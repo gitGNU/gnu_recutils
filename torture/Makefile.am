@@ -1,0 +1,54 @@
+# torture/ Makefile.am
+# GNU rec library
+
+# Copyright (C) 2009 Jose E. Marchesi
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+if CHECK
+
+TESTS = runtests
+noinst_PROGRAMS = runtests
+
+REC_FIELD_TSUITE = rec-field/rec-field-get-name.c \
+                  rec-field/rec-field-set-name.c \
+                  rec-field/rec-field-get-type.c \
+                  rec-field/rec-field-set-type.c \
+                  rec-field/rec-field-get-value.c \
+                  rec-field/rec-field-set-value.c \
+                  rec-field/rec-field-dup.c \
+                  rec-field/tsuite-rec-field.c
+
+REC_RECORD_TSUITE = rec-record/rec-record-new.c \
+                   rec-record/rec-record-size.c \
+                   rec-record/rec-record-field-p.c \
+                   rec-record/rec-record-insert-field.c \
+                   rec-record/rec-record-remove-field.c \
+                   rec-record/tsuite-rec-record.c
+
+runtests_SOURCES = runtests.c \
+                   $(REC_FIELD_TSUITE) \
+                   $(REC_RECORD_TSUITE)
+
+runtests_CPPFLAGS = -I$(top_srcdir)/src
+runtests_LDFLAGS = -L$(top_srcdir)/src
+runtests_LDADD = $(CHECK_LIBS) \
+                 -lrec
+
+clean-local:
+	-rm -f tests.log
+
+endif # CHECK
+
+# End of Makefile.am

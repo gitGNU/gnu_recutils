@@ -1,0 +1,727 @@
+\input texinfo
+@comment $Id: gnurec.texi,v 1.12 2009-09-30 21:33:21 jemarch Exp $
+@comment %**start of header
+@setfilename gnurec.info
+@settitle GNU Rec Manual
+@afourpaper
+@comment %**end of header
+
+@set VERSION 0.1
+
+@copying
+This is the GNU Rec Manual updated for GNU Rec version
+@value{VERSION}.
+
+Copyright @copyright{} 2009 Jose E. Marchesi
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A
+copy of the license is included in the section entitled ``GNU Free
+Documentation License''.
+@end quotation
+@end copying
+
+@direntry
+* gnurec: (gnurec). The GNU Rec manual.
+@end direntry
+
+@titlepage
+@sp
+@center @titlefont{GNU Rec Manual}
+@sp 4
+@center Updated for version @value{VERSION}.
+@sp 5
+@center Jos@'e E. Marchesi
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top GNU Rec Manual
+
+GNU Rec Manual
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Overview::            Introduction to the GNU records.
+
+The Rec Format
+* Fields and Records::  The basic structures conforming Rec files.
+* Record Descriptors::  Describing different types of records.
+* Compound Field Names:: Referencing record instances.
+* Comments::            Comments are useful to store meta data.
+
+GNU Rec Utilities
+* recsel::              Selecting records from rec files.
+* recins::              Inserting records in rec files.
+* recdel::              Deleting records from rec files.
+* recfix::              Fixing broken rec files and diagnostics.
+
+* The Rec Library::     Writing programs to manipulate rec files.
+* Usage Example::       A full-fledged rec-based project management
+                          system.
+* GNU Free Documentation License:: Distribution terms for this document.
+@end menu
+
+@node Overview
+@chapter Overview
+
+This chapter contains a short text explaining why the rec format was
+conceived, and a little example showing GNU rec in action.
+
+@menu
+* Motivation::          Why GNU rec?
+* A Little Example::    GNU rec in action.
+@end menu
+
+@node Motivation
+@section Motivation
+
+There are a lot of available different data storage systems that are
+suitable to satisfy a broad set of requirements.  A complex data
+management system usually makes use of a full-fledged relational
+system, such as PostgreSQL.  Some applications use custom binary file
+formats to store the application data.  @acronym{xml} files are also
+used for that purpose, using structured text instead.  If we had to
+elaborate a taxonomy of those systems, we could make use of the
+following properties:
+
+@table @emph
+@item Compactness
+It is usually a good feature for a data storage system to use a
+compact representation of the data.  Redundant or useless information
+increase the amount of memory/disk space required to hold the data.
+
+Both relational systems and custom binary file formats use a quite
+compact physical representation of the data when written to a disk or
+dumped into memory.  On the contrary, @dfn{xml} files contain a lot of
+redundant data to improve human readability.
+@item Complexity
+Complex problems require complex tools.
+@item Efficiency
+Efficiency is a quite important factor in systems designed to store a
+big amount of data.  The operations performed on the storage system
+(namely search, insertion and deletion) shall not feature a bad
+asymptotic behavior when the amount of data stored in the system
+increases a lot.
+
+The usage of both logical and physical indexes is common to avoid
+performance problems.  The physical format used to store the data has
+a quite direct impact in the feasibility of having such indexes.
+@item Human readability
+Contrary to the previous listed properties, this one is not usually
+found in data storage systems.
+
+Exceptions are @acronym{xml} and @emph{org} files.
+@end table
+
+@node A Little Example
+@section A Little Example
+
+Everyone loves to grow a nice book collection in home.  Unfortunately,
+in most cases the management of our private books gets uncontrolled:
+some books gets lost, some of them may be loaned to some friend, there
+are some duplicated (or even triplicated!) titles because we forgot
+about the existence of the previous copy, and a large etc.
+
+In order to improve the management of our little book collection, we
+could make use of a complex data storage system such as a relational
+database.  The problem with that approach, as explained in the
+previous section, is that the tool is too complicated for the task: we
+do not need the power of a @acronym{RDBS} to maintain a simple
+collection of books.
+
+With GNU rec it is possible to maintain such a little database in a
+text file.  Let's call it @file{books.rec}.  The following table
+resumes the information items that we want to store for each book,
+along with some common-sense restrictions.
+
+@table @emph
+@item Title
+@itemize @minus
+@item
+Every book has a title, even if it is ``No Title''.
+@item
+A book can have several titles.
+@end itemize
+@item Authors
+@itemize @minus
+@item
+A book can have more than one author.
+@item
+Sometimes the author is not known.
+@item
+Sometimes we don't care about who the author of a book is.
+@end itemize
+@item Location
+@itemize
+@item
+We usually store our books in home.
+@item
+We use to loan books to friends.
+@item
+Sometimes we are not sure about the physical location of a book.  Did
+we loan it to someone?  Was it lost in the last move?  Is it in some
+hidden place in home?
+@end itemize
+@end table
+
+The contents of the rec file follows:
+
+@example
+# -*- mode: rec -*-
+
+%rec: Book
+%mandatory: Title
+%doc:
++ A book in my personal collection.
++
++ The possible locations for a book are 'in site', 'loaned'
++ and 'unknown'.
+
+Title: GNU Emacs Manual
+Author: Richard M. Stallman
+Publisher: FSF
+Location: in site
+
+Title: The Colour of Magic
+Author: Terry Pratchett
+Location: loaned
+Contact:Name: Nicola Dinisio
+
+Title: Mio Cid
+Author: Anonymous
+Location: in site
+
+Title: chapters.gnu.org administration guide
+Author: Nacho Gonzalez
+Author: Jose E. Marchesi
+Location: unknown
+
+Title: Yeelong User Manual
+Location: in site
+
+# End of books.rec
+@end example
+
+Pretty simple.  The file contains a set of records separated by blank
+lines.  Each record is composed by a set of fields with a name and a
+value.
+
+The GNU rec utilities can then be used to access the contents of the
+file.  For example, we could get a list of the names of loaned books
+invoking @command{recsel} in the following way:
+
+@example
+$ recsel -e 'Location = loaned' -p Title books.rec
+The Colour of Magic
+@end example
+
+@node Fields and Records
+@chapter Fields and Records
+
+A field is the written expression of an association between a label
+and a value.  For example, if we want to associate the label
+@code{Name} with the value @code{Ada Lovelace} we would write the
+field:
+
+@example
+Name: Ada Lovelace
+@end example
+
+The separator between the field name and the value is a colon followed
+by zero or more blank (space and tabs, but not newlines) characters.
+The name of the field shall begin in the first column of the line.
+
+A field name can be composed by any alphanumeric character plus
+dashes (@code{-}) and underscores (@code{_}).  The regular expression
+denoting a field name is:
+
+@example
+[a-zA-Z0-9_-]+
+@end example
+
+Note that, unlike in many programming languages, it is possible to
+begin a field name with a number or with one of the allowed symbols.
+Field names are case-sensitive.  @code{Foo} and @code{foo} are
+considered different names.
+
+The following list contain valid field names (the final colon is
+not part of the names):
+
+@example
+Foo:
+foo:
+A23:
+_23:
+-dash:
+ab1:
+a-b:
+A_Field:
+@end example
+
+The value of a field is a sequence of characters ended by a single
+newline character (@code{\n}).  Any prefix or suffix composed by blank
+characters only are stripped.  This is done in order to improve the
+readability of the values since blank characters are not easily
+recognizable.  The following fields contain the same value (the
+underscore character is denoting a blank character in this example):
+
+@example
+Foo1:_bar
+Foo2:__bar
+Foo3:___bar
+Foo1: bar
+Foo2: bar_
+Foo3: bar___
+@end example
+
+Sometimes a value is long enough to exceed the usual width of
+terminals and screens.  In that case, depending on the specific tool
+used to access the file, the readability of the data greatly
+decreases.  It is possible to physically split a logical line by
+escaping a newline with a backslash character, as in:
+
+@example
+LongLine: This is a quite long value \
+composed by a unique logical line \
+splitted in several lines.
+@end example
+
+The sequence @code{\n} (newline) @code{+} (PLUS) and an optional
+@code{_} (SPACE) is interpreted as a newline when found in a field
+value.  For example, the C string @code{"bar1\nbar2\n bar3"} would be
+encoded in the following way in a field value:
+
+@example          
+Foo: bar
++ bar2
+Foo:
++  bar3
+@end example
+             
+The newline sequence described above is also interpreted as a blank
+character for prefix stripping.  That means that the following fields
+are encoding exactly the same value (@code{bar}):
+
+@example             
+Foo: bar
+Foo:
++ bar
+@end example
+
+A record is an ordered set of one or more fields.  The fields are
+separated by newline characters, like in:
+
+@example
+Name1: Value1
+Name2: Value2
+Name2: Value3
+@end example
+
+Nothing prevent for several of the fields of a record to have the same
+field name or field value.  So the following is a valid record
+containing three fields:
+
+@example
+Name: John Smith
+Email: john.smith@@foomail.com
+Email: john@@smith.name
+@end example
+
+The @dfn{size of a record} is defined as the number of fields
+contained in that record.  There is no such like an empty record, so
+the minimum size for a record is 1.  The maximum number of fields for
+a record shall be considered as an implementation limit.  The size of
+the previous record is 3.
+
+Records are delimited from each other by one or more blank lines, or
+the beginning or the end of the file.  For example, the following
+example depicts three different records in a file:
+
+@example
+Name: Ada Lovelace
+Age: 23
+
+Name: John Smith
+Age: 40
+
+Name: Peter the Great
+Age: 140
+@end example
+
+@node Record Descriptors
+@chapter Record Descriptors
+
+It is possible to specify certain properties of the records by using
+@dfn{record descriptors}.  The record descriptor is itself a record
+and precedes the rest of the records affected by the restrictions.
+The presence of another record descriptor mark the end of the
+application of the previous one.  So, in a file with the following
+structure:
+
+@example
+RECORD-DESCRIPTOR-1
+
+REC1
+
+REC2
+
+RECORD-DESCRIPTOR-2
+
+REC3
+
+REC4
+@end example
+
+The @code{REC1} and @code{REC2} are described by
+@code{RECORD-DESCRIPTOR-1} while @code{REC3} and @code{REC4} are
+described by @code{RECORD-DESCRIPTOR-2}.
+
+The record descriptor can contain the following fields:
+
+@table @code
+@item %rec
+The value of this field is interpreted as the name of the kind of
+record described by the record descriptor.
+
+This field is both mandatory and unique.
+
+It is highly recommended (but not enforced) to place this field in the
+first position of the record descriptor.
+@item %mandatory
+The value of this field is interpreted as the name of a field, that
+will be considered mandatory.
+
+Its effect is that at least one field with this name should be present
+in any record of this kind.  Any record violating this restriction
+will be considered invalid.
+@item %unique
+The value of this field is interpreted as the name of a field, that
+will be considered unique.
+
+Its effect is that at much one field with this name should be present
+in any record of this kind.  Any record violating this restriction
+will be considered invalid.
+@item %key
+The value of this field is interpreted as the name of a field, that
+will be considered as part of the key.
+
+Its effect is that any field with that name is both unique and
+mandatory, and additionally the values of those fields shall be
+unique. 
+@item %doc
+This field contains documentation about the record.
+
+It is like a comment, but this field can be managed in a programmatic
+way easier.
+@end table
+
+@node Compound Field Names
+@chapter Compound Field Names
+
+It is possible to make a reference to a record (or set of records) of
+a certain type by using a @dfn{compound field name}.  A compound field
+is composed by three components separated by double colon characters
+(@code{:}):
+
+@example
+TYPE:FIELD[:ROLE]:
+@end example
+
+The first component is a record type, usually defined somewhere else
+(@pxref{Record Descriptors}). The second component is the name of a
+field.  Finally, an optional third component is the role played by the
+referenced field in the referencing record.
+
+The simplest kind of reference is one without an explicit role.  It is
+used when only one association between records of different types is
+desired.  Consider for example:
+
+@example
+%rec: Maintainer
+
+Name: Jose E. Marchesi
+Package:Name: GNU rec
+@end example
+
+In the previous example it is pretty clear which role is played by the
+referenced package in the @code{Maintainer} record: it is the package
+maintained by the maintainer.  But sometimes the role is not that
+identifiable.  Consider the following record:
+
+@example
+%rec: Bug
+
+Id: 203
+Title: recsel crashes with files bigger than 2gb
+Hacker:Name: John Smith
+@end example
+
+Seems to be a bug report.  But, what has the hacker named John Smith
+to do with it?  Maybe he is the reporter of the bug.  Or perhaps he is
+the hacker that is working to fix it.  Or is he the hacker that closed
+the bug?  We can make the situation clear by using a role in the
+compound field:
+
+@example
+Id: 203
+Title: recsel crashes with files bigger than 2gb
+Hacker:Name:Reporter: John Smith
+@end example
+
+It is possible to make references to different instances of the same
+record type by using roles.  Supposing that we want to record who is
+the assignee of the bug report, we can introduce the new role
+@code{Assignee}:
+
+@example
+Id: 203
+Title: recsel crashes with files bigger than 2gb
+Hacker:Name:Reporter: John Smith
+Hacker:Name:Assignee: Juan Valdes 
+@end example
+
+Note that, like in the case of regular fields, there can be several
+compound fields with the same name and the same implicit role in a
+record, like in:
+
+@example
+%rec: Maintainer
+
+Name: Jose E. Marchesi
+Package:Name: GNU PDF
+Package:Name: GNU Ferret
+Package:Name: GNU rec
+@end example
+
+@node Comments
+@chapter Comments
+
+A line starting with a @code{#} (ASCII 0x23) character in the column 1
+is a comment.
+
+Comment lines are quite useful to insert additional information that
+is not part of the database but useful otherwise.
+
+It is useful to comment-out information from the rec file without
+having to remove it in a definitive way: you may want to recover the
+data into the database later!  Comment lines can be used to
+comment-out either full registers and single fields:
+
+@example
+Name: Jose E. Marchesi
+# Occupation: Software Engineer
+# Severe lack of brain capacity
+# Fired on 02/01/2009 (without compensation)
+Occupation: Unoccupied
+@end example
+
+Also, the rec files are intended to be comfortably accessed with
+general-purpose programs like text editors.  Some text editors are
+able to read instructions from the file under edition.  Consider the
+following comment line which tells Emacs to activate the rec edition
+mode when opening the file:
+
+@example
+# -*- mode: rec -*-
+...FILE CONTENTS...
+@end example
+      
+@node recsel
+@chapter recsel
+
+XXX
+
+@menu
+* recsel Invocation::   Command line options.
+* Search Expressions::  Patterns.
+* recsel Examples::     Examples of the usage of @command{recsel}
+@end menu
+
+@node recsel Invocation
+@section recsel Invocation
+
+@command{recsel} search rec files for records satisfying a certain
+expression.  Synopsis:
+
+@example
+recsel [OPTION]... [FILE]...
+@end example
+
+The program accepts the following options.
+
+@table @option
+@item -e
+@item --expression
+The expression to be used to determine the matching records and what
+information to print in the standard output.
+
+XXX xref to the expression format.
+@item --help
+Print a usage message listing all available options, then exit
+successfully.
+@item --version
+Print the version number, then exit successfully.
+@item --
+Delimit the option list.  Later arguments, if any, are treated as
+operands even if they begin with @option{-}.  For example, @command{recsel
+-- -e} reads from the file named @file{-r}.
+@end table
+
+@node Search Expressions
+@section Search Expressions
+
+XXX
+
+@node recsel Examples
+@section recsel Examples
+
+XXX
+
+@example
+$ recsel -e 'Name ~ Jo' foo.rec
+@end example
+
+Print the name of the partners of all the persons less than twenty:
+
+@example
+$ recsel -e 'Age < 20' -p Person:Name:Partner foo.rec
+@end example
+
+Print the number of partners of all the persons less than twenty:
+
+@example
+$ recsel -e 'Age < 20' -p #Person:Name:Partner foo.rec
+@end example
+
+@node recins
+@chapter recins
+
+XXX
+
+@node recdel
+@chapter recdel
+
+XXX
+
+Option to comment the records instead of deleting them.
+
+@node recfix
+@chapter recfix
+
+XXX
+
+@node The Rec Library
+@chapter The Rec Library
+
+XXX
+
+@node Usage Example
+@chapter Usage Example
+
+This chapter contains a complete description of a use-case for rec
+files: the storage of the data associated with the management of a
+free software project: @dfn{GNU Foo}.
+
+@menu
+* The GNU Foo Project::         Foo.
+* Managing Contributors::       Foo.
+* Managing Tasks::              Foo.
+* Managing Patches::            Foo.
+* Legal Papers::                Foo.
+@end menu
+
+@node The GNU Foo Project
+@section The GNU Foo Project
+
+XXX
+
+@node Managing Contributors
+@section Managing Contributors
+
+The record descriptor for the hackers is:
+
+@example
+%rec: Hacker
+%key: Email
+%doc:
++ Contributor to GNU Foo.
+@end example
+
+@example
+Name: John Smith
+Email: john@@smith.name
+Role: Developer
+Papers: no
+@end example
+
+@node Managing Tasks
+@section Managing Tasks
+
+XXX
+
+@example
+%rec: Task
+%doc:
++ Task of the GNU foo project.
+
+Id: 203
+Title: Update to autoconf 2.64
+Description:
++ Both libfoo and footool source trees shall be updated to support
++ autoconf 2.64.
++
++ Obsolete macros shall be replaced by the recommended ones.  Backward
++ compatibility with previous versions of autoconf is not a must.
+Status: closed
+
+@end example
+
+@node Managing Patches
+@section Managing Patches
+
+XXX
+
+@example
+%rec: Patch
+%doc:
++ Patch sent to the GNU foo project.
+
+Id: 1
+Description:
++ Update to use autoconf 2.64.  A couple of obsolete macros are
++ substituted with their replacements.
+Hacker:Name: John Smith
+Task:Id: 203
+Applied: no
+Date: 2009-03-22
+
+Id: 2
+Description:
++ Implementation of the fluzo capacitor.
+Hacker:Name: Juan Valdes
+Applied: yes
+Date: 2008-11-02
+@end example
+
+@node Legal Papers
+@section Legal Papers
+
+XXX
+
+@node GNU Free Documentation License
+@appendix GNU Free Documentation License
+
+@include fdl.texi
+
+@bye

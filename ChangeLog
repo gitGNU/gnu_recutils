@@ -1,0 +1,17 @@
+2009-09-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/grec.h: Comments clarified.
+
+2009-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/fdl.texi: New file.
+
+	* doc/gnurec.texi: New file.
+
+2009-07-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* torture/runtests.c (main): Use CK_ENV instead of CK_VERbOSE in
+	srunner_run_all.
+
+	* Begin of the change log.
+
