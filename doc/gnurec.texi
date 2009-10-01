@@ -6,7 +6,7 @@
 @afourpaper
 @comment %**end of header
 
-@set VERSION 0.1
+@set VERSION 0.0
 
 @copying
 This is the GNU Rec Manual updated for GNU Rec version
