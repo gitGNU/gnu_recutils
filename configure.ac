@@ -54,7 +54,6 @@ AM_CONDITIONAL([CHECK], [test "x$have_check" != "xno"])
 dnl Search for required programs
 
 AM_PROG_LEX
-AC_PROG_YACC
 
 dnl Platform-based compilation options
 compile_w32_system=no
