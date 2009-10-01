@@ -344,19 +344,19 @@ the minimum size for a record is 1.  The maximum number of fields for
 a record shall be considered as an implementation limit.  The size of
 the previous record is 3.
 
-Records are delimited from each other by one or more blank lines, or
-the beginning or the end of the file.  For example, the following
-example depicts three different records in a file:
+Records are separated by one or more blank lines.  For example, the
+following example shows a file named @file{personalities.rec}
+featuring three records:
 
 @example
 Name: Ada Lovelace
-Age: 23
-
-Name: John Smith
-Age: 40
+Age: 37
 
 Name: Peter the Great
-Age: 140
+Age: 53
+
+Name: Matusalen
+Age: 969
 @end example
 
 @node Record Descriptors
