@@ -319,8 +319,8 @@ Foo:
 + bar
 @end example
 
-A record is an ordered set of one or more fields.  The fields are
-separated by newline characters, like in:
+A record is a group of one or more fields written one after the other.
+The fields are separated by newline characters, like in:
 
 @example
 Name1: Value1
@@ -328,9 +328,9 @@ Name2: Value2
 Name2: Value3
 @end example
 
-Nothing prevent for several of the fields of a record to have the same
-field name or field value.  So the following is a valid record
-containing three fields:
+It is possible for several fields in a record to share the same name
+or/and the field value. The following is a valid record containing
+three fields:
 
 @example
 Name: John Smith
@@ -344,9 +344,9 @@ the minimum size for a record is 1.  The maximum number of fields for
 a record shall be considered as an implementation limit.  The size of
 the previous record is 3.
 
-Records are separated by one or more blank lines.  For example, the
-following example shows a file named @file{personalities.rec}
-featuring three records:
+Records are separated by one or more blank lines.  For instance, the
+following example shows a file named @file{personalities} featuring
+three records:
 
 @example
 Name: Ada Lovelace
@@ -370,6 +370,8 @@ application of the previous one.  So, in a file with the following
 structure:
 
 @example
+REC0
+
 RECORD-DESCRIPTOR-1
 
 REC1
@@ -383,9 +385,10 @@ REC3
 REC4
 @end example
 
-The @code{REC1} and @code{REC2} are described by
-@code{RECORD-DESCRIPTOR-1} while @code{REC3} and @code{REC4} are
-described by @code{RECORD-DESCRIPTOR-2}.
+@code{REC0} is not affected by any record descriptor.  The @code{REC1}
+and @code{REC2} are described by @code{RECORD-DESCRIPTOR-1} while
+@code{REC3} and @code{REC4} are described by
+@code{RECORD-DESCRIPTOR-2}.
 
 The record descriptor can contain the following fields:
 
@@ -394,7 +397,7 @@ The record descriptor can contain the following fields:
 The value of this field is interpreted as the name of the kind of
 record described by the record descriptor.
 
-This field is both mandatory and unique.
+This field is unique.
 
 It is highly recommended (but not enforced) to place this field in the
 first position of the record descriptor.

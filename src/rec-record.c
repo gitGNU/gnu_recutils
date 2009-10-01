@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 18:00:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/10/01 23:04:33 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -63,7 +63,7 @@ rec_record_new (void)
                                                  rec_record_field_equals_fn,
                                                  NULL,
                                                  rec_record_field_dispose_fn,
-                                                 false);
+                                                 true);
       
       if (record->field_list == NULL)
         {
@@ -125,28 +125,13 @@ bool
 rec_record_insert_field (rec_record_t record,
                          rec_field_t field)
 {
-  bool inserted;
   gl_list_node_t list_node;
 
-  inserted = false;
-  if (!rec_record_field_p (record,
-                           rec_field_get_name (field)))
-    {
-      list_node = gl_list_add_last (record->field_list,
-                                    (void *) field);
+  list_node = gl_list_add_last (record->field_list,
+                                (void *) field);
+  record->size++;
 
-      if (list_node != NULL)
-        {
-          inserted = true;
-        }
-    }
-
-  if (inserted)
-    {
-      record->size++;
-    }
-
-  return inserted;
+  return true;
 }
 
 bool

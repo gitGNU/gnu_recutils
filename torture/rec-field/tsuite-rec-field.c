@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:48:18 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/10/01 23:02:48 jemarch"
  *
  *       File:         tsuite-rec-field.c
  *       Date:         Sun Mar  1 17:06:28 2009
@@ -28,8 +28,6 @@
 
 extern TCase *test_rec_field_get_name (void);
 extern TCase *test_rec_field_set_name (void);
-extern TCase *test_rec_field_get_type (void);
-extern TCase *test_rec_field_set_type (void);
 extern TCase *test_rec_field_get_value (void);
 extern TCase *test_rec_field_set_value (void);
 extern TCase *test_rec_field_dup (void);
@@ -42,8 +40,6 @@ tsuite_rec_field ()
   s = suite_create ("rec-field");
   suite_add_tcase (s, test_rec_field_get_name ());
   suite_add_tcase (s, test_rec_field_set_name ());
-  suite_add_tcase (s, test_rec_field_get_type ());
-  suite_add_tcase (s, test_rec_field_set_type ());
   suite_add_tcase (s, test_rec_field_get_value ());
   suite_add_tcase (s, test_rec_field_set_value ());
   suite_add_tcase (s, test_rec_field_dup ());

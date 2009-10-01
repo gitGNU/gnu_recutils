@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:38:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/10/01 23:02:19 jemarch"
  *
  *       File:         rec-field.c
  *       Date:         Fri Feb 27 20:40:26 2009
@@ -36,27 +36,11 @@
  */
 struct rec_field_s
 {
-  enum rec_field_type_e type;
-
   char *name;  /* NULL-terminated string containing the name of the
-                  field. The string is not including the colon
-                  character ':' that ends the name */
+                  field. */
   char *value; /* NULL-terminated string containing the text value of
                   the field. */
 };
-
-enum rec_field_type_e
-rec_field_get_type (rec_field_t field)
-{
-  return field->type;
-}
-
-void
-rec_field_set_type (rec_field_t field,
-                    enum rec_field_type_e type)
-{
-  field->type = type;
-}
 
 const char *
 rec_field_get_name (rec_field_t field)
@@ -109,7 +93,6 @@ rec_field_new (const char *name,
   if (field != NULL)
     {
       field->name = NULL;
-      field->type = REC_FIELD_TYPE_TEXT;
       field->value = NULL;
 
       rec_field_set_name (field, name);

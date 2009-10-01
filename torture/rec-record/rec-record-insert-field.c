@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:49:39 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/10/01 23:06:39 jemarch"
  *
  *       File:         rec-record-insert-field.c
  *       Date:         Fri Mar  6 20:08:59 2009
@@ -81,8 +81,8 @@ END_TEST
  * Description:
  *   Fields with duplicated names are not allowed.
  * Success conditions:
- *   1. Any attempt to insert a duplicated field
- *      should be a no-op.
+ *   1. The attempt to insert a duplicated field
+ *      should success.
  */
 START_TEST(rec_record_insert_field_003)
 {
@@ -102,10 +102,10 @@ START_TEST(rec_record_insert_field_003)
   /* Create a new field and insert it into the record */
   field2 = rec_field_new ("name", "value");
   fail_if(field2 == NULL);
-  fail_if(rec_record_insert_field (record, field2));
+  fail_if(!rec_record_insert_field (record, field2));
 
   /* Check for the existence of the field into the record */
-  fail_if(rec_record_size (record) != 1);
+  fail_if(rec_record_size (record) != 2);
 
   rec_record_destroy (record);
 }

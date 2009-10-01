@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:44:42 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/10/01 22:56:00 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -33,78 +33,32 @@
 
 /* Record Set Data Structure.
  *
- * A record set is a set of zero or more non-special records preceded
- * by a special record.
+ * A record set is a set of zero or more non-special records maybe
+ * preceded by a record descriptor.
  */
 struct rec_rset_s
 {
-  char *name;                 /* Name of the record */
   int size;                   /* Number of records stored in the
-                                 record set. The special record is not
-                                 included in the count */
-  rec_record_t special_record; /* Special record heading this record
-                                  set */
-  gl_list_t record_list;      /* List of ordinary records */
+                                 record set. The record descriptor is
+                                 not included in the count. */
+  rec_record_t descriptor;    /* Record descriptor of this record
+                                 set. */
+  gl_list_t record_list;      /* List of ordinary records. */
 };
 
 /* Set of names for special fields */
 
-#define REC_NAME_FLF "%flf:"
-#define REC_NAME_KEY "%key:"
-#define REC_NAME_TYPE "%type:"
-#define REC_NAME_FORMAT "%format:"
-#define REC_NAME_MANDATORY "%mandatory:"
+#define REC_NAME_REC "%rec"
+#define REC_NAME_KEY "%key"
+#define REC_NAME_MANDATORY "%mandatory"
 #define REC_NAME_UNIQUE "%unique:"
-#define REC_NAME_UNIT "%unit:"
 
 static char *special_fields[] =
   {
-    /* FLF version.
-     *
-     * The value should be interpreted as a string denoting the
-     * version of the FLF format used in the file. The version string
-     * is composed by two numbers separated by a dot:
-     *
-     *    MAJOR_VERSION.MINOR_VERSION
-     */
-    REC_NAME_FLF,
-    /* Declare a field name as a key.
-     *
-     * The value should be interpreted as a field name.
-     */
+    REC_NAME_REC,
     REC_NAME_KEY,
-    /* Specify how to interpret the values of a given field.
-     *
-     * The value should be the name of a field, one or more BLANK
-     * characters and then a type specification.
-     */
-    REC_NAME_TYPE,
-    /* Specify how to format the values of a given field.
-     *
-     * The value should be the name of a field, one or more BLANK
-     * characters and then a format specification.
-     */
-    REC_NAME_FORMAT,
-    /* Declare a field name as mandatory, so any record in the file
-     * should have at least one field with that name.
-     *
-     * The value should be the name of a field.
-     */
     REC_NAME_MANDATORY,
-    /* Declare a field as unique, so two fields with this name in the
-     * file cannot share the same value.
-     *
-     * The value should be the name of a field.
-     */
     REC_NAME_UNIQUE,
-    /* Specify the units of some quantity stored as the value of a
-     * field.
-     *
-     * The value should be the name of a field, one or more BLANK
-     * characters and then a unit specification.
-     */
-    REC_NAME_UNIT,
-
     /* Centinel */
     ""
   };
@@ -120,7 +74,7 @@ rec_rset_t
 rec_rset_new (void)
 {
   rec_rset_t rset;
-  rec_record_t special_record;
+  rec_record_t descriptor;
   rec_field_t field;
 
   /* Allocate memory for the new record set */
@@ -128,13 +82,8 @@ rec_rset_new (void)
   
   if (rset != NULL)
     {
-      /* Create the special record with the "flf:" field containing
-         the version of the implemented FLF */
-      special_record = rec_record_new ();
-      field = rec_field_new (REC_NAME_FLF, REC_VERSION_STRING);
-      rec_record_insert_field (special_record, field);
-
-      rset->special_record = special_record;
+      rset->descriptor = NULL;
+      rset->size = 0;
 
       /* Initialize the record list, allowing duplicates */
       rset->record_list = gl_list_create_empty (GL_ARRAY_LIST,
@@ -150,7 +99,7 @@ rec_rset_new (void)
 void
 rec_rset_destroy (rec_rset_t rset)
 {
-  rec_record_destroy (rset->special_record);
+  rec_record_destroy (rset->descriptor);
   gl_list_free (rset->record_list);
 }
 
@@ -158,27 +107,6 @@ int
 rec_rset_size (rec_rset_t rset)
 {
   return rset->size;
-}
-
-bool
-rec_rset_remove_record_at (rec_rset_t rset,
-                           int position)
-{
-  bool removed;
-
-  /* position sanity check */
-  if ((position < 0) ||
-      (position >= gl_list_size (rset->record_list)))
-    {
-      removed = false;
-    }
-  else
-    {
-      removed = gl_list_remove_at (rset->record_list,
-                                   position);
-    }
-
-  return removed;
 }
 
 rec_record_t
@@ -235,17 +163,25 @@ rec_rset_insert_record_at (rec_rset_t rset,
   return inserted;
 }
 
-rec_record_t
-rec_rset_get_special_record (rec_rset_t rset)
+bool
+rec_rset_remove_record_at (rec_rset_t rset,
+                           int position)
 {
-  return rset->special_record;
-}
+  bool removed;
 
-void
-rec_rset_set_special_record (rec_rset_t rset, rec_record_t record)
-{
-  rec_record_destroy (rset->special_record);
-  rset->special_record = record;
+  /* position sanity check */
+  if ((position < 0) ||
+      (position >= gl_list_size (rset->record_list)))
+    {
+      removed = false;
+    }
+  else
+    {
+      removed = gl_list_remove_at (rset->record_list,
+                                   position);
+    }
+
+  return removed;
 }
 
 bool
@@ -269,6 +205,19 @@ rec_rset_insert_record (rec_rset_t rset,
     }
 
   return inserted;
+}
+
+rec_record_t
+rec_rset_get_descriptor (rec_rset_t rset)
+{
+  return rset->descriptor;
+}
+
+void
+rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
+{
+  rec_record_destroy (rset->descriptor);
+  rset->descriptor = record;
 }
 
 /*
@@ -302,15 +251,18 @@ static bool
 rec_rset_record_can_be_inserted_p (rec_rset_t rset,
                                    rec_record_t record)
 {
-  /* The record can be inserted if and only if:
+  /* The record can be inserted if and only if it
    *
-   * - It does not contain a field defined as unique having a value
+   * - It does not contain a field defined as key having a value
    *   already present in some record in the set.
-   * - It contains any defined mandatory field.
+   *
+   * - It does not contain duplicated fields defined as unique.
+   *
+   * - It does not contain a field defined as mandatory.
    */
 
   bool can_be_inserted;
-  rec_record_t special_record;
+  rec_record_t descriptor;
   rec_field_t field;
   int index;
 
@@ -318,13 +270,13 @@ rec_rset_record_can_be_inserted_p (rec_rset_t rset,
 
   /* Get the special record of the record set and iterate on its
      fields */
-  special_record = rec_rset_get_special_record (rset);
+  descriptor = rec_rset_get_descriptor (rset);
 
   for (index = 0;
-       index < rec_record_size (special_record);
+       index < rec_record_size (descriptor);
        index++)
     {
-      field = rec_record_get_field_at (special_record,
+      field = rec_record_get_field_at (descriptor,
                                        index);
 
       if (strcmp (rec_field_get_name (field),

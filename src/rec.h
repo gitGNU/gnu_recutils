@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:44:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/10/01 23:04:10 jemarch"
  *
  *       File:         rec.h
  *       Date:         Fri Feb 27 20:04:59 2009
@@ -40,17 +40,10 @@
 #define REC_VERSION_STRING "1.0"
 
 /*
- * GR Fields
+ * Fields
  *
  * A field is a name-value pair.
  */
-
-enum rec_field_type_e
-  {
-    REC_FIELD_TYPE_TEXT,
-    REC_FIELD_TYPE_INTEGER,
-    REC_FIELD_TYPE_REAL
-  };
 
 typedef struct rec_field_s *rec_field_t;
 
@@ -62,19 +55,14 @@ rec_field_t rec_field_new (const char *name,
 /* Destroy a field, freeing any occupied memory */
 void rec_field_destroy (rec_field_t field);
 
-/* Return the type of a field */
-enum rec_field_type_e rec_field_get_type (rec_field_t field);
-
-/* Set the type of a field */
-void rec_field_set_type (rec_field_t field, enum rec_field_type_e type);
-
-/* Return a string containing the field name */
+/* Return a pointer to the string containing the field name. */
 const char *rec_field_get_name (rec_field_t field);
 
 /* Set the name of a field to a given string */
 void rec_field_set_name (rec_field_t field, const char *name);
 
-/* Return the value of a given field */
+/* Return a pointer to the string containing the value of the
+   field. */
 const char *rec_field_get_value (rec_field_t field);
 
 /* Set the value of a given field to the given string. */
@@ -90,7 +78,7 @@ bool rec_field_equal_p (rec_field_t field1,
                         rec_field_t field2);
 
 /*
- * GR Records
+ * Records
  *
  * A record is an ordered set of one or more fields.
  */
@@ -112,10 +100,7 @@ int rec_record_size (rec_record_t record);
 bool rec_record_field_p (rec_record_t record,
                          const char *field_name);
 
-/* Insert the given field into the given record. If a field with that
-   name is already contained by the record then 'false' is returned
-   and no field is inserted. If the field is inserted then 'true' is
-   returned */
+/* Insert the given field into the given record. */
 bool rec_record_insert_field (rec_record_t record,
                               rec_field_t field);
 
@@ -162,15 +147,15 @@ bool rec_record_subset_p (rec_record_t record1,
 rec_record_t rec_record_dup (rec_record_t record);
 
 /*
- * GR Record Sets
+ * Record Sets
  *
- * A record set is a set of zero or more non-special records preceded
- * by a special record. The order of the records is significant.
+ * A record set is a set of zero or more non-special records maybe
+ * preceded by a record descriptor. The order of the records is
+ * significant.
  */
 typedef struct rec_rset_s *rec_rset_t;
 
-/* Create a new, empty record set. The special record of the new
-   record set is initialized with a grf: field. */
+/* Create a new, empty record set. */
 rec_rset_t rec_rset_new (void);
 
 /* Destroy a record set, freeing any used memory. This means that all
@@ -197,27 +182,28 @@ bool rec_rset_insert_record_at (rec_rset_t rset,
                                 rec_record_t record,
                                 int position);
 
+/* Remove the record contained in the given position into the given
+   record set. A boolean value is returned telling if the record was
+   found and deleted. */
+bool rec_rset_remove_record_at (rec_rset_t rset, int position);
+
 /* Insert the given record into the given record set. If the record is
    inserted then 'true' is returned. If there is an error then 'false'
    is returned. */
 bool rec_rset_insert_record (rec_rset_t rset,
                              rec_record_t record);
 
-/* Remove the record contained in the given position into the given
-   record set. A boolean value is returned telling if the record was
-   found and deleted. */
-bool rec_rset_remove_record_at (rec_rset_t rset, int position);
-
-/* Return a pointer to the special record contained in the given
+/* Return a pointer to the record descriptor contained in the given
    record set. */
-rec_record_t rec_rset_get_special_record (rec_rset_t rset);
+rec_record_t rec_rset_get_descriptor (rec_rset_t rset);
 
-/* Replace the special record of a record set with a given record. The
-   previous special record in the record set is destroyed. */
-void rec_rset_set_special_record (rec_rset_t rset, rec_record_t record);
+/* Replace the record descriptor of a record set with a given
+   record. The previous descriptor in the record set is
+   destroyed. */
+void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
 
 /* 
- * GR Databases
+ * Databases
  *
  * A database is an unordered sequence of one or more record sets.
  *

@@ -23,8 +23,6 @@ noinst_PROGRAMS = runtests
 
 REC_FIELD_TSUITE = rec-field/rec-field-get-name.c \
                   rec-field/rec-field-set-name.c \
-                  rec-field/rec-field-get-type.c \
-                  rec-field/rec-field-set-type.c \
                   rec-field/rec-field-get-value.c \
                   rec-field/rec-field-set-value.c \
                   rec-field/rec-field-dup.c \
