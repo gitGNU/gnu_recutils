@@ -1,3 +1,7 @@
+2009-10-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lisp/rec-mode.el: New file.
+
 2009-10-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/rec-record.c (rec_record_new): Allow duplicates.
