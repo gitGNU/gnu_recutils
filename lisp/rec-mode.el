@@ -32,6 +32,30 @@
   :group 'applications
   :link '(url-link "http://www.gnu.org/software/rec"))
 
+(defvar rec-field-name-re
+  "^\\([a-zA-Z0-1_%-]+:\\)+"
+  "Regexp matching a field name.")
+
+(defvar rec-field-value-re
+  (let ((ret-re "\n\\+ ?")
+        (esc-ret-re "\\\\\n"))
+    (concat
+     "\\("
+     "\\(" ret-re "\\)*"
+     "\\(" esc-ret-re"\\)*"
+     "[^\\\n]*"
+     "\\)*"))
+  "Regexp matching a field value.")
+
+(defvar rec-field-re
+  (concat rec-field-name-re
+          rec-field-value-re)
+"Regexp matching a field.")
+
+(defvar rec-beginning-record-re 
+  (concat "\n" rec-field-re)
+  "Regexp denoting the beginning of a record")
+
 (defvar rec-mode-syntax-table
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?# "<" st)   ; Comment start
@@ -40,8 +64,9 @@
   "Syntax table used in rec-mode")
 
 (defvar rec-font-lock-keywords
-  '(("^%\\(rec\\|key\\|unique\\|mandatory\\):" . font-lock-keyword-face)
-    ("^[^:]+:" . font-lock-variable-name-face))
+  `(("^%\\(rec\\|key\\|unique\\|mandatory\\|doc\\):" . font-lock-keyword-face)
+    (,rec-field-name-re . font-lock-variable-name-face)
+    ("^\\+" . font-lock-constant-face))
   "Font lock keywords used in rec-mode")
   
 (defvar rec-mode-map
@@ -53,69 +78,164 @@
 (defvar rec-comment-re "^#.*$"
   "regexp denoting a comment line")
 
-(setq rec-field-name-re "^[a-zA-Z0-1_%-]+:")
-(setq rec-field-re
-      (concat rec-field-name-re ;; The field name
-              "[ \t]*"          ;; Stripped prefix of blanks
-              ".*"              ;; The field value
-              "[ \t]*"          ;; Stripped end of blanks
-              "\n"))
+(defun rec-parse-comment ()
+  "Parse and return a comment starting at point.
 
-(defun rec-get-field-value ()
-  "Return the field value under the pointer.  If the pointer is not
-in top of a field value, return nil."
-  (save-excursion
-    (let (ret)
-      ;; Search the field name
-      (when (re-search-backward rec-field-name-re nil t)
-        (goto-char (match-end 0))
-        ;; Get the field value
-        (setq ret (rec-parse-field-value))))))
+Return a list whose first element is the symbol 'comment and the
+second element is the string with the contents of the comment,
+including the leading #:
+
+   (comment \"# foo\")
+
+If the point is not at the beginning of a comment return nil."
+  (when (and (equal (current-column) 0)
+             (looking-at rec-comment-re))
+    (goto-char (match-end 0))
+    (list 'comment (buffer-substring-no-properties (match-beginning 0)
+                                                   (match-end 0)))))
 
 (defun rec-parse-field-name ()
-  "Parse and return a field name starting at point.  If the point
-is not at the beginning of a field name return nil."
+  "Parse and return a field name starting at point.
+
+Return a list with whose elements are the parts of the field
+name.  For the name a:b:c:d: the following list is returned:
+
+   ('a' 'b' 'c' 'd')
+
+If the point is not at the beginning of a field name return nil."
   (when (and (equal (current-column) 0)
-             (looking-at "^[a-zA-Z_%-]+:"))
+             (looking-at rec-field-name-re))
     (goto-char (match-end 0))
-    ;; TODO: strip blank suffix
-    (buffer-substring-no-properties (match-beginning 0)
-                                    (- (match-end 0) 1))))
+    (split-string
+     (buffer-substring-no-properties (match-beginning 0)
+                                     (- (match-end 0) 1))
+     ":")))
 
 (defun rec-parse-field-value ()
-  "Parse and return the field value starting at point."
-  (save-excursion
-    ;; Skip whitespaces
-    (re-search-forward "[ \t]+" nil t)
-    ;; Get the field value
-    (let (exit (val ""))
-      (while (and (looking-at "[^\n]+")
-                  (or (equal (char-before (match-end 0)) ?\\)
-                      (equal (char-after (+ (match-end 0) 1)) ?+)))
-        (setq val (concat val (buffer-substring-no-properties (match-beginning 0)
-                                                              (match-end 0))))
-        (goto-char (match-end 0)))
+  "Return the field value under the pointer.
+
+Return a string containing the value of the field.
+
+If the pointer is not at the beginning of a field value, return
+nil."
+  (when (looking-at rec-field-value-re)
+    (goto-char (match-end 0))
+    (let ((val (buffer-substring-no-properties (match-beginning 0)
+                                               (match-end 0))))
+      ;; Replace escaped newlines
+      (setq val (replace-regexp-in-string "\\\\\n" "" val))
+      ;; Replace continuation lines
+      (setq val (replace-regexp-in-string "\n\\+ ?" "\n" val))
+      ;; Trim blanks in the value
+      (setq val (replace-regexp-in-string "^[ \t]+" "" val))
+      (setq val (replace-regexp-in-string "[ \t]+$" "" val))
       val)))
-          
+
 (defun rec-parse-field ()
   "Return a structure describing the field starting from the
-pointer.  If the pointer is not in the beginning of a field
-descriptor then return nil.
+pointer.
 
-The structure containing the data of the field is a list whose
-first element is the name of the field and the second element is
-the value of the field."
+The returned structure is a list whose first element is the
+symbol 'field', the second element is the name of the field and
+the second element is the value of the field:
+
+   (field FIELD-NAME FIELD-VALUE)
+
+If the pointer is not at the beginning of a field
+descriptor then return nil."
   (let (field-name field-value)
     (and (setq field-name (rec-parse-field-name))
          (setq field-value (rec-parse-field-value)))
     (when (and field-name field-value)
-        (list field-name field-value))))
-        
-(defun rec-goto-next-rec ()
-  "Move the pointer to the beginning of the next record."
-  (interactive)
-  (if (re-search-forward rec-field-re nil t)
-      (goto-char (match-beginning 0))))
+        (list 'field field-name field-value))))
+
+(defun rec-parse-record ()
+  "Return a structure describing the record starting from the pointer.
+
+The returned structure is a list of fields preceded by the symbol
+'record':
+
+   (record FIELD-1 FIELD-2 ... FIELD-N)
+
+If the pointer is not at the beginning of a record, then return
+nil."
+  (let (record field-or-comment)
+    (while (setq field-or-comment (or (rec-parse-field)
+                                      (rec-parse-comment)))
+      (setq record (cons field-or-comment record))
+      ;; Skip the newline finishing the field or the comment
+      (when (looking-at "\n") (goto-char (match-end 0))))
+    (setq record (cons 'record (reverse record)))))
+
+(defun rec-mark-buffer ()
+  "Return a list of marks marking the beginning of the records in
+the current buffer, for all the record types.
+
+   (rec-buffer (RECORD-DESCRIPTOR RECORD ...) ...)
+
+Return nil."
+  (while (re-search-forward rec-beginning-record-re)
+    (goto-char (match-begin 0))
+    (let (rec (rec-parse-record))
+      (if (rec-assoc record "%rec")
+          ;; A record descriptor
+          nil
+        ;; A regular record
+        nil))))
+    
+(defun rec-insert-comment (comment)
+  "Insert the written form of COMMENT in the current buffer."
+  (when (and (listp comment) 
+             (equal (car comment) 'comment))
+    (insert (cadr comment) "\n")))
+
+(defun rec-insert-field-name (field-name)
+  "Insert the written form of FIELD-NAME in the current buffer."
+  (when (listp field-name)
+    (mapcar (lambda (elem)
+              (when (stringp elem) (insert elem ":")))
+            field-name)))
+
+(defun rec-insert-field-value (field-value)
+  "Insert the written form of FIELD-VALUE in the current buffer."
+  (when (stringp field-value)
+    (let ((val field-value))
+      ;; FIXME: Maximum line size
+      (insert (replace-regexp-in-string "\n" "\n+ " val)))
+    (insert "\n")))
+
+(defun rec-insert-field (field)
+  "Insert the written form of FIELD in the current buffer."
+  (when (and (listp field)
+             (equal (car field) 'field))
+    (when (rec-insert-field-name (cadr field))
+      (insert " ")
+      (rec-insert-field-value (nth 2 field)))))
+
+(defun rec-insert-record (record)
+  "Insert the written form of RECORD in the current buffer."
+  (when (and (listp record)
+             (equal (car record) 'record))
+    (rec-insert-record-2 (cdr record))))
+
+(defun rec-insert-record-2 (record)
+  "Insert the written form of RECORD in the current buffer.
+Recursive part."
+  (when (and record (listp record))
+    (let ((elem (car record)))
+      (cond
+       ((equal (car elem) 'comment)
+        (rec-insert-comment elem))
+       ((equal (car elem) 'field)
+        (rec-insert-field elem))))
+    (rec-insert-record-2 (cdr record))))
+
+(defun rec-assoc (record name)
+  "Get the value of a field in RECORD named NAME.  If no such
+field exists in RECORD then nil is returned."
+  (when (and (listp record)
+             (equal (car record) 'record))
+    (cadr (assoc name (mapcar #'cdr (cdr record))))))
 
 (defun rec-mode ()
   "A major mode for editing rec files.
