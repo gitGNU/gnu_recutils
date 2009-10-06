@@ -230,12 +230,29 @@ Recursive part."
         (rec-insert-field elem))))
     (rec-insert-record-2 (cdr record))))
 
-(defun rec-assoc (record name)
-  "Get the value of a field in RECORD named NAME.  If no such
+(defun rec-assoc (name record)
+  "Get a list with the values of the fields in RECORD named NAME.  If no such
 field exists in RECORD then nil is returned."
   (when (and (listp record)
              (equal (car record) 'record))
-    (cadr (assoc name (mapcar #'cdr (cdr record))))))
+    (let (result)
+      (mapcar (lambda (field)
+                (when (and (equal (car field) 'field)
+                           (equal name (cadr field)))
+                  (setq result (cons (nth 2 field) result))))
+              (cdr record))
+      (reverse result))))
+
+(defun rec-names (record)
+  "Get a list of the field names in the record."
+  (when (and (listp record)
+             (equal (car record) 'record))
+    (let (result)
+      (mapcar (lambda (field)
+                (when (and (equal (car field) 'field))
+                  (setq result (cons (nth 1 field) result))))
+              (cdr record))
+      (reverse result))))
 
 (defun rec-mode ()
   "A major mode for editing rec files.
