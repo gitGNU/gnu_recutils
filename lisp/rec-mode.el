@@ -32,6 +32,9 @@
   :group 'applications
   :link '(url-link "http://www.gnu.org/software/rec"))
 
+(defvar rec-comment-re "^#.*$"
+  "regexp denoting a comment line")
+
 (defvar rec-field-name-re
   "^\\([a-zA-Z0-1_%-]+:\\)+"
   "Regexp matching a field name.")
@@ -50,12 +53,16 @@
 (defvar rec-field-re
   (concat rec-field-name-re
           rec-field-value-re)
-"Regexp matching a field.")
+  "Regexp matching a field.")
 
-(defvar rec-beginning-record-re 
-  (concat "\n" rec-field-re)
-  "Regexp denoting the beginning of a record")
+(defvar rec-record-re
+  (concat rec-field-re "\\(\n" rec-field-re "\\)+")
+  "Regexp matching a record.")
 
+(defvar rec-record-beginning-re
+  (concat "\n\n\\(" rec-comment-re "\\|" rec-field-re "\\)")
+  "Regexp matching the beginning of a record.")
+  
 (defvar rec-mode-syntax-table
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?# "<" st)   ; Comment start
@@ -74,9 +81,6 @@
     (define-key map (kbd "TAB") 'rec-goto-next-rec)
     map)
   "Keymap for rec-mode")
-
-(defvar rec-comment-re "^#.*$"
-  "regexp denoting a comment line")
 
 (defun rec-parse-comment ()
   "Parse and return a comment starting at point.
@@ -167,22 +171,6 @@ nil."
       (when (looking-at "\n") (goto-char (match-end 0))))
     (setq record (cons 'record (reverse record)))))
 
-(defun rec-mark-buffer ()
-  "Return a list of marks marking the beginning of the records in
-the current buffer, for all the record types.
-
-   (rec-buffer (RECORD-DESCRIPTOR RECORD ...) ...)
-
-Return nil."
-  (while (re-search-forward rec-beginning-record-re)
-    (goto-char (match-begin 0))
-    (let (rec (rec-parse-record))
-      (if (rec-assoc record "%rec")
-          ;; A record descriptor
-          nil
-        ;; A regular record
-        nil))))
-    
 (defun rec-insert-comment (comment)
   "Insert the written form of COMMENT in the current buffer."
   (when (and (listp comment) 
@@ -230,7 +218,7 @@ Recursive part."
         (rec-insert-field elem))))
     (rec-insert-record-2 (cdr record))))
 
-(defun rec-assoc (name record)
+(defun rec-record-assoc (name record)
   "Get a list with the values of the fields in RECORD named NAME.  If no such
 field exists in RECORD then nil is returned."
   (when (and (listp record)
@@ -243,7 +231,7 @@ field exists in RECORD then nil is returned."
               (cdr record))
       (reverse result))))
 
-(defun rec-names (record)
+(defun rec-record-names (record)
   "Get a list of the field names in the record."
   (when (and (listp record)
              (equal (car record) 'record))
@@ -253,6 +241,25 @@ field exists in RECORD then nil is returned."
                   (setq result (cons (nth 1 field) result))))
               (cdr record))
       (reverse result))))
+
+(defun rec-current-record ()
+  "Return a structure with the contents of the current record.
+The current record is the record where the pointer is."
+  (save-excursion
+    (when (re-search-backward "^$" nil t)
+      (goto-char (+ (point) 1))
+      (rec-parse-record))))
+  
+(defun rec-update-records ()
+  "Update the value of the `rec-buffer-records' local variable by
+scanning the current buffer.  Recursive step."
+  (when (re-search-forward rec-record-beginning-re nil t)
+    (let (rec (rec-current-record))
+      (if (rec-record-assoc '("%rec") rec)
+          ;; Record descriptor
+          (reverse (cons (list 'descriptor (rec-record-assoc '("Name") rec)) (rec-update-records)))
+        ;; Regular record
+        (reverse (cons (list 'record (rec-record-assoc '("Name") rec)) (rec-update-records)))))))
 
 (defun rec-mode ()
   "A major mode for editing rec files.
@@ -266,6 +273,7 @@ Commands:
   (use-local-map rec-mode-map)
   (set-syntax-table rec-mode-syntax-table)
   (setq mode-name "Rec")
+  (make-local-variable 'rec-buffer-records)
   (setq major-mode 'rec-mode))
 
 ;;; rec-mode.el ends here
