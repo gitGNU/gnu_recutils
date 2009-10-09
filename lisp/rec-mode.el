@@ -36,7 +36,7 @@
 
 ;; Variables that the user does not want to touch (really)
 
-(defvar rec-comment-re "^#.*$"
+(defvar rec-comment-re "^#.*\n?"
   "regexp denoting a comment line")
 
 (defvar rec-field-name-re
@@ -56,17 +56,14 @@
 
 (defvar rec-field-re
   (concat rec-field-name-re
-          rec-field-value-re)
+          rec-field-value-re
+          "\n")
   "Regexp matching a field")
 
 (defvar rec-record-re
-  (concat rec-field-re "\\(\n" rec-field-re "\\)+")
+  (concat rec-field-re "\\(" rec-field-re "\\|" rec-comment-re "\\)*")
   "Regexp matching a record")
 
-(defvar rec-record-beginning-re
-  (concat "\n\n\\(" rec-comment-re "\\|" rec-field-re "\\)")
-  "Regexp matching the beginning of a record")
-  
 (defvar rec-mode-syntax-table
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?# "<" st)   ; Comment start
@@ -289,29 +286,113 @@ field exists in RECORD then nil is returned"
 ;; like comments, fields and records.  If the especified entity is not
 ;; under the pointer then nil is returned.
 
-(defun rec-current-comment ()
-  ""
-  )
+(defun rec-beginning-of-field-pos ()
+  "Return the position of the beginning of the current field, or
+nil if the pointer is not on a field."
+  (save-excursion
+    (beginning-of-line)
+    (cond
+     ((and (not (= (line-beginning-position) 1))
+           (or (looking-at "+")
+               (looking-back "\\\\\n" 2)))
+      (forward-line -1)
+      (rec-beginning-of-field))
+     ((looking-at rec-field-name-re)
+      (point))
+     (t
+      nil))))
+
+(defun rec-end-of-field-pos ()
+  "Return the position of the end of the current field, or nil if
+the pointer is not on a field."
+  (let ((begin-pos (rec-beginning-of-field-pos)))
+    (when begin-pos
+      (save-excursion
+        (goto-char begin-pos)
+        (when (looking-at rec-field-re)
+          (match-end 0))))))
+
+(defun rec-beginning-of-comment-pos ()
+  "Return the position of the beginning of the current comment,
+or nil if the pointer is not on a comment."
+  (save-excursion
+    (beginning-of-line)
+    (when (looking-at rec-comment-re)
+      (point))))
+
+(defun rec-end-of-comment-pos ()
+  "Return the position of the end of the current comment,
+or nil if the pointer is not on a comment."
+  (let ((begin-pos (rec-beginning-of-comment-pos)))
+    (when begin-pos
+      (save-excursion
+        (goto-char begin-pos)
+        (when (looking-at rec-comment-re)
+          (match-end 0))))))
+
+(defun rec-beginning-of-record-pos ()
+  "Return the position of the beginning of the current record, or nil if
+the pointer is not on a record."
+  (save-excursion
+    (let (field-pos)
+      (while (and (not (equal (point) (point-min)))
+                  (or (setq field-pos (rec-beginning-of-field-pos))
+                      (setq field-pos (rec-beginning-of-comment-pos))))
+        (goto-char field-pos)
+        (if (not (equal (point) (point-min)))
+            (backward-char)))
+      (if (not (equal (point) (point-min)))
+          (forward-char))
+      (when (looking-at rec-record-re)
+        (point)))))
+
+(defun rec-end-of-record-pos ()
+  "Return the position of the end of the current record,
+or nil if the pointer is not on a record."
+  (let ((begin-pos (rec-beginning-of-record-pos)))
+    (when begin-pos
+      (save-excursion
+        (goto-char begin-pos)
+        (when (looking-at rec-record-re)
+          (match-end 0))))))
 
 (defun rec-current-field ()
   "Return a structure with the contents of the current field.
 The current field is the field where the pointer is."
   (save-excursion
-    (let ((current-point (point)))
-      (when (re-search-backward rec-field-re nil t)
-        (re-search-forward rec-field-re nil t)
-        (when (>= (match-end 0) current-point)
-          (goto-char (match-beginning 0))
-          (rec-parse-field))))))
+    (let ((begin-pos (rec-beginning-of-field-pos)))
+      (when begin-pos
+        (goto-char begin-pos)
+        (rec-parse-field)))))
 
 (defun rec-current-record ()
   "Return a structure with the contents of the current record.
 The current record is the record where the pointer is"
   (save-excursion
-    (rec-beginning-of-record)
-    (let ((rec (rec-parse-record)))
-    (when (> (length rec) 1)
-      rec))))
+    (let ((begin-pos (rec-beginning-of-record-pos)))
+      (when begin-pos
+        (goto-char begin-pos)
+        (rec-parse-record)))))
+
+;; Visibility
+;;
+;; These functions manage the visibility in the rec buffer.
+
+(defun rec-narrow-to-record ()
+  "Narrow to the current record, if any"
+  (let ((begin-pos (rec-beginning-of-record-pos))
+        (end-pos (rec-end-of-record-pos)))
+    (if (and begin-pos end-pos)
+        (narrow-to-region begin-pos end-pos))))
+
+;; (defun rec-next-record ()
+;;   ""
+;;   (interactive)
+;;   (widen)
+;;   (rec-end-of-record)
+;;   (when (re-search-forward rec-record-re nil t)
+;;     (goto-char (match-beginning 0))
+;;     (rec-narrow-to-record)))
 
 ;; Record collection management
 ;;
@@ -321,14 +402,20 @@ The current record is the record where the pointer is"
     
 (defun rec-update-records ()
   "Update the value of the `rec-buffer-records' local variable by
-scanning the current buffer.  Recursive step"
-  (when (re-search-forward rec-record-beginning-re nil t)
-    (let (rec (rec-current-record))
-      (if (rec-record-assoc '("%rec") rec)
-          ;; Record descriptor
-          (reverse (cons (list 'descriptor (rec-record-assoc '("Name") rec)) (rec-update-records)))
-        ;; Regular record
-        (reverse (cons (list 'record (rec-record-assoc '("Name") rec)) (rec-update-records)))))))
+scanning the current buffer."
+  (save-excursion
+    (let (records rec marker)
+      (goto-char (point-min))
+      (while (and (not (= (point) (point-max)))
+                  (re-search-forward rec-record-re nil t))
+        (goto-char (match-beginning 0))
+        (setq marker (point-marker))
+        (if (rec-record-assoc '("%rec") (rec-parse-record))
+            (setq records (cons (list 'descriptor marker) records))
+          (setq records (cons (list 'record marker) records)))
+        (if (not (= (point) (point-max)))
+            (forward-char)))
+      (reverse records))))
 
 ;; Commands
 ;;
@@ -354,37 +441,58 @@ buffer"
 (defun rec-beginning-of-field ()
   "Goto to the beginning of the current field"
   (interactive)
-  (re-search-backward rec-field-value-re nil t))
+  (let ((pos (rec-beginning-of-field-pos)))
+    (when pos
+      (goto-char pos))))
 
 (defun rec-end-of-field ()
   "Goto to the end of the current field"
   (interactive)
-  (while (or (looking-at rec-field-name-re))
-    (goto-char (match-end 0))))
+  (let ((pos (rec-end-of-field-pos)))
+    (when pos
+      (goto-char pos))))
 
 (defun rec-beginning-of-record ()
   "Goto to the beginning of the current record"
   (interactive)
-  (let ((current-pos (point))
-        (rec-sep-re "^[ \t]*$"))
-    (beginning-of-line)
-    (while (not (or (= (point) (point-min))
-                    (looking-at rec-sep-re)))
-      (vertical-motion -1)
-      (beginning-of-line))
-    (when (not (= (point) current-pos))
-      (when (looking-at rec-sep-re)
-        (goto-char (+ (match-end 0) 1))))))
+  (let ((pos (rec-beginning-of-record-pos)))
+    (when pos
+      (goto-char pos))))
 
 (defun rec-end-of-record ()
   "Goto to the end of the current record"
   (interactive)
-  (let ((rec-sep-re "^[ \t]*$"))
-    (beginning-of-line)
-    (while (not (or (= (point) (point-max))
-                    (looking-at rec-sep-re)))
-      (vertical-motion 1)
-      (beginning-of-line))))
+  (let ((pos (rec-end-of-record-pos)))
+    (when pos
+      (goto-char pos))))
+
+(defun rec-kill-field ()
+  "Kill the current field"
+  (interactive)
+  (let ((begin-pos (rec-beginning-of-field-pos))
+        (end-pos (rec-end-of-field-pos)))
+    (when (and begin-pos end-pos)
+      (kill-region begin-pos end-pos))))
+
+(defun rec-copy-field ()
+  "Copy the current field"
+  (interactive)
+  (let ((begin-pos (rec-beginning-of-field-pos))
+        (end-pos (rec-end-of-field-pos)))
+    (when (and begin-pos end-pos)
+      (copy-region-as-kill begin-pos end-pos))))
+
+(defun rec-delete-field ()
+  "Delete the current field"
+  (interactive)
+  (let ((begin-pos (rec-beginning-of-field-pos))
+        (end-pos (rec-end-of-field-pos)))
+    (when (and begin-pos end-pos)
+      (delete-region begin-pos end-pos))))
+
+(defun rec-copy-record ()
+  "Copy the current record"
+  (interactive))
 
 ;; Definition of modes
   
