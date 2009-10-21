@@ -79,8 +79,12 @@
   
 (defvar rec-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "TAB") 'rec-goto-next-rec)
+    (define-key map "\C-cn" 'rec-goto-next-rec)
+    (define-key map "\C-cp" 'rec-goto-previous-rec)
+    (define-key map "\C-cg" 'rec-goto-record)
     (define-key map "\C-ce" 'rec-edit-field)
+    (define-key map "\C-ct" 'rec-find-type)
+    (define-key map "\C-c#" 'rec-count-records)
     map)
   "Keymap for rec-mode")
 
@@ -385,24 +389,19 @@ The current record is the record where the pointer is"
     (if (and begin-pos end-pos)
         (narrow-to-region begin-pos end-pos))))
 
-;; (defun rec-next-record ()
-;;   ""
-;;   (interactive)
-;;   (widen)
-;;   (rec-end-of-record)
-;;   (when (re-search-forward rec-record-re nil t)
-;;     (goto-char (match-beginning 0))
-;;     (rec-narrow-to-record)))
+(defun rec-narrow-to-type (type)
+  "Narrow to the specified type, if any"
+  (let ((begin-pos (or (rec-type-pos type) (point-min)))
+        (end-pos (or (rec-type-pos (rec-type-next type)) (point-max))))
+    (narrow-to-region begin-pos end-pos)))
 
 ;; Record collection management
 ;;
 ;; These functions perform the management of the collection of records
-;; in the buffer.  They operate in the buffer local variable
-;; `rec-buffer-records'.
+;; in the buffer.
     
-(defun rec-update-records ()
-  "Update the value of the `rec-buffer-records' local variable by
-scanning the current buffer."
+(defun rec-buffer-descriptors ()
+  "Get a list of the record descriptors in the current buffer."
   (save-excursion
     (let (records rec marker)
       (goto-char (point-min))
@@ -410,34 +409,124 @@ scanning the current buffer."
                   (re-search-forward rec-record-re nil t))
         (goto-char (match-beginning 0))
         (setq marker (point-marker))
-        (if (rec-record-assoc '("%rec") (rec-parse-record))
-            (setq records (cons (list 'descriptor marker) records))
-          (setq records (cons (list 'record marker) records)))
+        (setq rec (rec-parse-record))
+        (when (rec-record-assoc '("%rec") rec)
+            (setq records (cons (list 'descriptor rec marker) records)))
         (if (not (= (point) (point-max)))
             (forward-char)))
       (reverse records))))
+
+(defun rec-buffer-types ()
+  "Return a list with the names of the record types in the
+existing buffer."
+  ;; If a descriptor has more than a %rec field, then the first one is
+  ;; used.  The rest are ignored.
+  (mapcar
+   (lambda (elem) (car elem))
+   (mapcar
+    (lambda (elem)
+      (rec-record-assoc '("%rec") (cadr elem)))
+    (rec-buffer-descriptors))))
+
+(defun rec-type-p (type)
+  "Return t if TYPE is a type of record in the current buffer."
+  )
+
+(defun rec-goto-type (type)
+  "Goto the beginning of the descriptor with type TYPE."
+  (let ((descriptors (rec-buffer-descriptors)))
+    (mapcar
+     (lambda (elem)
+       (when (equal (car (rec-record-assoc '("%rec") (cadr elem)))
+                    type)
+         (goto-char (nth 2 elem))))
+     descriptors)))
+
+(defun rec-type-pos (type)
+  ""
+  (when (rec-type-p type)
+    (save-excursion
+      (rec-goto-type type)
+      (point))))
+
+(defun rec-type-next (type)
+  ""
+)
 
 ;; Commands
 ;;
 ;; The following functions are implementing commands available in the
 ;; modes.
 
+(defun rec-edit-read-control-line ()
+  "Return a structure:
+
+   (POS FIELD-NAME)"
+  (save-excursion
+    (goto-char (point-min))
+    (let* ((name (when (looking-at rec-field-name-re)
+                   (rec-parse-field-name)))
+           (pos (read (current-buffer))))
+
+      (list name pos))))
+
+(defun rec-edit-field-insert-control-line (pos field-name)
+  ""
+  (mapcar
+   (lambda (name) (insert name ":"))
+   field-name)
+  (insert " ")
+  (insert (number-to-string pointer))
+  (insert "\n\n"))
+
 (defun rec-edit-field ()
   "Edit the contents of the field under point in a separate
 buffer"
   (interactive)
-  (let (edit-buf
-        (field-value (rec-field-value (rec-current-field))))
+  (let* (edit-buf
+         (field (rec-current-field))
+         (field-value (rec-field-value field))
+         (field-name (rec-field-name field))
+         (pointer (rec-beginning-of-field-pos))
+         (prev-buffer (current-buffer)))
     (if field-value
         (progn
           (setq edit-buf (get-buffer-create "Rec Edit"))
           (set-buffer edit-buf)
+          (delete-region (point-min) (point-max))
           (rec-edit-field-mode)
+          (make-local-variable 'rec-field-name)
+          (setq rec-field-name field-name)
+          (make-local-variable 'rec-marker)
+          (setq rec-marker (make-marker))
+          (set-marker rec-marker pointer prev-buffer)
+          (make-local-variable 'rec-buffer)
+          (setq rec-prev-buffer prev-buffer)
+          (setq rec-pointer pointer)
           (insert field-value)
           (switch-to-buffer-other-window edit-buf)
+          (goto-char (point-min))
           (message "Edit the value of the field and press C-cC-c to exit"))
       (message "Not in a field"))))
 
+(defun rec-finish-editing-field ()
+  "Stop editing the value of a field."
+  (interactive)
+  (let ((marker rec-marker)
+        (prev-pointer rec-pointer)
+        (edit-buffer (current-buffer))
+        (name rec-field-name)
+        (value (buffer-substring-no-properties (point-min) (point-max))))
+    (delete-window)
+    (switch-to-buffer rec-prev-buffer)
+    (kill-buffer edit-buffer)
+    (goto-char marker)
+    (rec-delete-field)
+    (rec-insert-field (list 'field
+                            name
+                            value))
+    (goto-char prev-pointer)))
+    
 (defun rec-beginning-of-field ()
   "Goto to the beginning of the current field"
   (interactive)
@@ -494,6 +583,45 @@ buffer"
   "Copy the current record"
   (interactive))
 
+(defun rec-find-type ()
+  "Goto the beginning of the descriptor with a given type."
+  (interactive)
+  (let ((type (completing-read "Record type: "
+                               (rec-buffer-types))))
+    (rec-goto-type type)))
+
+(defun rec-goto-next-rec ()
+  "Move the pointer to the beginning of the next record in the
+file."
+  (interactive)
+  (let ((pos (save-excursion
+               (rec-end-of-record)
+               (when (re-search-forward rec-record-re nil t)
+                 (match-beginning 0)))))
+    (if pos 
+        (goto-char pos)
+      (message "No more records."))))
+
+(defun rec-goto-previous-rec ()
+  "Move the pointer to the beginning of the previous record in
+the file."
+  (interactive)
+  (let ((pos (save-excursion
+               (rec-beginning-of-record)
+               (if (not (= (point) (point-min)))
+                   (backward-char))
+               (when (and (re-search-backward rec-record-re nil t)
+                          (rec-beginning-of-record))
+                 (point)))))
+    (if pos
+        (goto-char pos)
+      (message "No more records."))))
+
+(defun rec-goto-record (name value)
+  ""
+  (interactive)
+)
+
 ;; Definition of modes
   
 (defun rec-mode ()
@@ -508,7 +636,6 @@ Commands:
   (use-local-map rec-mode-map)
   (set-syntax-table rec-mode-syntax-table)
   (setq mode-name "Rec")
-  (make-local-variable 'rec-buffer-records)
   (setq major-mode 'rec-mode))
 
 (defvar rec-edit-field-mode-map
