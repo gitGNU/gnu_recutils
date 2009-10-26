@@ -34,7 +34,13 @@
   :group 'applications
   :link '(url-link "http://www.gnu.org/software/rec"))
 
-;; Variables that the user does not want to touch (really)
+;; Variables and constants that the user does not want to touch
+;; (really!)
+
+(defconst rec-keyword-rec "%rec"
+  ;; Remember to update `rec-font-lock-keywords' if you change this
+  ;; value!!
+  "Rec keyword.")
 
 (defvar rec-comment-re "^#.*\n?"
   "regexp denoting a comment line")
@@ -79,11 +85,12 @@
   
 (defvar rec-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "\C-cn" 'rec-goto-next-rec)
-    (define-key map "\C-cp" 'rec-goto-previous-rec)
+    (define-key map "\C-cn" 'rec-cmd-goto-next-rec)
+    (define-key map "\C-cp" 'rec-cmd-goto-previous-rec)
     (define-key map "\C-cg" 'rec-goto-record)
     (define-key map "\C-ce" 'rec-edit-field)
     (define-key map "\C-ct" 'rec-find-type)
+    (define-key map "\C-cj" 'rec-jump)
     (define-key map "\C-c#" 'rec-count-records)
     map)
   "Keymap for rec-mode")
@@ -410,7 +417,7 @@ The current record is the record where the pointer is"
         (goto-char (match-beginning 0))
         (setq marker (point-marker))
         (setq rec (rec-parse-record))
-        (when (rec-record-assoc '("%rec") rec)
+        (when (rec-record-assoc (list rec-keyword-rec) rec)
             (setq records (cons (list 'descriptor rec marker) records)))
         (if (not (= (point) (point-max)))
             (forward-char)))
@@ -422,62 +429,144 @@ existing buffer."
   ;; If a descriptor has more than a %rec field, then the first one is
   ;; used.  The rest are ignored.
   (mapcar
+
    (lambda (elem) (car elem))
    (mapcar
     (lambda (elem)
-      (rec-record-assoc '("%rec") (cadr elem)))
+      (rec-record-assoc (list rec-keyword-rec) (cadr elem)))
     (rec-buffer-descriptors))))
 
 (defun rec-type-p (type)
-  "Return t if TYPE is a type of record in the current buffer."
-  )
+  "Determine if there are records of type TYPE in the current
+file."
+  (member type (rec-buffer-types)))
 
 (defun rec-goto-type (type)
-  "Goto the beginning of the descriptor with type TYPE."
-  (let ((descriptors (rec-buffer-descriptors)))
+  "Goto the beginning of the descriptor with type TYPE.
+
+If the type does not exist in the current buffer then
+this function returns nil."
+  (let (found
+        (descriptors (rec-buffer-descriptors)))
     (mapcar
      (lambda (elem)
-       (when (equal (car (rec-record-assoc '("%rec") (cadr elem)))
+       (when (equal (car (rec-record-assoc (list rec-keyword-rec)
+                                           (cadr elem)))
                     type)
+         (setq found t)
          (goto-char (nth 2 elem))))
-     descriptors)))
+     descriptors)
+    found))
 
 (defun rec-type-pos (type)
-  ""
+  "Return the position where the records of type TYPE start in
+the current file.  If no records of type TYPE are defined in the
+current file then return nil."
   (when (rec-type-p type)
     (save-excursion
       (rec-goto-type type)
       (point))))
 
 (defun rec-type-next (type)
-  ""
-)
+  "Return the name of the type following TYPE in the file, if
+any.  If the specified type is the last appearing in the file,
+or the specified type does not exist, then return nil."
+  (let ((types (member type (rec-buffer-types))))
+    (nth 1 types)))
+
+(defun rec-type-previous (type)
+  "Return the name of the type preceding TYPE in the file, if
+any.  If the specified type is the first appearing in the file,
+or the specified type does not exist, then return nil."
+  (let ((types (member type (reverse (rec-buffer-types)))))
+    (nth 1 types)))
+
+(defun rec-goto-next-rec ()
+  "Move the pointer to the beginning of the next record in the
+file."
+  (let ((pos (save-excursion
+               (rec-end-of-record)
+               (when (re-search-forward rec-record-re nil t)
+                 (match-beginning 0)))))
+    (when pos 
+        (goto-char pos)
+        t)))
+
+(defun rec-goto-previous-rec ()
+  "Move the pointer to the end of the previous record in the
+file."
+    (let ((pos (save-excursion
+                 (rec-beginning-of-record)
+                 (if (not (= (point) (point-min)))
+                     (backward-char))
+                 (when (and (re-search-backward rec-record-re nil t)
+                            (rec-beginning-of-record))
+                   (point)))))
+      (when pos
+        (goto-char pos)
+        t)))
+
+(defun rec-count (&optional type)
+  "If TYPE is a string, return the number of records of the
+specified type in the current file.
+
+If TYPE is nil, return the number of records in the current file
+not including the record descriptors.
+
+If TYPE is t, return the number of records in the current file,
+including the record descriptors.
+
+XXX: to test after rec-map gets written.
+XXX: update doc to take into account the usage of the `&optional'
+keyword."
+  (length (rec-map
+           (lambda () t)
+           type)))
+
+(defun rec-map (function type)
+  "XXX"
+  )
+
+;; Searching functions
+
+(defun rec-search-first (type name value)
+  "Return the position of the beginning of the record of type TYPE
+containing a field NAME:VALUE.
+
+If such a record is not found then return nil."
+  (save-excursion
+    (let (found end-of-type record)
+      (when (rec-goto-type type)
+        (while (and (not found) (not end-of-type)
+                    (rec-goto-next-rec))
+          ;; Read a record
+          (setq record (rec-current-record))
+          ;; Check if found
+          (if (member value (rec-record-assoc name record))
+              (setq found t)
+            ;; Check end-of-type
+            (if (rec-record-assoc (list rec-keyword-rec) record)
+                (setq end-of-type t))))
+        (when found (point))))))
+
+;; Getting data
+
+(defun rec-sel (what name value &optional type)
+  "Not working.
+XXX"
+  (save-excursion
+    (mapcar
+     (lambda (type)
+       (let ((pos (rec-search-first type name value)))
+         (when pos
+           (goto-char pos)
+           (rec-record-assoc what (rec-current-record)))))
+     (rec-buffer-types))))
 
 ;; Commands
 ;;
 ;; The following functions are implementing commands available in the
 ;; modes.
-
-(defun rec-edit-read-control-line ()
-  "Return a structure:
-
-   (POS FIELD-NAME)"
-  (save-excursion
-    (goto-char (point-min))
-    (let* ((name (when (looking-at rec-field-name-re)
-                   (rec-parse-field-name)))
-           (pos (read (current-buffer))))
-
-      (list name pos))))
-
-(defun rec-edit-field-insert-control-line (pos field-name)
-  ""
-  (mapcar
-   (lambda (name) (insert name ":"))
-   field-name)
-  (insert " ")
-  (insert (number-to-string pointer))
-  (insert "\n\n"))
 
 (defun rec-edit-field ()
   "Edit the contents of the field under point in a separate
@@ -590,38 +679,42 @@ buffer"
                                (rec-buffer-types))))
     (rec-goto-type type)))
 
-(defun rec-goto-next-rec ()
+(defun rec-cmd-goto-next-rec ()
   "Move the pointer to the beginning of the next record in the
-file."
+file.  Interactive version."
   (interactive)
-  (let ((pos (save-excursion
-               (rec-end-of-record)
-               (when (re-search-forward rec-record-re nil t)
-                 (match-beginning 0)))))
-    (if pos 
-        (goto-char pos)
-      (message "No more records."))))
+  (if (not (rec-goto-next-rec))
+      (message "No more records")))
 
-(defun rec-goto-previous-rec ()
+(defun rec-cmd-goto-previous-rec ()
   "Move the pointer to the beginning of the previous record in
-the file."
+the file.  Interactive version."
   (interactive)
-  (let ((pos (save-excursion
-               (rec-beginning-of-record)
-               (if (not (= (point) (point-min)))
-                   (backward-char))
-               (when (and (re-search-backward rec-record-re nil t)
-                          (rec-beginning-of-record))
-                 (point)))))
-    (if pos
-        (goto-char pos)
-      (message "No more records."))))
+  (if (not (rec-goto-previous-rec))
+      (message "No more records")))
 
-(defun rec-goto-record (name value)
-  ""
+(defun rec-jump ()
+  "Jump to the first record containing the reference under
+point."
   (interactive)
-)
-
+  (let (size field name value)
+    (if (setq field (rec-current-field))
+        (progn (setq name (rec-field-name field))
+               (setq value (rec-field-value field))
+               (if (or (= (length name) 2)
+                       (= (length name) 3))
+                   (progn
+                     (let* ((field-type (nth 0 name))
+                            (field-name (nth 1 name))
+                            (pos (rec-search-first field-type
+                                                   (list field-name)
+                                                   value)))
+                       (if pos
+                           (goto-char pos)
+                         (message "Not found."))))
+                 (message "Not in a reference.")))
+      (message "Not in a reference."))))
+      
 ;; Definition of modes
   
 (defun rec-mode ()

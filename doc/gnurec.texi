@@ -687,7 +687,6 @@ Description:
 + Obsolete macros shall be replaced by the recommended ones.  Backward
 + compatibility with previous versions of autoconf is not a must.
 Status: closed
-
 @end example
 
 @node Managing Patches
