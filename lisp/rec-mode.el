@@ -87,7 +87,17 @@
   (let ((map (make-sparse-keymap)))
     (define-key map "\C-cn" 'rec-cmd-goto-next-rec)
     (define-key map "\C-cp" 'rec-cmd-goto-previous-rec)
-    (define-key map "\C-cg" 'rec-goto-record)
+    (define-key map "\C-ce" 'rec-edit-field)
+    (define-key map "\C-ct" 'rec-find-type)
+    (define-key map "\C-cj" 'rec-jump)
+    (define-key map "\C-c#" 'rec-count-records)
+    map)
+  "Keymap for rec-mode")
+
+(defvar rec-nav-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\C-cn" 'rec-nav-cmd-goto-next-rec)
+    (define-key map "\C-cp" 'rec-nav-cmd-goto-previous-rec)
     (define-key map "\C-ce" 'rec-edit-field)
     (define-key map "\C-ct" 'rec-find-type)
     (define-key map "\C-cj" 'rec-jump)
@@ -736,6 +746,23 @@ Commands:
     (define-key map "\C-c\C-c" 'rec-finish-editing-field)
     map)
   "Keymap for rec-edit-field-mode")
+
+(defun rec-nav-mode ()
+  "A major mode for navigating rec files.
+
+Commands:
+\\{rec-nav-mode-map}"
+  (interactive)
+  (kill-all-local-variables)
+  (make-local-variable 'font-lock-defaults)
+  (setq font-lock-defaults '(rec-font-lock-keywords))
+  (use-local-map rec-nav-mode-map)
+  (setq syntax-table rec-mode-syntax-table)
+  (setq mode-name "Rec Nav")
+  (setq major-mode 'rec-nav-mode)
+  ;; Select the first record in the file
+  ;; XXX
+  )
 
 (defun rec-edit-field-mode ()
   "A major mode for editing rec field values.
