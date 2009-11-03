@@ -94,8 +94,8 @@
     (define-key map "n" 'rec-cmd-goto-next-rec)
     (define-key map "p" 'rec-cmd-goto-previous-rec)
     (define-key map "\C-ce" 'rec-edit-field)
-    (define-key map "e" 'rec-edit-record)
-    (define-key map "E" 'rec-edit-type)
+    (define-key map "R" 'rec-edit-record)
+    (define-key map "T" 'rec-edit-type)
     (define-key map "B" 'rec-edit-buffer)
     (define-key map "t" 'rec-cmd-show-descriptor)
     (define-key map "\C-ct" 'rec-find-type)
@@ -889,7 +889,9 @@ point."
       (rec-goto-next-rec)
       (rec-goto-previous-rec))
   (when rec-update-p
-    (rec-update-buffer-descriptors)
+    (save-restriction
+      (widen)
+      (rec-update-buffer-descriptors))
     (setq rec-update-p nil))
   (rec-show-record)
   ;; TODO: Restore modeline
