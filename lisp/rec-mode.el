@@ -56,6 +56,7 @@
      "\\("
      "\\(" ret-re "\\)*"
      "\\(" esc-ret-re "\\)*"
+     "\\(" "\\\\[^\n]" "\\)*"
      "[^\\\n]*"
      "\\)*"))
   "Regexp matching a field value")
@@ -100,6 +101,7 @@
     (define-key map "t" 'rec-cmd-show-descriptor)
     (define-key map "\C-ct" 'rec-find-type)
     (define-key map (kbd "RET") 'rec-cmd-jump)
+    (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map "b" 'rec-cmd-jump-back)
     map)
   "Keymap for rec-mode")
@@ -311,16 +313,19 @@ field exists in RECORD then nil is returned"
 nil if the pointer is not on a field."
   (save-excursion
     (beginning-of-line)
-    (cond
-     ((and (not (= (line-beginning-position) 1))
-           (or (looking-at "+")
-               (looking-back "\\\\\n" 2)))
-      (forward-line -1)
-      (rec-beginning-of-field))
-     ((looking-at rec-field-name-re)
-      (point))
-     (t
-      nil))))
+    (let (res exit)
+      (while (not exit)
+        (cond
+         ((and (not (= (line-beginning-position) 1))
+               (or (looking-at "+")
+                   (looking-back "\\\\\n" 2)))
+          (forward-line -1))
+         ((looking-at rec-field-name-re)
+          (setq res (point))
+          (setq exit t))
+         (t
+          (setq exit t))))
+      res)))
 
 (defun rec-end-of-field-pos ()
   "Return the position of the end of the current field, or nil if
@@ -329,8 +334,16 @@ the pointer is not on a field."
     (when begin-pos
       (save-excursion
         (goto-char begin-pos)
-        (when (looking-at rec-field-re)
-          (match-end 0))))))
+        ;; The following hack is due to the fact that
+        ;; the regular expressions search engine is
+        ;; hanging on rec-field-re
+        (when (looking-at rec-field-name-re)
+          (goto-char (match-end 0)))
+        (when (looking-at rec-field-value-re)
+          ;; The +1 is to include the \n at the beginning of the
+          ;; record value, that is part of the field but not part of
+          ;; the value
+          (+ (match-end 0) 1))))))
 
 (defun rec-beginning-of-comment-pos ()
   "Return the position of the beginning of the current comment,
@@ -363,7 +376,7 @@ the pointer is not on a record."
             (backward-char)))
       (if (not (equal (point) (point-min)))
           (forward-char))
-      (when (looking-at rec-record-re)
+      (when (looking-at rec-field-name-re)
         (point)))))
 
 (defun rec-end-of-record-pos ()
@@ -373,8 +386,13 @@ or nil if the pointer is not on a record."
     (when begin-pos
       (save-excursion
         (goto-char begin-pos)
-        (when (looking-at rec-record-re)
-          (match-end 0))))))
+        (while (or (looking-at rec-field-name-re)
+                   (looking-at rec-comment-re))
+          (goto-char (match-end 0))
+          (when (or (looking-at rec-field-value-re)
+                    (looking-at rec-comment-re))
+            (goto-char (+ (match-end 0) 1))))
+        (point)))))
 
 (defun rec-current-field ()
   "Return a structure with the contents of the current field.
@@ -423,7 +441,7 @@ The current record is the record where the pointer is"
           (let (records rec marker)
             (goto-char (point-min))
             (while (and (not (= (point) (point-max)))
-                        (re-search-forward rec-field-re nil t))
+                        (re-search-forward rec-field-name-re nil t))
               (goto-char (match-beginning 0))
               (setq marker (point-marker))
               (setq rec (rec-parse-record))
@@ -503,12 +521,23 @@ or the specified type does not exist, then return nil."
   (let ((types (member type (reverse (rec-buffer-types)))))
     (nth 1 types)))
 
+(defun rec-goto-next-field ()
+  "Move the pointer to the beginning of the next field in the
+file."
+  (let ((pos (save-excursion
+               (rec-end-of-field)
+               (when (re-search-forward rec-field-name-re nil t)
+                 (match-beginning 0)))))
+    (when pos
+      (goto-char pos)
+      t)))
+
 (defun rec-goto-next-rec ()
   "Move the pointer to the beginning of the next record in the
 file."
   (let ((pos (save-excursion
                (rec-end-of-record)
-               (when (re-search-forward rec-record-re nil t)
+               (when (re-search-forward rec-field-name-re nil t)
                  (match-beginning 0)))))
     (when pos 
         (goto-char pos)
@@ -590,7 +619,10 @@ If the record is of no known type, return nil."
                          (cadr (rec-record-descriptor)))))
 
 (defun rec-record-descriptor ()
-  "XXX"
+  "Return the record descriptor of the record under point.
+
+Return nil if no proper record descriptor is found in the file,
+or if the point is not on a record."
   (when (rec-current-record)
     (let ((descriptors rec-buffer-descriptors)
           descriptor type position found
@@ -599,7 +631,7 @@ If the record is of no known type, return nil."
                   (< i (length descriptors)))
         (setq descriptor (nth i rec-buffer-descriptors))
         (setq position (marker-position (nth 2 descriptor)))
-        (if (and (> (point) position)
+        (if (and (>= (point) position)
                  (or (= i (- (length rec-buffer-descriptors) 1))
                      (< (point) (marker-position (nth 2 (nth (+ i 1) rec-buffer-descriptors))))))
             (setq found t)
@@ -648,7 +680,6 @@ XXX"
 (defun rec-show-type (type)
   "Show the records of the given type"
   (widen)
-;;  (unless (rec-goto-type-first-rec type)
   (unless (rec-goto-type type)
     (message "No records with that type found in the file"))
   (rec-show-record))
@@ -787,14 +818,22 @@ buffer"
     (if (equal type "") (setq type nil))
     (rec-show-type type)))
 
+(defun rec-cmd-goto-next-field ()
+  "Move the pointer to the beginning of the next field in the
+record.  Interactive version."
+  (interactive)
+  (if (save-excursion
+        (not (rec-goto-next-field)))
+      (message "No more fields")
+    (rec-goto-next-field)))
+
 (defun rec-cmd-goto-next-rec ()
   "Move the pointer to the beginning of the next record in the
 file.  Interactive version."
   (interactive)
   (widen)
   (if (save-excursion
-        (or (not (rec-goto-next-rec))
-            (not (rec-regular-p))))
+        (not (rec-goto-next-rec)))
       (message "No more records")
     (rec-goto-next-rec))
   (rec-show-record))
@@ -805,7 +844,7 @@ the file.  Interactive version."
   (interactive)
   (widen)
   (if (save-excursion
-        (or (not (rec-regular-p))))
+        (not (rec-goto-previous-rec)))
       (message "No more records")
     (rec-goto-previous-rec))
   (rec-show-record))
@@ -857,7 +896,7 @@ point."
   (interactive)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
-  (rec-set-mode-line "Edit Record")
+  (rec-set-mode-line "Editing record")
   (message "Editing: Press C-c C-c when you are done"))
 
 (defun rec-edit-type ()
@@ -868,7 +907,7 @@ point."
   (widen)
   (rec-narrow-to-type (rec-record-type))
   (setq rec-update-p t)
-  (rec-set-mode-line "Edit Type")
+  (rec-set-mode-line "Editing type")
   (message "Editing:  Press C-c C-c when you are done"))
 
 (defun rec-edit-buffer ()
@@ -878,7 +917,7 @@ point."
   (use-local-map rec-mode-edit-map)
   (widen)
   (setq rec-update-p t)
-  (rec-set-mode-line "Edit Buffer")
+  (rec-set-mode-line "Editing buffer")
   (message "Editing: Press C-c C-c when you are done"))
 
 (defun rec-finish-editing ()
