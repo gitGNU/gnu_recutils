@@ -107,6 +107,7 @@
     (define-key map "T" 'rec-edit-type)
     (define-key map "B" 'rec-edit-buffer)
     (define-key map "t" 'rec-cmd-show-descriptor)
+    (define-key map "a" 'rec-cmd-append-field)
     (define-key map "\C-ct" 'rec-find-type)
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
@@ -467,6 +468,7 @@ The current record is the record where the pointer is"
     
 (defun rec-update-buffer-descriptors ()
   "Get a list of the record descriptors in the current buffer."
+  (message "Updating record descriptors...")
   (setq rec-buffer-descriptors
         (save-excursion
           (let (records rec marker)
@@ -480,7 +482,8 @@ The current record is the record where the pointer is"
                 (setq records (cons (list 'descriptor rec marker) records)))
               (if (not (= (point) (point-max)))
                   (forward-char)))
-            (reverse records)))))
+            (reverse records))))
+  (message "done"))
 
 (defun rec-buffer-types ()
   "Return a list with the names of the record types in the
@@ -726,7 +729,7 @@ If such a record is not found then return nil."
 
 ;; Getting data
 
-(defun rec-sel (what name value &optional type)
+(defun rec-sel (what name value &optional type write-descriptor)
   "Make a selection on the rec file.
 
 WHAT is a list with the field names to include in the selection,
@@ -738,7 +741,10 @@ If some of the fields specified in WHAT does not exist in the
 matching records, then they are not included in the result.
 
 NAME is the name of a field, like \"Name\", that will be compared
-with \"VALUE\"."
+with \"VALUE\".
+
+If WRITE-DESCRIPTOR is t, then record descriptors are included in
+the result buffer."
   (let ((sel-buffer
          (get-buffer-create (generate-new-buffer-name "Rec Sel ")))
         inserted-types)
@@ -760,8 +766,9 @@ with \"VALUE\"."
              (let (buffer-read-only)
                (when (and descriptor
                           (not (member type inserted-types)))
-                 ;; Insert the type descriptor
-                 (rec-insert-record (cadr descriptor))
+                 (when write-descriptor
+                   ;; Insert the type descriptor
+                   (rec-insert-record (cadr descriptor)))
                  (insert "\n")
                  (setq inserted-types 
                        (cons type inserted-types)))
@@ -1080,6 +1087,15 @@ records of the current type"
                              (equal type ""))
                          " records"
                        (concat " records of type " type))))))
+
+(defun rec-cmd-append-field ()
+  "Goto the end of the record and switch to edit record mode."
+  (interactive)
+  (unless rec-editing
+    (rec-edit-record)
+    (goto-char (point-max))
+    (insert "\n")
+    (backward-char)))
       
 ;; Definition of modes
   
