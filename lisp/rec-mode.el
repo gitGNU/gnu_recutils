@@ -86,6 +86,14 @@
 
 (defvar rec-mode-edit-map
   (let ((map (make-sparse-keymap)))
+    (define-key map "\C-cn" 'rec-cmd-goto-next-rec)
+    (define-key map "\C-cp" 'rec-cmd-goto-previous-rec)
+    (define-key map "\C-ce" 'rec-cmd-edit-field)
+    (define-key map "\C-ct" 'rec-cmd-show-descriptor)
+    (define-key map "\C-c#" 'rec-cmd-count)
+    (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
+    (define-key map (concat "\C-c" (kbd "RET")) 'rec-cmd-jump)
+    (define-key map "\C-cb" 'rec-cmd-jump-back)
     (define-key map "\C-c\C-c" 'rec-finish-editing)
     map)
   "Keymap for rec-mode")
@@ -94,12 +102,13 @@
   (let ((map (make-sparse-keymap)))
     (define-key map "n" 'rec-cmd-goto-next-rec)
     (define-key map "p" 'rec-cmd-goto-previous-rec)
-    (define-key map "\C-ce" 'rec-edit-field)
+    (define-key map "e" 'rec-cmd-edit-field)
     (define-key map "R" 'rec-edit-record)
     (define-key map "T" 'rec-edit-type)
     (define-key map "B" 'rec-edit-buffer)
     (define-key map "t" 'rec-cmd-show-descriptor)
     (define-key map "\C-ct" 'rec-find-type)
+    (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map "b" 'rec-cmd-jump-back)
@@ -160,9 +169,23 @@ nil"
       (setq val (replace-regexp-in-string "\\\\\n" "" val))
       ;; Replace continuation lines
       (setq val (replace-regexp-in-string "\n\\+ ?" "\n" val))
-      ;; Trim blanks in the value
-      (setq val (replace-regexp-in-string "^[ \t]+" "" val))
-      (setq val (replace-regexp-in-string "[ \t]+$" "" val))
+      ;; Remove the initial blank
+      (with-temp-buffer
+        (insert val)
+        (goto-char (point-min))
+        (if (equal (char-after (point)) ? )
+            (progn
+              (delete-char 1)))
+        (setq val (buffer-substring-no-properties (point-min)
+                                                  (point-max))))
+;;      (with-temp-buffer
+;;        (insert val)
+;;        (goto-char (point-min))
+;;        (when (looking-at "[ \t\n]+")
+;;          (delete-region (match-beginning 0)
+;;                         (match-end 0)))
+;;        (setq val (buffer-substring-no-properties (point-min)
+;;                                                  (point-max))))
       val)))
 
 (defun rec-parse-field ()
@@ -211,7 +234,7 @@ nil"
   "Insert the written form of COMMENT in the current buffer"
   (when (and (listp comment) 
              (equal (car comment) 'comment))
-    (insert (cadr comment) "\n")))
+    (insert (cadr comment))))
 
 (defun rec-insert-field-name (field-name)
   "Insert the written form of FIELD-NAME in the current buffer"
@@ -236,23 +259,30 @@ nil"
       (insert " ")
       (rec-insert-field-value (nth 2 field)))))
 
-(defun rec-insert-record (record)
-  "Insert the written form of RECORD in the current buffer"
+(defun rec-insert-record (record &optional fields)
+  "Insert the written form of RECORD in the current buffer.
+
+If FIELDS is specified, it is a list of fields to include in the
+insertion.  If a field in the list does not exist in the record
+it is ignored."
   (when (and (listp record)
              (equal (car record) 'record))
-    (rec-insert-record-2 (cdr record))))
+    (rec-insert-record-2 (cdr record) fields)))
 
-(defun rec-insert-record-2 (record)
+(defun rec-insert-record-2 (record fields)
   "Insert the written form of RECORD in the current buffer.
 Recursive part"
   (when (and record (listp record))
     (let ((elem (car record)))
       (cond
-       ((equal (car elem) 'comment)
+       ((and (not fields)
+             (equal (car elem) 'comment))
         (rec-insert-comment elem))
-       ((equal (car elem) 'field)
+       ((and (equal (car elem) 'field)
+             (or (not fields)
+                 (member (nth 1 elem) fields)))
         (rec-insert-field elem))))
-    (rec-insert-record-2 (cdr record))))
+    (rec-insert-record-2 (cdr record) fields)))
 
 ;; Operations on record structures
 ;;
@@ -374,7 +404,8 @@ the pointer is not on a record."
         (goto-char field-pos)
         (if (not (equal (point) (point-min)))
             (backward-char)))
-      (if (not (equal (point) (point-min)))
+      (if (and (not (equal (point) (point-min)))
+               (not (equal (point) (point-max))))
           (forward-char))
       (when (looking-at rec-field-name-re)
         (point)))))
@@ -582,7 +613,7 @@ If no such record exist then don't move and return nil."
     (when pos
       (goto-char pos))))
 
-(defun rec-count (&optional type)
+(defun rec-count (&optional type descriptors)
   "If TYPE is a string, return the number of records of the
 specified type in the current file.
 
@@ -592,17 +623,41 @@ not including the record descriptors.
 If TYPE is t, return the number of records in the current file,
 including the record descriptors.
 
-XXX: to test after rec-map gets written.
-XXX: update doc to take into account the usage of the `&optional'
-keyword."
-  (length (rec-map
-           (lambda () t)
-           type)))
+XXX Update documentation"
+  (let ((count 0))
+    (rec-do (lambda () (setq count (+ count 1))) type descriptors)
+    count))
 
-(defun rec-map (function type)
+(defun rec-do (rec-do-func &optional type descriptors)
+  "Apply REC-DO-FUNC for each record of type TYPE.  If TYPE is nil
+then the function is applied for all the records existing in the
+file (including the record descriptors).  A third optional
+parameter specify whether to include the record descriptors in
+the list of records.
+
+The function should not accept any parameter."
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-min))
+      (while (rec-goto-next-rec)
+        (when (and (or (not type)
+                       (equal (rec-record-type) type))
+                   (or descriptors
+                       (rec-regular-p)))
+          (apply rec-do-func nil))))))
+
+(defun rec-map (rec-map-func &optional type descriptors)
   "XXX"
-  )
-
+  (let (res)
+    (rec-do (lambda ()
+              (setq res 
+                    (cons (apply rec-map-func nil)
+                          res)))
+            type
+            descriptors)
+    (reverse res)))
+    
 (defun rec-regular-p ()
   "Return t if the record under point is a regular record.
 Return nil otherwise."
@@ -615,14 +670,21 @@ Return nil otherwise."
   "Return the type of the record under point.
 
 If the record is of no known type, return nil."
-  (car (rec-record-assoc (list rec-keyword-rec)
-                         (cadr (rec-record-descriptor)))))
+  (let ((descriptor (rec-record-descriptor)))
+    (cond
+     ((listp descriptor)
+      (car (rec-record-assoc (list rec-keyword-rec)
+                             (cadr descriptor))))
+     ((equal descriptor "")
+      "")
+     (t/
+      nil))))
 
 (defun rec-record-descriptor ()
   "Return the record descriptor of the record under point.
 
-Return nil if no proper record descriptor is found in the file,
-or if the point is not on a record."
+Return \"\" if no proper record descriptor is found in the file.
+Return nil if the point is not on a record."
   (when (rec-current-record)
     (let ((descriptors rec-buffer-descriptors)
           descriptor type position found
@@ -636,8 +698,9 @@ or if the point is not on a record."
                      (< (point) (marker-position (nth 2 (nth (+ i 1) rec-buffer-descriptors))))))
             (setq found t)
           (setq i (+ i 1))))
-      (when found
-          descriptor))))
+      (if found
+          descriptor
+        ""))))
                 
 ;; Searching functions
 
@@ -664,16 +727,52 @@ If such a record is not found then return nil."
 ;; Getting data
 
 (defun rec-sel (what name value &optional type)
-  "Not working.
-XXX"
-  (save-excursion
-    (mapcar
-     (lambda (type)
-       (let ((pos (rec-search-first type name value)))
-         (when pos
-           (goto-char pos)
-           (rec-record-assoc what (rec-current-record)))))
-     (rec-buffer-types))))
+  "Make a selection on the rec file.
+
+WHAT is a list with the field names to include in the selection,
+like:
+  
+   ((\"Name\") (\"Email\"))
+
+If some of the fields specified in WHAT does not exist in the
+matching records, then they are not included in the result.
+
+NAME is the name of a field, like \"Name\", that will be compared
+with \"VALUE\"."
+  (let ((sel-buffer
+         (get-buffer-create (generate-new-buffer-name "Rec Sel ")))
+        inserted-types)
+    (with-current-buffer sel-buffer
+      (insert "# -*- mode: rec -*- " (time-stamp-string) "\n"
+              "#\n"
+              "# Result of rec-sel at "
+              "\n\n"))
+    (rec-do
+     (lambda ()
+       (let* ((rec (rec-parse-record))
+              (type (rec-record-type))
+              (descriptor (rec-record-descriptor))
+              (values (rec-record-assoc (list name) rec)))
+         (when (member value values)
+           ;; Matching record
+           ;; Print it (the requested fields)
+           (with-current-buffer sel-buffer
+             (let (buffer-read-only)
+               (when (and descriptor
+                          (not (member type inserted-types)))
+                 ;; Insert the type descriptor
+                 (rec-insert-record (cadr descriptor))
+                 (insert "\n")
+                 (setq inserted-types 
+                       (cons type inserted-types)))
+               (rec-insert-record rec what)
+               (insert "\n"))))))
+     type)
+    (with-current-buffer sel-buffer
+      (insert "\n"
+              "# End of rec-sel\n")
+      (rec-mode))
+    (switch-to-buffer-other-window sel-buffer)))
 
 ;; Navigation
 
@@ -686,6 +785,9 @@ XXX"
 
 (defun rec-show-record ()
   "Show the record under the point"
+;;  (when (and (not (rec-current-record))
+;;             (rec-goto-next-rec)
+;;             (rec-goto-previous-rec)))
   (setq buffer-read-only t)
   (rec-narrow-to-record)
   (rec-set-mode-line (rec-record-type)))
@@ -703,7 +805,7 @@ XXX"
 ;; The following functions are implementing commands available in the
 ;; modes.
 
-(defun rec-edit-field ()
+(defun rec-cmd-edit-field ()
   "Edit the contents of the field under point in a separate
 buffer"
   (interactive)
@@ -730,7 +832,7 @@ buffer"
           (insert field-value)
           (switch-to-buffer-other-window edit-buf)
           (goto-char (point-min))
-          (message "Edit the value of the field and press C-cC-c to exit"))
+          (message "Edit the value of the field and press C-c C-c to exit"))
       (message "Not in a field"))))
 
 (defun rec-finish-editing-field ()
@@ -824,7 +926,11 @@ record.  Interactive version."
   (interactive)
   (if (save-excursion
         (not (rec-goto-next-field)))
-      (message "No more fields")
+      (if rec-editing
+          (progn
+            (goto-char (point-min))
+            (rec-goto-next-rec))
+      (rec-beginning-of-record))
     (rec-goto-next-field)))
 
 (defun rec-cmd-goto-next-rec ()
@@ -836,7 +942,8 @@ file.  Interactive version."
         (not (rec-goto-next-rec)))
       (message "No more records")
     (rec-goto-next-rec))
-  (rec-show-record))
+  (unless rec-editing
+    (rec-show-record)))
 
 (defun rec-cmd-goto-previous-rec ()
   "Move the pointer to the beginning of the previous record in
@@ -847,7 +954,8 @@ the file.  Interactive version."
         (not (rec-goto-previous-rec)))
       (message "No more records")
     (rec-goto-previous-rec))
-  (rec-show-record))
+  (unless rec-editing
+    (rec-show-record)))
     
 (defun rec-cmd-jump ()
   "Jump to the first record containing the reference under
@@ -870,15 +978,19 @@ point."
                            (progn
                              (setq rec-jump-back (point-marker))
                              (goto-char pos)
-                             (rec-narrow-to-record))
+                             (unless rec-editing
+                               (rec-narrow-to-record)))
                          (message "Not found.")
-                         (rec-show-record))))
+                         (unless rec-editing
+                           (rec-show-record)))))
                  (message "Not in a reference.")
-                 (rec-show-record)))
+                 (unless rec-editing
+                   (rec-show-record))))
       (message "Not in a reference.")
       (save-excursion
         (rec-goto-previous-rec)
-        (rec-show-record)))))
+        (unless rec-editing
+          (rec-show-record))))))
 
 (defun rec-cmd-jump-back ()
   "Undo the previous jump"
@@ -887,37 +999,43 @@ point."
       (progn
         (widen)
         (goto-char (marker-position rec-jump-back))
-        (rec-show-record)
+        (unless rec-editing
+          (rec-show-record))
         (setq rec-jump-back nil))
     (message "No previous position to jump")))
   
 (defun rec-edit-record ()
   "Go to the record edition mode"
   (interactive)
+  (setq rec-editing t)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
-  (rec-set-mode-line "Editing record")
+  (rec-set-mode-line "Edit record")
   (message "Editing: Press C-c C-c when you are done"))
 
 (defun rec-edit-type ()
   "Go to the type edition mode"
   (interactive)
+  (setq rec-editing t)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (widen)
   (rec-narrow-to-type (rec-record-type))
   (setq rec-update-p t)
-  (rec-set-mode-line "Editing type")
+  (goto-char (point-min))
+  (rec-set-mode-line "Edit type")
   (message "Editing:  Press C-c C-c when you are done"))
 
 (defun rec-edit-buffer ()
   "Go to the buffer edition mode"
   (interactive)
+  (setq rec-editing t)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (widen)
   (setq rec-update-p t)
-  (rec-set-mode-line "Editing buffer")
+  (goto-char (point-min))
+  (rec-set-mode-line "Edit buffer")
   (message "Editing: Press C-c C-c when you are done"))
 
 (defun rec-finish-editing ()
@@ -934,6 +1052,8 @@ point."
     (setq rec-update-p nil))
   (rec-show-record)
   ;; TODO: Restore modeline
+  (rec-set-mode-line (rec-record-type))
+  (setq rec-editing nil)
   (message "End of edition"))
 
 (defun rec-cmd-show-descriptor ()
@@ -944,7 +1064,22 @@ This jump sets jump-back."
   (let ((type (rec-record-type)))
     (when type
       (setq rec-jump-back (point-marker))
-      (rec-show-type type))))
+      (if rec-editing
+          (rec-goto-type type)
+        (rec-show-type type)))))
+
+(defun rec-cmd-count ()
+  "Display a message in the minibuffer showing the number of
+records of the current type"
+  (interactive)
+  (message "Counting records...")
+  (let ((type (rec-record-type)))
+    (message (concat (number-to-string (rec-count type))
+
+                     (if (or (not type)
+                             (equal type ""))
+                         " records"
+                       (concat " records of type " type))))))
       
 ;; Definition of modes
   
@@ -961,6 +1096,8 @@ Commands:
   (make-local-variable 'rec-buffer-descriptors)
   (make-local-variable 'rec-jump-back)
   (make-local-variable 'rec-update-p)
+  (make-local-variable 'rec-editing)
+  (setq rec-editing nil)
   (setq rec-jump-back nil)
   (setq rec-update-p nil)
   (setq font-lock-defaults '(rec-font-lock-keywords))
