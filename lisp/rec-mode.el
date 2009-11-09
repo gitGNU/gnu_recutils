@@ -106,8 +106,8 @@
     (define-key map "R" 'rec-edit-record)
     (define-key map "T" 'rec-edit-type)
     (define-key map "B" 'rec-edit-buffer)
+    (define-key map "A" 'rec-cmd-append-field)
     (define-key map "t" 'rec-cmd-show-descriptor)
-    (define-key map "a" 'rec-cmd-append-field)
     (define-key map "\C-ct" 'rec-find-type)
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
@@ -466,6 +466,7 @@ The current record is the record where the pointer is"
 ;; These functions perform the management of the collection of records
 ;; in the buffer.
     
+
 (defun rec-update-buffer-descriptors ()
   "Get a list of the record descriptors in the current buffer."
   (message "Updating record descriptors...")
@@ -474,8 +475,9 @@ The current record is the record where the pointer is"
           (let (records rec marker)
             (goto-char (point-min))
             (while (and (not (= (point) (point-max)))
-                        (re-search-forward rec-field-name-re nil t))
-              (goto-char (match-beginning 0))
+                        (re-search-forward
+                         (concat "^" (regexp-quote rec-keyword-rec) ":") nil t))
+              (rec-beginning-of-record)
               (setq marker (point-marker))
               (setq rec (rec-parse-record))
               (when (rec-record-assoc (list rec-keyword-rec) rec)
@@ -483,7 +485,7 @@ The current record is the record where the pointer is"
               (if (not (= (point) (point-max)))
                   (forward-char)))
             (reverse records))))
-  (message "done"))
+  (message ""))
 
 (defun rec-buffer-types ()
   "Return a list with the names of the record types in the
@@ -758,7 +760,7 @@ the result buffer."
        (let* ((rec (rec-parse-record))
               (type (rec-record-type))
               (descriptor (rec-record-descriptor))
-              (values (rec-record-assoc (list name) rec)))
+              (values (rec-record-assoc name rec)))
          (when (member value values)
            ;; Matching record
            ;; Print it (the requested fields)
@@ -792,11 +794,10 @@ the result buffer."
 
 (defun rec-show-record ()
   "Show the record under the point"
-;;  (when (and (not (rec-current-record))
-;;             (rec-goto-next-rec)
-;;             (rec-goto-previous-rec)))
   (setq buffer-read-only t)
   (rec-narrow-to-record)
+  ;; TODO: Update field names for autocompletion
+  ;;  (let ((names (rec-record-field-names (rec-current-record)))))
   (rec-set-mode-line (rec-record-type)))
 
 ;; Mode line
@@ -1018,6 +1019,7 @@ point."
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (rec-set-mode-line "Edit record")
+  (setq rec-update-p t)
   (message "Editing: Press C-c C-c when you are done"))
 
 (defun rec-edit-type ()
@@ -1113,9 +1115,11 @@ Commands:
   (make-local-variable 'rec-jump-back)
   (make-local-variable 'rec-update-p)
   (make-local-variable 'rec-editing)
+  (make-local-variable 'rec-field-names)
   (setq rec-editing nil)
   (setq rec-jump-back nil)
   (setq rec-update-p nil)
+  (setq rec-field-names nil)
   (setq font-lock-defaults '(rec-font-lock-keywords))
   (use-local-map rec-mode-map)
   (set-syntax-table rec-mode-syntax-table)
