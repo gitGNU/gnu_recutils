@@ -34,6 +34,12 @@
   :group 'applications
   :link '(url-link "http://www.gnu.org/software/rec"))
 
+(defcustom rec-open-mode 'edit
+  "Default mode to use when switching a buffer to rec-mode.
+Valid values are `edit' and `navigation'.  The default is `edit'"
+  :type 'symbol
+  :group 'rec-mode)
+
 ;; Variables and constants that the user does not want to touch
 ;; (really!)
 
@@ -1125,11 +1131,17 @@ Commands:
   (set-syntax-table rec-mode-syntax-table)
   (setq mode-name "Rec")
   (setq major-mode 'rec-mode)
-  (setq buffer-read-only t)
   ;; Goto the first record of the first type (including the Unknown)
   (rec-update-buffer-descriptors)
-  (setq rec-type (car (rec-buffer-types)))
-  (rec-show-type rec-type))
+  (if (equal rec-open-mode 'navigation)
+    (progn
+      (setq buffer-read-only t)
+      (setq rec-type (car (rec-buffer-types)))
+      (rec-show-type rec-type))
+    ;; Edit mode
+    (use-local-map rec-mode-edit-map)
+    (setq rec-editing t)
+    (rec-set-mode-line "Edit buffer")))
 
 (defvar rec-edit-field-mode-map
   (let ((map (make-sparse-keymap)))
