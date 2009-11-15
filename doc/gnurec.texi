@@ -633,12 +633,12 @@ XXX
 @chapter Usage Example
 
 This chapter contains a complete description of a use-case for rec
-files: the storage of the data associated with the management of a
-free software project: @dfn{GNU Foo}.
+files: the management of the data associated with a free software
+project called @dfn{GNU Foo}.
 
 @menu
-* The GNU Foo Project::         Foo.
-* Managing Contributors::       Foo.
+* The GNU Foo Project::         Introduction to GNU Foo.
+* Managing Contributors::       Hackers contributing to GNU Foo.
 * Managing Tasks::              Foo.
 * Managing Patches::            Foo.
 * Legal Papers::                Foo.
@@ -647,7 +647,10 @@ free software project: @dfn{GNU Foo}.
 @node The GNU Foo Project
 @section The GNU Foo Project
 
-XXX
+The main purpose of the GNU Foo project is to provide a full-fledged
+free implementation of the @cfn{foo} format.  The software
+distribution of GNU Foo consist in a shared library called
+@code{libgnufoo} and a bunch of command line utilities.
 
 @node Managing Contributors
 @section Managing Contributors
@@ -666,6 +669,8 @@ Name: John Smith
 Email: john@@smith.name
 Role: Developer
 Papers: no
+Wiki: yes
+Flyspray: no
 @end example
 
 @node Managing Tasks

@@ -48,7 +48,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
   ;; value!!
   "Rec keyword.")
 
-(defvar rec-comment-re "^#.*\n?"
+(defvar rec-comment-re "^#.*"
   "regexp denoting a comment line")
 
 (defvar rec-field-name-re
@@ -737,13 +737,10 @@ If such a record is not found then return nil."
 
 ;; Getting data
 
-(defun rec-sel (what name value &optional type write-descriptor)
+(defun rec-sel (what func &optional type write-descriptor)
   "Make a selection on the rec file.
 
-WHAT is a list with the field names to include in the selection,
-like:
-  
-   ((\"Name\") (\"Email\"))
+FUNC is a function that will be evaluated XXX.
 
 If some of the fields specified in WHAT does not exist in the
 matching records, then they are not included in the result.
@@ -765,9 +762,8 @@ the result buffer."
      (lambda ()
        (let* ((rec (rec-parse-record))
               (type (rec-record-type))
-              (descriptor (rec-record-descriptor))
-              (values (rec-record-assoc name rec)))
-         (when (member value values)
+              (descriptor (rec-record-descriptor)))
+         (when (apply func (list rec))
            ;; Matching record
            ;; Print it (the requested fields)
            (with-current-buffer sel-buffer
@@ -1026,6 +1022,7 @@ point."
   (use-local-map rec-mode-edit-map)
   (rec-set-mode-line "Edit record")
   (setq rec-update-p t)
+  (setq rec-preserve-last-newline t)
   (message "Editing: Press C-c C-c when you are done"))
 
 (defun rec-edit-type ()
@@ -1060,6 +1057,11 @@ point."
   (or (rec-current-record)
       (rec-goto-next-rec)
       (rec-goto-previous-rec))
+  (when rec-preserve-last-newline
+    (save-excursion
+      (goto-char (point-max))
+      (unless (equal (char-before) ?\n)
+        (insert ?\n))))
   (when rec-update-p
     (save-restriction
       (widen)
@@ -1120,11 +1122,13 @@ Commands:
   (make-local-variable 'rec-buffer-descriptors)
   (make-local-variable 'rec-jump-back)
   (make-local-variable 'rec-update-p)
+  (make-local-variable 'rec-preserve-last-newline)
   (make-local-variable 'rec-editing)
   (make-local-variable 'rec-field-names)
   (setq rec-editing nil)
   (setq rec-jump-back nil)
   (setq rec-update-p nil)
+  (setq rec-preserve-last-newline nil)
   (setq rec-field-names nil)
   (setq font-lock-defaults '(rec-font-lock-keywords))
   (use-local-map rec-mode-map)
