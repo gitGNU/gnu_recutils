@@ -97,6 +97,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "\C-ce" 'rec-cmd-edit-field)
     (define-key map "\C-ct" 'rec-cmd-show-descriptor)
     (define-key map "\C-c#" 'rec-cmd-count)
+    (define-key map "\C-cs" 'rec-cmd-search)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map (concat "\C-c" (kbd "RET")) 'rec-cmd-jump)
     (define-key map "\C-cb" 'rec-cmd-jump-back)
@@ -114,6 +115,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "B" 'rec-edit-buffer)
     (define-key map "A" 'rec-cmd-append-field)
     (define-key map "t" 'rec-cmd-show-descriptor)
+    (define-key map "s" 'rec-cmd-search)
     (define-key map "\C-ct" 'rec-find-type)
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
@@ -160,6 +162,20 @@ If the point is not at the beginning of a field name return nil"
      (buffer-substring-no-properties (match-beginning 0)
                                      (- (match-end 0) 1))
      ":")))
+
+(defun rec-parse-field-name-from-string (str)
+  "Parse and return a field name parsed from a string.
+
+If the string does not contain a field name, then return nil."
+  (with-temp-buffer
+    (insert str)
+    ;; Add a colon to the end if does not exist
+    (save-excursion
+      (goto-char (point-max))
+      (unless (equal (char-before) ?:)
+        (insert ?:)))
+    (goto-char (point-min))
+    (rec-parse-field-name)))
 
 (defun rec-parse-field-value ()
   "Return the field value under the pointer.
@@ -650,13 +666,16 @@ The function should not accept any parameter."
   (save-excursion
     (save-restriction
       (widen)
-      (goto-char (point-min))
-      (while (rec-goto-next-rec)
-        (when (and (or (not type)
-                       (equal (rec-record-type) type))
-                   (or descriptors
-                       (rec-regular-p)))
-          (apply rec-do-func nil))))))
+      (rec-goto-type type)
+      (let ((in-type t))
+        (while (and (rec-goto-next-rec)
+                    in-type)
+          (setq in-type (or (not type)
+                            (equal (rec-record-type) type)))
+          (when (and in-type
+                     (or descriptors
+                         (rec-regular-p)))
+            (apply rec-do-func nil)))))))
 
 (defun rec-map (rec-map-func &optional type descriptors)
   "XXX"
@@ -754,10 +773,12 @@ the result buffer."
          (get-buffer-create (generate-new-buffer-name "Rec Sel ")))
         inserted-types)
     (with-current-buffer sel-buffer
-      (insert "# -*- mode: rec -*- " (time-stamp-string) "\n"
+      (insert "# -*- mode: rec -*- \n"
               "#\n"
-              "# Result of rec-sel at "
-              "\n\n"))
+              "# Result of rec-sel with \n# ")
+      (print func (lambda (c) (unless (equal c ?\n) (insert c))))
+      (insert "\n"))
+    (message "Searching...")
     (rec-do
      (lambda ()
        (let* ((rec (rec-parse-record))
@@ -782,8 +803,10 @@ the result buffer."
     (with-current-buffer sel-buffer
       (insert "\n"
               "# End of rec-sel\n")
+      (goto-char (point-min))
       (rec-mode))
-    (switch-to-buffer-other-window sel-buffer)))
+    (switch-to-buffer-other-window sel-buffer)
+    (message "")))
 
 ;; Navigation
 
@@ -809,6 +832,100 @@ the result buffer."
   (setq mode-line-buffer-identification
         (list 20
               "%b " str)))
+
+;; Fast selection
+
+(defun rec-fast-selection (names prompt)
+  "Fast group tag selection with single keys.
+
+NAMES is an association list of the form:
+
+    ((\"NAME1\" char1) ...)
+
+Each character should identify only one name."
+  ;; Adapted from `org-fast-tag-selection' in org.el by Carsten Dominic
+  ;; Thanks Carsten! :D
+  (let* ((maxlen (apply 'max (mapcar (lambda (name)
+                                       (string-width (car name))) names)))
+         (buf (current-buffer))
+         (fwidth (+ maxlen 3 1 3))
+         (ncol (/ (- (window-width) 4) fwidth))
+         name count result char i key-list)
+    (save-window-excursion
+      (set-buffer (get-buffer-create " *Rec Fast Selection*"))
+      (delete-other-windows)
+      (split-window-vertically)
+      (switch-to-buffer-other-window (get-buffer-create " *Rec Fast Selection*"))
+      (erase-buffer)
+      (insert prompt ":")
+      (insert "\n\n")
+      (setq count 0)
+      (while (setq name (pop names))
+        (setq key-list (cons (cadr name) key-list))
+        (insert "[" (cadr name) "] "
+                (car name)
+                (make-string (- fwidth 4 (length (car name))) ?\ ))
+        (when (= (setq count (+ count 1)) ncol)
+          (insert "\n")
+          (setq count 0)))
+      (goto-char (point-min))
+      (if (fboundp 'fit-window-to-buffer)
+          (fit-window-to-buffer))
+      (catch 'exit
+        (while t
+          (message "[a-z0-9...]: Select entry   [RET]: Exit")
+          (setq char (let ((inhibit-quit t)) (read-char-exclusive)))
+          (cond
+           ((= char ?\r)
+            (setq result nil)
+            (throw 'exit t))
+           ((member char key-list)
+            (setq result char)
+            (throw 'exit t)))))
+      result)))
+
+(defun rec-search-list ()
+  "XXX"
+  (let (search-list)
+    ;; Add standard searches
+    (add-to-list 'search-list
+                 (list "Generic expression" ?E))
+    ;; Add custom searches
+    (append search-list
+            (mapcar 
+             (lambda (elem)
+               (if (and (listp elem)
+                        (>= (length elem) 4))
+                   (let ((char (car elem))
+                         (descr (cadr elem)))
+                     (list descr char))
+                 (error "Invalid entry in rec-custom-searches")))
+             rec-custom-searches))))
+
+(defun rec-init-searches ()
+  "XXX"
+  (let (res)
+    (rec-do
+     (lambda ()
+       (let* ((rec (rec-parse-record))
+              (name (rec-record-assoc (list "Name") rec))
+              (letter (rec-record-assoc (list "Letter") rec))
+              (fields (rec-record-assoc (list "Field") rec))
+              (type (rec-record-assoc (list "Type") rec))
+              (expr (rec-record-assoc (list "Expression") rec)))
+         (when (and (equal (length name) 1)
+                    (equal (length letter) 1)
+                    (equal (length (car letter)) 1)
+                    (equal (length expr) 1))
+           (add-to-list 'res
+                        (list (aref (car letter) 0)
+                              (car name)
+                              (mapcar (lambda (elem) 
+                                        (rec-parse-field-name-from-string elem)) fields)
+                              (read (car expr))
+                              type)))))
+     "RecModeSearch")
+    (setq rec-custom-searches res)))
 
 ;; Commands
 ;;
@@ -862,7 +979,8 @@ buffer"
       (rec-insert-field (list 'field
                               name
                               value))
-      (goto-char prev-pointer))))
+      (goto-char prev-pointer)))
+  (rec-init-searches))
     
 (defun rec-beginning-of-field ()
   "Goto to the beginning of the current field"
@@ -1071,6 +1189,7 @@ point."
   ;; TODO: Restore modeline
   (rec-set-mode-line (rec-record-type))
   (setq rec-editing nil)
+  (rec-init-searches)
   (message "End of edition"))
 
 (defun rec-cmd-show-descriptor ()
@@ -1106,7 +1225,38 @@ records of the current type"
     (goto-char (point-max))
     (insert "\n")
     (backward-char)))
-      
+
+(defun rec-cmd-search ()
+  "XXX"
+  (interactive)
+  (let ((res (rec-fast-selection
+              (rec-search-list)
+              "Search Type")))
+    (cond
+     ((equal res ?E)
+      ;; Prompt the user for an expression and search
+      (let (what func name type)
+        (setq type (read-from-minibuffer "Type of record (empty for all): "))
+        (if (equal type "")
+            (setq type nil)
+          (when (not (member type (rec-buffer-types)))
+            (error (concat "Cannot find type " type))))
+        (while (not (equal
+                     (setq name
+                           (read-from-minibuffer "Field to print (empty when done): "))
+                     ""))
+          (add-to-list 'what
+                       (rec-parse-field-name-from-string name)))
+        (setq func (read-from-minibuffer "Search expression: "))
+        (rec-sel what (read func) type)))
+     (res
+      ;; Launch the appropriate expression
+      (let* ((search (assoc res rec-custom-searches))
+             (what (nth 2 search))
+             (func (nth 3 search))
+             (type (nth 4 search)))
+        (rec-sel what func type))))))
+                   
 ;; Definition of modes
   
 (defun rec-mode ()
@@ -1125,11 +1275,13 @@ Commands:
   (make-local-variable 'rec-preserve-last-newline)
   (make-local-variable 'rec-editing)
   (make-local-variable 'rec-field-names)
+  (make-local-variable 'rec-custom-searches)
   (setq rec-editing nil)
   (setq rec-jump-back nil)
   (setq rec-update-p nil)
   (setq rec-preserve-last-newline nil)
   (setq rec-field-names nil)
+  (setq rec-custom-searches nil)
   (setq font-lock-defaults '(rec-font-lock-keywords))
   (use-local-map rec-mode-map)
   (set-syntax-table rec-mode-syntax-table)
@@ -1137,6 +1289,8 @@ Commands:
   (setq major-mode 'rec-mode)
   ;; Goto the first record of the first type (including the Unknown)
   (rec-update-buffer-descriptors)
+  ;; Initialize the value of rec-custom-searches
+  (rec-init-searches)
   (if (equal rec-open-mode 'navigation)
     (progn
       (setq buffer-read-only t)
