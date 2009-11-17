@@ -823,6 +823,20 @@ the result buffer."
     (switch-to-buffer-other-window sel-buffer)
     (message "")))
 
+;; Search macros
+;;
+;; Note that in the context of the body in the following macros `rec'
+;; is a record data structure.
+
+(defmacro rec-field-eq (name val)
+  `(let ((value (rec-record-assoc ,name rec)))
+     (if value
+         (equal (car value) ,val)
+       nil)))
+
+(defmacro rec-field-count (name)
+  `(lenth (rec-record-assoc ,name rec)))
+
 ;; Navigation
 
 (defun rec-show-type (type)
@@ -941,6 +955,140 @@ Each character should identify only one name."
                               type)))))
      "RecModeSearch")
     (setq rec-custom-searches res)))
+
+;; Rec Idle mode
+;;
+;; This section is heavily inspired in semantic-idle.el
+
+(defvar rec-idle-scheduler-timer nil
+  "*Timer used to schedule tasks in idle time.")
+
+(defvar rec-idle-scheduler-work-timer nil
+  "*Timer used to schedule tasks in idle time that may take a
+  while.")
+
+(defcustom rec-idle-scheduler-idle-time 2
+  "*Time in seconds of idle before scheduling events.
+This time should be short enough to ensure that idle-scheduler
+will be run as soon as Emacs is idle."
+  :group 'rec
+  :type 'number
+  :set (lambda (sym val)
+         (set-default sym val)
+         (when (timerp rec-idle-scheduler-timer)
+           (cancel-timer rec-idle-scheduler-timer)
+           (setq rec-idle-scheduler-timer nil)
+           (rec-idle-scheduler-setup-timers))))
+
+(defcustom rec-idle-scheduler-work-idle-time 60
+  "*Time in seconds of idle before scheduling big work.
+This time should be long enough that once any big work is
+started, it is unlikely the user would be ready to type again
+right away."
+  :group 'rec
+  :type 'number
+  :set (lambda (sym val)
+         (set-default sym val)
+         (when (timerp rec-idle-scheduler-work-timer)
+           (cancel-timer rec-idle-scheduler-work-timer)
+           (setq semantic-idle-scheduler-work-timer nil)
+           (rec-idle-scheduler-setup-timers))))
+
+(defun rec-idle-scheduler-setup-timers ()
+  "Lazy initialization of the auto parse idle timer."
+  (or (timerp rec-idle-scheduler-timer)
+      (setq rec-idle-scheduler-timer
+            (run-with-idle-timer
+             rec-idle-scheduler-idle-time t
+             #'rec-idle-scheduler-function)))
+  (or (timerp rec-idle-scheduler-work-timer)
+      (setq rec-idle-scheduler-work-timer
+            (run-with-idle-timer
+             rec-idle-scheduler-work-idle-time t
+             #'rec-idle-scheduler-work-function))))
+
+(defun rec-idle-scheduler-kill-timer ()
+  "Kill the rec idle timer."
+  (if (timerp rec-idle-scheduler-timer)
+      (cancel-timer rec-idle-scheduler-timer))
+  (setq rec-idle-scheduler-timer nil))
+
+(defcustom rec-idle-scheduler-mode-hook nil
+  "*HOok run at the end of function `rec-idle-scheduler-mode'."
+  :group 'semantic
+  :type 'hook)
+
+(defvar rec-idle-scheduler-mode nil
+  "Non-nil if idle-scheduler minor mode is enabled.
+Use the command `rec-idle-scheduler-mode' to change this variable.")
+(make-variable-buffer-local 'rec-idle-scheduler-mode)
+
+(defcustom rec-idle-scheduler-max-buffer-size 0
+  "*Maximum size in bytes of buffers where idle-scheduler is enabled.
+If this value is less than or equal to 0, idle-schedule is enabled in
+all buffers regardless of their size."
+  :group 'rec
+  :type 'number)
+
+(defsubst rec-idle-scheduler-enabled-p ()
+  "Return non-nil if idle-scheduler is enabled for this buffer.
+idle-scheduler is disabled when debugging or if the buffer size
+exceeds the `rec-idle-scheduler-max-buffer-size' threshold."
+  (and rec-idle-scheduler-mode
+       (or (<= rec-idle-scheduler-max-buffer-size 0)
+           (< (buffer-size) rec-idle-scheduler-max-buffer-size))))
+
+(defun rec-idle-scheduler-mode-setup ()
+  "Setup option `rec-idle-scheduler-mode'.
+The minor mode can be turned on only if rec is available.  When
+minor mode is enabled process the current buffer if needed.
+Return non-nil if the minor mode is enabled."
+  (if rec-idle-scheduler-mode
+      (if (not (featurep 'rec-mode))
+          (progn
+            ;; Disable minor mode if rec-mode not available
+            (setq rec-idle-scheduler-mode nil)
+            (error "Buffer %s was not set up idle time scheduling"
+                   (buffer-name)))
+        (rec-idle-scheduler-setup-timers)))
+  rec-idle-scheduler-mode)
+
+(defun rec-idle-scheduler-mode (&optional arg)
+  "Minor mode to auto analyze buffer following a change.
+When this mode is off, a buffer is only rescanned for record
+types when some command requests the list of available types.
+When idle-scheduler is enabled, Emacs periodically checks to see
+if the buffer is out of date, and reanalyzes while the user is
+idle (not typing).
+
+With prefix argument ARG, turn on if positive, otherwise off.
+The minor mode can be turned on only if rec-mode feature is
+available and the current buffer is in rec mode.  Return non-nil
+if the minor mode is enabled."
+  (interactive
+   (list (or current-prefix-arg
+             (if rec-idle-scheduler-mode 0 1))))
+  (setq rec-idle-scheduler-mode
+        (if arg
+            (>
+             (prefix-numeric-value arg)
+             0)
+          (not rec-idle-scheduler-mode)))
+  (rec-idle-scheduler-mode-setup)
+  (run-hooks 'rec-idle-scheduler-mode-hook)
+  (if (interactive-p)
+      (message "rec-idle-scheduler minor mode %sabled"
+               (if rec-idle-scheduler-mode "en" "dis")))
+  ;; FIXME: add a note in the modeline
+  rec-idle-scheduler-mode)
+
+(defun rec-idle-scheduler-function ()
+  "Function run when after `rec-idle-scheduler-idle-time'.
+This function will reanalyze the current buffer, and if successful,
+call additional functions registered with the timer calls."
+  (when (zerop (recursion-depth))
+    (let ((debug-on-error nil))
+      (save-match-data (rec-idle-core-handler)))))
 
 ;; Commands
 ;;
@@ -1072,7 +1220,7 @@ record.  Interactive version."
       (if rec-editing
           (progn
             (goto-char (point-min))
-            (unless (looking-at rec-comment-field-re)
+            (unless (looking-at rec-field-name-re)
               (rec-goto-next-field)))
       (rec-beginning-of-record))
     (rec-goto-next-field)))
@@ -1270,7 +1418,7 @@ records of the current type"
              (what (nth 2 search))
              (func (nth 3 search))
              (type (nth 4 search)))
-        (rec-sel what (concat "(lambda (rec) " func ")") type))))))
+        (rec-sel what (list 'lambda (list 'rec) func) type))))))
                    
 ;; Definition of modes
   
