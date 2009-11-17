@@ -312,8 +312,13 @@ Recursive part"
 ;; Those functions retrieve or set properties of field structures.
 
 (defun rec-record-assoc (name record)
-  "Get a list with the values of the fields in RECORD named NAME.  If no such
-field exists in RECORD then nil is returned"
+  "Get a list with the values of the fields in RECORD named NAME.
+
+XXX: describe NAME.
+
+If no such field exists in RECORD then nil is returned."
+  (if (stringp name)
+      (setq name (rec-parse-field-name-from-string name)))
   (when (and (listp record)
              (equal (car record) 'record))
     (let (result)
@@ -420,14 +425,17 @@ or nil if the pointer is not on a comment."
   "Return the position of the beginning of the current record, or nil if
 the pointer is not on a record."
   (save-excursion
-    (let (field-pos)
+    (let (field-pos prev-pos)
+      (setq prev-pos (point))
       (while (and (not (equal (point) (point-min)))
                   (or (setq field-pos (rec-beginning-of-field-pos))
                       (setq field-pos (rec-beginning-of-comment-pos))))
+        (setq foo (+ foo 1))
         (goto-char field-pos)
         (if (not (equal (point) (point-min)))
             (backward-char)))
-      (if (and (not (equal (point) (point-min)))
+      (if (and (not (equal (point) prev-pos))
+               (not (equal (point) (point-min)))
                (not (equal (point) (point-max))))
           (forward-char))
       (when (looking-at rec-field-name-re)
@@ -532,7 +540,8 @@ file."
 
 If the type do not exist in the current buffer then
 this function returns nil."
-  (if (not type)
+  (if (or (not type)
+          (equal type ""))
       ;; If there is a regular record in the 
       ;; beginning of the file, go there.
       (if (save-excursion
@@ -660,16 +669,20 @@ XXX Update documentation"
 then the function is applied for all the records existing in the
 file (including the record descriptors).  A third optional
 parameter specify whether to include the record descriptors in
-the list of records.
-
-The function should not accept any parameter."
+the list of records."
   (save-excursion
     (save-restriction
       (widen)
-      (rec-goto-type type)
-      (let ((in-type t))
-        (while (and (rec-goto-next-rec)
-                    in-type)
+      (unless (rec-goto-type type)
+        (goto-char (point-min))
+        (rec-goto-next-rec))
+      (let ((in-type t)
+            (first-time t))
+        (while (and in-type
+                    (if (not first-time)
+                        (rec-goto-next-rec)
+                      t))
+          (setq first-time nil)
           (setq in-type (or (not type)
                             (equal (rec-record-type) type)))
           (when (and in-type
@@ -707,7 +720,7 @@ If the record is of no known type, return nil."
                              (cadr descriptor))))
      ((equal descriptor "")
       "")
-     (t/
+     (t
       nil))))
 
 (defun rec-record-descriptor ()
@@ -889,7 +902,7 @@ Each character should identify only one name."
   (let (search-list)
     ;; Add standard searches
     (add-to-list 'search-list
-                 (list "Generic expression" ?E))
+                 (list "Generic search" ?E))
     ;; Add custom searches
     (append search-list
             (mapcar 
@@ -912,7 +925,7 @@ Each character should identify only one name."
               (letter (rec-record-assoc (list "Letter") rec))
               (fields (rec-record-assoc (list "Field") rec))
               (type (rec-record-assoc (list "Type") rec))
-              (expr (rec-record-assoc (list "Expression") rec)))
+              (expr (rec-record-assoc (list "Predicate") rec)))
          (when (and (equal (length name) 1)
                     (equal (length letter) 1)
                     (equal (length (car letter)) 1)
@@ -1211,7 +1224,6 @@ records of the current type"
   (message "Counting records...")
   (let ((type (rec-record-type)))
     (message (concat (number-to-string (rec-count type))
-
                      (if (or (not type)
                              (equal type ""))
                          " records"
@@ -1248,14 +1260,14 @@ records of the current type"
           (add-to-list 'what
                        (rec-parse-field-name-from-string name)))
         (setq func (read-from-minibuffer "Search expression: "))
-        (rec-sel what (read func) type)))
+        (rec-sel what (read (concat "(lambda (rec) " func ")")) type)))
      (res
       ;; Launch the appropriate expression
       (let* ((search (assoc res rec-custom-searches))
              (what (nth 2 search))
              (func (nth 3 search))
              (type (nth 4 search)))
-        (rec-sel what func type))))))
+        (rec-sel what (concat "(lambda (rec) " func ")") type))))))
                    
 ;; Definition of modes
   
