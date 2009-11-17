@@ -51,6 +51,9 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
 (defvar rec-comment-re "^#.*"
   "regexp denoting a comment line")
 
+(defvar rec-comment-field-re "^\\(#.*\n\\)*\\([a-zA-Z0-1_%-]+:\\)+"
+  "regexp denoting the beginning of a record")
+
 (defvar rec-field-name-re
   "^\\([a-zA-Z0-1_%-]+:\\)+"
   "Regexp matching a field name")
@@ -430,15 +433,12 @@ the pointer is not on a record."
       (while (and (not (equal (point) (point-min)))
                   (or (setq field-pos (rec-beginning-of-field-pos))
                       (setq field-pos (rec-beginning-of-comment-pos))))
-        (setq foo (+ foo 1))
         (goto-char field-pos)
         (if (not (equal (point) (point-min)))
             (backward-char)))
-      (if (and (not (equal (point) prev-pos))
-               (not (equal (point) (point-min)))
-               (not (equal (point) (point-max))))
+      (if (not (looking-at rec-comment-field-re))
           (forward-char))
-      (when (looking-at rec-field-name-re)
+      (when (looking-at rec-comment-field-re)
         (point)))))
 
 (defun rec-end-of-record-pos ()
@@ -546,11 +546,13 @@ this function returns nil."
       ;; beginning of the file, go there.
       (if (save-excursion
             (goto-char (point-min))
-            (rec-goto-next-rec)
+            (unless (looking-at rec-comment-field-re)
+              (rec-goto-next-rec))
             (rec-regular-p))
           (progn
             (goto-char (point-min))
-            (rec-goto-next-rec)
+            (unless (looking-at rec-comment-field-re)
+              (rec-goto-next-rec))
             t)
         nil)
     (let (found
@@ -604,7 +606,7 @@ file."
 file."
   (let ((pos (save-excursion
                (rec-end-of-record)
-               (when (re-search-forward rec-field-name-re nil t)
+               (when (re-search-forward rec-comment-field-re nil t)
                  (match-beginning 0)))))
     (when pos 
         (goto-char pos)
@@ -790,7 +792,7 @@ the result buffer."
               "#\n"
               "# Result of rec-sel with \n# ")
       (print func (lambda (c) (unless (equal c ?\n) (insert c))))
-      (insert "\n"))
+      (insert "\n\n"))
     (message "Searching...")
     (rec-do
      (lambda ()
@@ -1070,7 +1072,8 @@ record.  Interactive version."
       (if rec-editing
           (progn
             (goto-char (point-min))
-            (rec-goto-next-rec))
+            (unless (looking-at rec-comment-field-re)
+              (rec-goto-next-field)))
       (rec-beginning-of-record))
     (rec-goto-next-field)))
 
