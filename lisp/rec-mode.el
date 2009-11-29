@@ -523,7 +523,6 @@ existing buffer."
   ;; If a descriptor has more than a %rec field, then the first one is
   ;; used.  The rest are ignored.
   (mapcar
-
    (lambda (elem) (car elem))
    (mapcar
     (lambda (elem)
