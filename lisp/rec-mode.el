@@ -24,10 +24,13 @@
 ;;; Commentary:
 
 ;; A major mode for editing rec files.
+;;
+;; To see the structure of this file activate the outline minor mode
+;; and execute M-xhide-body
 
 ;;; Code:
 
-;; Customization
+;; * Customization
 
 (defgroup rec-mode nil
   "rec-mode subsystem"
@@ -40,7 +43,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
   :type 'symbol
   :group 'rec-mode)
 
-;; Variables and constants that the user does not want to touch
+;; * Variables and constants that the user does not want to touch
 ;; (really!)
 
 (defconst rec-keyword-rec "%rec"
@@ -127,7 +130,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     map)
   "Keymap for rec-mode")
 
-;; Parsing functions (rec-parse-*)
+;; * Parsing functions (rec-parse-*)
 ;;
 ;; Those functions read the contents of the buffer (starting at the
 ;; current position of the pointer) and try to parse field, comment
@@ -250,7 +253,7 @@ nil"
       (when (looking-at "\n") (goto-char (match-end 0))))
     (setq record (cons 'record (reverse record)))))
 
-;; Writer functions (rec-insert-*)
+;; * Writer functions (rec-insert-*)
 ;;
 ;; Those functions dump the written representation of the parser
 ;; structures (field, comment, record, etc) into the current buffer
@@ -310,7 +313,7 @@ Recursive part"
         (rec-insert-field elem))))
     (rec-insert-record-2 (cdr record) fields)))
 
-;; Operations on record structures
+;; * Operations on record structures
 ;;
 ;; Those functions retrieve or set properties of field structures.
 
@@ -343,7 +346,7 @@ If no such field exists in RECORD then nil is returned."
               (cdr record))
       (reverse result))))
 
-;; Operations on field structures
+;; * Operations on field structures
 ;;
 ;; Those functions retrieve or set properties of field structures.
 
@@ -363,7 +366,7 @@ If no such field exists in RECORD then nil is returned."
   (when (rec-field-p field)
     (nth 2 field)))
 
-;; Get entities under pointer
+;; * Get entities under pointer
 ;;
 ;; Those functions retrieve structures of the entities under pointer
 ;; like comments, fields and records.  If the especified entity is not
@@ -474,7 +477,7 @@ The current record is the record where the pointer is"
         (goto-char begin-pos)
         (rec-parse-record)))))
 
-;; Visibility
+;; * Visibility
 ;;
 ;; These functions manage the visibility in the rec buffer.
 
@@ -491,7 +494,7 @@ The current record is the record where the pointer is"
         (end-pos (or (rec-type-pos (rec-type-next type)) (point-max))))
     (narrow-to-region begin-pos end-pos)))
 
-;; Record collection management
+;; * Record collection management
 ;;
 ;; These functions perform the management of the collection of records
 ;; in the buffer.
@@ -746,7 +749,7 @@ Return nil if the point is not on a record."
           descriptor
         ""))))
                 
-;; Searching functions
+;; * Searching functions
 
 (defun rec-search-first (type name value)
   "Return the position of the beginning of the record of type TYPE
@@ -768,7 +771,7 @@ If such a record is not found then return nil."
                 (setq end-of-type t))))
         (when found (point))))))
 
-;; Getting data
+;; * Getting data
 
 (defun rec-sel (what func &optional type write-descriptor)
   "Make a selection on the rec file.
@@ -822,7 +825,7 @@ the result buffer."
     (switch-to-buffer-other-window sel-buffer)
     (message "")))
 
-;; Search macros
+;; * Search macros
 ;;
 ;; Note that in the context of the body in the following macros `rec'
 ;; is a record data structure.
@@ -836,7 +839,7 @@ the result buffer."
 (defmacro rec-field-count (name)
   `(lenth (rec-record-assoc ,name rec)))
 
-;; Navigation
+;; * Navigation
 
 (defun rec-show-type (type)
   "Show the records of the given type"
@@ -853,7 +856,7 @@ the result buffer."
   ;;  (let ((names (rec-record-field-names (rec-current-record)))))
   (rec-set-mode-line (rec-record-type)))
 
-;; Mode line
+;; * Mode line
 
 (defun rec-set-mode-line (str)
   "Set the modeline in rec buffers"
@@ -861,7 +864,7 @@ the result buffer."
         (list 20
               "%b " str)))
 
-;; Fast selection
+;; * Fast selection
 
 (defun rec-fast-selection (names prompt)
   "Fast group tag selection with single keys.
@@ -955,7 +958,7 @@ Each character should identify only one name."
      "RecModeSearch")
     (setq rec-custom-searches res)))
 
-;; Rec Idle mode
+;; * Rec Idle mode
 ;;
 ;; This section is heavily inspired in semantic-idle.el
 
@@ -1089,7 +1092,7 @@ call additional functions registered with the timer calls."
     (let ((debug-on-error nil))
       (save-match-data (rec-idle-core-handler)))))
 
-;; Commands
+;; * Commands
 ;;
 ;; The following functions are implementing commands available in the
 ;; modes.
@@ -1419,7 +1422,7 @@ records of the current type"
              (type (nth 4 search)))
         (rec-sel what (list 'lambda (list 'rec) func) type))))))
                    
-;; Definition of modes
+;; * Definition of modes
   
 (defun rec-mode ()
   "A major mode for editing rec files.
@@ -1479,5 +1482,9 @@ Commands:
   (use-local-map rec-edit-field-mode-map)
   (setq mode-name "Rec Edit")
   (setq major-mode 'rec-edit-field-mode))
+
+;; Local variables:
+;; outline-regexp: ";; \\*"
+;; End:
 
 ;;; rec-mode.el ends here
