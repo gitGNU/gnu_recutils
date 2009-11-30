@@ -439,7 +439,8 @@ the pointer is not on a record."
         (goto-char field-pos)
         (if (not (equal (point) (point-min)))
             (backward-char)))
-      (if (not (looking-at rec-comment-field-re))
+      (unless (or (eobp)
+                  (looking-at rec-comment-field-re))
           (forward-char))
       (when (looking-at rec-comment-field-re)
         (point)))))
@@ -933,7 +934,7 @@ Each character should identify only one name."
                  (error "Invalid entry in rec-custom-searches")))
              rec-custom-searches))))
 
-(defun rec-init-searches ()
+@(defun rec-init-searches ()
   "XXX"
   (let (res)
     (rec-do

@@ -1,3 +1,8 @@
+2009-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lisp/rec-mode.el (rec-beginning-of-record-pos): Don't signal an
+	error if the buffer is empty.
+
 2009-10-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lisp/rec-mode.el: New file.
