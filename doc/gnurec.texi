@@ -75,8 +75,10 @@ GNU Rec Utilities
 @node Overview
 @chapter Overview
 
-This chapter contains a short text explaining why the rec format was
-conceived, and a little example showing GNU rec in action.
+This chapter contains a short introduction describing how the rec
+format was conceived and how can it be used for data storage and
+management purposes.  The chapters finalizes with a little example
+showing GNU rec in action.
 
 @menu
 * Motivation::          Why GNU rec?
