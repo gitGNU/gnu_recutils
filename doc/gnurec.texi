@@ -52,7 +52,7 @@ GNU Rec Manual
 @end ifnottex
 
 @menu
-* Overview::            Introduction to the GNU records.
+* Overview::            Introduction to the GNU Records.
 
 The Rec Format
 * Fields and Records::  The basic structures conforming Rec files.
@@ -66,7 +66,7 @@ GNU Rec Utilities
 * recdel::              Deleting records from rec files.
 * recfix::              Fixing broken rec files and diagnostics.
 
-* The Rec Library::     Writing programs to manipulate rec files.
+* The Rec Library::     Writing C programs to manipulate rec files.
 * Usage Example::       A full-fledged rec-based project management
                           system.
 * GNU Free Documentation License:: Distribution terms for this document.
@@ -75,10 +75,10 @@ GNU Rec Utilities
 @node Overview
 @chapter Overview
 
-This chapter contains a short introduction describing how the rec
-format was conceived and how can it be used for data storage and
-management purposes.  The chapters finalizes with a little example
-showing GNU rec in action.
+This chapter contains an introduction describing why the rec format
+was conceived and how can it be used for data storage and management
+purposes.  The chapters finalizes with a little example showing GNU
+rec in action.
 
 @menu
 * Motivation::          Why GNU rec?
@@ -88,14 +88,17 @@ showing GNU rec in action.
 @node Motivation
 @section Motivation
 
-There are a lot of available different data storage systems that are
-suitable to satisfy a broad set of requirements.  A complex data
-management system usually makes use of a full-fledged relational
-system, such as PostgreSQL.  Some applications use custom binary file
-formats to store the application data.  @acronym{xml} files are also
-used for that purpose, using structured text instead.  If we had to
-elaborate a taxonomy of those systems, we could make use of the
-following properties:
+Currently (as in 2009) there are a lot of available different data
+storage systems that are suitable to satisfy a broad set of
+requirements.  A quite huge set of requirements, I would say.  But
+most of those requirements are high-profiled.
+
+A complex data management system usually makes use of a full-fledged
+relational system, such as PostgreSQL.  Some applications use custom
+binary file formats to store the application data.  @acronym{xml}
+files are also used for that purpose, using structured text instead.
+If we had to elaborate a taxonomy of those systems, we could make use
+of the following properties:
 
 @table @emph
 @item Compactness

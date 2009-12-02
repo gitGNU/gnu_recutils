@@ -934,7 +934,7 @@ Each character should identify only one name."
                  (error "Invalid entry in rec-custom-searches")))
              rec-custom-searches))))
 
-@(defun rec-init-searches ()
+(defun rec-init-searches ()
   "XXX"
   (let (res)
     (rec-do
