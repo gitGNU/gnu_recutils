@@ -1484,6 +1484,8 @@ Commands:
   (setq mode-name "Rec Edit")
   (setq major-mode 'rec-edit-field-mode))
 
+(provide 'rec-mode)
+
 ;; Local variables:
 ;; outline-regexp: ";; \\*"
 ;; End:
