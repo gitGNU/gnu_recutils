@@ -24,6 +24,7 @@ Documentation License''.
 @end quotation
 @end copying
 
+@dircategory Database
 @direntry
 * gnurec: (gnurec). The GNU Rec manual.
 @end direntry
@@ -653,7 +654,7 @@ project called @dfn{GNU Foo}.
 @section The GNU Foo Project
 
 The main purpose of the GNU Foo project is to provide a full-fledged
-free implementation of the @cfn{foo} format.  The software
+free implementation of the @dfn{foo} format.  The software
 distribution of GNU Foo consist in a shared library called
 @code{libgnufoo} and a bunch of command line utilities.
 
