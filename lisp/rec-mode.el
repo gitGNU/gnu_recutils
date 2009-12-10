@@ -682,8 +682,10 @@ the list of records."
         (goto-char (point-min))
         (rec-goto-next-rec))
       (let ((in-type t)
-            (first-time t))
-        (while (and in-type
+            (first-time t)
+            exit)
+        (while (and (not exit)
+                    in-type
                     (if (not first-time)
                         (rec-goto-next-rec)
                       t))
@@ -693,15 +695,16 @@ the list of records."
           (when (and in-type
                      (or descriptors
                          (rec-regular-p)))
-            (apply rec-do-func nil)))))))
+            (setq exit (not (funcall rec-do-func)))))))))
 
 (defun rec-map (rec-map-func &optional type descriptors)
   "XXX"
   (let (res)
     (rec-do (lambda ()
               (setq res 
-                    (cons (apply rec-map-func nil)
-                          res)))
+                    (cons (funcall rec-map-func)
+                          res))
+              t)
             type
             descriptors)
     (reverse res)))
@@ -816,7 +819,8 @@ the result buffer."
                  (setq inserted-types 
                        (cons type inserted-types)))
                (rec-insert-record rec what)
-               (insert "\n"))))))
+               (insert "\n"))))
+         t))
      type)
     (with-current-buffer sel-buffer
       (insert "\n"
@@ -922,6 +926,8 @@ Each character should identify only one name."
     ;; Add standard searches
     (add-to-list 'search-list
                  (list "Generic search" ?E))
+    (add-to-list 'search-list
+                 (list "Next record search" ?N))
     ;; Add custom searches
     (append search-list
             (mapcar 
@@ -955,7 +961,8 @@ Each character should identify only one name."
                               (mapcar (lambda (elem) 
                                         (rec-parse-field-name-from-string elem)) fields)
                               (read (car expr))
-                              type)))))
+                              type)))
+         t))
      "RecModeSearch")
     (setq rec-custom-searches res)))
 
@@ -1399,6 +1406,26 @@ records of the current type"
               (rec-search-list)
               "Search Type")))
     (cond
+     ((equal res ?N)
+      ;; Prompt the user for a field and a value and search
+      (let (field regexp pos)
+        (setq field (read-from-minibuffer "Field: "))
+        (setq regexp (read-from-minibuffer "Regexp: "))
+        (rec-do
+         (lambda ()
+           (let* ((init-pos (point))
+                  (rec (rec-parse-record))
+                  (val (rec-record-assoc (list field) rec)))
+             (when val
+               (if (string-match regexp (car val))
+                   (progn
+                     (setq pos init-pos)
+                     nil)
+                 t)))))
+        (when pos
+          (widen)
+          (goto-char pos)
+          (rec-show-record))))
      ((equal res ?E)
       ;; Prompt the user for an expression and search
       (let (what func name type)
