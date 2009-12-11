@@ -802,24 +802,25 @@ the result buffer."
     (message "Searching...")
     (rec-do
      (lambda ()
-       (let* ((rec (rec-parse-record))
-              (type (rec-record-type))
-              (descriptor (rec-record-descriptor)))
-         (when (apply func (list rec))
-           ;; Matching record
-           ;; Print it (the requested fields)
-           (with-current-buffer sel-buffer
-             (let (buffer-read-only)
-               (when (and descriptor
-                          (not (member type inserted-types)))
-                 (when write-descriptor
-                   ;; Insert the type descriptor
-                   (rec-insert-record (cadr descriptor)))
-                 (insert "\n")
-                 (setq inserted-types 
-                       (cons type inserted-types)))
-               (rec-insert-record rec what)
-               (insert "\n"))))
+       (save-excursion
+         (let* ((rec (rec-parse-record))
+                (type (rec-record-type))
+                (descriptor (rec-record-descriptor)))
+           (when (apply func (list rec))
+             ;; Matching record
+             ;; Print it (the requested fields)
+             (with-current-buffer sel-buffer
+               (let (buffer-read-only)
+                 (when (and descriptor
+                            (not (member type inserted-types)))
+                   (when write-descriptor
+                     ;; Insert the type descriptor
+                     (rec-insert-record (cadr descriptor)))
+                   (insert "\n")
+                   (setq inserted-types 
+                         (cons type inserted-types)))
+                 (rec-insert-record rec what)
+                 (insert "\n")))))
          t))
      type)
     (with-current-buffer sel-buffer
@@ -857,6 +858,7 @@ the result buffer."
   "Show the record under the point"
   (setq buffer-read-only t)
   (rec-narrow-to-record)
+  (use-local-map rec-mode-map)
   ;; TODO: Update field names for autocompletion
   ;;  (let ((names (rec-record-field-names (rec-current-record)))))
   (rec-set-mode-line (rec-record-type)))
@@ -1345,7 +1347,6 @@ point."
 (defun rec-finish-editing ()
   "Go back from the record edition mode"
   (interactive)
-  (use-local-map rec-mode-map)
   (or (rec-current-record)
       (rec-goto-next-rec)
       (rec-goto-previous-rec))
