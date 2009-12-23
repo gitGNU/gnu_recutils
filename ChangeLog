@@ -1,3 +1,9 @@
+2009-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* lisp/rec-mode.el: New file.
+	(rec-field-trim-value): New function.
+	(rec-cmd-trim-field-value): New function.
+
 2009-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lisp/rec-mode.el (rec-beginning-of-record-pos): Don't signal an
