@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:21:54 jemarch"
+/* -*- mode: C -*- Time-stamp: ""
  *
  *       File:         rec.h
  *       Date:         Fri Feb 27 20:04:59 2009
@@ -249,13 +249,36 @@ rec_record_t rec_rset_descriptor (rec_rset_t rset);
  */
 void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
 
-/* 
- * DATABASES
+/*
+ * PARSER
  *
- * A database is an unordered sequence of one or more record sets.
- *
+ * The rec parser provides functions to parse field, records and
+ * entire record sets from a file stream.
  */
-typedef struct rec_db_s *rec_db_t;
+
+typedef struct rec_parser_s *rec_parser_t;
+
+/* Create a new parser associated with a given file stream. */
+rec_parser_t rec_parser_new (FILE *in);
+
+/* Destroy a parser.
+ *
+ * Note that this call is not closing the associated file stream.
+ */
+void rec_parser_destroy (rec_parser_t parser);
+
+/* Parsing routines.
+ *
+ * If a parse error (or EOF) occurs, the following functions return
+ * NULL.
+ */
+
+bool rec_expect (rec_parser_t parser, char *str);
+char *rec_parse_field_name (rec_parser_t parser);
+char *rec_parse_field_value (rec_parser_t parser);
+rec_field_t rec_parse_field (rec_parser_t parser);
+rec_record_t rec_parse_record (rec_parser_t parser);
+rec_rset_t rec_parse_rset (rec_parser_t parser);
 
 #endif /* !REC_H */
 

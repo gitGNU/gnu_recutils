@@ -22,7 +22,8 @@ include_HEADERS = rec.h
 
 librec_la_SOURCES = rec-field.c \
                     rec-record.c \
-                    rec-rset.c
+                    rec-rset.c \
+                    rec-parser.c
 
 librec_la_LDFLAGS =
 librec_la_CPPFLAGS = -I$(top_srcdir)/lib
