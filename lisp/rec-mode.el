@@ -43,8 +43,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
   :type 'symbol
   :group 'rec-mode)
 
-;;;; Variables and constants that the user does not want to touch
-;;; (really!)
+;;;; Variables and constants that the user does not want to touch (really!)
 
 (defconst rec-keyword-rec "%rec"
   ;; Remember to update `rec-font-lock-keywords' if you change this
@@ -105,6 +104,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "\C-c#" 'rec-cmd-count)
     (define-key map "\C-cl" 'rec-cmd-sel)
     (define-key map "\C-cs" 'rec-cmd-search)
+    (define-key map "\C-cm" 'rec-cmd-trim-field-value)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map (concat "\C-c" (kbd "RET")) 'rec-cmd-jump)
     (define-key map "\C-cb" 'rec-cmd-jump-back)
@@ -124,6 +124,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "t" 'rec-cmd-show-descriptor)
     (define-key map "l" 'rec-cmd-sel)
     (define-key map "s" 'rec-cmd-search)
+    (define-key map "m" 'rec-cmd-trim-field-value)
     (define-key map "\C-ct" 'rec-find-type)
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
@@ -133,10 +134,10 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
   "Keymap for rec-mode")
 
 ;;;; Parsing functions (rec-parse-*)
-;;;
-;;; Those functions read the contents of the buffer (starting at the
-;;; current position of the pointer) and try to parse field, comment
-;;; and records structures.
+;;
+;; Those functions read the contents of the buffer (starting at the
+;; current position of the pointer) and try to parse field, comment
+;; and records structures.
 
 (defun rec-parse-comment ()
   "Parse and return a comment starting at point.
@@ -256,10 +257,10 @@ nil"
     (setq record (cons 'record (reverse record)))))
 
 ;;;; Writer functions (rec-insert-*)
-;;;
-;;; Those functions dump the written representation of the parser
-;;; structures (field, comment, record, etc) into the current buffer
-;;; starting at the current position.
+;;
+;; Those functions dump the written representation of the parser
+;; structures (field, comment, record, etc) into the current buffer
+;; starting at the current position.
 
 (defun rec-insert-comment (comment)
   "Insert the written form of COMMENT in the current buffer"
@@ -316,8 +317,8 @@ Recursive part"
     (rec-insert-record-2 (cdr record) fields)))
 
 ;;;; Operations on record structures
-;;;
-;;; Those functions retrieve or set properties of field structures.
+;;
+;; Those functions retrieve or set properties of field structures.
 
 (defun rec-record-assoc (name record)
   "Get a list with the values of the fields in RECORD named NAME.
@@ -349,8 +350,8 @@ If no such field exists in RECORD then nil is returned."
       (reverse result))))
 
 ;;;; Operations on field structures
-;;;
-;;; Those functions retrieve or set properties of field structures.
+;;
+;; Those functions retrieve or set properties of field structures.
 
 (defun rec-field-p (field)
   "Determine if the provided structure is a field"
@@ -368,11 +369,35 @@ If no such field exists in RECORD then nil is returned."
   (when (rec-field-p field)
     (nth 2 field)))
 
+(defun rec-field-trim-value (field)
+  "Trim the value of the given field."
+  (when (rec-field-p field)
+    (let ((value (nth 2 field))
+          c)
+      (with-temp-buffer
+        (insert value)
+        (goto-char (point-min))
+        (when (looking-at "[ \t\n]+")
+          (delete-region (match-beginning 0)
+                         (match-end 0)))
+        (goto-char (point-max))
+        (setq c (char-before))
+        (while (and c
+                    (or (equal c ?\n)
+                        (equal c ?\t)
+                        (equal c ? )))
+          (backward-char)
+          (setq c (char-before)))
+        (delete-region (point) (point-max))
+        (setq value (buffer-substring-no-properties (point-min)
+                                                    (point-max))))
+      (setcar (cddr field) value))))
+      
 ;;;; Get entities under pointer
-;;;
-;;; Those functions retrieve structures of the entities under pointer
-;;; like comments, fields and records.  If the especified entity is not
-;;; under the pointer then nil is returned.
+;;
+;; Those functions retrieve structures of the entities under pointer
+;; like comments, fields and records.  If the especified entity is not
+;; under the pointer then nil is returned.
 
 (defun rec-beginning-of-field-pos ()
   "Return the position of the beginning of the current field, or
@@ -481,8 +506,8 @@ The current record is the record where the pointer is"
         (rec-parse-record)))))
 
 ;;;; Visibility
-;;;
-;;; These functions manage the visibility in the rec buffer.
+;;
+;; These functions manage the visibility in the rec buffer.
 
 (defun rec-narrow-to-record ()
   "Narrow to the current record, if any"
@@ -498,10 +523,9 @@ The current record is the record where the pointer is"
     (narrow-to-region begin-pos end-pos)))
 
 ;;;; Record collection management
-;;;
-;;; These functions perform the management of the collection of records
-;;; in the buffer.
-    
+;;
+;; These functions perform the management of the collection of records
+;; in the buffer.
 
 (defun rec-update-buffer-descriptors ()
   "Get a list of the record descriptors in the current buffer."
@@ -755,9 +779,7 @@ Return nil if the point is not on a record."
           descriptor
         ""))))
                 
-;;;; Searching
-;;;
-;;; The following functions implement record search facilities.
+;;;; Searching functions
 
 (defun rec-search-first (type name value)
   "Return the position of the beginning of the record of type TYPE
@@ -836,9 +858,9 @@ the result buffer."
     (message "")))
 
 ;;;; Selection macros
-;;;
-;;; Note that in the context of the body in the following macros `rec'
-;;; is a record data structure.
+;;
+;; Note that in the context of the body in the following macros `rec'
+;; is a record data structure.
 
 (defmacro rec-field-eq (name val)
   `(let ((value (rec-record-assoc ,name rec)))
@@ -971,8 +993,8 @@ Each character should identify only one name."
     (setq rec-custom-searches res)))
 
 ;;;; Rec Idle mode
-;;;
-;;; This section is heavily inspired in semantic-idle.el
+;;
+;; This section is heavily inspired in semantic-idle.el
 
 (defvar rec-idle-scheduler-timer nil
   "*Timer used to schedule tasks in idle time.")
@@ -1105,9 +1127,9 @@ call additional functions registered with the timer calls."
       (save-match-data (rec-idle-core-handler)))))
 
 ;;;; Commands
-;;;
-;;; The following functions are implementing commands available in the
-;;; modes.
+;;
+;; The following functions are implementing commands available in the
+;; modes.
 
 (defun rec-cmd-edit-field ()
   "Edit the contents of the field under point in a separate
@@ -1432,6 +1454,16 @@ records of the current type"
              (func (nth 3 search))
              (type (nth 4 search)))
         (rec-sel what (list 'lambda (list 'rec) func) type))))))
+
+(defun rec-cmd-trim-field-value ()
+  "Trim the value of the field under point, if any."
+  (interactive)
+  (save-excursion
+    (let ((buffer-read-only nil)
+          (field (rec-current-field)))
+      (rec-field-trim-value field)
+      (rec-delete-field)
+      (rec-insert-field field))))
                    
 ;;;; Definition of modes
   
