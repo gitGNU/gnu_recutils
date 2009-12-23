@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 23:02:19 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 19:21:48 jemarch"
  *
  *       File:         rec-field.c
  *       Date:         Fri Feb 27 20:40:26 2009
@@ -43,7 +43,7 @@ struct rec_field_s
 };
 
 const char *
-rec_field_get_name (rec_field_t field)
+rec_field_name (rec_field_t field)
 {
   return field->name;
 }
@@ -63,7 +63,7 @@ rec_field_set_name (rec_field_t field,
 }
 
 const char *
-rec_field_get_value (rec_field_t field)
+rec_field_value (rec_field_t field)
 {
   return field->value;
 }
@@ -107,8 +107,8 @@ rec_field_dup (rec_field_t field)
 {
   rec_field_t new_field;
 
-  new_field = rec_field_new (rec_field_get_name (field),
-                             rec_field_get_value (field));
+  new_field = rec_field_new (rec_field_name (field),
+                             rec_field_value (field));
 
   return new_field;
 }
@@ -117,8 +117,8 @@ bool
 rec_field_equal_p (rec_field_t field1,
                    rec_field_t field2)
 {
-  return (strcmp (rec_field_get_name (field1),
-                  rec_field_get_name (field2)) == 0);
+  return (strcmp (rec_field_name (field1),
+                  rec_field_name (field2)) == 0);
 }
 
 void

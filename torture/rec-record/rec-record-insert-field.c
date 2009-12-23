@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 23:06:39 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 20:32:17 jemarch"
  *
  *       File:         rec-record-insert-field.c
  *       Date:         Fri Mar  6 20:08:59 2009
@@ -32,7 +32,7 @@ START_TEST(rec_record_insert_field_001)
   /* Create a new field and insert it into the record */
   field = rec_field_new ("name", "value");
   fail_if(field == NULL);
-  fail_if(!rec_record_insert_field (record, field));
+  fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
   fail_if(!rec_record_field_p (record, "name"));
@@ -62,12 +62,12 @@ START_TEST(rec_record_insert_field_002)
   /* Create a new field and insert it into the record */
   field = rec_field_new ("name", "value");
   fail_if(field == NULL);
-  fail_if(!rec_record_insert_field (record, field));
+  fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Create a new field and insert it into the record */
   field2 = rec_field_new ("name2", "value");
   fail_if(field2 == NULL);
-  fail_if(!rec_record_insert_field (record, field2));
+  fail_if(!rec_record_insert_field (record, field2, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
   fail_if(!rec_record_field_p (record, "name2"));
@@ -97,12 +97,12 @@ START_TEST(rec_record_insert_field_003)
   /* Create a new field and insert it into the record */
   field = rec_field_new ("name", "value");
   fail_if(field == NULL);
-  fail_if(!rec_record_insert_field (record, field));
+  fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Create a new field and insert it into the record */
   field2 = rec_field_new ("name", "value");
   fail_if(field2 == NULL);
-  fail_if(!rec_record_insert_field (record, field2));
+  fail_if(!rec_record_insert_field (record, field2, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
   fail_if(rec_record_size (record) != 2);

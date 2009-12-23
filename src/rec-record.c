@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 23:04:33 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 20:36:25 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -59,11 +59,11 @@ rec_record_new (void)
   if (record != NULL)
     {
       record->size = 0;
-      record->field_list = gl_list_create_empty (GL_ARRAY_LIST,
-                                                 rec_record_field_equals_fn,
-                                                 NULL,
-                                                 rec_record_field_dispose_fn,
-                                                 true);
+      record->field_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
+                                                    rec_record_field_equals_fn,
+                                                    NULL,
+                                                    rec_record_field_dispose_fn,
+                                                    true);
       
       if (record->field_list == NULL)
         {
@@ -94,153 +94,116 @@ rec_record_field_p (rec_record_t record,
                     const char *field_name)
 {
   bool found;
-  gl_list_node_t list_node;
   rec_field_t field;
+  gl_list_iterator_t iter;
 
   found = false;
-
-  /* Create a dummy field to use with gl_list_search. Unfortunately
-     this means that we are allocating memory here. An alternative
-     would be to use a list iterator - jemarch */
-  field = rec_field_new (field_name, "");
-
-  if (field != NULL)
+  iter = gl_list_iterator (record->field_list);
+  
+  while (gl_list_iterator_next (&iter, (const void **) &field, NULL))
     {
-
-      list_node = gl_list_search (record->field_list,
-                                  field);
-
-      if (list_node != NULL)
+      if (strcmp (field_name,
+                  rec_field_name (field)) == 0)
         {
           found = true;
+          break;
         }
-
-      rec_field_destroy (field);
     }
+
+  gl_list_iterator_free (&iter);
 
   return found;
 }
 
 bool
-rec_record_insert_field (rec_record_t record,
-                         rec_field_t field)
-{
-  gl_list_node_t list_node;
-
-  list_node = gl_list_add_last (record->field_list,
-                                (void *) field);
-  record->size++;
-
-  return true;
-}
-
-bool
 rec_record_remove_field (rec_record_t record,
-                         const char *field_name)
+                         int position)
 {
   bool removed;
-  rec_field_t field;
-  gl_list_node_t list_node;
 
   removed = false;
 
-  /* Create a dummy field to use with gl_list_search. Unfortunately
-     this is allocating memory. An alternative would be to use list
-     iterators -jemarch */
-  field = rec_field_new (field_name, "");
-
-  if (field != NULL)
+  if (record->size > 0)
     {
-      removed = gl_list_remove (record->field_list,
-                                (void *) field);
-      rec_field_destroy (field);
+      if (position < 0)
+        {
+          position = 0;
+        }
+      if (position >= record->size)
+        {
+          position = record->size - 1;
+        }
+      
+      if (gl_list_remove_at (record->field_list,
+                             position))
+        {
+          record->size--;
+          removed = true;
+        }
     }
-
-  if (removed)
-    {
-      record->size--;
-    }
-
+     
   return removed;
 }
 
 rec_field_t
 rec_record_get_field (rec_record_t record,
-                      const char *field_name)
+                      int position)
 {
-  rec_field_t result;
   rec_field_t field;
-  gl_list_node_t list_node;
 
-  result = NULL;
+  field = NULL;
 
-  /* Create a dummy rec_field_t to use with gl_list_search */
-  field = rec_field_new (field_name, "");
-  if (field != NULL)
+  if (record->size > 0)
     {
-      list_node = gl_list_search (record->field_list,
-                                  field);
-      if (list_node != NULL)
+      if (position < 0)
         {
-          result = (rec_field_t)
-            gl_list_node_value (record->field_list,
-                                list_node);
+          position = 0;
+        }
+      if (position >= record->size)
+        {
+          position = record->size - 1;
         }
 
-      rec_field_destroy (field);
+      field = (rec_field_t) gl_list_get_at (record->field_list,
+                                            position);
     }
 
-  return result;
-}
-
-rec_field_t
-rec_record_get_field_at (rec_record_t record,
-                         int position)
-{
-  rec_field_t result;
-
-  /* position sanity check */
-  if ((position < 0) ||
-      (position >= gl_list_size (record->field_list)))
-    {
-      result = NULL;
-    }
-  else
-    {
-      result = (rec_field_t) gl_list_get_at (record->field_list,
-                                             position);
-    }
-
-  return result;
+  return field;
 }
 
 bool
-rec_record_insert_field_at (rec_record_t record,
-                            rec_field_t field,
-                            int position)
+rec_record_insert_field (rec_record_t record,
+                         rec_field_t field,
+                         int position)
 {
-  bool inserted;
-  int number_of_fields;
   gl_list_node_t node;
     
-  /* position sanity check */
-  number_of_fields = gl_list_size (record->field_list);
+  node = NULL;
+
   if (position < 0)
     {
-      position = 0;
+      node = gl_list_nx_add_first (record->field_list,
+                                   (void *) field);
     }
-  if (position >= number_of_fields)
+  else if (position >= record->size)
     {
-      position = number_of_fields;
+      node = gl_list_nx_add_last (record->field_list,
+                                  (void *) field);
+    }
+  else
+    {
+      node = gl_list_nx_add_at (record->field_list,
+                                position,
+                                (void *) field);
     }
 
-  /* Field insertion */
-  node = gl_list_set_at (record->field_list,
-                         position,
-                         (void *) field);
+  if (node != NULL)
+    {
+      record->size++;
+      return true;
+    }
 
-  inserted = true;
-  return inserted;
+  return false;
 }
 
 bool
@@ -266,11 +229,11 @@ rec_record_subset_p (rec_record_t record1,
   for (index1 = 0; index1 < rec_record_size (record1); index1++)
     {
       field_found = false;
-      field1 = rec_record_get_field_at (record1, index1);
+      field1 = rec_record_get_field (record1, index1);
 
       for (index2 = 0; index2 < rec_record_size (record2); index2++)
         {
-          field2 = rec_record_get_field_at (record2, index2);
+          field2 = rec_record_get_field (record2, index2);
 
           if (rec_field_equal_p (field1, field2))
             {
@@ -300,12 +263,12 @@ rec_record_dup (rec_record_t record)
   new_record = rec_record_new ();
   for (index = 0; index < rec_record_size (record); index++)
     {
-      field = rec_record_get_field_at (record, index);
+      field = rec_record_get_field (record, index);
       
-      new_field = rec_field_new (rec_field_get_name (field),
-                                 rec_field_get_value (field));
+      new_field = rec_field_new (rec_field_name (field),
+                                 rec_field_value (field));
 
-      rec_record_insert_field (new_record, new_field);
+      rec_record_insert_field (new_record, new_field, index);
     }
 
   return new_record;

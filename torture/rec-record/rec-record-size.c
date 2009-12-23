@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:50:30 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 20:30:53 jemarch"
  *
  *       File:         rec-record-size.c
  *       Date:         Fri Mar  6 00:02:20 2009
@@ -57,9 +57,9 @@ START_TEST(rec_record_size_002)
   record = rec_record_new ();
   fail_if(record == NULL);
 
-  fail_if(!rec_record_insert_field (record, field1));
-  fail_if(!rec_record_insert_field (record, field2));
-  fail_if(!rec_record_insert_field (record, field3));
+  fail_if(!rec_record_insert_field (record, field1, rec_record_size (record)));
+  fail_if(!rec_record_insert_field (record, field2, rec_record_size (record)));
+  fail_if(!rec_record_insert_field (record, field3, rec_record_size (record)));
 
   fail_if(rec_record_size (record) != 3);
   

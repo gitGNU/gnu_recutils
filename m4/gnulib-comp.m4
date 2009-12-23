@@ -25,7 +25,6 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
-  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -41,24 +40,10 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='lib'
-  AC_REQUIRE([gl_HEADER_ERRNO_H])
-  gl_ERROR
-  m4_ifdef([AM_XGETTEXT_OPTION],
-    [AM_XGETTEXT_OPTION([--flag=error:3:c-format])
-     AM_XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
-  gl_EXITFAIL
-  AC_SUBST([LIBINTL])
-  AC_SUBST([LTLIBINTL])
   gl_INLINE
   gl_LIST
   gl_SIZE_MAX
   AM_STDBOOL_H
-  gl_STDLIB_H
-  gl_FUNC_STRERROR
-  gl_STRING_MODULE_INDICATOR([strerror])
-  gl_HEADER_STRING_H
-  gl_UNISTD_H
-  gl_XALLOC
   gl_XSIZE
   m4_ifval(gl_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
@@ -82,7 +67,7 @@ AC_DEFUN([gl_INIT],
     if test -n "$gl_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl_libobjs="$gl_libobjs $i.$ac_objext"
         gl_ltlibobjs="$gl_ltlibobjs $i.lo"
       done
@@ -121,7 +106,7 @@ AC_DEFUN([gl_INIT],
     if test -n "$gltests_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gltests_libobjs="$gltests_libobjs $i.$ac_objext"
         gltests_ltlibobjs="$gltests_ltlibobjs $i.lo"
       done
@@ -188,44 +173,19 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
-  build-aux/link-warning.h
-  lib/errno.in.h
-  lib/error.c
-  lib/error.h
-  lib/exitfail.c
-  lib/exitfail.h
-  lib/gettext.h
   lib/gl_array_list.c
   lib/gl_array_list.h
   lib/gl_list.c
   lib/gl_list.h
-  lib/intprops.h
   lib/size_max.h
   lib/stdbool.in.h
-  lib/stdlib.in.h
-  lib/strerror.c
-  lib/string.in.h
-  lib/unistd.in.h
-  lib/xalloc-die.c
-  lib/xalloc.h
-  lib/xmalloc.c
   lib/xsize.h
   m4/00gnulib.m4
-  m4/errno_h.m4
-  m4/error.m4
-  m4/exitfail.m4
-  m4/extensions.m4
   m4/gl_list.m4
   m4/gnulib-common.m4
-  m4/include_next.m4
   m4/inline.m4
   m4/onceonly.m4
   m4/size_max.m4
   m4/stdbool.m4
-  m4/stdlib_h.m4
-  m4/strerror.m4
-  m4/string_h.m4
-  m4/unistd_h.m4
-  m4/xalloc.m4
   m4/xsize.m4
 ])

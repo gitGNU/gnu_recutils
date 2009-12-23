@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:47:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 20:28:20 jemarch"
  *
  *       File:         rec-field-set-name.c
  *       Date:         Sun Mar  1 17:04:00 2009
@@ -47,7 +47,7 @@ START_TEST(rec_field_set_name_001)
   fail_if(field == NULL);
 
   rec_field_set_name (field, "");
-  field_name = rec_field_get_name (field);
+  field_name = rec_field_name (field);
   fail_if(strcmp (field_name, "") != 0);
 }
 END_TEST
@@ -70,7 +70,7 @@ START_TEST(rec_field_set_name_002)
   fail_if(field == NULL);
 
   rec_field_set_name (field, "foo");
-  field_name = rec_field_get_name (field);
+  field_name = rec_field_name (field);
   fail_if(strcmp (field_name, "foo") != 0);
 }
 END_TEST
@@ -88,4 +88,4 @@ test_rec_field_set_name (void)
   return tc;
 }
 
-/* End of rec-field-get-name.c */
+/* End of rec-field-set-name.c */

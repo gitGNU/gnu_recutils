@@ -21,9 +21,9 @@ if CHECK
 TESTS = runtests
 noinst_PROGRAMS = runtests
 
-REC_FIELD_TSUITE = rec-field/rec-field-get-name.c \
+REC_FIELD_TSUITE = rec-field/rec-field-name.c \
                   rec-field/rec-field-set-name.c \
-                  rec-field/rec-field-get-value.c \
+                  rec-field/rec-field-value.c \
                   rec-field/rec-field-set-value.c \
                   rec-field/rec-field-dup.c \
                   rec-field/tsuite-rec-field.c

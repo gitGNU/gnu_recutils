@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:49:25 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 20:31:20 jemarch"
  *
  *       File:         rec-record-field-p.c
  *       Date:         Fri Mar  6 20:01:09 2009
@@ -33,7 +33,7 @@ START_TEST(rec_record_field_p_001)
   /* Create a new field and insert it into the record */
   field = rec_field_new ("name", "value");
   fail_if(field == NULL);
-  fail_if(!rec_record_insert_field (record, field));
+  fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
   fail_if(!rec_record_field_p (record, "name"));
@@ -63,7 +63,7 @@ START_TEST(rec_record_field_p_002)
   /* Create a new field and insert it into the record*/
   field = rec_field_new ("name", "value");
   fail_if(field == NULL);
-  fail_if(!rec_record_insert_field (record, field));
+  fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
   fail_if(rec_record_field_p (record, "nonexistant"));

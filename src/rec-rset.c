@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 22:56:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 20:25:09 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -59,7 +59,7 @@ static char *special_fields[] =
     REC_NAME_KEY,
     REC_NAME_MANDATORY,
     REC_NAME_UNIQUE,
-    /* Centinel */
+    /* Sentinel */
     ""
   };
 
@@ -67,8 +67,6 @@ static bool
 rec_rset_record_equals_fn (const void *elt1, const void *elt2);
 static void
 rec_rset_record_dispose_fn (const void *elt);
-static bool
-rec_rset_record_can_be_inserted_p (rec_rset_t rset, rec_record_t record);
 
 rec_rset_t
 rec_rset_new (void)
@@ -86,11 +84,18 @@ rec_rset_new (void)
       rset->size = 0;
 
       /* Initialize the record list, allowing duplicates */
-      rset->record_list = gl_list_create_empty (GL_ARRAY_LIST,
-                                                rec_rset_record_equals_fn,
-                                                NULL,
-                                                rec_rset_record_dispose_fn,
-                                                true);
+      rset->record_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
+                                                   rec_rset_record_equals_fn,
+                                                   NULL,
+                                                   rec_rset_record_dispose_fn,
+                                                   true);
+
+      if (rset->record_list == NULL)
+        {
+          /* Out of memory */
+          free (rset);
+          rset = NULL;
+        }
     }
 
   return rset;
@@ -110,105 +115,99 @@ rec_rset_size (rec_rset_t rset)
 }
 
 rec_record_t
-rec_rset_get_record_at (rec_rset_t rset,
-                        int position)
+rec_rset_get_record (rec_rset_t rset,
+                     int position)
 {
-  rec_record_t result;
+  rec_record_t record;
 
-  /* position sanity check */
-  if ((position < 0) ||
-      (position >= gl_list_size (rset->record_list)))
+  record = NULL;
+
+  if (rset->size > 0)
     {
-      result = NULL;
-    }
-  else
-    {
-      result = (rec_record_t) gl_list_get_at (rset->record_list,
+      if (position < 0)
+        {
+          position = 0;
+        }
+      if (position >= rset->size)
+        {
+          position = rset->size - 1;
+        }
+
+      record = (rec_record_t) gl_list_get_at (rset->record_list,
                                               position);
     }
   
-  return result;
+  return record;
 }
 
 bool
-rec_rset_insert_record_at (rec_rset_t rset,
-                           rec_record_t record,
-                           int position)
+rec_rset_insert_record (rec_rset_t rset,
+                        rec_record_t record,
+                        int position)
 {
-  bool inserted;
-  int number_of_records;
   gl_list_node_t node;
 
-  /* position sanity check */
-  number_of_records = gl_list_size (rset->record_list);
+  node = NULL;
+
   if (position < 0)
     {
-      position = 0;
+      node = gl_list_nx_add_first (rset->record_list,
+                                   (void *) record);
     }
-  if (position >= number_of_records)
+  else if (position >= rset->size)
     {
-      position = number_of_records;
-    }
-
-  inserted = false;
-  if (rec_rset_record_can_be_inserted_p (rset, record))
-    {
-      /* Field insertion */
-      node = gl_list_set_at (rset->record_list,
-                             position,
-                             (void *) record);
-      inserted = true;
-    }
-
-  return inserted;
-}
-
-bool
-rec_rset_remove_record_at (rec_rset_t rset,
-                           int position)
-{
-  bool removed;
-
-  /* position sanity check */
-  if ((position < 0) ||
-      (position >= gl_list_size (rset->record_list)))
-    {
-      removed = false;
+      node = gl_list_nx_add_last (rset->record_list,
+                                  (void *) record);
     }
   else
     {
-      removed = gl_list_remove_at (rset->record_list,
-                                   position);
+      node = gl_list_nx_add_at (rset->record_list,
+                                position,
+                                (void *) record);
+    }
+
+
+  if (node != NULL)
+    {
+      rset->size++;
+      return true;
+    }
+
+  return false;
+}
+
+bool
+rec_rset_remove_record (rec_rset_t rset,
+                        int position)
+{
+  bool removed;
+
+  removed = false;
+
+  if (rset->size > 0)
+    {
+      if (position < 0)
+        {
+          position = 0;
+        }
+      if (position >= rset->size)
+        {
+          position = rset->size - 1;
+        }
+
+      if (gl_list_remove_at (rset->record_list,
+                             position))
+        {
+          rset->size--;
+          removed = true;
+        }
     }
 
   return removed;
 }
 
-bool
-rec_rset_insert_record (rec_rset_t rset,
-                        rec_record_t record)
-{
-  bool inserted;
-  gl_list_node_t list_node;
-
-  inserted = false;
-  if (rec_rset_record_can_be_inserted_p (rset, record))
-    {
-      list_node = gl_list_add_last (rset->record_list,
-                                    (void *) record);
-      
-      if (list_node != NULL)
-        {
-          inserted = true;
-          rset->size++;
-        }
-    }
-
-  return inserted;
-}
-
 rec_record_t
-rec_rset_get_descriptor (rec_rset_t rset)
+rec_rset_descriptor (rec_rset_t rset)
 {
   return rset->descriptor;
 }
@@ -245,65 +244,6 @@ rec_rset_record_dispose_fn (const void *elt)
 
   record = (rec_record_t) elt;
   rec_record_destroy (record);
-}
-
-static bool
-rec_rset_record_can_be_inserted_p (rec_rset_t rset,
-                                   rec_record_t record)
-{
-  /* The record can be inserted if and only if it
-   *
-   * - It does not contain a field defined as key having a value
-   *   already present in some record in the set.
-   *
-   * - It does not contain duplicated fields defined as unique.
-   *
-   * - It does not contain a field defined as mandatory.
-   */
-
-  bool can_be_inserted;
-  rec_record_t descriptor;
-  rec_field_t field;
-  int index;
-
-  can_be_inserted = true;
-
-  /* Get the special record of the record set and iterate on its
-     fields */
-  descriptor = rec_rset_get_descriptor (rset);
-
-  for (index = 0;
-       index < rec_record_size (descriptor);
-       index++)
-    {
-      field = rec_record_get_field_at (descriptor,
-                                       index);
-
-      if (strcmp (rec_field_get_name (field),
-                  REC_NAME_MANDATORY) == 0)
-        {
-          /* Mandatory field => the record should contain this
-             field */
-          if (!rec_record_field_p (record, rec_field_get_value (field)))
-            {
-              can_be_inserted = false;
-              break;
-            }
-        }
-      if (strcmp (rec_field_get_name (field),
-                  REC_NAME_UNIQUE) == 0)
-        {
-          /* Unique field => if the record has a field with this name
-             then no other record in the set can have the same
-             NAME->VALUE field */
-          if (rec_record_field_p (record, rec_field_get_value (field)))
-            {
-              /* XXX */
-            }
-        }
-    }
-
-  return can_be_inserted;
 }
 
 /* End of rec-rset.c */

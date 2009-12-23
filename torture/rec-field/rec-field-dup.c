@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:46:23 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/23 20:30:11 jemarch"
  *
  *       File:         rec-field-dup.c
  *       Date:         Thu Mar  5 23:29:56 2009
@@ -55,8 +55,8 @@ START_TEST(rec_field_dup_001)
   fail_if(field_copy == NULL);
 
   /* Get the attributes of the copy */
-  field_name = rec_field_get_name (field_copy);
-  field_value = rec_field_get_value (field_copy);
+  field_name = rec_field_name (field_copy);
+  field_value = rec_field_value (field_copy);
 
   /* Validate the attributes */
   fail_if(strcmp (field_name, "") != 0);
@@ -93,8 +93,8 @@ START_TEST(rec_field_dup_002)
   fail_if(field_copy == NULL);
 
   /* Get the attributes of the copy */
-  field_name = rec_field_get_name (field_copy);
-  field_value = rec_field_get_value (field_copy);
+  field_name = rec_field_name (field_copy);
+  field_value = rec_field_value (field_copy);
 
   /* Validate the attributes */
   fail_if(strcmp (field_name, "name") != 0);

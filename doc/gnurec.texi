@@ -53,7 +53,9 @@ GNU Rec Manual
 @end ifnottex
 
 @menu
-* Overview::            Introduction to the GNU Records.
+Overview
+* Introduction::        Introducing GNU records.
+* A Little Example::    GNU rec in action.
 
 The Rec Format
 * Fields and Records::  The basic structures conforming Rec files.
@@ -73,26 +75,12 @@ GNU Rec Utilities
 * GNU Free Documentation License:: Distribution terms for this document.
 @end menu
 
-@node Overview
-@chapter Overview
+@node Introduction
+@chapter Introduction
 
-This chapter contains an introduction describing why the rec format
-was conceived and how can it be used for data storage and management
-purposes.  The chapters finalizes with a little example showing GNU
-rec in action.
-
-@menu
-* Motivation::          Why GNU rec?
-* A Little Example::    GNU rec in action.
-@end menu
-
-@node Motivation
-@section Motivation
-
-Currently (as in 2009) there are a lot of available different data
-storage systems that are suitable to satisfy a broad set of
-requirements.  A quite huge set of requirements, I would say.  But
-most of those requirements are high-profiled.
+Currently (as in 2009) there are a lot of available data storage
+systems that are suitable to satisfy a quite broad set of
+requirements.
 
 A complex data management system usually makes use of a full-fledged
 relational system, such as PostgreSQL.  Some applications use custom
@@ -131,7 +119,7 @@ Exceptions are @acronym{xml} and @emph{org} files.
 @end table
 
 @node A Little Example
-@section A Little Example
+@chapter A Little Example
 
 Everyone loves to grow a nice book collection in home.  Unfortunately,
 in most cases the management of our private books gets uncontrolled:
@@ -219,9 +207,9 @@ Location: in site
 # End of books.rec
 @end example
 
-Pretty simple.  The file contains a set of records separated by blank
-lines.  Each record is composed by a set of fields with a name and a
-value.
+Pretty simple, huh?.  The file contains a set of records separated by
+blank lines.  Each record is composed by a set of fields with a name
+and a value.
 
 The GNU rec utilities can then be used to access the contents of the
 file.  For example, we could get a list of the names of loaned books
