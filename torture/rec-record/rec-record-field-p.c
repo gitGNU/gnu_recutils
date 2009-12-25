@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:31:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:20:49 jemarch"
  *
  *       File:         rec-record-field-p.c
  *       Date:         Fri Mar  6 20:01:09 2009
@@ -25,18 +25,21 @@ START_TEST(rec_record_field_p_001)
 {
   rec_record_t record;
   rec_field_t field;
+  rec_field_name_t fname;
 
   /* Create a new record */
   record = rec_record_new ();
   fail_if(record == NULL);
 
   /* Create a new field and insert it into the record */
-  field = rec_field_new ("name", "value");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "name");
+  field = rec_field_new (fname, "value");
   fail_if(field == NULL);
   fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
-  fail_if(!rec_record_field_p (record, "name"));
+  fail_if(!rec_record_field_p (record, fname));
 
   rec_record_destroy (record);
 }
@@ -55,18 +58,24 @@ START_TEST(rec_record_field_p_002)
 {
   rec_record_t record;
   rec_field_t field;
+  rec_field_name_t fname;
+  rec_field_name_t fname2;
 
   /* Create a new record */
   record = rec_record_new ();
   fail_if(record == NULL);
 
   /* Create a new field and insert it into the record*/
-  field = rec_field_new ("name", "value");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "name");
+  field = rec_field_new (fname, "value");
   fail_if(field == NULL);
   fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
-  fail_if(rec_record_field_p (record, "nonexistant"));
+  fname2 = rec_field_name_dup (fname);
+  rec_field_name_set (fname2, 1, "nonexistant");
+  fail_if(rec_record_field_p (record, fname2));
 
   rec_record_destroy (record);
 }

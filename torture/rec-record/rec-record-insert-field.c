@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:32:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:27:29 jemarch"
  *
  *       File:         rec-record-insert-field.c
  *       Date:         Fri Mar  6 20:08:59 2009
@@ -24,18 +24,21 @@ START_TEST(rec_record_insert_field_001)
 {
   rec_record_t record;
   rec_field_t field;
+  rec_field_name_t fname;
 
   /* Create a new record */
   record = rec_record_new ();
   fail_if(record == NULL);
 
   /* Create a new field and insert it into the record */
-  field = rec_field_new ("name", "value");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "name");
+  field = rec_field_new (fname, "value");
   fail_if(field == NULL);
   fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
-  fail_if(!rec_record_field_p (record, "name"));
+  fail_if(!rec_record_field_p (record, fname));
 
   rec_record_destroy (record);
 }
@@ -53,24 +56,30 @@ START_TEST(rec_record_insert_field_002)
 {
   rec_record_t record;
   rec_field_t field;
+  rec_field_name_t fname;
   rec_field_t field2;
+  rec_field_name_t fname2;
 
   /* Create a new record */
   record = rec_record_new ();
   fail_if(record == NULL);
 
   /* Create a new field and insert it into the record */
-  field = rec_field_new ("name", "value");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "name");
+  field = rec_field_new (fname, "value");
   fail_if(field == NULL);
   fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Create a new field and insert it into the record */
-  field2 = rec_field_new ("name2", "value");
+  fname2 = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "name2");
+  field2 = rec_field_new (fname2, "value");
   fail_if(field2 == NULL);
   fail_if(!rec_record_insert_field (record, field2, rec_record_size (record)));
 
   /* Check for the existence of the field into the record */
-  fail_if(!rec_record_field_p (record, "name2"));
+  fail_if(!rec_record_field_p (record, fname2));
 
   rec_record_destroy (record);
 }
@@ -88,19 +97,25 @@ START_TEST(rec_record_insert_field_003)
 {
   rec_record_t record;
   rec_field_t field;
+  rec_field_name_t fname;
   rec_field_t field2;
+  rec_field_name_t fname2;
 
   /* Create a new record */
   record = rec_record_new ();
   fail_if(record == NULL);
 
   /* Create a new field and insert it into the record */
-  field = rec_field_new ("name", "value");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "name");
+  field = rec_field_new (fname, "value");
   fail_if(field == NULL);
   fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 
   /* Create a new field and insert it into the record */
-  field2 = rec_field_new ("name", "value");
+  fname2 = rec_field_name_new ();
+  rec_field_name_set (fname2, 0, "name");
+  field2 = rec_field_new (fname2, "value");
   fail_if(field2 == NULL);
   fail_if(!rec_record_insert_field (record, field2, rec_record_size (record)));
 

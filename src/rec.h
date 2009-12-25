@@ -39,6 +39,54 @@
 #define REC_VERSION_MINOR 0
 #define REC_VERSION_STRING "1.0"
 
+/* FIELD NAMES
+ *
+ * A field name is a list of name-parts:
+ *
+ *   namepart1:namepart2: ...
+ *
+ * Each name-part is finished by a colon (:) character.
+ */
+
+typedef struct rec_field_name_s *rec_field_name_t;
+
+/* Return a newly created field.
+ *
+ * In the case of an error NULL is returned.
+ */
+rec_field_name_t rec_field_name_new ();
+
+/* Destroy a field name */
+void rec_field_name_destroy (rec_field_name_t fname);
+
+/* Get a copy of a field name */
+rec_field_name_t rec_field_name_dup (rec_field_name_t fname);
+
+/* Comparation of field names.
+ *
+ * Two given field names are equal if and only if they contain the
+ * same number of name parts and they are identical.
+*/
+bool rec_field_name_equal_p (rec_field_name_t fname1,
+                             rec_field_name_t fname2);
+
+/* Get the number of parts contained in a given field name */
+int rec_field_name_size (rec_field_name_t fname);
+
+/* Set a part in a field name.
+ *
+ * If INDEX is out of bounds then 'false' is returned.
+ */
+bool rec_field_name_set (rec_field_name_t fname,
+                         int index,
+                         const char *str);
+
+/* Get a part of a field name.
+ *
+ * If INDEX is out of bounds then NULL is returned.
+ */
+const char *rec_field_name_get (rec_field_name_t fname,
+                                int index);
 /*
  * FIELDS
  *
@@ -51,17 +99,17 @@ typedef struct rec_field_s *rec_field_t;
  *
  * In the case of an error NULL is returned.
  */
-rec_field_t rec_field_new (const char *name,
+rec_field_t rec_field_new (const rec_field_name_t name,
                            const char *value);
 
 /* Destroy a field, freeing any occupied memory. */
 void rec_field_destroy (rec_field_t field);
 
 /* Return a pointer to the string containing the field name. */
-const char *rec_field_name (rec_field_t field);
+rec_field_name_t rec_field_name (rec_field_t field);
 
 /* Set the name of a field to a given string. */
-void rec_field_set_name (rec_field_t field, const char *name);
+void rec_field_set_name (rec_field_t field, rec_field_name_t fname);
 
 /* Return a pointer to the string containing the value of the
    field. */
@@ -105,7 +153,7 @@ int rec_record_size (rec_record_t record);
  * given name.
  */
 bool rec_record_field_p (rec_record_t record,
-                         const char *field_name);
+                         rec_field_name_t field_name);
 
 /* Insert a field into a record at a given position.
  *
@@ -273,12 +321,23 @@ void rec_parser_destroy (rec_parser_t parser);
  * NULL.
  */
 
-bool rec_expect (rec_parser_t parser, char *str);
-char *rec_parse_field_name (rec_parser_t parser);
-char *rec_parse_field_value (rec_parser_t parser);
-rec_field_t rec_parse_field (rec_parser_t parser);
-rec_record_t rec_parse_record (rec_parser_t parser);
-rec_rset_t rec_parse_rset (rec_parser_t parser);
+bool rec_parse_field (rec_parser_t parser, rec_field_t *field);
+bool rec_parse_record (rec_parser_t parser, rec_record_t *record);
+bool rec_parse_rset (rec_parser_t parser, rec_rset_t *rset);
+
+/* Getting information about the parser */
+bool rec_parser_eof (rec_parser_t parser);
+bool rec_parser_error (rec_parser_t parser);
+
+/* Print a message with details on the last parser error.
+ *
+ * This function produces a message on the standard error output,
+ * describing the last error encountered while parsing.  First, if FMT
+ * is not NULL, it is printed along with any remaining argument.  Then
+ * a colon and a space are printed, and finally an error message
+ * describing what went wrong.
+ */
+void rec_parser_perror (rec_parser_t parser, char *fmt, ...);
 
 #endif /* !REC_H */
 

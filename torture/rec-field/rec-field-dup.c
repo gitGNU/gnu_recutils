@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:30:11 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:16:03 jemarch"
  *
  *       File:         rec-field-dup.c
  *       Date:         Thu Mar  5 23:29:56 2009
@@ -43,11 +43,13 @@ START_TEST(rec_field_dup_001)
 {
   rec_field_t field;
   rec_field_t field_copy;
-  const char *field_name;
+  rec_field_name_t field_name;
   const char *field_value;
 
   /* Create a field */
-  field = rec_field_new ("", "");
+  field_name = rec_field_name_new ();
+  rec_field_name_set (field_name, 0, "");
+  field = rec_field_new (field_name, "");
   fail_if(field == NULL);
 
   /* Create a copy of the field */
@@ -59,7 +61,7 @@ START_TEST(rec_field_dup_001)
   field_value = rec_field_value (field_copy);
 
   /* Validate the attributes */
-  fail_if(strcmp (field_name, "") != 0);
+  fail_if(strcmp (rec_field_name_get (field_name, 0), "") != 0);
   fail_if(strcmp (field_value, "") != 0);
 
   rec_field_destroy (field);
@@ -81,11 +83,13 @@ START_TEST(rec_field_dup_002)
 {
   rec_field_t field;
   rec_field_t field_copy;
-  const char *field_name;
+  rec_field_name_t field_name;
   const char *field_value;
 
   /* Create a field */
-  field = rec_field_new ("name", "value");
+  field_name = rec_field_name_new ();
+  rec_field_name_set (field_name, 0, "name");
+  field = rec_field_new (field_name, "value");
   fail_if(field == NULL);
 
   /* Create a copy of the field */
@@ -97,7 +101,7 @@ START_TEST(rec_field_dup_002)
   field_value = rec_field_value (field_copy);
 
   /* Validate the attributes */
-  fail_if(strcmp (field_name, "name") != 0);
+  fail_if(strcmp (rec_field_name_get (field_name, 0), "name") != 0);
   fail_if(strcmp (field_value, "value") != 0);
 
   rec_field_destroy (field);

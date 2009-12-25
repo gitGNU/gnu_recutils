@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 19:21:48 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:18:06 jemarch"
  *
  *       File:         rec-field.c
  *       Date:         Fri Feb 27 20:40:26 2009
@@ -24,6 +24,7 @@
  */
 
 #include <config.h>
+
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
@@ -36,13 +37,12 @@
  */
 struct rec_field_s
 {
-  char *name;  /* NULL-terminated string containing the name of the
-                  field. */
+  rec_field_name_t name;
   char *value; /* NULL-terminated string containing the text value of
                   the field. */
 };
 
-const char *
+rec_field_name_t
 rec_field_name (rec_field_t field)
 {
   return field->name;
@@ -50,16 +50,16 @@ rec_field_name (rec_field_t field)
 
 void
 rec_field_set_name (rec_field_t field,
-                    const char *name)
+                    rec_field_name_t fname)
 {
   if (field->name != NULL)
     {
       /* Release previously used memory */
-      free (field->name);
+      rec_field_name_destroy (field->name);
       field->name = NULL;
     }
 
-  field->name = strdup (name);
+  field->name = fname;
 }
 
 const char *
@@ -83,7 +83,7 @@ rec_field_set_value (rec_field_t field,
 }
 
 rec_field_t
-rec_field_new (const char *name,
+rec_field_new (rec_field_name_t name,
                const char *value)
 {
   rec_field_t field;
@@ -107,7 +107,7 @@ rec_field_dup (rec_field_t field)
 {
   rec_field_t new_field;
 
-  new_field = rec_field_new (rec_field_name (field),
+  new_field = rec_field_new (rec_field_name_dup (rec_field_name (field)),
                              rec_field_value (field));
 
   return new_field;
@@ -117,13 +117,18 @@ bool
 rec_field_equal_p (rec_field_t field1,
                    rec_field_t field2)
 {
-  return (strcmp (rec_field_name (field1),
-                  rec_field_name (field2)) == 0);
+  return (rec_field_name_equal_p (field1->name,
+                                  field2->name));
 }
 
 void
 rec_field_destroy (rec_field_t field)
 {
+  if (field->name)
+    {
+      rec_field_name_destroy (field->name);
+    }
+
   free (field);
 }
 

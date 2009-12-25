@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:34:11 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:28:16 jemarch"
  *
  *       File:         rec-record-remove-field.c
  *       Date:         Fri Mar  6 21:11:18 2009
@@ -25,13 +25,16 @@ START_TEST(rec_record_remove_field_001)
 {
   rec_record_t record;
   rec_field_t field;
+  rec_field_name_t fname;
 
   /* Create a new record */
   record = rec_record_new ();
   fail_if(record == NULL);
 
   /* Create a new field and insert it into the record */
-  field = rec_field_new ("name", "value");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "name");
+  field = rec_field_new (fname, "value");
   fail_if(field == NULL);
   fail_if(!rec_record_insert_field (record, field, rec_record_size (record)));
 

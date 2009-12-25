@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:28:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:13:53 jemarch"
  *
  *       File:         rec-field-set-name.c
  *       Date:         Sun Mar  1 17:04:00 2009
@@ -41,14 +41,22 @@
 START_TEST(rec_field_set_name_001)
 {
   rec_field_t field;
-  const char *field_name;
+  rec_field_name_t field_name;
+  rec_field_name_t field_name_2;
   
-  field = rec_field_new ("", "");
+  field_name = rec_field_name_new ();
+  rec_field_name_set (field_name, 0, "");
+
+  field = rec_field_new (field_name, "");
   fail_if(field == NULL);
 
-  rec_field_set_name (field, "");
-  field_name = rec_field_name (field);
-  fail_if(strcmp (field_name, "") != 0);
+  field_name_2 = rec_field_name_new ();
+  rec_field_name_set (field_name_2, 0, "");
+
+  rec_field_set_name (field, field_name_2);
+  field_name_2 = rec_field_name (field);
+  fail_if(strcmp (rec_field_name_get (field_name_2, 0), "")
+          != 0);
 }
 END_TEST
 
@@ -64,14 +72,22 @@ END_TEST
 START_TEST(rec_field_set_name_002)
 {
   rec_field_t field;
-  const char *field_name;
+  rec_field_name_t field_name;
+  rec_field_name_t field_name_2;
   
-  field = rec_field_new ("foo", "");
+  field_name = rec_field_name_new ();
+  rec_field_name_set (field_name, 0, "");
+
+  field = rec_field_new (field_name, "");
   fail_if(field == NULL);
 
-  rec_field_set_name (field, "foo");
-  field_name = rec_field_name (field);
-  fail_if(strcmp (field_name, "foo") != 0);
+  field_name_2 = rec_field_name_new ();
+  rec_field_name_set (field_name_2, 0, "foo");
+
+  rec_field_set_name (field, field_name_2);
+  field_name_2 = rec_field_name (field);
+  fail_if(strcmp (rec_field_name_get (field_name_2, 0), "foo")
+          != 0);
 }
 END_TEST
 

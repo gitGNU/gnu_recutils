@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:36:25 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:00:01 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -91,7 +91,7 @@ rec_record_size (rec_record_t record)
 
 bool
 rec_record_field_p (rec_record_t record,
-                    const char *field_name)
+                    rec_field_name_t field_name)
 {
   bool found;
   rec_field_t field;
@@ -102,8 +102,8 @@ rec_record_field_p (rec_record_t record,
   
   while (gl_list_iterator_next (&iter, (const void **) &field, NULL))
     {
-      if (strcmp (field_name,
-                  rec_field_name (field)) == 0)
+      if (rec_field_name_equal_p (field_name,
+                                  rec_field_name (field)))
         {
           found = true;
           break;

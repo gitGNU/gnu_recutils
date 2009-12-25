@@ -20,7 +20,8 @@ lib_LTLIBRARIES = librec.la
 
 include_HEADERS = rec.h
 
-librec_la_SOURCES = rec-field.c \
+librec_la_SOURCES = rec-field-name.c \
+                    rec-field.c \
                     rec-record.c \
                     rec-rset.c \
                     rec-parser.c
