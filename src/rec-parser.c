@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/25 17:57:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:30:08 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -248,10 +248,10 @@ rec_parse_field_name_part (rec_parser_t parser,
 
   /* The syntax of a field name is described by the following regexp:
    *
-   * [a-zA-Z][a-zA-Z0-9_]*
+   * [a-zA-Z%][a-zA-Z0-9_]*
    */
 
-  /* [a-zA-Z] */
+  /* [a-zA-Z%] */
   ci = rec_parser_getc (parser);
   if (ci == EOF)
     {
@@ -261,7 +261,8 @@ rec_parse_field_name_part (rec_parser_t parser,
     {
       c = (char) ci;
 
-      if (rec_parser_letter_p (c))
+      if ((rec_parser_letter_p (c))
+          || (c == '%'))
         {
           ADD_TO_STR(c);
         }

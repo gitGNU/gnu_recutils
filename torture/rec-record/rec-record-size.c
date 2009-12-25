@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:30:53 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:33:30 jemarch"
  *
  *       File:         rec-record-size.c
  *       Date:         Fri Mar  6 00:02:20 2009
@@ -42,16 +42,25 @@ START_TEST(rec_record_size_002)
 {
   rec_record_t record;
   rec_field_t field1;
+  rec_field_name_t fname1;
   rec_field_t field2;
+  rec_field_name_t fname2;
   rec_field_t field3;
+  rec_field_name_t fname3;
 
-  field1 = rec_field_new ("foo1", "bar");
+  fname1 = rec_field_name_new ();
+  rec_field_name_set (fname1, 0, "foo1");
+  field1 = rec_field_new (fname1, "bar");
   fail_if(field1 == NULL);
 
-  field2 = rec_field_new ("foo2", "bar");
+  fname2 = rec_field_name_new ();
+  rec_field_name_set (fname2, 0, "foo2");
+  field2 = rec_field_new (fname2, "bar");
   fail_if(field2 == NULL);
 
-  field3 = rec_field_new ("foo3", "bar");
+  fname3 = rec_field_name_new ();
+  rec_field_name_set (fname3, 0, "foo3");
+  field3 = rec_field_new (fname3, "bar");
   fail_if(field3 == NULL);
 
   record = rec_record_new ();

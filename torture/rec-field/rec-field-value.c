@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:26:47 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/25 18:34:44 jemarch"
  *
  *       File:         rec-field-value.c
  *       Date:         Sun Mar  1 17:04:00 2009
@@ -41,9 +41,12 @@
 START_TEST(rec_field_value_001)
 {
   rec_field_t field;
+  rec_field_name_t fname;
   const char *field_value;
   
-  field = rec_field_new ("", "");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "");
+  field = rec_field_new (fname, "");
   fail_if(field == NULL);
 
   field_value = rec_field_value (field);
@@ -63,9 +66,12 @@ END_TEST
 START_TEST(rec_field_value_002)
 {
   rec_field_t field;
+  rec_field_name_t fname;
   const char *field_value;
   
-  field = rec_field_new ("", "foo");
+  fname = rec_field_name_new ();
+  rec_field_name_set (fname, 0, "");
+  field = rec_field_new (fname, "foo");
   fail_if(field == NULL);
 
   field_value = rec_field_value (field);
