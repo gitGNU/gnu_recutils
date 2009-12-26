@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/26 01:10:16 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/26 01:27:13 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -161,45 +161,45 @@ rec_parse_field_name (rec_parser_t parser,
         {
           break;
         }
+
+      /* Add this name part to the name */
+      if (!rec_field_name_set (*fname,
+                               rec_field_name_size (*fname),
+                               name_part))
+        {
+          /* Too much parts */
+          parser->error = REC_PARSER_ETOOMUCHNAMEPARTS;
+        }
       else
         {
-          /* Add this name part to the name */
-          if (!rec_field_name_set (*fname,
-                                   rec_field_name_size (*fname),
-                                   name_part))
-            {
-              /* Too much parts */
-              parser->error = REC_PARSER_ETOOMUCHNAMEPARTS;
-            }
-          else
-            {
-              ret = true;
-            }
-        }
-    }
+          ret = true;
 
-  if (ret && (parser->error > 0))
-    {
-      /* Field names ends with:
-       *
-       * - A blank character or
-       * - A newline or
-       * - The end of the file
-       */
-      ci = rec_parser_getc (parser);
-      if (ci != EOF)
-        {
-          c = (char) ci;
-          if ((c == '\n') || (c == ' '))
+          /* Field names ends with:
+           *
+           * - A blank character or
+           * - A newline or
+           * - The end of the file
+           */
+          ci = rec_parser_getc (parser);
+          if (ci != EOF)
             {
-              parser->error = REC_PARSER_NOERROR;
+              c = (char) ci;
+              if ((c == '\n') || (c == ' '))
+                {
+                  parser->error = REC_PARSER_NOERROR;
+                  break;
+                }
+              else
+                {
+                  if (!rec_parser_ungetc (parser, c))
+                    {
+                      parser->error = REC_PARSER_EUNGETC;
+                    }
+                }
             }
           else
             {
-              if (!rec_parser_ungetc (parser, c))
-                {
-                  parser->error = REC_PARSER_EUNGETC;
-                }
+              break;
             }
         }
     }
@@ -398,10 +398,6 @@ rec_parse_field_name_part (rec_parser_t parser,
         {
           /* Parse error */
           parser->error = REC_PARSER_EFNAME;
-          if (rec_parser_ungetc (parser, ci) != ci)
-            {
-              parser->error = REC_PARSER_EUNGETC;
-            }
           ret = false;
         }
     }
@@ -512,6 +508,10 @@ rec_parse_field_value (rec_parser_t parser,
       if ((prev_newline) && (c != '+'))
         {
           /* End of value */
+          if (rec_parser_ungetc (parser, ci) != ci)
+            {
+              parser->error = REC_PARSER_EUNGETC;
+            }
           break;
         }
 
