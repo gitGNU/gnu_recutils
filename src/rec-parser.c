@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/26 22:25:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/26 22:45:01 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -146,9 +146,17 @@ rec_parser_perror (rec_parser_t parser,
                    ...)
 {
   va_list ap;
+  char *number_str;
 
   va_start (ap, fmt);
   vfprintf (stderr, fmt, ap);
+  fputs (":", stderr);
+  /* XXX: replace the following line with a calculation of the number
+     of digits of a given number.  Sorry, I am a bit drunk while
+     writing this and cannot think clearly :D -jemarch */
+  number_str = malloc (10); /* 10 is a big arbitrary number */
+  sprintf(number_str, "%d", parser->line);
+  fputs (number_str, stderr);
   fputs (": ", stderr);
   fputs (rec_parser_error_strings[parser->error], stderr);
   fputc ('\n', stderr);
@@ -280,80 +288,6 @@ rec_parse_field (rec_parser_t parser,
 }
 
 bool
-rec_parse_record_xxx (rec_parser_t parser,
-                      rec_record_t *record)
-{
-  rec_record_t new;
-  rec_field_t field;
-  bool ret;
-  int ci;
-  char c;
-
-  ret = false;
-
-  new = rec_record_new ();
-  if (!new)
-    {
-      parser->error = REC_PARSER_ENOMEM;
-      return false;
-    }
-
-  /* A record is a list of mixed fields and comments, containing at
-   * least one field */
-  while ((ci = rec_parser_getc (parser)) != EOF)
-    {
-      c = (char) ci;
-
-      if (c == '#')
-        {
-          /* Parse a comment */
-          if ((!rec_parser_ungetc (parser, c))
-              || (!rec_parse_comment (parser)))
-            {
-              ret = false;
-              parser->error = REC_PARSER_ECOMMENT;
-              break;
-            }
-        }
-      else if (c == '\n')
-        {
-          /* End of the record */
-          ret = true;
-          break;
-        }
-      else
-        {
-          if (rec_parse_field (parser, &field))
-            {
-              /* Add the field to the record */
-              if (!rec_record_insert_field (new,
-                                            field,
-                                            rec_record_size (new)))
-                {
-                  ret = false;
-                  parser->error = REC_PARSER_ENOMEM;
-                  break;
-                }
-            }
-          else
-            {
-              ret = false;
-              parser->error = REC_PARSER_EFIELD;
-              break;
-            }
-        }
-    }
-
-  if (ret
-      || (rec_record_size (new) > 0))
-    {
-      *record = new;
-    }
-
-  return ret;
-}
-
-bool
 rec_parse_record (rec_parser_t parser,
                   rec_record_t *record)
 {
@@ -382,7 +316,8 @@ rec_parse_record (rec_parser_t parser,
         {
           if (!rec_parse_comment (parser))
             {
-              ret = false;
+              parser->error = REC_PARSER_ECOMMENT;
+              break;
             }
         }
       else
@@ -394,7 +329,6 @@ rec_parse_record (rec_parser_t parser,
                                             field,
                                             rec_record_size (new)))
                 {
-                  ret = false;
                   parser->error = REC_PARSER_ENOMEM;
                   break;
                 }
@@ -414,6 +348,11 @@ rec_parse_record (rec_parser_t parser,
   if (ret)
     {
       *record = new;
+    }
+  else
+    {
+      rec_record_destroy (new);
+      *record = NULL;
     }
 
   return ret;
@@ -893,6 +832,7 @@ rec_parse_comment (rec_parser_t parser)
 
           if (c == '\n')
             {
+              ret = true;
               break;
             }
         }
