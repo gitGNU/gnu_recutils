@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/26 01:36:38 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/26 01:39:19 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -453,9 +453,7 @@ rec_parse_field_name_part (rec_parser_t parser,
 }
 
 #define FIELD_VALUE_MAX 2048
-#if defined(ADD_TO_STR)
-#   undef ADD_TO_STR
-#endif
+#undef ADD_TO_STR
 #define ADD_TO_STR(c)                                   \
   do                                                    \
     {                                                   \
@@ -477,11 +475,9 @@ rec_parse_field_value (rec_parser_t parser,
                        char **str)
 {
   bool ret;
-  int ci;
-  int ci2;
+  int ci, ci2;
+  char c, c2;
   size_t index;
-  char c;
-  char c2;
   bool prev_newline;
 
   /* Sanity check */
