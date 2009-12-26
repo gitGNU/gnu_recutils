@@ -321,6 +321,7 @@ void rec_parser_destroy (rec_parser_t parser);
  * NULL.
  */
 
+bool rec_parse_field_name (rec_parser_t parser, rec_field_name_t *fname);
 bool rec_parse_field (rec_parser_t parser, rec_field_t *field);
 bool rec_parse_record (rec_parser_t parser, rec_record_t *record);
 bool rec_parse_rset (rec_parser_t parser, rec_rset_t *rset);
@@ -328,6 +329,9 @@ bool rec_parse_rset (rec_parser_t parser, rec_rset_t *rset);
 /* Getting information about the parser */
 bool rec_parser_eof (rec_parser_t parser);
 bool rec_parser_error (rec_parser_t parser);
+
+/* Reset the error status and EOF of a parser. */
+void rec_parser_reset (rec_parser_t parser);
 
 /* Print a message with details on the last parser error.
  *

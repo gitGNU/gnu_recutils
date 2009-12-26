@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/25 18:30:08 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/26 01:10:16 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -38,7 +38,6 @@ static int rec_parser_ungetc (rec_parser_t parser, int ci);
 static bool rec_expect (rec_parser_t parser, char *str);
 
 static bool rec_parse_field_name_part (rec_parser_t parser, char **str);
-static bool rec_parse_field_name (rec_parser_t parser, rec_field_name_t *fname);
 static bool rec_parse_field_value (rec_parser_t parser, char **str);
 
 static bool rec_parser_digit_p (char c);
@@ -74,7 +73,9 @@ const char *rec_parser_error_strings[] =
   "unknown error",
   "unreading a character",
   "expected a field name",
+  "field name is too long",
   "out of memory",
+  "too much parts in field name",
   NULL /* Sentinel */
 };
 
@@ -126,6 +127,133 @@ rec_parser_perror (rec_parser_t parser,
   fputs (rec_parser_error_strings[parser->error], stderr);
   fputc ('\n', stderr);
   va_end (ap);
+}
+
+bool
+rec_parse_field_name (rec_parser_t parser,
+                      rec_field_name_t *fname)
+{
+  bool ret;
+  char *name_part;
+  int ci;
+  char c;
+
+  /* Sanity check */
+  if (rec_parser_eof (parser)
+      || rec_parser_error (parser))
+    {
+      return false;
+    }
+
+  *fname = rec_field_name_new ();
+  if (*fname == NULL)
+    {
+      /* End of memory */
+      parser->error = REC_PARSER_ENOMEM;
+      return false;
+    }
+
+  ret = false;
+  while (rec_parse_field_name_part (parser, &name_part))
+    {
+      if ((parser->eof)
+          || (parser->error > 0))
+        {
+          break;
+        }
+      else
+        {
+          /* Add this name part to the name */
+          if (!rec_field_name_set (*fname,
+                                   rec_field_name_size (*fname),
+                                   name_part))
+            {
+              /* Too much parts */
+              parser->error = REC_PARSER_ETOOMUCHNAMEPARTS;
+            }
+          else
+            {
+              ret = true;
+            }
+        }
+    }
+
+  if (ret && (parser->error > 0))
+    {
+      /* Field names ends with:
+       *
+       * - A blank character or
+       * - A newline or
+       * - The end of the file
+       */
+      ci = rec_parser_getc (parser);
+      if (ci != EOF)
+        {
+          c = (char) ci;
+          if ((c == '\n') || (c == ' '))
+            {
+              parser->error = REC_PARSER_NOERROR;
+            }
+          else
+            {
+              if (!rec_parser_ungetc (parser, c))
+                {
+                  parser->error = REC_PARSER_EUNGETC;
+                }
+            }
+        }
+    }
+
+  if (!ret)
+    {
+      /* Free used memory */
+      rec_field_name_destroy (*fname);
+    }
+
+  return ret;
+}
+
+void
+rec_parser_reset (rec_parser_t parser)
+{
+  parser->eof = false;
+  parser->error = REC_PARSER_NOERROR;
+}
+
+bool
+rec_parse_field (rec_parser_t parser,
+                 rec_field_t *field)
+{
+  bool ret;
+  rec_field_t new;
+  rec_field_name_t field_name;
+  char *field_value;
+
+  /* Sanity check */
+  if (rec_parser_eof (parser)
+      || rec_parser_error (parser))
+    {
+      return false;
+    }
+
+  ret = rec_parse_field_name (parser, &field_name);
+  if (ret)
+    {
+      ret = rec_parse_field_value (parser, &field_value);
+
+      if (ret)
+        {
+          new = rec_field_new (field_name,
+                               field_value);
+          *field = new;
+        }
+      else
+        {
+          rec_field_name_destroy (field_name);
+        }
+    }
+
+  return ret;
 }
 
 /*
@@ -229,7 +357,7 @@ rec_expect (rec_parser_t parser,
         }                                               \
       else                                              \
         {                                               \
-         *str[index++] = c;                             \
+         (*str)[index++] = c;                           \
          }                                              \
       } while (0)
   
@@ -264,12 +392,16 @@ rec_parse_field_name_part (rec_parser_t parser,
       if ((rec_parser_letter_p (c))
           || (c == '%'))
         {
-          ADD_TO_STR(c);
+          ADD_TO_STR (c);
         }
       else
         {
           /* Parse error */
           parser->error = REC_PARSER_EFNAME;
+          if (rec_parser_ungetc (parser, ci) != ci)
+            {
+              parser->error = REC_PARSER_EUNGETC;
+            }
           ret = false;
         }
     }
@@ -285,12 +417,16 @@ rec_parse_field_name_part (rec_parser_t parser,
               || rec_parser_digit_p (c)
               || (c == '_'))
             {
-              ADD_TO_STR(c);
+              ADD_TO_STR (c);
+              if (parser->error > 0)
+                {
+                  /* error was set by ADD_TO_STR */
+                  break;
+                }
             }
           else if (c == ':')
             {
               /* End of token.  Consume the ':' and report success */
-              ret = true;
               break;
             }
           else
@@ -301,60 +437,188 @@ rec_parse_field_name_part (rec_parser_t parser,
               break;
             }
         }
+
+      if (parser->eof)
+        {
+          parser->error = REC_PARSER_EFNAME;
+          ret = false;
+        }
     }
 
   if (ret)
     {
       /* Resize the token */
       *str = realloc (*str, index);
-      *str[index] = '\0';
+      (*str)[index] = '\0';
     }
 
   return ret;
 }
 
+#define FIELD_VALUE_MAX 2048
+#if defined(ADD_TO_STR)
+#   undef ADD_TO_STR
+#endif
+#define ADD_TO_STR(c)                                   \
+  do                                                    \
+    {                                                   \
+      if (index > FIELD_VALUE_MAX)                      \
+        {                                               \
+          /* Error: name too long */                    \
+          parser->error = REC_PARSER_EFNAMETOOLONG;     \
+          ret = false;                                  \
+        }                                               \
+      else                                              \
+        {                                               \
+         (*str)[index++] = c;                           \
+        }                                               \
+      } while (0)
+
+
 static bool
-rec_parse_field_name (rec_parser_t parser,
-                      rec_field_name_t *fname)
+rec_parse_field_value (rec_parser_t parser,
+                       char **str)
 {
   bool ret;
-  char *name_part;
+  int ci;
+  int ci2;
+  size_t index;
+  char c;
+  char c2;
+  bool prev_newline;
 
-  *fname = rec_field_name_new ();
-  if (*fname == NULL)
+  /* Sanity check */
+  if (rec_parser_eof (parser)
+      || rec_parser_error (parser))
     {
-      /* End of memory */
-      parser->error = REC_PARSER_ENOMEM;
       return false;
     }
 
+  prev_newline = false;
   ret = true;
-  while (rec_parse_field_name_part (parser, &name_part))
+  index = 0;
+  *str = malloc (sizeof(char) * (FIELD_VALUE_MAX + 1));
+  
+  /* A field value is a sequence of zero or more ascii codes finished
+   * with a newline character.
+   *
+   *  \$ is translated to nothing.
+   *  $+ ? is translated to $.
+   */
+  while ((ci = rec_parser_getc (parser)) != EOF)
     {
-      if ((parser->eof)
-          || (parser->error > 0))
+      c = (char) ci;
+
+      if ((prev_newline) && (c != '+'))
         {
-          ret = false;
+          /* End of value */
           break;
+        }
+
+      if (c == '\\')
+        {
+          ci2 = rec_parser_getc (parser);
+          if (ci2 == EOF)
+            {
+              parser->eof = true;
+              ret = false;
+              break;
+            }
+          else
+            {
+              c2 = (char) ci2;
+              if (c2 == '\n')
+                {
+                  /* Consume both $\n chars not adding them to str =>
+                     do nothing here. */
+                }
+              else
+                {
+                  /* Add \ and put back c2 */
+                  ADD_TO_STR (c);
+                  if (parser->error > 0)
+                    {
+                      break;
+                    }
+
+                  if (rec_parser_ungetc (parser, ci2)
+                      != ci2)
+                    {
+                      parser->error = REC_PARSER_EUNGETC;
+                      ret = false;
+                      break;
+                    }
+                }
+            }
+
+          prev_newline = false;
+        }
+      else if (c == '+')
+        {
+          if (prev_newline)
+            {
+              /* Reduce \n+ ? to \n by ignoring the + ? */
+              ci2 = rec_parser_getc (parser);
+              
+              if (ci2 == EOF)
+                {
+                  parser->eof = true;
+                  ret = false;
+                  break;
+                }
+              else
+                {
+                  c2 = (char) ci2;
+                  /* If the look ahead character is a blank, skip it.
+                     Otherwise put it back in the stream to be
+                     processed in the next iteration. */
+                  if (c2 != ' ')
+                    {
+                      if (rec_parser_ungetc (parser, ci2) != ci2)
+                        {
+                          parser->error = REC_PARSER_EUNGETC;
+                          ret = false;
+                          break;
+                        }
+                    }
+                }
+            }
+          else
+            {
+              ADD_TO_STR (c);
+              if (parser->error > 0)
+                {
+                  break;
+                }
+            }
+
+          prev_newline = false;
+        }
+      else if (c == '\n')
+        {
+          ADD_TO_STR (c);
+          if (parser->error > 0)
+            {
+              break;
+            }
+          prev_newline = true;
         }
       else
         {
-          /* Add this name part to the name */
-          if (!rec_field_name_set (*fname,
-                                   rec_field_name_size (*fname),
-                                   name_part))
+          ADD_TO_STR (c);
+          if (parser->error > 0)
             {
-              /* Too much parts */
-              parser->error = REC_PARSER_ETOOMUCHNAMEPARTS;
-              ret = false;
+              break;
             }
+          prev_newline = false;
         }
     }
 
-  if (!ret)
+  if (ret)
     {
-      /* Free used memory */
-      rec_field_name_destroy (*fname);
+      /* Resize the token */
+      *str = realloc (*str, index);
+      (*str)[index] = '\0';
     }
 
   return ret;
