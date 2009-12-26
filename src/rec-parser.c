@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/26 01:39:19 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/26 13:18:24 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -31,7 +31,9 @@
 
 #include <rec.h>
 
-/* Static functions defined in this file */
+/*
+ * Static functions defined in this file
+ */
 static int rec_parser_getc (rec_parser_t parser);
 static int rec_parser_ungetc (rec_parser_t parser, int ci);
 
@@ -43,6 +45,26 @@ static bool rec_parse_field_value (rec_parser_t parser, char **str);
 static bool rec_parser_digit_p (char c);
 static bool rec_parser_letter_p (char c);
 
+/* Buffer management */
+
+#define REC_PARSER_BUF_STEP 512
+
+struct rec_parser_buf_s
+{
+  char *data;
+  size_t used;
+  size_t size;
+};
+
+typedef struct rec_parser_buf_s *rec_parser_buf_t;
+
+static rec_parser_buf_t rec_parser_buf_new ();
+static bool rec_parser_buf_add (rec_parser_buf_t buf,
+                                char c);
+static char *rec_parser_buf_data (rec_parser_buf_t buf);
+static void rec_parser_buf_adjust (rec_parser_buf_t buf);
+static void rec_parser_buf_destroy (rec_parser_buf_t buf);
+
 /* Parser Data Structure
  *
  */
@@ -53,7 +75,6 @@ enum rec_parser_error_e
   REC_PARSER_ERROR,
   REC_PARSER_EUNGETC,
   REC_PARSER_EFNAME,
-  REC_PARSER_EFNAMETOOLONG,
   REC_PARSER_ENOMEM,
   REC_PARSER_ETOOMUCHNAMEPARTS
 };
@@ -73,7 +94,6 @@ const char *rec_parser_error_strings[] =
   "unknown error",
   "unreading a character",
   "expected a field name",
-  "field name is too long",
   "out of memory",
   "too much parts in field name",
   NULL /* Sentinel */
@@ -344,24 +364,6 @@ rec_expect (rec_parser_t parser,
   return found;
 }
 
-/* Macros used in 'rec_parse_field_name_part' */
-#define STR_MAX_SIZE 255
-
-#define ADD_TO_STR(c)                                   \
-  do                                                    \
-    {                                                   \
-     if (index > STR_MAX_SIZE)                          \
-        {                                               \
-          /* Error: name too long */                    \
-          parser->error = REC_PARSER_EFNAMETOOLONG;     \
-          ret = false;                                  \
-        }                                               \
-      else                                              \
-        {                                               \
-         (*str)[index++] = c;                           \
-         }                                              \
-      } while (0)
-  
 static bool
 rec_parse_field_name_part (rec_parser_t parser,
                            char **str)
@@ -370,10 +372,17 @@ rec_parse_field_name_part (rec_parser_t parser,
   int ci;
   size_t index;
   char c;
+  rec_parser_buf_t buf;
 
   ret = true;
   index = 0;
-  *str = malloc (sizeof(char) * (STR_MAX_SIZE + 1));
+  buf = rec_parser_buf_new ();
+  if (!buf)
+    {
+      /* Out of memory */
+      parser->error = REC_PARSER_ENOMEM;
+      return false;
+    }
 
   /* The syntax of a field name is described by the following regexp:
    *
@@ -393,7 +402,12 @@ rec_parse_field_name_part (rec_parser_t parser,
       if ((rec_parser_letter_p (c))
           || (c == '%'))
         {
-          ADD_TO_STR (c);
+          if (!rec_parser_buf_add (buf, c))
+            {
+              /* Out of memory */
+              parser->error = REC_PARSER_ENOMEM;
+              return false;
+            }
         }
       else
         {
@@ -414,7 +428,12 @@ rec_parse_field_name_part (rec_parser_t parser,
               || rec_parser_digit_p (c)
               || (c == '_'))
             {
-              ADD_TO_STR (c);
+              if (!rec_parser_buf_add (buf, c))
+                {
+                  /* Out of memory */
+                  parser->error = REC_PARSER_ENOMEM;
+                  return false;
+                }
               if (parser->error > 0)
                 {
                   /* error was set by ADD_TO_STR */
@@ -445,30 +464,14 @@ rec_parse_field_name_part (rec_parser_t parser,
   if (ret)
     {
       /* Resize the token */
-      *str = realloc (*str, index);
-      (*str)[index] = '\0';
+      rec_parser_buf_adjust (buf);
+      *str = rec_parser_buf_data (buf);
     }
+
+  rec_parser_buf_destroy (buf);
 
   return ret;
 }
-
-#define FIELD_VALUE_MAX 2048
-#undef ADD_TO_STR
-#define ADD_TO_STR(c)                                   \
-  do                                                    \
-    {                                                   \
-      if (index > FIELD_VALUE_MAX)                      \
-        {                                               \
-          /* Error: name too long */                    \
-          parser->error = REC_PARSER_EFNAMETOOLONG;     \
-          ret = false;                                  \
-        }                                               \
-      else                                              \
-        {                                               \
-         (*str)[index++] = c;                           \
-        }                                               \
-      } while (0)
-
 
 static bool
 rec_parse_field_value (rec_parser_t parser,
@@ -479,6 +482,7 @@ rec_parse_field_value (rec_parser_t parser,
   char c, c2;
   size_t index;
   bool prev_newline;
+  rec_parser_buf_t buf;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -490,7 +494,13 @@ rec_parse_field_value (rec_parser_t parser,
   prev_newline = false;
   ret = true;
   index = 0;
-  *str = malloc (sizeof(char) * (FIELD_VALUE_MAX + 1));
+  buf = rec_parser_buf_new ();
+  if (!buf)
+    {
+      /* Out of memory */
+      parser->error = REC_PARSER_ENOMEM;
+      return false;
+    }
   
   /* A field value is a sequence of zero or more ascii codes finished
    * with a newline character.
@@ -529,7 +539,13 @@ rec_parse_field_value (rec_parser_t parser,
               else
                 {
                   /* Add \ and put back c2 */
-                  ADD_TO_STR (c);
+                  if (!rec_parser_buf_add (buf, c))
+                    {
+                      /* Out of memory */
+                      parser->error = REC_PARSER_ENOMEM;
+                      return false;
+                    }
+
                   if (parser->error > 0)
                     {
                       break;
@@ -577,7 +593,13 @@ rec_parse_field_value (rec_parser_t parser,
             }
           else
             {
-              ADD_TO_STR (c);
+              if (!rec_parser_buf_add (buf, c))
+                {
+                  /* Out of memory */
+                  parser->error = REC_PARSER_ENOMEM;
+                  return false;
+                }
+
               if (parser->error > 0)
                 {
                   break;
@@ -588,7 +610,13 @@ rec_parse_field_value (rec_parser_t parser,
         }
       else if (c == '\n')
         {
-          ADD_TO_STR (c);
+          if (!rec_parser_buf_add (buf, c))
+            {
+              /* Out of memory */
+              parser->error = REC_PARSER_ENOMEM;
+              return false;
+            }
+
           if (parser->error > 0)
             {
               break;
@@ -597,7 +625,13 @@ rec_parse_field_value (rec_parser_t parser,
         }
       else
         {
-          ADD_TO_STR (c);
+          if (!rec_parser_buf_add (buf, c))
+            {
+              /* Out of memory */
+              parser->error = REC_PARSER_ENOMEM;
+              return false;
+            }
+
           if (parser->error > 0)
             {
               break;
@@ -609,11 +643,86 @@ rec_parse_field_value (rec_parser_t parser,
   if (ret)
     {
       /* Resize the token */
-      *str = realloc (*str, index);
-      (*str)[index] = '\0';
+      rec_parser_buf_adjust (buf);
+      *str = rec_parser_buf_data (buf);
+    }
+
+  rec_parser_buf_destroy (buf);
+
+  return ret;
+}
+
+static rec_parser_buf_t
+rec_parser_buf_new ()
+{
+  rec_parser_buf_t new;
+
+  new = malloc (sizeof (struct rec_parser_buf_s));
+  if (new)
+    {
+      new->data = malloc (REC_PARSER_BUF_STEP);
+      new->size = REC_PARSER_BUF_STEP;
+      new->used = 0;
+
+      if (!new->data)
+        {
+          free (new);
+          new = NULL;
+        }
+    }
+
+  return new;
+}
+
+static void
+rec_parser_buf_destroy (rec_parser_buf_t buf)
+{
+  /* Don't deallocate buf->data */
+  free (buf);
+}
+
+static bool
+rec_parser_buf_add (rec_parser_buf_t buf,
+                    char c)
+{
+  bool ret;
+
+  ret = true;
+
+  if ((buf->used + 1) > buf->size)
+    {
+      /* Allocate a new block */
+      buf->size = buf->size + REC_PARSER_BUF_STEP;
+      buf->data = realloc (buf->data, buf->size);
+
+      if (!buf->data)
+        {
+          /* Not enough memory.
+           * REC_PARSER_BUF_STEP should not be 0. */
+          ret = false;
+        }
+    }
+
+  if (ret)
+    {
+      /* Add the character */
+      buf->data[buf->used++] = c;
     }
 
   return ret;
+}
+
+static char *
+rec_parser_buf_data (rec_parser_buf_t buf)
+{
+  return buf->data;
+}
+
+static void
+rec_parser_buf_adjust (rec_parser_buf_t buf)
+{
+  buf->data = realloc (buf->data, buf->used);
+  buf->data[buf->used] = '\0';
 }
 
 /* End of rec-parser.c */
