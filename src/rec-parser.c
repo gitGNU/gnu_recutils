@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/26 01:27:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/26 01:36:38 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -191,10 +191,7 @@ rec_parse_field_name (rec_parser_t parser,
                 }
               else
                 {
-                  if (!rec_parser_ungetc (parser, c))
-                    {
-                      parser->error = REC_PARSER_EUNGETC;
-                    }
+                  rec_parser_ungetc (parser, c);
                 }
             }
           else
@@ -282,7 +279,15 @@ int
 rec_parser_ungetc (rec_parser_t parser,
                    int ci)
 {
-  return ungetc (ci, parser->in);
+  int res;
+  
+  res = ungetc (ci, parser->in);
+  if (res != ci)
+    {
+      parser->error = REC_PARSER_EUNGETC;
+    }
+
+  return res;
 }
 
 static bool
@@ -329,11 +334,7 @@ rec_expect (rec_parser_t parser,
           if (c != str[counter])
             {
               /* Not match */
-              if (rec_parser_ungetc (parser, ci)
-                  != ci)
-                {
-                  parser->error = REC_PARSER_EUNGETC;
-                }
+              rec_parser_ungetc (parser, ci);
               found = false;
               break;
             }
@@ -508,10 +509,7 @@ rec_parse_field_value (rec_parser_t parser,
       if ((prev_newline) && (c != '+'))
         {
           /* End of value */
-          if (rec_parser_ungetc (parser, ci) != ci)
-            {
-              parser->error = REC_PARSER_EUNGETC;
-            }
+          rec_parser_ungetc (parser, ci);
           break;
         }
 
@@ -544,7 +542,6 @@ rec_parse_field_value (rec_parser_t parser,
                   if (rec_parser_ungetc (parser, ci2)
                       != ci2)
                     {
-                      parser->error = REC_PARSER_EUNGETC;
                       ret = false;
                       break;
                     }
@@ -576,7 +573,6 @@ rec_parse_field_value (rec_parser_t parser,
                     {
                       if (rec_parser_ungetc (parser, ci2) != ci2)
                         {
-                          parser->error = REC_PARSER_EUNGETC;
                           ret = false;
                           break;
                         }
