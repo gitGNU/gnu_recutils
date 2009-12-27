@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:25:09 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/27 20:27:29 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -104,7 +104,10 @@ rec_rset_new (void)
 void
 rec_rset_destroy (rec_rset_t rset)
 {
-  rec_record_destroy (rset->descriptor);
+  if (rset->descriptor)
+    {
+      rec_record_destroy (rset->descriptor);
+    }
   gl_list_free (rset->record_list);
 }
 
@@ -215,7 +218,10 @@ rec_rset_descriptor (rec_rset_t rset)
 void
 rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
 {
-  rec_record_destroy (rset->descriptor);
+  if (rset->descriptor)
+    {
+      rec_record_destroy (rset->descriptor);
+    }
   rset->descriptor = record;
 }
 

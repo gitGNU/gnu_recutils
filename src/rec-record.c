@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/25 18:00:01 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/27 20:30:07 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -101,7 +101,7 @@ rec_record_field_p (rec_record_t record,
   iter = gl_list_iterator (record->field_list);
   
   while (gl_list_iterator_next (&iter, (const void **) &field, NULL))
-    {
+    {            
       if (rec_field_name_equal_p (field_name,
                                   rec_field_name (field)))
         {

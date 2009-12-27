@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/26 22:45:01 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/27 20:47:23 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -80,13 +80,16 @@ enum rec_parser_error_e
   REC_PARSER_ENOMEM,
   REC_PARSER_ETOOMUCHNAMEPARTS,
   REC_PARSER_ECOMMENT,
-  REC_PARSER_EFIELD
+  REC_PARSER_EFIELD,
+  REC_PARSER_ERECORD
 };
 
 struct rec_parser_s
 {
   FILE *in; /* File stream used by the parser. */
   
+  rec_record_t prev_descriptor;
+
   bool eof;
   enum rec_parser_error_e error;
   int line; /* Current line number. */
@@ -102,6 +105,7 @@ const char *rec_parser_error_strings[] =
   "too much parts in field name",
   "expected a comment",
   "expected a field",
+  "expected a record",
   NULL /* Sentinel */
 };
 
@@ -117,6 +121,7 @@ rec_parser_new (FILE *in)
       parser->eof = false;
       parser->error = false;
       parser->line = 1;
+      parser->prev_descriptor = NULL;
     }
 
   return parser;
@@ -293,11 +298,16 @@ rec_parse_record (rec_parser_t parser,
 {
   rec_record_t new;
   rec_field_t field;
-  bool ret;
+  bool ret, field_p;
   int ci;
   char c;
 
-  ret = false;
+  /* Sanity check */
+  if (rec_parser_eof (parser)
+      || rec_parser_error (parser))
+    {
+      return false;
+    }
 
   new = rec_record_new ();
   if (!new)
@@ -307,21 +317,46 @@ rec_parse_record (rec_parser_t parser,
     }
 
   /* A record is a list of mixed fields and comments, containing at
-   * least one field */
+   * least one field starting it:
+   *
+   *  FIELD (FIELD|COMMENT)*
+   */
+  if (rec_parse_field (parser, &field))
+    {
+      /* Add the field to the record */
+      if (!rec_record_insert_field (new,
+                                    field,
+                                    rec_record_size (new)))
+        {
+          parser->error = REC_PARSER_ENOMEM;
+          return false;
+        }
+    }
+  else
+    {
+      /* Expected a field */
+      parser->error = REC_PARSER_EFIELD;
+      return false;
+    }
+
+  ret = true;
   while ((ci = rec_parser_getc (parser)) != EOF)
     {
       c = (char) ci;
-      rec_parser_ungetc (parser, c);
+
       if (c == '#')
         {
-          if (!rec_parse_comment (parser))
-            {
-              parser->error = REC_PARSER_ECOMMENT;
-              break;
-            }
+          rec_parser_ungetc (parser, ci);
+          rec_parse_comment (parser);
+        }
+      else if (c == '\n')
+        {
+          /* End of record */
+          break;
         }
       else
         {
+          /* Try to parse a field */
           if (rec_parse_field (parser, &field))
             {
               /* Add the field to the record */
@@ -330,19 +365,18 @@ rec_parse_record (rec_parser_t parser,
                                             rec_record_size (new)))
                 {
                   parser->error = REC_PARSER_ENOMEM;
+                  ret = false;
                   break;
                 }
             }
           else
             {
+              /* Parse error: field expected */
+              parser->error = REC_PARSER_EFIELD;
+              ret = false;
               break;
             }
         }
-    }
-
-  if (rec_record_size (new) > 0)
-    {
-      ret = true;
     }
 
   if (ret)
@@ -353,6 +387,121 @@ rec_parse_record (rec_parser_t parser,
     {
       rec_record_destroy (new);
       *record = NULL;
+    }
+
+  return ret;
+}
+
+bool
+rec_parse_rset (rec_parser_t parser,
+                rec_rset_t *rset)
+{
+  bool ret;
+  int ci;
+  char c;
+  rec_rset_t new;
+  rec_record_t record;
+  rec_field_name_t rec_fname;
+
+  ret = false;
+
+  if ((rec_fname = rec_field_name_new ()) == NULL)
+    {
+      /* Out of memory */
+      parser->error = REC_PARSER_ENOMEM;
+      return false;
+    }
+  
+  rec_field_name_set (rec_fname, 0, "%rec");
+
+  if ((new = rec_rset_new ()) == NULL)
+    {
+      /* Out of memory */
+      parser->error = REC_PARSER_ENOMEM;
+      rec_field_name_destroy (rec_fname);
+      return false;
+    }
+
+  /* Set the descriptor for this record set */
+  rec_rset_set_descriptor (new, parser->prev_descriptor);
+  parser->prev_descriptor = NULL;
+
+  while ((ci = rec_parser_getc (parser)) != EOF)
+    {
+      c = (char) ci;
+
+      /* Skip newline characters and blanks */
+      if ((c == '\n') || (c == ' '))
+        {
+        }
+      /* Skip comments */
+      else if (c == '#')
+        {
+          rec_parser_ungetc (parser, c);
+          rec_parse_comment (parser);
+        }
+      else
+        {
+          /* Try to parse a record */
+          rec_parser_ungetc (parser, c);
+          if (rec_parse_record (parser, &record))
+            {
+              /* Check if the parsed record is a descriptor.  In that
+                 case, set it as the previous descriptor in the parser
+                 state and stop parsing.  Otherwise, add the record to
+                 the current record set. */
+              if (rec_record_field_p (record,
+                                      rec_fname))
+                {
+                  if ((rec_rset_size (new) == 0) &&
+                      (!rec_rset_descriptor (new)))
+                    {
+                      /* Special case: the first record found in the
+                         input stream is a descriptor. */
+                      rec_rset_set_descriptor (new, record);
+                    }
+                  else
+                    {
+                      parser->prev_descriptor = record;
+                      ret = true;
+                      break;
+                    }
+                }
+              else
+                {
+                  if (!rec_rset_insert_record (new,
+                                               record,
+                                               rec_rset_size (new)))
+                    {
+                      /* Parse error: out of memory */
+                      parser->error = REC_PARSER_ENOMEM;
+                      break;
+                    }
+                }
+            }
+          else
+            {
+              /* Parse error: expected a record */
+              parser->error = REC_PARSER_ERECORD;
+              break;
+            }
+        }
+    }
+
+  if (rec_rset_descriptor (new)
+      || (rec_rset_size (new) > 0))
+    {
+      ret = true;
+    }
+
+  if (ret)
+    {
+      *rset = new;
+    }
+  else
+    {
+      rec_rset_destroy (new);
+      *rset = NULL;
     }
 
   return ret;
@@ -558,6 +707,11 @@ rec_parse_field_name_part (rec_parser_t parser,
   return ret;
 }
 
+/* XXX: the following function fails in the case:
+ 
+   foo:
+   EOF
+*/
 static bool
 rec_parse_field_value (rec_parser_t parser,
                        char **str)
@@ -728,7 +882,7 @@ rec_parse_field_value (rec_parser_t parser,
   if (ret)
     {
       /* Resize the token */
-      rec_parser_buf_adjust (buf);
+     rec_parser_buf_adjust (buf);
       *str = rec_parser_buf_data (buf);
     }
 
@@ -832,19 +986,14 @@ rec_parse_comment (rec_parser_t parser)
 
           if (c == '\n')
             {
-              ret = true;
               break;
             }
         }
-
-      if (rec_parser_eof (parser))
-        {
-          ret = true;
-        }
+      
+      ret = true;
     }
 
   rec_parser_buf_destroy (buf);
-
   return ret;
 }
 

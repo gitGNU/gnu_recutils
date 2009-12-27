@@ -343,6 +343,14 @@ void rec_parser_reset (rec_parser_t parser);
  */
 void rec_parser_perror (rec_parser_t parser, char *fmt, ...);
 
+/*
+ * WRITER
+ *
+ * Writing routines.
+ */
+
+
+
 #endif /* !REC_H */
 
 /* End of rec.h */
