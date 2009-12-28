@@ -538,8 +538,9 @@ mode when opening the file:
 @node recinf
 @chapter recinf
 
-@command{recinf} reads the given rec data and prints structural
-information about it.
+@command{recinf} reads the given rec file (or the data in the standard
+input if no file is specified) and prints structural information about
+it.
 
 @menu
 * recinf Invocation::  Command line options.
@@ -549,19 +550,17 @@ information about it.
 @node recinf Invocation
 @section recinf Invocation
 
-@command{recinf} reads the given rec data and prints structural
-information about it.  Synopsis:
+@command{recinf} reads the given rec file (or the data in the standard
+input if no file is specified) and prints structural information about
+it.  Synopsis:
 
 @example
-recinf [OPTION]... [FILE]...
+recinf [OPTION]... [FILE]
 @end example
 
 The program accepts the following options.
 
 @table @option
-@item -a
-@item --all
-Print all kind of information.
 @item --version
 Print the version number, then exit successfully.
 @item --

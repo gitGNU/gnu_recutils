@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/28 09:18:23 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/28 09:31:07 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -12,6 +12,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <rec.h>
+#include <stdlib.h>
 
 #include <recinf.h>
 
@@ -30,7 +31,6 @@ static const struct option GNU_longOptions[] =
     {"help", no_argument, NULL, HELP_ARG},
     {"usage", no_argument, NULL, USAGE_ARG},
     {"version", no_argument, NULL, VERSION_ARG},
-    {"all", no_argument, NULL, PRINTALL_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -39,7 +39,7 @@ static const struct option GNU_longOptions[] =
 char *recinf_version_msg = "recinf 1.0";
 
 char *recinf_usage_msg = "\
-Usage: recinf [OPTION]... [FILE]...\n\
+Usage: recinf [OPTION]... [FILE]\n\
 Print information about the specified rec files.\n\
 \n\
 available options\n\
@@ -65,7 +65,7 @@ main (int argc, char *argv[])
   while (!finish &&
          (ret = getopt_long (argc,
                              argv,
-                             "a",
+                             NULL,
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -89,11 +89,6 @@ main (int argc, char *argv[])
           {
             fprintf (stdout, "%s\n", recinf_usage_msg);
             exit (0);
-            break;
-          }
-        case PRINTALL_ARG:
-          {
-            printall = true;
             break;
           }
         }
