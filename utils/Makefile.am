@@ -1,5 +1,5 @@
-# Top-level Makefile.am
-# Fairly Light Library
+# utils/ Makefile.am
+# GNU rec
 
 # Copyright (C) 2009 Jose E. Marchesi
 
@@ -16,7 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = lib src utils doc torture
+bin_PROGRAMS = recinf
+
+recinf_SOURCES = recinf.h \
+                 recinf.c
+
+recinf_LDFLAGS =
+recinf_CPPFLAGS = -I$(top_srcdir)/lib
+recinf_LDADD = $(top_builddir)/lib/libgnu.la
 
 # End of Makefile.am

@@ -1,3 +1,11 @@
+2009-12-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* utils/recinf.h (HELP_ARG): New file.
+
+	* utils/recinf.c: New file.
+
+	* utils/Makefile.am (recinf_LDFLAGS): New file.
+
 2009-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* lisp/rec-mode.el: New file.

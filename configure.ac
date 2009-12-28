@@ -67,6 +67,6 @@ case "${host}" in
 esac
 
 dnl Generate output files
-AC_OUTPUT(Makefile lib/Makefile src/Makefile doc/Makefile torture/Makefile)
+AC_OUTPUT(Makefile lib/Makefile src/Makefile utils/Makefile doc/Makefile torture/Makefile)
 
 dnl End of configure.ac

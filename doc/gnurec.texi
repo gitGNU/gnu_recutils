@@ -64,6 +64,7 @@ The Rec Format
 * Comments::            Comments are useful to store meta data.
 
 GNU Rec Utilities
+* recinf::              Printing information about rec files.
 * recsel::              Selecting records from rec files.
 * recins::              Inserting records in rec files.
 * recdel::              Deleting records from rec files.
@@ -534,6 +535,46 @@ mode when opening the file:
 ...FILE CONTENTS...
 @end example
       
+@node recinf
+@chapter recinf
+
+@command{recinf} reads the given rec data and prints structural
+information about it.
+
+@menu
+* recinf Invocation::  Command line options.
+* recinf Examples::    Examples of the usage of @command{recinf}
+@end menu
+
+@node recinf Invocation
+@section recinf Invocation
+
+@command{recinf} reads the given rec data and prints structural
+information about it.  Synopsis:
+
+@example
+recinf [OPTION]... [FILE]...
+@end example
+
+The program accepts the following options.
+
+@table @option
+@item -a
+@item --all
+Print all kind of information.
+@item --version
+Print the version number, then exit successfully.
+@item --
+Delimit the option list.  Later arguments, if any, are treated as
+operands even if they begin with @option{-}.  For example,
+@command{recinf -- -a} reads from the file named @file{-a}.
+@end table
+
+@node recinf Examples
+@section recinf Examples
+
+XXX
+
 @node recsel
 @chapter recsel
 
@@ -548,7 +589,7 @@ XXX
 @node recsel Invocation
 @section recsel Invocation
 
-@command{recsel} search rec files for records satisfying a certain
+@command{recsel} searches rec files for records satisfying a certain
 expression.  Synopsis:
 
 @example
@@ -571,8 +612,8 @@ successfully.
 Print the version number, then exit successfully.
 @item --
 Delimit the option list.  Later arguments, if any, are treated as
-operands even if they begin with @option{-}.  For example, @command{recsel
--- -e} reads from the file named @file{-r}.
+operands even if they begin with @option{-}.  For example,
+@command{recsel -- -e} reads from the file named @file{-r}.
 @end table
 
 @node Search Expressions
