@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/28 09:31:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/28 09:38:13 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -43,7 +43,6 @@ Usage: recinf [OPTION]... [FILE]\n\
 Print information about the specified rec files.\n\
 \n\
 available options\n\
-  -a, --all                           print all available information.\n\
   --help                              print a help message and exit.\n\
   --usage                             print a usage message and exit.\n\
   --version                           show recinf version and exit.\n\
@@ -65,7 +64,7 @@ main (int argc, char *argv[])
   while (!finish &&
          (ret = getopt_long (argc,
                              argv,
-                             NULL,
+                             "",
                              GNU_longOptions,
                              NULL)) != -1)
     {
