@@ -24,7 +24,8 @@ librec_la_SOURCES = rec-field-name.c \
                     rec-field.c \
                     rec-record.c \
                     rec-rset.c \
-                    rec-parser.c
+                    rec-parser.c \
+                    rec-writer.c
 
 librec_la_LDFLAGS =
 librec_la_CPPFLAGS = -I$(top_srcdir)/lib

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/27 20:47:23 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/28 00:38:27 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -63,6 +63,7 @@ typedef struct rec_parser_buf_s *rec_parser_buf_t;
 static rec_parser_buf_t rec_parser_buf_new ();
 static bool rec_parser_buf_add (rec_parser_buf_t buf,
                                 char c);
+static void rec_parser_buf_rewind (rec_parser_buf_t buf, int n);
 static char *rec_parser_buf_data (rec_parser_buf_t buf);
 static void rec_parser_buf_adjust (rec_parser_buf_t buf);
 static void rec_parser_buf_destroy (rec_parser_buf_t buf);
@@ -357,6 +358,7 @@ rec_parse_record (rec_parser_t parser,
       else
         {
           /* Try to parse a field */
+          rec_parser_ungetc (parser, ci);
           if (rec_parse_field (parser, &field))
             {
               /* Add the field to the record */
@@ -755,6 +757,7 @@ rec_parse_field_value (rec_parser_t parser,
         {
           /* End of value */
           rec_parser_ungetc (parser, ci);
+          rec_parser_buf_rewind (buf, 1);
           break;
         }
 
@@ -881,6 +884,13 @@ rec_parse_field_value (rec_parser_t parser,
 
   if (ret)
     {
+      if (rec_parser_eof (parser)
+          && (c == '\n'))
+        {
+          /* Special case: field just before EOF */
+          rec_parser_buf_rewind (buf, 1);
+        }
+
       /* Resize the token */
      rec_parser_buf_adjust (buf);
       *str = rec_parser_buf_data (buf);
@@ -918,6 +928,16 @@ rec_parser_buf_destroy (rec_parser_buf_t buf)
 {
   /* Don't deallocate buf->data */
   free (buf);
+}
+
+static void
+rec_parser_buf_rewind (rec_parser_buf_t buf,
+                       int n)
+{
+  if ((buf->used - n) >= 0)
+    {
+      buf->used = buf->used - n;
+    }
 }
 
 static bool
@@ -960,7 +980,8 @@ rec_parser_buf_data (rec_parser_buf_t buf)
 static void
 rec_parser_buf_adjust (rec_parser_buf_t buf)
 {
-  buf->data = realloc (buf->data, buf->used);
+  /* The following realloc fails and I don't know why -jemarch */
+  /* buf->data = realloc (buf->data, buf->used); */
   buf->data[buf->used] = '\0';
 }
 

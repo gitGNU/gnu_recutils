@@ -306,7 +306,8 @@ void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
 
 typedef struct rec_parser_s *rec_parser_t;
 
-/* Create a new parser associated with a given file stream. */
+/* Create a parser associated with a given file stream.  If not enough
+   memory, return NULL. */
 rec_parser_t rec_parser_new (FILE *in);
 
 /* Destroy a parser.
@@ -349,7 +350,30 @@ void rec_parser_perror (rec_parser_t parser, char *fmt, ...);
  * Writing routines.
  */
 
+typedef struct rec_writer_s *rec_writer_t;
 
+/* Create a writer associated with a given file stream.  If not enough
+   memory, return NULL. */
+rec_writer_t rec_writer_new (FILE *out);
+
+/* Destroy a writer.
+ *
+ * Note that this call is not closing the associated file stream.
+ */
+void rec_writer_destroy (rec_writer_t writer);
+
+/* Writing routines.
+ *
+ * If EOF occurs, the following functions return NULL.
+ */
+
+bool rec_write_field (rec_writer_t writer, rec_field_t field);
+bool rec_write_record (rec_writer_t writer, rec_record_t record);
+bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
+
+/* Getting information about the writer */
+bool rec_writer_eof (rec_writer_t writer);
+int rec_writer_line (rec_writer_t writer);
 
 #endif /* !REC_H */
 
