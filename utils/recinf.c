@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/29 15:46:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/29 15:49:59 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -40,8 +40,8 @@ static const struct option GNU_longOptions[] =
 char *recinf_version_msg = "recinf 1.0";
 
 char *recinf_usage_msg = "\
-Usage: recinf [OPTION]... [FILE]\n\
-Print information about the specified rec files.\n\
+Usage: recinf [OPTION]... [FILE]...\n\
+Print information about the contents of the specified rec files.\n\
 \n\
 available options\n\
   --help                              print a help message and exit.\n\

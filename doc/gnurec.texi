@@ -550,12 +550,12 @@ it.
 @node recinf Invocation
 @section recinf Invocation
 
-@command{recinf} reads the given rec file (or the data in the standard
-input if no file is specified) and prints structural information about
-it.  Synopsis:
+@command{recinf} reads the given rec files (or the data in the
+standard input if no file is specified) and prints structural
+information about them.  Synopsis:
 
 @example
-recinf [OPTION]... [FILE]
+recinf [OPTION]... [FILE]...
 @end example
 
 The program accepts the following options.
@@ -563,16 +563,27 @@ The program accepts the following options.
 @table @option
 @item --version
 Print the version number, then exit successfully.
-@item --
-Delimit the option list.  Later arguments, if any, are treated as
-operands even if they begin with @option{-}.  For example,
-@command{recinf -- -a} reads from the file named @file{-a}.
+@item --help, --usage
+Print a help message, then exit successfully.
 @end table
 
 @node recinf Examples
 @section recinf Examples
 
-XXX
+Specifying rec data using the standard input:
+
+@example
+$ cat hackers.rec | recinf
+25 Hacker
+@end example
+
+Using explicit file names:
+
+@example
+$ recinf hackers.rec tasks.rec
+25 Hacker
+102 Task
+@end example
 
 @node recsel
 @chapter recsel
