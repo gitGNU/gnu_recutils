@@ -65,10 +65,10 @@ The Rec Format
 
 GNU Rec Utilities
 * recinf::              Printing information about rec files.
-* recsel::              Selecting records from rec files.
-* recins::              Inserting records in rec files.
-* recdel::              Deleting records from rec files.
-* recfix::              Fixing broken rec files and diagnostics.
+* recsel::              Selecting records.
+* recins::              Inserting records.
+* recdel::              Deleting records.
+* recfix::              Fixing broken rec files, and diagnostics.
 
 * The Rec Library::     Writing C programs to manipulate rec files.
 * Usage Example::       A full-fledged rec-based project management

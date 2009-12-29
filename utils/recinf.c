@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/29 15:49:59 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/29 16:02:23 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -140,7 +140,7 @@ main (int argc, char *argv[])
           file_name = argv[optind++];
           if (!(in = fopen (file_name, "r")))
             {
-              printf("cannot read file: %s\n", file_name);
+              printf("error: cannot read file %s\n", file_name);
               return 1;
             }
           else
