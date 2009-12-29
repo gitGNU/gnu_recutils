@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/28 00:38:27 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/29 15:33:42 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -161,9 +161,9 @@ rec_parser_perror (rec_parser_t parser,
      of digits of a given number.  Sorry, I am a bit drunk while
      writing this and cannot think clearly :D -jemarch */
   number_str = malloc (10); /* 10 is a big arbitrary number */
-  sprintf(number_str, "%d", parser->line);
+  sprintf(number_str, "%d", parser->line - 1);
   fputs (number_str, stderr);
-  fputs (": ", stderr);
+  fputs (": error: ", stderr);
   fputs (rec_parser_error_strings[parser->error], stderr);
   fputc ('\n', stderr);
   va_end (ap);
@@ -483,8 +483,7 @@ rec_parse_rset (rec_parser_t parser,
             }
           else
             {
-              /* Parse error: expected a record */
-              parser->error = REC_PARSER_ERECORD;
+              /* Parse error */
               break;
             }
         }
@@ -523,7 +522,7 @@ rec_parser_getc (rec_parser_t parser)
     {
       parser->eof = true;
     }
-  else if (ci == '\n')
+  else if (((char) ci) == '\n')
     {
       parser->line++;
     }
@@ -537,6 +536,11 @@ rec_parser_ungetc (rec_parser_t parser,
 {
   int res;
   
+  if (((char) ci) == '\n')
+    {
+      parser->line--;
+    }
+
   res = ungetc (ci, parser->in);
   if (res != ci)
     {

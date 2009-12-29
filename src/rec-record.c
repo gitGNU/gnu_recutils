@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/27 20:30:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/28 13:39:19 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -169,6 +169,32 @@ rec_record_get_field (rec_record_t record,
     }
 
   return field;
+}
+
+rec_field_t
+rec_record_get_field_name (rec_record_t record,
+                           const char *name)
+{
+  rec_field_t ret;
+  rec_field_t field;
+  rec_field_name_t field_name;
+  int i;
+
+  ret = NULL;
+  
+  for (i = 0; i < rec_record_size (record); i++)
+    {
+      field = rec_record_get_field (record, i);
+      field_name = rec_field_name (field);
+      if (strcmp (name, rec_field_name_get (field_name, 0))
+          == 0)
+        {
+          ret = field;
+          break;
+        }
+    }
+
+  return ret;
 }
 
 bool

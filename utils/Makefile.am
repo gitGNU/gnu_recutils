@@ -23,6 +23,6 @@ recinf_SOURCES = recinf.h \
 
 recinf_LDFLAGS =
 recinf_CPPFLAGS = -I$(top_srcdir)/lib
-recinf_LDADD = $(top_builddir)/lib/libgnu.la
+recinf_LDADD = $(top_builddir)/lib/libgnu.la -lrec
 
 # End of Makefile.am
