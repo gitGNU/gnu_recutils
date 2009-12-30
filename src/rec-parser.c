@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/30 18:14:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/30 18:22:31 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -845,7 +845,7 @@ rec_parse_field_value (rec_parser_t parser,
                 {
                   c2 = (char) ci2;
                   /* If the look ahead character is a blank, skip it.
-                     Otherwise put it back in the stream to be
+                     Otherwise put it back in the stream so it will be
                      processed in the next iteration. */
                   if (c2 != ' ')
                     {
