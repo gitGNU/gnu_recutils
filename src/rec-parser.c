@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/29 15:33:42 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/30 18:14:37 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -42,7 +42,7 @@ static bool rec_expect (rec_parser_t parser, char *str);
 static bool rec_parse_field_name_part (rec_parser_t parser, char **str);
 static bool rec_parse_field_value (rec_parser_t parser, char **str);
 
-static bool rec_parse_comment (rec_parser_t parser);
+static bool rec_parse_comment (rec_parser_t parser, char **str);
 
 static bool rec_parser_digit_p (char c);
 static bool rec_parser_letter_p (char c);
@@ -299,9 +299,11 @@ rec_parse_record (rec_parser_t parser,
 {
   rec_record_t new;
   rec_field_t field;
+  rec_field_name_t field_name;
   bool ret, field_p;
   int ci;
   char c;
+  char *comment_value;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -348,7 +350,24 @@ rec_parse_record (rec_parser_t parser,
       if (c == '#')
         {
           rec_parser_ungetc (parser, ci);
-          rec_parse_comment (parser);
+          if (rec_parse_comment (parser, &comment_value))
+            {
+              /* Insert the comment fake field:
+               *
+               *  empty name -> comment value
+               */
+              field_name = rec_field_name_new ();
+              field = rec_field_new (field_name,
+                                     comment_value);
+              if (!rec_record_insert_field (new,
+                                            field,
+                                            rec_record_size (new)))
+                {
+                  parser->error = REC_PARSER_ENOMEM;
+                  ret = false;
+                  break;
+                }
+            }
         }
       else if (c == '\n')
         {
@@ -404,6 +423,7 @@ rec_parse_rset (rec_parser_t parser,
   rec_rset_t new;
   rec_record_t record;
   rec_field_name_t rec_fname;
+  char *comment_value;
 
   ret = false;
 
@@ -440,7 +460,7 @@ rec_parse_rset (rec_parser_t parser,
       else if (c == '#')
         {
           rec_parser_ungetc (parser, c);
-          rec_parse_comment (parser);
+          rec_parse_comment (parser, &comment_value);
         }
       else
         {
@@ -990,7 +1010,7 @@ rec_parser_buf_adjust (rec_parser_buf_t buf)
 }
 
 static bool
-rec_parse_comment (rec_parser_t parser)
+rec_parse_comment (rec_parser_t parser, char **str)
 {
   bool ret;
   rec_parser_buf_t buf;
@@ -1013,9 +1033,29 @@ rec_parse_comment (rec_parser_t parser)
             {
               break;
             }
+          else
+            {
+              if (!rec_parser_buf_add (buf, c))
+                {
+                  /* Out of memory */
+                  parser->error = REC_PARSER_ENOMEM;
+                  return false;
+                }
+            }
         }
       
       ret = true;
+    }
+
+  if (ret)
+    {
+      /* Resize the token */
+      rec_parser_buf_adjust (buf);
+      *str = rec_parser_buf_data (buf);
+    }
+  else
+    {
+      *str = NULL;
     }
 
   rec_parser_buf_destroy (buf);

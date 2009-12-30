@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/28 08:42:01 jemarch"
+/* -*- mode: C -*- Time-stamp: "09/12/30 18:16:09 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -80,43 +80,58 @@ rec_write_field (rec_writer_t writer,
 
   /* Write the field name */
   fname = rec_field_name (field);
-  for (i = 0; i < rec_field_name_size (fname); i++)
+  if (rec_field_name_size (fname) == 0)
     {
+      /* This is a comment */
+      if (!rec_writer_putc (writer, '#'))
+        {
+          return false;
+        }
       if (!rec_writer_puts (writer,
-                            rec_field_name_get (fname, i)))
-        {
-          return false;
-        }
-      if (!rec_writer_putc (writer, ':'))
+                            rec_field_value (field)))
         {
           return false;
         }
     }
-
-  if (!rec_writer_putc (writer, ' '))
+  else
     {
-      return false;
-    }
-  
-
-  /* Write the field value */
-  fvalue = rec_field_value (field);
-  for (pos = 0; pos < strlen (fvalue); pos++)
-    {
-      if (fvalue[pos] == '\n')
+      for (i = 0; i < rec_field_name_size (fname); i++)
         {
-          if (!rec_writer_puts (writer, "\n+ "))
+          if (!rec_writer_puts (writer,
+                                rec_field_name_get (fname, i)))
             {
-              /* EOF on output */
+              return false;
+            }
+          if (!rec_writer_putc (writer, ':'))
+            {
               return false;
             }
         }
-      else
+      
+      if (!rec_writer_putc (writer, ' '))
         {
-          if (!rec_writer_putc (writer, fvalue[pos]))
+          return false;
+        }
+
+      /* Write the field value */
+      fvalue = rec_field_value (field);
+      for (pos = 0; pos < strlen (fvalue); pos++)
+        {
+          if (fvalue[pos] == '\n')
             {
-              /* EOF on output */
-              return false;
+              if (!rec_writer_puts (writer, "\n+ "))
+                {
+                  /* EOF on output */
+                  return false;
+                }
+            }
+          else
+            {
+              if (!rec_writer_putc (writer, fvalue[pos]))
+                {
+                  /* EOF on output */
+                  return false;
+                }
             }
         }
     }
