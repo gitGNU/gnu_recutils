@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/01 23:11:06 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/01 23:38:46 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -53,7 +53,13 @@ static const struct option GNU_longOptions[] =
 
 /* Messages */
 
-char *recinf_version_msg = "recinf 1.0";
+char *recinf_version_msg = "recinf (GNU recutils) 1.0\n\
+Copyright (C) 2010 Jose E. Marchesi. \n\
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \n\
+This is free software: you are free to change and redistribute it. \n\
+There is NO WARRANTY, to the extent permitted by law.\n\
+\n\
+Written by Jose E. Marchesi.";
 
 char *recinf_usage_msg = "\
 Usage: recinf [OPTION]... [FILE]...\n\
