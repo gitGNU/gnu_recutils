@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "10/01/01 23:11:25 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/01 23:12:30 jemarch"
  *
- *       File:         recinf.h
- *       Date:         Mon Dec 28 08:54:38 2009
+ *       File:         recsel.h
+ *       Date:         Fri Jan  1 23:10:08 2010
  *
- *       GNU Rec - recinf
+ *       GNU Rec - recsel
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RECINF_H
-#define RECINF_H
+#ifndef RECSEL_H
+#define RECSEL_H
 
 /* Command line arguments */
 
@@ -35,7 +35,6 @@ enum
   VERSION_ARG
 };
 
+#endif /* recsel.h */
 
-#endif /* recinf.h */
-
-/* End of recinf.h */
+/* End of recsel.h */
