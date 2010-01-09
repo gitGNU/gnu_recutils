@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/09 22:43:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/09 23:14:20 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -49,6 +49,7 @@ static const struct option GNU_longOptions[] =
     {"usage", no_argument, NULL, USAGE_ARG},
     {"version", no_argument, NULL, VERSION_ARG},
     {"expression", required_argument, NULL, EXPRESSION_ARG},
+    {"print", required_argument, NULL, PRINT_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -67,6 +68,8 @@ Usage: recsel [OPTION]... [FILE]...\n\
 Print the contents of the specified rec files.\n\
 \n\
 available options\n\
+  --expression,-e                     selection expression.\n\
+  --print,-p                          list of fields to print for each matching record.\n\
   --help                              print a help message and exit.\n\
   --usage                             print a usage message and exit.\n\
   --version                           show recsel version and exit.\n\
@@ -76,6 +79,21 @@ char *recsel_help_msg = "";
 
 /* String containing the selection expression.  */
 char *recsel_sex = NULL;
+
+/* String containing the list of field names. */
+char *recsel_fields = NULL;
+
+void
+write_fields (rec_writer_t writer,
+              rec_record_t record,
+              char *fields)
+{
+  char *p;
+  size_t i;
+
+  /* Scan the fields. XXX.  */
+  rec_write_record (writer, record);
+}
 
 bool
 recsel_file (FILE *in)
@@ -108,7 +126,16 @@ recsel_file (FILE *in)
                 {
                   fprintf (stdout, "\n");
                 }
-              rec_write_record (writer, record);
+
+              if (recsel_fields)
+                {
+                  write_fields (writer, record, recsel_fields);
+                }
+              else
+                {
+                  rec_write_record (writer, record);
+                }
+
               written++;
             }
         }
@@ -130,7 +157,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "e:",
+                             "e:p:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -160,6 +187,11 @@ main (int argc, char *argv[])
         case 'e':
           {
             recsel_sex = strdup (optarg);
+          }
+        case PRINT_ARG:
+        case 'p':
+          {
+            recsel_fields = strdup (optarg);
           }
         }
     }

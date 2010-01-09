@@ -34,6 +34,7 @@
    #include <stdlib.h>
    #include <stdio.h>
    #include <string.h>
+   #include <regex.h>
 
    #include <rec.h>
    #include <rec-sex-ctx.h>
@@ -84,7 +85,7 @@ exp : REC_SEX_TOK_INT
     }
     | exp REC_SEX_TOK_EQL exp       
     {
-      $$ = ($1 == $2);
+      $$ = ($1 == $3);
     }
     | exp REC_SEX_TOK_NEQ exp
     {
@@ -100,7 +101,23 @@ exp : REC_SEX_TOK_INT
     }
     | REC_SEX_TOK_STR REC_SEX_TOK_MAT REC_SEX_TOK_STR
     {
-      /* Regexp match.  Second is the pattern. */ 
+      {
+        regex_t regexp;
+
+        if (regcomp (&regexp, $3, REG_EXTENDED) == 0)
+          {
+            $$ = (regexec (&regexp,
+                           $1,
+                           0,
+                           NULL,
+                           0) == 0);
+          }
+        else
+          {
+            /* Error compiling the regexp.  */
+            YYABORT;
+          }
+      }
     }
     | exp REC_SEX_TOK_ADD exp       
     {

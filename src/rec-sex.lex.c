@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[101] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/09 22:41:31 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/09 23:45:45 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -919,31 +919,51 @@ YY_RULE_SETUP
 #line 77 "rec-sex.l"
 {
   /* Get the number of fields with this name */
-/*  {
+  {
     int i;
-    int num_records = 0;
+    int num_fields = 0;
     rec_parser_t parser;
     rec_field_name_t field_name;
+    FILE *stm;
+    char *field_name_str;
 
-    for (i = 0; i < rec_record_size (yyextra); i++)
+    /* Parse a field name.  */
+    field_name_str = malloc (strlen (yytext));
+    strncpy (field_name_str, yytext + 1, strlen (yytext) - 1);
+    field_name_str[strlen (yytext) - 1] = ':';
+    field_name_str[strlen (yytext)] = 0;
+
+    stm = fmemopen (field_name_str, strlen(field_name_str), "r");
+    parser = rec_parser_new (stm);
+    if (!rec_parse_field_name (parser, &field_name))
+      {
+        printf ("FOOOO\n");
+      }
+
+    for (i = 0; i < rec_record_size (yyextra->record); i++)
       {
         rec_field_t field;
   
-        field = rec_record_get_field (yyextra, i);
-        if (strcmp (rec_field_name (field), yytext) == 0)
+        field = rec_record_get_field (yyextra->record, i);
+        if (rec_field_name_equal_p (rec_field_name (field),
+                                    field_name))
           {
-            num_records++;
+            num_fields++;
           }
       }
+
+    yylval->int_val = num_fields;
+
+    rec_parser_destroy (parser);
+    fclose (stm);
   }
-*/
-  yylval->int_val = 0;
+
   return REC_SEX_TOK_INT;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 101 "rec-sex.l"
+#line 121 "rec-sex.l"
 {
   /* Get the value of the first field with this name, or error */
   {
@@ -970,7 +990,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 124 "rec-sex.l"
+#line 144 "rec-sex.l"
 {
   /* Strip the " characters */
   yytext[strlen(yytext) - 1] = 0;
@@ -980,15 +1000,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 131 "rec-sex.l"
+#line 151 "rec-sex.l"
 { printf ("Unrecognized character: %s\n", yytext); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 133 "rec-sex.l"
+#line 153 "rec-sex.l"
 ECHO;
 	YY_BREAK
-#line 992 "rec-sex.lex.c"
+#line 1012 "rec-sex.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2155,7 +2175,7 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 133 "rec-sex.l"
+#line 153 "rec-sex.l"
 
 
 
