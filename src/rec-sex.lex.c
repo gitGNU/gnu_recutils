@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[101] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/09 23:45:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/10 00:11:40 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -1001,7 +1001,7 @@ YY_RULE_SETUP
 case 21:
 YY_RULE_SETUP
 #line 151 "rec-sex.l"
-{ printf ("Unrecognized character: %s\n", yytext); }
+{ return REC_SEX_TOK_ERR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP

@@ -63,6 +63,7 @@
 %left <int_val> REC_SEX_TOK_AND REC_SEX_TOK_OR
 %right <int_val> REC_SEX_TOK_NOT
 %token REC_SEX_TOK_BP REC_SEX_TOK_EP
+%token REC_SEX_TOK_ERR
 
 %type <int_val> input
 %type <int_val> exp
@@ -120,7 +121,7 @@ exp : REC_SEX_TOK_INT
       }
     }
     | exp REC_SEX_TOK_ADD exp       
-    {
+   {
       $$ = $1 + $3;
     }
     | exp REC_SEX_TOK_SUB exp       

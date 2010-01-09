@@ -399,8 +399,8 @@ rec_sex_t rec_sex_new ();
 /* Destroy a sex.  */
 void rec_sex_destroy (rec_sex_t sex);
 
-/* Apply a sex expression to a record.  */
-bool rec_sex_apply (rec_sex_t sex, char *expr, rec_record_t record);
+/* Apply a sex expression to a record, setting RESULT in accordance.  */
+bool rec_sex_apply (rec_sex_t sex, char *expr, rec_record_t record, bool *result);
 
 #endif /* !REC_H */
 

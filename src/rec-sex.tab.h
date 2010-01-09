@@ -57,7 +57,8 @@
      REC_SEX_TOK_AND = 273,
      REC_SEX_TOK_NOT = 274,
      REC_SEX_TOK_BP = 275,
-     REC_SEX_TOK_EP = 276
+     REC_SEX_TOK_EP = 276,
+     REC_SEX_TOK_ERR = 277
    };
 #endif
 
@@ -76,7 +77,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 80 "rec-sex.tab.h"
+#line 81 "rec-sex.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

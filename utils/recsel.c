@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/09 23:14:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/10 00:09:43 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -105,6 +105,7 @@ recsel_file (FILE *in)
   rec_parser_t parser;
   rec_writer_t writer;
   rec_sex_t sex;
+  bool parse_status;
 
   ret = true;
 
@@ -120,7 +121,7 @@ recsel_file (FILE *in)
           record = rec_rset_get_record (rset, i);
 
           if ((!recsel_sex) ||
-              (rec_sex_apply (sex, recsel_sex, record)))
+              (rec_sex_apply (sex, recsel_sex, record, &parse_status)))
             {
               if (written != 0)
                 {
@@ -137,6 +138,11 @@ recsel_file (FILE *in)
                 }
 
               written++;
+            }
+
+          if (!parse_status)
+            {
+              return false;
             }
         }
 

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/09 23:45:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/10 00:11:40 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -148,7 +148,7 @@ STRING             '([^'\n]|\\(.|\n))*'
   return REC_SEX_TOK_STR;
 }
 
-.        { printf ("Unrecognized character: %s\n", yytext); }
+.        { return REC_SEX_TOK_ERR; }
 
 %%
 

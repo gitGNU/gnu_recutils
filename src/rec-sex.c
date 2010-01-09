@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/09 22:51:28 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/10 00:10:25 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -78,7 +78,8 @@ rec_sex_destroy (rec_sex_t sex)
 bool
 rec_sex_apply (rec_sex_t sex,
                char *expr,
-               rec_record_t record)
+               rec_record_t record,
+               bool *result)
 {
   bool res;
 
@@ -98,8 +99,9 @@ rec_sex_apply (rec_sex_t sex,
     }
   else
     {
-      /* Parse error.  XXX.*/
-      printf("Parser error in selection expression.\n");
+      /* Parse error.  */
+      printf("Parse error in selection expression.\n");
+      *result = false;
       res = false;
     }
 
