@@ -89,7 +89,7 @@ exp : REC_SEX_TOK_INT
     }
     | exp REC_SEX_TOK_NEQ exp
     {
-      $$ = ($1 != $2);
+      $$ = ($1 != $3);
     }
     | REC_SEX_TOK_STR REC_SEX_TOK_EQL REC_SEX_TOK_STR 
     {
@@ -121,31 +121,31 @@ exp : REC_SEX_TOK_INT
     }
     | exp REC_SEX_TOK_ADD exp       
     {
-      $$ = $1 + $2;
+      $$ = $1 + $3;
     }
     | exp REC_SEX_TOK_SUB exp       
     {
-      $$ = $1 + $2;
+      $$ = $1 + $3;
     }
     | exp REC_SEX_TOK_MUL exp       
     {
-      $$ = $1 * $2;
+      $$ = $1 * $3;
     }
     | exp REC_SEX_TOK_DIV exp       
     {
-      $$ = $1 / $2;
+      $$ = $1 / $3;
     }
     | exp REC_SEX_TOK_MOD exp       
     {
-      $$ = $1 % $2;
+      $$ = $1 % $3;
     }
     | exp REC_SEX_TOK_BT exp       
     {
-      $$ = ($1 > $2);
+      $$ = ($1 > $3);
     }
     | exp REC_SEX_TOK_LT exp       
     {
-      $$ = ($1 < $2);
+      $$ = ($1 < $3);
     }
     | REC_SEX_TOK_MIN exp %prec REC_SEX_TOK_NEG
     {
