@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/01 23:39:28 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/09 22:43:17 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -48,6 +48,7 @@ static const struct option GNU_longOptions[] =
     {"help", no_argument, NULL, HELP_ARG},
     {"usage", no_argument, NULL, USAGE_ARG},
     {"version", no_argument, NULL, VERSION_ARG},
+    {"expression", required_argument, NULL, EXPRESSION_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -73,17 +74,63 @@ available options\n\
 
 char *recsel_help_msg = "";
 
+/* String containing the selection expression.  */
+char *recsel_sex = NULL;
+
+bool
+recsel_file (FILE *in)
+{
+  bool ret;
+  rec_rset_t rset;
+  rec_record_t record;
+  int i, written;
+  rec_parser_t parser;
+  rec_writer_t writer;
+  rec_sex_t sex;
+
+  ret = true;
+
+  sex = rec_sex_new ();
+  parser = rec_parser_new (in);
+  writer = rec_writer_new (stdout);
+
+  written = 0;
+  while (rec_parse_rset (parser, &rset))
+    {
+      for (i = 0; i < rec_rset_size (rset); i++)
+        {
+          record = rec_rset_get_record (rset, i);
+
+          if ((!recsel_sex) ||
+              (rec_sex_apply (sex, recsel_sex, record)))
+            {
+              if (written != 0)
+                {
+                  fprintf (stdout, "\n");
+                }
+              rec_write_record (writer, record);
+              written++;
+            }
+        }
+
+    }
+
+  return ret;
+}
+
 int
 main (int argc, char *argv[])
 {
   char c;
   char ret;
+  char *file_name;
+  FILE *in;
 
   program_name = strdup (argv[0]);
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "",
+                             "e:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -109,7 +156,41 @@ main (int argc, char *argv[])
             exit (0);
             break;
           }
+        case EXPRESSION_ARG:
+        case 'e':
+          {
+            recsel_sex = strdup (optarg);
+          }
         }
+    }
+
+  /* optarg9 the input files, if any.  Otherwise use the standard
+     input to read the rec data.  */
+  if (optind < argc)
+    {
+      while (optind < argc)
+        {
+          file_name = argv[optind++];
+          if (!(in = fopen (file_name, "r")))
+            {
+              printf("error: cannot read file %s\n", file_name);
+              return 1;
+            }
+          else
+            {
+              if (!recsel_file (in))
+                {
+                  /* Parse error.  */
+                  return 1;
+                }
+              
+              fclose (in);
+            }
+        }
+    }
+  else
+    {
+      recsel_file (stdin);
     }
 
   return 0;

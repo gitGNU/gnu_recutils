@@ -383,6 +383,25 @@ bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
 bool rec_writer_eof (rec_writer_t writer);
 int rec_writer_line (rec_writer_t writer);
 
+/*
+ * SELECTION EXPRESSIONS
+ *
+ * A selection expression is a written boolean expression that can be
+ * applied on a record.
+ */
+
+typedef struct rec_sex_s *rec_sex_t;
+
+/* Create a new selection expression and return it.  If there is not
+   enough memory to create the sex, then return NULL.  */
+rec_sex_t rec_sex_new ();
+
+/* Destroy a sex.  */
+void rec_sex_destroy (rec_sex_t sex);
+
+/* Apply a sex expression to a record.  */
+bool rec_sex_apply (rec_sex_t sex, char *expr, rec_record_t record);
+
 #endif /* !REC_H */
 
 /* End of rec.h */

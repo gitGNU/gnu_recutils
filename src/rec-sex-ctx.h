@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/09 21:24:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/09 22:47:50 jemarch"
  *
- *       File:         recsel.h
- *       Date:         Fri Jan  1 23:10:08 2010
+ *       File:         rec-sex-ctx.h
+ *       Date:         Sat Jan  9 20:22:52 2010
  *
- *       GNU Rec - recsel
+ *       GNU Records - Select Expressions parse context
  *
  */
 
@@ -23,19 +23,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RECSEL_H
-#define RECSEL_H
+#ifndef REC_SEX_CTX_H
+#define REC_SEX_CTX_H
 
-/* Command line arguments */
+#include <config.h>
 
-enum
+#include <rec.h>
+
+struct rec_sex_ctx_s
 {
-  HELP_ARG,
-  USAGE_ARG,
-  VERSION_ARG,
-  EXPRESSION_ARG
+  char *in;              /* String to be parsed.  */
+  size_t index;          /* Index in in_str.  */
+  rec_record_t record;   /* Record to apply the expr. on.  */
+  void *scanner;         /* Flex scanner.  */
+
+  bool result;
 };
 
-#endif /* recsel.h */
+/* Forward reference for the bison parser.  */
+int sexparse (struct rec_sex_ctx_s *sex_ctx);
 
-/* End of recsel.h */
+#endif /* rec-sex-ctx.h */
+
+/* End of rec-sex-ctx.h */

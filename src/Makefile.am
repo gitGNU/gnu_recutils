@@ -25,7 +25,12 @@ librec_la_SOURCES = rec-field-name.c \
                     rec-record.c \
                     rec-rset.c \
                     rec-parser.c \
-                    rec-writer.c
+                    rec-writer.c \
+                    rec-sex-ctx.h \
+                    rec-sex.c \
+                    rec-sex.lex.c \
+                    rec-sex.lex.h \
+                    rec-sex.tab.c
 
 librec_la_LDFLAGS =
 librec_la_CPPFLAGS = -I$(top_srcdir)/lib
