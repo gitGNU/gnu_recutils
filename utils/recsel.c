@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/10 01:20:03 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/10 01:22:37 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -315,7 +315,7 @@ main (int argc, char *argv[])
         }
     }
 
-  /* optarg9 the input files, if any.  Otherwise use the standard
+  /* Process the input files, if any.  Otherwise use the standard
      input to read the rec data.  */
   if (optind < argc)
     {
