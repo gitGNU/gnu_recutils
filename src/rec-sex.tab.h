@@ -41,18 +41,18 @@
    enum yytokentype {
      REC_SEX_TOK_INT = 258,
      REC_SEX_TOK_STR = 259,
-     REC_SEX_TOK_ADD = 260,
-     REC_SEX_TOK_SUB = 261,
-     REC_SEX_TOK_MOD = 262,
-     REC_SEX_TOK_DIV = 263,
-     REC_SEX_TOK_MUL = 264,
-     REC_SEX_TOK_MIN = 265,
-     REC_SEX_TOK_NEG = 266,
-     REC_SEX_TOK_BT = 267,
-     REC_SEX_TOK_LT = 268,
-     REC_SEX_TOK_MAT = 269,
-     REC_SEX_TOK_NEQ = 270,
-     REC_SEX_TOK_EQL = 271,
+     REC_SEX_TOK_BT = 260,
+     REC_SEX_TOK_LT = 261,
+     REC_SEX_TOK_MAT = 262,
+     REC_SEX_TOK_NEQ = 263,
+     REC_SEX_TOK_EQL = 264,
+     REC_SEX_TOK_ADD = 265,
+     REC_SEX_TOK_SUB = 266,
+     REC_SEX_TOK_MOD = 267,
+     REC_SEX_TOK_DIV = 268,
+     REC_SEX_TOK_MUL = 269,
+     REC_SEX_TOK_MIN = 270,
+     REC_SEX_TOK_NEG = 271,
      REC_SEX_TOK_OR = 272,
      REC_SEX_TOK_AND = 273,
      REC_SEX_TOK_NOT = 274,
@@ -69,7 +69,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 52 "rec-sex.y"
+#line 145 "rec-sex.y"
 
   int int_val;
   char *str_val;
