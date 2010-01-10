@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/10 01:08:38 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/10 01:20:03 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -50,6 +50,7 @@ static const struct option GNU_longOptions[] =
     {"version", no_argument, NULL, VERSION_ARG},
     {"expression", required_argument, NULL, EXPRESSION_ARG},
     {"print", required_argument, NULL, PRINT_ARG},
+    {"type", required_argument, NULL, TYPE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -70,6 +71,7 @@ Print the contents of the specified rec files.\n\
 available options\n\
   --expression,-e                     selection expression.\n\
   --print,-p                          list of fields to print for each matching record.\n\
+  --type,-t                           print records of the specified type only.\n\
   --help                              print a help message and exit.\n\
   --usage                             print a usage message and exit.\n\
   --version                           show recsel version and exit.\n\
@@ -83,6 +85,9 @@ char *recsel_sex = NULL;
 /* Field names.  */
 rec_field_name_t recsel_fields[256];
 int recsel_num_fields = 0;
+
+/* Record type.  */
+char *recsel_type = NULL;
 
 bool
 mount_recsel_fields (char *str)
@@ -184,6 +189,8 @@ recsel_file (FILE *in)
   bool ret;
   rec_rset_t rset;
   rec_record_t record;
+  rec_record_t descriptor;
+  rec_field_t type;
   int i, written;
   rec_parser_t parser;
   rec_writer_t writer;
@@ -199,6 +206,16 @@ recsel_file (FILE *in)
   written = 0;
   while (rec_parse_rset (parser, &rset))
     {
+      if (recsel_type != NULL)
+        {
+          descriptor = rec_rset_descriptor (rset);
+          type = rec_record_get_field_name (descriptor, "%rec");
+          if (strcmp (rec_field_value (type), recsel_type) != 0)
+            {
+              continue;
+            }
+        }
+
       for (i = 0; i < rec_rset_size (rset); i++)
         {
           record = rec_rset_get_record (rset, i);
@@ -246,7 +263,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "e:p:",
+                             "t:e:p:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -287,6 +304,12 @@ main (int argc, char *argv[])
                 return 1;
               }
 
+            break;
+          }
+        case TYPE_ARG:
+        case 't':
+          {
+            recsel_type = strdup (optarg);
             break;
           }
         }
