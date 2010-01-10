@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/10 00:09:43 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/10 01:08:38 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -80,19 +80,102 @@ char *recsel_help_msg = "";
 /* String containing the selection expression.  */
 char *recsel_sex = NULL;
 
-/* String containing the list of field names. */
-char *recsel_fields = NULL;
+/* Field names.  */
+rec_field_name_t recsel_fields[256];
+int recsel_num_fields = 0;
+
+bool
+mount_recsel_fields (char *str)
+{
+  rec_parser_t parser;
+  rec_field_name_t field_name;
+  char *field_name_str;
+  char *p, *c;
+  FILE *stm;
+  bool parse_error;
+
+  parse_error = false;
+
+  p = str;
+  c = str;
+  while (*c != 0)
+    {
+      if ((*c == ',')
+          || (*(c + 1) == 0))
+        {
+          if (*(c + 1) == 0)
+            {
+              c++;
+            }
+
+          /* Parse a field name from *p .. *(c - 1).  */
+          field_name_str = malloc ((c - p) + 2);
+          field_name_str[(c - p) + 1] = 0;
+          field_name_str[(c - p)] = ':';
+          strncpy (field_name_str, p, (c - p));
+
+          stm = fmemopen (field_name_str,
+                          strlen (field_name_str),
+                          "r");
+          parser = rec_parser_new (stm);
+
+          if (rec_parse_field_name (parser, &field_name))
+            {
+              /* Add the field name to recsel_fields.  */
+              recsel_fields[recsel_num_fields++] = field_name;
+            }
+          else
+            {
+              /* Error.  */
+              parse_error = true;
+            }
+
+          rec_parser_destroy (parser);
+          fclose (stm);
+          free (field_name_str);
+          p = c + 1;
+
+          if (parse_error)
+            {
+              return false;
+            }
+        }
+
+      c++;
+    }
+
+  return true;
+}
 
 void
 write_fields (rec_writer_t writer,
-              rec_record_t record,
-              char *fields)
+              rec_record_t record)
 {
-  char *p;
-  size_t i;
+  int i, j;
+  rec_field_t field;
+  bool found;
 
-  /* Scan the fields. XXX.  */
-  rec_write_record (writer, record);
+  /* Scan the fields.  */
+  for (i = 0; i < rec_record_size (record); i++)
+    {
+      field = rec_record_get_field (record, i);
+
+      found = false;
+      for (j = 0; j < recsel_num_fields; j++)
+        {
+          if (rec_field_name_equal_p (recsel_fields[j],
+                                      rec_field_name (field)))
+            {
+              found = true;
+              break;
+            }
+        }
+
+      if (found)
+        {
+          rec_write_field (writer, field);
+        }
+    }
 }
 
 bool
@@ -128,9 +211,9 @@ recsel_file (FILE *in)
                   fprintf (stdout, "\n");
                 }
 
-              if (recsel_fields)
+              if (recsel_num_fields > 0)
                 {
-                  write_fields (writer, record, recsel_fields);
+                  write_fields (writer, record);
                 }
               else
                 {
@@ -193,11 +276,18 @@ main (int argc, char *argv[])
         case 'e':
           {
             recsel_sex = strdup (optarg);
+            break;
           }
         case PRINT_ARG:
         case 'p':
           {
-            recsel_fields = strdup (optarg);
+            if (!mount_recsel_fields (strdup (optarg)))
+              {
+                fprintf (stderr, "Invalid field list.\n");
+                return 1;
+              }
+
+            break;
           }
         }
     }
