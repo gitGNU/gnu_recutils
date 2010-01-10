@@ -217,8 +217,8 @@ file.  For example, we could get a list of the names of loaned books
 invoking @command{recsel} in the following way:
 
 @example
-$ recsel -e 'Location = loaned' -p Title books.rec
-The Colour of Magic
+$ recsel -e "Location = 'loaned'" -p Title books.rec
+Title: The Colour of Magic
 @end example
 
 @node Fields and Records
@@ -538,7 +538,7 @@ mode when opening the file:
 @node recinf
 @chapter recinf
 
-@command{recinf} reads the given rec file (or the data in the standard
+@command{recinf} reads the given rec files (or the data in the standard
 input if no file is specified) and prints structural information about
 it.
 
@@ -588,12 +588,14 @@ $ recinf hackers.rec tasks.rec
 @node recsel
 @chapter recsel
 
-XXX
+@command{recsel} reads the given rec files (or the data in the
+standard input if no file is specified) and prints out records (or
+part of records) based in some criteria specified by the user.
 
 @menu
-* recsel Invocation::   Command line options.
-* Search Expressions::  Patterns.
-* recsel Examples::     Examples of the usage of @command{recsel}
+* recsel Invocation::      Command line options.
+* Selection Expressions::  Patterns. XXX.
+* recsel Examples::        Examples of the usage of @command{recsel}
 @end menu
 
 @node recsel Invocation
@@ -609,12 +611,32 @@ recsel [OPTION]... [FILE]...
 The program accepts the following options.
 
 @table @option
-@item -e
-@item --expression
-The expression to be used to determine the matching records and what
-information to print in the standard output.
+@item -e EXPR
+@item --expression=EXPR
+The expression to be used to determine the matching records.  The
+format of those expressions is documented in ``Selection
+Expressions''.  (XXX: xref).
 
-XXX xref to the expression format.
+If this option is not specified then any record will match.
+@item -t TYPE
+@item --type=TYPE
+Select records of a given type only.
+@item -p LIST_OF_NAMES
+@item --print=LIST_OF_NAMES
+List of fields to print for each record.  @option{LIST_OF_NAMES} is a
+list of field names separated by commas.  For example:
+@example
+-p Name,Email
+@end example
+means to print the Name and the Email of every matching record.
+
+If this option is not specified then all the fields of the matching
+records are printed in the standard output.
+@item -c
+@item --count
+If this option is specified then recsel will print the number of
+matching records instead of the records themselves.  This option is
+incompatible with @option{-p}.
 @item --help
 Print a usage message listing all available options, then exit
 successfully.
@@ -626,10 +648,109 @@ operands even if they begin with @option{-}.  For example,
 @command{recsel -- -e} reads from the file named @file{-r}.
 @end table
 
-@node Search Expressions
-@section Search Expressions
+@node Selection Expressions
+@section Selection Expressions
 
-XXX
+A @dfn{selection expression} (also known as a @dfn{sex}) is a simple
+arithmetic infix expression that can be applied to a record.  The
+result of a sex application is an integer value.  That value shall be
+interpreted with the boolean convention in the C programming language,
+0 meaning false and any value other than 0 meaning true.
+
+A sex expression allows the usage of several types of @dfn{operands}:
+
+@table @strong
+@item Integer values
+Integer literals can be positive or negative.
+
+Examples:
+@example
+10000
+0
+-1342
+@end example
+@item String values
+String values are delimited by the @code{'} character.  Examples are:
+
+@example
+'Hello.'
+'The following example is the empty string.'
+''
+@end example
+
+The @code{'} and @code{\n} characters can be part of a string if they
+are escaped with a backslash, like in:
+
+@example
+'This string contains an apostrophe: \'.'
+'This string is a\
+multi lines string.'
+@end example
+
+XXX.
+@item Field values
+
+A field value can be included in a sex expression by writing its
+name.  The field name is replaced by a string containing the field
+value.  The last colon character (@code{:}) is optional.
+
+Examples:
+@example
+Name
+Email:
+Hacker:Name:OpenedBy
+@end example
+
+@item Field counters
+
+Field counters are replaced by the number of occurrences of a field
+with the given name in the record.  For example:
+
+@example
+#Email
+@end example
+
+The previosu expression is replaced with the number of fields named
+@code{Email} in the record.  It can be zero if the record does not
+have a field with that name.
+
+@item Grouping parenthesis
+
+Parenthesis characters (@code{(} and @code{)}) can be used to group
+sexs in the usual way.
+@end table
+
+The @dfn{operators} that can be used in a sex expression are:
+
+@table @strong
+@item Arithmetic operators
+Arithmetic operators for addition (@code{+}), subtraction (@code{-}),
+multiplication (@code{*}), integer division (@code{/}) and modulus
+(@code{%}) are supported with their usual meanings.
+
+These operators require either integer operands or string operands
+whose value can be interpreted as an integer literal.
+@item Boolean operators
+The boolean operators @strong{and} (@code{&&}), @strong{or}
+(@code{||}) and  @strong{not} (@code{!}) are supported with the same
+semantics as their C counterparts.
+
+Like the arithmetic operators, the boolean operators expect integer
+operands, and will try to convert any string operand to an integer
+value.
+@item Compare operators
+The compare operators @strong{less than} (@code{<}), @strong{greater
+than} (@code{>}), @strong{less than or equal} (@code{<=}),
+@strong{greater than or equal} (@code{>=}), @strong{equal} (@code{=})
+and @strong{unequal} (@code{!=}) are supported with their usual
+meaning.
+@item String comparison and matching operators
+Strings can be compared with the equality operator (@code{=}).
+
+The match operator (@code{~}) can be used to match a string with a
+given regular expression.  The supported regexp syntax is described in
+the GNU C library manual. XXX.
+@end table
 
 @node recsel Examples
 @section recsel Examples
