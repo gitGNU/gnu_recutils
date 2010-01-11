@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 18:13:18 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 19:55:04 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -166,7 +166,11 @@ recsel_file (FILE *in)
                 {
                   if (recsel_expr)
                     {
-                      fprintf (stdout, "%s", resolver_result);
+                      if (strcmp (resolver_result, "") != 0)
+                        {
+                          fprintf (stdout, "%s", resolver_result);
+                          written++;
+                        }
                     }
                   else
                     {
@@ -174,7 +178,10 @@ recsel_file (FILE *in)
                     }
                 }
 
-              written++;
+              if (!recsel_expr)
+                {
+                  written++;
+                }
             }
 
           if (!parse_status)
