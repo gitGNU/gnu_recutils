@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 19:37:25 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 23:02:21 jemarch"
  *
  *       File:         rec-resolver.c
  *       Date:         Mon Jan 11 14:29:18 2010
@@ -154,38 +154,46 @@ rec_resolve_part (rec_record_t record,
 {
   bool ret;
   int i;
-  int index = -1;
+  int index, num_found;
   rec_field_t field;
   bool slash_p;
   rec_field_name_t field_name;
 
+  num_found = 0;
+
   field_name = rec_parse_field_name_str (part->field_name);
   slash_p = (part->prefix_mod == '/');
+  index = part->min;
 
   /* Get the result string.  */
   for (i = 0; i < rec_record_size (record); i++)
     {
       field = rec_record_get_field (record, i);
 
-      if (((index == -1) || (i == index))
-          && (rec_field_name_equal_p (field_name,
-                                      rec_field_name (field))))
+      if (rec_field_name_equal_p (field_name,
+                                  rec_field_name (field)))
         {
           ret = true;
+          
+          if ((index == -1) ||
+              (index == num_found))
+            {
+              if (slash_p)
+                {
+                  fprintf (out, rec_field_value (field));
+                  fprintf (out, "\n");
+                }
+              else
+                {
+                  rec_writer_t writer;
+                  
+                  writer = rec_writer_new (out);
+                  rec_write_field (writer, field);
+                  rec_writer_destroy (writer);
+                }
+            }
 
-          if (slash_p)
-            {
-              fprintf (out, rec_field_value (field));
-              fprintf (out, "\n");
-            }
-          else
-            {
-              rec_writer_t writer;
-              
-              writer = rec_writer_new (out);
-              rec_write_field (writer, field);
-              rec_writer_destroy (writer);
-            }
+          num_found++;
         }
     }
   
@@ -205,6 +213,7 @@ rec_resolver_parse_int (char *p,
     {
       /* Add a digit.  */
       number[number_size++] = *p;
+      p++;
     }
   number[number_size] = 0;
   
@@ -260,6 +269,33 @@ rec_parse_part (char *str,
       
       part->field_name = field_name_str;
     }
+
+  /* Get the subscript, if any.  */
+  if ((part->field_name)
+      && (*p == '['))
+    {
+      char number[100];
+      size_t number_size = 0;
+
+      p++;
+      while ((*p != 0) && (*p <= '9') && (*p >= '0'))
+        {
+          number[number_size++] = *p;
+          p++;
+        }
+      number[number_size] = 0;
+
+      if (*p == ']')
+        {
+          part->min = atoi (number);
+        }
+      else 
+        {
+          /* Expected ]: parse error. */
+          ret = false;
+        }
+    }
+  
 
   if (!(part->field_name))
     {
