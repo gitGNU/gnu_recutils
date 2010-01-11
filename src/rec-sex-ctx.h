@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/09 22:47:50 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 21:48:19 jemarch"
  *
  *       File:         rec-sex-ctx.h
  *       Date:         Sat Jan  9 20:22:52 2010
@@ -39,6 +39,22 @@ struct rec_sex_ctx_s
 
   bool result;
 };
+
+enum rec_sex_val_type_e
+{
+  REC_SEX_INT,
+  REC_SEX_STR
+};
+
+struct rec_sex_val_s
+{
+  enum rec_sex_val_type_e type;
+
+  int int_val;
+  char *str_val;
+};
+
+typedef struct rec_sex_val_s *rec_sex_val_t;
 
 /* Forward reference for the bison parser.  */
 int sexparse (struct rec_sex_ctx_s *sex_ctx);

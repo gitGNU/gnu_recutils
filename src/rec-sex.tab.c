@@ -94,103 +94,27 @@
   }
 
   #define scanner sex_ctx->scanner
-  
-  /*
-   * Macros implementing the operators.
-   *
-   * We use macros instead of functions to simplify error management
-   * by directly using the YY* macros.
-   */
 
-  #define REC_SEX_EQL_INT_INT(RES, INT1, INT2)    \
-    do                                            \
-    {                                             \
-      (RES) = (INT1 == INT2);                     \
-    } while (0)
-
-  #define REC_SEX_EQL_STR_STR(RES, STR1, STR2)    \
-    do                                            \
-    {                                             \
-      (RES) = (strcmp ((STR1), (STR2)) == 0);     \
-    } while (0)
-
-  #define REC_SEX_EQL_INT_STR(RES, INT, STR)      \
-    do                                            \
-    {                                             \
-      int i;                                      \
-      i = atoi ((STR));                           \
-      (RES) = (i == (INT));                       \
-    } while (0)
-
-  #define REC_SEX_NEQ_INT_INT(RES, INT1, INT2)    \
-    do                                            \
-    {                                             \
-      (RES) = (INT1 != INT2);                     \
-    } while (0)
-
-  #define REC_SEX_NEQ_STR_STR(RES, STR1, STR2)    \
-    do                                            \
-    {                                             \
-      (RES) = (strcmp ((STR1), (STR2)) != 0);     \
-    } while (0)
-
-  #define REC_SEX_NEQ_INT_STR(RES, INT, STR)      \
-    do                                            \
-    {                                             \
-      int i;                                      \
-      i = atoi ((STR));                           \
-      (RES) = (i != (INT));                       \
-    } while (0)
-
-  #define REC_SEX_MAT(RES, STR, PATTERN)                        \
-  do                                                            \
-  {                                                             \
-    int res = 0;                                                \
-    regex_t regexp;                                             \
-                                                                \
-    if (regcomp (&regexp, (PATTERN), REG_EXTENDED) == 0)        \
-      {                                                         \
-        (RES) = (regexec (&regexp,                              \
-                         (STR),                                 \
-                         0,                                     \
-                         NULL,                                  \
-                         0) == 0);                              \
-      }                                                         \
-    else                                                        \
-      {                                                         \
-        /* Error compiling the regexp.  */                      \
-        YYABORT;                                                \
-      }                                                         \
-  } while (0)
-
-  #define REC_SEX_ADD_INT_INT(RES,INT1,INT2)      \
-    do                                            \
-      {                                           \
-        (RES) = (INT1) + (INT2);                  \
-      } while (0)
-
-  #define REC_SEX_ADD_STR_STR(RES,STR1,STR2)      \
-    do                                            \
-      {                                           \
-        int i1, i2;                               \
-        i1 = atoi ((STR1));                       \
-        i2 = atoi ((STR2));                       \
-        (RES) = i1 + i2;                          \
-    } while (0)
-
-  #define REC_SEX_ADD_INT_STR(RES,INT,STR)        \
-    do                                            \
-      {                                           \
-        int i;                                    \
-        i = atoi ((STR));                         \
-        (RES) = (INT) + i;                        \
-    } while (0)
-
+  /* Forward references for parsing routines.  */
+  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_add (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_sub (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_mul (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_div (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_mod (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_bt (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_lt (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_not (rec_sex_val_t res, rec_sex_val_t val);
+  bool rec_sex_and (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_or (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_group (rec_sex_val_t res, rec_sex_val_t val);
 
 
 
 /* Line 189 of yacc.c  */
-#line 194 "rec-sex.tab.c"
+#line 118 "rec-sex.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -219,20 +143,20 @@
    enum yytokentype {
      REC_SEX_TOK_INT = 258,
      REC_SEX_TOK_STR = 259,
-     REC_SEX_TOK_BT = 260,
-     REC_SEX_TOK_LT = 261,
-     REC_SEX_TOK_MAT = 262,
-     REC_SEX_TOK_NEQ = 263,
-     REC_SEX_TOK_EQL = 264,
-     REC_SEX_TOK_ADD = 265,
-     REC_SEX_TOK_SUB = 266,
-     REC_SEX_TOK_MOD = 267,
-     REC_SEX_TOK_DIV = 268,
-     REC_SEX_TOK_MUL = 269,
-     REC_SEX_TOK_MIN = 270,
-     REC_SEX_TOK_NEG = 271,
-     REC_SEX_TOK_OR = 272,
-     REC_SEX_TOK_AND = 273,
+     REC_SEX_TOK_MAT = 260,
+     REC_SEX_TOK_OR = 261,
+     REC_SEX_TOK_AND = 262,
+     REC_SEX_TOK_BT = 263,
+     REC_SEX_TOK_LT = 264,
+     REC_SEX_TOK_NEQ = 265,
+     REC_SEX_TOK_EQL = 266,
+     REC_SEX_TOK_ADD = 267,
+     REC_SEX_TOK_SUB = 268,
+     REC_SEX_TOK_MOD = 269,
+     REC_SEX_TOK_DIV = 270,
+     REC_SEX_TOK_MUL = 271,
+     REC_SEX_TOK_MIN = 272,
+     REC_SEX_TOK_NEG = 273,
      REC_SEX_TOK_NOT = 274,
      REC_SEX_TOK_BP = 275,
      REC_SEX_TOK_EP = 276,
@@ -247,15 +171,14 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 145 "rec-sex.y"
+#line 69 "rec-sex.y"
 
-  int int_val;
-  char *str_val;
+  struct rec_sex_val_s sexval;
 
 
 
 /* Line 214 of yacc.c  */
-#line 259 "rec-sex.tab.c"
+#line 182 "rec-sex.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -267,7 +190,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 271 "rec-sex.tab.c"
+#line 194 "rec-sex.tab.c"
 
 #ifdef short
 # undef short
@@ -480,18 +403,18 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  15
+#define YYFINAL  10
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   114
+#define YYLAST   61
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  23
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  28
+#define YYNRULES  19
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  49
+#define YYNSTATES  35
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -538,33 +461,27 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     4,     6,     8,    12,    16,    20,    24,
-      28,    32,    36,    40,    44,    48,    52,    56,    60,    64,
-      68,    72,    76,    80,    84,    87,    90,    94,    98
+       0,     0,     3,     4,     6,     8,    10,    14,    18,    22,
+      26,    30,    34,    38,    42,    46,    50,    53,    57,    61
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      24,     0,    -1,    -1,    25,    -1,     3,    -1,    25,     9,
-      25,    -1,     4,     9,     4,    -1,    25,     9,     4,    -1,
-       4,     9,    25,    -1,    25,     8,    25,    -1,     4,     8,
-       4,    -1,    25,     8,     4,    -1,     4,     8,    25,    -1,
-       4,     7,     4,    -1,    25,    10,    25,    -1,     4,    10,
-       4,    -1,    25,    10,     4,    -1,     4,    10,    25,    -1,
-      25,    11,    25,    -1,    25,    14,    25,    -1,    25,    13,
-      25,    -1,    25,    12,    25,    -1,    25,     5,    25,    -1,
-      25,     6,    25,    -1,    15,    25,    -1,    19,    25,    -1,
-      25,    18,    25,    -1,    25,    17,    25,    -1,    20,    25,
-      21,    -1
+      24,     0,    -1,    -1,    25,    -1,     3,    -1,     4,    -1,
+      25,    11,    25,    -1,    25,    10,    25,    -1,     4,     5,
+       4,    -1,    25,    12,    25,    -1,    25,    13,    25,    -1,
+      25,    16,    25,    -1,    25,    15,    25,    -1,    25,    14,
+      25,    -1,    25,     8,    25,    -1,    25,     9,    25,    -1,
+      19,    25,    -1,    25,     7,    25,    -1,    25,     6,    25,
+      -1,    20,    25,    21,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   166,   166,   167,   170,   183,   185,   187,   189,   202,
-     204,   206,   208,   218,   231,   233,   235,   237,   239,   240,
-     241,   242,   243,   244,   245,   246,   247,   248,   249
+       0,    90,    90,    91,   105,   106,   107,   108,   109,   110,
+     111,   112,   113,   114,   115,   116,   117,   118,   119,   120
 };
 #endif
 
@@ -574,11 +491,11 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "REC_SEX_TOK_INT", "REC_SEX_TOK_STR",
-  "REC_SEX_TOK_BT", "REC_SEX_TOK_LT", "REC_SEX_TOK_MAT", "REC_SEX_TOK_NEQ",
-  "REC_SEX_TOK_EQL", "REC_SEX_TOK_ADD", "REC_SEX_TOK_SUB",
-  "REC_SEX_TOK_MOD", "REC_SEX_TOK_DIV", "REC_SEX_TOK_MUL",
-  "REC_SEX_TOK_MIN", "REC_SEX_TOK_NEG", "REC_SEX_TOK_OR",
-  "REC_SEX_TOK_AND", "REC_SEX_TOK_NOT", "REC_SEX_TOK_BP", "REC_SEX_TOK_EP",
+  "REC_SEX_TOK_MAT", "REC_SEX_TOK_OR", "REC_SEX_TOK_AND", "REC_SEX_TOK_BT",
+  "REC_SEX_TOK_LT", "REC_SEX_TOK_NEQ", "REC_SEX_TOK_EQL",
+  "REC_SEX_TOK_ADD", "REC_SEX_TOK_SUB", "REC_SEX_TOK_MOD",
+  "REC_SEX_TOK_DIV", "REC_SEX_TOK_MUL", "REC_SEX_TOK_MIN",
+  "REC_SEX_TOK_NEG", "REC_SEX_TOK_NOT", "REC_SEX_TOK_BP", "REC_SEX_TOK_EP",
   "REC_SEX_TOK_ERR", "$accept", "input", "exp", 0
 };
 #endif
@@ -598,16 +515,14 @@ static const yytype_uint16 yytoknum[] =
 static const yytype_uint8 yyr1[] =
 {
        0,    23,    24,    24,    25,    25,    25,    25,    25,    25,
-      25,    25,    25,    25,    25,    25,    25,    25,    25,    25,
-      25,    25,    25,    25,    25,    25,    25,    25,    25
+      25,    25,    25,    25,    25,    25,    25,    25,    25,    25
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     0,     1,     1,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     2,     2,     3,     3,     3
+       0,     2,     0,     1,     1,     1,     3,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     2,     3,     3,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -615,35 +530,33 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     4,     0,     0,     0,     0,     0,     3,     0,     0,
-       0,     0,    24,    25,     0,     1,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    13,    10,    12,
-       6,     8,    15,    17,    28,    22,    23,    11,     9,     7,
-       5,    16,    14,    18,    21,    20,    19,    27,    26
+       2,     4,     5,     0,     0,     0,     3,     0,    16,     0,
+       1,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     8,    19,    18,    17,    14,    15,     7,     6,
+       9,    10,    13,    12,    11
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     6,     7
+      -1,     5,     6
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -15
+#define YYPACT_NINF -10
 static const yytype_int8 yypact[] =
 {
-      21,   -15,     2,    21,    21,    21,     5,    87,    24,    23,
-      29,    31,   -14,   -15,    73,   -15,    21,    21,    49,    51,
-      57,    21,    21,    21,    21,    21,    21,   -15,     2,    96,
-       2,    96,     2,    45,   -15,    96,    96,     2,    96,     2,
-      96,     2,    45,    45,   -14,   -14,   -14,   -15,   -15
+       0,   -10,    27,     0,     0,     2,    31,    29,   -10,    15,
+     -10,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   -10,   -10,    40,    40,    45,    45,    45,    45,
+      -9,    -9,   -10,   -10,   -10
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -15,   -15,    -3
+     -10,   -10,    -3
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -653,45 +566,34 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      12,    13,    14,    25,    26,    15,    29,    31,    33,     8,
-       9,    10,    11,    35,    36,    38,    40,    42,    43,    44,
-      45,    46,    47,    48,     1,     2,     1,    28,    27,     0,
-       0,     0,     1,    30,     1,    32,     3,     0,     3,     0,
-       4,     5,     4,     5,     3,     0,     3,     0,     4,     5,
-       4,     5,     1,    37,     1,    39,     0,    22,    23,    24,
-       1,    41,    25,    26,     3,     0,     3,     0,     4,     5,
-       4,     5,     3,     0,     0,     0,     4,     5,    16,    17,
-       0,    18,    19,    20,    21,    22,    23,    24,     0,     0,
-      25,    26,    16,    17,    34,    18,    19,    20,    21,    22,
-      23,    24,     0,     0,    25,    26,    20,    21,    22,    23,
-      24,     0,     0,    25,    26
+       8,     9,    10,     1,     2,    19,    20,    21,    24,    25,
+      26,    27,    28,    29,    30,    31,    32,    33,    34,     3,
+       4,    11,    12,    13,    14,    15,    16,    17,    18,    19,
+      20,    21,     7,    22,     0,     0,    23,    11,    12,    13,
+      14,    15,    16,    17,    18,    19,    20,    21,    13,    14,
+      15,    16,    17,    18,    19,    20,    21,    17,    18,    19,
+      20,    21
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     4,     5,    17,    18,     0,     9,    10,    11,     7,
-       8,     9,    10,    16,    17,    18,    19,    20,    21,    22,
-      23,    24,    25,    26,     3,     4,     3,     4,     4,    -1,
-      -1,    -1,     3,     4,     3,     4,    15,    -1,    15,    -1,
-      19,    20,    19,    20,    15,    -1,    15,    -1,    19,    20,
-      19,    20,     3,     4,     3,     4,    -1,    12,    13,    14,
-       3,     4,    17,    18,    15,    -1,    15,    -1,    19,    20,
-      19,    20,    15,    -1,    -1,    -1,    19,    20,     5,     6,
-      -1,     8,     9,    10,    11,    12,    13,    14,    -1,    -1,
-      17,    18,     5,     6,    21,     8,     9,    10,    11,    12,
-      13,    14,    -1,    -1,    17,    18,    10,    11,    12,    13,
-      14,    -1,    -1,    17,    18
+       3,     4,     0,     3,     4,    14,    15,    16,    11,    12,
+      13,    14,    15,    16,    17,    18,    19,    20,    21,    19,
+      20,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,     5,     4,    -1,    -1,    21,     6,     7,     8,
+       9,    10,    11,    12,    13,    14,    15,    16,     8,     9,
+      10,    11,    12,    13,    14,    15,    16,    12,    13,    14,
+      15,    16
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,    15,    19,    20,    24,    25,     7,     8,
-       9,    10,    25,    25,    25,     0,     5,     6,     8,     9,
-      10,    11,    12,    13,    14,    17,    18,     4,     4,    25,
-       4,    25,     4,    25,    21,    25,    25,     4,    25,     4,
-      25,     4,    25,    25,    25,    25,    25,    25,    25
+       0,     3,     4,    19,    20,    24,    25,     5,    25,    25,
+       0,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,     4,    21,    25,    25,    25,    25,    25,    25,
+      25,    25,    25,    25,    25
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1510,196 +1412,143 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 166 "rec-sex.y"
+#line 90 "rec-sex.y"
     { sex_ctx->result = 0; ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 167 "rec-sex.y"
-    { sex_ctx->result = ((yyvsp[(1) - (1)].int_val) != 0); ;}
+#line 92 "rec-sex.y"
+    {
+       if ((yyvsp[(1) - (1)].sexval).type == REC_SEX_INT)
+         {
+           sex_ctx->result = ((yyvsp[(1) - (1)].sexval).int_val != 0);
+         }
+       else
+         {
+           /* Nonempty string => true. */
+           sex_ctx->result = ((yyvsp[(1) - (1)].sexval).str_val[0] != 0);
+         }
+     ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 170 "rec-sex.y"
-    { (yyval.int_val) = (yyvsp[(1) - (1)].int_val); ;}
+#line 105 "rec-sex.y"
+    { (yyval.sexval).type = REC_SEX_INT; (yyval.sexval).int_val = (yyvsp[(1) - (1)].sexval).int_val; ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 183 "rec-sex.y"
-    { REC_SEX_EQL_INT_INT ((yyval.int_val), (yyvsp[(1) - (3)].int_val), (yyvsp[(3) - (3)].int_val)); ;}
+#line 106 "rec-sex.y"
+    { (yyval.sexval).type = REC_SEX_STR; (yyval.sexval).str_val = (yyvsp[(1) - (1)].sexval).str_val; ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 185 "rec-sex.y"
-    { REC_SEX_EQL_STR_STR ((yyval.int_val), (yyvsp[(1) - (3)].str_val), (yyvsp[(3) - (3)].str_val)); ;}
+#line 107 "rec-sex.y"
+    { if (!rec_sex_eql (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT;;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 187 "rec-sex.y"
-    {REC_SEX_EQL_INT_STR ((yyval.int_val), (yyvsp[(1) - (3)].int_val), (yyvsp[(3) - (3)].str_val)); ;}
+#line 108 "rec-sex.y"
+    { if (!rec_sex_neq (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 189 "rec-sex.y"
-    {REC_SEX_EQL_INT_STR ((yyval.int_val), (yyvsp[(3) - (3)].int_val), (yyvsp[(1) - (3)].str_val)); ;}
+#line 109 "rec-sex.y"
+    { if (!rec_sex_mat (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 202 "rec-sex.y"
-    { REC_SEX_NEQ_INT_INT ((yyval.int_val), (yyvsp[(1) - (3)].int_val), (yyvsp[(3) - (3)].int_val)); ;}
+#line 110 "rec-sex.y"
+    { if (!rec_sex_add (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 204 "rec-sex.y"
-    { REC_SEX_NEQ_STR_STR ((yyval.int_val), (yyvsp[(1) - (3)].str_val), (yyvsp[(3) - (3)].str_val)); ;}
+#line 111 "rec-sex.y"
+    { if (!rec_sex_sub (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 206 "rec-sex.y"
-    { REC_SEX_NEQ_INT_STR ((yyval.int_val), (yyvsp[(1) - (3)].int_val), (yyvsp[(3) - (3)].str_val)); ;}
+#line 112 "rec-sex.y"
+    { if (!rec_sex_mul (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 208 "rec-sex.y"
-    { REC_SEX_NEQ_INT_STR ((yyval.int_val), (yyvsp[(3) - (3)].int_val), (yyvsp[(1) - (3)].str_val)); ;}
+#line 113 "rec-sex.y"
+    { if (!rec_sex_div (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 218 "rec-sex.y"
-    { REC_SEX_MAT ((yyval.int_val), (yyvsp[(1) - (3)].str_val), (yyvsp[(3) - (3)].str_val)); ;}
+#line 114 "rec-sex.y"
+    { if (!rec_sex_mod (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 231 "rec-sex.y"
-    { REC_SEX_ADD_INT_INT ((yyval.int_val), (yyvsp[(1) - (3)].int_val), (yyvsp[(3) - (3)].int_val)); ;}
+#line 115 "rec-sex.y"
+    { if (!rec_sex_bt (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 233 "rec-sex.y"
-    { REC_SEX_ADD_STR_STR ((yyval.int_val), (yyvsp[(1) - (3)].str_val), (yyvsp[(3) - (3)].str_val)); ;}
+#line 116 "rec-sex.y"
+    { if (!rec_sex_lt (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 235 "rec-sex.y"
-    { REC_SEX_ADD_INT_STR ((yyval.int_val), (yyvsp[(1) - (3)].int_val), (yyvsp[(3) - (3)].str_val)); ;}
+#line 117 "rec-sex.y"
+    { if (!rec_sex_not (&(yyval.sexval), &(yyvsp[(2) - (2)].sexval))) YYABORT; ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 237 "rec-sex.y"
-    { REC_SEX_ADD_INT_STR ((yyval.int_val), (yyvsp[(3) - (3)].int_val), (yyvsp[(1) - (3)].str_val)); ;}
+#line 118 "rec-sex.y"
+    { if (!rec_sex_and (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 239 "rec-sex.y"
-    { (yyval.int_val) = (yyvsp[(1) - (3)].int_val) + (yyvsp[(3) - (3)].int_val); ;}
+#line 119 "rec-sex.y"
+    { if (!rec_sex_or (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 240 "rec-sex.y"
-    { (yyval.int_val) = (yyvsp[(1) - (3)].int_val) * (yyvsp[(3) - (3)].int_val); ;}
-    break;
-
-  case 20:
-
-/* Line 1455 of yacc.c  */
-#line 241 "rec-sex.y"
-    { (yyval.int_val) = (yyvsp[(1) - (3)].int_val) / (yyvsp[(3) - (3)].int_val); ;}
-    break;
-
-  case 21:
-
-/* Line 1455 of yacc.c  */
-#line 242 "rec-sex.y"
-    { (yyval.int_val) = (yyvsp[(1) - (3)].int_val) % (yyvsp[(3) - (3)].int_val); ;}
-    break;
-
-  case 22:
-
-/* Line 1455 of yacc.c  */
-#line 243 "rec-sex.y"
-    { (yyval.int_val) = ((yyvsp[(1) - (3)].int_val) > (yyvsp[(3) - (3)].int_val)); ;}
-    break;
-
-  case 23:
-
-/* Line 1455 of yacc.c  */
-#line 244 "rec-sex.y"
-    { (yyval.int_val) = ((yyvsp[(1) - (3)].int_val) < (yyvsp[(3) - (3)].int_val)); ;}
-    break;
-
-  case 24:
-
-/* Line 1455 of yacc.c  */
-#line 245 "rec-sex.y"
-    { (yyval.int_val) = -(yyvsp[(2) - (2)].int_val); ;}
-    break;
-
-  case 25:
-
-/* Line 1455 of yacc.c  */
-#line 246 "rec-sex.y"
-    { (yyval.int_val) = !(yyvsp[(1) - (2)].int_val); ;}
-    break;
-
-  case 26:
-
-/* Line 1455 of yacc.c  */
-#line 247 "rec-sex.y"
-    { (yyval.int_val) = ((yyvsp[(1) - (3)].int_val) && (yyvsp[(3) - (3)].int_val)); ;}
-    break;
-
-  case 27:
-
-/* Line 1455 of yacc.c  */
-#line 248 "rec-sex.y"
-    { (yyval.int_val) = ((yyvsp[(1) - (3)].int_val) || (yyvsp[(3) - (3)].int_val)); ;}
-    break;
-
-  case 28:
-
-/* Line 1455 of yacc.c  */
-#line 249 "rec-sex.y"
-    { (yyval.int_val) = (yyvsp[(2) - (3)].int_val); ;}
+#line 120 "rec-sex.y"
+    { if (!rec_sex_group (&(yyval.sexval), &(yyvsp[(2) - (3)].sexval))) YYABORT; ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1703 "rec-sex.tab.c"
+#line 1552 "rec-sex.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1911,7 +1760,513 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 251 "rec-sex.y"
+#line 122 "rec-sex.y"
+
+
+bool
+rec_sex_eql (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val == val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      res->int_val =  strcmp (val1->str_val, val2->str_val) == 0;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val == val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val == val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_neq (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val != val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      res->int_val =  strcmp (val1->str_val, val2->str_val) != 0;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val != val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val != val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_mat (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+  regex_t regexp;
+ 
+  ret = true;
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_STR)
+      && (val2->type == REC_SEX_STR))
+    {
+      if (regcomp (&regexp, val2->str_val, REG_EXTENDED) == 0)
+        {
+          res->int_val = (regexec (&regexp,
+                                   val1->str_val,
+                                   0,
+                                   NULL,
+                                   0) == 0);
+        }
+      else
+        {
+          /* Error compiling the regexp.  */
+          ret = false;
+        }
+    }
+  else
+    {
+      ret = false;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_add (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val + val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val + val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val + val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val + val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_sub (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val - val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val - val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val - val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val - val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_mul (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val * val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val * val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val * val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val * val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_div (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val / val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val / val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val / val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val / val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_mod (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val % val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val % val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val % val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val % val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_bt (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val > val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val > val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val > val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val > val2->int_val;
+    }
+
+  return ret;
+}     
+
+bool
+rec_sex_lt (rec_sex_val_t res,
+            rec_sex_val_t val1,
+            rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val < val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val < val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val < val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val < val2->int_val;
+    }
+
+  return ret;
+}     
+
+bool
+rec_sex_not (rec_sex_val_t res,
+             rec_sex_val_t val)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+  if (val->type == REC_SEX_INT)
+    {
+      res->int_val = -val->int_val;
+    }
+  else
+    {
+      val->int_val = atoi (val->str_val);
+      res->int_val = -val->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_and (rec_sex_val_t res,
+            rec_sex_val_t val1,
+            rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val && val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val && val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val && val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val && val2->int_val;
+    }
+
+  return ret;
+}     
+
+bool
+rec_sex_or (rec_sex_val_t res,
+            rec_sex_val_t val1,
+            rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val || val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val || val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val || val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val || val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_group (rec_sex_val_t res,
+               rec_sex_val_t val)
+{
+  bool ret;
+  
+  ret = true;
+  if (val->type == REC_SEX_INT)
+    {
+      res->type = REC_SEX_INT;
+      res->int_val = val->int_val;
+    }
+  else
+    {
+      res->type = REC_SEX_STR;
+      res->str_val = val->str_val;
+    }
+
+  return ret;
+}
+
 
 
 /* End of rec-sex.y */

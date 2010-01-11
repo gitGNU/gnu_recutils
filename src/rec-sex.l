@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 13:05:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 21:43:12 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -70,8 +70,9 @@ STRING             '([^'\n]|\\(.|\n))*'
 "||"     { return REC_SEX_TOK_OR; }
 
 {DIGIT}+ {
-    yylval->int_val = atoi (yytext);
-    return REC_SEX_TOK_INT;    
+  yylval->sexval.type = REC_SEX_INT;
+  yylval->sexval.int_val = atoi (yytext);
+  return REC_SEX_TOK_INT;    
 }
 
 #{FIELD_NAME} {
@@ -101,7 +102,8 @@ STRING             '([^'\n]|\\(.|\n))*'
           }
       }
 
-    yylval->int_val = num_fields;
+    yylval->sexval.type = REC_SEX_INT;
+    yylval->sexval.int_val = num_fields;
     free (field_name_str);
   }
 
@@ -113,18 +115,20 @@ STRING             '([^'\n]|\\(.|\n))*'
   {
     rec_field_t field;
 
+    yylval->sexval.type = REC_SEX_STR;
+
     /* Get the first field with the given name in RECORD,
        if any.  */
     field = rec_record_get_field_name (yyextra->record, yytext);
     if (field)
       {
         /* Return the field value.  */
-        yylval->str_val = strdup (rec_field_value (field));
+        yylval->sexval.str_val = strdup (rec_field_value (field));
       }
     else
       {
         /* No field with such a name: return the empty string.  */
-        yylval->str_val = "";
+        yylval->sexval.str_val = "";
       }
   }
 
@@ -134,7 +138,9 @@ STRING             '([^'\n]|\\(.|\n))*'
 {STRING} {
   /* Strip the " characters */
   yytext[strlen(yytext) - 1] = 0;
-  yylval->str_val = strdup (yytext + 1);
+
+  yylval->sexval.type = REC_SEX_STR;
+  yylval->sexval.str_val = strdup (yytext + 1);
   return REC_SEX_TOK_STR;
 }
 

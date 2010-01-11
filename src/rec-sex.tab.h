@@ -41,20 +41,20 @@
    enum yytokentype {
      REC_SEX_TOK_INT = 258,
      REC_SEX_TOK_STR = 259,
-     REC_SEX_TOK_BT = 260,
-     REC_SEX_TOK_LT = 261,
-     REC_SEX_TOK_MAT = 262,
-     REC_SEX_TOK_NEQ = 263,
-     REC_SEX_TOK_EQL = 264,
-     REC_SEX_TOK_ADD = 265,
-     REC_SEX_TOK_SUB = 266,
-     REC_SEX_TOK_MOD = 267,
-     REC_SEX_TOK_DIV = 268,
-     REC_SEX_TOK_MUL = 269,
-     REC_SEX_TOK_MIN = 270,
-     REC_SEX_TOK_NEG = 271,
-     REC_SEX_TOK_OR = 272,
-     REC_SEX_TOK_AND = 273,
+     REC_SEX_TOK_MAT = 260,
+     REC_SEX_TOK_OR = 261,
+     REC_SEX_TOK_AND = 262,
+     REC_SEX_TOK_BT = 263,
+     REC_SEX_TOK_LT = 264,
+     REC_SEX_TOK_NEQ = 265,
+     REC_SEX_TOK_EQL = 266,
+     REC_SEX_TOK_ADD = 267,
+     REC_SEX_TOK_SUB = 268,
+     REC_SEX_TOK_MOD = 269,
+     REC_SEX_TOK_DIV = 270,
+     REC_SEX_TOK_MUL = 271,
+     REC_SEX_TOK_MIN = 272,
+     REC_SEX_TOK_NEG = 273,
      REC_SEX_TOK_NOT = 274,
      REC_SEX_TOK_BP = 275,
      REC_SEX_TOK_EP = 276,
@@ -69,15 +69,14 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 145 "rec-sex.y"
+#line 69 "rec-sex.y"
 
-  int int_val;
-  char *str_val;
+  struct rec_sex_val_s sexval;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 81 "rec-sex.tab.h"
+#line 80 "rec-sex.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

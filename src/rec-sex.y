@@ -45,209 +45,586 @@
   }
 
   #define scanner sex_ctx->scanner
-  
-  /*
-   * Macros implementing the operators.
-   *
-   * We use macros instead of functions to simplify error management
-   * by directly using the YY* macros.
-   */
 
-  #define REC_SEX_EQL_INT_INT(RES, INT1, INT2)    \
-    do                                            \
-    {                                             \
-      (RES) = (INT1 == INT2);                     \
-    } while (0)
-
-  #define REC_SEX_EQL_STR_STR(RES, STR1, STR2)    \
-    do                                            \
-    {                                             \
-      (RES) = (strcmp ((STR1), (STR2)) == 0);     \
-    } while (0)
-
-  #define REC_SEX_EQL_INT_STR(RES, INT, STR)      \
-    do                                            \
-    {                                             \
-      int i;                                      \
-      i = atoi ((STR));                           \
-      (RES) = (i == (INT));                       \
-    } while (0)
-
-  #define REC_SEX_NEQ_INT_INT(RES, INT1, INT2)    \
-    do                                            \
-    {                                             \
-      (RES) = (INT1 != INT2);                     \
-    } while (0)
-
-  #define REC_SEX_NEQ_STR_STR(RES, STR1, STR2)    \
-    do                                            \
-    {                                             \
-      (RES) = (strcmp ((STR1), (STR2)) != 0);     \
-    } while (0)
-
-  #define REC_SEX_NEQ_INT_STR(RES, INT, STR)      \
-    do                                            \
-    {                                             \
-      int i;                                      \
-      i = atoi ((STR));                           \
-      (RES) = (i != (INT));                       \
-    } while (0)
-
-  #define REC_SEX_MAT(RES, STR, PATTERN)                        \
-  do                                                            \
-  {                                                             \
-    int res = 0;                                                \
-    regex_t regexp;                                             \
-                                                                \
-    if (regcomp (&regexp, (PATTERN), REG_EXTENDED) == 0)        \
-      {                                                         \
-        (RES) = (regexec (&regexp,                              \
-                         (STR),                                 \
-                         0,                                     \
-                         NULL,                                  \
-                         0) == 0);                              \
-      }                                                         \
-    else                                                        \
-      {                                                         \
-        /* Error compiling the regexp.  */                      \
-        YYABORT;                                                \
-      }                                                         \
-  } while (0)
-
-  #define REC_SEX_ADD_INT_INT(RES,INT1,INT2)      \
-    do                                            \
-      {                                           \
-        (RES) = (INT1) + (INT2);                  \
-      } while (0)
-
-  #define REC_SEX_ADD_STR_STR(RES,STR1,STR2)      \
-    do                                            \
-      {                                           \
-        int i1, i2;                               \
-        i1 = atoi ((STR1));                       \
-        i2 = atoi ((STR2));                       \
-        (RES) = i1 + i2;                          \
-    } while (0)
-
-  #define REC_SEX_ADD_INT_STR(RES,INT,STR)        \
-    do                                            \
-      {                                           \
-        int i;                                    \
-        i = atoi ((STR));                         \
-        (RES) = (INT) + i;                        \
-    } while (0)
-
+  /* Forward references for parsing routines.  */
+  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_add (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_sub (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_mul (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_div (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_mod (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_bt (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_lt (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_not (rec_sex_val_t res, rec_sex_val_t val);
+  bool rec_sex_and (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_or (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_group (rec_sex_val_t res, rec_sex_val_t val);
 
 %}
 
 /* Bison declarations.  */
 
 %union {
-  int int_val;
-  char *str_val;
+  struct rec_sex_val_s sexval;
 }
  
-%token <int_val> REC_SEX_TOK_INT
-%token <str_val> REC_SEX_TOK_STR
-%left <int_val> REC_SEX_TOK_EQL REC_SEX_TOK_NEQ REC_SEX_TOK_MAT REC_SEX_TOK_LT REC_SEX_TOK_BT
-%left <int_val> REC_SEX_TOK_SUB REC_SEX_TOK_ADD
-%left <int_val> REC_SEX_TOK_MUL REC_SEX_TOK_DIV REC_SEX_TOK_MOD
+%token <sexval> REC_SEX_TOK_INT
+%token <sexval> REC_SEX_TOK_STR
+%left <sexval> REC_SEX_TOK_MAT 
+%left <sexval> REC_SEX_TOK_AND REC_SEX_TOK_OR
+%left <sexval> REC_SEX_TOK_EQL REC_SEX_TOK_NEQ REC_SEX_TOK_LT REC_SEX_TOK_BT
+%left <sexval> REC_SEX_TOK_SUB REC_SEX_TOK_ADD
+%left <sexval> REC_SEX_TOK_MUL REC_SEX_TOK_DIV REC_SEX_TOK_MOD
 %left REC_SEX_TOK_NEG  REC_SEX_TOK_MIN /* negation--unary minus */
-%left <int_val> REC_SEX_TOK_AND REC_SEX_TOK_OR
-%right <int_val> REC_SEX_TOK_NOT
+%right <sexval> REC_SEX_TOK_NOT
 %token REC_SEX_TOK_BP REC_SEX_TOK_EP
 %token REC_SEX_TOK_ERR
 
-%type <int_val> input
-%type <int_val> exp
+%type <sexval> input
+%type <sexval> exp
 
 %% /* The grammar follows.  */
 
 input: /* Empty */ { sex_ctx->result = 0; }
-     | exp { sex_ctx->result = ($1 != 0); }
+     | exp
+     {
+       if ($1.type == REC_SEX_INT)
+         {
+           sex_ctx->result = ($1.int_val != 0);
+         }
+       else
+         {
+           /* Nonempty string => true. */
+           sex_ctx->result = ($1.str_val[0] != 0);
+         }
+     }
      ;
 
-exp : REC_SEX_TOK_INT          { $$ = $1; }
-
-    /* Equality operator (=)
-     *
-     * When integer and string parameters are mixed, the string
-     * is replaced by its integer value.
-     *
-     * The 4 shift/reduce conflicts introduced by these rules are ok,
-     * since the resulting behaviour is coherent with the left
-     * associativiy of the = operator.
-     */
-
-    /* INT = INT */
-    | exp REC_SEX_TOK_EQL exp  { REC_SEX_EQL_INT_INT ($$, $1, $3); }
-    /* STR = STR */
-    | REC_SEX_TOK_STR REC_SEX_TOK_EQL REC_SEX_TOK_STR  { REC_SEX_EQL_STR_STR ($$, $1, $3); }
-    /* INT = STR */
-    | exp REC_SEX_TOK_EQL REC_SEX_TOK_STR {REC_SEX_EQL_INT_STR ($$, $1, $3); }
-    /* STR = INT */
-    | REC_SEX_TOK_STR REC_SEX_TOK_EQL exp {REC_SEX_EQL_INT_STR ($$, $3, $1); }
-
-    /* Unequality operator (!=)
-     *
-     * When integer and string parameters are mixed, the string
-     * is replaced by its integer value.
-     *
-     * The 4 shift/reduce conflicts introduced by these rules are ok,
-     * since the resulting behaviour is coherent with the left
-     * associativiy of the != operator.
-     */
-
-    /* INT != INT */
-    | exp REC_SEX_TOK_NEQ exp  { REC_SEX_NEQ_INT_INT ($$, $1, $3); }
-    /* STR != STR */
-    | REC_SEX_TOK_STR REC_SEX_TOK_NEQ REC_SEX_TOK_STR  { REC_SEX_NEQ_STR_STR ($$, $1, $3); }
-    /* INT != STR */
-    | exp REC_SEX_TOK_NEQ REC_SEX_TOK_STR { REC_SEX_NEQ_INT_STR ($$, $1, $3); }
-    /* STR != INT */
-    | REC_SEX_TOK_STR REC_SEX_TOK_NEQ exp { REC_SEX_NEQ_INT_STR ($$, $3, $1); }
-
-    /* Match operator (~)
-     *
-     * This operator accepts two strings:
-     *
-     *      STR ~ PATTERN
-     *
-     * PATTERN is interpreted as a regular expression.
-     */
-    | REC_SEX_TOK_STR REC_SEX_TOK_MAT REC_SEX_TOK_STR  { REC_SEX_MAT ($$, $1, $3); }
-
-    /* Addition operator (+)
-     *
-     * When integer and string parameters are mixed, the string
-     * is replaced by its integer value.
-     *
-     * The 4 shift/reduce conflicts introduced by these rules are ok,
-     * since the resulting behaviour is coherent with the left
-     * associativity of the + operator.
-     */
-
-    /* INT + INT */
-    | exp REC_SEX_TOK_ADD exp  { REC_SEX_ADD_INT_INT ($$, $1, $3); }
-    /* STR + STR */
-    | REC_SEX_TOK_STR REC_SEX_TOK_ADD REC_SEX_TOK_STR { REC_SEX_ADD_STR_STR ($$, $1, $3); }
-    /* INT + STR */
-    | exp REC_SEX_TOK_ADD REC_SEX_TOK_STR { REC_SEX_ADD_INT_STR ($$, $1, $3); }
-    /* STR + INT */
-    | REC_SEX_TOK_STR REC_SEX_TOK_ADD exp { REC_SEX_ADD_INT_STR ($$, $3, $1); }
-
-    | exp REC_SEX_TOK_SUB exp  { $$ = $1 + $3; }
-    | exp REC_SEX_TOK_MUL exp  { $$ = $1 * $3; }
-    | exp REC_SEX_TOK_DIV exp  { $$ = $1 / $3; }
-    | exp REC_SEX_TOK_MOD exp  { $$ = $1 % $3; }
-    | exp REC_SEX_TOK_BT exp   { $$ = ($1 > $3); }
-    | exp REC_SEX_TOK_LT exp   { $$ = ($1 < $3); }
-    | REC_SEX_TOK_MIN exp %prec REC_SEX_TOK_NEG { $$ = -$2; }
-    | REC_SEX_TOK_NOT exp      { $$ = !$1; }
-    | exp REC_SEX_TOK_AND exp  { $$ = ($1 && $3); }
-    | exp REC_SEX_TOK_OR exp   { $$ = ($1 || $3); }
-    | REC_SEX_TOK_BP exp REC_SEX_TOK_EP { $$ = $2; }
+exp : REC_SEX_TOK_INT          { $$.type = REC_SEX_INT; $$.int_val = $1.int_val; }
+    | REC_SEX_TOK_STR          { $$.type = REC_SEX_STR; $$.str_val = $1.str_val; }
+    | exp REC_SEX_TOK_EQL exp  { if (!rec_sex_eql (&$$, &$1, &$3)) YYABORT;}
+    | exp REC_SEX_TOK_NEQ exp  { if (!rec_sex_neq (&$$, &$1, &$3)) YYABORT; }
+| REC_SEX_TOK_STR REC_SEX_TOK_MAT REC_SEX_TOK_STR  { if (!rec_sex_mat (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_ADD exp  { if (!rec_sex_add (&$$, &$1, &$3)) YYABORT; }
+| exp REC_SEX_TOK_SUB exp  { if (!rec_sex_sub (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_MUL exp  { if (!rec_sex_mul (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_DIV exp  { if (!rec_sex_div (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_MOD exp  { if (!rec_sex_mod (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_BT exp   { if (!rec_sex_bt (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_LT exp   { if (!rec_sex_lt (&$$, &$1, &$3)) YYABORT; }
+    | REC_SEX_TOK_NOT exp %prec REC_SEX_TOK_NEG { if (!rec_sex_not (&$$, &$2)) YYABORT; }
+    | exp REC_SEX_TOK_AND exp  { if (!rec_sex_and (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_OR exp   { if (!rec_sex_or (&$$, &$1, &$3)) YYABORT; }
+    | REC_SEX_TOK_BP exp REC_SEX_TOK_EP { if (!rec_sex_group (&$$, &$2)) YYABORT; }
 
 %%
+
+bool
+rec_sex_eql (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val == val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      res->int_val =  strcmp (val1->str_val, val2->str_val) == 0;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val == val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val == val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_neq (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val != val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      res->int_val =  strcmp (val1->str_val, val2->str_val) != 0;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val != val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val != val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_mat (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+  regex_t regexp;
+ 
+  ret = true;
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_STR)
+      && (val2->type == REC_SEX_STR))
+    {
+      if (regcomp (&regexp, val2->str_val, REG_EXTENDED) == 0)
+        {
+          res->int_val = (regexec (&regexp,
+                                   val1->str_val,
+                                   0,
+                                   NULL,
+                                   0) == 0);
+        }
+      else
+        {
+          /* Error compiling the regexp.  */
+          ret = false;
+        }
+    }
+  else
+    {
+      ret = false;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_add (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val + val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val + val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val + val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val + val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_sub (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val - val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val - val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val - val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val - val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_mul (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val * val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val * val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val * val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val * val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_div (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val / val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val / val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val / val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val / val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_mod (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val % val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val % val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val % val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val % val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_bt (rec_sex_val_t res,
+             rec_sex_val_t val1,
+             rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val > val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val > val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val > val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val > val2->int_val;
+    }
+
+  return ret;
+}     
+
+bool
+rec_sex_lt (rec_sex_val_t res,
+            rec_sex_val_t val1,
+            rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val < val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val < val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val < val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val < val2->int_val;
+    }
+
+  return ret;
+}     
+
+bool
+rec_sex_not (rec_sex_val_t res,
+             rec_sex_val_t val)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+  if (val->type == REC_SEX_INT)
+    {
+      res->int_val = -val->int_val;
+    }
+  else
+    {
+      val->int_val = atoi (val->str_val);
+      res->int_val = -val->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_and (rec_sex_val_t res,
+            rec_sex_val_t val1,
+            rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val && val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val && val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val && val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val && val2->int_val;
+    }
+
+  return ret;
+}     
+
+bool
+rec_sex_or (rec_sex_val_t res,
+            rec_sex_val_t val1,
+            rec_sex_val_t val2)
+{
+  bool ret;
+
+  ret = true;
+
+  res->type = REC_SEX_INT;
+
+  if ((val1->type == REC_SEX_INT)
+      && (val2->type == REC_SEX_INT))
+    {
+      res->int_val = val1->int_val || val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_STR))
+    {
+      val1->int_val = atoi (val1->str_val);
+      val2->int_val = atoi (val2->str_val);
+      res->int_val =  val1->int_val || val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_STR)
+           && (val2->type == REC_SEX_INT))
+    {
+      val1->int_val = atoi (val1->str_val);
+      res->int_val = val1->int_val || val2->int_val;
+    }
+  else if ((val1->type == REC_SEX_INT)
+           && (val2->type == REC_SEX_STR))
+    {
+      val2->int_val = atoi (val2->str_val);
+      res->int_val = val1->int_val || val2->int_val;
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_group (rec_sex_val_t res,
+               rec_sex_val_t val)
+{
+  bool ret;
+  
+  ret = true;
+  if (val->type == REC_SEX_INT)
+    {
+      res->type = REC_SEX_INT;
+      res->int_val = val->int_val;
+    }
+  else
+    {
+      res->type = REC_SEX_STR;
+      res->str_val = val->str_val;
+    }
+
+  return ret;
+}
+
+
 
 /* End of rec-sex.y */

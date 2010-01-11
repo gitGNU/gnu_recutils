@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[101] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/10 00:11:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 21:43:12 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -910,21 +910,20 @@ case 17:
 YY_RULE_SETUP
 #line 72 "rec-sex.l"
 {
-    yylval->int_val = atoi (yytext);
-    return REC_SEX_TOK_INT;    
+  yylval->sexval.type = REC_SEX_INT;
+  yylval->sexval.int_val = atoi (yytext);
+  return REC_SEX_TOK_INT;    
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 77 "rec-sex.l"
+#line 78 "rec-sex.l"
 {
   /* Get the number of fields with this name */
   {
     int i;
     int num_fields = 0;
-    rec_parser_t parser;
     rec_field_name_t field_name;
-    FILE *stm;
     char *field_name_str;
 
     /* Parse a field name.  */
@@ -933,13 +932,7 @@ YY_RULE_SETUP
     field_name_str[strlen (yytext) - 1] = ':';
     field_name_str[strlen (yytext)] = 0;
 
-    stm = fmemopen (field_name_str, strlen(field_name_str), "r");
-    parser = rec_parser_new (stm);
-    if (!rec_parse_field_name (parser, &field_name))
-      {
-        printf ("FOOOO\n");
-      }
-
+    field_name = rec_parse_field_name_str (field_name_str);
     for (i = 0; i < rec_record_size (yyextra->record); i++)
       {
         rec_field_t field;
@@ -952,10 +945,9 @@ YY_RULE_SETUP
           }
       }
 
-    yylval->int_val = num_fields;
-
-    rec_parser_destroy (parser);
-    fclose (stm);
+    yylval->sexval.type = REC_SEX_INT;
+    yylval->sexval.int_val = num_fields;
+    free (field_name_str);
   }
 
   return REC_SEX_TOK_INT;
@@ -963,11 +955,13 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 121 "rec-sex.l"
+#line 113 "rec-sex.l"
 {
   /* Get the value of the first field with this name, or error */
   {
     rec_field_t field;
+
+    yylval->sexval.type = REC_SEX_STR;
 
     /* Get the first field with the given name in RECORD,
        if any.  */
@@ -975,12 +969,12 @@ YY_RULE_SETUP
     if (field)
       {
         /* Return the field value.  */
-        yylval->str_val = strdup (rec_field_value (field));
+        yylval->sexval.str_val = strdup (rec_field_value (field));
       }
     else
       {
         /* No field with such a name: return the empty string.  */
-        yylval->str_val = "";
+        yylval->sexval.str_val = "";
       }
   }
 
@@ -990,25 +984,27 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 144 "rec-sex.l"
+#line 138 "rec-sex.l"
 {
   /* Strip the " characters */
   yytext[strlen(yytext) - 1] = 0;
-  yylval->str_val = strdup (yytext + 1);
+
+  yylval->sexval.type = REC_SEX_STR;
+  yylval->sexval.str_val = strdup (yytext + 1);
   return REC_SEX_TOK_STR;
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 151 "rec-sex.l"
+#line 147 "rec-sex.l"
 { return REC_SEX_TOK_ERR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 153 "rec-sex.l"
+#line 149 "rec-sex.l"
 ECHO;
 	YY_BREAK
-#line 1012 "rec-sex.lex.c"
+#line 1008 "rec-sex.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2175,7 +2171,7 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 153 "rec-sex.l"
+#line 149 "rec-sex.l"
 
 
 
