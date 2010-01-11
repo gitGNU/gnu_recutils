@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 13:08:10 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 13:30:13 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -53,6 +53,7 @@ static const struct option GNU_longOptions[] =
     {"type", required_argument, NULL, TYPE_ARG},
     {"collapse", no_argument, NULL, COLLAPSE_ARG},
     {"count", no_argument, NULL, COUNT_ARG},
+    {"num", required_argument, NULL, NUM_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -71,12 +72,13 @@ Usage: recsel [OPTION]... [FILE]...\n\
 Print the contents of the specified rec files.\n\
 \n\
 available options\n\
-  --expression,-e                     selection expression.\n\
+  -t TYPE, --type                     print records of the specified type only.\n\
+  -e EXPR, --expression               selection expression.\n\
+  -n NUM, --number                    select an specific record.\n\
   -p FIELDS, --print                  comma-separated list of fields to print for each\n\
                                         matching record.\n\
   -c, --count                         provide a count of the matching records instead of\n\
                                         the records themselves.\n\
-  -t TYPE, --type                     print records of the specified type only.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
   --help                              print a help message and exit.\n\
   --usage                             print a usage message and exit.\n\
@@ -100,6 +102,9 @@ bool recsel_collapse = false;
 
 /* Whether to provide a count of the matching records.  */
 bool recsel_count = false;
+
+/* Whether to provide an specific record.  */
+long recsel_num = -1;
 
 bool
 mount_recsel_fields (char *str)
@@ -164,13 +169,13 @@ write_fields (rec_writer_t writer,
   bool found;
 
   /* Scan the fields.  */
-  for (i = 0; i < rec_record_size (record); i++)
+  for (j = 0; j < recsel_num_fields; j++)
     {
-      field = rec_record_get_field (record, i);
-
-      found = false;
-      for (j = 0; j < recsel_num_fields; j++)
+      for (i = 0; i < rec_record_size (record); i++)
         {
+          field = rec_record_get_field (record, i);
+          
+          found = false;
           if (rec_field_name_equal_p (recsel_fields[j],
                                       rec_field_name (field)))
             {
@@ -178,7 +183,7 @@ write_fields (rec_writer_t writer,
               break;
             }
         }
-
+      
       if (found)
         {
           rec_write_field (writer, field);
@@ -223,8 +228,10 @@ recsel_file (FILE *in)
         {
           record = rec_rset_get_record (rset, i);
 
-          if ((!recsel_sex) ||
-              (rec_sex_apply (sex, recsel_sex, record, &parse_status)))
+          if (((recsel_num == -1) &&
+               ((!recsel_sex) ||
+                (rec_sex_apply (sex, recsel_sex, record, &parse_status))))
+              || (recsel_num == i))
             {
               if ((written != 0)
                   && (!recsel_collapse)
@@ -276,7 +283,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "Cct:e:p:",
+                             "Cct:e:n:p:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -305,7 +312,26 @@ main (int argc, char *argv[])
         case EXPRESSION_ARG:
         case 'e':
           {
+            if (recsel_num != -1)
+              {
+                fprintf (stderr, "Cannot specify -e and also -n.\n");
+                return 1;
+              }
+
             recsel_sex = strdup (optarg);
+            break;
+          }
+        case NUM_ARG:
+        case 'n':
+          {
+            if (recsel_sex)
+              {
+                fprintf (stderr, "Cannot specify -n and also -e.\n");
+                return 1;
+              }
+
+            /* XXX: check for conversion errors.  */
+            recsel_num = atoi (optarg);
             break;
           }
         case PRINT_ARG:
