@@ -330,6 +330,7 @@ void rec_parser_destroy (rec_parser_t parser);
  * NULL.
  */
 
+rec_field_name_t rec_parse_field_name_str (char *str);
 bool rec_parse_field_name (rec_parser_t parser, rec_field_name_t *fname);
 bool rec_parse_field (rec_parser_t parser, rec_field_t *field);
 bool rec_parse_record (rec_parser_t parser, rec_record_t *record);

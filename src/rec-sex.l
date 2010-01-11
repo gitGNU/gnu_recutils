@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/10 00:11:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 13:05:46 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -79,9 +79,7 @@ STRING             '([^'\n]|\\(.|\n))*'
   {
     int i;
     int num_fields = 0;
-    rec_parser_t parser;
     rec_field_name_t field_name;
-    FILE *stm;
     char *field_name_str;
 
     /* Parse a field name.  */
@@ -90,13 +88,7 @@ STRING             '([^'\n]|\\(.|\n))*'
     field_name_str[strlen (yytext) - 1] = ':';
     field_name_str[strlen (yytext)] = 0;
 
-    stm = fmemopen (field_name_str, strlen(field_name_str), "r");
-    parser = rec_parser_new (stm);
-    if (!rec_parse_field_name (parser, &field_name))
-      {
-        printf ("FOOOO\n");
-      }
-
+    field_name = rec_parse_field_name_str (field_name_str);
     for (i = 0; i < rec_record_size (yyextra->record); i++)
       {
         rec_field_t field;
@@ -110,9 +102,7 @@ STRING             '([^'\n]|\\(.|\n))*'
       }
 
     yylval->int_val = num_fields;
-
-    rec_parser_destroy (parser);
-    fclose (stm);
+    free (field_name_str);
   }
 
   return REC_SEX_TOK_INT;

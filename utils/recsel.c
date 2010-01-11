@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 12:12:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 13:08:10 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -104,11 +104,9 @@ bool recsel_count = false;
 bool
 mount_recsel_fields (char *str)
 {
-  rec_parser_t parser;
   rec_field_name_t field_name;
   char *field_name_str;
   char *p, *c;
-  FILE *stm;
   bool parse_error;
 
   parse_error = false;
@@ -131,12 +129,7 @@ mount_recsel_fields (char *str)
           field_name_str[(c - p)] = ':';
           strncpy (field_name_str, p, (c - p));
 
-          stm = fmemopen (field_name_str,
-                          strlen (field_name_str),
-                          "r");
-          parser = rec_parser_new (stm);
-
-          if (rec_parse_field_name (parser, &field_name))
+          if ((field_name = rec_parse_field_name_str (field_name_str)))
             {
               /* Add the field name to recsel_fields.  */
               recsel_fields[recsel_num_fields++] = field_name;
@@ -147,8 +140,6 @@ mount_recsel_fields (char *str)
               parse_error = true;
             }
 
-          rec_parser_destroy (parser);
-          fclose (stm);
           free (field_name_str);
           p = c + 1;
 

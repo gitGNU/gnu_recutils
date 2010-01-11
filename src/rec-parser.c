@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/30 18:22:31 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 13:04:18 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -526,6 +526,30 @@ rec_parse_rset (rec_parser_t parser,
     }
 
   return ret;
+}
+
+rec_field_name_t
+rec_parse_field_name_str (char *str)
+{
+  rec_parser_t parser;
+  rec_field_name_t field_name;
+  FILE *stm;
+
+  field_name = NULL;
+  stm = fmemopen (str, strlen (str), "r");
+  if (stm)
+    {
+      parser = rec_parser_new (stm);
+      if (parser)
+        {
+          rec_parse_field_name (parser, &field_name);
+          rec_parser_destroy (parser);
+        }
+
+      fclose (stm);
+    }
+  
+  return field_name;
 }
 
 /*
