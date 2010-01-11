@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/10 01:22:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 12:03:22 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -51,6 +51,7 @@ static const struct option GNU_longOptions[] =
     {"expression", required_argument, NULL, EXPRESSION_ARG},
     {"print", required_argument, NULL, PRINT_ARG},
     {"type", required_argument, NULL, TYPE_ARG},
+    {"collapse", no_argument, NULL, COLLAPSE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -72,6 +73,7 @@ available options\n\
   --expression,-e                     selection expression.\n\
   --print,-p                          list of fields to print for each matching record.\n\
   --type,-t                           print records of the specified type only.\n\
+  --collapse,-C                       do not section the result in records with newlines.\n\
   --help                              print a help message and exit.\n\
   --usage                             print a usage message and exit.\n\
   --version                           show recsel version and exit.\n\
@@ -88,6 +90,9 @@ int recsel_num_fields = 0;
 
 /* Record type.  */
 char *recsel_type = NULL;
+
+/* Whether to collapse the output.  */
+bool recsel_collapse = false;
 
 bool
 mount_recsel_fields (char *str)
@@ -223,7 +228,8 @@ recsel_file (FILE *in)
           if ((!recsel_sex) ||
               (rec_sex_apply (sex, recsel_sex, record, &parse_status)))
             {
-              if (written != 0)
+              if ((written != 0)
+                  && (!recsel_collapse))
                 {
                   fprintf (stdout, "\n");
                 }
@@ -263,7 +269,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "t:e:p:",
+                             "Ct:e:p:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -310,6 +316,12 @@ main (int argc, char *argv[])
         case 't':
           {
             recsel_type = strdup (optarg);
+            break;
+          }
+        case COLLAPSE_ARG:
+        case 'C':
+          {
+            recsel_collapse = true;
             break;
           }
         }

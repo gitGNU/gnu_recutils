@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/10 01:13:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 11:56:28 jemarch"
  *
  *       File:         recsel.h
  *       Date:         Fri Jan  1 23:10:08 2010
@@ -35,7 +35,8 @@ enum
   VERSION_ARG,
   EXPRESSION_ARG,
   PRINT_ARG,
-  TYPE_ARG
+  TYPE_ARG,
+  COLLAPSE_ARG
 };
 
 #endif /* recsel.h */
