@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 21:48:19 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 22:28:44 jemarch"
  *
  *       File:         rec-sex-ctx.h
  *       Date:         Sat Jan  9 20:22:52 2010
@@ -36,6 +36,7 @@ struct rec_sex_ctx_s
   size_t index;          /* Index in in_str.  */
   rec_record_t record;   /* Record to apply the expr. on.  */
   void *scanner;         /* Flex scanner.  */
+  bool case_insensitive;
 
   bool result;
 };

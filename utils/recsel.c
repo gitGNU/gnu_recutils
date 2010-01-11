@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 20:36:31 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 22:34:47 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -54,6 +54,7 @@ static const struct option GNU_longOptions[] =
     {"collapse", no_argument, NULL, COLLAPSE_ARG},
     {"count", no_argument, NULL, COUNT_ARG},
     {"num", required_argument, NULL, NUM_ARG},
+    {"case-insensitive", no_argument, NULL, INSENSITIVE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -73,6 +74,8 @@ Print the contents of the specified rec files.\n\
 \n\
 available options\n\
   -t TYPE, --type                     print records of the specified type only.\n\
+  -i, --case-insensitive              make strings case-insensitive in selection\n\
+                                        expressions.\n\
   -e EXPR, --expression               selection expression.\n\
   -n NUM, --number                    select an specific record.\n\
   -p FIELDS, --print                  comma-separated list of fields to print for each\n\
@@ -102,6 +105,10 @@ bool recsel_collapse = false;
 /* Whether to provide a count of the matching records.  */
 bool recsel_count = false;
 
+/* Whether to be case-insensitive while evaluating
+   selection expressions.  */
+bool recsel_insensitive = false;
+
 /* Whether to provide an specific record.  */
 long recsel_num = -1;
 
@@ -122,7 +129,7 @@ recsel_file (FILE *in)
 
   ret = true;
 
-  sex = rec_sex_new ();
+  sex = rec_sex_new (recsel_insensitive);
   parser = rec_parser_new (in);
   writer = rec_writer_new (stdout);
 
@@ -221,7 +228,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "Cct:e:n:p:",
+                             "Cict:e:n:p:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -258,6 +265,12 @@ main (int argc, char *argv[])
               }
 
             recsel_sex = strdup (optarg);
+            break;
+          }
+        case INSENSITIVE_ARG:
+        case 'i':
+          {
+            recsel_insensitive = true;
             break;
           }
         case NUM_ARG:

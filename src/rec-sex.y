@@ -47,9 +47,9 @@
   #define scanner sex_ctx->scanner
 
   /* Forward references for parsing routines.  */
-  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
   bool rec_sex_add (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_sub (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_mul (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
@@ -104,11 +104,11 @@ input: /* Empty */ { sex_ctx->result = 0; }
 
 exp : REC_SEX_TOK_INT          { $$.type = REC_SEX_INT; $$.int_val = $1.int_val; }
     | REC_SEX_TOK_STR          { $$.type = REC_SEX_STR; $$.str_val = $1.str_val; }
-    | exp REC_SEX_TOK_EQL exp  { if (!rec_sex_eql (&$$, &$1, &$3)) YYABORT;}
-    | exp REC_SEX_TOK_NEQ exp  { if (!rec_sex_neq (&$$, &$1, &$3)) YYABORT; }
-| REC_SEX_TOK_STR REC_SEX_TOK_MAT REC_SEX_TOK_STR  { if (!rec_sex_mat (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_EQL exp  { if (!rec_sex_eql (&$$, &$1, &$3, sex_ctx->case_insensitive)) YYABORT;}
+    | exp REC_SEX_TOK_NEQ exp  { if (!rec_sex_neq (&$$, &$1, &$3, sex_ctx->case_insensitive)) YYABORT; }
+    | REC_SEX_TOK_STR REC_SEX_TOK_MAT REC_SEX_TOK_STR  { if (!rec_sex_mat (&$$, &$1, &$3, sex_ctx->case_insensitive)) YYABORT; }
     | exp REC_SEX_TOK_ADD exp  { if (!rec_sex_add (&$$, &$1, &$3)) YYABORT; }
-| exp REC_SEX_TOK_SUB exp  { if (!rec_sex_sub (&$$, &$1, &$3)) YYABORT; }
+    | exp REC_SEX_TOK_SUB exp  { if (!rec_sex_sub (&$$, &$1, &$3)) YYABORT; }
     | exp REC_SEX_TOK_MUL exp  { if (!rec_sex_mul (&$$, &$1, &$3)) YYABORT; }
     | exp REC_SEX_TOK_DIV exp  { if (!rec_sex_div (&$$, &$1, &$3)) YYABORT; }
     | exp REC_SEX_TOK_MOD exp  { if (!rec_sex_mod (&$$, &$1, &$3)) YYABORT; }
@@ -124,7 +124,8 @@ exp : REC_SEX_TOK_INT          { $$.type = REC_SEX_INT; $$.int_val = $1.int_val;
 bool
 rec_sex_eql (rec_sex_val_t res,
              rec_sex_val_t val1,
-             rec_sex_val_t val2)
+             rec_sex_val_t val2,
+             bool case_insensitive)
 {
   bool ret;
 
@@ -140,7 +141,14 @@ rec_sex_eql (rec_sex_val_t res,
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_STR))
     {
-      res->int_val =  strcmp (val1->str_val, val2->str_val) == 0;
+      if (case_insensitive)
+        {
+          res->int_val =  strcasecmp (val1->str_val, val2->str_val) == 0;
+        }
+      else
+        {
+          res->int_val =  strcmp (val1->str_val, val2->str_val) == 0;
+        }
     }
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_INT))
@@ -161,7 +169,8 @@ rec_sex_eql (rec_sex_val_t res,
 bool
 rec_sex_neq (rec_sex_val_t res,
              rec_sex_val_t val1,
-             rec_sex_val_t val2)
+             rec_sex_val_t val2,
+             bool case_insensitive)
 {
   bool ret;
 
@@ -177,7 +186,14 @@ rec_sex_neq (rec_sex_val_t res,
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_STR))
     {
-      res->int_val =  strcmp (val1->str_val, val2->str_val) != 0;
+      if (case_insensitive)
+        {
+          res->int_val =  strcasecmp (val1->str_val, val2->str_val) != 0;
+        }
+      else
+        {
+          res->int_val =  strcmp (val1->str_val, val2->str_val) != 0;
+        }
     }
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_INT))
@@ -198,19 +214,30 @@ rec_sex_neq (rec_sex_val_t res,
 bool
 rec_sex_mat (rec_sex_val_t res,
              rec_sex_val_t val1,
-             rec_sex_val_t val2)
+             rec_sex_val_t val2,
+             bool case_insensitive)
 {
   bool ret;
   regex_t regexp;
+  int flags;
  
+  flags = 0;
   ret = true;
   res->type = REC_SEX_INT;
+
+  flags = REG_EXTENDED;
+  if (case_insensitive)
+    {
+      flags |= REG_ICASE;
+    }
 
   if ((val1->type == REC_SEX_STR)
       && (val2->type == REC_SEX_STR))
     {
-      if (regcomp (&regexp, val2->str_val, REG_EXTENDED) == 0)
+      if (regcomp (&regexp, val2->str_val, flags) == 0)
         {
+          int flags = 0;
+
           res->int_val = (regexec (&regexp,
                                    val1->str_val,
                                    0,

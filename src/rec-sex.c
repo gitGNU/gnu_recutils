@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/10 00:10:25 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 22:36:19 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -44,7 +44,7 @@ struct rec_sex_s
  */
 
 rec_sex_t
-rec_sex_new ()
+rec_sex_new (bool case_insensitive)
 {
   rec_sex_t new;
 
@@ -57,6 +57,7 @@ rec_sex_new ()
           new->parser_ctx->in = NULL;
           new->parser_ctx->index = 0;
           new->parser_ctx->result = false;
+          new->parser_ctx->case_insensitive = case_insensitive;
         }
       else
         {

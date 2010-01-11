@@ -96,9 +96,9 @@
   #define scanner sex_ctx->scanner
 
   /* Forward references for parsing routines.  */
-  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
+  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
   bool rec_sex_add (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_sub (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_mul (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
@@ -1451,21 +1451,21 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 107 "rec-sex.y"
-    { if (!rec_sex_eql (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT;;}
+    { if (!rec_sex_eql (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval), sex_ctx->case_insensitive)) YYABORT;;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
 #line 108 "rec-sex.y"
-    { if (!rec_sex_neq (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+    { if (!rec_sex_neq (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval), sex_ctx->case_insensitive)) YYABORT; ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
 #line 109 "rec-sex.y"
-    { if (!rec_sex_mat (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+    { if (!rec_sex_mat (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval), sex_ctx->case_insensitive)) YYABORT; ;}
     break;
 
   case 9:
@@ -1766,7 +1766,8 @@ yyreturn:
 bool
 rec_sex_eql (rec_sex_val_t res,
              rec_sex_val_t val1,
-             rec_sex_val_t val2)
+             rec_sex_val_t val2,
+             bool case_insensitive)
 {
   bool ret;
 
@@ -1782,7 +1783,14 @@ rec_sex_eql (rec_sex_val_t res,
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_STR))
     {
-      res->int_val =  strcmp (val1->str_val, val2->str_val) == 0;
+      if (case_insensitive)
+        {
+          res->int_val =  strcasecmp (val1->str_val, val2->str_val) == 0;
+        }
+      else
+        {
+          res->int_val =  strcmp (val1->str_val, val2->str_val) == 0;
+        }
     }
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_INT))
@@ -1803,7 +1811,8 @@ rec_sex_eql (rec_sex_val_t res,
 bool
 rec_sex_neq (rec_sex_val_t res,
              rec_sex_val_t val1,
-             rec_sex_val_t val2)
+             rec_sex_val_t val2,
+             bool case_insensitive)
 {
   bool ret;
 
@@ -1819,7 +1828,14 @@ rec_sex_neq (rec_sex_val_t res,
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_STR))
     {
-      res->int_val =  strcmp (val1->str_val, val2->str_val) != 0;
+      if (case_insensitive)
+        {
+          res->int_val =  strcasecmp (val1->str_val, val2->str_val) != 0;
+        }
+      else
+        {
+          res->int_val =  strcmp (val1->str_val, val2->str_val) != 0;
+        }
     }
   else if ((val1->type == REC_SEX_STR)
            && (val2->type == REC_SEX_INT))
@@ -1840,19 +1856,30 @@ rec_sex_neq (rec_sex_val_t res,
 bool
 rec_sex_mat (rec_sex_val_t res,
              rec_sex_val_t val1,
-             rec_sex_val_t val2)
+             rec_sex_val_t val2,
+             bool case_insensitive)
 {
   bool ret;
   regex_t regexp;
+  int flags;
  
+  flags = 0;
   ret = true;
   res->type = REC_SEX_INT;
+
+  flags = REG_EXTENDED;
+  if (case_insensitive)
+    {
+      flags |= REG_ICASE;
+    }
 
   if ((val1->type == REC_SEX_STR)
       && (val2->type == REC_SEX_STR))
     {
-      if (regcomp (&regexp, val2->str_val, REG_EXTENDED) == 0)
+      if (regcomp (&regexp, val2->str_val, flags) == 0)
         {
+          int flags = 0;
+
           res->int_val = (regexec (&regexp,
                                    val1->str_val,
                                    0,

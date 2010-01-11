@@ -397,7 +397,7 @@ typedef struct rec_sex_s *rec_sex_t;
 
 /* Create a new selection expression and return it.  If there is not
    enough memory to create the sex, then return NULL.  */
-rec_sex_t rec_sex_new ();
+rec_sex_t rec_sex_new (bool case_insensitive);
 
 /* Destroy a sex.  */
 void rec_sex_destroy (rec_sex_t sex);
