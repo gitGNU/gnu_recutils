@@ -4,7 +4,7 @@
 
 RECFILE=$HOME/org/gnupdf-hackers.org
 
-for addr in `recsel -t Hacker -p %Email[0] $RECFILE`
+for addr in `recsel -t Hacker -p /Email[0] $RECFILE`
 do
    mail $addr ...
 done 
@@ -24,7 +24,7 @@ NREC=0
 while test $NREC -lt $NUMRECS
 do
    REC=`recsel -t Hacker -n $NREC $RECFILE`
-   for addr in `echo $REC | recsel -p %Email[1..]`
+   for addr in `echo $REC | recsel -p /Email[1..]`
    do
      NAME=`echo $REC | recsel -p %Name`
      DESCR=`echo $REC | recsel -p %Descr`

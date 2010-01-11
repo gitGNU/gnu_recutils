@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 13:30:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 18:13:18 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -90,9 +90,8 @@ char *recsel_help_msg = "";
 /* String containing the selection expression.  */
 char *recsel_sex = NULL;
 
-/* Field names.  */
-rec_field_name_t recsel_fields[256];
-int recsel_num_fields = 0;
+/* Field list.  */
+char *recsel_expr = NULL;
 
 /* Record type.  */
 char *recsel_type = NULL;
@@ -105,91 +104,6 @@ bool recsel_count = false;
 
 /* Whether to provide an specific record.  */
 long recsel_num = -1;
-
-bool
-mount_recsel_fields (char *str)
-{
-  rec_field_name_t field_name;
-  char *field_name_str;
-  char *p, *c;
-  bool parse_error;
-
-  parse_error = false;
-
-  p = str;
-  c = str;
-  while (*c != 0)
-    {
-      if ((*c == ',')
-          || (*(c + 1) == 0))
-        {
-          if (*(c + 1) == 0)
-            {
-              c++;
-            }
-
-          /* Parse a field name from *p .. *(c - 1).  */
-          field_name_str = malloc ((c - p) + 2);
-          field_name_str[(c - p) + 1] = 0;
-          field_name_str[(c - p)] = ':';
-          strncpy (field_name_str, p, (c - p));
-
-          if ((field_name = rec_parse_field_name_str (field_name_str)))
-            {
-              /* Add the field name to recsel_fields.  */
-              recsel_fields[recsel_num_fields++] = field_name;
-            }
-          else
-            {
-              /* Error.  */
-              parse_error = true;
-            }
-
-          free (field_name_str);
-          p = c + 1;
-
-          if (parse_error)
-            {
-              return false;
-            }
-        }
-
-      c++;
-    }
-
-  return true;
-}
-
-void
-write_fields (rec_writer_t writer,
-              rec_record_t record)
-{
-  int i, j;
-  rec_field_t field;
-  bool found;
-
-  /* Scan the fields.  */
-  for (j = 0; j < recsel_num_fields; j++)
-    {
-      for (i = 0; i < rec_record_size (record); i++)
-        {
-          field = rec_record_get_field (record, i);
-          
-          found = false;
-          if (rec_field_name_equal_p (recsel_fields[j],
-                                      rec_field_name (field)))
-            {
-              found = true;
-              break;
-            }
-        }
-      
-      if (found)
-        {
-          rec_write_field (writer, field);
-        }
-    }
-}
 
 bool
 recsel_file (FILE *in)
@@ -233,18 +147,26 @@ recsel_file (FILE *in)
                 (rec_sex_apply (sex, recsel_sex, record, &parse_status))))
               || (recsel_num == i))
             {
+              char *resolver_result = NULL;
+
+              if (recsel_expr)
+                {
+                  resolver_result = rec_resolve_str (record, recsel_expr);
+                }
+
               if ((written != 0)
                   && (!recsel_collapse)
-                  && (!recsel_count))
+                  && (!recsel_count)
+                  && (!resolver_result || strcmp(resolver_result, "") != 0))
                 {
                   fprintf (stdout, "\n");
                 }
 
               if (!recsel_count)
                 {
-                  if (recsel_num_fields > 0)
+                  if (recsel_expr)
                     {
-                      write_fields (writer, record);
+                      fprintf (stdout, "%s", resolver_result);
                     }
                   else
                     {
@@ -261,6 +183,12 @@ recsel_file (FILE *in)
             }
         }
 
+    }
+
+  if (rec_parser_error (parser))
+    {
+      rec_parser_perror (parser, "recsel:");
+      exit(1);
     }
 
   if (recsel_count)
@@ -343,7 +271,9 @@ main (int argc, char *argv[])
                 return 1;
               }
 
-            if (!mount_recsel_fields (strdup (optarg)))
+            recsel_expr = strdup (optarg);
+
+            if (!rec_resolver_check (recsel_expr))
               {
                 fprintf (stderr, "Invalid field list.\n");
                 return 1;
@@ -366,7 +296,7 @@ main (int argc, char *argv[])
         case COUNT_ARG:
         case 'c':
           {
-            if (recsel_num_fields > 0)
+            if (recsel_expr)
               {
                 fprintf (stderr, "Cannot specify -c and also -p.\n");
                 return 1;
@@ -404,6 +334,7 @@ main (int argc, char *argv[])
     }
   else
     {
+      fflush (stdin);
       recsel_file (stdin);
     }
 

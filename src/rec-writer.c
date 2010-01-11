@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/12/30 18:16:09 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 14:57:38 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -213,6 +213,32 @@ rec_write_rset (rec_writer_t writer,
     }
 
   return ret;
+}
+
+char *
+rec_write_field_str (rec_field_t field)
+{
+  rec_writer_t writer;
+  char *result;
+  size_t result_size;
+  FILE *stm;
+  
+  result = NULL;
+  stm = open_memstream (&result, &result_size);
+  if (stm)
+    {
+      writer = rec_writer_new (stm);
+
+      if (writer)
+        {
+          rec_write_field (writer, field);
+          rec_writer_destroy (writer);
+        }
+
+      fclose (stm);
+    }
+  
+  return result;
 }
 
 /*
