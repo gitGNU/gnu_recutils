@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 20:15:55 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 23:11:14 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -167,8 +167,10 @@ main (int argc, char *argv[])
             break;
           }
         case VERBOSE_ARG:
+        case 'V':
           {
             recinf_verbose = true;
+            break;
           }
         default:
           {
