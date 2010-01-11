@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 13:04:18 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 20:34:34 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -561,7 +561,7 @@ rec_parser_getc (rec_parser_t parser)
 {
   int ci;
 
-  ci = fgetc (parser->in);
+  ci = getc (parser->in);
   if (ci == EOF)
     {
       parser->eof = true;

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 14:57:38 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 20:14:15 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -66,6 +66,7 @@ rec_writer_new (FILE *out)
 void
 rec_writer_destroy (rec_writer_t writer)
 {
+  fflush (writer->out);
   free (writer);
 }
 

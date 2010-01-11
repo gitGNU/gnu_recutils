@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 19:55:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 20:36:31 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -109,6 +109,7 @@ bool
 recsel_file (FILE *in)
 {
   bool ret;
+  int rset_size;
   rec_rset_t rset;
   rec_record_t record;
   rec_record_t descriptor;
@@ -138,7 +139,8 @@ recsel_file (FILE *in)
             }
         }
 
-      for (i = 0; i < rec_rset_size (rset); i++)
+      rset_size = rec_rset_size (rset);
+      for (i = 0; i < rset_size; i++)
         {
           record = rec_rset_get_record (rset, i);
 
@@ -184,7 +186,8 @@ recsel_file (FILE *in)
                 }
             }
 
-          if (!parse_status)
+          if (recsel_sex
+              && (!parse_status))
             {
               return false;
             }
@@ -249,7 +252,8 @@ main (int argc, char *argv[])
           {
             if (recsel_num != -1)
               {
-                fprintf (stderr, "Cannot specify -e and also -n.\n");
+                fprintf (stderr, "%s: cannot specify -e and also -n.\n",
+                         argv[0]);
                 return 1;
               }
 
@@ -261,7 +265,8 @@ main (int argc, char *argv[])
           {
             if (recsel_sex)
               {
-                fprintf (stderr, "Cannot specify -n and also -e.\n");
+                fprintf (stderr, "%s: cannot specify -n and also -e.\n",
+                         argv[0]);
                 return 1;
               }
 
@@ -274,7 +279,8 @@ main (int argc, char *argv[])
           {
             if (recsel_count)
               {
-                fprintf (stderr, "Cannot specify -p and also -c.\n");
+                fprintf (stderr, "%s: cannot specify -p and also -c.\n",
+                         argv[0]);
                 return 1;
               }
 
@@ -305,12 +311,17 @@ main (int argc, char *argv[])
           {
             if (recsel_expr)
               {
-                fprintf (stderr, "Cannot specify -c and also -p.\n");
+                fprintf (stderr, "%s: cannot specify -c and also -p.\n",
+                         argv[0]);
                 return 1;
               }
 
             recsel_count = true;
             break;
+          }
+        default:
+          {
+            return 1;
           }
         }
     }
@@ -324,7 +335,7 @@ main (int argc, char *argv[])
           file_name = argv[optind++];
           if (!(in = fopen (file_name, "r")))
             {
-              printf("error: cannot read file %s\n", file_name);
+              printf("%s: cannot read file %s\n", argv[0], file_name);
               return 1;
             }
           else
@@ -341,7 +352,6 @@ main (int argc, char *argv[])
     }
   else
     {
-      fflush (stdin);
       recsel_file (stdin);
     }
 

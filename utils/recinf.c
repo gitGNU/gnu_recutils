@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/01 23:38:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/11 20:15:55 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -48,6 +48,7 @@ static const struct option GNU_longOptions[] =
     {"help", no_argument, NULL, HELP_ARG},
     {"usage", no_argument, NULL, USAGE_ARG},
     {"version", no_argument, NULL, VERSION_ARG},
+    {"verbose", no_argument, NULL, VERBOSE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -66,12 +67,15 @@ Usage: recinf [OPTION]... [FILE]...\n\
 Print information about the contents of the specified rec files.\n\
 \n\
 available options\n\
+  -V, --verbose                       include the full record descriptors.\n\
   --help                              print a help message and exit.\n\
   --usage                             print a usage message and exit.\n\
   --version                           show recinf version and exit.\n\
 ";
 
 char *recinf_help_msg = "";
+
+bool recinf_verbose = false;
 
 bool
 print_info_file (FILE *in)
@@ -89,16 +93,28 @@ print_info_file (FILE *in)
   while (rec_parse_rset (parser, &rset))
     {
       descriptor = rec_rset_descriptor (rset);
-      printf("%d ", rec_rset_size (rset));
-      if (descriptor)
+
+      if (recinf_verbose)
         {
-          printf ("%s", rec_field_value (rec_record_get_field_name (descriptor,
-                                                                    "%rec")));
+          rec_writer_t writer;
+
+          writer = rec_writer_new (stdout);
+          rec_write_record (writer, descriptor);
+          rec_writer_destroy (writer);
         }
       else
         {
-          printf ("unknown");
+          if (descriptor)
+            {
+              printf ("%s", rec_field_value (rec_record_get_field_name (descriptor,
+                                                                        "%rec")));
+            }
+          else
+            {
+              printf ("unknown");
+            }
         }
+
       printf ("\n");
     }
   
@@ -124,7 +140,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "",
+                             "V",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -149,6 +165,14 @@ main (int argc, char *argv[])
             fprintf (stdout, "%s\n", recinf_usage_msg);
             exit (0);
             break;
+          }
+        case VERBOSE_ARG:
+          {
+            recinf_verbose = true;
+          }
+        default:
+          {
+            return 1;
           }
         }
     }
