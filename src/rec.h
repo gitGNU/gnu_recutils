@@ -200,12 +200,13 @@ bool rec_record_remove_field (rec_record_t record,
 rec_field_t rec_record_get_field (rec_record_t record,
                                   int position);
 
-/* Return a pointer to the first field with the given name in RECORD.
+/* Return a pointer to the Nth field with the given name in RECORD.
  *
  * If such a record is not found then return NULL.
  */
-rec_field_t rec_record_get_field_name (rec_record_t record,
-                                       const char *name);
+rec_field_t rec_record_get_field_by_name (rec_record_t record,
+                                          rec_field_name_t fname,
+                                          int n);
 
 /* Determine wether two given records are equal (i.e. they contain
  * exactly the same fields with same values).

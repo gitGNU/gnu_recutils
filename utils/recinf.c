@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 23:11:14 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 14:23:03 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -106,8 +106,12 @@ print_info_file (FILE *in)
         {
           if (descriptor)
             {
-              printf ("%s", rec_field_value (rec_record_get_field_name (descriptor,
-                                                                        "%rec")));
+              rec_field_name_t fname;
+
+              fname = rec_parse_field_name_str ("%rec");
+              printf ("%s", rec_field_value (rec_record_get_field_by_name (descriptor,
+                                                                           fname,
+                                                                           0)));
             }
           else
             {

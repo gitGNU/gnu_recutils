@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 21:43:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 14:32:58 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -44,7 +44,7 @@ BLANK              [ \t\n]
 DIGIT              [0-9]
 LETTER             [a-zA-Z]
 FIELD_NAME_PART    {LETTER}[a-zA-Z0-9_]+":"?
-FIELD_NAME         {FIELD_NAME_PART}+
+FIELD_NAME         ({FIELD_NAME_PART})+
 STRING             '([^'\n]|\\(.|\n))*'
 
 /* Please do not touch this comment' */
@@ -113,13 +113,32 @@ STRING             '([^'\n]|\\(.|\n))*'
 {FIELD_NAME} {
   /* Get the value of the first field with this name, or error */
   {
+    char *field_str;
     rec_field_t field;
+    rec_field_name_t fname;
 
     yylval->sexval.type = REC_SEX_STR;
 
+    /* Make sure the field name finish with ':'.  */
+    field_str = malloc (strlen(yytext) + 2);
+    strncpy (field_str, yytext, strlen(yytext));
+    if (yytext[strlen(yytext) - 1] != ':')
+      {
+        field_str[strlen(yytext)] = ':';
+        field_str[strlen(yytext) + 1] = 0;
+      }
+    else
+      {
+        field_str[strlen(yytext)] = 0;
+      }
+
+
     /* Get the first field with the given name in RECORD,
        if any.  */
-    field = rec_record_get_field_name (yyextra->record, yytext);
+    fname = rec_parse_field_name_str (field_str);
+    free (field_str);
+
+    field = rec_record_get_field_by_name (yyextra->record, fname, 0);
     if (field)
       {
         /* Return the field value.  */

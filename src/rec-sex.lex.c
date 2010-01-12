@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[101] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/11 21:43:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 14:32:58 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -959,13 +959,32 @@ YY_RULE_SETUP
 {
   /* Get the value of the first field with this name, or error */
   {
+    char *field_str;
     rec_field_t field;
+    rec_field_name_t fname;
 
     yylval->sexval.type = REC_SEX_STR;
 
+    /* Make sure the field name finish with ':'.  */
+    field_str = malloc (strlen(yytext) + 2);
+    strncpy (field_str, yytext, strlen(yytext));
+    if (yytext[strlen(yytext) - 1] != ':')
+      {
+        field_str[strlen(yytext)] = ':';
+        field_str[strlen(yytext) + 1] = 0;
+      }
+    else
+      {
+        field_str[strlen(yytext)] = 0;
+      }
+
+
     /* Get the first field with the given name in RECORD,
        if any.  */
-    field = rec_record_get_field_name (yyextra->record, yytext);
+    fname = rec_parse_field_name_str (field_str);
+    free (field_str);
+
+    field = rec_record_get_field_by_name (yyextra->record, fname, 0);
     if (field)
       {
         /* Return the field value.  */
@@ -984,7 +1003,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 138 "rec-sex.l"
+#line 157 "rec-sex.l"
 {
   /* Strip the " characters */
   yytext[strlen(yytext) - 1] = 0;
@@ -996,15 +1015,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 147 "rec-sex.l"
+#line 166 "rec-sex.l"
 { return REC_SEX_TOK_ERR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 149 "rec-sex.l"
+#line 168 "rec-sex.l"
 ECHO;
 	YY_BREAK
-#line 1008 "rec-sex.lex.c"
+#line 1027 "rec-sex.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2171,7 +2190,7 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 149 "rec-sex.l"
+#line 168 "rec-sex.l"
 
 
 

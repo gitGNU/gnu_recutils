@@ -139,7 +139,7 @@ do
    PACKAGE_DESCRIPTOR=`echo $REC | recsel -p %Package:Description`
 done
 
-# Monitoring of the free memory in the system
+# Monitoring the free memory in the system
 
 OUTFILE=/var/log/memlog.rec
 

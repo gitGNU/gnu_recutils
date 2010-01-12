@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/09 21:54:34 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 14:22:02 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -172,29 +172,36 @@ rec_record_get_field (rec_record_t record,
 }
 
 rec_field_t
-rec_record_get_field_name (rec_record_t record,
-                           const char *name)
+rec_record_get_field_by_name (rec_record_t record,
+                              rec_field_name_t fname,
+                              int n)
 {
   rec_field_t ret;
   rec_field_t field;
   rec_field_name_t field_name;
   const char *field_name_str;
   int i;
+  int num_found;
 
   ret = NULL;
+  num_found = 0;
   
-  /* XXX: make this to work with compount field names!!.  */
-
   for (i = 0; i < rec_record_size (record); i++)
     {
       field = rec_record_get_field (record, i);
       field_name = rec_field_name (field);
-      field_name_str = rec_field_name_get (field_name, 0);
-      if (field_name_str
-          && (strcmp (name, field_name_str) == 0))
+      if (rec_field_name_equal_p (field_name,
+                                  fname))
         {
-          ret = field;
-          break;
+          if (n == num_found)
+            {
+              ret = field;
+              break;
+            }
+          else
+            {
+              num_found++;
+            }
         }
     }
 
