@@ -407,7 +407,7 @@ void rec_sex_destroy (rec_sex_t sex);
 bool rec_sex_compile (rec_sex_t sex, char *expr);
 
 /* Apply a sex expression to a record, setting RESULT in accordance.  */
-bool rec_sex_apply (rec_sex_t sex, rec_record_t record, bool *status);
+bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
 
 void rec_sex_print_ast (rec_sex_t sex);
 

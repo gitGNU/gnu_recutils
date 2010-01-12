@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 23:08:24 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 23:20:36 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -155,7 +155,7 @@ recsel_file (FILE *in)
 
           if (((recsel_num == -1) &&
                ((!recsel_sex) ||
-                (rec_sex_apply (recsel_sex, record, &parse_status))))
+                (rec_sex_eval (recsel_sex, record, &parse_status))))
               || (recsel_num == i))
             {
               char *resolver_result = NULL;

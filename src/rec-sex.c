@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 23:04:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 23:39:16 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -43,6 +43,23 @@ struct rec_sex_s
   rec_sex_parser_t parser;
 };
 
+#define REC_SEX_VAL_INT 0
+#define REC_SEX_VAL_STR 1
+
+struct rec_sex_val_s
+{
+  int type;
+
+  int int_val;
+  char *str_val;
+};
+
+/* Static functions declarations.  */
+static struct rec_sex_val_s rec_sex_eval_node (rec_sex_t sex,
+                                               rec_record_t record,
+                                               rec_sex_ast_node_t node,
+                                               bool *status);
+
 /*
  * Public functions.
  */
@@ -61,7 +78,7 @@ rec_sex_new (bool case_insensitive)
                                            case_insensitive);
 
       /* Initialize a new AST.  */
-      new->ast = rec_sex_ast_new ();
+      new->ast = NULL;
     }
 
   return new;
@@ -90,17 +107,38 @@ rec_sex_compile (rec_sex_t sex,
   bool res;
 
   res = rec_sex_parser_run (sex->parser, expr);
+  sex->ast = rec_sex_parser_ast (sex->parser);
   return res;
 }
 
 bool
-rec_sex_apply (rec_sex_t sex,
-               rec_record_t record,
-               bool *status)
+rec_sex_eval (rec_sex_t sex,
+              rec_record_t record,
+              bool *status)
 {
-  /* XXX: write me.  */
-  *status = true;
-  return true;
+  bool res;
+  struct rec_sex_val_s val;
+
+  val = rec_sex_eval_node (sex,
+                           record,
+                           rec_sex_ast_top (sex->ast),
+                           status);
+
+  switch (val.type)
+    {
+    case REC_SEX_VAL_INT:
+      {
+        res = (val.int_val != 0);
+        break;
+      }
+    case REC_SEX_VAL_STR:
+      {
+        res = (strcmp (val.str_val, "") != 0);
+        break;
+      }
+    }
+
+  return res;
 }
 
 void
@@ -108,5 +146,85 @@ rec_sex_print_ast (rec_sex_t sex)
 {
   rec_sex_parser_print_ast (sex->parser);
 }
+
+/*
+ * Private functions.
+ */
+
+struct rec_sex_val_s
+rec_sex_eval_node (rec_sex_t sex,
+                   rec_record_t record,
+                   rec_sex_ast_node_t node,
+                   bool *status)
+{
+  int i;
+  struct rec_sex_val_s res;
+
+  for (i = 0; i < rec_sex_ast_node_num_children (node); i++)
+    {
+      rec_sex_eval_node (sex,
+                         record,
+                         rec_sex_ast_node_child (node, i),
+                         status);
+
+      if (!*status)
+        {
+          /* Error: roll back!  */
+          *status = false;
+          return res;
+        }
+    }
+
+  switch (rec_sex_ast_node_type (node))
+    {
+    case REC_SEX_NOVAL:
+      {
+        fprintf (stderr, "Application bug: REC_SEX_NOVAL node found.\nPlease report this!\n");
+        *status = false;
+        break;
+      }
+      /* Operations.  */
+    case REC_SEX_OP_NEG:
+    case REC_SEX_OP_ADD:
+    case REC_SEX_OP_SUB:
+    case REC_SEX_OP_MUL:
+    case REC_SEX_OP_DIV:
+    case REC_SEX_OP_MOD:
+    case REC_SEX_OP_EQL:
+    case REC_SEX_OP_NEQ:
+    case REC_SEX_OP_MAT:
+    case REC_SEX_OP_LT:
+    case REC_SEX_OP_GT:
+    case REC_SEX_OP_AND:
+    case REC_SEX_OP_OR:
+    case REC_SEX_OP_NOT:
+    case REC_SEX_OP_SHA:
+      {
+        break;
+      }
+      /* Values.  */
+    case REC_SEX_INT:
+      {
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = rec_sex_ast_node_int (node);
+        break;
+      }
+    case REC_SEX_STR:
+      {
+        res.type = REC_SEX_VAL_STR;
+        res.str_val = rec_sex_ast_node_str (node);
+        break;
+      }
+    case REC_SEX_NAME:
+      {
+        
+        break;
+      }
+    }
+
+  return res;
+}
+
+
  
 /* End of rec-sex.c */
