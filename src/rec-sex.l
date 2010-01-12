@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 14:57:42 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 22:27:12 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -14,28 +14,27 @@
 %option noyywrap
 %option reentrant
 %option bison-bridge
-%option extra-type="struct rec_sex_ctx_s *"
+%option extra-type="void *"
 
 %{
 #include <config.h>
 
-#include <rec.h>
-#include <rec-sex-ctx.h>
+#include <rec-sex-ast.h>
+#include <rec-sex-parser.h>
 #include <rec-sex.tab.h>
 
-#define YY_INPUT(buf,result,max_size)           \
-   {                                            \
-   char c;                                      \
-   if ((yyextra->index) < strlen(yyextra->in))  \
-     {                                          \
-       buf[0] = yyextra->in[yyextra->index];    \
-       result = 1;                              \
-       (yyextra->index)++;                      \
-     }                                          \
-     else                                       \
-     {                                          \
-       result = YY_NULL;                        \
-     }                                          \
+#define YY_INPUT(buf,result,max_size)                                   \
+   {                                                                    \
+     int ci;                                                            \
+     if ((ci = rec_sex_parser_getc ((rec_sex_parser_t) yyextra)) == -1)     \
+       {                                                                \
+         result = YY_NULL;                                              \
+       }                                                                \
+     else                                                               \
+       {                                                                \
+         buf[0] = (char) ci;                                            \
+         result = 1;                                                    \
+     }                                                                  \
    }
 %}
 
@@ -62,30 +61,79 @@ STRING             '([^'\n]|\\(.|\n))*'
 "!="     { return REC_SEX_TOK_NEQ; }
 "!"      { return REC_SEX_TOK_NOT; }
 "~"      { return REC_SEX_TOK_MAT; }
-">"      { return REC_SEX_TOK_BT; }
+">"      { return REC_SEX_TOK_GT; }
 "<"      { return REC_SEX_TOK_LT; }
 "("      { return REC_SEX_TOK_BP; }
 ")"      { return REC_SEX_TOK_EP; }
 "&&"     { return REC_SEX_TOK_AND; }
 "||"     { return REC_SEX_TOK_OR; }
+"#"      { return REC_SEX_TOK_SHARP; }
 
 {DIGIT}+ {
-  yylval->sexval.type = REC_SEX_INT;
-  yylval->sexval.int_val = atoi (yytext);
-  yylval->sexval.tag = NULL;
+  /*
+   * Create an integer node.
+   */
+  yylval->node = rec_sex_ast_node_new ();
+  rec_sex_ast_node_set_int (yylval->node, atoi (yytext));
 
   return REC_SEX_TOK_INT;    
 }
 
+{FIELD_NAME} {
+  /*
+   * Create a name node.
+   */
+  {
+    char *name_str;
+
+    /* Make sure the field name finish with ':'.  */
+    name_str = malloc (strlen(yytext) + 2);
+    strncpy (name_str, yytext, strlen(yytext));
+    if (yytext[strlen(yytext) - 1] != ':')
+      {
+        name_str[strlen(yytext)] = ':';
+        name_str[strlen(yytext) + 1] = 0;
+      }
+    else
+      {
+        name_str[strlen(yytext)] = 0;
+      }
+
+    yylval->node = rec_sex_ast_node_new ();
+    rec_sex_ast_node_set_name (yylval->node, name_str);
+
+    free (name_str);
+  }
+
+  return REC_SEX_TOK_NAM;
+}
+
+{STRING} {
+  /*
+   * Create a string node.
+   */
+
+  /* Strip the " characters */
+  yytext[strlen(yytext) - 1] = 0;
+
+  yylval->node = rec_sex_ast_node_new ();
+  rec_sex_ast_node_set_str (yylval->node, yytext + 1);
+
+  return REC_SEX_TOK_STR;
+}
+
+.        { return REC_SEX_TOK_ERR; }
+
+%%
+
+/*
 #{FIELD_NAME} {
-  /* Get the number of fields with this name */
   {
     int i;
     int num_fields = 0;
     rec_field_name_t field_name;
     char *field_name_str;
 
-    /* Parse a field name.  */
     field_name_str = malloc (strlen (yytext));
     strncpy (field_name_str, yytext + 1, strlen (yytext) - 1);
     field_name_str[strlen (yytext) - 1] = ':';
@@ -113,64 +161,6 @@ STRING             '([^'\n]|\\(.|\n))*'
 
   return REC_SEX_TOK_INT;
 }
-
-{FIELD_NAME} {
-  /* Get the value of the first field with this name, or error */
-  {
-    char *field_str;
-    rec_field_t field;
-    rec_field_name_t fname;
-
-    yylval->sexval.type = REC_SEX_STR;
-
-    /* Make sure the field name finish with ':'.  */
-    field_str = malloc (strlen(yytext) + 2);
-    strncpy (field_str, yytext, strlen(yytext));
-    if (yytext[strlen(yytext) - 1] != ':')
-      {
-        field_str[strlen(yytext)] = ':';
-        field_str[strlen(yytext) + 1] = 0;
-      }
-    else
-      {
-        field_str[strlen(yytext)] = 0;
-      }
-
-    /* Save the tag.  */
-    yylval->sexval.tag = field_str;
-
-    /* Get the first field with the given name in RECORD,
-       if any.  */
-    fname = rec_parse_field_name_str (field_str);
-    field = rec_record_get_field_by_name (yyextra->record, fname, 0);
-    if (field)
-      {
-        /* Return the field value.  */
-        yylval->sexval.str_val = strdup (rec_field_value (field));
-      }
-    else
-      {
-        /* No field with such a name: return the empty string.  */
-        yylval->sexval.str_val = "";
-      }
-  }
-
-  return REC_SEX_TOK_STR;
-}
-
-{STRING} {
-  /* Strip the " characters */
-  yytext[strlen(yytext) - 1] = 0;
-
-  yylval->sexval.type = REC_SEX_STR;
-  yylval->sexval.str_val = strdup (yytext + 1);
-  yylval->sexval.tag = NULL;
-
-  return REC_SEX_TOK_STR;
-}
-
-.        { return REC_SEX_TOK_ERR; }
-
-%%
+*/
 
 /* End of rec-sex.l */

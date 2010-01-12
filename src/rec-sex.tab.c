@@ -85,39 +85,45 @@
   #include <string.h>
   #include <regex.h>
 
-  #include <rec.h>
-  #include <rec-sex-ctx.h>
+  #include <rec-sex-ast.h>
+  #include <rec-sex-parser.h>
 
-  void sexerror (struct rec_sex_ctx_s *context, const char *err)
+  void sexerror (rec_sex_parser_t context, const char *err)
   {
     /* Do nothing.  */
   }
 
-  #define scanner sex_ctx->scanner
+  #define scanner (rec_sex_parser_scanner (sex_parser))
 
-  /* Forward references for parsing routines.  */
-  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci,
-                    rec_record_t record);
-  bool rec_sex_eql_2 (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
-  bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
-  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci,
-                    rec_record_t record);
-  bool rec_sex_add (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_sub (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_mul (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_div (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_mod (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_bt (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_lt (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_not (rec_sex_val_t res, rec_sex_val_t val);
-  bool rec_sex_and (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_or (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
-  bool rec_sex_group (rec_sex_val_t res, rec_sex_val_t val);
+  #define CREATE_NODE_OP1(TYPE,RES,OP)                  \
+    do                                                  \
+      {                                                 \
+        /* Create the node.  */                         \
+        (RES) = rec_sex_ast_node_new ();                \
+        rec_sex_ast_node_set_type ((RES), (TYPE));      \
+                                                        \
+        /* Set children. */                             \
+        rec_sex_ast_node_link ((RES), (OP));            \
+      }                                                 \
+    while (0)
 
+    #define CREATE_NODE_OP2(TYPE, RES, OP1, OP2)        \
+      do                                                \
+        {                                               \
+          /* Create the node.  */                       \
+          (RES) = rec_sex_ast_node_new ();              \
+          rec_sex_ast_node_set_type ((RES), (TYPE));    \
+                                                        \
+          /* Set children. */                           \
+          rec_sex_ast_node_link ((RES), (OP1));         \
+          rec_sex_ast_node_link ((RES), (OP2));         \
+        }                                               \
+     while (0)
+  
 
 
 /* Line 189 of yacc.c  */
-#line 121 "rec-sex.tab.c"
+#line 127 "rec-sex.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -146,24 +152,26 @@
    enum yytokentype {
      REC_SEX_TOK_INT = 258,
      REC_SEX_TOK_STR = 259,
-     REC_SEX_TOK_MAT = 260,
-     REC_SEX_TOK_OR = 261,
-     REC_SEX_TOK_AND = 262,
-     REC_SEX_TOK_BT = 263,
-     REC_SEX_TOK_LT = 264,
-     REC_SEX_TOK_NEQ = 265,
-     REC_SEX_TOK_EQL = 266,
-     REC_SEX_TOK_ADD = 267,
-     REC_SEX_TOK_SUB = 268,
-     REC_SEX_TOK_MOD = 269,
-     REC_SEX_TOK_DIV = 270,
-     REC_SEX_TOK_MUL = 271,
-     REC_SEX_TOK_MIN = 272,
-     REC_SEX_TOK_NEG = 273,
-     REC_SEX_TOK_NOT = 274,
-     REC_SEX_TOK_BP = 275,
-     REC_SEX_TOK_EP = 276,
-     REC_SEX_TOK_ERR = 277
+     REC_SEX_TOK_NAM = 260,
+     REC_SEX_TOK_MAT = 261,
+     REC_SEX_TOK_OR = 262,
+     REC_SEX_TOK_AND = 263,
+     REC_SEX_TOK_GT = 264,
+     REC_SEX_TOK_LT = 265,
+     REC_SEX_TOK_NEQ = 266,
+     REC_SEX_TOK_EQL = 267,
+     REC_SEX_TOK_ADD = 268,
+     REC_SEX_TOK_SUB = 269,
+     REC_SEX_TOK_MOD = 270,
+     REC_SEX_TOK_DIV = 271,
+     REC_SEX_TOK_MUL = 272,
+     REC_SEX_TOK_MIN = 273,
+     REC_SEX_TOK_NEG = 274,
+     REC_SEX_TOK_NOT = 275,
+     REC_SEX_TOK_BP = 276,
+     REC_SEX_TOK_EP = 277,
+     REC_SEX_TOK_ERR = 278,
+     REC_SEX_TOK_SHARP = 279
    };
 #endif
 
@@ -174,14 +182,15 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 72 "rec-sex.y"
+#line 76 "rec-sex.y"
 
-  struct rec_sex_val_s sexval;
+  rec_sex_ast_node_t node;
+  rec_sex_ast_t ast;
 
 
 
 /* Line 214 of yacc.c  */
-#line 185 "rec-sex.tab.c"
+#line 194 "rec-sex.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -193,7 +202,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 197 "rec-sex.tab.c"
+#line 206 "rec-sex.tab.c"
 
 #ifdef short
 # undef short
@@ -406,22 +415,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  10
+#define YYFINAL  13
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   61
+#define YYLAST   64
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  23
+#define YYNTOKENS  25
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  19
+#define YYNRULES  21
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  35
+#define YYNSTATES  38
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   277
+#define YYMAXUTOK   279
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -456,7 +465,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    22
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24
 };
 
 #if YYDEBUG
@@ -464,27 +473,29 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     4,     6,     8,    10,    14,    18,    22,
-      26,    30,    34,    38,    42,    46,    50,    53,    57,    61
+       0,     0,     3,     4,     6,     8,    10,    12,    16,    20,
+      24,    28,    32,    36,    40,    44,    48,    52,    55,    59,
+      63,    66
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      24,     0,    -1,    -1,    25,    -1,     3,    -1,     4,    -1,
-      25,    11,    25,    -1,    25,    10,    25,    -1,     4,     5,
-       4,    -1,    25,    12,    25,    -1,    25,    13,    25,    -1,
-      25,    16,    25,    -1,    25,    15,    25,    -1,    25,    14,
-      25,    -1,    25,     8,    25,    -1,    25,     9,    25,    -1,
-      19,    25,    -1,    25,     7,    25,    -1,    25,     6,    25,
-      -1,    20,    25,    21,    -1
+      26,     0,    -1,    -1,    27,    -1,     3,    -1,     4,    -1,
+       5,    -1,    27,    12,    27,    -1,    27,    11,    27,    -1,
+       4,     6,     4,    -1,    27,    13,    27,    -1,    27,    14,
+      27,    -1,    27,    17,    27,    -1,    27,    16,    27,    -1,
+      27,    15,    27,    -1,    27,     9,    27,    -1,    27,    10,
+      27,    -1,    20,    27,    -1,    27,     8,    27,    -1,    27,
+       7,    27,    -1,    24,     5,    -1,    21,    27,    22,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    93,    93,    94,   108,   109,   110,   121,   122,   133,
-     134,   135,   136,   137,   138,   139,   140,   141,   142,   143
+       0,   103,   103,   109,   119,   120,   121,   122,   123,   124,
+     126,   127,   128,   129,   130,   131,   132,   133,   134,   135,
+     136,   137
 };
 #endif
 
@@ -494,12 +505,13 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "REC_SEX_TOK_INT", "REC_SEX_TOK_STR",
-  "REC_SEX_TOK_MAT", "REC_SEX_TOK_OR", "REC_SEX_TOK_AND", "REC_SEX_TOK_BT",
-  "REC_SEX_TOK_LT", "REC_SEX_TOK_NEQ", "REC_SEX_TOK_EQL",
-  "REC_SEX_TOK_ADD", "REC_SEX_TOK_SUB", "REC_SEX_TOK_MOD",
-  "REC_SEX_TOK_DIV", "REC_SEX_TOK_MUL", "REC_SEX_TOK_MIN",
-  "REC_SEX_TOK_NEG", "REC_SEX_TOK_NOT", "REC_SEX_TOK_BP", "REC_SEX_TOK_EP",
-  "REC_SEX_TOK_ERR", "$accept", "input", "exp", 0
+  "REC_SEX_TOK_NAM", "REC_SEX_TOK_MAT", "REC_SEX_TOK_OR",
+  "REC_SEX_TOK_AND", "REC_SEX_TOK_GT", "REC_SEX_TOK_LT", "REC_SEX_TOK_NEQ",
+  "REC_SEX_TOK_EQL", "REC_SEX_TOK_ADD", "REC_SEX_TOK_SUB",
+  "REC_SEX_TOK_MOD", "REC_SEX_TOK_DIV", "REC_SEX_TOK_MUL",
+  "REC_SEX_TOK_MIN", "REC_SEX_TOK_NEG", "REC_SEX_TOK_NOT",
+  "REC_SEX_TOK_BP", "REC_SEX_TOK_EP", "REC_SEX_TOK_ERR",
+  "REC_SEX_TOK_SHARP", "$accept", "input", "exp", 0
 };
 #endif
 
@@ -510,22 +522,24 @@ static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277
+     275,   276,   277,   278,   279
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    23,    24,    24,    25,    25,    25,    25,    25,    25,
-      25,    25,    25,    25,    25,    25,    25,    25,    25,    25
+       0,    25,    26,    26,    27,    27,    27,    27,    27,    27,
+      27,    27,    27,    27,    27,    27,    27,    27,    27,    27,
+      27,    27
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     0,     1,     1,     1,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     2,     3,     3,     3
+       0,     2,     0,     1,     1,     1,     1,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     2,     3,     3,
+       2,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -533,33 +547,33 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     4,     5,     0,     0,     0,     3,     0,    16,     0,
-       1,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     8,    19,    18,    17,    14,    15,     7,     6,
-       9,    10,    13,    12,    11
+       2,     4,     5,     6,     0,     0,     0,     0,     3,     0,
+      17,     0,    20,     1,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     9,    21,    19,    18,    15,
+      16,     8,     7,    10,    11,    14,    13,    12
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     5,     6
+      -1,     7,     8
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -10
+#define YYPACT_NINF -7
 static const yytype_int8 yypact[] =
 {
-       0,   -10,    27,     0,     0,     2,    31,    29,   -10,    15,
-     -10,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,   -10,   -10,    40,    40,    45,    45,    45,    45,
-      -9,    -9,   -10,   -10,   -10
+      -3,    -7,    13,    -7,    -3,    -3,    15,    44,    42,    41,
+      -7,    26,    -7,    -7,    -3,    -3,    -3,    -3,    -3,    -3,
+      -3,    -3,    -3,    -3,    -3,    -7,    -7,    -6,    -6,    47,
+      47,    47,    47,    -1,    -1,    -7,    -7,    -7
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -10,   -10,    -3
+      -7,    -7,     8
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -569,34 +583,34 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       8,     9,    10,     1,     2,    19,    20,    21,    24,    25,
-      26,    27,    28,    29,    30,    31,    32,    33,    34,     3,
-       4,    11,    12,    13,    14,    15,    16,    17,    18,    19,
-      20,    21,     7,    22,     0,     0,    23,    11,    12,    13,
-      14,    15,    16,    17,    18,    19,    20,    21,    13,    14,
-      15,    16,    17,    18,    19,    20,    21,    17,    18,    19,
-      20,    21
+       1,     2,     3,    16,    17,    18,    19,    20,    21,    22,
+      23,    24,    10,    11,    22,    23,    24,     4,     5,     9,
+      12,     6,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    14,    15,    16,    17,    18,    19,    20,
+      21,    22,    23,    24,    13,    25,     0,     0,    26,    14,
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      20,    21,    22,    23,    24
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     4,     0,     3,     4,    14,    15,    16,    11,    12,
-      13,    14,    15,    16,    17,    18,    19,    20,    21,    19,
-      20,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,     5,     4,    -1,    -1,    21,     6,     7,     8,
-       9,    10,    11,    12,    13,    14,    15,    16,     8,     9,
-      10,    11,    12,    13,    14,    15,    16,    12,    13,    14,
-      15,    16
+       3,     4,     5,     9,    10,    11,    12,    13,    14,    15,
+      16,    17,     4,     5,    15,    16,    17,    20,    21,     6,
+       5,    24,    14,    15,    16,    17,    18,    19,    20,    21,
+      22,    23,    24,     7,     8,     9,    10,    11,    12,    13,
+      14,    15,    16,    17,     0,     4,    -1,    -1,    22,     7,
+       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
+      13,    14,    15,    16,    17
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,    19,    20,    24,    25,     5,    25,    25,
-       0,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,     4,    21,    25,    25,    25,    25,    25,    25,
-      25,    25,    25,    25,    25
+       0,     3,     4,     5,    20,    21,    24,    26,    27,     6,
+      27,    27,     5,     0,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,    16,    17,     4,    22,    27,    27,    27,
+      27,    27,    27,    27,    27,    27,    27,    27
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -629,7 +643,7 @@ do								\
     }								\
   else								\
     {								\
-      yyerror (sex_ctx, YY_("syntax error: cannot back up")); \
+      yyerror (sex_parser, YY_("syntax error: cannot back up")); \
       YYERROR;							\
     }								\
 while (YYID (0))
@@ -709,7 +723,7 @@ do {									  \
     {									  \
       YYFPRINTF (stderr, "%s ", Title);					  \
       yy_symbol_print (stderr,						  \
-		  Type, Value, sex_ctx); \
+		  Type, Value, sex_parser); \
       YYFPRINTF (stderr, "\n");						  \
     }									  \
 } while (YYID (0))
@@ -723,19 +737,19 @@ do {									  \
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, struct rec_sex_ctx_s *sex_ctx)
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, rec_sex_parser_t sex_parser)
 #else
 static void
-yy_symbol_value_print (yyoutput, yytype, yyvaluep, sex_ctx)
+yy_symbol_value_print (yyoutput, yytype, yyvaluep, sex_parser)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
-    struct rec_sex_ctx_s *sex_ctx;
+    rec_sex_parser_t sex_parser;
 #endif
 {
   if (!yyvaluep)
     return;
-  YYUSE (sex_ctx);
+  YYUSE (sex_parser);
 # ifdef YYPRINT
   if (yytype < YYNTOKENS)
     YYPRINT (yyoutput, yytoknum[yytype], *yyvaluep);
@@ -757,14 +771,14 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, sex_ctx)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, struct rec_sex_ctx_s *sex_ctx)
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep, rec_sex_parser_t sex_parser)
 #else
 static void
-yy_symbol_print (yyoutput, yytype, yyvaluep, sex_ctx)
+yy_symbol_print (yyoutput, yytype, yyvaluep, sex_parser)
     FILE *yyoutput;
     int yytype;
     YYSTYPE const * const yyvaluep;
-    struct rec_sex_ctx_s *sex_ctx;
+    rec_sex_parser_t sex_parser;
 #endif
 {
   if (yytype < YYNTOKENS)
@@ -772,7 +786,7 @@ yy_symbol_print (yyoutput, yytype, yyvaluep, sex_ctx)
   else
     YYFPRINTF (yyoutput, "nterm %s (", yytname[yytype]);
 
-  yy_symbol_value_print (yyoutput, yytype, yyvaluep, sex_ctx);
+  yy_symbol_value_print (yyoutput, yytype, yyvaluep, sex_parser);
   YYFPRINTF (yyoutput, ")");
 }
 
@@ -815,13 +829,13 @@ do {								\
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yy_reduce_print (YYSTYPE *yyvsp, int yyrule, struct rec_sex_ctx_s *sex_ctx)
+yy_reduce_print (YYSTYPE *yyvsp, int yyrule, rec_sex_parser_t sex_parser)
 #else
 static void
-yy_reduce_print (yyvsp, yyrule, sex_ctx)
+yy_reduce_print (yyvsp, yyrule, sex_parser)
     YYSTYPE *yyvsp;
     int yyrule;
-    struct rec_sex_ctx_s *sex_ctx;
+    rec_sex_parser_t sex_parser;
 #endif
 {
   int yynrhs = yyr2[yyrule];
@@ -835,7 +849,7 @@ yy_reduce_print (yyvsp, yyrule, sex_ctx)
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr, yyrhs[yyprhs[yyrule] + yyi],
 		       &(yyvsp[(yyi + 1) - (yynrhs)])
-		       		       , sex_ctx);
+		       		       , sex_parser);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -843,7 +857,7 @@ yy_reduce_print (yyvsp, yyrule, sex_ctx)
 # define YY_REDUCE_PRINT(Rule)		\
 do {					\
   if (yydebug)				\
-    yy_reduce_print (yyvsp, Rule, sex_ctx); \
+    yy_reduce_print (yyvsp, Rule, sex_parser); \
 } while (YYID (0))
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -1094,18 +1108,18 @@ yysyntax_error (char *yyresult, int yystate, int yychar)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 static void
-yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, struct rec_sex_ctx_s *sex_ctx)
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, rec_sex_parser_t sex_parser)
 #else
 static void
-yydestruct (yymsg, yytype, yyvaluep, sex_ctx)
+yydestruct (yymsg, yytype, yyvaluep, sex_parser)
     const char *yymsg;
     int yytype;
     YYSTYPE *yyvaluep;
-    struct rec_sex_ctx_s *sex_ctx;
+    rec_sex_parser_t sex_parser;
 #endif
 {
   YYUSE (yyvaluep);
-  YYUSE (sex_ctx);
+  YYUSE (sex_parser);
 
   if (!yymsg)
     yymsg = "Deleting";
@@ -1128,7 +1142,7 @@ int yyparse ();
 #endif
 #else /* ! YYPARSE_PARAM */
 #if defined __STDC__ || defined __cplusplus
-int yyparse (struct rec_sex_ctx_s *sex_ctx);
+int yyparse (rec_sex_parser_t sex_parser);
 #else
 int yyparse ();
 #endif
@@ -1156,11 +1170,11 @@ yyparse (YYPARSE_PARAM)
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
 int
-yyparse (struct rec_sex_ctx_s *sex_ctx)
+yyparse (rec_sex_parser_t sex_parser)
 #else
 int
-yyparse (sex_ctx)
-    struct rec_sex_ctx_s *sex_ctx;
+yyparse (sex_parser)
+    rec_sex_parser_t sex_parser;
 #endif
 #endif
 {
@@ -1415,161 +1429,158 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 93 "rec-sex.y"
-    { sex_ctx->result = 0; ;}
+#line 103 "rec-sex.y"
+    {
+       rec_sex_ast_t ast;
+
+       ast = rec_sex_ast_new ();
+       rec_sex_parser_set_ast (sex_parser, ast);
+     ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 95 "rec-sex.y"
+#line 110 "rec-sex.y"
     {
-       if ((yyvsp[(1) - (1)].sexval).type == REC_SEX_INT)
-         {
-           sex_ctx->result = ((yyvsp[(1) - (1)].sexval).int_val != 0);
-         }
-       else
-         {
-           /* Nonempty string => true. */
-           sex_ctx->result = ((yyvsp[(1) - (1)].sexval).str_val[0] != 0);
-         }
+       rec_sex_ast_t ast;
+
+       ast = rec_sex_ast_new ();
+       rec_sex_ast_set_top (ast, (yyvsp[(1) - (1)].node));
+       rec_sex_parser_set_ast (sex_parser, ast);
      ;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 108 "rec-sex.y"
-    { (yyval.sexval).type = REC_SEX_INT; (yyval.sexval).int_val = (yyvsp[(1) - (1)].sexval).int_val; ;}
+#line 119 "rec-sex.y"
+    { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 109 "rec-sex.y"
-    { (yyval.sexval).type = REC_SEX_STR; (yyval.sexval).str_val = (yyvsp[(1) - (1)].sexval).str_val; ;}
+#line 120 "rec-sex.y"
+    { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 111 "rec-sex.y"
-    {
-      if (!rec_sex_eql (&(yyval.sexval),
-                        &(yyvsp[(1) - (3)].sexval),
-                        &(yyvsp[(3) - (3)].sexval),
-                        sex_ctx->case_insensitive,
-                        sex_ctx->record))
-        {
-          YYABORT;
-        }
-    ;}
+#line 121 "rec-sex.y"
+    { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 121 "rec-sex.y"
-    { if (!rec_sex_neq (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval), sex_ctx->case_insensitive)) YYABORT; ;}
+#line 122 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_EQL, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
 #line 123 "rec-sex.y"
-    {
-      if (!rec_sex_mat (&(yyval.sexval),
-                        &(yyvsp[(1) - (3)].sexval),
-                        &(yyvsp[(3) - (3)].sexval),
-                        sex_ctx->case_insensitive,
-                        sex_ctx->record))
-        {
-          YYABORT;
-        }
-    ;}
+    { CREATE_NODE_OP2 (REC_SEX_OP_NEQ, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 133 "rec-sex.y"
-    { if (!rec_sex_add (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 125 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_MAT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 134 "rec-sex.y"
-    { if (!rec_sex_sub (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 126 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_ADD, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 135 "rec-sex.y"
-    { if (!rec_sex_mul (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 127 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_SUB, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 136 "rec-sex.y"
-    { if (!rec_sex_div (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 128 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_MUL, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 137 "rec-sex.y"
-    { if (!rec_sex_mod (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 129 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_DIV, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 138 "rec-sex.y"
-    { if (!rec_sex_bt (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 130 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_MOD, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 139 "rec-sex.y"
-    { if (!rec_sex_lt (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 131 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_GT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 140 "rec-sex.y"
-    { if (!rec_sex_not (&(yyval.sexval), &(yyvsp[(2) - (2)].sexval))) YYABORT; ;}
+#line 132 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_LT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 141 "rec-sex.y"
-    { if (!rec_sex_and (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 133 "rec-sex.y"
+    { CREATE_NODE_OP1 (REC_SEX_OP_NOT, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 142 "rec-sex.y"
-    { if (!rec_sex_or (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
+#line 134 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_AND, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 143 "rec-sex.y"
-    { if (!rec_sex_group (&(yyval.sexval), &(yyvsp[(2) - (3)].sexval))) YYABORT; ;}
+#line 135 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_OR, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
+    break;
+
+  case 20:
+
+/* Line 1455 of yacc.c  */
+#line 136 "rec-sex.y"
+    { CREATE_NODE_OP1 (REC_SEX_OP_SHA, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
+    break;
+
+  case 21:
+
+/* Line 1455 of yacc.c  */
+#line 137 "rec-sex.y"
+    { (yyval.node) = (yyvsp[(2) - (3)].node); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1573 "rec-sex.tab.c"
+#line 1584 "rec-sex.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1604,7 +1615,7 @@ yyerrlab:
     {
       ++yynerrs;
 #if ! YYERROR_VERBOSE
-      yyerror (sex_ctx, YY_("syntax error"));
+      yyerror (sex_parser, YY_("syntax error"));
 #else
       {
 	YYSIZE_T yysize = yysyntax_error (0, yystate, yychar);
@@ -1628,11 +1639,11 @@ yyerrlab:
 	if (0 < yysize && yysize <= yymsg_alloc)
 	  {
 	    (void) yysyntax_error (yymsg, yystate, yychar);
-	    yyerror (sex_ctx, yymsg);
+	    yyerror (sex_parser, yymsg);
 	  }
 	else
 	  {
-	    yyerror (sex_ctx, YY_("syntax error"));
+	    yyerror (sex_parser, YY_("syntax error"));
 	    if (yysize != 0)
 	      goto yyexhaustedlab;
 	  }
@@ -1656,7 +1667,7 @@ yyerrlab:
       else
 	{
 	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, sex_ctx);
+		      yytoken, &yylval, sex_parser);
 	  yychar = YYEMPTY;
 	}
     }
@@ -1712,7 +1723,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, sex_ctx);
+		  yystos[yystate], yyvsp, sex_parser);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1747,7 +1758,7 @@ yyabortlab:
 | yyexhaustedlab -- memory exhaustion comes here.  |
 `-------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (sex_ctx, YY_("memory exhausted"));
+  yyerror (sex_parser, YY_("memory exhausted"));
   yyresult = 2;
   /* Fall through.  */
 #endif
@@ -1755,7 +1766,7 @@ yyexhaustedlab:
 yyreturn:
   if (yychar != YYEMPTY)
      yydestruct ("Cleanup: discarding lookahead",
-		 yytoken, &yylval, sex_ctx);
+		 yytoken, &yylval, sex_parser);
   /* Do not reclaim the symbols of the rule which action triggered
      this YYABORT or YYACCEPT.  */
   YYPOPSTACK (yylen);
@@ -1763,7 +1774,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, sex_ctx);
+		  yystos[*yyssp], yyvsp, sex_parser);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1781,10 +1792,10 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 145 "rec-sex.y"
+#line 139 "rec-sex.y"
 
 
-
+      /*
 bool
 rec_sex_eql (rec_sex_val_t res,
              rec_sex_val_t val1,
@@ -1799,8 +1810,6 @@ rec_sex_eql (rec_sex_val_t res,
   struct rec_sex_val_s str_val_1;
   struct rec_sex_val_s str_val_2;
   int i, j;
-
-  /* XXX.  This WILL be simplified.  REALLY.  */
 
   ret = true;
 
@@ -2048,7 +2057,6 @@ rec_sex_mat (rec_sex_val_t res,
         {
           if (val1->tag == NULL)
             {
-              /* Try to match the string.  */
               res->int_val = (regexec (&regexp,
                                        val1->str_val,
                                        0,
@@ -2057,7 +2065,6 @@ rec_sex_mat (rec_sex_val_t res,
             }
           else
             {
-              /* Try to match any field of the record named TAG.  */
               bool result;
               rec_field_t field;
               rec_field_name_t field_name;
@@ -2090,7 +2097,6 @@ rec_sex_mat (rec_sex_val_t res,
         }
       else
         {
-          /* Error compiling the regexp.  */
           ret = false;
         }
     }
@@ -2509,7 +2515,7 @@ rec_sex_group (rec_sex_val_t res,
   return ret;
 }
 
-
+*/
 
 /* End of rec-sex.y */
 

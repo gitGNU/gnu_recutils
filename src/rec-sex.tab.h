@@ -41,24 +41,26 @@
    enum yytokentype {
      REC_SEX_TOK_INT = 258,
      REC_SEX_TOK_STR = 259,
-     REC_SEX_TOK_MAT = 260,
-     REC_SEX_TOK_OR = 261,
-     REC_SEX_TOK_AND = 262,
-     REC_SEX_TOK_BT = 263,
-     REC_SEX_TOK_LT = 264,
-     REC_SEX_TOK_NEQ = 265,
-     REC_SEX_TOK_EQL = 266,
-     REC_SEX_TOK_ADD = 267,
-     REC_SEX_TOK_SUB = 268,
-     REC_SEX_TOK_MOD = 269,
-     REC_SEX_TOK_DIV = 270,
-     REC_SEX_TOK_MUL = 271,
-     REC_SEX_TOK_MIN = 272,
-     REC_SEX_TOK_NEG = 273,
-     REC_SEX_TOK_NOT = 274,
-     REC_SEX_TOK_BP = 275,
-     REC_SEX_TOK_EP = 276,
-     REC_SEX_TOK_ERR = 277
+     REC_SEX_TOK_NAM = 260,
+     REC_SEX_TOK_MAT = 261,
+     REC_SEX_TOK_OR = 262,
+     REC_SEX_TOK_AND = 263,
+     REC_SEX_TOK_GT = 264,
+     REC_SEX_TOK_LT = 265,
+     REC_SEX_TOK_NEQ = 266,
+     REC_SEX_TOK_EQL = 267,
+     REC_SEX_TOK_ADD = 268,
+     REC_SEX_TOK_SUB = 269,
+     REC_SEX_TOK_MOD = 270,
+     REC_SEX_TOK_DIV = 271,
+     REC_SEX_TOK_MUL = 272,
+     REC_SEX_TOK_MIN = 273,
+     REC_SEX_TOK_NEG = 274,
+     REC_SEX_TOK_NOT = 275,
+     REC_SEX_TOK_BP = 276,
+     REC_SEX_TOK_EP = 277,
+     REC_SEX_TOK_ERR = 278,
+     REC_SEX_TOK_SHARP = 279
    };
 #endif
 
@@ -69,14 +71,15 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 72 "rec-sex.y"
+#line 76 "rec-sex.y"
 
-  struct rec_sex_val_s sexval;
+  rec_sex_ast_node_t node;
+  rec_sex_ast_t ast;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 80 "rec-sex.tab.h"
+#line 83 "rec-sex.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

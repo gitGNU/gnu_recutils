@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 14:55:33 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 23:04:45 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
  *
- *       GNU Records - Selection Expressions
+ *       GNU Records - Sexy expressions
  *
  */
 
@@ -26,7 +26,10 @@
 #include <config.h>
 
 #include <rec.h>
-#include <rec-sex-ctx.h>
+
+#include <rec-sex-ast.h>
+#include <rec-sex-parser.h>
+
 #include <rec-sex.tab.h>
 #include <rec-sex.lex.h>
 
@@ -36,7 +39,8 @@
 
 struct rec_sex_s
 {
-  struct rec_sex_ctx_s *parser_ctx;
+  rec_sex_ast_t ast;
+  rec_sex_parser_t parser;
 };
 
 /*
@@ -51,19 +55,13 @@ rec_sex_new (bool case_insensitive)
   new = malloc (sizeof (struct rec_sex_s));
   if (new)
     {
-      new->parser_ctx = malloc (sizeof (struct rec_sex_ctx_s));
-      if (new->parser_ctx)
-        {
-          new->parser_ctx->in = NULL;
-          new->parser_ctx->index = 0;
-          new->parser_ctx->result = false;
-          new->parser_ctx->case_insensitive = case_insensitive;
-        }
-      else
-        {
-          free (new);
-          new = NULL;
-        }
+      /* Initialize a new parser.  */
+      new->parser = rec_sex_parser_new ();
+      rec_sex_parser_set_case_insensitive (new->parser,
+                                           case_insensitive);
+
+      /* Initialize a new AST.  */
+      new->ast = rec_sex_ast_new ();
     }
 
   return new;
@@ -72,44 +70,43 @@ rec_sex_new (bool case_insensitive)
 void
 rec_sex_destroy (rec_sex_t sex)
 {
-  free (sex->parser_ctx);
-  free (sex);
+  if (sex->parser)
+    {
+      rec_sex_parser_destroy (sex->parser);
+    }
+
+  if (sex->ast)
+    {
+      rec_sex_ast_destroy (sex->ast);
+    }
+
+  free (sex);  /* yeah! :D */
+}
+
+bool
+rec_sex_compile (rec_sex_t sex,
+                 char *expr)
+{
+  bool res;
+
+  res = rec_sex_parser_run (sex->parser, expr);
+  return res;
 }
 
 bool
 rec_sex_apply (rec_sex_t sex,
-               char *expr,
                rec_record_t record,
-               bool *result)
+               bool *status)
 {
-  bool res;
+  /* XXX: write me.  */
+  *status = true;
+  return true;
+}
 
-  /* Set the context.  */
-  sex->parser_ctx->in = expr;
-  sex->parser_ctx->index = 0;
-  sex->parser_ctx->record = record;
-  sex->parser_ctx->result = false;
-
-  /* Initialize the sexy scanner.  */
-  sexlex_init (&(sex->parser_ctx->scanner));
-  sexset_extra (sex->parser_ctx, sex->parser_ctx->scanner);
-
-  if (!sexparse (sex->parser_ctx))
-    {
-      res = sex->parser_ctx->result;
-    }
-  else
-    {
-      /* Parse error.  */
-      printf("Parse error in selection expression.\n");
-      *result = false;
-      res = false;
-    }
-
-  /* Deallocate memory.  */
-  sexlex_destroy (sex->parser_ctx->scanner);
-
-  return res;
+void
+rec_sex_print_ast (rec_sex_t sex)
+{
+  rec_sex_parser_print_ast (sex->parser);
 }
  
 /* End of rec-sex.c */
