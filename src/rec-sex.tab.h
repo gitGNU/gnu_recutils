@@ -69,7 +69,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 69 "rec-sex.y"
+#line 72 "rec-sex.y"
 
   struct rec_sex_val_s sexval;
 

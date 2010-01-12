@@ -47,9 +47,12 @@
   #define scanner sex_ctx->scanner
 
   /* Forward references for parsing routines.  */
-  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci,
+                    rec_record_t record);
+  bool rec_sex_eql_2 (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
   bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
-  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci,
+                    rec_record_t record);
   bool rec_sex_add (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_sub (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_mul (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
@@ -104,9 +107,29 @@ input: /* Empty */ { sex_ctx->result = 0; }
 
 exp : REC_SEX_TOK_INT          { $$.type = REC_SEX_INT; $$.int_val = $1.int_val; }
     | REC_SEX_TOK_STR          { $$.type = REC_SEX_STR; $$.str_val = $1.str_val; }
-    | exp REC_SEX_TOK_EQL exp  { if (!rec_sex_eql (&$$, &$1, &$3, sex_ctx->case_insensitive)) YYABORT;}
+    | exp REC_SEX_TOK_EQL exp
+    {
+      if (!rec_sex_eql (&$$,
+                        &$1,
+                        &$3,
+                        sex_ctx->case_insensitive,
+                        sex_ctx->record))
+        {
+          YYABORT;
+        }
+    }
     | exp REC_SEX_TOK_NEQ exp  { if (!rec_sex_neq (&$$, &$1, &$3, sex_ctx->case_insensitive)) YYABORT; }
-    | REC_SEX_TOK_STR REC_SEX_TOK_MAT REC_SEX_TOK_STR  { if (!rec_sex_mat (&$$, &$1, &$3, sex_ctx->case_insensitive)) YYABORT; }
+    | REC_SEX_TOK_STR REC_SEX_TOK_MAT REC_SEX_TOK_STR
+    {
+      if (!rec_sex_mat (&$$,
+                        &$1,
+                        &$3,
+                        sex_ctx->case_insensitive,
+                        sex_ctx->record))
+        {
+          YYABORT;
+        }
+    }
     | exp REC_SEX_TOK_ADD exp  { if (!rec_sex_add (&$$, &$1, &$3)) YYABORT; }
     | exp REC_SEX_TOK_SUB exp  { if (!rec_sex_sub (&$$, &$1, &$3)) YYABORT; }
     | exp REC_SEX_TOK_MUL exp  { if (!rec_sex_mul (&$$, &$1, &$3)) YYABORT; }
@@ -121,11 +144,155 @@ exp : REC_SEX_TOK_INT          { $$.type = REC_SEX_INT; $$.int_val = $1.int_val;
 
 %%
 
+
 bool
 rec_sex_eql (rec_sex_val_t res,
              rec_sex_val_t val1,
              rec_sex_val_t val2,
-             bool case_insensitive)
+             bool case_insensitive,
+             rec_record_t record)
+{
+  bool ret;
+  rec_field_t field;
+  rec_field_name_t field_name_1;
+  rec_field_name_t field_name_2;
+  struct rec_sex_val_s str_val_1;
+  struct rec_sex_val_s str_val_2;
+  int i, j;
+
+  /* XXX.  This WILL be simplified.  REALLY.  */
+
+  ret = true;
+
+  res->int_val = false;
+  res->tag = NULL;
+
+  if (val1->tag && val2->tag)
+    {
+      rec_field_name_t field_name_1;
+      rec_field_name_t field_name_2;
+
+      field_name_1 = rec_parse_field_name_str (val1->tag);
+      field_name_2 = rec_parse_field_name_str (val2->tag);
+
+      for (i = 0; i < rec_record_size (record); i++)
+        {
+          rec_field_t field1;
+          field1 = rec_record_get_field (record, i);
+
+          if (rec_field_name_equal_p (rec_field_name (field1),
+                                      field_name_1))
+            {
+              for (j = 0; j < rec_record_size (record); j++)
+                {
+                  struct rec_sex_val_s inf_val1;
+                  struct rec_sex_val_s inf_val2;
+                  struct rec_sex_val_s inf_res;
+                  rec_field_t field2;
+                  field2 = rec_record_get_field (record, j);
+          
+                  if (rec_field_name_equal_p (rec_field_name (field2),
+                                              field_name_2))
+                    {
+                      inf_val1.type = REC_SEX_STR;
+                      inf_val1.str_val = rec_field_value (field1);
+                      inf_val1.tag = NULL;
+                      
+                      inf_val2.type = REC_SEX_STR;
+                      inf_val2.str_val = rec_field_value (field2);
+                      inf_val2.tag = NULL;
+                      
+                      ret = rec_sex_eql_2 (&inf_res,
+                                           &inf_val1,
+                                           &inf_val2,
+                                           case_insensitive);
+                      
+                      res->type = inf_res.type;
+                      res->tag = inf_res.tag;
+                      res->int_val |= inf_res.int_val;
+                      
+                      if (res->int_val || !ret)
+                        {
+                          break;
+                        }
+                    }
+                }
+            }
+          
+          if (res->int_val || !ret)
+            {
+              break;
+            }
+        }
+    }
+  else if (val1->tag || val2->tag)
+    {
+      rec_field_name_t field_name;
+
+      if (val1->tag)
+        {
+          field_name = rec_parse_field_name_str (val1->tag);
+        }
+      else
+        {
+          field_name = rec_parse_field_name_str (val2->tag);
+        }
+
+      for (i = 0; i < rec_record_size (record); i++)
+        {
+          struct rec_sex_val_s inf_res;
+          struct rec_sex_val_s inf_val;
+          rec_field_t field;
+
+          field = rec_record_get_field (record, i);
+          if (rec_field_name_equal_p (rec_field_name (field),
+                                      field_name))
+            {
+              inf_val.type = REC_SEX_STR;
+              inf_val.str_val = (char *) rec_field_value (field);
+              inf_val.tag = NULL;
+              
+              if (val1->tag)
+                {
+                  ret = rec_sex_eql_2 (&inf_res,
+                                       &inf_val,
+                                       val2,
+                                       case_insensitive);
+                }
+              else
+                {
+                  ret = rec_sex_eql_2 (&inf_res,
+                                       val1,
+                                       &inf_val,
+                                       case_insensitive);
+                }
+              
+              res->type = inf_res.type;
+              res->tag = inf_res.tag;
+              res->int_val |= inf_res.int_val;
+              if ((res->int_val) || !ret)
+                {
+                  break;
+                }
+            }
+        }
+    }
+  else
+    {
+      ret = rec_sex_eql_2 (res,
+                           val1,
+                           val2,
+                           case_insensitive);
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_eql_2 (rec_sex_val_t res,
+               rec_sex_val_t val1,
+               rec_sex_val_t val2,
+               bool case_insensitive)
 {
   bool ret;
 
@@ -163,6 +330,7 @@ rec_sex_eql (rec_sex_val_t res,
       res->int_val = val1->int_val == val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -208,6 +376,7 @@ rec_sex_neq (rec_sex_val_t res,
       res->int_val = val1->int_val != val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -215,7 +384,8 @@ bool
 rec_sex_mat (rec_sex_val_t res,
              rec_sex_val_t val1,
              rec_sex_val_t val2,
-             bool case_insensitive)
+             bool case_insensitive,
+             rec_record_t record)
 {
   bool ret;
   regex_t regexp;
@@ -236,13 +406,47 @@ rec_sex_mat (rec_sex_val_t res,
     {
       if (regcomp (&regexp, val2->str_val, flags) == 0)
         {
-          int flags = 0;
+          if (val1->tag == NULL)
+            {
+              /* Try to match the string.  */
+              res->int_val = (regexec (&regexp,
+                                       val1->str_val,
+                                       0,
+                                       NULL,
+                                       0) == 0);
+            }
+          else
+            {
+              /* Try to match any field of the record named TAG.  */
+              bool result;
+              rec_field_t field;
+              rec_field_name_t field_name;
+              int i;
 
-          res->int_val = (regexec (&regexp,
-                                   val1->str_val,
-                                   0,
-                                   NULL,
-                                   0) == 0);
+              result = false;
+
+              field_name = rec_parse_field_name_str (val1->tag);
+              for (i = 0; i < rec_record_size (record); i++)
+                {
+                  field = rec_record_get_field (record, i);
+                  if (rec_field_name_equal_p (field_name,
+                                              rec_field_name (field)))
+                    {
+                      result |= (regexec (&regexp,
+                                          rec_field_value (field),
+                                          0,
+                                          NULL,
+                                          0) == 0);
+
+                      if (result)
+                        {
+                          break;
+                        }
+                    }
+                }
+
+              res->int_val = result;
+            }
         }
       else
         {
@@ -255,6 +459,8 @@ rec_sex_mat (rec_sex_val_t res,
       ret = false;
     }
 
+
+  res->tag = NULL;
   return ret;
 }
 
@@ -294,6 +500,7 @@ rec_sex_add (rec_sex_val_t res,
       res->int_val = val1->int_val + val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -333,6 +540,7 @@ rec_sex_sub (rec_sex_val_t res,
       res->int_val = val1->int_val - val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -372,6 +580,7 @@ rec_sex_mul (rec_sex_val_t res,
       res->int_val = val1->int_val * val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -411,6 +620,7 @@ rec_sex_div (rec_sex_val_t res,
       res->int_val = val1->int_val / val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -450,6 +660,7 @@ rec_sex_mod (rec_sex_val_t res,
       res->int_val = val1->int_val % val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -489,6 +700,7 @@ rec_sex_bt (rec_sex_val_t res,
       res->int_val = val1->int_val > val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }     
 
@@ -528,6 +740,7 @@ rec_sex_lt (rec_sex_val_t res,
       res->int_val = val1->int_val < val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }     
 
@@ -550,6 +763,7 @@ rec_sex_not (rec_sex_val_t res,
       res->int_val = -val->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -589,6 +803,7 @@ rec_sex_and (rec_sex_val_t res,
       res->int_val = val1->int_val && val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }     
 
@@ -628,6 +843,7 @@ rec_sex_or (rec_sex_val_t res,
       res->int_val = val1->int_val || val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -649,6 +865,7 @@ rec_sex_group (rec_sex_val_t res,
       res->str_val = val->str_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 

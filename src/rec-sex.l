@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 14:32:58 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 14:57:42 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -72,6 +72,8 @@ STRING             '([^'\n]|\\(.|\n))*'
 {DIGIT}+ {
   yylval->sexval.type = REC_SEX_INT;
   yylval->sexval.int_val = atoi (yytext);
+  yylval->sexval.tag = NULL;
+
   return REC_SEX_TOK_INT;    
 }
 
@@ -104,6 +106,8 @@ STRING             '([^'\n]|\\(.|\n))*'
 
     yylval->sexval.type = REC_SEX_INT;
     yylval->sexval.int_val = num_fields;
+    yylval->sexval.tag = NULL;
+
     free (field_name_str);
   }
 
@@ -132,12 +136,12 @@ STRING             '([^'\n]|\\(.|\n))*'
         field_str[strlen(yytext)] = 0;
       }
 
+    /* Save the tag.  */
+    yylval->sexval.tag = field_str;
 
     /* Get the first field with the given name in RECORD,
        if any.  */
     fname = rec_parse_field_name_str (field_str);
-    free (field_str);
-
     field = rec_record_get_field_by_name (yyextra->record, fname, 0);
     if (field)
       {
@@ -160,6 +164,8 @@ STRING             '([^'\n]|\\(.|\n))*'
 
   yylval->sexval.type = REC_SEX_STR;
   yylval->sexval.str_val = strdup (yytext + 1);
+  yylval->sexval.tag = NULL;
+
   return REC_SEX_TOK_STR;
 }
 

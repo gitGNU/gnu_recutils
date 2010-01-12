@@ -96,9 +96,12 @@
   #define scanner sex_ctx->scanner
 
   /* Forward references for parsing routines.  */
-  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_eql (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci,
+                    rec_record_t record);
+  bool rec_sex_eql_2 (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
   bool rec_sex_neq (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
-  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci);
+  bool rec_sex_mat (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2, bool ci,
+                    rec_record_t record);
   bool rec_sex_add (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_sub (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
   bool rec_sex_mul (rec_sex_val_t res, rec_sex_val_t val1, rec_sex_val_t val2);
@@ -114,7 +117,7 @@
 
 
 /* Line 189 of yacc.c  */
-#line 118 "rec-sex.tab.c"
+#line 121 "rec-sex.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -171,14 +174,14 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 69 "rec-sex.y"
+#line 72 "rec-sex.y"
 
   struct rec_sex_val_s sexval;
 
 
 
 /* Line 214 of yacc.c  */
-#line 182 "rec-sex.tab.c"
+#line 185 "rec-sex.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -190,7 +193,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 194 "rec-sex.tab.c"
+#line 197 "rec-sex.tab.c"
 
 #ifdef short
 # undef short
@@ -480,8 +483,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    90,    90,    91,   105,   106,   107,   108,   109,   110,
-     111,   112,   113,   114,   115,   116,   117,   118,   119,   120
+       0,    93,    93,    94,   108,   109,   110,   121,   122,   133,
+     134,   135,   136,   137,   138,   139,   140,   141,   142,   143
 };
 #endif
 
@@ -1412,14 +1415,14 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 90 "rec-sex.y"
+#line 93 "rec-sex.y"
     { sex_ctx->result = 0; ;}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 92 "rec-sex.y"
+#line 95 "rec-sex.y"
     {
        if ((yyvsp[(1) - (1)].sexval).type == REC_SEX_INT)
          {
@@ -1436,119 +1439,137 @@ yyreduce:
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 105 "rec-sex.y"
+#line 108 "rec-sex.y"
     { (yyval.sexval).type = REC_SEX_INT; (yyval.sexval).int_val = (yyvsp[(1) - (1)].sexval).int_val; ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 106 "rec-sex.y"
+#line 109 "rec-sex.y"
     { (yyval.sexval).type = REC_SEX_STR; (yyval.sexval).str_val = (yyvsp[(1) - (1)].sexval).str_val; ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 107 "rec-sex.y"
-    { if (!rec_sex_eql (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval), sex_ctx->case_insensitive)) YYABORT;;}
+#line 111 "rec-sex.y"
+    {
+      if (!rec_sex_eql (&(yyval.sexval),
+                        &(yyvsp[(1) - (3)].sexval),
+                        &(yyvsp[(3) - (3)].sexval),
+                        sex_ctx->case_insensitive,
+                        sex_ctx->record))
+        {
+          YYABORT;
+        }
+    ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 108 "rec-sex.y"
+#line 121 "rec-sex.y"
     { if (!rec_sex_neq (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval), sex_ctx->case_insensitive)) YYABORT; ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 109 "rec-sex.y"
-    { if (!rec_sex_mat (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval), sex_ctx->case_insensitive)) YYABORT; ;}
+#line 123 "rec-sex.y"
+    {
+      if (!rec_sex_mat (&(yyval.sexval),
+                        &(yyvsp[(1) - (3)].sexval),
+                        &(yyvsp[(3) - (3)].sexval),
+                        sex_ctx->case_insensitive,
+                        sex_ctx->record))
+        {
+          YYABORT;
+        }
+    ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 110 "rec-sex.y"
+#line 133 "rec-sex.y"
     { if (!rec_sex_add (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 111 "rec-sex.y"
+#line 134 "rec-sex.y"
     { if (!rec_sex_sub (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 112 "rec-sex.y"
+#line 135 "rec-sex.y"
     { if (!rec_sex_mul (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 113 "rec-sex.y"
+#line 136 "rec-sex.y"
     { if (!rec_sex_div (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 114 "rec-sex.y"
+#line 137 "rec-sex.y"
     { if (!rec_sex_mod (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 115 "rec-sex.y"
+#line 138 "rec-sex.y"
     { if (!rec_sex_bt (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 116 "rec-sex.y"
+#line 139 "rec-sex.y"
     { if (!rec_sex_lt (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 117 "rec-sex.y"
+#line 140 "rec-sex.y"
     { if (!rec_sex_not (&(yyval.sexval), &(yyvsp[(2) - (2)].sexval))) YYABORT; ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 118 "rec-sex.y"
+#line 141 "rec-sex.y"
     { if (!rec_sex_and (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 119 "rec-sex.y"
+#line 142 "rec-sex.y"
     { if (!rec_sex_or (&(yyval.sexval), &(yyvsp[(1) - (3)].sexval), &(yyvsp[(3) - (3)].sexval))) YYABORT; ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 120 "rec-sex.y"
+#line 143 "rec-sex.y"
     { if (!rec_sex_group (&(yyval.sexval), &(yyvsp[(2) - (3)].sexval))) YYABORT; ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1552 "rec-sex.tab.c"
+#line 1573 "rec-sex.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1760,14 +1781,158 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 122 "rec-sex.y"
+#line 145 "rec-sex.y"
+
 
 
 bool
 rec_sex_eql (rec_sex_val_t res,
              rec_sex_val_t val1,
              rec_sex_val_t val2,
-             bool case_insensitive)
+             bool case_insensitive,
+             rec_record_t record)
+{
+  bool ret;
+  rec_field_t field;
+  rec_field_name_t field_name_1;
+  rec_field_name_t field_name_2;
+  struct rec_sex_val_s str_val_1;
+  struct rec_sex_val_s str_val_2;
+  int i, j;
+
+  /* XXX.  This WILL be simplified.  REALLY.  */
+
+  ret = true;
+
+  res->int_val = false;
+  res->tag = NULL;
+
+  if (val1->tag && val2->tag)
+    {
+      rec_field_name_t field_name_1;
+      rec_field_name_t field_name_2;
+
+      field_name_1 = rec_parse_field_name_str (val1->tag);
+      field_name_2 = rec_parse_field_name_str (val2->tag);
+
+      for (i = 0; i < rec_record_size (record); i++)
+        {
+          rec_field_t field1;
+          field1 = rec_record_get_field (record, i);
+
+          if (rec_field_name_equal_p (rec_field_name (field1),
+                                      field_name_1))
+            {
+              for (j = 0; j < rec_record_size (record); j++)
+                {
+                  struct rec_sex_val_s inf_val1;
+                  struct rec_sex_val_s inf_val2;
+                  struct rec_sex_val_s inf_res;
+                  rec_field_t field2;
+                  field2 = rec_record_get_field (record, j);
+          
+                  if (rec_field_name_equal_p (rec_field_name (field2),
+                                              field_name_2))
+                    {
+                      inf_val1.type = REC_SEX_STR;
+                      inf_val1.str_val = rec_field_value (field1);
+                      inf_val1.tag = NULL;
+                      
+                      inf_val2.type = REC_SEX_STR;
+                      inf_val2.str_val = rec_field_value (field2);
+                      inf_val2.tag = NULL;
+                      
+                      ret = rec_sex_eql_2 (&inf_res,
+                                           &inf_val1,
+                                           &inf_val2,
+                                           case_insensitive);
+                      
+                      res->type = inf_res.type;
+                      res->tag = inf_res.tag;
+                      res->int_val |= inf_res.int_val;
+                      
+                      if (res->int_val || !ret)
+                        {
+                          break;
+                        }
+                    }
+                }
+            }
+          
+          if (res->int_val || !ret)
+            {
+              break;
+            }
+        }
+    }
+  else if (val1->tag || val2->tag)
+    {
+      rec_field_name_t field_name;
+
+      if (val1->tag)
+        {
+          field_name = rec_parse_field_name_str (val1->tag);
+        }
+      else
+        {
+          field_name = rec_parse_field_name_str (val2->tag);
+        }
+
+      for (i = 0; i < rec_record_size (record); i++)
+        {
+          struct rec_sex_val_s inf_res;
+          struct rec_sex_val_s inf_val;
+          rec_field_t field;
+
+          field = rec_record_get_field (record, i);
+          if (rec_field_name_equal_p (rec_field_name (field),
+                                      field_name))
+            {
+              inf_val.type = REC_SEX_STR;
+              inf_val.str_val = (char *) rec_field_value (field);
+              inf_val.tag = NULL;
+              
+              if (val1->tag)
+                {
+                  ret = rec_sex_eql_2 (&inf_res,
+                                       &inf_val,
+                                       val2,
+                                       case_insensitive);
+                }
+              else
+                {
+                  ret = rec_sex_eql_2 (&inf_res,
+                                       val1,
+                                       &inf_val,
+                                       case_insensitive);
+                }
+              
+              res->type = inf_res.type;
+              res->tag = inf_res.tag;
+              res->int_val |= inf_res.int_val;
+              if ((res->int_val) || !ret)
+                {
+                  break;
+                }
+            }
+        }
+    }
+  else
+    {
+      ret = rec_sex_eql_2 (res,
+                           val1,
+                           val2,
+                           case_insensitive);
+    }
+
+  return ret;
+}
+
+bool
+rec_sex_eql_2 (rec_sex_val_t res,
+               rec_sex_val_t val1,
+               rec_sex_val_t val2,
+               bool case_insensitive)
 {
   bool ret;
 
@@ -1805,6 +1970,7 @@ rec_sex_eql (rec_sex_val_t res,
       res->int_val = val1->int_val == val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -1850,6 +2016,7 @@ rec_sex_neq (rec_sex_val_t res,
       res->int_val = val1->int_val != val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -1857,7 +2024,8 @@ bool
 rec_sex_mat (rec_sex_val_t res,
              rec_sex_val_t val1,
              rec_sex_val_t val2,
-             bool case_insensitive)
+             bool case_insensitive,
+             rec_record_t record)
 {
   bool ret;
   regex_t regexp;
@@ -1878,13 +2046,47 @@ rec_sex_mat (rec_sex_val_t res,
     {
       if (regcomp (&regexp, val2->str_val, flags) == 0)
         {
-          int flags = 0;
+          if (val1->tag == NULL)
+            {
+              /* Try to match the string.  */
+              res->int_val = (regexec (&regexp,
+                                       val1->str_val,
+                                       0,
+                                       NULL,
+                                       0) == 0);
+            }
+          else
+            {
+              /* Try to match any field of the record named TAG.  */
+              bool result;
+              rec_field_t field;
+              rec_field_name_t field_name;
+              int i;
 
-          res->int_val = (regexec (&regexp,
-                                   val1->str_val,
-                                   0,
-                                   NULL,
-                                   0) == 0);
+              result = false;
+
+              field_name = rec_parse_field_name_str (val1->tag);
+              for (i = 0; i < rec_record_size (record); i++)
+                {
+                  field = rec_record_get_field (record, i);
+                  if (rec_field_name_equal_p (field_name,
+                                              rec_field_name (field)))
+                    {
+                      result |= (regexec (&regexp,
+                                          rec_field_value (field),
+                                          0,
+                                          NULL,
+                                          0) == 0);
+
+                      if (result)
+                        {
+                          break;
+                        }
+                    }
+                }
+
+              res->int_val = result;
+            }
         }
       else
         {
@@ -1897,6 +2099,8 @@ rec_sex_mat (rec_sex_val_t res,
       ret = false;
     }
 
+
+  res->tag = NULL;
   return ret;
 }
 
@@ -1936,6 +2140,7 @@ rec_sex_add (rec_sex_val_t res,
       res->int_val = val1->int_val + val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -1975,6 +2180,7 @@ rec_sex_sub (rec_sex_val_t res,
       res->int_val = val1->int_val - val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -2014,6 +2220,7 @@ rec_sex_mul (rec_sex_val_t res,
       res->int_val = val1->int_val * val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -2053,6 +2260,7 @@ rec_sex_div (rec_sex_val_t res,
       res->int_val = val1->int_val / val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -2092,6 +2300,7 @@ rec_sex_mod (rec_sex_val_t res,
       res->int_val = val1->int_val % val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -2131,6 +2340,7 @@ rec_sex_bt (rec_sex_val_t res,
       res->int_val = val1->int_val > val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }     
 
@@ -2170,6 +2380,7 @@ rec_sex_lt (rec_sex_val_t res,
       res->int_val = val1->int_val < val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }     
 
@@ -2192,6 +2403,7 @@ rec_sex_not (rec_sex_val_t res,
       res->int_val = -val->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -2231,6 +2443,7 @@ rec_sex_and (rec_sex_val_t res,
       res->int_val = val1->int_val && val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }     
 
@@ -2270,6 +2483,7 @@ rec_sex_or (rec_sex_val_t res,
       res->int_val = val1->int_val || val2->int_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 
@@ -2291,6 +2505,7 @@ rec_sex_group (rec_sex_val_t res,
       res->str_val = val->str_val;
     }
 
+  res->tag = NULL;
   return ret;
 }
 

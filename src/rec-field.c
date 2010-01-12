@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 19:36:11 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 16:18:11 jemarch"
  *
  *       File:         rec-field.c
  *       Date:         Fri Feb 27 20:40:26 2009
@@ -62,7 +62,7 @@ rec_field_set_name (rec_field_t field,
   field->name = fname;
 }
 
-const char *
+char *
 rec_field_value (rec_field_t field)
 {
   return field->value;

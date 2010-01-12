@@ -114,7 +114,7 @@ void rec_field_set_name (rec_field_t field, rec_field_name_t fname);
 
 /* Return a pointer to the string containing the value of the
    field. */
-const char *rec_field_value (rec_field_t field);
+char *rec_field_value (rec_field_t field);
 
 /* Set the value of a given field to the given string. */
 void rec_field_set_value (rec_field_t field, const char *value);

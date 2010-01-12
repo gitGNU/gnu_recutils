@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 22:28:44 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 16:17:53 jemarch"
  *
  *       File:         rec-sex-ctx.h
  *       Date:         Sat Jan  9 20:22:52 2010
@@ -53,6 +53,9 @@ struct rec_sex_val_s
 
   int int_val;
   char *str_val;
+
+  char *tag;              /* Used by = and ~ to get the name of the
+                             field originating STR_VAL, if any.  */
 };
 
 typedef struct rec_sex_val_s *rec_sex_val_t;

@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[101] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/12 14:32:58 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/12 14:57:42 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -912,12 +912,14 @@ YY_RULE_SETUP
 {
   yylval->sexval.type = REC_SEX_INT;
   yylval->sexval.int_val = atoi (yytext);
+  yylval->sexval.tag = NULL;
+
   return REC_SEX_TOK_INT;    
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 78 "rec-sex.l"
+#line 80 "rec-sex.l"
 {
   /* Get the number of fields with this name */
   {
@@ -947,6 +949,8 @@ YY_RULE_SETUP
 
     yylval->sexval.type = REC_SEX_INT;
     yylval->sexval.int_val = num_fields;
+    yylval->sexval.tag = NULL;
+
     free (field_name_str);
   }
 
@@ -955,7 +959,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 113 "rec-sex.l"
+#line 117 "rec-sex.l"
 {
   /* Get the value of the first field with this name, or error */
   {
@@ -978,12 +982,12 @@ YY_RULE_SETUP
         field_str[strlen(yytext)] = 0;
       }
 
+    /* Save the tag.  */
+    yylval->sexval.tag = field_str;
 
     /* Get the first field with the given name in RECORD,
        if any.  */
     fname = rec_parse_field_name_str (field_str);
-    free (field_str);
-
     field = rec_record_get_field_by_name (yyextra->record, fname, 0);
     if (field)
       {
@@ -1003,27 +1007,29 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 157 "rec-sex.l"
+#line 161 "rec-sex.l"
 {
   /* Strip the " characters */
   yytext[strlen(yytext) - 1] = 0;
 
   yylval->sexval.type = REC_SEX_STR;
   yylval->sexval.str_val = strdup (yytext + 1);
+  yylval->sexval.tag = NULL;
+
   return REC_SEX_TOK_STR;
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 166 "rec-sex.l"
+#line 172 "rec-sex.l"
 { return REC_SEX_TOK_ERR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 168 "rec-sex.l"
+#line 174 "rec-sex.l"
 ECHO;
 	YY_BREAK
-#line 1027 "rec-sex.lex.c"
+#line 1033 "rec-sex.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2190,7 +2196,7 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 168 "rec-sex.l"
+#line 174 "rec-sex.l"
 
 
 
