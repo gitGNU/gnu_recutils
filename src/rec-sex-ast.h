@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 13:59:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 17:33:02 jemarch"
  *
  *       File:         rec-sex-ast.h
  *       Date:         Tue Jan 12 17:07:59 2010
@@ -27,6 +27,8 @@
 #define REC_SEX_AST_H
 
 #include <config.h>
+
+#include <stdbool.h>
 
 enum rec_sex_ast_node_type_e
 {
