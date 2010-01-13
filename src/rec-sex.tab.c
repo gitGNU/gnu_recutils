@@ -153,15 +153,15 @@
      REC_SEX_TOK_INT = 258,
      REC_SEX_TOK_STR = 259,
      REC_SEX_TOK_NAM = 260,
-     REC_SEX_TOK_MAT = 261,
-     REC_SEX_TOK_OR = 262,
-     REC_SEX_TOK_AND = 263,
-     REC_SEX_TOK_GT = 264,
-     REC_SEX_TOK_LT = 265,
-     REC_SEX_TOK_NEQ = 266,
-     REC_SEX_TOK_EQL = 267,
-     REC_SEX_TOK_ADD = 268,
-     REC_SEX_TOK_SUB = 269,
+     REC_SEX_TOK_OR = 261,
+     REC_SEX_TOK_AND = 262,
+     REC_SEX_TOK_GT = 263,
+     REC_SEX_TOK_LT = 264,
+     REC_SEX_TOK_NEQ = 265,
+     REC_SEX_TOK_EQL = 266,
+     REC_SEX_TOK_ADD = 267,
+     REC_SEX_TOK_SUB = 268,
+     REC_SEX_TOK_MAT = 269,
      REC_SEX_TOK_MOD = 270,
      REC_SEX_TOK_DIV = 271,
      REC_SEX_TOK_MUL = 272,
@@ -417,7 +417,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   78
+#define YYLAST   68
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  25
@@ -482,20 +482,20 @@ static const yytype_uint8 yyprhs[] =
 static const yytype_int8 yyrhs[] =
 {
       26,     0,    -1,    -1,    27,    -1,     3,    -1,     4,    -1,
-       5,    -1,    27,    12,    27,    -1,    27,    11,    27,    -1,
-      27,     6,    27,    -1,    27,    13,    27,    -1,    27,    14,
+       5,    -1,    27,    11,    27,    -1,    27,    10,    27,    -1,
+      27,    14,    27,    -1,    27,    12,    27,    -1,    27,    13,
       27,    -1,    27,    17,    27,    -1,    27,    16,    27,    -1,
-      27,    15,    27,    -1,    27,     9,    27,    -1,    27,    10,
-      27,    -1,    20,    27,    -1,    27,     8,    27,    -1,    27,
-       7,    27,    -1,    24,     5,    -1,    21,    27,    22,    -1
+      27,    15,    27,    -1,    27,     8,    27,    -1,    27,     9,
+      27,    -1,    20,    27,    -1,    27,     7,    27,    -1,    27,
+       6,    27,    -1,    24,     5,    -1,    21,    27,    22,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   103,   103,   109,   119,   120,   121,   122,   123,   124,
-     136,   137,   138,   139,   140,   141,   153,   165,   175,   187,
-     199,   200
+       0,   102,   102,   108,   118,   119,   120,   121,   122,   123,
+     135,   136,   137,   138,   139,   140,   141,   142,   143,   144,
+     145,   146
 };
 #endif
 
@@ -505,9 +505,9 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "REC_SEX_TOK_INT", "REC_SEX_TOK_STR",
-  "REC_SEX_TOK_NAM", "REC_SEX_TOK_MAT", "REC_SEX_TOK_OR",
-  "REC_SEX_TOK_AND", "REC_SEX_TOK_GT", "REC_SEX_TOK_LT", "REC_SEX_TOK_NEQ",
-  "REC_SEX_TOK_EQL", "REC_SEX_TOK_ADD", "REC_SEX_TOK_SUB",
+  "REC_SEX_TOK_NAM", "REC_SEX_TOK_OR", "REC_SEX_TOK_AND", "REC_SEX_TOK_GT",
+  "REC_SEX_TOK_LT", "REC_SEX_TOK_NEQ", "REC_SEX_TOK_EQL",
+  "REC_SEX_TOK_ADD", "REC_SEX_TOK_SUB", "REC_SEX_TOK_MAT",
   "REC_SEX_TOK_MOD", "REC_SEX_TOK_DIV", "REC_SEX_TOK_MUL",
   "REC_SEX_TOK_MIN", "REC_SEX_TOK_NEG", "REC_SEX_TOK_NOT",
   "REC_SEX_TOK_BP", "REC_SEX_TOK_EP", "REC_SEX_TOK_ERR",
@@ -549,8 +549,8 @@ static const yytype_uint8 yydefact[] =
 {
        2,     4,     5,     6,     0,     0,     0,     0,     3,    17,
        0,    20,     1,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    21,     9,    19,    18,    15,
-      16,     8,     7,    10,    11,    14,    13,    12
+       0,     0,     0,     0,     0,    21,    19,    18,    15,    16,
+       8,     7,    10,    11,     9,    14,    13,    12
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -561,19 +561,19 @@ static const yytype_int8 yydefgoto[] =
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -7
+#define YYPACT_NINF -6
 static const yytype_int8 yypact[] =
 {
-      -3,    -7,    -7,    -7,    -3,    -3,     7,    15,    45,    -7,
-      28,    -7,    -7,    -3,    -3,    -3,    -3,    -3,    -3,    -3,
-      -3,    -3,    -3,    -3,    -3,    -7,    56,    -6,    -6,    61,
-      61,    61,    61,    31,    31,    -7,    -7,    -7
+      -3,    -6,    -6,    -6,    -3,    -3,    10,    16,    45,    -6,
+      28,    -6,    -6,    -3,    -3,    -3,    -3,    -3,    -3,    -3,
+      -3,    -3,    -3,    -3,    -3,    -6,    -5,    -5,    51,    51,
+      51,    51,    32,    32,    -6,    -6,    -6,    -6
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,     9
+      -6,    -6,     9
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -583,26 +583,24 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       1,     2,     3,    16,    17,    18,    19,    20,    21,    22,
-      23,    24,    11,     9,    10,    12,     0,     4,     5,     0,
+       1,     2,     3,    15,    16,    17,    18,    19,    20,    21,
+      22,    23,    24,     9,    10,    11,    12,     4,     5,     0,
        0,     6,    26,    27,    28,    29,    30,    31,    32,    33,
       34,    35,    36,    37,    13,    14,    15,    16,    17,    18,
-      19,    20,    21,    22,    23,    24,    22,    23,    24,     0,
+      19,    20,    21,    22,    23,    24,    21,    22,    23,    24,
       25,    13,    14,    15,    16,    17,    18,    19,    20,    21,
-      22,    23,    24,    14,    15,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    20,    21,    22,    23,    24
+      22,    23,    24,    19,    20,    21,    22,    23,    24
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     4,     5,     9,    10,    11,    12,    13,    14,    15,
-      16,    17,     5,     4,     5,     0,    -1,    20,    21,    -1,
+       3,     4,     5,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,     4,     5,     5,     0,    20,    21,    -1,
       -1,    24,    13,    14,    15,    16,    17,    18,    19,    20,
       21,    22,    23,    24,     6,     7,     8,     9,    10,    11,
-      12,    13,    14,    15,    16,    17,    15,    16,    17,    -1,
+      12,    13,    14,    15,    16,    17,    14,    15,    16,    17,
       22,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,     7,     8,     9,    10,    11,    12,    13,
-      14,    15,    16,    17,    13,    14,    15,    16,    17
+      15,    16,    17,    12,    13,    14,    15,    16,    17
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -1431,7 +1429,7 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 103 "rec-sex.y"
+#line 102 "rec-sex.y"
     {
        rec_sex_ast_t ast;
 
@@ -1443,7 +1441,7 @@ yyreduce:
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 110 "rec-sex.y"
+#line 109 "rec-sex.y"
     {
        rec_sex_ast_t ast;
 
@@ -1456,42 +1454,42 @@ yyreduce:
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 119 "rec-sex.y"
+#line 118 "rec-sex.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 120 "rec-sex.y"
+#line 119 "rec-sex.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 121 "rec-sex.y"
+#line 120 "rec-sex.y"
     { (yyval.node) = (yyvsp[(1) - (1)].node); ;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 122 "rec-sex.y"
+#line 121 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_EQL, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 123 "rec-sex.y"
+#line 122 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_NEQ, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 125 "rec-sex.y"
+#line 124 "rec-sex.y"
     {
       if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) == REC_SEX_INT)
           || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) == REC_SEX_INT))
@@ -1508,139 +1506,91 @@ yyreduce:
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 136 "rec-sex.y"
+#line 135 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_ADD, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 137 "rec-sex.y"
+#line 136 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_SUB, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 138 "rec-sex.y"
+#line 137 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_MUL, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 139 "rec-sex.y"
+#line 138 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_DIV, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 140 "rec-sex.y"
+#line 139 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_MOD, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 142 "rec-sex.y"
-    {
-      if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
-          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
-        {
-           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
-           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
-           YYABORT;
-        }
-
-      CREATE_NODE_OP2 (REC_SEX_OP_GT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
-    ;}
+#line 140 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_GT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 154 "rec-sex.y"
-    {
-      if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
-          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
-        {
-           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
-           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
-           YYABORT;
-        }
-
-        CREATE_NODE_OP2 (REC_SEX_OP_LT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
-    ;}
+#line 141 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_LT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 166 "rec-sex.y"
-    {
-        if (rec_sex_ast_node_type ((yyvsp[(2) - (2)].node)) != REC_SEX_INT)
-        {
-           rec_sex_ast_node_destroy ((yyvsp[(2) - (2)].node));
-           YYABORT;
-        }
-
-         CREATE_NODE_OP1 (REC_SEX_OP_NOT, (yyval.node), (yyvsp[(2) - (2)].node));
-    ;}
+#line 142 "rec-sex.y"
+    { CREATE_NODE_OP1 (REC_SEX_OP_NOT, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 176 "rec-sex.y"
-    {
-        if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
-          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
-        {
-           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
-           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
-           YYABORT;
-        }
-
-         CREATE_NODE_OP2 (REC_SEX_OP_AND, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
-    ;}
+#line 143 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_AND, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 188 "rec-sex.y"
-    {
-        if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
-          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
-        {
-           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
-           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
-           YYABORT;
-        }
-
-        CREATE_NODE_OP2 (REC_SEX_OP_OR, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
-    ;}
+#line 144 "rec-sex.y"
+    { CREATE_NODE_OP2 (REC_SEX_OP_OR, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 199 "rec-sex.y"
+#line 145 "rec-sex.y"
     { CREATE_NODE_OP1 (REC_SEX_OP_SHA, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 200 "rec-sex.y"
+#line 146 "rec-sex.y"
     { (yyval.node) = (yyvsp[(2) - (3)].node); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1644 "rec-sex.tab.c"
+#line 1594 "rec-sex.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1852,7 +1802,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 202 "rec-sex.y"
+#line 148 "rec-sex.y"
 
 
 /* End of rec-sex.y */

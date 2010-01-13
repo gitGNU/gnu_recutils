@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 17:04:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 17:20:16 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -111,6 +111,32 @@ rec_sex_compile (rec_sex_t sex,
   return res;
 }
 
+#define EXEC_AST(RECORD)                                                \
+  do                                                                    \
+    {                                                                   \
+      val = rec_sex_eval_node (sex,                                     \
+                               (RECORD),                                \
+                               rec_sex_ast_top (sex->ast),              \
+                               status);                                 \
+                                                                        \
+  switch (val.type)                                                     \
+    {                                                                   \
+    case REC_SEX_VAL_INT:                                               \
+      {                                                                 \
+        res = (val.int_val != 0);                                       \
+        break;                                                          \
+      }                                                                 \
+     case REC_SEX_VAL_STR:                                              \
+       {                                                                \
+         res = false;                                                   \
+         break;                                                         \
+       }                                                                \
+     }                                                                  \
+    }                                                                   \
+  while (0)
+
+
+
 bool
 rec_sex_eval (rec_sex_t sex,
               rec_record_t record,
@@ -121,10 +147,16 @@ rec_sex_eval (rec_sex_t sex,
   rec_field_t wfield;
   rec_record_t wrec;
   int i, j, nf;
-
+  struct rec_sex_val_s val;
   
   res = false;
   wrec = NULL;
+
+  EXEC_AST (record);
+  if (res)
+    {
+      goto exit;
+    }
 
   for (i = 0; i < rec_record_size (record); i++)
     {
@@ -136,8 +168,6 @@ rec_sex_eval (rec_sex_t sex,
         {
           for (j = 0; j < nf; j++)
             {
-              struct rec_sex_val_s val;
-
               wfield = rec_record_get_field_by_name (record,
                                                      rec_field_name (field),
                                                      j);
@@ -151,24 +181,8 @@ rec_sex_eval (rec_sex_t sex,
                                                rec_field_name (field),
                                                -1); /* Delete all.  */
               rec_record_insert_field (wrec, rec_field_dup (wfield), 0);
-              val = rec_sex_eval_node (sex,
-                                       wrec,
-                                       rec_sex_ast_top (sex->ast),
-                                       status);
 
-              switch (val.type)
-                {
-                case REC_SEX_VAL_INT:
-                  {
-                    res = (val.int_val != 0);
-                    break;
-                  }
-                case REC_SEX_VAL_STR:
-                  {
-                    res = false;
-                    break;
-                  }
-                }
+              EXEC_AST(wrec);
 
               if (res)
                 {
