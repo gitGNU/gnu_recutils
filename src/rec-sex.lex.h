@@ -240,7 +240,7 @@ void sexfree (void * ,yyscan_t yyscanner );
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE struct rec_sex_ctx_s *
+#define YY_EXTRA_TYPE void *
 
 int sexlex_init (yyscan_t* scanner);
 
@@ -345,7 +345,7 @@ extern int sexlex \
 #undef YY_DECL
 #endif
 
-#line 174 "rec-sex.l"
+#line 127 "rec-sex.l"
 
 
 #line 352 "rec-sex.lex.h"

@@ -26,7 +26,10 @@ librec_la_SOURCES = rec-field-name.c \
                     rec-rset.c \
                     rec-parser.c \
                     rec-writer.c \
-                    rec-sex-ctx.h \
+                    rec-sex-parser.h \
+                    rec-sex-parser.c \
+                    rec-sex-ast.h \
+                    rec-sex-ast.c \
                     rec-sex.c \
                     rec-sex.lex.c \
                     rec-sex.lex.h \

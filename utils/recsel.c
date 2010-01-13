@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 14:23:47 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 14:20:56 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -91,7 +91,8 @@ available options\n\
 char *recsel_help_msg = "";
 
 /* String containing the selection expression.  */
-char *recsel_sex = NULL;
+char *recsel_sex_str = NULL;
+rec_sex_t recsel_sex = NULL;
 
 /* Field list.  */
 char *recsel_expr = NULL;
@@ -124,12 +125,10 @@ recsel_file (FILE *in)
   int i, written;
   rec_parser_t parser;
   rec_writer_t writer;
-  rec_sex_t sex;
   bool parse_status;
 
   ret = true;
 
-  sex = rec_sex_new (recsel_insensitive);
   parser = rec_parser_new (in);
   writer = rec_writer_new (stdout);
 
@@ -155,8 +154,8 @@ recsel_file (FILE *in)
           record = rec_rset_get_record (rset, i);
 
           if (((recsel_num == -1) &&
-               ((!recsel_sex) ||
-                (rec_sex_apply (sex, recsel_sex, record, &parse_status))))
+               ((!recsel_sex_str) ||
+                (rec_sex_eval (recsel_sex, record, &parse_status))))
               || (recsel_num == i))
             {
               char *resolver_result = NULL;
@@ -196,13 +195,13 @@ recsel_file (FILE *in)
                 }
             }
 
-          if (recsel_sex
+          if (recsel_sex_str
               && (!parse_status))
             {
+              fprintf (stderr, "recsel: error evaluating the selection expression.\n");
               return false;
             }
         }
-
     }
 
   if (rec_parser_error (parser))
@@ -266,8 +265,8 @@ main (int argc, char *argv[])
                          argv[0]);
                 return 1;
               }
-
-            recsel_sex = strdup (optarg);
+            
+            recsel_sex_str = strdup (optarg);
             break;
           }
         case INSENSITIVE_ARG:
@@ -339,6 +338,16 @@ main (int argc, char *argv[])
           {
             return 1;
           }
+        }
+    }
+
+  /* Compile the search expression.  */
+  if (recsel_sex_str)
+    {
+      recsel_sex = rec_sex_new (recsel_insensitive);
+      if (!rec_sex_compile (recsel_sex, recsel_sex_str))
+        {
+          return 1;
         }
     }
 
