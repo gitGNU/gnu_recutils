@@ -415,9 +415,9 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  13
+#define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   64
+#define YYLAST   78
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  25
@@ -483,7 +483,7 @@ static const yytype_int8 yyrhs[] =
 {
       26,     0,    -1,    -1,    27,    -1,     3,    -1,     4,    -1,
        5,    -1,    27,    12,    27,    -1,    27,    11,    27,    -1,
-       4,     6,     4,    -1,    27,    13,    27,    -1,    27,    14,
+      27,     6,    27,    -1,    27,    13,    27,    -1,    27,    14,
       27,    -1,    27,    17,    27,    -1,    27,    16,    27,    -1,
       27,    15,    27,    -1,    27,     9,    27,    -1,    27,    10,
       27,    -1,    20,    27,    -1,    27,     8,    27,    -1,    27,
@@ -494,8 +494,8 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,   103,   103,   109,   119,   120,   121,   122,   123,   124,
-     126,   127,   128,   129,   130,   131,   132,   133,   134,   135,
-     136,   137
+     136,   137,   138,   139,   140,   141,   142,   143,   144,   145,
+     146,   147
 };
 #endif
 
@@ -547,9 +547,9 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     4,     5,     6,     0,     0,     0,     0,     3,     0,
-      17,     0,    20,     1,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     9,    21,    19,    18,    15,
+       2,     4,     5,     6,     0,     0,     0,     0,     3,    17,
+       0,    20,     1,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    21,     9,    19,    18,    15,
       16,     8,     7,    10,    11,    14,    13,    12
 };
 
@@ -564,16 +564,16 @@ static const yytype_int8 yydefgoto[] =
 #define YYPACT_NINF -7
 static const yytype_int8 yypact[] =
 {
-      -3,    -7,    13,    -7,    -3,    -3,    15,    44,    42,    41,
-      -7,    26,    -7,    -7,    -3,    -3,    -3,    -3,    -3,    -3,
-      -3,    -3,    -3,    -3,    -3,    -7,    -7,    -6,    -6,    47,
-      47,    47,    47,    -1,    -1,    -7,    -7,    -7
+      -3,    -7,    -7,    -7,    -3,    -3,     7,    15,    45,    -7,
+      28,    -7,    -7,    -3,    -3,    -3,    -3,    -3,    -3,    -3,
+      -3,    -3,    -3,    -3,    -3,    -7,    56,    -6,    -6,    61,
+      61,    61,    61,    31,    31,    -7,    -7,    -7
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -7,    -7,     8
+      -7,    -7,     9
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -584,32 +584,34 @@ static const yytype_int8 yypgoto[] =
 static const yytype_uint8 yytable[] =
 {
        1,     2,     3,    16,    17,    18,    19,    20,    21,    22,
-      23,    24,    10,    11,    22,    23,    24,     4,     5,     9,
-      12,     6,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36,    37,    14,    15,    16,    17,    18,    19,    20,
-      21,    22,    23,    24,    13,    25,     0,     0,    26,    14,
-      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      20,    21,    22,    23,    24
+      23,    24,    11,     9,    10,    12,     0,     4,     5,     0,
+       0,     6,    26,    27,    28,    29,    30,    31,    32,    33,
+      34,    35,    36,    37,    13,    14,    15,    16,    17,    18,
+      19,    20,    21,    22,    23,    24,    22,    23,    24,     0,
+      25,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+      22,    23,    24,    14,    15,    16,    17,    18,    19,    20,
+      21,    22,    23,    24,    20,    21,    22,    23,    24
 };
 
 static const yytype_int8 yycheck[] =
 {
        3,     4,     5,     9,    10,    11,    12,    13,    14,    15,
-      16,    17,     4,     5,    15,    16,    17,    20,    21,     6,
-       5,    24,    14,    15,    16,    17,    18,    19,    20,    21,
-      22,    23,    24,     7,     8,     9,    10,    11,    12,    13,
-      14,    15,    16,    17,     0,     4,    -1,    -1,    22,     7,
-       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
-      13,    14,    15,    16,    17
+      16,    17,     5,     4,     5,     0,    -1,    20,    21,    -1,
+      -1,    24,    13,    14,    15,    16,    17,    18,    19,    20,
+      21,    22,    23,    24,     6,     7,     8,     9,    10,    11,
+      12,    13,    14,    15,    16,    17,    15,    16,    17,    -1,
+      22,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,     7,     8,     9,    10,    11,    12,    13,
+      14,    15,    16,    17,    13,    14,    15,    16,    17
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,     5,    20,    21,    24,    26,    27,     6,
-      27,    27,     5,     0,     7,     8,     9,    10,    11,    12,
-      13,    14,    15,    16,    17,     4,    22,    27,    27,    27,
+       0,     3,     4,     5,    20,    21,    24,    26,    27,    27,
+      27,     5,     0,     6,     7,     8,     9,    10,    11,    12,
+      13,    14,    15,    16,    17,    22,    27,    27,    27,    27,
       27,    27,    27,    27,    27,    27,    27,    27
 };
 
@@ -1490,97 +1492,107 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 125 "rec-sex.y"
-    { CREATE_NODE_OP2 (REC_SEX_OP_MAT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
+    {
+      if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) == REC_SEX_INT)
+          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) == REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
+           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
+           YYABORT;
+        }
+
+      CREATE_NODE_OP2 (REC_SEX_OP_MAT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
+    ;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 126 "rec-sex.y"
+#line 136 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_ADD, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 127 "rec-sex.y"
+#line 137 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_SUB, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 128 "rec-sex.y"
+#line 138 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_MUL, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 129 "rec-sex.y"
+#line 139 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_DIV, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 130 "rec-sex.y"
+#line 140 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_MOD, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 131 "rec-sex.y"
+#line 141 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_GT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 132 "rec-sex.y"
+#line 142 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_LT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 133 "rec-sex.y"
+#line 143 "rec-sex.y"
     { CREATE_NODE_OP1 (REC_SEX_OP_NOT, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 134 "rec-sex.y"
+#line 144 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_AND, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 135 "rec-sex.y"
+#line 145 "rec-sex.y"
     { CREATE_NODE_OP2 (REC_SEX_OP_OR, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 136 "rec-sex.y"
+#line 146 "rec-sex.y"
     { CREATE_NODE_OP1 (REC_SEX_OP_SHA, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 137 "rec-sex.y"
+#line 147 "rec-sex.y"
     { (yyval.node) = (yyvsp[(2) - (3)].node); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1584 "rec-sex.tab.c"
+#line 1596 "rec-sex.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1792,730 +1804,8 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 139 "rec-sex.y"
+#line 149 "rec-sex.y"
 
-
-      /*
-bool
-rec_sex_eql (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2,
-             bool case_insensitive,
-             rec_record_t record)
-{
-  bool ret;
-  rec_field_t field;
-  rec_field_name_t field_name_1;
-  rec_field_name_t field_name_2;
-  struct rec_sex_val_s str_val_1;
-  struct rec_sex_val_s str_val_2;
-  int i, j;
-
-  ret = true;
-
-  res->int_val = false;
-  res->tag = NULL;
-
-  if (val1->tag && val2->tag)
-    {
-      rec_field_name_t field_name_1;
-      rec_field_name_t field_name_2;
-
-      field_name_1 = rec_parse_field_name_str (val1->tag);
-      field_name_2 = rec_parse_field_name_str (val2->tag);
-
-      for (i = 0; i < rec_record_size (record); i++)
-        {
-          rec_field_t field1;
-          field1 = rec_record_get_field (record, i);
-
-          if (rec_field_name_equal_p (rec_field_name (field1),
-                                      field_name_1))
-            {
-              for (j = 0; j < rec_record_size (record); j++)
-                {
-                  struct rec_sex_val_s inf_val1;
-                  struct rec_sex_val_s inf_val2;
-                  struct rec_sex_val_s inf_res;
-                  rec_field_t field2;
-                  field2 = rec_record_get_field (record, j);
-          
-                  if (rec_field_name_equal_p (rec_field_name (field2),
-                                              field_name_2))
-                    {
-                      inf_val1.type = REC_SEX_STR;
-                      inf_val1.str_val = rec_field_value (field1);
-                      inf_val1.tag = NULL;
-                      
-                      inf_val2.type = REC_SEX_STR;
-                      inf_val2.str_val = rec_field_value (field2);
-                      inf_val2.tag = NULL;
-                      
-                      ret = rec_sex_eql_2 (&inf_res,
-                                           &inf_val1,
-                                           &inf_val2,
-                                           case_insensitive);
-                      
-                      res->type = inf_res.type;
-                      res->tag = inf_res.tag;
-                      res->int_val |= inf_res.int_val;
-                      
-                      if (res->int_val || !ret)
-                        {
-                          break;
-                        }
-                    }
-                }
-            }
-          
-          if (res->int_val || !ret)
-            {
-              break;
-            }
-        }
-    }
-  else if (val1->tag || val2->tag)
-    {
-      rec_field_name_t field_name;
-
-      if (val1->tag)
-        {
-          field_name = rec_parse_field_name_str (val1->tag);
-        }
-      else
-        {
-          field_name = rec_parse_field_name_str (val2->tag);
-        }
-
-      for (i = 0; i < rec_record_size (record); i++)
-        {
-          struct rec_sex_val_s inf_res;
-          struct rec_sex_val_s inf_val;
-          rec_field_t field;
-
-          field = rec_record_get_field (record, i);
-          if (rec_field_name_equal_p (rec_field_name (field),
-                                      field_name))
-            {
-              inf_val.type = REC_SEX_STR;
-              inf_val.str_val = (char *) rec_field_value (field);
-              inf_val.tag = NULL;
-              
-              if (val1->tag)
-                {
-                  ret = rec_sex_eql_2 (&inf_res,
-                                       &inf_val,
-                                       val2,
-                                       case_insensitive);
-                }
-              else
-                {
-                  ret = rec_sex_eql_2 (&inf_res,
-                                       val1,
-                                       &inf_val,
-                                       case_insensitive);
-                }
-              
-              res->type = inf_res.type;
-              res->tag = inf_res.tag;
-              res->int_val |= inf_res.int_val;
-              if ((res->int_val) || !ret)
-                {
-                  break;
-                }
-            }
-        }
-    }
-  else
-    {
-      ret = rec_sex_eql_2 (res,
-                           val1,
-                           val2,
-                           case_insensitive);
-    }
-
-  return ret;
-}
-
-bool
-rec_sex_eql_2 (rec_sex_val_t res,
-               rec_sex_val_t val1,
-               rec_sex_val_t val2,
-               bool case_insensitive)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val == val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      if (case_insensitive)
-        {
-          res->int_val =  strcasecmp (val1->str_val, val2->str_val) == 0;
-        }
-      else
-        {
-          res->int_val =  strcmp (val1->str_val, val2->str_val) == 0;
-        }
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val == val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val == val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_neq (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2,
-             bool case_insensitive)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val != val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      if (case_insensitive)
-        {
-          res->int_val =  strcasecmp (val1->str_val, val2->str_val) != 0;
-        }
-      else
-        {
-          res->int_val =  strcmp (val1->str_val, val2->str_val) != 0;
-        }
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val != val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val != val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_mat (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2,
-             bool case_insensitive,
-             rec_record_t record)
-{
-  bool ret;
-  regex_t regexp;
-  int flags;
- 
-  flags = 0;
-  ret = true;
-  res->type = REC_SEX_INT;
-
-  flags = REG_EXTENDED;
-  if (case_insensitive)
-    {
-      flags |= REG_ICASE;
-    }
-
-  if ((val1->type == REC_SEX_STR)
-      && (val2->type == REC_SEX_STR))
-    {
-      if (regcomp (&regexp, val2->str_val, flags) == 0)
-        {
-          if (val1->tag == NULL)
-            {
-              res->int_val = (regexec (&regexp,
-                                       val1->str_val,
-                                       0,
-                                       NULL,
-                                       0) == 0);
-            }
-          else
-            {
-              bool result;
-              rec_field_t field;
-              rec_field_name_t field_name;
-              int i;
-
-              result = false;
-
-              field_name = rec_parse_field_name_str (val1->tag);
-              for (i = 0; i < rec_record_size (record); i++)
-                {
-                  field = rec_record_get_field (record, i);
-                  if (rec_field_name_equal_p (field_name,
-                                              rec_field_name (field)))
-                    {
-                      result |= (regexec (&regexp,
-                                          rec_field_value (field),
-                                          0,
-                                          NULL,
-                                          0) == 0);
-
-                      if (result)
-                        {
-                          break;
-                        }
-                    }
-                }
-
-              res->int_val = result;
-            }
-        }
-      else
-        {
-          ret = false;
-        }
-    }
-  else
-    {
-      ret = false;
-    }
-
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_add (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val + val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val + val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val + val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val + val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_sub (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val - val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val - val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val - val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val - val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_mul (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val * val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val * val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val * val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val * val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_div (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val / val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val / val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val / val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val / val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_mod (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val % val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val % val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val % val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val % val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_bt (rec_sex_val_t res,
-             rec_sex_val_t val1,
-             rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val > val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val > val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val > val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val > val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}     
-
-bool
-rec_sex_lt (rec_sex_val_t res,
-            rec_sex_val_t val1,
-            rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val < val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val < val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val < val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val < val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}     
-
-bool
-rec_sex_not (rec_sex_val_t res,
-             rec_sex_val_t val)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-  if (val->type == REC_SEX_INT)
-    {
-      res->int_val = -val->int_val;
-    }
-  else
-    {
-      val->int_val = atoi (val->str_val);
-      res->int_val = -val->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_and (rec_sex_val_t res,
-            rec_sex_val_t val1,
-            rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val && val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val && val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val && val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val && val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}     
-
-bool
-rec_sex_or (rec_sex_val_t res,
-            rec_sex_val_t val1,
-            rec_sex_val_t val2)
-{
-  bool ret;
-
-  ret = true;
-
-  res->type = REC_SEX_INT;
-
-  if ((val1->type == REC_SEX_INT)
-      && (val2->type == REC_SEX_INT))
-    {
-      res->int_val = val1->int_val || val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_STR))
-    {
-      val1->int_val = atoi (val1->str_val);
-      val2->int_val = atoi (val2->str_val);
-      res->int_val =  val1->int_val || val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_STR)
-           && (val2->type == REC_SEX_INT))
-    {
-      val1->int_val = atoi (val1->str_val);
-      res->int_val = val1->int_val || val2->int_val;
-    }
-  else if ((val1->type == REC_SEX_INT)
-           && (val2->type == REC_SEX_STR))
-    {
-      val2->int_val = atoi (val2->str_val);
-      res->int_val = val1->int_val || val2->int_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-bool
-rec_sex_group (rec_sex_val_t res,
-               rec_sex_val_t val)
-{
-  bool ret;
-  
-  ret = true;
-  if (val->type == REC_SEX_INT)
-    {
-      res->type = REC_SEX_INT;
-      res->int_val = val->int_val;
-    }
-  else
-    {
-      res->type = REC_SEX_STR;
-      res->str_val = val->str_val;
-    }
-
-  res->tag = NULL;
-  return ret;
-}
-
-*/
 
 /* End of rec-sex.y */
 

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 22:38:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 13:59:45 jemarch"
  *
  *       File:         rec-sex-ast.h
  *       Date:         Tue Jan 12 17:07:59 2010
@@ -96,8 +96,10 @@ rec_sex_ast_node_t rec_sex_ast_node_child (rec_sex_ast_node_t node,
 void rec_sex_ast_node_link (rec_sex_ast_node_t parent,
                             rec_sex_ast_node_t child);
 
-void
-rec_sex_ast_print (rec_sex_ast_t ast);
+void rec_sex_ast_node_reset (rec_sex_ast_node_t node);
+int rec_sex_ast_node_index (rec_sex_ast_node_t node);
+
+void rec_sex_ast_print (rec_sex_ast_t ast);
 
 #endif /* rec-sex-ast.h */
 

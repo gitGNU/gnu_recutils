@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 23:39:16 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 14:20:04 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -25,11 +25,11 @@
 
 #include <config.h>
 
-#include <rec.h>
+#include <regex.h>
 
+#include <rec.h>
 #include <rec-sex-ast.h>
 #include <rec-sex-parser.h>
-
 #include <rec-sex.tab.h>
 #include <rec-sex.lex.h>
 
@@ -138,6 +138,11 @@ rec_sex_eval (rec_sex_t sex,
       }
     }
 
+  if (!*status)
+    {
+      res = false;
+    }
+
   return res;
 }
 
@@ -151,6 +156,48 @@ rec_sex_print_ast (rec_sex_t sex)
  * Private functions.
  */
 
+#define GET_CHILD_VAL(DEST,NUM)                                         \
+  do                                                                    \
+    {                                                                   \
+      (DEST) = rec_sex_eval_node (sex,                                  \
+                                  record,                               \
+                                  rec_sex_ast_node_child (node, (NUM)), \
+                                  status);                              \
+      if (!*status)                                                     \
+        {                                                               \
+          return res;                                                   \
+        }                                                               \
+    }                                                                   \
+    while (0)
+
+
+#define ATOI_VAL(DEST, VAL)                     \
+  do                                            \
+    {                                           \
+      switch ((VAL).type)                       \
+        {                                       \
+        case REC_SEX_VAL_INT:                   \
+          {                                     \
+            (DEST) = (VAL).int_val;             \
+            break;                              \
+          }                                     \
+        case REC_SEX_VAL_STR:                   \
+          {                                     \
+            /* XXX.  Check for errors. */       \
+            if (strcmp ((VAL).str_val, "") == 0)\
+            {                                   \
+              (DEST) = 0;                       \
+            }                                   \
+          else                                  \
+            {                                   \
+              (DEST) = atoi ((VAL).str_val);    \
+            }                                   \
+          break;                                \
+          }                                     \
+        }                                       \
+    }                                           \
+  while (0)
+
 struct rec_sex_val_s
 rec_sex_eval_node (rec_sex_t sex,
                    rec_record_t record,
@@ -159,21 +206,12 @@ rec_sex_eval_node (rec_sex_t sex,
 {
   int i;
   struct rec_sex_val_s res;
+  rec_sex_ast_node_t child1;
+  struct rec_sex_val_s child_val1;
+  rec_sex_ast_node_t child2;
+  struct rec_sex_val_s child_val2;
 
-  for (i = 0; i < rec_sex_ast_node_num_children (node); i++)
-    {
-      rec_sex_eval_node (sex,
-                         record,
-                         rec_sex_ast_node_child (node, i),
-                         status);
-
-      if (!*status)
-        {
-          /* Error: roll back!  */
-          *status = false;
-          return res;
-        }
-    }
+  *status = true;
 
   switch (rec_sex_ast_node_type (node))
     {
@@ -186,20 +224,295 @@ rec_sex_eval_node (rec_sex_t sex,
       /* Operations.  */
     case REC_SEX_OP_NEG:
     case REC_SEX_OP_ADD:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 + op2;
+
+        break;
+      }
     case REC_SEX_OP_SUB:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 - op2;
+
+        break;
+      }
     case REC_SEX_OP_MUL:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 * op2;
+
+        break;
+      }
     case REC_SEX_OP_DIV:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 / op2;
+
+        break;
+      }
     case REC_SEX_OP_MOD:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 % op2;
+
+        break;
+      }
     case REC_SEX_OP_EQL:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        if ((child_val1.type == REC_SEX_VAL_STR)
+            && (child_val2.type == REC_SEX_VAL_STR))
+          {
+            /* String comparison.  */
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = (strcmp (child_val1.str_val,
+                                   child_val2.str_val) == 0);
+          }
+        else
+          {
+            /* Integer comparison.  */
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+            
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 == op2;
+          }
+
+        break;
+      }
     case REC_SEX_OP_NEQ:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        if ((child_val1.type == REC_SEX_VAL_STR)
+            && (child_val2.type == REC_SEX_VAL_STR))
+          {
+            /* String comparison.  */
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = (strcmp (child_val1.str_val,
+                                   child_val2.str_val) != 0);
+          }
+        else
+          {
+            /* Integer comparison.  */
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+            
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 != op2;
+          }
+
+        break;
+      }
     case REC_SEX_OP_MAT:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        if ((child_val1.type == REC_SEX_VAL_STR)
+            && (child_val2.type == REC_SEX_VAL_STR))
+          {
+            /* String match.  */
+            regex_t regexp;
+            int flags;
+
+            flags = REG_EXTENDED;
+            if (rec_sex_parser_case_insensitive (sex->parser))
+              {
+                flags |= REG_ICASE;
+              }
+
+            if (regcomp (&regexp,
+                         child_val2.str_val,
+                         flags) != 0)
+              {
+                *status = false;
+                return res;
+              }
+
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = (regexec (&regexp,
+                                    child_val1.str_val,
+                                    0,
+                                    NULL,
+                                    0) == 0);
+          }
+        else
+          {
+            /* Error.  */
+            *status = false;
+            return res;
+          }
+
+        break;
+      }
     case REC_SEX_OP_LT:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 < op2;
+
+        break;
+      }
     case REC_SEX_OP_GT:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 > op2;
+
+        break;
+      }
     case REC_SEX_OP_AND:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 && op2;
+
+        break;
+      }
     case REC_SEX_OP_OR:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = op1 || op2;
+
+        break;
+      }
     case REC_SEX_OP_NOT:
+      {
+        int op;
+
+        GET_CHILD_VAL (child_val1, 0);
+        ATOI_VAL (op, child_val1);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = !op;
+
+        break;
+      }
     case REC_SEX_OP_SHA:
       {
+        int i, n;
+        rec_field_t field;
+        rec_field_name_t field_name;
+        char *field_name_str;
+        rec_sex_ast_node_t child;
+
+        /* The child should be a Name.  */
+        child = rec_sex_ast_node_child (node, 0);
+        if (rec_sex_ast_node_type (rec_sex_ast_node_child(node, 0))
+            != REC_SEX_NAME)
+          {
+            *status = false;
+            return res;
+          }
+
+        field_name_str = rec_sex_ast_node_name (child);
+        field_name = rec_parse_field_name_str (field_name_str);
+
+        n = 0;
+        for (i = 0; i < rec_record_size (record); i++)
+          {
+            field = rec_record_get_field (record, i);
+            if (rec_field_name_equal_p (field_name,
+                                        rec_field_name (field)))
+              {
+                n++;
+              }
+          }
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = n;
         break;
       }
       /* Values.  */
@@ -217,7 +530,27 @@ rec_sex_eval_node (rec_sex_t sex,
       }
     case REC_SEX_NAME:
       {
-        
+        rec_field_t field;
+        rec_field_name_t field_name;
+        char *field_name_str;
+        int n;
+
+        field_name_str = rec_sex_ast_node_name (node);
+        field_name = rec_parse_field_name_str (field_name_str);
+        /*        n = rec_sex_ast_node_index (node); */
+        field = rec_record_get_field_by_name (record, field_name, 0);
+
+        res.type = REC_SEX_VAL_STR;
+        if (field)
+          {
+            res.str_val = rec_field_value (field);
+          }
+        else
+          {
+            /* No field => ""  */
+            res.str_val = "";
+          }
+
         break;
       }
     }

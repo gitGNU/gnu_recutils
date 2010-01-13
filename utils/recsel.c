@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 23:20:36 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 14:20:56 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -154,7 +154,7 @@ recsel_file (FILE *in)
           record = rec_rset_get_record (rset, i);
 
           if (((recsel_num == -1) &&
-               ((!recsel_sex) ||
+               ((!recsel_sex_str) ||
                 (rec_sex_eval (recsel_sex, record, &parse_status))))
               || (recsel_num == i))
             {
@@ -195,13 +195,13 @@ recsel_file (FILE *in)
                 }
             }
 
-          if (recsel_sex
+          if (recsel_sex_str
               && (!parse_status))
             {
+              fprintf (stderr, "recsel: error evaluating the selection expression.\n");
               return false;
             }
         }
-
     }
 
   if (rec_parser_error (parser))
