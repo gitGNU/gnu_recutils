@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 14:20:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 15:01:06 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -133,7 +133,7 @@ rec_sex_eval (rec_sex_t sex,
       }
     case REC_SEX_VAL_STR:
       {
-        res = (strcmp (val.str_val, "") != 0);
+        res = false;
         break;
       }
     }

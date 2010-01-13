@@ -494,8 +494,8 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,   103,   103,   109,   119,   120,   121,   122,   123,   124,
-     136,   137,   138,   139,   140,   141,   142,   143,   144,   145,
-     146,   147
+     136,   137,   138,   139,   140,   141,   153,   165,   175,   187,
+     199,   200
 };
 #endif
 
@@ -1543,56 +1543,104 @@ yyreduce:
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 141 "rec-sex.y"
-    { CREATE_NODE_OP2 (REC_SEX_OP_GT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
+#line 142 "rec-sex.y"
+    {
+      if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
+           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
+           YYABORT;
+        }
+
+      CREATE_NODE_OP2 (REC_SEX_OP_GT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
+    ;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 142 "rec-sex.y"
-    { CREATE_NODE_OP2 (REC_SEX_OP_LT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
+#line 154 "rec-sex.y"
+    {
+      if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
+           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
+           YYABORT;
+        }
+
+        CREATE_NODE_OP2 (REC_SEX_OP_LT, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
+    ;}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 143 "rec-sex.y"
-    { CREATE_NODE_OP1 (REC_SEX_OP_NOT, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
+#line 166 "rec-sex.y"
+    {
+        if (rec_sex_ast_node_type ((yyvsp[(2) - (2)].node)) != REC_SEX_INT)
+        {
+           rec_sex_ast_node_destroy ((yyvsp[(2) - (2)].node));
+           YYABORT;
+        }
+
+         CREATE_NODE_OP1 (REC_SEX_OP_NOT, (yyval.node), (yyvsp[(2) - (2)].node));
+    ;}
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 144 "rec-sex.y"
-    { CREATE_NODE_OP2 (REC_SEX_OP_AND, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
+#line 176 "rec-sex.y"
+    {
+        if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
+           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
+           YYABORT;
+        }
+
+         CREATE_NODE_OP2 (REC_SEX_OP_AND, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
+    ;}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 145 "rec-sex.y"
-    { CREATE_NODE_OP2 (REC_SEX_OP_OR, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node)); ;}
+#line 188 "rec-sex.y"
+    {
+        if ((rec_sex_ast_node_type ((yyvsp[(1) - (3)].node)) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ((yyvsp[(3) - (3)].node)) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ((yyvsp[(1) - (3)].node));
+           rec_sex_ast_node_destroy ((yyvsp[(3) - (3)].node));
+           YYABORT;
+        }
+
+        CREATE_NODE_OP2 (REC_SEX_OP_OR, (yyval.node), (yyvsp[(1) - (3)].node), (yyvsp[(3) - (3)].node));
+    ;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 146 "rec-sex.y"
+#line 199 "rec-sex.y"
     { CREATE_NODE_OP1 (REC_SEX_OP_SHA, (yyval.node), (yyvsp[(2) - (2)].node)); ;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 147 "rec-sex.y"
+#line 200 "rec-sex.y"
     { (yyval.node) = (yyvsp[(2) - (3)].node); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1596 "rec-sex.tab.c"
+#line 1644 "rec-sex.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1804,7 +1852,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 149 "rec-sex.y"
+#line 202 "rec-sex.y"
 
 
 /* End of rec-sex.y */

@@ -138,11 +138,64 @@ exp : REC_SEX_TOK_INT          { $$ = $1; }
     | exp REC_SEX_TOK_MUL exp  { CREATE_NODE_OP2 (REC_SEX_OP_MUL, $$, $1, $3); }
     | exp REC_SEX_TOK_DIV exp  { CREATE_NODE_OP2 (REC_SEX_OP_DIV, $$, $1, $3); }
     | exp REC_SEX_TOK_MOD exp  { CREATE_NODE_OP2 (REC_SEX_OP_MOD, $$, $1, $3); }
-    | exp REC_SEX_TOK_GT exp   { CREATE_NODE_OP2 (REC_SEX_OP_GT, $$, $1, $3); }
-    | exp REC_SEX_TOK_LT exp   { CREATE_NODE_OP2 (REC_SEX_OP_LT, $$, $1, $3); }
-    | REC_SEX_TOK_NOT exp      { CREATE_NODE_OP1 (REC_SEX_OP_NOT, $$, $2); }
-    | exp REC_SEX_TOK_AND exp  { CREATE_NODE_OP2 (REC_SEX_OP_AND, $$, $1, $3); }
-    | exp REC_SEX_TOK_OR exp   { CREATE_NODE_OP2 (REC_SEX_OP_OR, $$, $1, $3); }
+    | exp REC_SEX_TOK_GT exp
+    {
+      if ((rec_sex_ast_node_type ($1) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ($3) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ($1);
+           rec_sex_ast_node_destroy ($3);
+           YYABORT;
+        }
+
+      CREATE_NODE_OP2 (REC_SEX_OP_GT, $$, $1, $3);
+    }
+    | exp REC_SEX_TOK_LT exp
+    {
+      if ((rec_sex_ast_node_type ($1) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ($3) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ($1);
+           rec_sex_ast_node_destroy ($3);
+           YYABORT;
+        }
+
+        CREATE_NODE_OP2 (REC_SEX_OP_LT, $$, $1, $3);
+    }
+    | REC_SEX_TOK_NOT exp      
+    {
+        if (rec_sex_ast_node_type ($2) != REC_SEX_INT)
+        {
+           rec_sex_ast_node_destroy ($2);
+           YYABORT;
+        }
+
+         CREATE_NODE_OP1 (REC_SEX_OP_NOT, $$, $2);
+    }
+    | exp REC_SEX_TOK_AND exp
+    {
+        if ((rec_sex_ast_node_type ($1) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ($3) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ($1);
+           rec_sex_ast_node_destroy ($3);
+           YYABORT;
+        }
+
+         CREATE_NODE_OP2 (REC_SEX_OP_AND, $$, $1, $3);
+    }
+    | exp REC_SEX_TOK_OR exp
+    {
+        if ((rec_sex_ast_node_type ($1) != REC_SEX_INT)
+          || (rec_sex_ast_node_type ($3) != REC_SEX_INT))
+        {
+           rec_sex_ast_node_destroy ($1);
+           rec_sex_ast_node_destroy ($3);
+           YYABORT;
+        }
+
+        CREATE_NODE_OP2 (REC_SEX_OP_OR, $$, $1, $3);
+    }
     | REC_SEX_TOK_SHARP REC_SEX_TOK_NAM    { CREATE_NODE_OP1 (REC_SEX_OP_SHA, $$, $2); }
     | REC_SEX_TOK_BP exp REC_SEX_TOK_EP { $$ = $2; }
 
