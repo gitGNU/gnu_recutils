@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 14:22:02 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 17:07:31 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -301,14 +301,63 @@ rec_record_dup (rec_record_t record)
   for (index = 0; index < rec_record_size (record); index++)
     {
       field = rec_record_get_field (record, index);
-      
-      new_field = rec_field_new (rec_field_name (field),
-                                 rec_field_value (field));
 
+      new_field = rec_field_dup (field);
       rec_record_insert_field (new_record, new_field, index);
     }
 
   return new_record;
+}
+
+int
+rec_record_get_num_fields (rec_record_t record,
+                           rec_field_name_t field_name)
+{
+  rec_field_t field;
+  int i;
+  int n;
+
+  n = 0;
+  for (i = 0; i < rec_record_size (record); i++)
+    {
+      field = rec_record_get_field (record, i);
+
+      if (rec_field_name_equal_p (field_name,
+                                  rec_field_name (field)))
+        {
+          n++;
+        }
+    }
+
+  return n;
+}
+
+void
+rec_record_remove_field_by_name (rec_record_t record,
+                                 rec_field_name_t field_name,
+                                 int index)
+{
+  rec_field_t field;
+  gl_list_node_t node;
+  gl_list_iterator_t iter;
+  int i;
+
+
+  i = 0;
+  iter = gl_list_iterator (record->field_list);
+  while (gl_list_iterator_next (&iter, (const void **) &field, &node))
+    {
+      if (((index == -1) || (index == i))
+          && (rec_field_name_equal_p (field_name,
+                                      rec_field_name (field))))
+        {
+          /* Delete and advance.  */
+          gl_list_remove_node (record->field_list,
+                               node);
+          record->size--;
+          i++;
+        }
+    }
 }
 
 /*

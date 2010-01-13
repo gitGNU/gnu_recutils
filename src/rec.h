@@ -223,6 +223,20 @@ bool rec_record_equal_p (rec_record_t record1,
 bool rec_record_subset_p (rec_record_t record1,
                           rec_record_t record2);
 
+/* Return the number of fields in RECORD with the given field
+   name.  */
+int
+rec_record_get_num_fields (rec_record_t record,
+                           rec_field_name_t field_name);
+
+/* Delete the INDEXnh field named FIELD_NAME in RECORD.  If INDEX is
+   -1, then delete all of them.  */
+void
+rec_record_remove_field_by_name (rec_record_t record,
+                                 rec_field_name_t field_name,
+                                 int index);
+
+
 /* Return a copy of a given record.
  *
  * If there is not enough memory to perform the copy then NULL is

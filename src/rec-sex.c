@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 15:01:06 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/13 17:04:40 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -117,26 +117,70 @@ rec_sex_eval (rec_sex_t sex,
               bool *status)
 {
   bool res;
-  struct rec_sex_val_s val;
+  rec_field_t field;
+  rec_field_t wfield;
+  rec_record_t wrec;
+  int i, j, nf;
 
-  val = rec_sex_eval_node (sex,
-                           record,
-                           rec_sex_ast_top (sex->ast),
-                           status);
+  
+  res = false;
+  wrec = NULL;
 
-  switch (val.type)
+  for (i = 0; i < rec_record_size (record); i++)
     {
-    case REC_SEX_VAL_INT:
-      {
-        res = (val.int_val != 0);
-        break;
-      }
-    case REC_SEX_VAL_STR:
-      {
-        res = false;
-        break;
-      }
+      field = rec_record_get_field (record, i);
+
+      nf = rec_record_get_num_fields (record, rec_field_name (field));
+      if (nf > 1)
+        /*          && (rec_sex_ast_name_p (sex->ast, field_name_str))) */
+        {
+          for (j = 0; j < nf; j++)
+            {
+              struct rec_sex_val_s val;
+
+              wfield = rec_record_get_field_by_name (record,
+                                                     rec_field_name (field),
+                                                     j);
+              if (wrec)
+                {
+                  rec_record_destroy (wrec);
+                }
+
+              wrec = rec_record_dup (record);
+              rec_record_remove_field_by_name (wrec,
+                                               rec_field_name (field),
+                                               -1); /* Delete all.  */
+              rec_record_insert_field (wrec, rec_field_dup (wfield), 0);
+              val = rec_sex_eval_node (sex,
+                                       wrec,
+                                       rec_sex_ast_top (sex->ast),
+                                       status);
+
+              switch (val.type)
+                {
+                case REC_SEX_VAL_INT:
+                  {
+                    res = (val.int_val != 0);
+                    break;
+                  }
+                case REC_SEX_VAL_STR:
+                  {
+                    res = false;
+                    break;
+                  }
+                }
+
+              if (res)
+                {
+                  rec_record_destroy (wrec);
+                  goto exit;
+                }
+            }
+        }
     }
+
+
+ exit:          
 
   if (!*status)
     {
@@ -537,7 +581,6 @@ rec_sex_eval_node (rec_sex_t sex,
 
         field_name_str = rec_sex_ast_node_name (node);
         field_name = rec_parse_field_name_str (field_name_str);
-        /*        n = rec_sex_ast_node_index (node); */
         field = rec_record_get_field_by_name (record, field_name, 0);
 
         res.type = REC_SEX_VAL_STR;
@@ -557,7 +600,6 @@ rec_sex_eval_node (rec_sex_t sex,
 
   return res;
 }
-
 
  
 /* End of rec-sex.c */
