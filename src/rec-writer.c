@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 16:10:58 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:30:17 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
  *
- *       GNU Rec library - Writer
+ *       GNU Record Utilities - Writer
  *
  */
 

@@ -3,7 +3,7 @@
  *       File:         rec.h
  *       Date:         Fri Feb 27 20:04:59 2009
  *
- *       GNU rec library - Main Header
+ *       GNU recutils - Main Header
  *
  */
 
@@ -319,6 +319,68 @@ rec_record_t rec_rset_descriptor (rec_rset_t rset);
  * The previous descriptor in the record set is destroyed.
  */
 void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
+
+/*
+ * DATABASES
+ *
+ * A database is an ordered set of zero or more record sets.
+ */
+
+typedef struct rec_db_s *rec_db_t;
+
+/* Create an empty database.  */
+rec_db_t rec_db_new (void);
+
+/* Destroy a database, freeing any used memory.
+ *
+ * This means that all the record sets contained in the database are
+ * also destroyed.
+ */
+void rec_db_destroy (rec_db_t db);
+
+/* Return the number of record sets contained in a given record
+   set.  */
+int rec_db_size (rec_db_t db);
+
+/* Return a pointer to the record set at the given position.
+ *
+ * If no such record set is contained in the database then NULL is
+ * returned.
+ */
+rec_rset_t rec_db_get_rset (rec_db_t db,
+                            int position);
+
+/* Insert the given record set into the given database at the given
+ * position.
+ *
+ * - If POSITION >= rec_rset_size (DB), RSET is appended to the
+ *   list of fields.
+ *
+ * - If POSITION < 0, RSET is prepended.
+ *
+ * - Otherwise RSET is inserted at the specified position.
+ *
+ * If the rset is inserted then 'true' is returned. If there is an
+ * error then 'false' is returned.
+ */
+bool rec_db_insert_rset (rec_db_t db,
+                         rec_rset_t rset,
+                         int position);
+
+/* Remove the record set contained in the given position into the
+ * given database.
+ *
+ * - If POSITION >= rec_db_size (DB), the last record set is deleted.
+ *
+ * - If POSITION <= 0, the first record set is deleted.
+ *
+ * - Otherwise the record set occupying the specified position is
+ *   deleted.
+ *
+ * If a record set has been removed then 'true' is returned.  If there
+ * is an error or the database has no record sets 'false' is returned.
+ */
+bool rec_db_remove_rset (rec_db_t db, int position);
 
 /*
  * PARSER

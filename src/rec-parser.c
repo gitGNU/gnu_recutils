@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 20:34:34 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:28:21 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
  *
- *       GNU rec - Parsing routines
+ *       GNU Record Utilities - Parsing routines
  *
  */
 

@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/11 23:02:21 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:28:36 jemarch"
  *
  *       File:         rec-resolver.c
  *       Date:         Mon Jan 11 14:29:18 2010
  *
- *       GNU Records - Resolver
+ *       GNU Record Utilities - Resolver
  *
  */
 

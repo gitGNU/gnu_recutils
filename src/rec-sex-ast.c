@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 13:41:44 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:28:52 jemarch"
  *
  *       File:         rec-sex-ast.c
  *       Date:         Tue Jan 12 17:29:03 2010
  *
- *       GNU Records - SEX Abstract Syntax Trees
+ *       GNU Record Utilities - SEX Abstract Syntax Trees
  *
  */
 

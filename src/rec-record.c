@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 14:31:48 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:44:15 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
  *
- *       GNU rec - Records
+ *       GNU recutils - Records
  *
  */
 

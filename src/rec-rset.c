@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "09/12/27 20:27:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:28:43 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
  *
- *       GNU rec - Record Sets
+ *       GNU Record Utilities - Record Sets
  *
  */
 
