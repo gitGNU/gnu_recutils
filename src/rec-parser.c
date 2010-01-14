@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:28:21 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:58:45 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
  *
- *       GNU Record Utilities - Parsing routines
+ *       GNU recutils - Parsing routines
  *
  */
 
@@ -523,6 +523,44 @@ rec_parse_rset (rec_parser_t parser,
     {
       rec_rset_destroy (new);
       *rset = NULL;
+    }
+
+  return ret;
+}
+
+bool
+rec_parse_db (rec_parser_t parser,
+              rec_db_t *db)
+{
+  bool ret;
+  rec_rset_t rset;
+  rec_db_t new;
+
+  ret = false;
+
+  new = rec_db_new ();
+  if (!new)
+    {
+      /* Out of memory.  */
+      return false;
+    }
+
+  while (rec_parse_rset (parser, &rset))
+    {
+      /* Add the rset into the database.  */
+      if (!rec_db_insert_rset (new,
+                               rset,
+                               rec_db_size (new)))
+        {
+          /* Parse error: out of memory.  */
+          parser->error = REC_PARSER_ENOMEM;
+          break;
+        }
+    }
+
+  if (ret)
+    {
+      *db = new;
     }
 
   return ret;

@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:30:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 16:28:55 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
  *
- *       GNU Record Utilities - Writer
+ *       GNU recutils - Writer
  *
  */
 
@@ -203,13 +203,37 @@ rec_write_rset (rec_writer_t writer,
                                  rec_rset_get_record (rset, i)))
             {
               ret = false;
+              break;
             }
 
           if (!rec_writer_putc (writer, '\n'))
 
             {
               ret = false;
+              break;
             }
+        }
+    }
+
+  return ret;
+}
+
+bool
+rec_write_db (rec_writer_t writer,
+              rec_db_t db)
+{
+  bool ret;
+  int i;
+  rec_rset_t rset;
+
+  ret = true;
+  for (i = 0; i < rec_db_size (db); i++)
+    {
+      if (!rec_write_rset (writer,
+                           rec_db_get_rset (db, i)))
+        {
+          ret = false;
+          break;
         }
     }
 

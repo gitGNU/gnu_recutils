@@ -412,6 +412,7 @@ bool rec_parse_field_name (rec_parser_t parser, rec_field_name_t *fname);
 bool rec_parse_field (rec_parser_t parser, rec_field_t *field);
 bool rec_parse_record (rec_parser_t parser, rec_record_t *record);
 bool rec_parse_rset (rec_parser_t parser, rec_rset_t *rset);
+bool rec_parse_db (rec_parser_t parser, rec_db_t *db);
 
 /* Getting information about the parser */
 bool rec_parser_eof (rec_parser_t parser);
@@ -456,6 +457,7 @@ void rec_writer_destroy (rec_writer_t writer);
 bool rec_write_field (rec_writer_t writer, rec_field_t field);
 bool rec_write_record (rec_writer_t writer, rec_record_t record);
 bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
+bool rec_write_db (rec_writer_t writer, rec_db_t db);
 
 char *rec_write_field_str (rec_field_t field);
 
