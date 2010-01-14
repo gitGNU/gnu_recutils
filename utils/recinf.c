@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 14:23:03 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 14:56:26 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -94,13 +94,21 @@ print_info_file (FILE *in)
     {
       descriptor = rec_rset_descriptor (rset);
 
+
       if (recinf_verbose)
         {
           rec_writer_t writer;
 
-          writer = rec_writer_new (stdout);
-          rec_write_record (writer, descriptor);
-          rec_writer_destroy (writer);
+          if (descriptor)
+            {
+              writer = rec_writer_new (stdout);
+              rec_write_record (writer, descriptor);
+              rec_writer_destroy (writer);
+            }
+          else
+            {
+              printf ("unknown");
+            }
         }
       else
         {
@@ -108,7 +116,7 @@ print_info_file (FILE *in)
             {
               rec_field_name_t fname;
 
-              fname = rec_parse_field_name_str ("%rec");
+              fname = rec_parse_field_name_str ("%rec:");
               printf ("%s", rec_field_value (rec_record_get_field_by_name (descriptor,
                                                                            fname,
                                                                            0)));

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 14:32:51 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 14:50:10 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -46,7 +46,6 @@ char *program_name; /* Initialized in main() */
 static const struct option GNU_longOptions[] =
   {
     {"help", no_argument, NULL, HELP_ARG},
-    {"usage", no_argument, NULL, USAGE_ARG},
     {"version", no_argument, NULL, VERSION_ARG},
     {"expression", required_argument, NULL, EXPRESSION_ARG},
     {"print", required_argument, NULL, PRINT_ARG},
@@ -68,27 +67,33 @@ There is NO WARRANTY, to the extent permitted by law.\n\
 \n\
 Written by Jose E. Marchesi.";
 
-char *recsel_usage_msg = "\
+char *recsel_help_msg = "\
 Usage: recsel [OPTION]... [FILE]...\n\
-Print the contents of the specified rec files.\n\
+Select and print rec data.\n\
 \n\
-available options\n\
-  -t TYPE, --type                     print records of the specified type only.\n\
+Mandatory arguments to long options are mandatory for short options too.\n\
+  -t, --type=TYPE                     print records of the specified type only.\n\
   -i, --case-insensitive              make strings case-insensitive in selection\n\
                                         expressions.\n\
-  -e EXPR, --expression               selection expression.\n\
-  -n NUM, --number                    select an specific record.\n\
-  -p FIELDS, --print                  comma-separated list of fields to print for each\n\
+  -e, --expression=EXPR               selection expression.\n\
+  -n, --number=NUM                    select an specific record.\n\
+  -p, --print=FIELDS                  comma-separated list of fields to print for each\n\
                                         matching record.\n\
   -c, --count                         provide a count of the matching records instead of\n\
                                         the records themselves.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
-  --help                              print a help message and exit.\n\
-  --usage                             print a usage message and exit.\n\
-  --version                           show recsel version and exit.\n\
+      --help                          print a help message and exit.\n\
+      --version                       show recsel version and exit.\n\
+\n\
+Examples:\n\
+\n\
+        recsel -e \"Name ~ 'Smith'\" friends.rec\n\
+        recsel -C -e \"#Email && Wiki = 'no'\" -p /Email[0] gnupdf-hackers.rec\n\
+\n\
+Report recsel bugs to bug-recutils@gnu.org\n\
+GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
+General help using GNU software: <http://www.gnu.org/gethelp/>\
 ";
-
-char *recsel_help_msg = "";
 
 /* String containing the selection expression.  */
 char *recsel_sex_str = NULL;
@@ -243,19 +248,13 @@ main (int argc, char *argv[])
           /* COMMON ARGUMENTS */
         case HELP_ARG:
           {
-            fprintf (stdout, "%s\n", recsel_usage_msg);
+            fprintf (stdout, "%s\n", recsel_help_msg);
             exit (0);
             break;
           }
         case VERSION_ARG:
           {
             fprintf (stdout, "%s\n", recsel_version_msg);
-            exit (0);
-            break;
-          }
-        case USAGE_ARG:
-          {
-            fprintf (stdout, "%s\n", recsel_usage_msg);
             exit (0);
             break;
           }
