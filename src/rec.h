@@ -512,8 +512,15 @@ bool rec_resolver_check (char *expr);
 
 /* Write the data from RECORD according to EXPR to OUT.  Return False
    if there is not enough room in OUT to hold the data.  */
-bool rec_resolve (rec_record_t record, char *expr, FILE *out);
-char *rec_resolve_str (rec_record_t record, char *expr);
+bool rec_resolve (rec_db_t db,
+                  char *type,
+                  rec_record_t record,
+                  char *expr,
+                  FILE *out);
+char *rec_resolve_str (rec_db_t db,
+                       char *type,
+                       rec_record_t record,
+                       char *expr);
 
 #endif /* !REC_H */
 

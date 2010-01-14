@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:28:36 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 18:07:44 jemarch"
  *
  *       File:         rec-resolver.c
  *       Date:         Mon Jan 11 14:29:18 2010
  *
- *       GNU Record Utilities - Resolver
+ *       GNU recutils - Resolver
  *
  */
 
@@ -77,7 +77,9 @@ rec_resolver_check (char *expr)
 }
 
 bool
-rec_resolve (rec_record_t record,
+rec_resolve (rec_db_t db,
+             char *type,
+             rec_record_t record,
              char *expr,
              FILE *out)
 {
@@ -124,7 +126,9 @@ rec_resolve (rec_record_t record,
 }
 
 char *
-rec_resolve_str (rec_record_t record,
+rec_resolve_str (rec_db_t db,
+                 char *type,
+                 rec_record_t record,
                  char *expr)
 {
   char *result;
@@ -136,7 +140,7 @@ rec_resolve_str (rec_record_t record,
 
   if (stm)
     {
-      rec_resolve (record, expr, stm);
+      rec_resolve (db, type, record, expr, stm);
       fclose (stm);
     }
 

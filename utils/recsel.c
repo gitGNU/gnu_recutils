@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 17:37:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 18:05:06 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -387,7 +387,10 @@ recsel_process_data (rec_db_t db)
               
               if (recsel_expr)
                 {
-                  resolver_result = rec_resolve_str (record, recsel_expr);
+                  resolver_result = rec_resolve_str (db,
+                                                     rec_rset_type (rset),
+                                                     record,
+                                                     recsel_expr);
                 }
               
               if ((written != 0)
