@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 21:15:36 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 23:10:17 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -270,7 +270,7 @@ recsel_parse_db_from_file (FILE *in,
       rset_type = rec_rset_type (rset);
       if (rec_db_type_p (db, rset_type))
         {
-          fprintf (stderr, "error: duplicated record set '%s' from %s.\n",
+          fprintf (stderr, "recsel: error: duplicated record set '%s' from %s.\n",
                    rset_type, file_name);
           exit (1);
         }
@@ -425,7 +425,7 @@ recsel_process_data (rec_db_t db)
           if (recsel_sex_str
               && (!parse_status))
             {
-              fprintf (stderr, "recsel: error evaluating the selection expression.\n");
+              fprintf (stderr, "recsel: error: evaluating the selection expression.\n");
               return false;
             }
         }

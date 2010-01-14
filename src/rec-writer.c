@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 21:03:28 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 22:52:26 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -155,23 +155,33 @@ rec_write_record (rec_writer_t writer,
   int i;
 
   ret = true;
-  for (i = 0; i < rec_record_size (record); i++)
+
+  if (rec_record_comment_p (record))
     {
-      if (rec_record_comment_p (record))
+      if (!rec_writer_putc (writer, '#'))
         {
-          if (!rec_writer_putc (writer, '#'))
-            {
-              ret = false;
-              break;
-            }
-          if (!rec_writer_puts (writer,
-                                rec_record_comment (record)))
-            {
-              ret = false;
-              break;
-            }
+          ret = false;
         }
-      else
+      if (!rec_writer_puts (writer,
+                            rec_record_comment (record)))
+        {
+          ret = false;
+        }
+      if (!rec_writer_putc (writer, '\n'))
+        {
+          ret = false;
+        }
+    }
+  else if (rec_record_newline_p (record))
+    {
+      if (!rec_writer_putc (writer, '\n'))
+        {
+          ret = false;
+        }
+    }
+  else
+    {
+      for (i = 0; i < rec_record_size (record); i++)
         {
           field = rec_record_get_field (record, i);
           if (!rec_write_field (writer, field))
@@ -216,14 +226,18 @@ rec_write_rset (rec_writer_t writer,
 
       for (i = 0; i < rec_rset_size (rset); i++)
         {
-          if (!rec_write_record (writer,
-                                 rec_rset_get_record (rset, i)))
+          rec_record_t record;
+          
+          record = rec_rset_get_record (rset, i);
+          if (!rec_write_record (writer, record))
             {
               ret = false;
               break;
             }
 
-          if (!rec_writer_putc (writer, '\n'))
+          if ((i != (rec_rset_size (rset) - 1))
+              && (rec_record_p (record))
+              && (!rec_writer_putc (writer, '\n')))
 
             {
               ret = false;
@@ -251,6 +265,15 @@ rec_write_db (rec_writer_t writer,
         {
           ret = false;
           break;
+        }
+
+      if (i != (rec_db_size (db) - 1))
+        {
+          /*          if (!rec_writer_putc (writer, '\n'))
+            {
+              ret = false;
+              break;
+              }*/
         }
     }
 

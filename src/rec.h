@@ -247,8 +247,10 @@ rec_record_remove_field_by_name (rec_record_t record,
  * returned. */
 rec_record_t rec_record_dup (rec_record_t record);
 
-/* Determine wether a given record is a comment.  */
+/* Determine wether a given record is a comment or a newline.  */
+bool rec_record_p (rec_record_t record);
 bool rec_record_comment_p (rec_record_t record);
+bool rec_record_newline_p (rec_record_t record);
 
 /* Get a comment from a record.  */
 char *rec_record_comment (rec_record_t record);

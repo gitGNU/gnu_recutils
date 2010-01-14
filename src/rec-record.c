@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 21:16:54 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 22:24:59 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -49,6 +49,7 @@ struct rec_record_s
   
   char *comment;  /* String containing the contents of a comment, if
                      size == 0 and comment != NULL.  */
+  bool newline;
 };
 
 rec_record_t
@@ -62,6 +63,7 @@ rec_record_new (void)
     {
       record->size = 0;
       record->comment = 0;
+      record->newline = false;
       record->field_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
                                                     rec_record_field_equals_fn,
                                                     NULL,
@@ -370,6 +372,20 @@ rec_record_comment_p (rec_record_t record)
           && (record->comment != NULL));
 }
 
+bool
+rec_record_newline_p (rec_record_t record)
+{
+  return ((record->size == 0)
+          && (record->newline == true));
+}
+
+bool
+rec_record_p (rec_record_t record)
+{
+  return ((!rec_record_comment_p (record))
+          && (!rec_record_newline_p (record)));
+}
+
 char *
 rec_record_comment (rec_record_t record)
 {
@@ -386,6 +402,13 @@ rec_record_set_comment (rec_record_t record,
     }
 
   record->comment = strdup (comment);
+}
+
+void
+rec_record_set_newline (rec_record_t record,
+                        bool newline)
+{
+  record->newline = newline;
 }
 
 /*
