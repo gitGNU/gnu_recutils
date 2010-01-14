@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[93] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/14 14:07:47 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 14:20:41 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010

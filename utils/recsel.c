@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 14:01:19 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 14:32:51 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -140,9 +140,12 @@ recsel_file (FILE *in)
           rec_field_name_t fname;
 
           descriptor = rec_rset_descriptor (rset);
-          fname = rec_parse_field_name_str ("%rec");
+          fname = rec_parse_field_name_str ("%rec:");
+
+          type = NULL;
           type = rec_record_get_field_by_name (descriptor, fname, 0);
-          if (strcmp (rec_field_value (type), recsel_type) != 0)
+          if (!type
+              || strcmp (rec_field_value (type), recsel_type) != 0)
             {
               continue;
             }
