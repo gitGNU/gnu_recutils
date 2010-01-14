@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 11:18:23 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 13:41:44 jemarch"
  *
  *       File:         rec-sex-ast.c
  *       Date:         Tue Jan 12 17:29:03 2010
@@ -31,6 +31,8 @@ struct rec_sex_ast_node_s
   } val;
 
   int index;
+  bool fixed;
+  char *fixed_val;
   rec_sex_ast_node_t children[REC_SEX_AST_MAX_CHILDREN];
   size_t num_children;
 };
@@ -80,6 +82,8 @@ rec_sex_ast_node_new (void)
       new->type = REC_SEX_NOVAL;
       new->num_children = 0;
       new->index = -1;
+      new->fixed = false;
+      new->fixed_val = NULL;
     }
 
   return new;
@@ -104,6 +108,11 @@ rec_sex_ast_node_destroy (rec_sex_ast_node_t node)
   else if (node->type == REC_SEX_NAME)
     {
       free (node->val.name);
+    }
+
+  if (node->fixed_val)
+    {
+      free (node->fixed_val);
     }
 }
 
@@ -255,6 +264,44 @@ rec_sex_ast_node_reset (rec_sex_ast_node_t node)
     }
 
   node->index = 0;
+}
+
+void
+rec_sex_ast_node_fix (rec_sex_ast_node_t node,
+                      char *val)
+{
+  if (node->fixed_val)
+    {
+      free (node->fixed_val);
+    }
+
+  node->fixed = true;
+  node->fixed_val = strdup (val);
+}
+
+void
+rec_sex_ast_node_unfix (rec_sex_ast_node_t node)
+{
+  int i;
+
+  for (i = 0; i < node->num_children; i++)
+    {
+      rec_sex_ast_node_unfix (node->children[i]);
+    }
+
+  node->fixed = false;
+}
+
+bool
+rec_sex_ast_node_fixed (rec_sex_ast_node_t node)
+{
+  return node->fixed;
+}
+
+char *
+rec_sex_ast_node_fixed_val (rec_sex_ast_node_t node)
+{
+  return node->fixed_val;
 }
 
 int

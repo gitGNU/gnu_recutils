@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[93] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/14 11:22:58 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 14:07:47 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -2168,6 +2168,7 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 char *
 rec_sex_lex_extract_name (char *str)
 {
+  size_t size;
   char *res;
   char *p;
 
@@ -2177,9 +2178,10 @@ rec_sex_lex_extract_name (char *str)
       p++;
     }
 
-  res = malloc ((p - str) + 1);
-  strncpy (res, str, (p - str));
-  res[(p - str) + 1] = 0;
+  size = (p - str) + 1;
+  res = malloc (size);
+  strncpy (res, str, size);
+  res[size] = 0;
 
   return res;
 }

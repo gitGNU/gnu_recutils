@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 11:23:05 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 14:02:54 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -152,6 +152,7 @@ rec_sex_eval (rec_sex_t sex,
   res = false;
   wrec = NULL;
 
+  rec_sex_ast_node_unfix (rec_sex_ast_top (sex->ast));
   EXEC_AST (record);
   if (res)
     {
@@ -591,27 +592,42 @@ rec_sex_eval_node (rec_sex_t sex,
         rec_field_name_t field_name;
         char *field_name_str;
         int index;
+        bool tofix;
 
-        field_name_str = rec_sex_ast_node_name (node);
-        index = rec_sex_ast_node_index (node);
-
-        if (index == -1)
+        if (rec_sex_ast_node_fixed (node))
           {
-            index = 0;
-          }
-
-        field_name = rec_parse_field_name_str (field_name_str);
-        field = rec_record_get_field_by_name (record, field_name, index);
-
-        res.type = REC_SEX_VAL_STR;
-        if (field)
-          {
-            res.str_val = rec_field_value (field);
+            res.type = REC_SEX_VAL_STR;
+            res.str_val = rec_sex_ast_node_fixed_val (node);
           }
         else
           {
-            /* No field => ""  */
-            res.str_val = "";
+            field_name_str = rec_sex_ast_node_name (node);
+            index = rec_sex_ast_node_index (node);
+            tofix = (index != -1);
+            if (index == -1)
+              {
+                index = 0;
+              }
+            
+            field_name = rec_parse_field_name_str (field_name_str);
+            field = rec_record_get_field_by_name (record, field_name, index);
+
+            res.type = REC_SEX_VAL_STR;
+            if (field)
+              {
+                res.str_val = rec_field_value (field);
+              }
+            else
+              {
+                /* No field => ""  */
+                res.str_val = "";
+              }
+
+            if (tofix)
+              {
+                /* Make this node fixed.  */
+                rec_sex_ast_node_fix (node, res.str_val);
+              }
           }
 
         break;
