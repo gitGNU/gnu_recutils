@@ -367,12 +367,13 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[39] =
+static yyconst flex_int16_t yy_accept[42] =
     {   0,
         0,    0,   23,   21,    1,    1,    9,   17,    5,   21,
        21,   13,   14,    6,    2,    3,    4,   18,   12,    7,
        11,   21,   21,   10,    8,   15,    0,   20,    0,   18,
-       19,   16,    0,   20,    0,   19,    0,    0
+       19,   16,    0,   20,    0,   19,    0,    0,    0,   19,
+        0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -386,11 +387,11 @@ static yyconst flex_int32_t yy_ec[256] =
        18,   19,    1,    1,   20,   20,   20,   20,   20,   20,
        20,   20,   20,   20,   20,   20,   20,   20,   20,   20,
        20,   20,   20,   20,   20,   20,   20,   20,   20,   20,
-        1,   21,    1,    1,   22,    1,   20,   20,   20,   20,
+       21,   22,   23,    1,   24,    1,   20,   20,   20,   20,
 
        20,   20,   20,   20,   20,   20,   20,   20,   20,   20,
        20,   20,   20,   20,   20,   20,   20,   20,   20,   20,
-       20,   20,    1,   23,    1,   24,    1,    1,    1,    1,
+       20,   20,    1,   25,    1,   26,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -407,53 +408,59 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[25] =
+static yyconst flex_int32_t yy_meta[27] =
     {   0,
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1
+        1,    1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int16_t yy_base[41] =
+static yyconst flex_int16_t yy_base[44] =
     {   0,
-        0,    0,   58,   59,   59,   59,   36,   59,   59,   45,
-       17,   59,   59,   59,   59,   59,   59,   36,   59,   59,
-       59,   11,   22,   59,   59,   59,   19,   59,   26,   27,
-       33,   59,   20,   22,   29,   16,   24,   59,   34,   55
+        0,    0,   65,   66,   66,   66,   46,   66,   66,   53,
+       19,   66,   66,   66,   66,   66,   66,   43,   66,   66,
+       66,   13,   29,   66,   66,   66,   21,   66,   27,   27,
+       35,   66,   23,   24,   31,   27,   25,   37,   21,   66,
+       66,   37,   61
     } ;
 
-static yyconst flex_int16_t yy_def[41] =
+static yyconst flex_int16_t yy_def[44] =
     {   0,
-       38,    1,   38,   38,   38,   38,   38,   38,   38,   38,
-       39,   38,   38,   38,   38,   38,   38,   38,   38,   38,
-       38,   38,   38,   38,   38,   38,   39,   38,   40,   38,
-       38,   38,   39,   39,   40,   38,   38,    0,   38,   38
+       41,    1,   41,   41,   41,   41,   41,   41,   41,   41,
+       42,   41,   41,   41,   41,   41,   41,   41,   41,   41,
+       41,   41,   41,   41,   41,   41,   42,   41,   43,   41,
+       41,   41,   42,   42,   43,   41,   41,   41,   41,   41,
+        0,   41,   41
     } ;
 
-static yyconst flex_int16_t yy_nxt[84] =
+static yyconst flex_int16_t yy_nxt[93] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
        14,   15,   16,   17,   18,    4,   19,   20,   21,   22,
-        4,    4,   23,   24,   28,   31,   28,   28,   27,   28,
-       31,   27,   31,   34,   27,   37,   34,   29,   31,   29,
-       29,   30,   29,   31,   32,   31,   35,   31,   36,   35,
-       30,   26,   31,   25,   31,   33,   33,   38,    3,   38,
-       38,   38,   38,   38,   38,   38,   38,   38,   38,   38,
-       38,   38,   38,   38,   38,   38,   38,   38,   38,   38,
-       38,   38,   38
+        4,    4,    4,    4,   23,   24,   28,   31,   28,   27,
+       28,   28,   31,   27,   34,   39,   31,   27,   34,   39,
+       29,   30,   29,   40,   29,   29,   38,   37,   35,   31,
+       36,   31,   35,   32,   31,   37,   31,   30,   31,   26,
+       31,   33,   33,   25,   41,    3,   41,   41,   41,   41,
+       41,   41,   41,   41,   41,   41,   41,   41,   41,   41,
+       41,   41,   41,   41,   41,   41,   41,   41,   41,   41,
+       41,   41
+
     } ;
 
-static yyconst flex_int16_t yy_chk[84] =
+static yyconst flex_int16_t yy_chk[93] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,   11,   22,   27,   33,   29,   34,
-       22,   35,   22,   29,   39,   36,   35,   11,   37,   27,
-       33,   30,   34,   37,   23,   37,   29,   31,   31,   35,
-       18,   10,   31,    7,   31,   40,   40,    3,   38,   38,
-       38,   38,   38,   38,   38,   38,   38,   38,   38,   38,
-       38,   38,   38,   38,   38,   38,   38,   38,   38,   38,
-       38,   38,   38
+        1,    1,    1,    1,    1,    1,   11,   22,   27,   29,
+       33,   34,   22,   35,   29,   39,   22,   42,   35,   37,
+       11,   30,   27,   39,   33,   34,   36,   36,   29,   31,
+       31,   38,   35,   23,   31,   31,   38,   18,   31,   10,
+       38,   43,   43,    7,    3,   41,   41,   41,   41,   41,
+       41,   41,   41,   41,   41,   41,   41,   41,   41,   41,
+       41,   41,   41,   41,   41,   41,   41,   41,   41,   41,
+       41,   41
+
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -464,7 +471,7 @@ static yyconst flex_int16_t yy_chk[84] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/12 22:27:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 11:22:58 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -492,8 +499,12 @@ static yyconst flex_int16_t yy_chk[84] =
          result = 1;                                                    \
      }                                                                  \
    }
+
+   /* Forward prototypes for functions defined below.  */
+   char *rec_sex_lex_extract_name (char *str);
+   bool rec_sex_lex_extract_index (char *str, int *num);
 /* Please do not touch this comment' */
-#line 497 "rec-sex.lex.c"
+#line 508 "rec-sex.lex.c"
 
 #define INITIAL 0
 
@@ -729,10 +740,10 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-#line 51 "rec-sex.l"
+#line 55 "rec-sex.l"
 
 
-#line 736 "rec-sex.lex.c"
+#line 747 "rec-sex.lex.c"
 
     yylval = yylval_param;
 
@@ -787,13 +798,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 39 )
+				if ( yy_current_state >= 42 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 59 );
+		while ( yy_base[yy_current_state] != 66 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -820,92 +831,92 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 53 "rec-sex.l"
+#line 57 "rec-sex.l"
 { /* Ignore whitespace */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 55 "rec-sex.l"
+#line 59 "rec-sex.l"
 { return REC_SEX_TOK_ADD; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 56 "rec-sex.l"
+#line 60 "rec-sex.l"
 { return REC_SEX_TOK_SUB; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 57 "rec-sex.l"
+#line 61 "rec-sex.l"
 { return REC_SEX_TOK_DIV; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 58 "rec-sex.l"
+#line 62 "rec-sex.l"
 { return REC_SEX_TOK_MOD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 59 "rec-sex.l"
+#line 63 "rec-sex.l"
 { return REC_SEX_TOK_MUL; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 60 "rec-sex.l"
+#line 64 "rec-sex.l"
 { return REC_SEX_TOK_EQL; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 61 "rec-sex.l"
+#line 65 "rec-sex.l"
 { return REC_SEX_TOK_NEQ; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 62 "rec-sex.l"
+#line 66 "rec-sex.l"
 { return REC_SEX_TOK_NOT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 63 "rec-sex.l"
+#line 67 "rec-sex.l"
 { return REC_SEX_TOK_MAT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 64 "rec-sex.l"
+#line 68 "rec-sex.l"
 { return REC_SEX_TOK_GT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 65 "rec-sex.l"
+#line 69 "rec-sex.l"
 { return REC_SEX_TOK_LT; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 66 "rec-sex.l"
+#line 70 "rec-sex.l"
 { return REC_SEX_TOK_BP; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 67 "rec-sex.l"
+#line 71 "rec-sex.l"
 { return REC_SEX_TOK_EP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 68 "rec-sex.l"
+#line 72 "rec-sex.l"
 { return REC_SEX_TOK_AND; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 69 "rec-sex.l"
+#line 73 "rec-sex.l"
 { return REC_SEX_TOK_OR; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 70 "rec-sex.l"
+#line 74 "rec-sex.l"
 { return REC_SEX_TOK_SHARP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 72 "rec-sex.l"
+#line 76 "rec-sex.l"
 {
   /*
    * Create an integer node.
@@ -918,40 +929,47 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 82 "rec-sex.l"
+#line 86 "rec-sex.l"
 {
-  /*
-   * Create a name node.
-   */
-  {
-    char *name_str;
+  int res;
+  char *match;
+  char *name;
+  char *name_str;
+  int index = -1;
 
-    /* Make sure the field name finish with ':'.  */
-    name_str = malloc (strlen(yytext) + 2);
-    strncpy (name_str, yytext, strlen(yytext));
-    if (yytext[strlen(yytext) - 1] != ':')
-      {
-        name_str[strlen(yytext)] = ':';
-        name_str[strlen(yytext) + 1] = 0;
-      }
-    else
-      {
-        name_str[strlen(yytext)] = 0;
-      }
+  match = strdup (yytext);
+  rec_sex_lex_extract_index (match, &index);
+  name = rec_sex_lex_extract_name (match);
 
-    yylval->node = rec_sex_ast_node_new ();
-    rec_sex_ast_node_set_name (yylval->node, name_str);
+  /* Make sure the field name finish with ':'.  */
+  name_str = malloc (strlen(name) + 2);
+  strncpy (name_str, name, strlen(name));
+  if (yytext[strlen(name) - 1] != ':')
+    {
+      name_str[strlen(name)] = ':';
+      name_str[strlen(name) + 1] = 0;
+    }
+  else
+    {
+      name_str[strlen(name)] = 0;
+    }
 
-    free (name_str);
-  }
+  /* Create a name node.  */
+  yylval->node = rec_sex_ast_node_new ();
+  rec_sex_ast_node_set_name (yylval->node, name_str);
+  rec_sex_ast_node_set_index (yylval->node, index);
+  res = REC_SEX_TOK_NAM;
 
-  return REC_SEX_TOK_NAM;
+  free (name);
+  free (match);
+
+  return res;
 }
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 111 "rec-sex.l"
+#line 122 "rec-sex.l"
 {
   /*
    * Create a string node.
@@ -968,15 +986,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 125 "rec-sex.l"
+#line 136 "rec-sex.l"
 { return REC_SEX_TOK_ERR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 127 "rec-sex.l"
+#line 138 "rec-sex.l"
 ECHO;
 	YY_BREAK
-#line 980 "rec-sex.lex.c"
+#line 998 "rec-sex.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1270,7 +1288,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 39 )
+			if ( yy_current_state >= 42 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1299,11 +1317,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 39 )
+		if ( yy_current_state >= 42 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 38);
+	yy_is_jam = (yy_current_state == 41);
 
 	return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2143,46 +2161,68 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 127 "rec-sex.l"
+#line 138 "rec-sex.l"
 
 
 
-/*
-#{FIELD_NAME} {
-  {
-    int i;
-    int num_fields = 0;
-    rec_field_name_t field_name;
-    char *field_name_str;
+char *
+rec_sex_lex_extract_name (char *str)
+{
+  char *res;
+  char *p;
 
-    field_name_str = malloc (strlen (yytext));
-    strncpy (field_name_str, yytext + 1, strlen (yytext) - 1);
-    field_name_str[strlen (yytext) - 1] = ':';
-    field_name_str[strlen (yytext)] = 0;
+  p = str;
+  while ((*p != '[') && (*p != 0))
+    {
+      p++;
+    }
 
-    field_name = rec_parse_field_name_str (field_name_str);
-    for (i = 0; i < rec_record_size (yyextra->record); i++)
-      {
-        rec_field_t field;
-  
-        field = rec_record_get_field (yyextra->record, i);
-        if (rec_field_name_equal_p (rec_field_name (field),
-                                    field_name))
-          {
-            num_fields++;
-          }
-      }
+  res = malloc ((p - str) + 1);
+  strncpy (res, str, (p - str));
+  res[(p - str) + 1] = 0;
 
-    yylval->sexval.type = REC_SEX_INT;
-    yylval->sexval.int_val = num_fields;
-    yylval->sexval.tag = NULL;
-
-    free (field_name_str);
-  }
-
-  return REC_SEX_TOK_INT;
+  return res;
 }
-*/
+
+bool
+rec_sex_lex_extract_index (char *str,
+                           int *num)
+{
+  bool res;
+  char *p, *b;
+  char aux[100];
+  int aux_size;
+
+  /* Note that this function assumes syntax correctness in STR if a
+     '[' is found.  */  
+
+  aux_size = 0;
+  p = str;
+  while ((*p != 0) && (*p != '['))
+    {
+      p++;
+    }
+
+  if (*p == 0)
+    {
+      res = false;
+    }
+  else
+    {
+      p++; /* Pass the [.  */
+      while (*p != ']')
+        {
+          aux[aux_size++] = *p;
+          p++;
+        }
+      aux[aux_size] = 0;
+
+      *num = atoi (aux);
+      res = true;
+    }
+
+  return res;
+}
 
 /* End of rec-sex.l */
 

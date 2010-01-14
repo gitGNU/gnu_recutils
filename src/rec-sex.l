@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/12 22:27:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 11:22:58 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -36,6 +36,10 @@
          result = 1;                                                    \
      }                                                                  \
    }
+
+   /* Forward prototypes for functions defined below.  */
+   char *rec_sex_lex_extract_name (char *str);
+   bool rec_sex_lex_extract_index (char *str, int *num);
 %}
 
 NEWLINE            \n
@@ -79,33 +83,40 @@ STRING             '([^'\n]|\\(.|\n))*'
   return REC_SEX_TOK_INT;    
 }
 
-{FIELD_NAME} {
-  /*
-   * Create a name node.
-   */
-  {
-    char *name_str;
+{FIELD_NAME}(\[[0-9]+\])? {
+  int res;
+  char *match;
+  char *name;
+  char *name_str;
+  int index = -1;
 
-    /* Make sure the field name finish with ':'.  */
-    name_str = malloc (strlen(yytext) + 2);
-    strncpy (name_str, yytext, strlen(yytext));
-    if (yytext[strlen(yytext) - 1] != ':')
-      {
-        name_str[strlen(yytext)] = ':';
-        name_str[strlen(yytext) + 1] = 0;
-      }
-    else
-      {
-        name_str[strlen(yytext)] = 0;
-      }
+  match = strdup (yytext);
+  rec_sex_lex_extract_index (match, &index);
+  name = rec_sex_lex_extract_name (match);
 
-    yylval->node = rec_sex_ast_node_new ();
-    rec_sex_ast_node_set_name (yylval->node, name_str);
+  /* Make sure the field name finish with ':'.  */
+  name_str = malloc (strlen(name) + 2);
+  strncpy (name_str, name, strlen(name));
+  if (yytext[strlen(name) - 1] != ':')
+    {
+      name_str[strlen(name)] = ':';
+      name_str[strlen(name) + 1] = 0;
+    }
+  else
+    {
+      name_str[strlen(name)] = 0;
+    }
 
-    free (name_str);
-  }
+  /* Create a name node.  */
+  yylval->node = rec_sex_ast_node_new ();
+  rec_sex_ast_node_set_name (yylval->node, name_str);
+  rec_sex_ast_node_set_index (yylval->node, index);
+  res = REC_SEX_TOK_NAM;
 
-  return REC_SEX_TOK_NAM;
+  free (name);
+  free (match);
+
+  return res;
 }
 
 {STRING} {
@@ -126,41 +137,63 @@ STRING             '([^'\n]|\\(.|\n))*'
 
 %%
 
-/*
-#{FIELD_NAME} {
-  {
-    int i;
-    int num_fields = 0;
-    rec_field_name_t field_name;
-    char *field_name_str;
+char *
+rec_sex_lex_extract_name (char *str)
+{
+  char *res;
+  char *p;
 
-    field_name_str = malloc (strlen (yytext));
-    strncpy (field_name_str, yytext + 1, strlen (yytext) - 1);
-    field_name_str[strlen (yytext) - 1] = ':';
-    field_name_str[strlen (yytext)] = 0;
+  p = str;
+  while ((*p != '[') && (*p != 0))
+    {
+      p++;
+    }
 
-    field_name = rec_parse_field_name_str (field_name_str);
-    for (i = 0; i < rec_record_size (yyextra->record); i++)
-      {
-        rec_field_t field;
-  
-        field = rec_record_get_field (yyextra->record, i);
-        if (rec_field_name_equal_p (rec_field_name (field),
-                                    field_name))
-          {
-            num_fields++;
-          }
-      }
+  res = malloc ((p - str) + 1);
+  strncpy (res, str, (p - str));
+  res[(p - str) + 1] = 0;
 
-    yylval->sexval.type = REC_SEX_INT;
-    yylval->sexval.int_val = num_fields;
-    yylval->sexval.tag = NULL;
-
-    free (field_name_str);
-  }
-
-  return REC_SEX_TOK_INT;
+  return res;
 }
-*/
+
+bool
+rec_sex_lex_extract_index (char *str,
+                           int *num)
+{
+  bool res;
+  char *p, *b;
+  char aux[100];
+  int aux_size;
+
+  /* Note that this function assumes syntax correctness in STR if a
+     '[' is found.  */  
+
+  aux_size = 0;
+  p = str;
+  while ((*p != 0) && (*p != '['))
+    {
+      p++;
+    }
+
+  if (*p == 0)
+    {
+      res = false;
+    }
+  else
+    {
+      p++; /* Pass the [.  */
+      while (*p != ']')
+        {
+          aux[aux_size++] = *p;
+          p++;
+        }
+      aux[aux_size] = 0;
+
+      *num = atoi (aux);
+      res = true;
+    }
+
+  return res;
+}
 
 /* End of rec-sex.l */

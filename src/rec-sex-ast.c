@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 17:33:01 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 11:18:23 jemarch"
  *
  *       File:         rec-sex-ast.c
  *       Date:         Tue Jan 12 17:29:03 2010
@@ -79,7 +79,7 @@ rec_sex_ast_node_new (void)
     {
       new->type = REC_SEX_NOVAL;
       new->num_children = 0;
-      new->index = 0;  /* Important!!!  See rec_sex_eval_node.  */
+      new->index = -1;
     }
 
   return new;
@@ -260,7 +260,14 @@ rec_sex_ast_node_reset (rec_sex_ast_node_t node)
 int
 rec_sex_ast_node_index (rec_sex_ast_node_t node)
 {
-  return node->index++;
+  return node->index;
+}
+
+void
+rec_sex_ast_node_set_index (rec_sex_ast_node_t node,
+                            int index)
+{
+  node->index = index;
 }
 
 void

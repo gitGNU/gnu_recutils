@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 17:34:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 11:23:05 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -119,19 +119,19 @@ rec_sex_compile (rec_sex_t sex,
                                rec_sex_ast_top (sex->ast),              \
                                status);                                 \
                                                                         \
-  switch (val.type)                                                     \
-    {                                                                   \
-    case REC_SEX_VAL_INT:                                               \
-      {                                                                 \
-        res = (val.int_val != 0);                                       \
-        break;                                                          \
-      }                                                                 \
-     case REC_SEX_VAL_STR:                                              \
-       {                                                                \
-         res = false;                                                   \
-         break;                                                         \
-       }                                                                \
-     }                                                                  \
+      switch (val.type)                                                 \
+        {                                                               \
+        case REC_SEX_VAL_INT:                                           \
+          {                                                             \
+            res = (val.int_val != 0);                                   \
+            break;                                                      \
+          }                                                             \
+        case REC_SEX_VAL_STR:                                           \
+          {                                                             \
+            res = false;                                                \
+            break;                                                      \
+          }                                                             \
+        }                                                               \
     }                                                                   \
   while (0)
 
@@ -590,11 +590,18 @@ rec_sex_eval_node (rec_sex_t sex,
         rec_field_t field;
         rec_field_name_t field_name;
         char *field_name_str;
-        int n;
+        int index;
 
         field_name_str = rec_sex_ast_node_name (node);
+        index = rec_sex_ast_node_index (node);
+
+        if (index == -1)
+          {
+            index = 0;
+          }
+
         field_name = rec_parse_field_name_str (field_name_str);
-        field = rec_record_get_field_by_name (record, field_name, 0);
+        field = rec_record_get_field_by_name (record, field_name, index);
 
         res.type = REC_SEX_VAL_STR;
         if (field)
@@ -613,6 +620,5 @@ rec_sex_eval_node (rec_sex_t sex,
 
   return res;
 }
-
  
 /* End of rec-sex.c */
