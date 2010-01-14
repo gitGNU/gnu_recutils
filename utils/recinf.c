@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:14:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 17:26:24 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -119,12 +119,7 @@ print_info_file (FILE *in)
         {
           if (descriptor)
             {
-              rec_field_name_t fname;
-
-              fname = rec_parse_field_name_str ("%rec:");
-              printf ("%s", rec_field_value (rec_record_get_field_by_name (descriptor,
-                                                                           fname,
-                                                                           0)));
+              printf ("%s", rec_rset_type (rset));
             }
           else
             {
@@ -157,7 +152,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "V",
+                             "v",
                              GNU_longOptions,
                              NULL)) != -1)
     {

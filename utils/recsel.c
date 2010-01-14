@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 17:02:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 17:37:04 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -36,7 +36,7 @@
 /* Forward prototypes.  */
 void recsel_parse_args (int argc, char **argv);
 rec_db_t recsel_build_db (int argc, char **argv);
-bool recsel_process_file (FILE *in, rec_db_t db);
+bool recsel_process_file (FILE *in, char *file_name, rec_db_t db);
 bool recsel_process_data (rec_db_t db);
 
 /*
@@ -275,7 +275,7 @@ recsel_build_db (int argc,
             }
           else
             {
-              if (!recsel_process_file (in, db))
+              if (!recsel_process_file (in, file_name, db))
                 {
                   free (db);
                   db = NULL;
@@ -287,7 +287,7 @@ recsel_build_db (int argc,
     }
   else
     {
-      if (!recsel_process_file (stdin, db))
+      if (!recsel_process_file (stdin, "stdin", db))
         {
           free (db);
           db = NULL;
@@ -299,6 +299,7 @@ recsel_build_db (int argc,
 
 bool
 recsel_process_file (FILE *in,
+                     char *file_name,
                      rec_db_t db)
 /* Parse databases from IN and append them to DB.  */
 {
@@ -311,7 +312,16 @@ recsel_process_file (FILE *in,
 
   while (rec_parse_rset (parser, &rset))
     {
+      char *rset_type;
       /* XXX: check for consistency!!!.  */
+      rset_type = rec_rset_type (rset);
+      if (rec_db_type_p (db, rset_type))
+        {
+          fprintf (stderr, "recsel: error: duplicated record set '%s' from %s.\n",
+                   rset_type, file_name);
+          exit (1);
+        }
+
       if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
         {
           /* Error.  */

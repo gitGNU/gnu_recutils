@@ -320,6 +320,9 @@ rec_record_t rec_rset_descriptor (rec_rset_t rset);
  */
 void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
 
+/* Get the type of a record set.  */
+char *rec_rset_type (rec_rset_t rset);
+
 /*
  * DATABASES
  *
@@ -381,6 +384,12 @@ bool rec_db_insert_rset (rec_db_t db,
  * is an error or the database has no record sets 'false' is returned.
  */
 bool rec_db_remove_rset (rec_db_t db, int position);
+
+/* Determine whether an rset named TYPE exists in DB.  */
+bool rec_db_type_p (rec_db_t db, char *type);
+
+/* Get the rset with the given type from db.  */
+rec_rset_t rec_db_get_rset_by_type (rec_db_t db, char *type);
 
 /*
  * PARSER
