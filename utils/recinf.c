@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 14:56:26 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 15:14:15 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -46,7 +46,6 @@ char *program_name; /* Initialized in main() */
 static const struct option GNU_longOptions[] =
   {
     {"help", no_argument, NULL, HELP_ARG},
-    {"usage", no_argument, NULL, USAGE_ARG},
     {"version", no_argument, NULL, VERSION_ARG},
     {"verbose", no_argument, NULL, VERBOSE_ARG},
     {NULL, 0, NULL, 0}
@@ -62,18 +61,24 @@ There is NO WARRANTY, to the extent permitted by law.\n\
 \n\
 Written by Jose E. Marchesi.";
 
-char *recinf_usage_msg = "\
+char *recinf_help_msg = "\
 Usage: recinf [OPTION]... [FILE]...\n\
-Print information about the contents of the specified rec files.\n\
+Print information about rec data.\n\
 \n\
-available options\n\
-  -V, --verbose                       include the full record descriptors.\n\
-  --help                              print a help message and exit.\n\
-  --usage                             print a usage message and exit.\n\
-  --version                           show recinf version and exit.\n\
+  -v, --verbose                       include the full record descriptors.\n\
+      --help                          print a help message and exit.\n\
+      --usage                         print a usage message and exit.\n\
+      --version                       show recinf version and exit.\n\
+\n\
+Examples:\n\
+\n\
+        recinf mydata.rec\n\
+        recinf -V mydata.rec moredata.rec\n\
+\n\
+Report recinf bugs to bug-recutils@gnu.org\n\
+GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
+General help using GNU software: <http://www.gnu.org/gethelp/>\
 ";
-
-char *recinf_help_msg = "";
 
 bool recinf_verbose = false;
 
@@ -162,7 +167,7 @@ main (int argc, char *argv[])
           /* COMMON ARGUMENTS */
         case HELP_ARG:
           {
-            fprintf (stdout, "%s\n", recinf_usage_msg);
+            fprintf (stdout, "%s\n", recinf_help_msg);
             exit (0);
             break;
           }
@@ -172,14 +177,8 @@ main (int argc, char *argv[])
             exit (0);
             break;
           }
-        case USAGE_ARG:
-          {
-            fprintf (stdout, "%s\n", recinf_usage_msg);
-            exit (0);
-            break;
-          }
         case VERBOSE_ARG:
-        case 'V':
+        case 'v':
           {
             recinf_verbose = true;
             break;
