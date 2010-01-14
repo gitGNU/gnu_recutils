@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 16:28:55 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 21:03:28 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -157,11 +157,28 @@ rec_write_record (rec_writer_t writer,
   ret = true;
   for (i = 0; i < rec_record_size (record); i++)
     {
-      field = rec_record_get_field (record, i);
-      if (!rec_write_field (writer, field))
+      if (rec_record_comment_p (record))
         {
-          ret = false;
-          break;
+          if (!rec_writer_putc (writer, '#'))
+            {
+              ret = false;
+              break;
+            }
+          if (!rec_writer_puts (writer,
+                                rec_record_comment (record)))
+            {
+              ret = false;
+              break;
+            }
+        }
+      else
+        {
+          field = rec_record_get_field (record, i);
+          if (!rec_write_field (writer, field))
+            {
+              ret = false;
+              break;
+            }
         }
     }
 

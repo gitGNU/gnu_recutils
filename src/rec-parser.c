@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:58:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 21:14:57 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -461,6 +461,11 @@ rec_parse_rset (rec_parser_t parser,
         {
           rec_parser_ungetc (parser, c);
           rec_parse_comment (parser, &comment_value);
+
+          /* Add a fake record with the comment value.  */
+          record = rec_record_new ();
+          rec_record_set_comment (record, comment_value);
+          rec_rset_insert_record (new, record, rec_rset_size (new));
         }
       else
         {

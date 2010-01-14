@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 18:05:06 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 21:15:36 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -36,8 +36,8 @@
 /* Forward prototypes.  */
 void recsel_parse_args (int argc, char **argv);
 rec_db_t recsel_build_db (int argc, char **argv);
-bool recsel_process_file (FILE *in, char *file_name, rec_db_t db);
 bool recsel_process_data (rec_db_t db);
+bool recsel_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 
 /*
  * Global variables
@@ -251,6 +251,41 @@ recsel_parse_args (int argc,
     }
 }
 
+bool
+recsel_parse_db_from_file (FILE *in,
+                           char *file_name,
+                           rec_db_t db)
+{
+  bool res;
+  rec_rset_t rset;
+  rec_parser_t parser;
+
+  res = true;
+  parser = rec_parser_new (in);
+
+  while (rec_parse_rset (parser, &rset))
+    {
+      char *rset_type;
+      /* XXX: check for consistency!!!.  */
+      rset_type = rec_rset_type (rset);
+      if (rec_db_type_p (db, rset_type))
+        {
+          fprintf (stderr, "error: duplicated record set '%s' from %s.\n",
+                   rset_type, file_name);
+          exit (1);
+        }
+
+      if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
+        {
+          /* Error.  */
+          res = false;
+          break;
+        }
+    }
+  
+  return res;
+}
+
 rec_db_t
 recsel_build_db (int argc,
                  char **argv)
@@ -275,7 +310,7 @@ recsel_build_db (int argc,
             }
           else
             {
-              if (!recsel_process_file (in, file_name, db))
+              if (!recsel_parse_db_from_file (in, file_name, db))
                 {
                   free (db);
                   db = NULL;
@@ -287,7 +322,7 @@ recsel_build_db (int argc,
     }
   else
     {
-      if (!recsel_process_file (stdin, "stdin", db))
+      if (!recsel_parse_db_from_file (stdin, "stdin", db))
         {
           free (db);
           db = NULL;
@@ -295,42 +330,6 @@ recsel_build_db (int argc,
     }
 
   return db;
-}
-
-bool
-recsel_process_file (FILE *in,
-                     char *file_name,
-                     rec_db_t db)
-/* Parse databases from IN and append them to DB.  */
-{
-  bool res;
-  rec_rset_t rset;
-  rec_parser_t parser;
-
-  res = true;
-  parser = rec_parser_new (in);
-
-  while (rec_parse_rset (parser, &rset))
-    {
-      char *rset_type;
-      /* XXX: check for consistency!!!.  */
-      rset_type = rec_rset_type (rset);
-      if (rec_db_type_p (db, rset_type))
-        {
-          fprintf (stderr, "recsel: error: duplicated record set '%s' from %s.\n",
-                   rset_type, file_name);
-          exit (1);
-        }
-
-      if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
-        {
-          /* Error.  */
-          res = false;
-          break;
-        }
-    }
-  
-  return res;
 }
 
 bool

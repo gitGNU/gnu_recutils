@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 20:40:15 jemarch"
  *
  *       File:         rec-field.c
  *       Date:         Fri Feb 27 20:40:26 2009
@@ -130,6 +130,20 @@ rec_field_destroy (rec_field_t field)
     }
 
   free (field);
+}
+
+bool
+rec_field_comment_p (rec_field_t field)
+{
+  bool res;
+
+  rec_field_name_t empty_fname;
+  empty_fname = rec_field_name_new ();
+  res = rec_field_name_equal_p (rec_field_name (field),
+                                empty_fname);
+  rec_field_name_destroy (empty_fname);
+
+  return res;
 }
 
 /* End of rec-field.c */

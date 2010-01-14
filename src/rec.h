@@ -128,6 +128,10 @@ rec_field_t rec_field_dup (rec_field_t field);
 bool rec_field_equal_p (rec_field_t field1,
                         rec_field_t field2);
 
+/* Determine wether a given field is a comment (i.e. its field name is
+   empty).  */
+bool rec_field_comment_p (rec_field_t field);
+
 /*
  * RECORDS
  *
@@ -242,6 +246,16 @@ rec_record_remove_field_by_name (rec_record_t record,
  * If there is not enough memory to perform the copy then NULL is
  * returned. */
 rec_record_t rec_record_dup (rec_record_t record);
+
+/* Determine wether a given record is a comment.  */
+bool rec_record_comment_p (rec_record_t record);
+
+/* Get a comment from a record.  */
+char *rec_record_comment (rec_record_t record);
+
+/* Set the comment value of a record. */
+void rec_record_set_comment (rec_record_t record,
+                             char *comment);
 
 /*
  * RECORD SETS
@@ -439,6 +453,7 @@ void rec_parser_reset (rec_parser_t parser);
  * describing what went wrong.
  */
 void rec_parser_perror (rec_parser_t parser, char *fmt, ...);
+
 
 /*
  * WRITER

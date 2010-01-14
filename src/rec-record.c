@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 18:47:49 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 21:16:54 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -44,10 +44,11 @@ static void rec_record_field_dispose_fn (const void *elt);
  */
 struct rec_record_s
 {
-  int size;             /* Number of fields contained in this
-                           record.  */
-  gl_list_t field_list; /* List of fields contained in this
-                           record.  */
+  int size;             /* Number of fields contained in this record.  */
+  gl_list_t field_list; /* List of fields.  */
+  
+  char *comment;  /* String containing the contents of a comment, if
+                     size == 0 and comment != NULL.  */
 };
 
 rec_record_t
@@ -60,6 +61,7 @@ rec_record_new (void)
   if (record != NULL)
     {
       record->size = 0;
+      record->comment = 0;
       record->field_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
                                                     rec_record_field_equals_fn,
                                                     NULL,
@@ -359,6 +361,31 @@ rec_record_remove_field_by_name (rec_record_t record,
           i++;
         }
     }
+}
+
+bool
+rec_record_comment_p (rec_record_t record)
+{
+  return ((record->size == 0)
+          && (record->comment != NULL));
+}
+
+char *
+rec_record_comment (rec_record_t record)
+{
+  return record->comment;
+}
+
+void
+rec_record_set_comment (rec_record_t record,
+                        char *comment)
+{
+  if (record->comment != NULL)
+    {
+      free (record->comment);
+    }
+
+  record->comment = strdup (comment);
 }
 
 /*
