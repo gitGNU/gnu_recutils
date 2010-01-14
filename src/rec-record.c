@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:44:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 18:47:49 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -45,8 +45,9 @@ static void rec_record_field_dispose_fn (const void *elt);
 struct rec_record_s
 {
   int size;             /* Number of fields contained in this
-                           record */
-  gl_list_t field_list; /* List of fields contained in this record */
+                           record.  */
+  gl_list_t field_list; /* List of fields contained in this
+                           record.  */
 };
 
 rec_record_t
