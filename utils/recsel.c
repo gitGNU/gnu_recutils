@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:14:10 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 17:02:04 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -32,6 +32,12 @@
 #include <rec.h>
 
 #include <recsel.h>
+
+/* Forward prototypes.  */
+void recsel_parse_args (int argc, char **argv);
+rec_db_t recsel_build_db (int argc, char **argv);
+bool recsel_process_file (FILE *in, rec_db_t db);
+bool recsel_process_data (rec_db_t db);
 
 /*
  * Global variables
@@ -118,8 +124,207 @@ bool recsel_insensitive = false;
 /* Whether to provide an specific record.  */
 long recsel_num = -1;
 
+void
+recsel_parse_args (int argc,
+                   char **argv)
+{
+  char c;
+  char ret;
+
+  while ((ret = getopt_long (argc,
+                             argv,
+                             "Cict:e:n:p:",
+                             GNU_longOptions,
+                             NULL)) != -1)
+    {
+      c = ret;
+      switch (c)
+        {
+          /* COMMON ARGUMENTS */
+        case HELP_ARG:
+          {
+            fprintf (stdout, "%s\n", recsel_help_msg);
+            exit (0);
+            break;
+          }
+        case VERSION_ARG:
+          {
+            fprintf (stdout, "%s\n", recsel_version_msg);
+            exit (0);
+            break;
+          }
+        case EXPRESSION_ARG:
+        case 'e':
+          {
+            if (recsel_num != -1)
+              {
+                fprintf (stderr, "%s: cannot specify -e and also -n.\n",
+                         argv[0]);
+                exit (1);
+              }
+            
+            recsel_sex_str = strdup (optarg);
+
+            /* Compile the search expression.  */
+            if (recsel_sex_str)
+              {
+                recsel_sex = rec_sex_new (recsel_insensitive);
+                if (!rec_sex_compile (recsel_sex, recsel_sex_str))
+                  {
+                    exit (1);
+                  }
+              }
+            
+            break;
+          }
+        case INSENSITIVE_ARG:
+        case 'i':
+          {
+            recsel_insensitive = true;
+            break;
+          }
+        case NUM_ARG:
+        case 'n':
+          {
+            if (recsel_sex)
+              {
+                fprintf (stderr, "%s: cannot specify -n and also -e.\n",
+                         argv[0]);
+                exit (1);
+              }
+
+            /* XXX: check for conversion errors.  */
+            recsel_num = atoi (optarg);
+            break;
+          }
+        case PRINT_ARG:
+        case 'p':
+          {
+            if (recsel_count)
+              {
+                fprintf (stderr, "%s: cannot specify -p and also -c.\n",
+                         argv[0]);
+                exit (1);
+              }
+
+            recsel_expr = strdup (optarg);
+
+            if (!rec_resolver_check (recsel_expr))
+              {
+                fprintf (stderr, "Invalid field list.\n");
+                exit (1);
+              }
+
+            break;
+          }
+        case TYPE_ARG:
+        case 't':
+          {
+            recsel_type = strdup (optarg);
+            break;
+          }
+        case COLLAPSE_ARG:
+        case 'C':
+          {
+            recsel_collapse = true;
+            break;
+          }
+        case COUNT_ARG:
+        case 'c':
+          {
+            if (recsel_expr)
+              {
+                fprintf (stderr, "%s: cannot specify -c and also -p.\n",
+                         argv[0]);
+                exit (1);
+              }
+
+            recsel_count = true;
+            break;
+          }
+        default:
+          {
+            exit (1);
+          }
+
+        }
+    }
+}
+
+rec_db_t
+recsel_build_db (int argc,
+                 char **argv)
+{
+  rec_db_t db;
+  char *file_name;
+  FILE *in;
+
+  db = rec_db_new ();
+
+  /* Process the input files, if any.  Otherwise use the standard
+     input to read the rec data.  */
+  if (optind < argc)
+    {
+      while (optind < argc)
+        {
+          file_name = argv[optind++];
+          if (!(in = fopen (file_name, "r")))
+            {
+              printf("%s: cannot read file %s\n", argv[0], file_name);
+              exit (1);
+            }
+          else
+            {
+              if (!recsel_process_file (in, db))
+                {
+                  free (db);
+                  db = NULL;
+                }
+              
+              fclose (in);
+            }
+        }
+    }
+  else
+    {
+      if (!recsel_process_file (stdin, db))
+        {
+          free (db);
+          db = NULL;
+        }
+    }
+
+  return db;
+}
+
 bool
-recsel_file (FILE *in)
+recsel_process_file (FILE *in,
+                     rec_db_t db)
+/* Parse databases from IN and append them to DB.  */
+{
+  bool res;
+  rec_rset_t rset;
+  rec_parser_t parser;
+
+  res = true;
+  parser = rec_parser_new (in);
+
+  while (rec_parse_rset (parser, &rset))
+    {
+      /* XXX: check for consistency!!!.  */
+      if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
+        {
+          /* Error.  */
+          res = false;
+          break;
+        }
+    }
+  
+  return res;
+}
+
+bool
+recsel_process_data (rec_db_t db)
 {
   bool ret;
   int rset_size;
@@ -127,19 +332,20 @@ recsel_file (FILE *in)
   rec_record_t record;
   rec_record_t descriptor;
   rec_field_t type;
-  int i, written;
-  rec_parser_t parser;
+  int n_rset, i, written;
   rec_writer_t writer;
   bool parse_status;
 
   ret = true;
 
-  parser = rec_parser_new (in);
   writer = rec_writer_new (stdout);
 
   written = 0;
-  while (rec_parse_rset (parser, &rset))
+  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
+      rset = rec_db_get_rset (db, n_rset);
+
+      /* Discriminate by type, if requested.  */
       if (recsel_type != NULL)
         {
           rec_field_name_t fname;
@@ -156,23 +362,24 @@ recsel_file (FILE *in)
             }
         }
 
+      /*  Print out the records of this rset, if appropriate.  */
       rset_size = rec_rset_size (rset);
       for (i = 0; i < rset_size; i++)
         {
           record = rec_rset_get_record (rset, i);
-
+          
           if (((recsel_num == -1) &&
                ((!recsel_sex_str) ||
                 (rec_sex_eval (recsel_sex, record, &parse_status))))
               || (recsel_num == i))
             {
               char *resolver_result = NULL;
-
+              
               if (recsel_expr)
                 {
                   resolver_result = rec_resolve_str (record, recsel_expr);
                 }
-
+              
               if ((written != 0)
                   && (!recsel_collapse)
                   && (!recsel_count)
@@ -212,12 +419,6 @@ recsel_file (FILE *in)
         }
     }
 
-  if (rec_parser_error (parser))
-    {
-      rec_parser_perror (parser, "recsel:");
-      exit(1);
-    }
-
   if (recsel_count)
     {
       printf ("%d\n", written);
@@ -229,160 +430,29 @@ recsel_file (FILE *in)
 int
 main (int argc, char *argv[])
 {
-  char c;
-  char ret;
-  char *file_name;
-  FILE *in;
+  int res;
+  rec_db_t db;
 
+  res = 0;
   program_name = strdup (argv[0]);
 
-  while ((ret = getopt_long (argc,
-                             argv,
-                             "Cict:e:n:p:",
-                             GNU_longOptions,
-                             NULL)) != -1)
+  /* Parse arguments.  */
+  recsel_parse_args (argc, argv);
+
+  /* Get the input data.  */
+  db = recsel_build_db (argc, argv);
+  if (!db)
     {
-      c = ret;
-      switch (c)
-        {
-          /* COMMON ARGUMENTS */
-        case HELP_ARG:
-          {
-            fprintf (stdout, "%s\n", recsel_help_msg);
-            exit (0);
-            break;
-          }
-        case VERSION_ARG:
-          {
-            fprintf (stdout, "%s\n", recsel_version_msg);
-            exit (0);
-            break;
-          }
-        case EXPRESSION_ARG:
-        case 'e':
-          {
-            if (recsel_num != -1)
-              {
-                fprintf (stderr, "%s: cannot specify -e and also -n.\n",
-                         argv[0]);
-                return 1;
-              }
-            
-            recsel_sex_str = strdup (optarg);
-            break;
-          }
-        case INSENSITIVE_ARG:
-        case 'i':
-          {
-            recsel_insensitive = true;
-            break;
-          }
-        case NUM_ARG:
-        case 'n':
-          {
-            if (recsel_sex)
-              {
-                fprintf (stderr, "%s: cannot specify -n and also -e.\n",
-                         argv[0]);
-                return 1;
-              }
-
-            /* XXX: check for conversion errors.  */
-            recsel_num = atoi (optarg);
-            break;
-          }
-        case PRINT_ARG:
-        case 'p':
-          {
-            if (recsel_count)
-              {
-                fprintf (stderr, "%s: cannot specify -p and also -c.\n",
-                         argv[0]);
-                return 1;
-              }
-
-            recsel_expr = strdup (optarg);
-
-            if (!rec_resolver_check (recsel_expr))
-              {
-                fprintf (stderr, "Invalid field list.\n");
-                return 1;
-              }
-
-            break;
-          }
-        case TYPE_ARG:
-        case 't':
-          {
-            recsel_type = strdup (optarg);
-            break;
-          }
-        case COLLAPSE_ARG:
-        case 'C':
-          {
-            recsel_collapse = true;
-            break;
-          }
-        case COUNT_ARG:
-        case 'c':
-          {
-            if (recsel_expr)
-              {
-                fprintf (stderr, "%s: cannot specify -c and also -p.\n",
-                         argv[0]);
-                return 1;
-              }
-
-            recsel_count = true;
-            break;
-          }
-        default:
-          {
-            return 1;
-          }
-        }
+      res = 1;
     }
 
-  /* Compile the search expression.  */
-  if (recsel_sex_str)
+  /* Process the data.  */
+  if (!recsel_process_data (db))
     {
-      recsel_sex = rec_sex_new (recsel_insensitive);
-      if (!rec_sex_compile (recsel_sex, recsel_sex_str))
-        {
-          return 1;
-        }
+      res = 1;
     }
 
-  /* Process the input files, if any.  Otherwise use the standard
-     input to read the rec data.  */
-  if (optind < argc)
-    {
-      while (optind < argc)
-        {
-          file_name = argv[optind++];
-          if (!(in = fopen (file_name, "r")))
-            {
-              printf("%s: cannot read file %s\n", argv[0], file_name);
-              return 1;
-            }
-          else
-            {
-              if (!recsel_file (in))
-                {
-                  /* Parse error.  */
-                  return 1;
-                }
-              
-              fclose (in);
-            }
-        }
-    }
-  else
-    {
-      recsel_file (stdin);
-    }
-
-  return 0;
+  return res;
 }
 
 /* End of recsel.c */
