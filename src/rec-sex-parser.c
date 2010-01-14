@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:29:05 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:17 jemarch"
  *
  *       File:         rec-sex-parser.c
  *       Date:         Tue Jan 12 18:01:37 2010
  *
- *       GNU Record Utilities - Sexy parser
+ *       GNU recutils - Sexy parser
  *
  */
 

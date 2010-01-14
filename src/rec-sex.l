@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:29:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:15 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
  *
- *       GNU Record Utilities - Selection Expressions lexer
+ *       GNU recutils - Selection Expressions lexer
  *
  */
 

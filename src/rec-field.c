@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:28:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:17 jemarch"
  *
  *       File:         rec-field.c
  *       Date:         Fri Feb 27 20:40:26 2009
  *
- *       GNU Record Utilities - Fields
+ *       GNU recutils - Fields
  *
  */
 

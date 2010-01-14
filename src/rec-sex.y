@@ -3,7 +3,7 @@
  *       File:         rec-sex.y
  *       Date:         Sat Jan  9 16:36:55 2010
  *
- *       GNU Record Utilities - Selection Expressions parser
+ *       GNU recutils - Selection Expressions parser
  *
  */
 

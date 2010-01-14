@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:29:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:16 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
  *
- *       GNU Record Utilities - Sexy expressions
+ *       GNU recutils - Sexy expressions
  *
  */
 
