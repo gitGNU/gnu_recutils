@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 22:52:26 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 11:14:46 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -172,13 +172,6 @@ rec_write_record (rec_writer_t writer,
           ret = false;
         }
     }
-  else if (rec_record_newline_p (record))
-    {
-      if (!rec_writer_putc (writer, '\n'))
-        {
-          ret = false;
-        }
-    }
   else
     {
       for (i = 0; i < rec_record_size (record); i++)
@@ -227,18 +220,18 @@ rec_write_rset (rec_writer_t writer,
       for (i = 0; i < rec_rset_size (rset); i++)
         {
           rec_record_t record;
-          
           record = rec_rset_get_record (rset, i);
-          if (!rec_write_record (writer, record))
+  
+          if ((i != 0)
+              && (rec_record_p (record))
+              && (!rec_writer_putc (writer, '\n')))
+
             {
               ret = false;
               break;
             }
 
-          if ((i != (rec_rset_size (rset) - 1))
-              && (rec_record_p (record))
-              && (!rec_writer_putc (writer, '\n')))
-
+          if (!rec_write_record (writer, record))
             {
               ret = false;
               break;
@@ -260,20 +253,19 @@ rec_write_db (rec_writer_t writer,
   ret = true;
   for (i = 0; i < rec_db_size (db); i++)
     {
+      if (i != 0)
+        {
+          if (!rec_writer_putc (writer, '\n'))
+            {
+              ret = false;
+              break;
+            }          
+        }
       if (!rec_write_rset (writer,
                            rec_db_get_rset (db, i)))
         {
           ret = false;
           break;
-        }
-
-      if (i != (rec_db_size (db) - 1))
-        {
-          /*          if (!rec_writer_putc (writer, '\n'))
-            {
-              ret = false;
-              break;
-              }*/
         }
     }
 

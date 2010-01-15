@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 00:04:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 11:12:53 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -452,16 +452,10 @@ rec_parse_rset (rec_parser_t parser,
     {
       c = (char) ci;
 
-      /* Skip newline characters and blanks */
+      /* Skip newline characters and blanks.  */
       if ((c == '\n') || (c == ' '))
         {
-          if (c == '\n')
-            {
-              /* Add a fake record with the comment value.  */
-              record = rec_record_new ();
-              rec_record_set_newline (record, true);
-              rec_rset_insert_record (new, record, rec_rset_size (new));
-            }
+          continue;
         }
       /* Skip comments */
       else if (c == '#')
