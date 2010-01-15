@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 11:31:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 11:37:35 jemarch"
  *
  *       File:         recins.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -96,7 +96,6 @@ recins_parse_db_from_file (FILE *in,
   while (rec_parse_rset (parser, &rset))
     {
       char *rset_type;
-      /* XXX: check for consistency!!!.  */
       rset_type = rec_rset_type (rset);
       if (rec_db_type_p (db, rset_type))
         {
