@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 15:23:08 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 20:23:36 jemarch"
  *
  *       File:         recdel.h
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -36,7 +36,8 @@ enum
   NUMBER_ARG,
   EXPRESSION_ARG,
   CASE_INSENSITIVE_ARG,
-  COMMENT_ARG
+  COMMENT_ARG,
+  FORCE_ARG
 };
 
 #endif /* recdel.h */

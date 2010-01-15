@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 18:12:59 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 20:30:29 jemarch"
  *
  *       File:         recdel.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -48,6 +48,7 @@ bool recdel_comment = false;
 rec_sex_t recdel_sex = NULL;
 int recdel_index = -1;
 bool recdel_case_insensitive = false;
+bool recdel_force = false;
 
 /*
  * Command line options management
@@ -62,6 +63,7 @@ static const struct option GNU_longOptions[] =
     {"expression", required_argument, NULL, EXPRESSION_ARG},
     {"case-insensitive", no_argument, NULL, CASE_INSENSITIVE_ARG},
     {"comment", no_argument, NULL, COMMENT_ARG},
+    {"force", no_argument, NULL, FORCE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -191,10 +193,11 @@ recdel_delete_records (rec_db_t db)
                   continue;
                 }
 
-              if ((recdel_index == -1) &&
-                  ((recdel_sex &&
-                    (rec_sex_eval (recdel_sex, record, &parse_status))))
-                  || (recdel_index == numrec))
+              if (((recdel_index == -1) && !recdel_sex)
+                  || ((recdel_index == -1) &&
+                      ((recdel_sex &&
+                        (rec_sex_eval (recdel_sex, record, &parse_status))))
+                      || (recdel_index == numrec)))
                 {
                   delmask[n_rec] = true;
                 }
@@ -284,6 +287,11 @@ recdel_parse_args (int argc,
             exit (0);
             break;
           }
+        case FORCE_ARG:
+          {
+            recdel_force = true;
+            break;
+          }
         case TYPE_ARG:
         case 't':
           {
@@ -333,6 +341,14 @@ recdel_parse_args (int argc,
             exit (1);
           }
         }
+    }
+
+  if ((recdel_index == -1) && !sex_str & !recdel_force)
+    {
+      fprintf (stderr, "recdel: ignoring a request to delete all records of type %s.\n",
+               recdel_type ? recdel_type : "unknown");
+      fprintf (stderr, "recdel: use --force if you really want to proceed, or use -n or -e.\n");
+      exit (1);
     }
 
   if (sex_str)
@@ -402,8 +418,9 @@ main (int argc, char *argv[])
       exit (1);
     }
   
-  if ((recdel_index != -1)
-      || recdel_sex)
+  if (((recdel_index != -1)
+       || recdel_sex)
+      || recdel_force)
     {
       recdel_delete_records (db);
     }
