@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 11:14:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 11:32:29 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -223,7 +223,6 @@ rec_write_rset (rec_writer_t writer,
           record = rec_rset_get_record (rset, i);
   
           if ((i != 0)
-              && (rec_record_p (record))
               && (!rec_writer_putc (writer, '\n')))
 
             {
