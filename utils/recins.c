@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 14:39:53 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 14:44:49 jemarch"
  *
  *       File:         recins.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -72,14 +72,17 @@ char *recins_help_msg = "\
 Usage: recins [OPTION]... [FILE]\n\
 Create rec data.\n\
 \n\
-  -v, --verbose                       include the full record descriptors.\n\
+  -t, --type=TYPE                     specify the type of the new record.\n\
+  -n, --name=STR                      field name.  Should be followed by a -v.\n\
+  -v, --value=STR                     field value.  Should be preceded by a -n.\n\
       --help                          print a help message and exit.\n\
       --usage                         print a usage message and exit.\n\
       --version                       show recins version and exit.\n\
 \n\
 Examples:\n\
 \n\
-        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n\
+        recins -n Name -v \"Mr Foo\" -n Email -v foo@foo.org contacts.rec\n\
+        recins -t Hacker -n Email -v foo@foo.org hackers.rec\n\
 \n\
 Report recins bugs to bug-recutils@gnu.org\n\
 GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
