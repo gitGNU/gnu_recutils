@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 23:10:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 17:31:12 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -171,6 +171,7 @@ recsel_parse_args (int argc,
                 recsel_sex = rec_sex_new (recsel_insensitive);
                 if (!rec_sex_compile (recsel_sex, recsel_sex_str))
                   {
+                    fprintf (stderr, "recsel: error: invalid selection expression.\n");
                     exit (1);
                   }
               }
@@ -341,7 +342,7 @@ recsel_process_data (rec_db_t db)
   rec_record_t record;
   rec_record_t descriptor;
   rec_field_t type;
-  int n_rset, i, written;
+  int n_rset, i, written, num_rec;
   rec_writer_t writer;
   bool parse_status;
 
@@ -353,80 +354,77 @@ recsel_process_data (rec_db_t db)
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-
-      /* Discriminate by type, if requested.  */
-      if (recsel_type != NULL)
-        {
-          rec_field_name_t fname;
-
-          descriptor = rec_rset_descriptor (rset);
-          fname = rec_parse_field_name_str ("%rec:");
-
-          type = NULL;
-          type = rec_record_get_field_by_name (descriptor, fname, 0);
-          if (!type
-              || strcmp (rec_field_value (type), recsel_type) != 0)
-            {
-              continue;
-            }
-        }
-
-      /*  Print out the records of this rset, if appropriate.  */
       rset_size = rec_rset_size (rset);
-      for (i = 0; i < rset_size; i++)
-        {
-          record = rec_rset_get_record (rset, i);
-          
-          if (((recsel_num == -1) &&
-               ((!recsel_sex_str) ||
-                (rec_sex_eval (recsel_sex, record, &parse_status))))
-              || (recsel_num == i))
-            {
-              char *resolver_result = NULL;
-              
-              if (recsel_expr)
-                {
-                  resolver_result = rec_resolve_str (db,
-                                                     rec_rset_type (rset),
-                                                     record,
-                                                     recsel_expr);
-                }
-              
-              if ((written != 0)
-                  && (!recsel_collapse)
-                  && (!recsel_count)
-                  && (!resolver_result || strcmp(resolver_result, "") != 0))
-                {
-                  fprintf (stdout, "\n");
-                }
 
-              if (!recsel_count)
+      if ((rset_size > 0)
+          && ((recsel_type && rec_rset_type (rset) && (strcmp (recsel_type, rec_rset_type (rset)) == 0)
+               || (!recsel_type && !rec_rset_type (rset)))))
+        {
+          /*  Print out the records of this rset, if appropriate.  */
+          num_rec = 0;
+          rset_size = rec_rset_size (rset);
+
+          for (i = 0; i < rset_size; i++)
+            {
+              record = rec_rset_get_record (rset, i);
+              if (!rec_record_p (record))
                 {
+                  continue;
+                }
+          
+              if (((recsel_num == -1) &&
+                   ((!recsel_sex_str) ||
+                    (rec_sex_eval (recsel_sex, record, &parse_status))))
+                  || (recsel_num == num_rec))
+                {
+                  char *resolver_result = NULL;
+              
                   if (recsel_expr)
                     {
-                      if (strcmp (resolver_result, "") != 0)
+                      resolver_result = rec_resolve_str (db,
+                                                         rec_rset_type (rset),
+                                                         record,
+                                                         recsel_expr);
+                    }
+              
+                  if ((written != 0)
+                      && (!recsel_collapse)
+                      && (!recsel_count)
+                      && (!resolver_result || strcmp(resolver_result, "") != 0))
+                    {
+                      fprintf (stdout, "\n");
+                    }
+
+                  if (!recsel_count)
+                    {
+                      if (recsel_expr)
                         {
-                          fprintf (stdout, "%s", resolver_result);
-                          written++;
+                          if (strcmp (resolver_result, "") != 0)
+                            {
+                              fprintf (stdout, "%s", resolver_result);
+                              written++;
+                            }
+                        }
+                      else
+                        {
+                          rec_write_record (writer, record);
                         }
                     }
-                  else
+
+                  if (!recsel_expr)
                     {
-                      rec_write_record (writer, record);
+                      written++;
                     }
                 }
 
-              if (!recsel_expr)
+              if (recsel_sex_str
+                  && (!parse_status))
                 {
-                  written++;
+                  fprintf (stderr, "recsel: error: evaluating the selection expression.\n");
+                  return false;
                 }
-            }
 
-          if (recsel_sex_str
-              && (!parse_status))
-            {
-              fprintf (stderr, "recsel: error: evaluating the selection expression.\n");
-              return false;
+              num_rec++;
             }
         }
     }

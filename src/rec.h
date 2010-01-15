@@ -507,7 +507,7 @@ rec_sex_t rec_sex_new (bool case_insensitive);
 /* Destroy a sex.  */
 void rec_sex_destroy (rec_sex_t sex);
 
-/* Compile a sex.  If there is a parse error, then return NULL.  */
+/* Compile a sex.  If there is a parse error return false.  */
 bool rec_sex_compile (rec_sex_t sex, char *expr);
 
 /* Apply a sex expression to a record, setting RESULT in accordance.  */

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 15:48:53 jemarch"
  *
  *       File:         rec-sex-parser.c
  *       Date:         Tue Jan 12 18:01:37 2010
@@ -144,7 +144,6 @@ rec_sex_parser_run (rec_sex_parser_t parser,
   else
     {
       /* Parse error.  */
-      printf ("Parse error in selection expression.\n");
       res = false;
     }
 

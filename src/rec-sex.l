@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 17:10:26 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -168,7 +168,7 @@ rec_sex_lex_extract_name (char *str)
 
   size = (p - str) + 1;
   res = malloc (size);
-  strncpy (res, str, size);
+  strncpy (res, str, size - 1);
   res[size] = 0;
 
   return res;

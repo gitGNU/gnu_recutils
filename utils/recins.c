@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 14:44:49 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 15:43:10 jemarch"
  *
  *       File:         recins.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -69,20 +69,24 @@ There is NO WARRANTY, to the extent permitted by law.\n\
 Written by Jose E. Marchesi.";
 
 char *recins_help_msg = "\
-Usage: recins [OPTION]... [FILE]\n\
-Create rec data.\n\
+Usage: recins [OPTION]... [-f STR -v STR]... [FILE]\n\
+Insert a record in a rec file.\n\
 \n\
   -t, --type=TYPE                     specify the type of the new record.\n\
-  -n, --name=STR                      field name.  Should be followed by a -v.\n\
-  -v, --value=STR                     field value.  Should be preceded by a -n.\n\
+  -f, --field=STR                     field name.  Should be followed by a -v.\n\
+  -v, --value=STR                     field value.  Should be preceded by a -f.\n\
       --help                          print a help message and exit.\n\
       --usage                         print a usage message and exit.\n\
       --version                       show recins version and exit.\n\
 \n\
+If no FILE is specified then the command acts like a filter, getting\n\
+the data from the standard input and writing the result in the\n\
+standard output.\n\
+\n\
 Examples:\n\
 \n\
-        recins -n Name -v \"Mr Foo\" -n Email -v foo@foo.org contacts.rec\n\
-        recins -t Hacker -n Email -v foo@foo.org hackers.rec\n\
+        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n\
+        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n\
 \n\
 Report recins bugs to bug-recutils@gnu.org\n\
 GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
@@ -221,7 +225,7 @@ void recins_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "t:n:v:",
+                             "t:f:v:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -248,11 +252,11 @@ void recins_parse_args (int argc,
             break;
           }
         case NAME_ARG:
-        case 'n':
+        case 'f':
           {
             if (field != NULL)
               {
-                fprintf (stderr, "recins: error: a -n should be followed by a -v.\n");
+                fprintf (stderr, "recins: error: a -f should be followed by a -v.\n");
                 exit (1);
               }
 
@@ -284,7 +288,7 @@ void recins_parse_args (int argc,
           {
             if (field == NULL)
               {
-                fprintf (stderr, "recins: error: a -v should be preceded by a -n.\n");
+                fprintf (stderr, "recins: error: a -v should be preceded by a -f.\n");
                 exit (1);
               }
 
@@ -355,7 +359,7 @@ main (int argc, char *argv[])
       in = fopen (file_name, "r");
       if (in == NULL)
         {
-          fprintf (stderr, "recins: error: cannot open %s for read.\n", file_name);
+          fprintf (stderr, "recins: error: cannot read %s.\n", file_name);
           exit (1);
         }
     }
