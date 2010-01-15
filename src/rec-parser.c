@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 23:15:28 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 00:04:46 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -594,7 +594,10 @@ rec_parse_field_name_str (char *str)
       parser = rec_parser_new (stm);
       if (parser)
         {
-          rec_parse_field_name (parser, &field_name);
+          if (!rec_parse_field_name (parser, &field_name))
+            {
+              field_name = NULL;
+            }
           rec_parser_destroy (parser);
         }
 
