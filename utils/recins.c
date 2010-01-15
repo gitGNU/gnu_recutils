@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 12:04:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 14:39:53 jemarch"
  *
  *       File:         recins.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -32,6 +32,11 @@
 #include <rec.h>
 
 #include <recins.h>
+
+/* Forward declarations.  */
+bool recins_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
+bool recins_insert_record (rec_db_t db, char *type, rec_record_t record);
+void recins_parse_args (int argc, char **argv, char **type, rec_record_t *rec);
 
 /*
  * Global variables
@@ -100,7 +105,7 @@ recins_parse_db_from_file (FILE *in,
       if (rec_db_type_p (db, rset_type))
         {
           fprintf (stderr, "recins: error: duplicated record set '%s' from %s.\n",
-                   rset_type, file_name);
+                   rset_type, file_name ? file_name : "stdin");
           exit (1);
         }
 
@@ -121,27 +126,95 @@ recins_parse_db_from_file (FILE *in,
   return res;
 }
 
-int
-main (int argc, char *argv[])
+bool
+recins_insert_record (rec_db_t db,
+                      char *type,
+                      rec_record_t record)
 {
+  bool res;
+  rec_rset_t rset;
+
+  if (rec_record_size (record) == 0)
+    {
+      /* Do nothing.  */
+      return true;
+    }
+
+  res = true;
+  
+  rset = rec_db_get_rset_by_type (db, type);
+  if (rset)
+    {
+      int i;
+      
+      for (i = (rec_rset_size (rset) - 1); i >= 0; i--)
+        {
+          rec_record_t rec;
+          rec = rec_rset_get_record (rset, i);
+          if (rec_record_p (rec))
+            {
+              /* Insert the new record just after rec.  */
+              if (!rec_rset_insert_record (rset,
+                                           record,
+                                           i + 1))
+                {
+                  fprintf (stderr, "recins: error: inserting the new record.\n");
+                  return false;
+                }     
+              
+              break;
+            }
+        }
+      
+      if (i == -1)
+        {
+          /* The rset was empty => prepend to it.  */
+          if (!rec_rset_insert_record (rset,
+                                       record,
+                                       -1))
+            {
+              fprintf (stderr, "recins: error: inserting the new record.\n");
+              return false;
+            }
+        }
+    }
+  else
+    {
+      /* Create a new type and insert the record there.  */
+      rset = rec_rset_new ();
+      rec_rset_set_type (rset, type);
+      rec_rset_insert_record (rset, record, rec_rset_size (rset));
+      
+      if (type)
+        {
+          rec_db_insert_rset (db, rset, rec_db_size (db));
+        }
+      else
+        {
+          /* The default rset should always be in the beginning of
+             the db.  */
+          rec_db_insert_rset (db, rset, -1);
+        }
+    }
+  
+  return res;
+}
+
+void recins_parse_args (int argc,
+                        char **argv,
+                        char **type,
+                        rec_record_t *rec)
+{
+  int ret;
   char c;
-  char ret;
-  char *file_name;
-  FILE *in;
-  rec_db_t db;
-  rec_writer_t writer;
-  char *type;
-  rec_record_t record;
+  rec_field_t field;
   rec_field_name_t field_name;
   char *field_name_str;
-  rec_field_t field;
+  rec_record_t record = NULL;
 
-  program_name = strdup (argv[0]);
-  
-
-  record = rec_record_new ();
-  type = NULL;
+  record = *rec;
   field = NULL;
+  *type = NULL;
 
   while ((ret = getopt_long (argc,
                              argv,
@@ -168,7 +241,7 @@ main (int argc, char *argv[])
         case TYPE_ARG:
         case 't':
           {
-            type = strdup (optarg);
+            *type = strdup (optarg);
             break;
           }
         case NAME_ARG:
@@ -222,7 +295,7 @@ main (int argc, char *argv[])
           }
         default:
           {
-            return 1;
+            exit (1);
           }
         }
     }
@@ -234,79 +307,113 @@ main (int argc, char *argv[])
                field_name_str);
       exit (1);
     }
+}
+
+int
+main (int argc, char *argv[])
+{
+  char c;
+  char *file_name = NULL;
+  char *tmp_file_name = NULL;
+  FILE *in;
+  FILE *out;
+  rec_db_t db;
+  rec_writer_t writer;
+  char *type;
+  rec_record_t record;
+
+
+  program_name = strdup (argv[0]);
+
+  record = rec_record_new ();
+  recins_parse_args (argc,
+                     argv,
+                     &type,
+                     &record);
 
   db = rec_db_new ();
-  if (!recins_parse_db_from_file (stdin,
-                                  "stdin",
+
+  /* Read the name of the file where to make the insertions.  */
+  if (optind < argc)
+    {
+
+      if ((argc - optind) != 1)
+        {
+          fprintf (stdout, "%s\n", recins_help_msg);
+          exit (1);
+        }
+
+      file_name = argv[optind++];
+    }
+
+
+  if (file_name)
+    {
+      in = fopen (file_name, "r");
+      if (in == NULL)
+        {
+          fprintf (stderr, "recins: error: cannot open %s for read.\n", file_name);
+          exit (1);
+        }
+    }
+  else
+    {
+      /* Process the standard input.  */
+      in = stdin;
+    }
+
+  if (!recins_parse_db_from_file (in,
+                                  file_name,
                                   db))
     {
       exit (1);
     }
 
-  /* Insert the record in the specified tpe, if it is not empty.  */
-  if (rec_record_size (record) > 0)
+  if (!recins_insert_record (db,
+                             type,
+                             record))
     {
-      rec_rset_t rset;
-
-      rset = rec_db_get_rset_by_type (db, type);
-      if (rset)
-        {
-          int i;
-
-          for (i = (rec_rset_size (rset) - 1); i >= 0; i--)
-            {
-              rec_record_t rec;
-              rec = rec_rset_get_record (rset, i);
-              if (rec_record_p (rec))
-                {
-                  /* Insert the new record just after rec.  */
-                  if (!rec_rset_insert_record (rset,
-                                               record,
-                                               i + 1))
-                  {
-                    fprintf (stderr, "recins: error: inserting the new record.\n");
-                    exit (1);
-                  }     
-
-                  break;
-                }
-            }
-
-          if (i == -1)
-            {
-              /* The rset was empty => prepend to it.  */
-              if (!rec_rset_insert_record (rset,
-                                           record,
-                                           -1))
-                {
-                  fprintf (stderr, "recins: error: inserting the new record.\n");
-                  exit (1);
-                }
-            }
-        }
-      else
-        {
-          /* Create a new type and insert the record there.  */
-          rset = rec_rset_new ();
-          rec_rset_set_type (rset, type);
-          rec_rset_insert_record (rset, record, rec_rset_size (rset));
+      exit (1);
+    }
            
-          if (type)
-            {
-              rec_db_insert_rset (db, rset, rec_db_size (db));
-            }
-          else
-            {
-              /* The default rset should always be in the beginning of
-                 the db.  */
-              rec_db_insert_rset (db, rset, -1);
-            }
-        }
-    } 
+  /* Output.  */
+             
+  if (!file_name)
+    {
+      out = stdout;
+    }
+  else
+    {
+      int des;
 
-  writer = rec_writer_new (stdout);
+      /* Create a temporary file with the results. */
+      tmp_file_name = malloc (100);
+      strcpy (tmp_file_name, "recXXXXXX");
+      des = mkstemp (tmp_file_name);
+      if (des == -1)
+        {
+          fprintf(stderr, "recins: error: cannot create a unique name.\n");
+          exit (1);
+        }
+      out = fdopen (des, "w+");
+    }
+
+  writer = rec_writer_new (out);
   rec_write_db (writer, db);
+  fclose (out);
   rec_db_destroy (db);
+
+  if (file_name)
+    {
+      /* Rename the temporary file to file_name.  */
+      if (rename (tmp_file_name, file_name) == -1)
+        {
+          fprintf (stderr, "recins: error: moving %s to %s\n",
+                   tmp_file_name, file_name);
+          remove (tmp_file_name);
+          exit (1);
+        }
+    }
 
   return 0;
 }
