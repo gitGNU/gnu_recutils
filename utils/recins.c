@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 11:37:35 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 12:04:20 jemarch"
  *
  *       File:         recins.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -286,9 +286,21 @@ main (int argc, char *argv[])
         }
       else
         {
-          /* XXX: create a new type and insert the record there.  */
-          fprintf (stderr, "recins: error: no records of type %s found.\n", type);
-          exit (1);
+          /* Create a new type and insert the record there.  */
+          rset = rec_rset_new ();
+          rec_rset_set_type (rset, type);
+          rec_rset_insert_record (rset, record, rec_rset_size (rset));
+           
+          if (type)
+            {
+              rec_db_insert_rset (db, rset, rec_db_size (db));
+            }
+          else
+            {
+              /* The default rset should always be in the beginning of
+                 the db.  */
+              rec_db_insert_rset (db, rset, -1);
+            }
         }
     } 
 

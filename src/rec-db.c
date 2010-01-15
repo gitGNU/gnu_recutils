@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 01:13:32 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 12:07:24 jemarch"
  *
  *       File:         rec-db.c
  *       Date:         Thu Jan 14 15:35:27 2010
@@ -212,7 +212,8 @@ rec_db_get_rset_by_type (rec_db_t db,
         }
       else
         {        
-          if (strcmp (rtype, type) == 0)
+          if ((type != NULL)
+              && (strcmp (rtype, type) == 0))
             {
               found = true;
               break;

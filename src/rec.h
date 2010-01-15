@@ -335,8 +335,9 @@ rec_record_t rec_rset_descriptor (rec_rset_t rset);
  */
 void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
 
-/* Get the type of a record set.  */
+/* Get and set the type of a record set.  */
 char *rec_rset_type (rec_rset_t rset);
+void rec_rset_set_type (rec_rset_t rset, char *type);
 
 /*
  * DATABASES

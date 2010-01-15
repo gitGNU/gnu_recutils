@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 11:30:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "10/01/15 12:06:50 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -221,8 +221,48 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
   if (rset->descriptor)
     {
       rec_record_destroy (rset->descriptor);
+      rset->descriptor = NULL;
     }
   rset->descriptor = record;
+}
+
+void
+rec_rset_set_type (rec_rset_t rset,
+                   char *type)
+{
+  rec_field_t rec_field;
+  rec_field_name_t rec_field_name;
+
+  if (!type)
+    {
+      /* This is a no-op for the default record set.  */
+      return;
+    }
+
+  if (!rset->descriptor)
+    {
+      /* Create a record descriptor.  */
+      rset->descriptor = rec_record_new ();
+      
+    }
+
+  rec_field_name = rec_parse_field_name_str ("%rec:");
+  rec_field = rec_record_get_field_by_name (rset->descriptor,
+                                            rec_field_name,
+                                            0);
+
+  if (rec_field)
+    {
+      rec_field_set_value (rec_field, type);
+    }
+  else
+    {
+      rec_field = rec_field_new (rec_field_name,
+                                 type);
+      rec_record_insert_field (rset->descriptor,
+                               rec_field,
+                               rec_record_size (rset->descriptor));
+    }
 }
 
 char *
