@@ -1,3 +1,7 @@
+2010-04-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* .gitignore: Ignore backup files.
+
 2010-01-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/rec-parser.c (rec_parse_field_name_str): New function.
