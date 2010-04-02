@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-02 13:28:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-02 13:38:07 jemarch"
  *
  *       File:         rec-mset.c
  *       Date:         Thu Apr  1 17:07:00 2010
@@ -36,7 +36,7 @@ struct rec_mset_s
   int ntypes;
 
   /* Properties of the element types.  */
-  char name[MAX_NTYPES];
+  char *name[MAX_NTYPES];
   rec_mset_disp_fn_t disp_fn[MAX_NTYPES];
   rec_mset_equal_fn_t equal_fn[MAX_NTYPES];
 
@@ -69,8 +69,8 @@ rec_mset_new (void)
     {
       new->ntypes = 1;
       new->name[0] = NULL;
-      new->equal[0] = NULL;
-      new->disp[0] = NULL;
+      new->equal_fn[0] = NULL;
+      new->disp_fn[0] = NULL;
 
       new->elem_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
                                                 rec_mset_elem_equal_fn,
@@ -137,7 +137,7 @@ rec_mset_get (rec_mset_t mset,
   rec_mset_elem_t result;
   int count[MAX_NTYPES];
 
-  if ((order < 0) || (order >= mset->count[type]))
+  if ((position < 0) || (position >= mset->count[type]))
     {
       /* Invalid order.  */
       return NULL;
@@ -149,7 +149,7 @@ rec_mset_get (rec_mset_t mset,
   iter = gl_list_iterator (mset->elem_list);
   while (gl_list_iterator_next (&iter, (const void **) &elem, &node))
     {
-      if (count[elem->type] == order)
+      if (count[elem->type] == position)
         {
           result = elem;
           break;
@@ -232,10 +232,8 @@ rec_mset_insert_at (rec_mset_t mset,
   if (node != NULL)
     {
       mset->count[0]++;
-      mset->count[mset->type]++;
+      mset->count[elem->type]++;
     }
-  
-  return node != NULL;
 }
 
 void
@@ -263,10 +261,11 @@ rec_mset_remove (rec_mset_t mset,
       next_node = gl_list_next_node (mset->elem_list, node);
       if (next_node)
         {
-          next_elem = (rec_mset_elem_t) gl_list_node_value (next_node);
+          next_elem = (rec_mset_elem_t) gl_list_node_value (mset->elem_list,
+                                                            next_node);
         }
 
-      removed = gl_list_remove_node (mset->elem_list, node);
+      gl_list_remove_node (mset->elem_list, node);
     }
 
   return next_elem;
@@ -327,7 +326,8 @@ rec_mset_elem_next (rec_mset_elem_t elem,
   node = gl_list_search (elem->mset->elem_list, (void *) elem);
   while (node = gl_list_next_node (elem->mset->elem_list, node))
     {
-      next_elem = (rec_mset_elem_t) gl_list_node_value (node);
+      next_elem = (rec_mset_elem_t) gl_list_node_value (elem->mset->elem_list,
+                                                        node);
       if (next_elem->type == type)
         {
           result = next_elem;
