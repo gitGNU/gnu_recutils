@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-02 13:38:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-02 14:56:20 jemarch"
  *
  *       File:         rec-mset.c
  *       Date:         Thu Apr  1 17:07:00 2010
@@ -312,6 +312,13 @@ rec_mset_search (rec_mset_t mset,
   while (elem);
 
   return result;
+}
+
+rec_mset_elem_t
+rec_mset_elem_first (rec_mset_t mset,
+                     int type)
+{
+  return rec_mset_get (mset, type, 0);
 }
 
 rec_mset_elem_t

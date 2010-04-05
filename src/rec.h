@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,19 +51,19 @@
 
 typedef struct rec_field_name_s *rec_field_name_t;
 
-/* Return a newly created field.
+/* Creating a field name.
  *
  * In the case of an error NULL is returned.
  */
 rec_field_name_t rec_field_name_new ();
 
-/* Destroy a field name */
+/* Destroy a field name.  */
 void rec_field_name_destroy (rec_field_name_t fname);
 
-/* Get a copy of a field name */
+/* Get a copy of a field name.  */
 rec_field_name_t rec_field_name_dup (rec_field_name_t fname);
 
-/* Comparation of field names.
+/* Comparing field names.
  *
  * Two given field names are equal if and only if they contain the
  * same number of name parts and they are identical.
@@ -71,7 +71,7 @@ rec_field_name_t rec_field_name_dup (rec_field_name_t fname);
 bool rec_field_name_equal_p (rec_field_name_t fname1,
                              rec_field_name_t fname2);
 
-/* Get the number of parts contained in a given field name */
+/* Get the size of a field name measured in number of parts.  */
 int rec_field_name_size (rec_field_name_t fname);
 
 /* Set a part in a field name.
@@ -96,10 +96,8 @@ const char *rec_field_name_get (rec_field_name_t fname,
 
 typedef struct rec_field_s *rec_field_t;
 
-/* Return a newly created field.
- *
- * In the case of an error NULL is returned.
- */
+/* Return a newly created field.  In the case of an error NULL is
+   returned.  */
 rec_field_t rec_field_new (const rec_field_name_t name,
                            const char *value);
 
@@ -128,135 +126,81 @@ rec_field_t rec_field_dup (rec_field_t field);
 bool rec_field_equal_p (rec_field_t field1,
                         rec_field_t field2);
 
-/* Determine wether a given field is a comment (i.e. its field name is
-   empty).  */
-bool rec_field_comment_p (rec_field_t field);
-
 /*
  * RECORDS
  *
- * A record is an ordered set of one or more fields.
+ * A record is an ordered set of one or more fields intermixed with
+ * comment blocks.
  */
 
 typedef struct rec_record_s *rec_record_t;
+typedef struct rec_record_elem_s *rec_record_elem_t;
 
-/* Create and return a new empty record. */
+/* General.  */
 rec_record_t rec_record_new (void);
-
-/* Destroy a record freeing any used resource.
- *
- * The contained fields are also destroyed.
- */
 void rec_record_destroy (rec_record_t record);
 
-/* Return the size of a given record. i.e. the number of fields
- * contained in the record.
- */
-int rec_record_size (rec_record_t record);
+rec_record_t rec_record_dup (rec_record_t record);
 
-/* Determine wether there is a field in the given record with the
- * given name.
- */
-bool rec_record_field_p (rec_record_t record,
-                         rec_field_name_t field_name);
-
-/* Insert a field into a record at a given position.
- *
- * - If POSITION >= rec_record_size (RECORD), FIELD is appended to the
- *   list of fields.
- *
- * - If POSITION < 0, FIELD is prepended.
- *
- * - Otherwise FIELD is inserted at the specified position.
- *
- * If the field is inserted then 'true' is returned. If there is an
- * error then 'false' is returned.
- */
-bool rec_record_insert_field (rec_record_t record,
-                              rec_field_t field,
-                              int position);
-
-/* Remove the field contained at the given POSITION in RECORD.
- *
- * - If POSITION >= rec_record_size (RECORD), the last field is
- *   deleted.
- *
- * - If POSITION <= 0, the first field is deleted.
- *
- * - Otherwise the field occupying the specified position is deleted.
- *
- * If a field has been removed then 'true' is returned.  If there is
- * an error or the record has no fields 'false' is returned.
- */
-bool rec_record_remove_field (rec_record_t record,
-                              int position);
-
-/* Return a pointer to the field at the given position.
- * 
- * - If POSITOIN >= rec_record_size (RECORD), the last field is
- *   returned.
- *
- * - If POSITION <= 0, the first field is returned.
- *
- * - Otherwise the field occupying the specified position is returned.
- * 
- */
-rec_field_t rec_record_get_field (rec_record_t record,
-                                  int position);
-
-/* Return a pointer to the Nth field with the given name in RECORD.
- *
- * If such a record is not found then return NULL.
- */
-rec_field_t rec_record_get_field_by_name (rec_record_t record,
-                                          rec_field_name_t fname,
-                                          int n);
-
-/* Determine wether two given records are equal (i.e. they contain
- * exactly the same fields with same values).
- */
 bool rec_record_equal_p (rec_record_t record1,
                          rec_record_t record2);
 
-/* Determine wether a record is a subset of another record.
- *
- * A record is contained in another record if all fields defined in
- * the first record are defined in the second record having the same
- * value.
- */
 bool rec_record_subset_p (rec_record_t record1,
                           rec_record_t record2);
 
-/* Return the number of fields in RECORD with the given field
-   name.  */
-int
-rec_record_get_num_fields (rec_record_t record,
-                           rec_field_name_t field_name);
+int rec_record_get_num_fields (rec_record_t record,
+                               rec_field_name_t field_name);
 
-/* Delete the INDEXnh field named FIELD_NAME in RECORD.  If INDEX is
-   -1, then delete all of them.  */
-void
-rec_record_remove_field_by_name (rec_record_t record,
-                                 rec_field_name_t field_name,
-                                 int index);
+/* Statistics.  */
 
+int rec_record_num_elems (rec_record_t record);
+int rec_record_num_fields (rec_record_t record);
+int rec_record_num_comments (rec_record_t record);
 
-/* Return a copy of a given record.
- *
- * If there is not enough memory to perform the copy then NULL is
- * returned. */
-rec_record_t rec_record_dup (rec_record_t record);
+/* Getting and setting elements.  */
 
-/* Determine wether a given record is a comment or a newline.  */
-bool rec_record_p (rec_record_t record);
-bool rec_record_comment_p (rec_record_t record);
+rec_record_elem_t rec_record_get_elem (rec_record_t record, int position);
+rec_record_elem_t rec_record_get_field (rec_record_t record, int position);
+rec_record_elem_t rec_record_get_comment (rec_record_t record, int position);
 
-/* Get a comment from a record.  */
-char *rec_record_comment (rec_record_t record);
+bool rec_record_remove_at (rec_record_t record, int position);
+void rec_record_insert_at (rec_record_t record, rec_record_elem_t elem, int position);
+void rec_record_append (rec_record_t record, rec_record_elem_t elem);
 
-/* Set the comment value of a record. */
-void rec_record_set_comment (rec_record_t record,
-                             char *comment);
+rec_record_elem_t rec_record_remove (rec_record_t record, rec_record_elem_t elem);
+void rec_record_insert_after (rec_record_t record,
+                              rec_record_elem_t elem,
+                              rec_record_elem_t new_elem);
+
+/* Searching.  */
+rec_record_elem_t rec_record_search_field (rec_record_t record,
+                                           ref_field_t field);
+rec_record_elem_t rec_record_search_field_name (rec_record_t record,
+                                                rec_field_name_t field_name,
+                                                int n);
+void rec_record_remove_field_by_name (rec_record_t record,
+                                      rec_field_name_t field_name,
+                                      int index);
+
+/* Iterating.  */
+rec_record_elem_t rec_record_first_field (rec_record_t record);
+rec_record_elem_t rec_record_first_comment (rec_record_t record);
+
+rec_record_elem_t rec_record_elem_next (rec_record_elem_t elem);
+rec_record_elem_t rec_record_elem_next_field (rec_record_elem_t elem);
+rec_record_elem_t rec_record_elem_next_comment (rec_record_elem_t elem);
+
+/* Elements.  */
+rec_record_elem_t rec_record_elem_field_new (rec_record_t record,
+                                             rec_field_t field);
+rec_record_elem_t rec_record_elem_comment_new (rec_record_t record,
+                                               rec_comment_t comment);
+void rec_record_elem_destroy (rec_record_elem_t elem);
+bool rec_record_elem_field_p (rec_record_elem_t elem);
+bool rec_record_elem_comment_p (rec_record_elem_t elem);
+rec_field_t rec_record_elem_field (rec_record_elem_t elem);
+rec_field_t rec_record_elem_set_field (rec_record_elem_t elem, rec_field_t field);
+rec_field_t rec_record_elem_set_comment (rec_record_elem_t elem, rec_comment_t comment);
 
 /*
  * RECORD SETS

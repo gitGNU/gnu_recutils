@@ -29,17 +29,25 @@
  *   +-----+----------+-------+--------+--------+
  */
 
-/* Data types.  */
+/*
+ * Data types.
+ */
+
 typedef struct rec_mset_s *rec_mset_t;
 typedef struct rec_mset_elem_s *rec_mset_elem_t;
 
 typedef (*rec_mset_disp_fn_t) (void *data);
 typedef (*rec_mset_equal_fn_t) (void *data1, void *data2);
 
-/* Constants.  */
+/*
+ * Constants.
+ */
 #define MSET_ANY 0
 
-/* Functions.  */
+/*
+ * Functions.
+ */
+
 rec_mset_t rec_mset_new (void);
 void rec_mset_destroy (rec_mset_t mset);
 
@@ -67,6 +75,7 @@ void rec_mset_insert_after (rec_mset_t mset, rec_mset_elem_t elem, rec_mset_elem
 rec_mset_elem_t rec_mset_search (rec_mset_t mset, void *data);
 
 /* Iterating.  */
+rec_mset_elem_t rec_mset_first (rec_mset_t mset, int type);
 rec_mset_elem_t rec_mset_elem_next (rec_mset_elem_t elem, int type);
 
 /* Elements.  */

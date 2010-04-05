@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 20:40:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-01 15:42:45 jemarch"
  *
  *       File:         rec-field.c
  *       Date:         Fri Feb 27 20:40:26 2009
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,20 +130,6 @@ rec_field_destroy (rec_field_t field)
     }
 
   free (field);
-}
-
-bool
-rec_field_comment_p (rec_field_t field)
-{
-  bool res;
-
-  rec_field_name_t empty_fname;
-  empty_fname = rec_field_name_new ();
-  res = rec_field_name_equal_p (rec_field_name (field),
-                                empty_fname);
-  rec_field_name_destroy (empty_fname);
-
-  return res;
 }
 
 /* End of rec-field.c */
