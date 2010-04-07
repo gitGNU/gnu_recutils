@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 17:26:24 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 22:16:15 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -86,48 +86,57 @@ bool
 print_info_file (FILE *in)
 {
   bool ret;
+  rec_db_t db;
   rec_rset_t rset;
   rec_record_t descriptor;
   rec_field_t field;
   rec_parser_t parser;
   rec_field_name_t fname;
   char *fvalue;
+  int position;
 
   ret = true;
   parser = rec_parser_new (in);
-  while (rec_parse_rset (parser, &rset))
+  if (rec_parse_db (parser, &db))
     {
-      descriptor = rec_rset_descriptor (rset);
-
-
-      if (recinf_verbose)
+      for (position = 0; position < rec_db_size (db); position++)
         {
-          rec_writer_t writer;
+          rset = rec_db_get_rset (db, position);
+          descriptor = rec_rset_descriptor (rset);
 
-          if (descriptor)
+          if (recinf_verbose)
             {
-              writer = rec_writer_new (stdout);
-              rec_write_record (writer, descriptor);
-              rec_writer_destroy (writer);
+              rec_writer_t writer;
+              
+              if (descriptor)
+                {
+                  writer = rec_writer_new (stdout);
+                  rec_write_record (writer, descriptor);
+                  rec_writer_destroy (writer);
+                }
+              else
+                {
+                  printf ("unknown");
+                }
             }
           else
             {
-              printf ("unknown");
+              if (descriptor)
+                {
+                  printf ("%s", rec_rset_type (rset));
+                }
+              else
+                {
+                  printf ("unknown");
+                }
             }
-        }
-      else
-        {
-          if (descriptor)
+          
+          if (position < (rec_db_size (db) - 1))
             {
-              printf ("%s", rec_rset_type (rset));
+              printf ("\n");
             }
-          else
-            {
-              printf ("unknown");
-            }
+          
         }
-
-      printf ("\n");
     }
   
   if (rec_parser_error (parser))

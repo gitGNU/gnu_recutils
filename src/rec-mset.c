@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 17:59:28 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 22:05:49 jemarch"
  *
  *       File:         rec-mset.c
  *       Date:         Thu Apr  1 17:07:00 2010
@@ -184,6 +184,7 @@ rec_mset_get (rec_mset_t mset,
   rec_mset_elem_t elem;
   rec_mset_elem_t result;
   int count[MAX_NTYPES];
+  int i;
 
   if ((position < 0) || (position >= mset->count[type]))
     {
@@ -193,7 +194,11 @@ rec_mset_get (rec_mset_t mset,
   
 
   result = NULL;
-  memset (count, 0, MAX_NTYPES);
+  for (i = 0; i < MAX_NTYPES; i++)
+    {
+      count[i] = 0;
+    }
+
   iter = gl_list_iterator (mset->elem_list);
   while (gl_list_iterator_next (&iter, (const void **) &elem, &node))
     {
@@ -288,7 +293,7 @@ void
 rec_mset_append (rec_mset_t mset,
                  rec_mset_elem_t elem)
 {
-  rec_mset_insert_at (mset, MSET_ANY, rec_mset_count (mset, MSET_ANY));
+  rec_mset_insert_at (mset, elem, rec_mset_count (mset, MSET_ANY));
 }
 
 rec_mset_elem_t
@@ -389,7 +394,7 @@ rec_mset_next (rec_mset_t mset,
         {
           next_elem = (rec_mset_elem_t) gl_list_node_value (elem->mset->elem_list,
                                                             node);
-          if (next_elem->type == type)
+          if ((type == 0) || (next_elem->type == type))
             {
               result = next_elem;
               break;

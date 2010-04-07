@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 20:51:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 22:15:53 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -418,7 +418,7 @@ rec_parse_rset (rec_parser_t parser,
       return false;
     }
 
-  /* Set the descriptor for this record set */
+  /* Set the descriptor for this record set.  */
   rec_rset_set_descriptor (new, parser->prev_descriptor);
   parser->prev_descriptor = NULL;
 
@@ -509,7 +509,7 @@ rec_parse_db (rec_parser_t parser,
   rec_rset_t rset;
   rec_db_t new;
 
-  ret = false;
+  ret = true;
 
   new = rec_db_new ();
   if (!new)
@@ -527,6 +527,7 @@ rec_parse_db (rec_parser_t parser,
         {
           /* Parse error: out of memory.  */
           parser->error = REC_PARSER_ENOMEM;
+          ret = false;
           break;
         }
     }

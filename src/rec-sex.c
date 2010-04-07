@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 21:32:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 21:35:08 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -165,7 +165,7 @@ rec_sex_eval (rec_sex_t sex,
     {
       field = rec_record_elem_field (elem_field);
 
-      nf = rec_record_get_num_fields (record, rec_field_name (field));
+      nf = rec_record_get_num_fields_by_name (record, rec_field_name (field));
       if (nf > 1)
         /* XXX.  Optimization: && (rec_sex_ast_name_p (sex->ast, field_name_str))) */
         {

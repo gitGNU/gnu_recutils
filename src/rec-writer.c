@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 21:31:30 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 22:21:10 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -74,8 +74,9 @@ bool
 rec_write_comment (rec_writer_t writer,
                    rec_comment_t comment)
 {
-  return rec_writer_puts (writer,
-                          rec_comment_text (comment));
+  return (rec_writer_putc (writer, '#')
+          && rec_writer_puts (writer, rec_comment_text (comment))
+          && rec_writer_putc (writer, '\n'));
 }
 
 bool
@@ -160,6 +161,7 @@ rec_write_record (rec_writer_t writer,
 {
   bool ret;
   rec_field_t field;
+  rec_comment_t comment;
   rec_record_elem_t elem;
 
   ret = true;
@@ -167,11 +169,25 @@ rec_write_record (rec_writer_t writer,
   elem = rec_record_null_elem ();
   while (rec_record_elem_p (elem = rec_record_next (record, elem)))
     {
-      field = rec_record_elem_field (elem);
-      if (!rec_write_field (writer, field))
+      if (rec_record_elem_field_p (record, elem))
         {
-          ret = false;
-          break;
+          /* Write a field.  */
+          field = rec_record_elem_field (elem);
+          if (!rec_write_field (writer, field))
+            {
+              ret = false;
+              break;
+            }
+        }
+      else
+        {
+          /* Write a comment.  */
+          comment = rec_record_elem_comment (elem);
+          if (!rec_write_comment (writer, comment))
+            {
+              ret = false;
+              break;
+            }
         }
     }
 
@@ -187,6 +203,7 @@ rec_write_rset (rec_writer_t writer,
   bool wrote_descriptor;
   rec_rset_elem_t elem;
   rec_record_t record;
+  int position;
 
   ret = true;
   wrote_descriptor = false;
@@ -208,14 +225,15 @@ rec_write_rset (rec_writer_t writer,
             }
         }
 
+      position = 0;
       elem = rec_rset_null_elem ();
       while (rec_rset_elem_p (elem = rec_rset_next (rset, elem)))
         {
-          /*          if ((i != 0)
+          /*          if ((position != 0)
               && ((rec_record_p (record))
-                  || ((i == 0)
+                  || ((position == 0)
                       || (!rec_record_comment_p (rec_rset_get_record (rset,
-                                                                      i - 1)))))
+                                                                      position - 1)))))
               && (!rec_writer_putc (writer, '\n')))
 
             {
@@ -236,6 +254,8 @@ rec_write_rset (rec_writer_t writer,
             {
               break;
             }
+
+          position++;
         }
     }
 

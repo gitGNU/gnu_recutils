@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 21:20:24 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 22:04:31 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -396,7 +396,7 @@ bool
 rec_record_field_p (rec_record_t record,
                     rec_field_name_t field_name)
 {
-  return (rec_record_get_num_fields (record, field_name) > 0);
+  return (rec_record_get_num_fields_by_name (record, field_name) > 0);
 }
 
 int
@@ -434,6 +434,7 @@ rec_record_get_field_by_name (rec_record_t record,
 
   num_fields = 0;
   elem = NULL;
+
   while (elem = rec_mset_next (record->mset, elem, record->field_type))
     {
       field = (rec_field_t) rec_mset_elem_data (elem);
@@ -484,7 +485,7 @@ rec_record_remove_field_by_name (rec_record_t record,
 }
 
 rec_record_elem_t
-rec_record_elem_null_elem (void)
+rec_record_null_elem (void)
 {
   rec_record_elem_t elem;
 
