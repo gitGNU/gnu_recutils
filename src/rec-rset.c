@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 19:32:02 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 19:35:16 jco"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -346,6 +346,12 @@ rec_rset_elem_comment_new (rec_rset_t rset,
   rec_mset_elem_set_data (elem.mset_elem, (void *) comment);
   
   return elem;
+}
+
+bool
+rec_rset_elem_p (rec_rset_elem_t elem)
+{
+  return (elem.mset_elem != NULL);
 }
 
 bool

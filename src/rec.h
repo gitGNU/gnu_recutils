@@ -228,8 +228,11 @@ rec_record_elem_t rec_record_elem_field_new (rec_record_t record,
                                              rec_field_t field);
 rec_record_elem_t rec_record_elem_comment_new (rec_record_t record,
                                                rec_comment_t comment);
+
+bool rec_record_elem_p (rec_record_elem_t elem);
 bool rec_record_elem_field_p (rec_record_t record, rec_record_elem_t elem);
 bool rec_record_elem_comment_p (rec_record_t record, rec_record_elem_t elem);
+
 rec_field_t rec_record_elem_field (rec_record_elem_t elem);
 rec_comment_t rec_record_elem_comment (rec_record_elem_t elem);
 
@@ -291,6 +294,7 @@ rec_rset_elem_t rec_rset_next_comment (rec_rset_t rset, rec_rset_elem_t elem);
 rec_rset_elem_t rec_rset_elem_record_new (rec_rset_t rset, rec_record_t record);
 rec_rset_elem_t rec_rset_elem_comment_new (rec_rset_t rset, rec_comment_t comment);
 
+bool rec_rset_elem_p (rec_rset_elem_t elem);
 bool rec_rset_elem_record_p (rec_rset_t rset, rec_rset_elem_t elem);
 bool rec_rset_elem_comment_p (rec_rset_t rset, rec_rset_elem_t elem);
 

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 19:28:15 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 19:34:45 jco"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -452,6 +452,12 @@ rec_record_elem_comment_new (rec_record_t record,
   rec_mset_elem_set_data (elem.mset_elem, (void *) comment);
 
   return elem;
+}
+
+bool
+rec_record_elem_p (rec_record_elem_t elem)
+{
+  return (elem.mset_elem != NULL);
 }
 
 bool
