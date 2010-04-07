@@ -40,6 +40,30 @@
 #define REC_VERSION_MINOR 0
 #define REC_VERSION_STRING "1.0"
 
+/*
+ * COMMENTS
+ *
+ * A comment is a block of text.  The printed representation of a
+ * comment includes a sharp (#) character after each newline (\n)
+ * character.
+ */
+
+typedef char *rec_comment_t;
+
+/* Creation and destruction of comments.  */
+
+rec_comment_t rec_comment_new (char *text);
+void rec_comment_destroy (rec_comment_t comment);
+
+rec_comment_t rec_comment_dup (rec_comment_t comment);
+
+/* Getting/Setting properties.  */
+char *rec_comment_text (rec_comment_t comment);
+void rec_comment_set_text (rec_comment_t comment, char *text);
+
+/* Testing comments.  */
+bool rec_comment_equal_p (rec_comment_t comment1, rec_comment_t comment2);
+
 /* FIELD NAMES
  *
  * A field name is a list of name-parts:
@@ -134,7 +158,7 @@ bool rec_field_equal_p (rec_field_t field1,
  */
 
 typedef struct rec_record_s *rec_record_t;
-typedef struct rec_record_elem_s *rec_record_elem_t;
+typedef struct rec_record_elem_s rec_record_elem_t;
 
 /* General.  */
 rec_record_t rec_record_new (void);
@@ -142,12 +166,13 @@ void rec_record_destroy (rec_record_t record);
 
 rec_record_t rec_record_dup (rec_record_t record);
 
-bool rec_record_equal_p (rec_record_t record1,
-                         rec_record_t record2);
-
 bool rec_record_subset_p (rec_record_t record1,
                           rec_record_t record2);
 
+bool rec_record_equal_p (rec_record_t record1,
+                         rec_record_t record2);
+
+/* XXX: */
 int rec_record_get_num_fields (rec_record_t record,
                                rec_field_name_t field_name);
 
@@ -174,7 +199,7 @@ void rec_record_insert_after (rec_record_t record,
 
 /* Searching.  */
 rec_record_elem_t rec_record_search_field (rec_record_t record,
-                                           ref_field_t field);
+                                           rec_field_t field);
 rec_record_elem_t rec_record_search_field_name (rec_record_t record,
                                                 rec_field_name_t field_name,
                                                 int n);
@@ -186,18 +211,17 @@ void rec_record_remove_field_by_name (rec_record_t record,
 rec_record_elem_t rec_record_first_field (rec_record_t record);
 rec_record_elem_t rec_record_first_comment (rec_record_t record);
 
-rec_record_elem_t rec_record_elem_next (rec_record_elem_t elem);
-rec_record_elem_t rec_record_elem_next_field (rec_record_elem_t elem);
-rec_record_elem_t rec_record_elem_next_comment (rec_record_elem_t elem);
+rec_record_elem_t rec_record_next (rec_record_t record, rec_record_elem_t elem);
+rec_record_elem_t rec_record_next_field (rec_record_t record, rec_record_elem_t elem);
+rec_record_elem_t rec_record_next_comment (rec_record_t record, rec_record_elem_t elem);
 
 /* Elements.  */
 rec_record_elem_t rec_record_elem_field_new (rec_record_t record,
                                              rec_field_t field);
 rec_record_elem_t rec_record_elem_comment_new (rec_record_t record,
                                                rec_comment_t comment);
-void rec_record_elem_destroy (rec_record_elem_t elem);
-bool rec_record_elem_field_p (rec_record_elem_t elem);
-bool rec_record_elem_comment_p (rec_record_elem_t elem);
+bool rec_record_elem_field_p (rec_record_t record, rec_record_elem_t elem);
+bool rec_record_elem_comment_p (rec_record_t record, rec_record_elem_t elem);
 rec_field_t rec_record_elem_field (rec_record_elem_t elem);
 rec_field_t rec_record_elem_set_field (rec_record_elem_t elem, rec_field_t field);
 rec_field_t rec_record_elem_set_comment (rec_record_elem_t elem, rec_comment_t comment);
