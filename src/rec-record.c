@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 18:10:25 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 18:37:45 jco"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -272,6 +272,28 @@ void
 rec_record_append (rec_record_t record,
                    rec_record_elem_t elem)
 {
+  rec_mset_append (record->mset,
+                   elem.mset_elem);
+}
+
+void
+rec_record_append_field (rec_record_t record,
+                         rec_field_t field)
+{
+  rec_record_elem_t elem;
+
+  elem = rec_record_elem_field_new (record, field);
+  rec_mset_append (record->mset,
+                   elem.mset_elem);
+}
+
+void
+rec_record_append_comment (rec_record_t record,
+                           rec_comment_t comment)
+{
+  rec_record_elem_t elem;
+
+  elem = rec_record_elem_comment_new (record, comment);
   rec_mset_append (record->mset,
                    elem.mset_elem);
 }
