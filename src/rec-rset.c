@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 12:06:50 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 19:32:02 jco"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,26 +24,25 @@
  */
 
 #include <config.h>
+
 #include <malloc.h>
 
-#include <gl_array_list.h>
-#include <gl_list.h>
-
+#include <rec-mset.h>
 #include <rec.h>
 
 /* Record Set Data Structure.
  *
- * A record set is a set of zero or more non-special records maybe
- * preceded by a record descriptor.
+ * A record set is a set of zero or more non-special records
+ * intermixed with comments, maybe preceded by a record descriptor.
  */
+
 struct rec_rset_s
 {
-  int size;                   /* Number of records stored in the
-                                 record set. The record descriptor is
-                                 not included in the count. */
-  rec_record_t descriptor;    /* Record descriptor of this record
-                                 set. */
-  gl_list_t record_list;      /* List of ordinary records. */
+  rec_record_t descriptor;
+
+  int record_type;
+  int comment_type;
+  rec_mset_t mset;
 };
 
 /* Set of names for special fields */
@@ -63,36 +62,50 @@ static char *special_fields[] =
     ""
   };
 
-static bool
-rec_rset_record_equals_fn (const void *elt1, const void *elt2);
-static void
-rec_rset_record_dispose_fn (const void *elt);
+/* Static functions implemented below.  */
+
+static bool rec_rset_record_equal_fn (void *data1, void *data2);
+static void rec_rset_record_disp_fn (void *data);
+static void *rec_rset_record_dup_fn (void *data);
+
+static bool rec_rset_comment_equal_fn (void *data1, void *data2);
+static void rec_rset_comment_disp_fn (void *data);
+static void *rec_rset_comment_dup_fn (void *data);
+
+/*
+ * Public functions.
+ */
 
 rec_rset_t
 rec_rset_new (void)
 {
   rec_rset_t rset;
-  rec_record_t descriptor;
-  rec_field_t field;
-
-  /* Allocate memory for the new record set */
-  rset = malloc (sizeof (struct rec_rset_s));
   
-  if (rset != NULL)
+  rset = malloc (sizeof (struct rec_rset_s));
+  if (rset)
     {
-      rset->descriptor = NULL;
-      rset->size = 0;
-
-      /* Initialize the record list, allowing duplicates */
-      rset->record_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
-                                                   rec_rset_record_equals_fn,
-                                                   NULL,
-                                                   rec_rset_record_dispose_fn,
-                                                   true);
-
-      if (rset->record_list == NULL)
+      /* Create the mset.  */
+      rset->mset = rec_mset_new ();
+      if (rset->mset)
         {
-          /* Out of memory */
+          /* No descriptor, initially.  */
+          rset->descriptor = NULL;
+
+          /* register the types.  */
+          rset->record_type = rec_mset_register_type (rset->mset,
+                                                      "record",
+                                                      rec_rset_record_disp_fn,
+                                                      rec_rset_record_equal_fn,
+                                                      rec_rset_record_dup_fn);
+          rset->comment_type = rec_mset_register_type (rset->mset,
+                                                       "comment",
+                                                       rec_rset_comment_disp_fn,
+                                                       rec_rset_comment_equal_fn,
+                                                       rec_rset_comment_dup_fn);
+        }
+      else
+        {
+          /* Error.  */
           free (rset);
           rset = NULL;
         }
@@ -108,105 +121,257 @@ rec_rset_destroy (rec_rset_t rset)
     {
       rec_record_destroy (rset->descriptor);
     }
-  gl_list_free (rset->record_list);
+
+  rec_mset_destroy (rset->mset);
+  free (rset);
+}
+
+rec_rset_t
+rec_rset_dup (rec_rset_t rset)
+{
+  rec_rset_t new;
+
+  new = malloc (sizeof (struct rec_rset_s));
+  if (new)
+    {
+      new->record_type = rset->record_type;
+      new->comment_type = rset->comment_type;
+      new->mset = rec_mset_dup (rset->mset);
+    }
+
+  return new;
 }
 
 int
-rec_rset_size (rec_rset_t rset)
+rec_rset_num_elems (rec_rset_t rset)
 {
-  return rset->size;
+  return rec_mset_count (rset->mset,
+                         MSET_ANY);
 }
 
-rec_record_t
+int
+rec_rset_num_records (rec_rset_t rset)
+{
+  return rec_mset_count (rset->mset,
+                         rset->record_type);
+}
+
+int
+rec_rset_num_comments (rec_rset_t rset)
+{
+  return rec_mset_count (rset->mset,
+                         rset->comment_type);
+}
+
+rec_rset_elem_t
+rec_rset_get_elem (rec_rset_t rset,
+                   int position)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = rec_mset_get (rset->mset,
+                                 MSET_ANY,
+                                 position);
+
+  return elem;
+}
+
+rec_rset_elem_t
 rec_rset_get_record (rec_rset_t rset,
                      int position)
 {
-  rec_record_t record;
+  rec_rset_elem_t elem;
 
-  record = NULL;
+  elem.mset_elem = rec_mset_get (rset->mset,
+                                 rset->record_type,
+                                 position);
 
-  if (rset->size > 0)
-    {
-      if (position < 0)
-        {
-          position = 0;
-        }
-      if (position >= rset->size)
-        {
-          position = rset->size - 1;
-        }
+  return elem;
+}
 
-      record = (rec_record_t) gl_list_get_at (rset->record_list,
-                                              position);
-    }
+rec_rset_elem_t
+rec_rset_get_comment (rec_rset_t rset,
+                      int position)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = rec_mset_get (rset->mset,
+                                 rset->comment_type,
+                                 position);
+
+  return elem;
+}
+
+bool
+rec_rset_remove_at (rec_rset_t rset,
+                    int position)
+{
+  return rec_mset_remove_at (rset->mset, position);
+}
+
+void
+rec_rset_insert_at (rec_rset_t rset,
+                    rec_rset_elem_t elem,
+                    int position)
+{
+  rec_mset_insert_at (rset->mset,
+                      elem.mset_elem,
+                      position);
+}
+
+void
+rec_rset_append (rec_rset_t rset,
+                 rec_rset_elem_t elem)
+{
+  rec_mset_append (rset->mset, elem.mset_elem);
+}
+
+void
+rec_rset_append_record (rec_rset_t rset,
+                        rec_record_t record)
+{
+  rec_rset_elem_t elem;
   
-  return record;
+  elem = rec_rset_elem_record_new (rset, record);
+  rec_mset_append (rset->mset, elem.mset_elem);
+}
+
+void
+rec_rset_append_comment (rec_rset_t rset,
+                         rec_comment_t comment)
+{
+  rec_rset_elem_t elem;
+
+  elem = rec_rset_elem_comment_new (rset, comment);
+  rec_mset_append (rset->mset, elem.mset_elem);
+}
+
+rec_rset_elem_t
+rec_rset_remove (rec_rset_t rset,
+                 rec_rset_elem_t elem)
+{
+  elem.mset_elem = rec_mset_remove (rset->mset, elem.mset_elem);
+  return elem;
+}
+
+void
+rec_rset_insert_after (rec_rset_t rset,
+                       rec_rset_elem_t elem,
+                       rec_rset_elem_t new_elem)
+{
+  rec_mset_insert_after (rset->mset,
+                         elem.mset_elem,
+                         new_elem.mset_elem);
+}
+
+rec_rset_elem_t
+rec_rset_first (rec_rset_t rset)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = rec_mset_first (rset->mset, MSET_ANY);
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_first_record (rec_rset_t rset)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = rec_mset_first (rset->mset, rset->record_type);
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_first_comment (rec_rset_t rset)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = rec_mset_first (rset->mset, rset->comment_type);
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_next (rec_rset_t rset,
+               rec_rset_elem_t elem)
+{
+  elem.mset_elem = rec_mset_next (rset->mset,
+                                  elem.mset_elem,
+                                  MSET_ANY);
+
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_next_record (rec_rset_t rset,
+                      rec_rset_elem_t elem)
+{
+  elem.mset_elem = rec_mset_next (rset->mset,
+                                  elem.mset_elem,
+                                  rset->record_type);
+
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_next_comment (rec_rset_t rset,
+                       rec_rset_elem_t elem)
+{
+  elem.mset_elem = rec_mset_next (rset->mset,
+                                  elem.mset_elem,
+                                  rset->comment_type);
+
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_elem_record_new (rec_rset_t rset,
+                          rec_record_t record)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = rec_mset_elem_new (rset->mset, rset->record_type);
+  rec_mset_elem_set_data (elem.mset_elem, (void *) record);
+
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_elem_comment_new (rec_rset_t rset,
+                           rec_comment_t comment)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = rec_mset_elem_new (rset->mset, rset->comment_type);
+  rec_mset_elem_set_data (elem.mset_elem, (void *) comment);
+  
+  return elem;
 }
 
 bool
-rec_rset_insert_record (rec_rset_t rset,
-                        rec_record_t record,
-                        int position)
+rec_rset_elem_record_p (rec_rset_t rset,
+                        rec_rset_elem_t elem)
 {
-  gl_list_node_t node;
-
-  node = NULL;
-
-  if (position < 0)
-    {
-      node = gl_list_nx_add_first (rset->record_list,
-                                   (void *) record);
-    }
-  else if (position >= rset->size)
-    {
-      node = gl_list_nx_add_last (rset->record_list,
-                                  (void *) record);
-    }
-  else
-    {
-      node = gl_list_nx_add_at (rset->record_list,
-                                position,
-                                (void *) record);
-    }
-
-
-  if (node != NULL)
-    {
-      rset->size++;
-      return true;
-    }
-
-  return false;
+  return (rec_mset_elem_type (elem.mset_elem) == rset->record_type);
 }
 
 bool
-rec_rset_remove_record (rec_rset_t rset,
-                        int position)
+rec_rset_elem_comment_p (rec_rset_t rset,
+                         rec_rset_elem_t elem)
 {
-  bool removed;
+  return (rec_mset_elem_type (elem.mset_elem) == rset->comment_type);
+}
 
-  removed = false;
+rec_record_t
+rec_rset_elem_record (rec_rset_elem_t elem)
+{
+  return (rec_record_t) rec_mset_elem_data (elem.mset_elem);
+}
 
-  if (rset->size > 0)
-    {
-      if (position < 0)
-        {
-          position = 0;
-        }
-      if (position >= rset->size)
-        {
-          position = rset->size - 1;
-        }
-
-      if (gl_list_remove_at (rset->record_list,
-                             position))
-        {
-          rset->size--;
-          removed = true;
-        }
-    }
-
-  return removed;
+rec_comment_t
+rec_rset_elem_comment (rec_rset_elem_t elem)
+{
+  return (rec_comment_t) rec_mset_elem_data (elem.mset_elem);
 }
 
 rec_record_t
@@ -231,6 +396,7 @@ rec_rset_set_type (rec_rset_t rset,
                    char *type)
 {
   rec_field_t rec_field;
+  rec_record_elem_t elem;
   rec_field_name_t rec_field_name;
 
   if (!type)
@@ -247,9 +413,10 @@ rec_rset_set_type (rec_rset_t rset,
     }
 
   rec_field_name = rec_parse_field_name_str ("%rec:");
-  rec_field = rec_record_get_field_by_name (rset->descriptor,
-                                            rec_field_name,
-                                            0);
+  elem = rec_record_search_field_name (rset->descriptor,
+                                       rec_field_name,
+                                       0);
+  rec_field = rec_record_elem_field (elem);
 
   if (rec_field)
     {
@@ -259,9 +426,7 @@ rec_rset_set_type (rec_rset_t rset,
     {
       rec_field = rec_field_new (rec_field_name,
                                  type);
-      rec_record_insert_field (rset->descriptor,
-                               rec_field,
-                               rec_record_size (rset->descriptor));
+      rec_record_append_field (rset->descriptor, rec_field);
     }
 }
 
@@ -271,15 +436,18 @@ rec_rset_type (rec_rset_t rset)
   char *res;
   rec_record_t descriptor;
   rec_field_t field;
+  rec_record_elem_t elem;
   rec_field_name_t field_name;
 
   res = NULL;
   if (rset->descriptor)
     {
       field_name = rec_parse_field_name_str ("%rec:");
-      field = rec_record_get_field_by_name (rset->descriptor,
-                                            field_name,
-                                            0);
+      elem = rec_record_search_field_name (rset->descriptor,
+                                           field_name,
+                                           0);
+      field = rec_record_elem_field (elem);
+
       if (field)
         {
           res = rec_field_value (field);
@@ -293,27 +461,44 @@ rec_rset_type (rec_rset_t rset)
  * Private functions
  */
 
-static bool
-rec_rset_record_equals_fn (const void *elt1,
-                           const void *elt2)
+static void
+rec_rset_record_disp_fn (void *data)
 {
-  rec_record_t record1;
-  rec_record_t record2;
+  rec_record_destroy ((rec_record_t) data);
+}
 
-  record1 = (rec_record_t) elt1;
-  record2 = (rec_record_t) elt2;
+static bool
+rec_rset_record_equal_fn (void *data1,
+                          void *data2)
+{
+  return rec_record_equal_p ((rec_record_t) data1,
+                             (rec_record_t) data2);
+}
 
-  return rec_record_equal_p (record1,
-                             record2);
+static void *
+rec_rset_record_dup_fn (void *data)
+{
+  return (void *) rec_record_dup ((rec_record_t) data);
 }
 
 static void
-rec_rset_record_dispose_fn (const void *elt)
+rec_rset_comment_disp_fn (void *data)
 {
-  rec_record_t record;
+  rec_comment_destroy ((rec_comment_t) data);
+}
 
-  record = (rec_record_t) elt;
-  rec_record_destroy (record);
+static bool
+rec_rset_comment_equal_fn (void *data1,
+                           void *data2)
+{
+  return rec_comment_equal_p ((rec_comment_t) data1,
+                              (rec_comment_t) data2);
+}
+
+static void *
+rec_rset_comment_dup_fn (void *data)
+{
+  return (void *) rec_comment_dup ((rec_comment_t) data);
 }
 
 /* End of rec-rset.c */

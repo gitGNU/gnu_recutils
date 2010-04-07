@@ -158,6 +158,12 @@ bool rec_field_equal_p (rec_field_t field1,
  */
 
 typedef struct rec_record_s *rec_record_t;
+
+struct rec_record_elem_s
+{
+  struct rec_mset_elem_s *mset_elem;
+};
+
 typedef struct rec_record_elem_s rec_record_elem_t;
 
 /* General.  */
@@ -172,7 +178,6 @@ bool rec_record_subset_p (rec_record_t record1,
 bool rec_record_equal_p (rec_record_t record1,
                          rec_record_t record2);
 
-/* XXX: */
 int rec_record_get_num_fields (rec_record_t record,
                                rec_field_name_t field_name);
 
@@ -210,6 +215,7 @@ void rec_record_remove_field_by_name (rec_record_t record,
                                       int index);
 
 /* Iterating.  */
+rec_record_elem_t rec_record_first (rec_record_t record);
 rec_record_elem_t rec_record_first_field (rec_record_t record);
 rec_record_elem_t rec_record_first_comment (rec_record_t record);
 
@@ -225,89 +231,80 @@ rec_record_elem_t rec_record_elem_comment_new (rec_record_t record,
 bool rec_record_elem_field_p (rec_record_t record, rec_record_elem_t elem);
 bool rec_record_elem_comment_p (rec_record_t record, rec_record_elem_t elem);
 rec_field_t rec_record_elem_field (rec_record_elem_t elem);
-rec_field_t rec_record_elem_set_field (rec_record_elem_t elem, rec_field_t field);
-rec_field_t rec_record_elem_set_comment (rec_record_elem_t elem, rec_comment_t comment);
+rec_comment_t rec_record_elem_comment (rec_record_elem_t elem);
 
 /*
  * RECORD SETS
  *
- * A record set is an ordered set of zero or more records maybe
- * preceded by a record descriptor.
+ * A record set is an ordered set of zero or more records and comments
+ * maybe preceded by a record descriptor.
  */
+
 typedef struct rec_rset_s *rec_rset_t;
 
-/* Create an empty record set. */
-rec_rset_t rec_rset_new (void);
+struct rec_rset_elem_s
+{
+  struct rec_mset_elem_s *mset_elem;
+};
 
-/* Destroy a record set, freeing any used memory.
- *
- * This means that all the records contained in the record set are
- * also destroyed.
- */
+typedef struct rec_rset_elem_s rec_rset_elem_t;
+
+/* General.  */
+rec_rset_t rec_rset_new (void);
 void rec_rset_destroy (rec_rset_t rset);
 
-/* Return the number of records contained in a given record set.
- *
- * The record descriptor is not included in the count.
- */
-int rec_rset_size (rec_rset_t rset);
+rec_rset_t rec_rset_dup (rec_rset_t rset);
 
-/* Return a pointer to the record at the given position.
- *
- * If no such record is contained in the record set at that position
- * then NULL is returned.
- */
-rec_record_t rec_rset_get_record (rec_rset_t rset,
-                                  int position);
+/* Statistics.  */
 
-/* Insert the given record into the given record set at the given
- * position.
- *
- * - If POSITION >= rec_rset_size (RSET), RECORD is appended to the
- *   list of fields.
- *
- * - If POSITION < 0, RECORD is prepended.
- *
- * - Otherwise RECORD is inserted at the specified position.
- *
- * If the record is inserted then 'true' is returned. If there is an
- * error then 'false' is returned.
- */
-bool rec_rset_insert_record (rec_rset_t rset,
-                             rec_record_t record,
-                             int position);
+int rec_rset_num_elems (rec_rset_t rset);
+int rec_rset_num_records (rec_rset_t rset);
+int rec_rset_num_comments (rec_rset_t rset);
 
-/* Remove the record contained in the given position into the given
- * record set.
- *
- * - If POSITION >= rec_rset_size (RSET), the last record is
- *   deleted.
- *
- * - If POSITION <= 0, the first record is deleted.
- *
- * - Otherwise the record occupying the specified position is deleted.
- *
- * If a record has been removed then 'true' is returned.  If there is
- * an error or the record set has no records 'false' is returned.
- */
-bool rec_rset_remove_record (rec_rset_t rset, int position);
+/* Getting and setting elements.  */
 
+rec_rset_elem_t rec_rset_get_elem (rec_rset_t rset, int position);
+rec_rset_elem_t rec_rset_get_record (rec_rset_t rset, int position);
+rec_rset_elem_t rec_rset_get_comment (rec_rset_t rset, int position);
 
-/* Return a pointer to the record descriptor contained in the given
- * record set.
- */
+bool rec_rset_remove_at (rec_rset_t rset, int position);
+void rec_rset_insert_at (rec_rset_t rset, rec_rset_elem_t elem, int position);
+void rec_rset_append (rec_rset_t rset, rec_rset_elem_t elem);
+void rec_rset_append_record (rec_rset_t rset, rec_record_t record);
+void rec_rset_append_comment (rec_rset_t rset, rec_comment_t comment);
+
+rec_rset_elem_t rec_rset_remove (rec_rset_t rset, rec_rset_elem_t elem);
+void rec_rset_insert_after (rec_rset_t rset,
+                            rec_rset_elem_t elem,
+                            rec_rset_elem_t new_elem);
+
+/* Iterating.  */
+rec_rset_elem_t rec_rset_first (rec_rset_t rset);
+rec_rset_elem_t rec_rset_first_record (rec_rset_t rset);
+rec_rset_elem_t rec_rset_first_comment (rec_rset_t rset);
+
+rec_rset_elem_t rec_rset_next (rec_rset_t rset, rec_rset_elem_t elem);
+rec_rset_elem_t rec_rset_next_record (rec_rset_t rset, rec_rset_elem_t elem);
+rec_rset_elem_t rec_rset_next_comment (rec_rset_t rset, rec_rset_elem_t elem);
+
+/* Elements.  */
+rec_rset_elem_t rec_rset_elem_record_new (rec_rset_t rset, rec_record_t record);
+rec_rset_elem_t rec_rset_elem_comment_new (rec_rset_t rset, rec_comment_t comment);
+
+bool rec_rset_elem_record_p (rec_rset_t rset, rec_rset_elem_t elem);
+bool rec_rset_elem_comment_p (rec_rset_t rset, rec_rset_elem_t elem);
+
+rec_record_t rec_rset_elem_record (rec_rset_elem_t elem);
+rec_comment_t rec_rset_elem_comment (rec_rset_elem_t elem);
+
+/* Record descriptor management.  */
+
 rec_record_t rec_rset_descriptor (rec_rset_t rset);
-
-/* Replace the record descriptor of a record set with a given
- * record.
- *
- * The previous descriptor in the record set is destroyed.
- */
 void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
 
-/* Get and set the type of a record set.  */
 char *rec_rset_type (rec_rset_t rset);
 void rec_rset_set_type (rec_rset_t rset, char *type);
+
 
 /*
  * DATABASES

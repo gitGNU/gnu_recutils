@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 18:37:45 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 19:28:15 jco"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -33,11 +33,6 @@
 /*
  * Record data structures.
  */
-
-struct rec_record_elem_s
-{
-  rec_mset_elem_t mset_elem;
-};
 
 struct rec_record_s
 {
@@ -272,8 +267,7 @@ void
 rec_record_append (rec_record_t record,
                    rec_record_elem_t elem)
 {
-  rec_mset_append (record->mset,
-                   elem.mset_elem);
+  rec_mset_append (record->mset, elem.mset_elem);
 }
 
 void
@@ -283,8 +277,7 @@ rec_record_append_field (rec_record_t record,
   rec_record_elem_t elem;
 
   elem = rec_record_elem_field_new (record, field);
-  rec_mset_append (record->mset,
-                   elem.mset_elem);
+  rec_mset_append (record->mset, elem.mset_elem);
 }
 
 void
@@ -374,6 +367,15 @@ rec_record_remove_field_by_name (rec_record_t record,
 }
 
 rec_record_elem_t
+rec_record_first (rec_record_t record)
+{
+  rec_record_elem_t elem;
+
+  elem.mset_elem = rec_mset_first (record->mset, MSET_ANY);
+  return elem;
+}
+
+rec_record_elem_t
 rec_record_first_field (rec_record_t record)
 {
   rec_record_elem_t elem;
@@ -434,9 +436,9 @@ rec_record_elem_field_new (rec_record_t record,
 {
   rec_record_elem_t elem;
 
-  elem.mset_elem = rec_mset_elem_new (record->mset,
-                                      record->field_type);
+  elem.mset_elem = rec_mset_elem_new (record->mset, record->field_type);
   rec_mset_elem_set_data (elem.mset_elem, (void *) field);
+
   return elem;
 }
 
@@ -446,8 +448,7 @@ rec_record_elem_comment_new (rec_record_t record,
 {
   rec_record_elem_t elem;
 
-  elem.mset_elem = rec_mset_elem_new (record->mset,
-                                      record->comment_type);
+  elem.mset_elem = rec_mset_elem_new (record->mset, record->comment_type);
   rec_mset_elem_set_data (elem.mset_elem, (void *) comment);
 
   return elem;
@@ -457,8 +458,7 @@ bool
 rec_record_elem_field_p (rec_record_t record,
                          rec_record_elem_t elem)
 {
-  return (rec_mset_elem_type (elem.mset_elem)
-          == record->field_type);
+  return (rec_mset_elem_type (elem.mset_elem) == record->field_type);
 }
 
 bool
