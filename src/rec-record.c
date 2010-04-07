@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 18:02:35 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 18:10:25 jco"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -165,6 +165,30 @@ rec_record_equal_p (rec_record_t record1,
 {
   return ((rec_record_subset_p (record1, record2)) &&
           (rec_record_subset_p (record2, record1)));
+}
+
+int
+rec_record_get_num_fields (rec_record_t record,
+                           rec_field_name_t field_name)
+{
+  rec_mset_elem_t elem;
+  int num_fields;
+  rec_field_t field;
+
+  num_fields = 0;
+
+  elem = NULL;
+  while (elem = rec_mset_next (record->mset, elem, record->field_type))
+    {
+      field = (rec_field_t) rec_mset_elem_data (elem);
+      if (rec_field_name_equal_p (rec_field_name (field),
+                                  field_name))
+        {
+          num_fields++;
+        }
+    }
+
+  return num_fields;
 }
 
 int
