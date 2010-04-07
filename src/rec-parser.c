@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 11:12:53 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 20:51:46 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ static bool rec_expect (rec_parser_t parser, char *str);
 static bool rec_parse_field_name_part (rec_parser_t parser, char **str);
 static bool rec_parse_field_value (rec_parser_t parser, char **str);
 
-static bool rec_parse_comment (rec_parser_t parser, char **str);
+static bool rec_parse_comment (rec_parser_t parser, rec_comment_t *comment);
 
 static bool rec_parser_digit_p (char c);
 static bool rec_parser_letter_p (char c);
@@ -303,7 +303,7 @@ rec_parse_record (rec_parser_t parser,
   bool ret, field_p;
   int ci;
   char c;
-  char *comment_value;
+  rec_comment_t comment;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -327,17 +327,11 @@ rec_parse_record (rec_parser_t parser,
   if (rec_parse_field (parser, &field))
     {
       /* Add the field to the record */
-      if (!rec_record_insert_field (new,
-                                    field,
-                                    rec_record_size (new)))
-        {
-          parser->error = REC_PARSER_ENOMEM;
-          return false;
-        }
+      rec_record_append_field (new, field);
     }
   else
     {
-      /* Expected a field */
+      /* Expected a field.  */
       parser->error = REC_PARSER_EFIELD;
       return false;
     }
@@ -350,23 +344,10 @@ rec_parse_record (rec_parser_t parser,
       if (c == '#')
         {
           rec_parser_ungetc (parser, ci);
-          if (rec_parse_comment (parser, &comment_value))
+          if (rec_parse_comment (parser, &comment))
             {
-              /* Insert the comment fake field:
-               *
-               *  empty name -> comment value
-               */
-              field_name = rec_field_name_new ();
-              field = rec_field_new (field_name,
-                                     comment_value);
-              if (!rec_record_insert_field (new,
-                                            field,
-                                            rec_record_size (new)))
-                {
-                  parser->error = REC_PARSER_ENOMEM;
-                  ret = false;
-                  break;
-                }
+              /* Add the comment to the record.  */
+              rec_record_append_comment (new, comment);
             }
         }
       else if (c == '\n')
@@ -381,14 +362,7 @@ rec_parse_record (rec_parser_t parser,
           if (rec_parse_field (parser, &field))
             {
               /* Add the field to the record */
-              if (!rec_record_insert_field (new,
-                                            field,
-                                            rec_record_size (new)))
-                {
-                  parser->error = REC_PARSER_ENOMEM;
-                  ret = false;
-                  break;
-                }
+              rec_record_append_field (new, field);
             }
           else
             {
@@ -423,7 +397,7 @@ rec_parse_rset (rec_parser_t parser,
   rec_rset_t new;
   rec_record_t record;
   rec_field_name_t rec_fname;
-  char *comment_value;
+  rec_comment_t comment;
 
   ret = false;
 
@@ -461,12 +435,10 @@ rec_parse_rset (rec_parser_t parser,
       else if (c == '#')
         {
           rec_parser_ungetc (parser, c);
-          rec_parse_comment (parser, &comment_value);
+          rec_parse_comment (parser, &comment);
 
-          /* Add a fake record with the comment value.  */
-          record = rec_record_new ();
-          rec_record_set_comment (record, comment_value);
-          rec_rset_insert_record (new, record, rec_rset_size (new));
+          /* Add the comment to the record set.  */
+          rec_rset_append_comment (new, comment);
         }
       else
         {
@@ -481,7 +453,7 @@ rec_parse_rset (rec_parser_t parser,
               if (rec_record_field_p (record,
                                       rec_fname))
                 {
-                  if ((rec_rset_size (new) == 0) &&
+                  if ((rec_rset_num_records (new) == 0) &&
                       (!rec_rset_descriptor (new)))
                     {
                       /* Special case: the first record found in the
@@ -497,14 +469,7 @@ rec_parse_rset (rec_parser_t parser,
                 }
               else
                 {
-                  if (!rec_rset_insert_record (new,
-                                               record,
-                                               rec_rset_size (new)))
-                    {
-                      /* Parse error: out of memory */
-                      parser->error = REC_PARSER_ENOMEM;
-                      break;
-                    }
+                  rec_rset_append_record (new, record);
                 }
             }
           else
@@ -518,7 +483,7 @@ rec_parse_rset (rec_parser_t parser,
 
   if ((parser->error == REC_PARSER_NOERROR)
       && (rec_rset_descriptor (new)
-          || (rec_rset_size (new) > 0)))
+          || (rec_rset_num_records (new) > 0)))
     {
       ret = true;
     }
@@ -1083,7 +1048,7 @@ rec_parser_buf_adjust (rec_parser_buf_t buf)
 }
 
 static bool
-rec_parse_comment (rec_parser_t parser, char **str)
+rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
 {
   bool ret;
   rec_parser_buf_t buf;
@@ -1124,11 +1089,11 @@ rec_parse_comment (rec_parser_t parser, char **str)
     {
       /* Resize the token */
       rec_parser_buf_adjust (buf);
-      *str = rec_parser_buf_data (buf);
+      *comment = rec_comment_new (rec_parser_buf_data (buf));
     }
   else
     {
-      *str = NULL;
+      *comment = NULL;
     }
 
   rec_parser_buf_destroy (buf);

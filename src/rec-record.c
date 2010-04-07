@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 19:34:45 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 21:20:24 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -160,30 +160,6 @@ rec_record_equal_p (rec_record_t record1,
 {
   return ((rec_record_subset_p (record1, record2)) &&
           (rec_record_subset_p (record2, record1)));
-}
-
-int
-rec_record_get_num_fields (rec_record_t record,
-                           rec_field_name_t field_name)
-{
-  rec_mset_elem_t elem;
-  int num_fields;
-  rec_field_t field;
-
-  num_fields = 0;
-
-  elem = NULL;
-  while (elem = rec_mset_next (record->mset, elem, record->field_type))
-    {
-      field = (rec_field_t) rec_mset_elem_data (elem);
-      if (rec_field_name_equal_p (rec_field_name (field),
-                                  field_name))
-        {
-          num_fields++;
-        }
-    }
-
-  return num_fields;
 }
 
 int
@@ -352,20 +328,6 @@ rec_record_search_field_name (rec_record_t record,
   return elem;
 }
 
-void
-rec_record_remove_field_by_name (rec_record_t record,
-                                 rec_field_name_t field_name,
-                                 int index)
-{
-  rec_record_elem_t elem;
-
-  elem = rec_record_search_field_name (record,
-                                       field_name,
-                                       index + 1);
-  rec_mset_remove (record->mset,
-                   elem.mset_elem);
-}
-
 rec_record_elem_t
 rec_record_first (rec_record_t record)
 {
@@ -426,6 +388,107 @@ rec_record_next_comment (rec_record_t record,
   elem.mset_elem = rec_mset_next (record->mset,
                                   elem.mset_elem,
                                   record->comment_type);
+
+  return elem;
+}
+
+bool
+rec_record_field_p (rec_record_t record,
+                    rec_field_name_t field_name)
+{
+  return (rec_record_get_num_fields (record, field_name) > 0);
+}
+
+int
+rec_record_get_num_fields_by_name (rec_record_t record,
+                                   rec_field_name_t field_name)
+{
+  rec_mset_elem_t elem;
+  int num_fields;
+  rec_field_t field;
+
+  num_fields = 0;
+
+  elem = NULL;
+  while (elem = rec_mset_next (record->mset, elem, record->field_type))
+    {
+      field = (rec_field_t) rec_mset_elem_data (elem);
+      if (rec_field_name_equal_p (rec_field_name (field),
+                                  field_name))
+        {
+          num_fields++;
+        }
+    }
+
+  return num_fields;
+}
+
+rec_field_t
+rec_record_get_field_by_name (rec_record_t record,
+                              rec_field_name_t field_name,
+                              int n)
+{
+  rec_mset_elem_t elem;
+  int num_fields;
+  rec_field_t field;
+
+  num_fields = 0;
+  elem = NULL;
+  while (elem = rec_mset_next (record->mset, elem, record->field_type))
+    {
+      field = (rec_field_t) rec_mset_elem_data (elem);
+      if (rec_field_name_equal_p (rec_field_name (field), field_name))
+        {
+          if (n == num_fields)
+            {
+              return field;
+            }
+
+          num_fields++;
+        }
+    }
+
+  return NULL;
+}
+
+void
+rec_record_remove_field_by_name (rec_record_t record,
+                                 rec_field_name_t field_name,
+                                 int index)
+{
+  rec_record_elem_t elem;
+  rec_field_t field;
+  int num_fields;
+
+  num_fields = 0;
+  elem = rec_record_first_field (record);
+  while (rec_record_elem_p (elem))
+    {
+      field = rec_record_elem_field (elem);
+      if (rec_field_name_equal_p (rec_field_name (field),
+                                  field_name))
+          
+        {
+          if ((index == -1) || (index == num_fields))
+            {
+              elem = rec_record_remove (record, elem);
+            }
+
+          num_fields++;
+        }
+      else
+        {
+          elem = rec_record_next_field (record, elem);
+        }
+    }
+}
+
+rec_record_elem_t
+rec_record_elem_null_elem (void)
+{
+  rec_record_elem_t elem;
+
+  elem.mset_elem = NULL;
 
   return elem;
 }

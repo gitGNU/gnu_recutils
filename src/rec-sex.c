@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 17:05:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 21:32:00 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -146,7 +146,8 @@ rec_sex_eval (rec_sex_t sex,
   rec_field_t field;
   rec_field_t wfield;
   rec_record_t wrec;
-  int i, j, nf;
+  rec_record_elem_t elem_field;
+  int j, nf;
   struct rec_sex_val_s val;
   
   res = false;
@@ -159,13 +160,10 @@ rec_sex_eval (rec_sex_t sex,
       goto exit;
     }
 
-  for (i = 0; i < rec_record_size (record); i++)
+  elem_field = rec_record_null_elem ();
+  while (rec_record_elem_p (elem_field = rec_record_next_field (record, elem_field)))
     {
-      field = rec_record_get_field (record, i);
-      if (rec_field_comment_p (field))
-        {
-          continue;
-        }
+      field = rec_record_elem_field (elem_field);
 
       nf = rec_record_get_num_fields (record, rec_field_name (field));
       if (nf > 1)
@@ -185,7 +183,7 @@ rec_sex_eval (rec_sex_t sex,
               rec_record_remove_field_by_name (wrec,
                                                rec_field_name (field),
                                                -1); /* Delete all.  */
-              rec_record_insert_field (wrec, rec_field_dup (wfield), 0);
+              rec_record_append_field (wrec, rec_field_dup (wfield));
 
               EXEC_AST(wrec);
 
@@ -562,16 +560,7 @@ rec_sex_eval_node (rec_sex_t sex,
         field_name_str = rec_sex_ast_node_name (child);
         field_name = rec_parse_field_name_str (field_name_str);
 
-        n = 0;
-        for (i = 0; i < rec_record_size (record); i++)
-          {
-            field = rec_record_get_field (record, i);
-            if (rec_field_name_equal_p (field_name,
-                                        rec_field_name (field)))
-              {
-                n++;
-              }
-          }
+        n = rec_record_get_num_fields_by_name (record, field_name);
 
         res.type = REC_SEX_VAL_INT;
         res.int_val = n;

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 18:07:44 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 21:32:29 jemarch"
  *
  *       File:         rec-resolver.c
  *       Date:         Mon Jan 11 14:29:18 2010
@@ -157,7 +157,7 @@ rec_resolve_part (rec_record_t record,
                   FILE *out)
 {
   bool ret;
-  int i;
+  rec_record_elem_t elem_field;
   int index, num_found;
   rec_field_t field;
   bool slash_p;
@@ -170,9 +170,10 @@ rec_resolve_part (rec_record_t record,
   index = part->min;
 
   /* Get the result string.  */
-  for (i = 0; i < rec_record_size (record); i++)
+  elem_field = rec_record_null_elem();
+  while (rec_record_elem_p (elem_field = rec_record_next_field (record, elem_field)))
     {
-      field = rec_record_get_field (record, i);
+      field = rec_record_elem_field (elem_field);
 
       if (rec_field_name_equal_p (field_name,
                                   rec_field_name (field)))

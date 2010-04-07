@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 11:53:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 21:31:30 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -68,6 +68,14 @@ rec_writer_destroy (rec_writer_t writer)
 {
   fflush (writer->out);
   free (writer);
+}
+
+bool
+rec_write_comment (rec_writer_t writer,
+                   rec_comment_t comment)
+{
+  return rec_writer_puts (writer,
+                          rec_comment_text (comment));
 }
 
 bool
@@ -152,36 +160,18 @@ rec_write_record (rec_writer_t writer,
 {
   bool ret;
   rec_field_t field;
-  int i;
+  rec_record_elem_t elem;
 
   ret = true;
 
-  if (rec_record_comment_p (record))
+  elem = rec_record_null_elem ();
+  while (rec_record_elem_p (elem = rec_record_next (record, elem)))
     {
-      if (!rec_writer_putc (writer, '#'))
+      field = rec_record_elem_field (elem);
+      if (!rec_write_field (writer, field))
         {
           ret = false;
-        }
-      if (!rec_writer_puts (writer,
-                            rec_record_comment (record)))
-        {
-          ret = false;
-        }
-      if (!rec_writer_putc (writer, '\n'))
-        {
-          ret = false;
-        }
-    }
-  else
-    {
-      for (i = 0; i < rec_record_size (record); i++)
-        {
-          field = rec_record_get_field (record, i);
-          if (!rec_write_field (writer, field))
-            {
-              ret = false;
-              break;
-            }
+          break;
         }
     }
 
@@ -192,10 +182,11 @@ bool
 rec_write_rset (rec_writer_t writer,
                 rec_rset_t rset)
 {
-  int i;
   bool ret;
   rec_record_t descriptor;
   bool wrote_descriptor;
+  rec_rset_elem_t elem;
+  rec_record_t record;
 
   ret = true;
   wrote_descriptor = false;
@@ -217,12 +208,10 @@ rec_write_rset (rec_writer_t writer,
             }
         }
 
-      for (i = 0; i < rec_rset_size (rset); i++)
+      elem = rec_rset_null_elem ();
+      while (rec_rset_elem_p (elem = rec_rset_next (rset, elem)))
         {
-          rec_record_t record;
-          record = rec_rset_get_record (rset, i);
-  
-          if ((i != 0)
+          /*          if ((i != 0)
               && ((rec_record_p (record))
                   || ((i == 0)
                       || (!rec_record_comment_p (rec_rset_get_record (rset,
@@ -232,11 +221,19 @@ rec_write_rset (rec_writer_t writer,
             {
               ret = false;
               break;
+              } */
+
+          if (rec_rset_elem_record_p (rset, elem))
+            {
+              ret = rec_write_record (writer, rec_rset_elem_record (elem));
+            }
+          else
+            {
+              ret = rec_write_comment (writer, rec_rset_elem_comment (elem));
             }
 
-          if (!rec_write_record (writer, record))
+          if (!ret)
             {
-              ret = false;
               break;
             }
         }

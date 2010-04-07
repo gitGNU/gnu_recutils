@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 19:35:16 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 21:21:12 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -161,6 +161,16 @@ rec_rset_num_comments (rec_rset_t rset)
 {
   return rec_mset_count (rset->mset,
                          rset->comment_type);
+}
+
+rec_rset_elem_t
+rec_rset_null_elem (void)
+{
+  rec_rset_elem_t elem;
+
+  elem.mset_elem = NULL;
+
+  return elem;
 }
 
 rec_rset_elem_t
@@ -402,7 +412,6 @@ rec_rset_set_type (rec_rset_t rset,
                    char *type)
 {
   rec_field_t rec_field;
-  rec_record_elem_t elem;
   rec_field_name_t rec_field_name;
 
   if (!type)
@@ -419,10 +428,9 @@ rec_rset_set_type (rec_rset_t rset,
     }
 
   rec_field_name = rec_parse_field_name_str ("%rec:");
-  elem = rec_record_search_field_name (rset->descriptor,
-                                       rec_field_name,
-                                       0);
-  rec_field = rec_record_elem_field (elem);
+  rec_field = rec_record_get_field_by_name (rset->descriptor,
+                                            rec_field_name,
+                                            0);
 
   if (rec_field)
     {
@@ -442,18 +450,15 @@ rec_rset_type (rec_rset_t rset)
   char *res;
   rec_record_t descriptor;
   rec_field_t field;
-  rec_record_elem_t elem;
   rec_field_name_t field_name;
 
   res = NULL;
   if (rset->descriptor)
     {
       field_name = rec_parse_field_name_str ("%rec:");
-      elem = rec_record_search_field_name (rset->descriptor,
-                                           field_name,
-                                           0);
-      field = rec_record_elem_field (elem);
-
+      field = rec_record_get_field_by_name (rset->descriptor,
+                                            field_name,
+                                            0);
       if (field)
         {
           res = rec_field_value (field);

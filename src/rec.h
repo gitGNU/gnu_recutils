@@ -178,9 +178,6 @@ bool rec_record_subset_p (rec_record_t record1,
 bool rec_record_equal_p (rec_record_t record1,
                          rec_record_t record2);
 
-int rec_record_get_num_fields (rec_record_t record,
-                               rec_field_name_t field_name);
-
 /* Statistics.  */
 
 int rec_record_num_elems (rec_record_t record);
@@ -207,12 +204,6 @@ void rec_record_insert_after (rec_record_t record,
 /* Searching.  */
 rec_record_elem_t rec_record_search_field (rec_record_t record,
                                            rec_field_t field);
-rec_record_elem_t rec_record_search_field_name (rec_record_t record,
-                                                rec_field_name_t field_name,
-                                                int n);
-void rec_record_remove_field_by_name (rec_record_t record,
-                                      rec_field_name_t field_name,
-                                      int index);
 
 /* Iterating.  */
 rec_record_elem_t rec_record_first (rec_record_t record);
@@ -223,7 +214,25 @@ rec_record_elem_t rec_record_next (rec_record_t record, rec_record_elem_t elem);
 rec_record_elem_t rec_record_next_field (rec_record_t record, rec_record_elem_t elem);
 rec_record_elem_t rec_record_next_comment (rec_record_t record, rec_record_elem_t elem);
 
+/* By-name operations.  */
+
+bool rec_record_field_p (rec_record_t record,
+                         rec_field_name_t field_name);
+
+int rec_record_get_num_fields_by_name (rec_record_t record,
+                                       rec_field_name_t field_name);
+
+rec_field_t rec_record_get_field_by_name (rec_record_t record,
+                                          rec_field_name_t field_name,
+                                          int n);
+
+void rec_record_remove_field_by_name (rec_record_t record,
+                                      rec_field_name_t field_name,
+                                      int index);
+
 /* Elements.  */
+rec_record_elem_t rec_record_null_elem (void);
+
 rec_record_elem_t rec_record_elem_field_new (rec_record_t record,
                                              rec_field_t field);
 rec_record_elem_t rec_record_elem_comment_new (rec_record_t record,
@@ -265,6 +274,8 @@ int rec_rset_num_records (rec_rset_t rset);
 int rec_rset_num_comments (rec_rset_t rset);
 
 /* Getting and setting elements.  */
+
+rec_rset_elem_t rec_rset_null_elem (void);
 
 rec_rset_elem_t rec_rset_get_elem (rec_rset_t rset, int position);
 rec_rset_elem_t rec_rset_get_record (rec_rset_t rset, int position);
@@ -451,6 +462,7 @@ void rec_writer_destroy (rec_writer_t writer);
  * If EOF occurs, the following functions return NULL.
  */
 
+bool rec_write_comment (rec_writer_t writer, rec_comment_t comment);
 bool rec_write_field (rec_writer_t writer, rec_field_t field);
 bool rec_write_record (rec_writer_t writer, rec_record_t record);
 bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
