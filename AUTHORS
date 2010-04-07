@@ -12,6 +12,8 @@ bar: jarl
 Name: Jose E. Marchesi
 Email: jemarch@gnu.org
 
+
+
 Name: foo
 Email: bar
 
@@ -21,6 +23,7 @@ Email: bar
 
 foo: bar
 bar: baz
+
 
 # End of AUTHORS
 

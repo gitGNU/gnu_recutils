@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 17:31:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-07 22:44:12 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -342,9 +342,10 @@ recsel_process_data (rec_db_t db)
   rec_record_t record;
   rec_record_t descriptor;
   rec_field_t type;
-  int n_rset, i, written, num_rec;
+  int n_rset, written, num_rec;
   rec_writer_t writer;
   bool parse_status;
+  rec_rset_elem_t elem_rset;
 
   ret = true;
 
@@ -354,7 +355,7 @@ recsel_process_data (rec_db_t db)
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-      rset_size = rec_rset_size (rset);
+      rset_size = rec_rset_num_records (rset);
 
       if ((rset_size > 0)
           && ((recsel_type && rec_rset_type (rset) && (strcmp (recsel_type, rec_rset_type (rset)) == 0)
@@ -362,16 +363,11 @@ recsel_process_data (rec_db_t db)
         {
           /*  Print out the records of this rset, if appropriate.  */
           num_rec = 0;
-          rset_size = rec_rset_size (rset);
-
-          for (i = 0; i < rset_size; i++)
+          elem_rset = rec_rset_null_elem ();
+          while (rec_rset_elem_p (elem_rset = rec_rset_next_record (rset, elem_rset)))
             {
-              record = rec_rset_get_record (rset, i);
-              if (!rec_record_p (record))
-                {
-                  continue;
-                }
-          
+              record = rec_rset_elem_record (elem_rset);
+
               if (((recsel_num == -1) &&
                    ((!recsel_sex_str) ||
                     (rec_sex_eval (recsel_sex, record, &parse_status))))
