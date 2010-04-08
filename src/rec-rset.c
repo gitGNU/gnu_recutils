@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 13:46:41 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 18:41:02 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -261,6 +261,34 @@ rec_rset_remove (rec_rset_t rset,
                  rec_rset_elem_t elem)
 {
   elem.mset_elem = rec_mset_remove (rset->mset, elem.mset_elem);
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_remove_record (rec_rset_t rset,
+                        rec_rset_elem_t elem)
+{
+  elem = rec_rset_remove (rset, elem);
+  if (rec_rset_elem_p (elem)
+      && !rec_rset_elem_record_p (rset, elem))
+    {
+      elem = rec_rset_next_record (rset, elem);
+    }
+
+  return elem;
+}
+
+rec_rset_elem_t
+rec_rset_remove_comment (rec_rset_t rset,
+                         rec_rset_elem_t elem)
+{
+  elem = rec_rset_remove (rset, elem);
+  if (rec_rset_elem_p (elem)
+      && !rec_rset_elem_comment_p (rset, elem))
+    {
+      elem = rec_rset_next_comment (rset, elem);
+    }
+
   return elem;
 }
 

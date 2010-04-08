@@ -292,6 +292,8 @@ void rec_rset_append_record (rec_rset_t rset, rec_record_t record);
 void rec_rset_append_comment (rec_rset_t rset, rec_comment_t comment);
 
 rec_rset_elem_t rec_rset_remove (rec_rset_t rset, rec_rset_elem_t elem);
+rec_rset_elem_t rec_rset_remove_record (rec_rset_t rset, rec_rset_elem_t elem);
+rec_rset_elem_t rec_rset_remove_comment (rec_rset_t rset, rec_rset_elem_t elem);
 void rec_rset_insert_after (rec_rset_t rset,
                             rec_rset_elem_t elem,
                             rec_rset_elem_t new_elem);
