@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 15:32:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 20:51:31 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -60,6 +60,7 @@ static const struct option GNU_longOptions[] =
     {"count", no_argument, NULL, COUNT_ARG},
     {"num", required_argument, NULL, NUM_ARG},
     {"case-insensitive", no_argument, NULL, INSENSITIVE_ARG},
+    {"include-descriptors", no_argument, NULL, DESCRIPTOR_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -81,6 +82,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -t, --type=TYPE                     print records of the specified type only.\n\
   -i, --case-insensitive              make strings case-insensitive in selection\n\
                                         expressions.\n\
+  -d, --include-descriptors           print record descriptors along with the matched\n\
+                                        records.\n\
   -e, --expression=EXPR               selection expression.\n\
   -n, --number=NUM                    select an specific record.\n\
   -p, --print=FIELDS                  comma-separated list of fields to print for each\n\
@@ -121,6 +124,9 @@ bool recsel_count = false;
    selection expressions.  */
 bool recsel_insensitive = false;
 
+/* Whether to include record descriptors in the selection results.  */
+bool recsel_descriptors = false;
+
 /* Whether to provide an specific record.  */
 long recsel_num = -1;
 
@@ -133,7 +139,7 @@ recsel_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "Cict:e:n:p:",
+                             "Cdict:e:n:p:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -182,6 +188,12 @@ recsel_parse_args (int argc,
         case 'i':
           {
             recsel_insensitive = true;
+            break;
+          }
+        case DESCRIPTOR_ARG:
+        case 'd':
+          {
+            recsel_descriptors = true;
             break;
           }
         case NUM_ARG:
@@ -345,6 +357,7 @@ recsel_process_data (rec_db_t db)
   int n_rset, written, num_rec;
   rec_writer_t writer;
   bool parse_status;
+  bool wrote_descriptor;
   rec_rset_elem_t elem_rset;
 
   ret = true;
@@ -356,6 +369,8 @@ recsel_process_data (rec_db_t db)
     {
       rset = rec_db_get_rset (db, n_rset);
       rset_size = rec_rset_num_records (rset);
+
+      wrote_descriptor = false;
 
       /* Don't process empty record sets.  */
       if (rset_size == 0)
@@ -423,12 +438,24 @@ recsel_process_data (rec_db_t db)
                     {
                       if (strcmp (resolver_result, "") != 0)
                         {
+                          if (recsel_descriptors && !wrote_descriptor)
+                            {
+                              rec_write_record (writer, rec_rset_descriptor (rset));
+                              fprintf (stdout, "\n");
+                              wrote_descriptor = true;
+                            }
                           fprintf (stdout, "%s", resolver_result);
                           written++;
                         }
                     }
                   else
                     {
+                      if (recsel_descriptors && !wrote_descriptor)
+                        {
+                          rec_write_record (writer, rec_rset_descriptor (rset));
+                          fprintf (stdout, "\n");
+                          wrote_descriptor = true;
+                        }
                       rec_write_record (writer, record);
                     }
                 }
