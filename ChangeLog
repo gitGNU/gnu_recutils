@@ -1,3 +1,9 @@
+2010-04-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-mset.c: Distribution terms added.
+
+	* src/rec-mset.h: Likewise.
+
 2010-04-07  Jose E. Marchesi  <jco@terma.com>
 
 	* src/rec-mset.c (rec_mset_elem_next): Added the MSET parameter.
