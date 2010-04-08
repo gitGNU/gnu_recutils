@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 15:43:10 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 14:15:29 jemarch"
  *
  *       File:         recins.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -140,8 +140,10 @@ recins_insert_record (rec_db_t db,
 {
   bool res;
   rec_rset_t rset;
+  rec_record_t rec;
+  rec_rset_elem_t last_elem, new_elem;
 
-  if (rec_record_size (record) == 0)
+  if (rec_record_num_fields (record) == 0)
     {
       /* Do nothing.  */
       return true;
@@ -152,37 +154,20 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
-      int i;
-      
-      for (i = (rec_rset_size (rset) - 1); i >= 0; i--)
+      new_elem = rec_rset_elem_record_new (rset, record);
+
+      if (rec_rset_num_records (rset) == 0)
         {
-          rec_record_t rec;
-          rec = rec_rset_get_record (rset, i);
-          if (rec_record_p (rec))
-            {
-              /* Insert the new record just after rec.  */
-              if (!rec_rset_insert_record (rset,
-                                           record,
-                                           i + 1))
-                {
-                  fprintf (stderr, "recins: error: inserting the new record.\n");
-                  return false;
-                }     
-              
-              break;
-            }
+          /* The rset is empty => prepend to it.  */
+          rec_rset_insert_at (rset, new_elem, -1);
         }
-      
-      if (i == -1)
+      else
         {
-          /* The rset was empty => prepend to it.  */
-          if (!rec_rset_insert_record (rset,
-                                       record,
-                                       -1))
-            {
-              fprintf (stderr, "recins: error: inserting the new record.\n");
-              return false;
-            }
+          /* Insert the new record after the last record in the
+             set.  */
+          last_elem = rec_rset_get_record (rset,
+                                           rec_rset_num_records (rset) - 1);
+          rec_rset_insert_after (rset, last_elem, new_elem);
         }
     }
   else
@@ -190,7 +175,7 @@ recins_insert_record (rec_db_t db,
       /* Create a new type and insert the record there.  */
       rset = rec_rset_new ();
       rec_rset_set_type (rset, type);
-      rec_rset_insert_record (rset, record, rec_rset_size (rset));
+      rec_rset_append_record (rset, record);
       
       if (type)
         {
@@ -293,9 +278,7 @@ void recins_parse_args (int argc,
               }
 
             rec_field_set_value (field, optarg);
-            rec_record_insert_field (record,
-                                     field,
-                                     rec_record_size (record));
+            rec_record_append_field (record, field);
 
             field = NULL;
             break;

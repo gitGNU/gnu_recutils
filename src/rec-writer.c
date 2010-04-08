@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 22:21:10 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 14:28:56 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -229,17 +229,13 @@ rec_write_rset (rec_writer_t writer,
       elem = rec_rset_null_elem ();
       while (rec_rset_elem_p (elem = rec_rset_next (rset, elem)))
         {
-          /*          if ((position != 0)
-              && ((rec_record_p (record))
-                  || ((position == 0)
-                      || (!rec_record_comment_p (rec_rset_get_record (rset,
-                                                                      position - 1)))))
-              && (!rec_writer_putc (writer, '\n')))
-
+          if (position != 0)
             {
-              ret = false;
-              break;
-              } */
+              if (!rec_writer_putc (writer, '\n'))
+                {
+                  ret = false;
+                }
+            }
 
           if (rec_rset_elem_record_p (rset, elem))
             {
