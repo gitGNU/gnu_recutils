@@ -473,6 +473,7 @@ bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
 bool rec_write_db (rec_writer_t writer, rec_db_t db);
 
 char *rec_write_field_str (rec_field_t field);
+char *rec_write_comment_str (rec_comment_t comment);
 
 /* Getting information about the writer */
 bool rec_writer_eof (rec_writer_t writer);

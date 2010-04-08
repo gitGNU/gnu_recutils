@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 14:28:56 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 18:07:14 jemarch"
  *
  *       File:         rec-writer.c
  *       Date:         Sat Dec 26 22:47:16 2009
@@ -74,9 +74,28 @@ bool
 rec_write_comment (rec_writer_t writer,
                    rec_comment_t comment)
 {
-  return (rec_writer_putc (writer, '#')
-          && rec_writer_puts (writer, rec_comment_text (comment))
-          && rec_writer_putc (writer, '\n'));
+  char *line;
+  char *str;
+  
+  /* Every line in the comment is written preceded by a '#' character
+     and postceded by a newline character.  */
+
+  str = strdupa (rec_comment_text (comment));
+  line = strsep (&str, "\n");
+  do
+    {
+      if (!rec_writer_putc (writer, '#') 
+          || !rec_writer_puts (writer, line)
+          || !rec_writer_putc (writer, '\n'))
+        {
+          return false;
+        }
+    }
+  while ((line = strsep (&str, "\n")));
+
+  free (str);
+
+  return true;
 }
 
 bool
@@ -305,6 +324,32 @@ rec_write_field_str (rec_field_t field)
       if (writer)
         {
           rec_write_field (writer, field);
+          rec_writer_destroy (writer);
+        }
+
+      fclose (stm);
+    }
+  
+  return result;
+}
+
+char *
+rec_write_comment_str (rec_comment_t comment)
+{
+  rec_writer_t writer;
+  char *result;
+  size_t result_size;
+  FILE *stm;
+  
+  result = NULL;
+  stm = open_memstream (&result, &result_size);
+  if (stm)
+    {
+      writer = rec_writer_new (stm);
+
+      if (writer)
+        {
+          rec_write_comment (writer, comment);
           rec_writer_destroy (writer);
         }
 

@@ -1,31 +1,7 @@
 # -*- mode: rec -*-
-# jorl
-
-foo: bar
-
-%rec: Author
-foo: bar
-# jo: ja
-jiji: jojo
-# jojo: jaja
-bar: jarl
-
 
 Name: Jose E. Marchesi
 Email: jemarch@gnu.org
-
-
-
-Name: foo
-Email: bar
-
-%rec: Otro
-
-%rec: Y otro mas
-
-foo: bar
-bar: baz
-
 
 # End of AUTHORS
 

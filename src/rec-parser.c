@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 11:56:34 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 16:58:02 jemarch"
  *
  *       File:         rec-parser.c
  *       Date:         Wed Dec 23 20:55:15 2009
@@ -1060,7 +1060,7 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
   buf = rec_parser_buf_new ();
 
   /* Comments start at the beginning of line and span until the first
-   * \n character or EOF.
+   * \n character not followed by a #, or EOF.
    */
   if (rec_expect (parser, "#"))
     {
@@ -1070,16 +1070,28 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
 
           if (c == '\n')
             {
-              break;
-            }
-          else
-            {
-              if (!rec_parser_buf_add (buf, c))
+              if ((ci = rec_parser_getc (parser)) == EOF)
                 {
-                  /* Out of memory */
-                  parser->error = REC_PARSER_ENOMEM;
-                  return false;
+                  break;
                 }
+              c = (char) ci;
+
+              if (c != '#')
+                {
+                  rec_parser_ungetc (parser, ci);
+                  break;
+                }
+              else
+                {
+                  c = '\n';
+                }
+            }
+
+          if (!rec_parser_buf_add (buf, c))
+            {
+              /* Out of memory */
+              parser->error = REC_PARSER_ENOMEM;
+              return false;
             }
         }
       

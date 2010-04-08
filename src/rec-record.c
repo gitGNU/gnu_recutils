@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 16:07:31 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 18:20:08 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -473,7 +473,8 @@ rec_record_remove_field_by_name (rec_record_t record,
           if ((index == -1) || (index == num_fields))
             {
               elem = rec_record_remove (record, elem);
-              if (!rec_record_elem_field_p (record, elem))
+              if (rec_record_elem_p (elem) &&
+                  !rec_record_elem_field_p (record, elem))
                 {
                   elem = rec_record_next_field (record, elem);
                 }
@@ -558,8 +559,42 @@ rec_record_elem_comment (rec_record_elem_t elem)
 rec_comment_t
 rec_record_to_comment (rec_record_t record)
 {
-  /* XXX */
-  return rec_comment_new (":P");
+  FILE *stm;
+  rec_comment_t res;
+  char *comment_str;
+  size_t comment_str_size;
+  rec_record_elem_t elem;
+
+  stm = open_memstream (&comment_str, &comment_str_size);
+
+  elem = rec_record_null_elem ();
+  while (rec_record_elem_p (elem = rec_record_next (record, elem)))
+    {
+      if (rec_record_elem_field_p (record, elem))
+        {
+          /* Field.  */
+          fputs (rec_write_field_str (rec_record_elem_field (elem)), stm);
+        }
+      else
+        {
+          /* Comment.  */
+          fputs (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem))),
+                 stm);
+        }
+    }
+
+  fclose (stm);
+
+  /* Remove a trailing newline.  */
+  if (comment_str[comment_str_size - 1] == '\n')
+    {
+      comment_str[comment_str_size - 1] = '\0';
+    }
+
+  res = rec_comment_new (comment_str);
+  free (comment_str);
+
+  return res;
 }
 
 /*

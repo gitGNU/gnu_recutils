@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 14:55:27 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 18:18:33 jemarch"
  *
  *       File:         recdel.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -202,6 +202,11 @@ recdel_delete_records (rec_db_t db)
                     }
 
                   rec_elem = rec_rset_remove (rset, rec_elem);
+                  if (rec_rset_elem_p (rec_elem)
+                      && (!rec_rset_elem_record_p (rset, rec_elem)))
+                    {
+                      rec_elem = rec_rset_next_record (rset, rec_elem);
+                    }
                 }
               else
                 {
