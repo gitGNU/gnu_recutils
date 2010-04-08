@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 14:45:09 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 14:55:27 jemarch"
  *
  *       File:         recdel.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -155,13 +155,13 @@ recdel_delete_records (rec_db_t db)
   int rset_size;
   rec_rset_t rset;
   rec_record_t record;
-  rec_record_t crec;
-  rec_field_t cfield;
+  rec_comment_t comment;
   bool parse_status = true;
   rec_record_t drec;
   char *comment_field_str;
   char *comment_str;
   rec_rset_elem_t rec_elem;
+  rec_rset_elem_t new_elem;
 
   if (!rec_db_type_p (db, recdel_type))
     {
@@ -196,8 +196,9 @@ recdel_delete_records (rec_db_t db)
 
                   if (recdel_comment)
                     {
-                      /* Prepare and insert a set of comments.  */
-                      drec = rec_record_dup (record);                      
+                      comment = rec_record_to_comment (record);
+                      new_elem = rec_rset_elem_comment_new (rset, comment);
+                      rec_rset_insert_after (rset, rec_elem, new_elem);
                     }
 
                   rec_elem = rec_rset_remove (rset, rec_elem);
@@ -338,7 +339,6 @@ main (int argc, char *argv[])
   rec_writer_t writer;
   char *type;
   rec_record_t record;
-
 
   program_name = strdup (argv[0]);
 

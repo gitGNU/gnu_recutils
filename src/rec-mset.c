@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 13:42:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 16:05:08 jemarch"
  *
  *       File:         rec-mset.c
  *       Date:         Thu Apr  1 17:07:00 2010
@@ -121,7 +121,10 @@ rec_mset_dup (rec_mset_t mset)
       for (i = 0; i < new->ntypes; i++)
         {
           new->count[i] = mset->count[i];
-          new->name[i] = strdup (mset->name[i]);
+          if (new->name[i])
+            {
+              new->name[i] = strdup (mset->name[i]);
+            }
           new->disp_fn[i] = mset->disp_fn[i];
           new->equal_fn[i] = mset->equal_fn[i];
           new->dup_fn[i] = mset->dup_fn[i];
@@ -136,8 +139,14 @@ rec_mset_dup (rec_mset_t mset)
           new_elem = rec_mset_elem_new (new, elem->type);
           
           /* Set the data.  */
-          rec_mset_elem_set_data (new_elem,
-                                  (new->dup_fn[elem->type] (elem->data)));
+          if (new->dup_fn[elem->type])
+            {
+              new_elem->data = (new->dup_fn[elem->type]) (elem->data);
+            }
+          else
+            {
+              new_elem->data = elem->data;
+            }
 
           /* Append the element.  */
           rec_mset_append (new, new_elem);

@@ -245,6 +245,10 @@ bool rec_record_elem_comment_p (rec_record_t record, rec_record_elem_t elem);
 rec_field_t rec_record_elem_field (rec_record_elem_t elem);
 rec_comment_t rec_record_elem_comment (rec_record_elem_t elem);
 
+/* Others...  */
+
+rec_comment_t rec_record_to_comment (rec_record_t record);
+
 /*
  * RECORD SETS
  *
