@@ -197,6 +197,8 @@ void rec_record_append_field (rec_record_t record, rec_field_t field);
 void rec_record_append_comment (rec_record_t record, rec_comment_t comment);
 
 rec_record_elem_t rec_record_remove (rec_record_t record, rec_record_elem_t elem);
+rec_record_elem_t rec_record_remove_field (rec_record_t record, rec_record_elem_t elem);
+rec_record_elem_t rec_record_remove_comment (rec_record_t record, rec_record_elem_t elem);
 void rec_record_insert_after (rec_record_t record,
                               rec_record_elem_t elem,
                               rec_record_elem_t new_elem);

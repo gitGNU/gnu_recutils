@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 18:20:08 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 20:37:31 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -276,6 +276,36 @@ rec_record_remove (rec_record_t record,
   return elem;
 }
 
+rec_record_elem_t
+rec_record_remove_field (rec_record_t record,
+                         rec_record_elem_t elem)
+{
+  elem.mset_elem = rec_mset_remove (record->mset,
+                                    elem.mset_elem);
+  if (rec_record_elem_p (elem)
+      && !rec_record_elem_field_p (record, elem))
+    {
+      elem = rec_record_next_field (record, elem);
+    }
+  
+  return elem;
+}
+
+rec_record_elem_t
+rec_record_remove_comment (rec_record_t record,
+                           rec_record_elem_t elem)
+{
+  elem.mset_elem = rec_mset_remove (record->mset,
+                                    elem.mset_elem);
+  if (rec_record_elem_p (elem)
+      && !rec_record_elem_comment_p (record, elem))
+    {
+      elem = rec_record_next_comment (record, elem);
+    }
+  
+  return elem;
+}
+
 void
 rec_record_insert_after (rec_record_t record,
                          rec_record_elem_t elem,
@@ -472,12 +502,7 @@ rec_record_remove_field_by_name (rec_record_t record,
         {
           if ((index == -1) || (index == num_fields))
             {
-              elem = rec_record_remove (record, elem);
-              if (rec_record_elem_p (elem) &&
-                  !rec_record_elem_field_p (record, elem))
-                {
-                  elem = rec_record_next_field (record, elem);
-                }
+              elem = rec_record_remove_field (record, elem);
             }
 
           num_fields++;
