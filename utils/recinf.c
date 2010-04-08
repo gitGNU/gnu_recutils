@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 22:16:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 11:22:50 jemarch"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -116,26 +116,25 @@ print_info_file (FILE *in)
                 }
               else
                 {
-                  printf ("unknown");
+                  printf ("unknown\n");
+                }
+
+              if (position < (rec_db_size (db) - 1))
+                {
+                  printf ("\n");
                 }
             }
           else
             {
               if (descriptor)
                 {
-                  printf ("%s", rec_rset_type (rset));
+                  printf ("%s\n", rec_rset_type (rset));
                 }
               else
                 {
-                  printf ("unknown");
+                  printf ("unknown\n");
                 }
-            }
-          
-          if (position < (rec_db_size (db) - 1))
-            {
-              printf ("\n");
-            }
-          
+            }          
         }
     }
   

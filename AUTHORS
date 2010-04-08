@@ -1,6 +1,8 @@
 # -*- mode: rec -*-
 # jorl
 
+foo: bar
+
 %rec: Author
 foo: bar
 # jo: ja
