@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 20:30:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 14:45:09 jemarch"
  *
  *       File:         recdel.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -157,11 +157,11 @@ recdel_delete_records (rec_db_t db)
   rec_record_t record;
   rec_record_t crec;
   rec_field_t cfield;
-  bool *delmask;
   bool parse_status = true;
   rec_record_t drec;
   char *comment_field_str;
   char *comment_str;
+  rec_rset_elem_t rec_elem;
 
   if (!rec_db_type_p (db, recdel_type))
     {
@@ -173,25 +173,18 @@ recdel_delete_records (rec_db_t db)
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-      rset_size = rec_rset_size (rset);
-      delmask = malloc (sizeof(bool) * rset_size);
+      rset_size = rec_rset_num_records (rset);
 
       if ((rset_size > 0)
           && (recdel_type && rec_rset_type (rset) && (strcmp (recdel_type, rec_rset_type (rset)) == 0)
               || (!recdel_type && !rec_rset_type (rset))))
         {
-          /* Initialize the deletion mask.  */
-          for (i = 0; i < rset_size; i++) delmask[i] = false;
-
-          /* Fill in the mask.  */
           numrec = 0;
-          for (n_rec = 0; n_rec < rset_size; n_rec++)
+              
+          rec_elem = rec_rset_first_record (rset);
+          while (rec_rset_elem_p (rec_elem))
             {
-              record = rec_rset_get_record (rset, n_rec);
-              if (!rec_record_p (record))
-                {
-                  continue;
-                }
+              record = rec_rset_elem_record (rec_elem);
 
               if (((recdel_index == -1) && !recdel_sex)
                   || ((recdel_index == -1) &&
@@ -199,7 +192,20 @@ recdel_delete_records (rec_db_t db)
                         (rec_sex_eval (recdel_sex, record, &parse_status))))
                       || (recdel_index == numrec)))
                 {
-                  delmask[n_rec] = true;
+                  /* Delete this record.  */
+
+                  if (recdel_comment)
+                    {
+                      /* Prepare and insert a set of comments.  */
+                      drec = rec_record_dup (record);                      
+                    }
+
+                  rec_elem = rec_rset_remove (rset, rec_elem);
+                }
+              else
+                {
+                  /* Process the next record. */
+                  rec_elem = rec_rset_next_record (rset, rec_elem);
                 }
 
               if (!parse_status)
@@ -210,52 +216,10 @@ recdel_delete_records (rec_db_t db)
 
               numrec++;
             }
-
-          /* Delete the masked record.  */
-          deleted = 0;
-          for (i = 0; i < rset_size; i++)
-            {
-              if (delmask[i])
-                {
-                  drec = rec_record_dup (rec_rset_get_record (rset, i - deleted));
-                  rec_rset_remove_record (rset, i - deleted);
-
-                  if (recdel_comment)
-                    {
-                      for (j = 0; j < rec_record_size (drec); j++)
-                        {
-                          /* Insert comments.  */
-                          crec = rec_record_new ();
-                          cfield = rec_record_get_field (drec, j);
-                          if (rec_field_comment_p (cfield))
-                            {
-                              rec_record_set_comment (crec,
-                                                      rec_field_value (cfield));
-                            }
-                          else
-                            {
-                              comment_field_str = rec_write_field_str (cfield);
-                              comment_str = malloc (strlen (comment_field_str) + 2);
-                              comment_str[0] = ' ';
-                              strncpy (comment_str + 1, comment_field_str, strlen (comment_field_str));
-                              comment_str[strlen (comment_field_str)] = 0;
-                              rec_record_set_comment (crec, comment_str);
-                              free (comment_str);
-                            }
-
-                          rec_rset_insert_record (rset, crec, i - deleted);
-                          deleted--;
-                        }
-                    }
-
-                  rec_record_destroy (drec);
-                  deleted++;
-                }
-            }
         }
     }
-
 }
+
 
 void
 recdel_parse_args (int argc,

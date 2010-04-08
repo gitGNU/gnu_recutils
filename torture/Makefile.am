@@ -28,12 +28,7 @@ REC_FIELD_TSUITE = rec-field/rec-field-name.c \
                   rec-field/rec-field-dup.c \
                   rec-field/tsuite-rec-field.c
 
-REC_RECORD_TSUITE = rec-record/rec-record-new.c \
-                   rec-record/rec-record-size.c \
-                   rec-record/rec-record-field-p.c \
-                   rec-record/rec-record-insert-field.c \
-                   rec-record/rec-record-remove-field.c \
-                   rec-record/tsuite-rec-record.c
+REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c
 
 runtests_SOURCES = runtests.c \
                    $(REC_FIELD_TSUITE) \

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:50:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 14:46:37 jemarch"
  *
  *       File:         tsuite-rec-record.c
  *       Date:         Thu Mar  5 23:56:38 2009
@@ -26,11 +26,11 @@
 #include <config.h>
 #include <check.h>
 
-extern TCase *test_rec_record_new (void);
+/* extern TCase *test_rec_record_new (void);
 extern TCase *test_rec_record_size (void);
 extern TCase *test_rec_record_field_p (void);
 extern TCase *test_rec_record_insert_field (void);
-extern TCase *test_rec_record_remove_field (void);
+extern TCase *test_rec_record_remove_field (void); */
 
 Suite *
 tsuite_rec_record ()
@@ -38,11 +38,11 @@ tsuite_rec_record ()
   Suite *s;
 
   s = suite_create ("rec-record");
-  suite_add_tcase (s, test_rec_record_new ());
+  /*  suite_add_tcase (s, test_rec_record_new ());
   suite_add_tcase (s, test_rec_record_size ());
   suite_add_tcase (s, test_rec_record_field_p ());
   suite_add_tcase (s, test_rec_record_insert_field ());
-  suite_add_tcase (s, test_rec_record_remove_field ());
+  suite_add_tcase (s, test_rec_record_remove_field ()); */
 
   return s;
 }
