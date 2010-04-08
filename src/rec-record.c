@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 01:18:18 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 13:46:56 jemarch"
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009
@@ -565,8 +565,9 @@ static bool
 rec_record_field_equal_fn (void *data1,
                            void *data2)
 {
-  return rec_field_equal_p ((rec_field_t) data1,
-                            (rec_field_t) data2);
+  return (data1 == data2);
+  /*  return rec_field_equal_p ((rec_field_t) data1,
+      (rec_field_t) data2);*/
 }
 
 static void *
@@ -585,8 +586,9 @@ static bool
 rec_record_comment_equal_fn (void *data1,
                              void *data2)
 {
-  return rec_comment_equal_p ((rec_comment_t) data1,
-                              (rec_comment_t) data2);
+  return (data1 == data2);
+/*  return rec_comment_equal_p ((rec_comment_t) data1,
+(rec_comment_t) data2);*/
 }
 
 static void *

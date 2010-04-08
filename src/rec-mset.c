@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 01:18:06 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 13:42:20 jemarch"
  *
  *       File:         rec-mset.c
  *       Date:         Thu Apr  1 17:07:00 2010
@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <gl_array_list.h>
 #include <gl_list.h>
@@ -70,10 +71,15 @@ rec_mset_new (void)
   if (new)
     {
       new->ntypes = 1;
-      new->name[0] = NULL;
-      new->equal_fn[0] = NULL;
-      new->disp_fn[0] = NULL;
-      new->dup_fn[0] = NULL;
+
+      for (i = 0; i < MAX_NTYPES; i++)
+        {
+          new->count[i] = 0;
+          new->name[i] = NULL;
+          new->equal_fn[i] = NULL;
+          new->disp_fn[i] = NULL;
+          new->dup_fn[i] = NULL;
+        }
 
       new->elem_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
                                                 rec_mset_elem_equal_fn,
@@ -285,7 +291,10 @@ rec_mset_insert_at (rec_mset_t mset,
   if (node != NULL)
     {
       mset->count[0]++;
-      mset->count[elem->type]++;
+      if (elem->type != 0)
+        {
+          mset->count[elem->type]++;
+        }
     }
 }
 
@@ -339,7 +348,10 @@ rec_mset_insert_after (rec_mset_t mset,
                             (void *) new_elem);
 
       mset->count[0]++;
-      mset->count[new_elem->type]++;
+      if (new_elem->type != 0)
+        {
+          mset->count[new_elem->type]++;
+        }
     }
 }
 
@@ -395,11 +407,10 @@ rec_mset_next (rec_mset_t mset,
         {
           next_elem = (rec_mset_elem_t) gl_list_node_value (elem->mset->elem_list,
                                                             node);
-
           if ((type == 0) || (next_elem->type == type))
             {
               result = next_elem;
-              break;
+              break; 
             }
         }
     }
@@ -461,6 +472,38 @@ rec_mset_elem_equal_p (rec_mset_elem_t elem1,
 {
   return rec_mset_elem_equal_fn ((void *) elem1,
                                  (void *) elem2);
+}
+
+void
+rec_mset_dump (rec_mset_t mset)
+{
+  gl_list_iterator_t iter;
+  gl_list_node_t node;
+  rec_mset_elem_t elem;
+  int i;
+  
+  printf ("MSET:\n");
+  printf ("  ntypes: %d\n", mset->ntypes);
+
+  for (i = 0; i < mset->ntypes; i++)
+    {
+      printf("  type %d:\n", i);
+      printf("    count:     %d\n", mset->count[i]);
+      printf("    disp_fn:   %p\n", mset->disp_fn[i]);
+      printf("    equal_fn:  %p\n", mset->equal_fn[i]);
+      printf("    dup_fn:    %p\n", mset->dup_fn[i]);
+    }
+
+  printf("  nodes:\n");
+  iter = gl_list_iterator (mset->elem_list);
+  while (gl_list_iterator_next (&iter, (const void **) &elem, &node))
+    {
+      printf("    node=%d elem=%p elem->type=%d elem->data=%p contained=%p\n", node, elem,
+             elem->type, elem->data, elem->mset);
+      i++;
+    }
+
+  printf("END MSET\n");
 }
 
 /*

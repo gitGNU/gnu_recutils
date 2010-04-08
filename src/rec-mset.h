@@ -90,6 +90,9 @@ void *rec_mset_elem_data (rec_mset_elem_t elem);
 void rec_mset_elem_set_data (rec_mset_elem_t elem, void *data);
 bool rec_mset_elem_equal_p (rec_mset_elem_t elem1, rec_mset_elem_t elem2);
 
+/* Debug.  */
+void rec_mset_dump (rec_mset_t mset);
+
 #endif /* rec-mset.h */
 
 /* End of rec-mset.h */

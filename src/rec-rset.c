@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 23:45:10 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-08 13:46:41 jemarch"
  *
  *       File:         rec-rset.c
  *       Date:         Thu Mar  5 18:12:10 2009
@@ -482,8 +482,9 @@ static bool
 rec_rset_record_equal_fn (void *data1,
                           void *data2)
 {
-  return rec_record_equal_p ((rec_record_t) data1,
-                             (rec_record_t) data2);
+  return (data1 == data2);
+  /*  return rec_record_equal_p ((rec_record_t) data1,
+      (rec_record_t) data2); */
 }
 
 static void *
@@ -502,8 +503,9 @@ static bool
 rec_rset_comment_equal_fn (void *data1,
                            void *data2)
 {
-  return rec_comment_equal_p ((rec_comment_t) data1,
-                              (rec_comment_t) data2);
+  return (data1 == data2);
+  /*  return rec_comment_equal_p ((rec_comment_t) data1,
+      (rec_comment_t) data2);*/
 }
 
 static void *
