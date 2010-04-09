@@ -557,12 +557,12 @@ Certain options are available in all of these programs.  Rather than
 writing identical descriptions for each of the programs, they are
 described here.
 
-@table @option
-@item --version
+@table @samp
+@item @w{@kbd{--version}}
 Print the version number, then exit successfully.
-@item --help
+@item @w{@kbd{--help}}
 Print a help message, then exit successfully.
-@item --
+@item @w{@kbd{--}}
 Delimit the option list.  Later arguments, if any, are treated as
 operands even if they begin with @option{-}.  For example,
 @end table
@@ -591,8 +591,8 @@ Synopsis:
 recinf [OPTION]... [FILE]...
 @end example
 
-The default behavior of the tool is to emit a line with the number and
-type for each type of record, as in:
+The default behavior of the tool is to emit a line per record type in
+the input containing its name and the number of records of that type:
 
 @example
 $ recinf hackers.rec tasks.rec
@@ -600,9 +600,9 @@ $ recinf hackers.rec tasks.rec
 102 Task
 @end example
 
-If the input contains non described records, i.e. records that are
-before the first record descriptor, the corresponding line resume
-won't have a type name:
+If the input contains anonymous records, i.e. records that are before
+the first record descriptor, the corresponding line resume won't have
+a type name:
 
 @example
 $ recinf data.rec
@@ -612,12 +612,12 @@ $ recinf data.rec
 In addition of the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
-@table @option
-@item --verbose
+@table @samp
 @item -v
+@itemx @w{@kbd{--verbose}}
 Be verbose by printing all the record descriptors present in the file.
-@item --names-only
 @item -n
+@itemx @w{@kbd{--names-only}}
 Output just the names of the record types found in the input.  If the
 input is composed by anonymous records only then don't emit any
 output.
@@ -632,7 +632,7 @@ part of records) based in some criteria specified by the user.
 
 @menu
 * recsel Invocation::      Command line options.
-* Selection Expressions::  Patterns. XXX.
+* Selection Expressions::  Expressions for record matching.
 * recsel Examples::        Examples of the usage of @command{recsel}
 @end menu
 
@@ -640,7 +640,7 @@ part of records) based in some criteria specified by the user.
 @section recsel Invocation
 
 @command{recsel} searches rec files for records satisfying a certain
-expression.  Synopsis:
+criteria.  Synopsis:
 
 @example
 recsel [OPTION]... [FILE]...
@@ -649,20 +649,27 @@ recsel [OPTION]... [FILE]...
 In addition of the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
-@table @option
-@item -e EXPR
-@item --expression=EXPR
-The expression to be used to determine the matching records.  The
-format of those expressions is documented in ``Selection
-Expressions''.  (XXX: xref).
+The @dfn{selection options} are used to select a subset of
+the records in the input.
 
-If this option is not specified then any record will match.
+@table @samp
+@item -e @var{expr}
+@itemx @w{@kbd{--expression}=@var{expr}}
+A record matching expression (@pxref{Selection Expressions}).  Only
+the records matched by the expression will get taken into account to
+compute the output.
 @item -t TYPE
-@item --type=TYPE
+@itemx @w{@kbd{--type}=@var{type}}
 Select records of a given type only.
-@item -p LIST_OF_NAMES
-@item --print=LIST_OF_NAMES
-List of fields to print for each record.  @option{LIST_OF_NAMES} is a
+@end table
+
+The @dfn{output options} are used to determine what information about
+the selected records to display to the user, and how to display it.
+
+@table @samp
+@item -p @var{name_list}
+@itemx @w{@kbd{--print}=@var{name_list}}
+List of fields to print for each record.  @var{name_list} is a
 list of field names separated by commas.  For example:
 @example
 -p Name,Email
@@ -672,11 +679,10 @@ means to print the Name and the Email of every matching record.
 If this option is not specified then all the fields of the matching
 records are printed in the standard output.
 @item -c
-@item --count
+@itemx @w{@kbd{--count}}
 If this option is specified then recsel will print the number of
 matching records instead of the records themselves.  This option is
 incompatible with @option{-p}.
-@command{recsel -- -e} reads from the file named @file{-e}.
 @end table
 
 @node Selection Expressions
