@@ -1,7 +1,6 @@
 \input texinfo
-@comment $Id: gnurec.texi,v 1.12 2009-09-30 21:33:21 jemarch Exp $
 @comment %**start of header
-@setfilename gnurec.info
+@setfilename recutils.info
 @settitle GNU Recutils
 @afourpaper
 @comment %**end of header
@@ -23,7 +22,7 @@ Documentation License''.
 
 @dircategory Database
 @direntry
-* gnurec: (gnurec). The GNU Recutils manual.
+* recutils: (recutils). The GNU Recutils manual.
 @end direntry
 
 @titlepage

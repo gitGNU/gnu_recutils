@@ -1,5 +1,5 @@
 # doc/Makefile.am -- GNU Rec
 
-info_TEXINFOS = gnurec.texi
+info_TEXINFOS = recutils.texi
 
 # End of Makefile.am
