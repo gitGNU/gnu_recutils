@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 18:40:33 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 11:56:10 jco"
  *
  *       File:         recdel.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -89,7 +89,6 @@ Remove records from a rec file.\n\
   -i, --case-insensitive              make the selection expression operators\n\
                                          case-insensitive.\n\
       --help                          print a help message and exit.\n\
-      --usage                         print a usage message and exit.\n\
       --version                       show recdel version and exit.\n\
 \n\
 If no FILE is specified then the command acts like a filter, getting\n\

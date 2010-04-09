@@ -9,7 +9,7 @@
 @set VERSION 1.0
 
 @copying
-Copyright @copyright{} 2009 Jose E. Marchesi
+Copyright @copyright{} 2009, 2010 Jose E. Marchesi
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -61,6 +61,8 @@ The Rec Format
 * Comments::            Comments are useful to store meta data.
 
 Utilities
+* Common Options::      Common command line arguments for the record
+                          utilities.
 * recinf::              Printing information about rec files.
 * recsel::              Selecting records.
 * recins::              Inserting records.
@@ -76,14 +78,23 @@ Utilities
 @node Introduction
 @chapter Introduction
 
-Currently (as in 2009) there are a lot of available data storage
-systems that are suitable to satisfy a quite broad set of
-requirements.
+There are a lot of available data storage systems in these days, that
+are suitable to satisfy a quite broad set of requirements.
 
-A complex data management system usually makes use of a full-fledged
-relational system, such as PostgreSQL.  Some applications use custom
-binary file formats to store the application data.  @acronym{xml}
-files are also used for that purpose, using structured text instead.
+Complex data management systems pose a demanding set of requirements
+when it comes to the storage of data: integrity, performance, support
+for transactions, stored procedures, support for extremely big
+databases, etc.  Banking and data gathering applications fall in that
+category.  Full-fledged relational systems, such as PostgreSQL, are
+widely used in that kind of applications.
+
+Some other applications use custom binary file formats to store the
+application data.
+
+XML files are also used for that purpose, using structured text
+instead.  XML allows to express hierarchical structures, but it is not
+very readable.
+
 If we had to elaborate a taxonomy of those systems, we could make use
 of the following properties:
 
@@ -119,22 +130,22 @@ Exceptions are @acronym{xml} and @emph{org} files.
 @node A Little Example
 @chapter A Little Example
 
-Everyone loves to grow a nice book collection in home.  Unfortunately,
+Everyone loves to grow a nice book collection at home.  Unfortunately,
 in most cases the management of our private books gets uncontrolled:
 some books gets lost, some of them may be loaned to some friend, there
 are some duplicated (or even triplicated!) titles because we forgot
 about the existence of the previous copy, and a large etc.
 
-In order to improve the management of our little book collection, we
+In order to improve the management of our little book collection we
 could make use of a complex data storage system such as a relational
 database.  The problem with that approach, as explained in the
-previous section, is that the tool is too complicated for the task: we
-do not need the power of a @acronym{RDBS} to maintain a simple
+previous section, is that the tool is too complicated for the simple
+task: we do not need the power of a RDBS to maintain a simple
 collection of books.
 
-With GNU rec it is possible to maintain such a little database in a
-text file.  Let's call it @file{books.rec}.  The following table
-resumes the information items that we want to store for each book,
+With GNU recutils it is possible to maintain such a little database in
+a text file.  Let's call it @file{books.rec}.  The following table
+resumes the information items that we want to store for each title,
 along with some common-sense restrictions.
 
 @table @emph
@@ -163,7 +174,7 @@ We use to loan books to friends.
 @item
 Sometimes we are not sure about the physical location of a book.  Did
 we loan it to someone?  Was it lost in the last move?  Is it in some
-hidden place in home?
+hidden place at home?
 @end itemize
 @end table
 
@@ -205,17 +216,17 @@ Location: in site
 # End of books.rec
 @end example
 
-Pretty simple, huh?.  The file contains a set of records separated by
-blank lines.  Each record is composed by a set of fields with a name
-and a value.
+Pretty clean and simple, huh?.  The file contains a set of records
+separated by blank lines.  Each record is composed by a set of fields
+with a name and a value.
 
-The GNU rec utilities can then be used to access the contents of the
-file.  For example, we could get a list of the names of loaned books
-invoking @command{recsel} in the following way:
+The GNU record utilities can then be used to access the contents of
+the file.  For example, we could get a list of the names of loaned
+books invoking @command{recsel} in the following way:
 
 @example
-$ recsel -e "Location = 'loaned'" -p Title books.rec
-Title: The Colour of Magic
+$ recsel -e "Location = 'loaned'" -p /Title books.rec
+The Colour of Magic
 @end example
 
 @node Fields and Records
@@ -230,22 +241,23 @@ field:
 Name: Ada Lovelace
 @end example
 
-The separator between the field name and the value is a colon followed
-by zero or more blank (space and tabs, but not newlines) characters.
-The name of the field shall begin in the first column of the line.
+The separator between the field name and the field value is a colon
+followed by zero or more blank characters (space and tabs, but not
+newlines).  The name of the field shall begin in the first column of
+the line.
 
-A field name can be composed by any alphanumeric character plus
-dashes (@code{-}) and underscores (@code{_}).  The regular expression
+A field name is composed by any alphanumeric character plus dashes
+(@code{-}) and underscores (@code{_}).  The regular expression
 denoting a field name is:
 
 @example
 [a-zA-Z0-9_-]+
 @end example
 
-Note that, unlike in many programming languages, it is possible to
-begin a field name with a number or with one of the allowed symbols.
-Field names are case-sensitive.  @code{Foo} and @code{foo} are
-considered different names.
+Note that, unlike many programming languages, it is possible to begin
+a field name with a number or with one of the allowed symbols.  Field
+names are case-sensitive.  @code{Foo} and @code{foo} are considered
+different field names.
 
 The following list contain valid field names (the final colon is
 not part of the names):
@@ -259,13 +271,15 @@ _23:
 ab1:
 a-b:
 A_Field:
+-:
+_:
 @end example
 
-The value of a field is a sequence of characters ended by a single
-newline character (@code{\n}).  Any prefix or suffix composed by blank
-characters only are stripped.  This is done in order to improve the
-readability of the values since blank characters are not easily
-recognizable.  The following fields contain the same value (the
+The value of a field is a sequence of characters terminated by a
+single newline character (@code{\n}).  Any prefix or suffix composed
+by blank characters only are stripped.  This is done in order to
+improve the readability of the values since blank characters are not
+easily recognizable.  The following fields contain the same value (the
 underscore character is denoting a blank character in this example):
 
 @example
@@ -279,9 +293,9 @@ Foo3: bar___
 
 Sometimes a value is long enough to exceed the usual width of
 terminals and screens.  In that case, depending on the specific tool
-used to access the file, the readability of the data greatly
-decreases.  It is possible to physically split a logical line by
-escaping a newline with a backslash character, as in:
+used to access the file, the readability of the data decreases.  It is
+possible to physically split a logical line by escaping a newline with
+a backslash character, as in:
 
 @example
 LongLine: This is a quite long value \
@@ -295,9 +309,8 @@ value.  For example, the C string @code{"bar1\nbar2\n bar3"} would be
 encoded in the following way in a field value:
 
 @example          
-Foo: bar
+Foo: bar1
 + bar2
-Foo:
 +  bar3
 @end example
              
@@ -311,8 +324,7 @@ Foo:
 + bar
 @end example
 
-A record is a group of one or more fields written one after the other.
-The fields are separated by newline characters, like in:
+A record is a group of one or more fields written one after the other:
 
 @example
 Name1: Value1
@@ -337,12 +349,12 @@ a record shall be considered as an implementation limit.  The size of
 the previous record is 3.
 
 Records are separated by one or more blank lines.  For instance, the
-following example shows a file named @file{personalities} featuring
-three records:
+following example shows a file named @file{personalities.rec}
+featuring three records:
 
 @example
 Name: Ada Lovelace
-Age: 37
+Age: 36
 
 Name: Peter the Great
 Age: 53
@@ -354,12 +366,12 @@ Age: 969
 @node Record Descriptors
 @chapter Record Descriptors
 
-It is possible to specify certain properties of the records by using
-@dfn{record descriptors}.  The record descriptor is itself a record
-and precedes the rest of the records affected by the restrictions.
-The presence of another record descriptor mark the end of the
-application of the previous one.  So, in a file with the following
-structure:
+It is possible to specify certain properties of a set of consecutive
+records by using @dfn{record descriptors}.  A record descriptor is
+itself a record and precedes the rest of the records affected by the
+restrictions.  The presence of another record descriptor mark the end
+of the application of the previous one.  So, in a file with the
+following structure:
 
 @example
 REC0
@@ -377,10 +389,10 @@ REC3
 REC4
 @end example
 
-@code{REC0} is not affected by any record descriptor.  The @code{REC1}
-and @code{REC2} are described by @code{RECORD-DESCRIPTOR-1} while
-@code{REC3} and @code{REC4} are described by
-@code{RECORD-DESCRIPTOR-2}.
+@code{REC0} is not described by any record descriptor.  The
+@code{REC1} and @code{REC2} are described by
+@code{RECORD-DESCRIPTOR-1} while @code{REC3} and @code{REC4} are
+described by @code{RECORD-DESCRIPTOR-2}.
 
 The record descriptor can contain the following fields:
 
@@ -446,7 +458,7 @@ desired.  Consider for example:
 %rec: Maintainer
 
 Name: Jose E. Marchesi
-Package:Name: GNU rec
+Package:Name: recutils
 @end example
 
 In the previous example it is pretty clear which role is played by the
@@ -462,10 +474,10 @@ Title: recsel crashes with files bigger than 2gb
 Hacker:Name: John Smith
 @end example
 
-Seems to be a bug report.  But, what has the hacker named John Smith
-to do with it?  Maybe he is the reporter of the bug.  Or perhaps he is
-the hacker that is working to fix it.  Or is he the hacker that closed
-the bug?  We can make the situation clear by using a role in the
+Seems to be a bug report.  But, what is the relationship between John
+Smith and the bug? Is he the reporter?  Or perhaps he is the hacker
+that is working to fix it?  Or is he the hacker that closed the bug?
+We can clarify the role of John Smith by using the third part of the
 compound field:
 
 @example
@@ -502,8 +514,8 @@ Package:Name: GNU rec
 @node Comments
 @chapter Comments
 
-A line starting with a @code{#} (ASCII 0x23) character in the column 1
-is a comment.
+A line starting with a @code{#} (ASCII 0x23) character in the first
+column is a comment line.
 
 Comment lines are quite useful to insert additional information that
 is not part of the database but useful otherwise.
@@ -521,66 +533,96 @@ Name: Jose E. Marchesi
 Occupation: Unoccupied
 @end example
 
-Also, the rec files are intended to be comfortably accessed with
-general-purpose programs like text editors.  Some text editors are
-able to read instructions from the file under edition.  Consider the
-following comment line which tells Emacs to activate the rec edition
-mode when opening the file:
+Comments are also useful to make up headers, comment blocks and all
+kind of markers:
 
 @example
 # -*- mode: rec -*-
-...FILE CONTENTS...
+#
+# Bug.rec
+#
+# This file contains the Bugs database of the recutils
+# project.
+#
+# Blah blah...
+
+...
+
+# End of Bug.rec
 @end example
+
+@node Common Options
+@chapter Common Options
+
+Certain options are available in all of these programs.  Rather than
+writing identical descriptions for each of the programs, they are
+described here.
+
+@table @option
+@item --version
+Print the version number, then exit successfully.
+@item --help
+Print a help message, then exit successfully.
+@item --
+Delimit the option list.  Later arguments, if any, are treated as
+operands even if they begin with @option{-}.  For example,
+@end table
       
 @node recinf
 @chapter recinf
 
-@command{recinf} reads the given rec files (or the data in the standard
-input if no file is specified) and prints structural information about
+@command{recinf} reads the given rec files (or the data in the
+standard input if no file is specified) and prints information about
 it.
 
 @menu
 * recinf Invocation::  Command line options.
-* recinf Examples::    Examples of the usage of @command{recinf}
 @end menu
 
 @node recinf Invocation
 @section recinf Invocation
 
 @command{recinf} reads the given rec files (or the data in the
-standard input if no file is specified) and prints structural
-information about them.  Synopsis:
+standard input if no file is specified) and prints a resume of the
+record types contained in the input.
+
+Synopsis:
 
 @example
 recinf [OPTION]... [FILE]...
 @end example
 
-The program accepts the following options.
-
-@table @option
-@item --version
-Print the version number, then exit successfully.
-@item --help, --usage
-Print a help message, then exit successfully.
-@end table
-
-@node recinf Examples
-@section recinf Examples
-
-Specifying rec data using the standard input:
-
-@example
-$ cat hackers.rec | recinf
-25 Hacker
-@end example
-
-Using explicit file names:
+The default behavior of the tool is to emit a line with the number and
+type for each type of record, as in:
 
 @example
 $ recinf hackers.rec tasks.rec
 25 Hacker
 102 Task
 @end example
+
+If the input contains non described records, i.e. records that are
+before the first record descriptor, the corresponding line resume
+won't have a type name:
+
+@example
+$ recinf data.rec
+10
+@end example
+
+In addition of the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @option
+@item --verbose
+@item -v
+Be verbose by printing all the record descriptors present in the file.
+@item --names-only
+@item -n
+Output just the names of the record types found in the input.  If the
+input is composed by anonymous records only then don't emit any
+output.
+@end table
 
 @node recsel
 @chapter recsel
@@ -605,7 +647,8 @@ expression.  Synopsis:
 recsel [OPTION]... [FILE]...
 @end example
 
-The program accepts the following options.
+In addition of the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
 
 @table @option
 @item -e EXPR
@@ -634,15 +677,7 @@ records are printed in the standard output.
 If this option is specified then recsel will print the number of
 matching records instead of the records themselves.  This option is
 incompatible with @option{-p}.
-@item --help
-Print a usage message listing all available options, then exit
-successfully.
-@item --version
-Print the version number, then exit successfully.
-@item --
-Delimit the option list.  Later arguments, if any, are treated as
-operands even if they begin with @option{-}.  For example,
-@command{recsel -- -e} reads from the file named @file{-r}.
+@command{recsel -- -e} reads from the file named @file{-e}.
 @end table
 
 @node Selection Expressions

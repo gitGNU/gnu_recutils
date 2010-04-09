@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 11:22:50 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 14:00:05 jco"
  *
  *       File:         recinf.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -48,6 +48,7 @@ static const struct option GNU_longOptions[] =
     {"help", no_argument, NULL, HELP_ARG},
     {"version", no_argument, NULL, VERSION_ARG},
     {"verbose", no_argument, NULL, VERBOSE_ARG},
+    {"names-only", no_argument, NULL, NAMES_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -63,12 +64,13 @@ Written by Jose E. Marchesi.";
 
 char *recinf_help_msg = "\
 Usage: recinf [OPTION]... [FILE]...\n\
-Print information about rec data.\n\
+Print information about the types of records stored in the input.\n\
 \n\
-  -v, --verbose                       include the full record descriptors.\n\
-      --help                          print a help message and exit.\n\
-      --usage                         print a usage message and exit.\n\
-      --version                       show recinf version and exit.\n\
+  -v, --verbose                   include the full record descriptors.\n\
+  -n, --names-only                output just the names of the record files\n\
+                                    found in the input.\n\
+      --help                      print a help message and exit.\n\
+      --version                   show recinf version and exit.\n\   
 \n\
 Examples:\n\
 \n\
@@ -81,6 +83,7 @@ General help using GNU software: <http://www.gnu.org/gethelp/>\
 ";
 
 bool recinf_verbose = false;
+bool recinf_names_only = false;
 
 bool
 print_info_file (FILE *in)
@@ -128,11 +131,18 @@ print_info_file (FILE *in)
             {
               if (descriptor)
                 {
-                  printf ("%s\n", rec_rset_type (rset));
+                  if (!recinf_names_only)
+                    {
+                      fprintf (stdout, "%d ", rec_rset_num_records (rset));
+                    }
+                  fprintf (stdout, "%s\n", rec_rset_type (rset));
                 }
               else
                 {
-                  printf ("unknown\n");
+                  if (!recinf_names_only)
+                    {
+                      printf ("%d\n", rec_rset_num_records (rset));
+                    }
                 }
             }          
         }
@@ -160,7 +170,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "v",
+                             "vn",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -184,6 +194,12 @@ main (int argc, char *argv[])
         case 'v':
           {
             recinf_verbose = true;
+            break;
+          }
+        case NAMES_ARG:
+        case 'n':
+          {
+            recinf_names_only = true;
             break;
           }
         default:

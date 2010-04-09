@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 14:15:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 11:55:58 jco"
  *
  *       File:         recins.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -76,7 +76,6 @@ Insert a record in a rec file.\n\
   -f, --field=STR                     field name.  Should be followed by a -v.\n\
   -v, --value=STR                     field value.  Should be preceded by a -f.\n\
       --help                          print a help message and exit.\n\
-      --usage                         print a usage message and exit.\n\
       --version                       show recins version and exit.\n\
 \n\
 If no FILE is specified then the command acts like a filter, getting\n\

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 15:10:57 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 13:53:46 jco"
  *
  *       File:         recinf.h
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -32,7 +32,8 @@ enum
 {
   HELP_ARG,
   VERSION_ARG,
-  VERBOSE_ARG
+  VERBOSE_ARG,
+  NAMES_ARG
 };
 
 #endif /* recinf.h */
