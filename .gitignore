@@ -19,6 +19,7 @@ libtool
 /utils/recinf
 /utils/recsel
 /utils/recins
+/utils/recset
 /lib/arg-nonnull.h
 /lib/link-warning.h
 /lib/unistd.h
