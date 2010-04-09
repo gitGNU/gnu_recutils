@@ -471,7 +471,7 @@ static yyconst flex_int16_t yy_chk[93] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "rec-sex.l"
-/* -*- mode: C -*- Time-stamp: "10/01/15 17:10:26 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 20:12:31 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -935,15 +935,18 @@ YY_RULE_SETUP
   /*
    * Create an integer node.
    */
+  int integer_value;
+
   yylval->node = rec_sex_ast_node_new ();
-  rec_sex_ast_node_set_int (yylval->node, atoi (yytext));
+  rec_atoi (yytext, &integer_value);
+  rec_sex_ast_node_set_int (yylval->node, integer_value);
 
   return REC_SEX_TOK_INT;    
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 102 "rec-sex.l"
+#line 105 "rec-sex.l"
 {
   int res;
   char *match;
@@ -983,7 +986,7 @@ YY_RULE_SETUP
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 138 "rec-sex.l"
+#line 141 "rec-sex.l"
 {
   /*
    * Create a string node.
@@ -1000,15 +1003,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 152 "rec-sex.l"
+#line 155 "rec-sex.l"
 { return REC_SEX_TOK_ERR; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 154 "rec-sex.l"
+#line 157 "rec-sex.l"
 ECHO;
 	YY_BREAK
-#line 1012 "rec-sex.lex.c"
+#line 1015 "rec-sex.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2175,7 +2178,7 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 154 "rec-sex.l"
+#line 157 "rec-sex.l"
 
 
 
@@ -2233,7 +2236,11 @@ rec_sex_lex_extract_index (char *str,
         }
       aux[aux_size] = 0;
 
-      *num = atoi (aux);
+      if (!rec_atoi (aux, num))
+        {
+          res = false;
+        }
+
       res = true;
     }
 

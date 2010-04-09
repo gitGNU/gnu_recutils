@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/15 17:10:26 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 20:12:31 jemarch"
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010
@@ -93,8 +93,11 @@ STRING             '([^'\n]|\\(.|\n))*'
   /*
    * Create an integer node.
    */
+  int integer_value;
+
   yylval->node = rec_sex_ast_node_new ();
-  rec_sex_ast_node_set_int (yylval->node, atoi (yytext));
+  rec_atoi (yytext, &integer_value);
+  rec_sex_ast_node_set_int (yylval->node, integer_value);
 
   return REC_SEX_TOK_INT;    
 }
@@ -207,7 +210,11 @@ rec_sex_lex_extract_index (char *str,
         }
       aux[aux_size] = 0;
 
-      *num = atoi (aux);
+      if (!rec_atoi (aux, num))
+        {
+          res = false;
+        }
+
       res = true;
     }
 

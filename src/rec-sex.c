@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 15:52:16 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 20:09:33 jemarch"
  *
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
@@ -231,31 +231,34 @@ rec_sex_print_ast (rec_sex_t sex)
     while (0)
 
 
-#define ATOI_VAL(DEST, VAL)                     \
-  do                                            \
-    {                                           \
-      switch ((VAL).type)                       \
-        {                                       \
-        case REC_SEX_VAL_INT:                   \
-          {                                     \
-            (DEST) = (VAL).int_val;             \
-            break;                              \
-          }                                     \
-        case REC_SEX_VAL_STR:                   \
-          {                                     \
-            /* XXX.  Check for errors. */       \
-            if (strcmp ((VAL).str_val, "") == 0)\
-            {                                   \
-              (DEST) = 0;                       \
-            }                                   \
-          else                                  \
-            {                                   \
-              (DEST) = atoi ((VAL).str_val);    \
-            }                                   \
-          break;                                \
-          }                                     \
-        }                                       \
-    }                                           \
+#define ATOI_VAL(DEST, VAL)                             \
+  do                                                    \
+    {                                                   \
+      switch ((VAL).type)                               \
+        {                                               \
+        case REC_SEX_VAL_INT:                           \
+          {                                             \
+            (DEST) = (VAL).int_val;                     \
+            break;                                      \
+          }                                             \
+        case REC_SEX_VAL_STR:                           \
+          {                                             \
+          if (strcmp ((VAL).str_val, "") == 0)          \
+              {                                         \
+                (DEST) = 0;                             \
+              }                                         \
+            else                                        \
+              {                                         \
+                if (!rec_atoi ((VAL).str_val, &(DEST))) \
+                {                                       \
+                  *status = false;                      \
+                  return res;                           \
+                }                                       \
+              }                                         \
+          break;                                        \
+        }                                               \
+    }                                                   \
+  }                                                     \
   while (0)
 
 struct rec_sex_val_s

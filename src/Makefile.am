@@ -22,6 +22,8 @@ include_HEADERS = rec.h
 
 librec_la_SOURCES = rec-mset.h \
                     rec-mset.c \
+                    rec-utils.h \
+                    rec-utils.c \
                     rec-comment.c \
                     rec-field-name.c \
                     rec-field.c \

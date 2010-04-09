@@ -66,6 +66,7 @@ Utilities
 * recsel::              Selecting records.
 * recins::              Inserting records.
 * recdel::              Deleting records.
+* recset::              Managing fields.
 * recfix::              Fixing broken rec files, and diagnostics.
 
 * The Rec Library::     Writing C programs to manipulate rec files.
@@ -843,13 +844,13 @@ $ recsel -e 'Name ~ Jo' foo.rec
 Print the name of the partners of all the persons less than twenty:
 
 @example
-$ recsel -e 'Age < 20' -p Person:Name:Partner foo.rec
+$ recsel -e 'Age < 20' -p Partner foo.rec
 @end example
 
 Print the number of partners of all the persons less than twenty:
 
 @example
-$ recsel -e 'Age < 20' -p #Person:Name:Partner foo.rec
+$ recsel -e 'Age < 20' -p #Partner foo.rec
 @end example
 
 @node recins
@@ -862,7 +863,10 @@ XXX
 
 XXX
 
-Option to comment the records instead of deleting them.
+@node recset
+@chapter recset
+
+XXX
 
 @node recfix
 @chapter recfix

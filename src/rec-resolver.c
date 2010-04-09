@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-07 21:32:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 20:04:15 jemarch"
  *
  *       File:         rec-resolver.c
  *       Date:         Mon Jan 11 14:29:18 2010
@@ -29,6 +29,7 @@
 #include <string.h>
 #include <regex.h>
 
+#include <rec-utils.h>
 #include <rec.h>
 
 /* Static forward references.  */
@@ -223,7 +224,7 @@ rec_resolver_parse_int (char *p,
   number[number_size] = 0;
   
   /* The following call cannot fail.  */
-  res = atoi (number);
+  rec_atoi (number, &res);
   *num = res;
 }
 
@@ -292,7 +293,8 @@ rec_parse_part (char *str,
 
       if (*p == ']')
         {
-          part->min = atoi (number);
+          /* The following call cannot fail.  */
+          rec_atoi (number, &(part->min));
         }
       else 
         {
