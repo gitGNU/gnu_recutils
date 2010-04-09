@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-09 17:06:18 jco"
+/* -*- mode: C -*-
  *
- *       File:         recsel.h
- *       Date:         Fri Jan  1 23:10:08 2010
+ *       File:         recset.h
+ *       Date:         Fri Apr  9 17:05:25 2010
  *
- *       GNU Rec - recsel
+ *       GNU recutils - recset
  *
  */
 
@@ -23,25 +23,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RECSEL_H
-#define RECSEL_H
+#ifndef RECSET_H
+#define RECSET_H
 
 /* Command line arguments.  */
 
 enum
-{
-  HELP_ARG,
-  VERSION_ARG,
-  EXPRESSION_ARG,
-  PRINT_ARG,
-  TYPE_ARG,
-  COLLAPSE_ARG,
-  COUNT_ARG,
-  NUM_ARG,
-  INSENSITIVE_ARG,
-  DESCRIPTOR_ARG
-};
+  {
+    HELP_ARG,
+    VERSION_ARG
+  };
 
-#endif /* recsel.h */
+#endif /* recset.h */
 
-/* End of recsel.h */
+/* End of recset.h */

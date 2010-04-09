@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-bin_PROGRAMS = recinf recsel recins recdel
+bin_PROGRAMS = recinf recsel recins recdel recset
 
 recinf_SOURCES = recinf.h \
                  recinf.c
@@ -45,5 +45,12 @@ recdel_SOURCES = recdel.h \
 recdel_LDFLAGS = -L$(top_builddir)/src
 recdel_CPPFLAGS = -I$(top_srcdir)/lib
 recdel_LDADD = $(top_builddir)/lib/libgnu.la -lrec
+
+recset_SOURCES = recset.h \
+                 recset.c
+
+recset_LDFLAGS = -L$(top_builddir)/src
+recset_CPPFLAGS = -I$(top_srcdir)/lib
+recset_LDADD = $(top_builddir)/lib/libgnu.la -lrec
 
 # End of Makefile.am

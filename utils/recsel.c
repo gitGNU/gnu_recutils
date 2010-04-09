@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 20:51:31 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 17:16:59 jco"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -67,9 +67,9 @@ static const struct option GNU_longOptions[] =
 /* Messages */
 
 char *recsel_version_msg = "recsel (GNU recutils) 1.0\n\
-Copyright (C) 2010 Jose E. Marchesi. \n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \n\
-This is free software: you are free to change and redistribute it. \n\
+Copyright (C) 2010 Jose E. Marchesi.\n\
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
+This is free software: you are free to change and redistribute it.\n\
 There is NO WARRANTY, to the extent permitted by law.\n\
 \n\
 Written by Jose E. Marchesi.";
@@ -146,7 +146,6 @@ recsel_parse_args (int argc,
       c = ret;
       switch (c)
         {
-          /* COMMON ARGUMENTS */
         case HELP_ARG:
           {
             fprintf (stdout, "%s\n", recsel_help_msg);

@@ -91,7 +91,12 @@ rec_field_name_t rec_field_name_dup (rec_field_name_t fname);
  *
  * Two given field names are equal if and only if they contain the
  * same number of name parts and they are identical.
-*/
+ */
+
+bool rec_field_name_eql_p (rec_field_name_t fname1,
+                           rec_field_name_t fname2);
+
+/* XXX: explain.  */
 bool rec_field_name_equal_p (rec_field_name_t fname1,
                              rec_field_name_t fname2);
 

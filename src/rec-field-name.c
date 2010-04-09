@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:18 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-09 16:25:54 jco"
  *
  *       File:         rec-field-name.c
  *       Date:         Fri Dec 25 17:27:05 2009
@@ -160,8 +160,8 @@ rec_field_name_dup (rec_field_name_t fname)
 }
 
 bool
-rec_field_name_equal_p (rec_field_name_t fname1,
-                        rec_field_name_t fname2)
+rec_field_name_eql_p (rec_field_name_t fname1,
+                      rec_field_name_t fname2)
 {
   int i;
   bool ret;
@@ -184,6 +184,41 @@ rec_field_name_equal_p (rec_field_name_t fname1,
   else
     {
       ret = false;
+    }
+
+  return ret;
+}
+
+bool
+rec_field_name_equal_p (rec_field_name_t fname1,
+                        rec_field_name_t fname2)
+{
+  int i;
+  bool ret;
+  char *role1;
+  char *role2;
+
+  ret = true;
+
+  if ((rec_field_name_size (fname1) == 1)
+      && (rec_field_name_size (fname2) == 3))
+    {
+      role1 = fname1->parts[0];
+      role2 = fname2->parts[2];
+
+      ret = (strcmp (role1, role2) == 0);
+    }
+  else if ((rec_field_name_size (fname1) == 3)
+           && (rec_field_name_size (fname2) == 1))
+    {
+      role1 = fname1->parts[2];
+      role2 = fname2->parts[0];
+
+      ret = (strcmp (role1, role2) == 0);
+    }
+  else
+    {
+      return rec_field_name_eql_p (fname1, fname2);
     }
 
   return ret;
