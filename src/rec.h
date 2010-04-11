@@ -513,28 +513,26 @@ bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
 void rec_sex_print_ast (rec_sex_t sex);
 
 /*
- * RESOLVER
+ * FIELD EXPRESSIONS
  *
- * The rec resolver gets information about a record with the form of a
- * string.  XXX.
- *
+ * XXX.
  */
 
-/* Check whether EXPR is a valid expression that can be used with
-   `rec_resolve'.  */
-bool rec_resolver_check (char *expr);
+typedef struct rec_fex_s *rec_fex_t;
+typedef struct rec_fex_elem_s *rec_fex_elem_t;
 
-/* Write the data from RECORD according to EXPR to OUT.  Return False
-   if there is not enough room in OUT to hold the data.  */
-bool rec_resolve (rec_db_t db,
-                  char *type,
-                  rec_record_t record,
-                  char *expr,
-                  FILE *out);
-char *rec_resolve_str (rec_db_t db,
-                       char *type,
-                       rec_record_t record,
-                       char *expr);
+rec_fex_t rec_fex_new (char *str);
+void rec_fex_destroy (rec_fex_t fex);
+
+bool rec_fex_check (char *str);
+
+int rec_fex_size (rec_fex_t fex);
+rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
+
+bool rec_fex_elem_prefix (rec_fex_elem_t elem);
+rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
+int rec_fex_elem_min (rec_fex_elem_t elem);
+int rec_fex_elem_max (rec_fex_elem_t elem);
 
 #endif /* !REC_H */
 
