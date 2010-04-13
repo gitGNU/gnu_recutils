@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-13 16:08:10 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-13 16:51:59 jco"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -449,6 +449,15 @@ recsel_process_data (rec_db_t db)
 
   writer = rec_writer_new (stdout);
 
+  /* If the database contains more than one type of records and the
+     user did'nt specify the recsel_type then ask the user to clear
+     the request.  */
+  if (!recsel_type && (rec_db_size (db) > 1))
+    {
+      fprintf (stderr, "The input data contains several record types.  Please use -t to specify one.\n");
+      exit (1);
+    }
+
   written = 0;
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
@@ -471,7 +480,6 @@ recsel_process_data (rec_db_t db)
         {
           continue;
         }
-          
 
       /* If the user didn't specify a type, print a record set if and
        * only if:
