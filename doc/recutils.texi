@@ -565,129 +565,12 @@ Print a help message, then exit successfully.
 Delimit the option list.  Later arguments, if any, are treated as
 operands even if they begin with @option{-}.  For example,
 @end table
-      
-@node recinf
-@chapter recinf
-
-@command{recinf} reads the given rec files (or the data in the
-standard input if no file is specified) and prints information about
-it.
 
 @menu
-* recinf Invocation::  Command line options.
-@end menu
-
-@node recinf Invocation
-@section recinf Invocation
-
-@command{recinf} reads the given rec files (or the data in the
-standard input if no file is specified) and prints a resume of the
-record types contained in the input.
-
-Synopsis:
-
-@example
-recinf [OPTION]... [FILE]...
-@end example
-
-The default behavior of the tool is to emit a line per record type in
-the input containing its name and the number of records of that type:
-
-@example
-$ recinf hackers.rec tasks.rec
-25 Hacker
-102 Task
-@end example
-
-If the input contains anonymous records, i.e. records that are before
-the first record descriptor, the corresponding line resume won't have
-a type name:
-
-@example
-$ recinf data.rec
-10
-@end example
-
-In addition of the common options described earlier (@pxref{Common
-Options}) the program accepts the following options.
-
-@table @samp
-@item -v
-@itemx @w{@kbd{--verbose}}
-Be verbose by printing all the record descriptors present in the file.
-@item -n
-@itemx @w{@kbd{--names-only}}
-Output just the names of the record types found in the input.  If the
-input is composed by anonymous records only then don't emit any
-output.
-@end table
-
-@node recsel
-@chapter recsel
-
-@command{recsel} reads the given rec files (or the data in the
-standard input if no file is specified) and prints out records (or
-part of records) based in some criteria specified by the user.
-
-@menu
-* recsel Invocation::      Command line options.
 * Selection Expressions::  Selecting records of a database.
 * Field Expressions::      Selecting fields of a record.
-* recsel Examples::        Examples of the usage of @command{recsel}.
 @end menu
-
-@node recsel Invocation
-@section recsel Invocation
-
-@command{recsel} searches rec files for records satisfying a certain
-criteria.  Synopsis:
-
-@example
-recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...
-@end example
-
-In addition of the common options described earlier (@pxref{Common
-Options}) the program accepts the following options.
-
-The @dfn{selection options} are used to select a subset of
-the records in the input.
-
-@table @samp
-@item -e @var{expr}
-@itemx @w{@kbd{--expression}=@var{expr}}
-A record selection expression (@pxref{Selection Expressions}).  Only
-the records matched by the expression will get taken into account to
-compute the output.
-@item -t TYPE
-@itemx @w{@kbd{--type}=@var{type}}
-Select records of a given type only.
-@end table
-
-The @dfn{output options} are used to determine what information about
-the selected records to display to the user, and how to display it.
-
-@table @samp
-@item -p @var{name_list}
-@itemx @w{@kbd{--print}=@var{name_list}}
-List of fields to print for each record.  @var{name_list} is a
-list of field names separated by commas.  For example:
-@example
--p Name,Email
-@end example
-means to print the Name and the Email of every matching record.
-
-If this option is not specified then all the fields of the matching
-records are printed in the standard output.
-@item -P @var{name_list}
-@itemx @w{@kbd{--print-values}=@var{name_list}}
-Same than @samp{-p}, but print the values of the selected fields.
-@item -c
-@itemx @w{@kbd{--count}}
-If this option is specified then recsel will print the number of
-matching records instead of the records themselves.  This option is
-incompatible with @option{-p}.
-@end table
-
+      
 @node Selection Expressions
 @section Selection Expressions
 
@@ -933,6 +816,129 @@ is equivalent to
 Email[0],Name,Email[1..2]
 @end example
 
+@node recinf
+@chapter recinf
+
+@command{recinf} reads the given rec files (or the data in the
+standard input if no file is specified) and prints information about
+it.
+
+@menu
+* recinf Invocation::  Command line options.
+@end menu
+
+@node recinf Invocation
+@section recinf Invocation
+
+@command{recinf} reads the given rec files (or the data in the
+standard input if no file is specified) and prints a resume of the
+record types contained in the input.
+
+Synopsis:
+
+@example
+recinf [OPTION]... [FILE]...
+@end example
+
+The default behavior of the tool is to emit a line per record type in
+the input containing its name and the number of records of that type:
+
+@example
+$ recinf hackers.rec tasks.rec
+25 Hacker
+102 Task
+@end example
+
+If the input contains anonymous records, i.e. records that are before
+the first record descriptor, the corresponding line resume won't have
+a type name:
+
+@example
+$ recinf data.rec
+10
+@end example
+
+In addition of the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -v
+@itemx @w{@kbd{--verbose}}
+Be verbose by printing all the record descriptors present in the file.
+@item -n
+@itemx @w{@kbd{--names-only}}
+Output just the names of the record types found in the input.  If the
+input is composed by anonymous records only then don't emit any
+output.
+@end table
+
+@node recsel
+@chapter recsel
+
+@command{recsel} reads the given rec files (or the data in the
+standard input if no file is specified) and prints out records (or
+part of records) based in some criteria specified by the user.
+
+@menu
+* recsel Invocation::      Command line options.
+* recsel Examples::        Examples of the usage of @command{recsel}.
+@end menu
+
+@node recsel Invocation
+@section recsel Invocation
+
+@command{recsel} searches rec files for records satisfying a certain
+criteria.  Synopsis:
+
+@example
+recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...
+@end example
+
+In addition of the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+The @dfn{selection options} are used to select a subset of
+the records in the input.
+
+@table @samp
+@item -n @var{num}
+Match the record occupying the @var{num}th position in its record
+set.
+@item -e @var{expr}
+@itemx @w{@kbd{--expression}=@var{expr}}
+A record selection expression (@pxref{Selection Expressions}).  Only
+the records matched by the expression will get taken into account to
+compute the output.
+@item -t TYPE
+@itemx @w{@kbd{--type}=@var{type}}
+Select records of a given type only.
+@end table
+
+The @dfn{output options} are used to determine what information about
+the selected records to display to the user, and how to display it.
+
+@table @samp
+@item -p @var{name_list}
+@itemx @w{@kbd{--print}=@var{name_list}}
+List of fields to print for each record.  @var{name_list} is a
+list of field names separated by commas.  For example:
+@example
+-p Name,Email
+@end example
+means to print the Name and the Email of every matching record.
+
+If this option is not specified then all the fields of the matching
+records are printed in the standard output.
+@item -P @var{name_list}
+@itemx @w{@kbd{--print-values}=@var{name_list}}
+Same than @samp{-p}, but print the values of the selected fields.
+@item -c
+@itemx @w{@kbd{--count}}
+If this option is specified then recsel will print the number of
+matching records instead of the records themselves.  This option is
+incompatible with @option{-p}.
+@end table
+
 @node recsel Examples
 @section recsel Examples
 
@@ -956,6 +962,50 @@ $ recsel -e 'Age < 20' -p #Partner foo.rec
 
 @node recins
 @chapter recins
+
+@command{recins} adds new records to a rec file or to rec data read
+from the standard input.
+
+@menu
+* recins Invocation::     Command line options.
+* recins Examples::       Examples of the usage of @command{recins}.
+@end menu
+
+@node recins Invocation
+@section recins Invocation
+
+@command{recins} adds new records to a rec file or to rec data read
+from the standard input.  Synopsis:
+
+@example
+recins [OPTION]... [-f STR -v STR]... [FILE]
+@end example
+
+The new record that will be inserted by the command is constructed by
+using pairs of @samp{-f} and @samp{-v} options.  Each pair defines a
+field.  The order of the parameters is significant.
+
+In addition to the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -t
+@itemx @w{@kbd{--type}=@var{expr}}
+The type of the new record.  If there is a record set in the input
+data matching this type then the new record is added there.  Otherwise
+a new record set is created.  If this parameter is not specified then
+the new record is anonymous.
+@item -f
+@itemx @w{@kbd{--field}=@var{name}}
+Declares the name of a field.  This option shall be followed by a
+@samp{-v}.
+@item -v
+@itemx @w{@kbd{--value}=@var{value}}
+The value of the field being defined.
+@end table
+
+@node recins Examples
+@section recins Examples
 
 XXX
 

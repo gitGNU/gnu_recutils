@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-13 18:25:08 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-13 21:23:42 jemarch"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -76,11 +76,10 @@ There is NO WARRANTY, to the extent permitted by law.\n\
 Written by Jose E. Marchesi.";
 
 char *recsel_help_msg = "\
-Usage: recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n\
+Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n\
 Select and print rec data.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
-  -t, --type=TYPE                     print records of the specified type only.\n\
   -i, --case-insensitive              make strings case-insensitive in selection\n\
                                         expressions.\n\
   -d, --include-descriptors           print record descriptors along with the matched\n\
@@ -90,6 +89,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       --version                       show recsel version and exit.\n\
 \n\
 Record selection options:\n\
+  -t, --type=TYPE                     print records of the specified type only.\n\
   -e, --expression=EXPR               selection expression.\n\
   -n, --number=NUM                    select an specific record.\n\
 \n\
@@ -467,7 +467,7 @@ recsel_process_data (rec_db_t db)
      the request.  */
   if (!recsel_type && (rec_db_size (db) > 1))
     {
-      fprintf (stderr, "The input data contains several record types.  Please use -t to specify one.\n");
+      fprintf (stderr, "Several record types found.  Please use -t to specify one.\n");
       exit (1);
     }
 

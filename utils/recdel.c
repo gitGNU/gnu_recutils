@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-09 11:56:10 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-13 21:25:41 jemarch"
  *
  *       File:         recdel.c
  *       Date:         Mon Dec 28 08:54:38 2009
@@ -79,17 +79,20 @@ Written by Jose E. Marchesi.";
 
 char *recdel_help_msg = "\
 Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n\
-Remove records from a rec file.\n\
+Remove (or comment out) records from a rec file.\n\
 \n\
-  -t, --type=TYPE                     specify the type of the new record.\n\
-  -n, --number                        select the NUMBERth record.\n\
-  -e, --expression=EXPR               select records matching this expression.\n\
+Mandatory arguments to long options are mandatory for short options too.\n\
   -c, --comment                       comment the matching records instead of\n\
                                          delete them.\n\
   -i, --case-insensitive              make the selection expression operators\n\
                                          case-insensitive.\n\
       --help                          print a help message and exit.\n\
       --version                       show recdel version and exit.\n\
+\n\
+Record selection options:\n\
+  -t, --type=TYPE                     specify the type of the new record.\n\
+  -e, --expression=EXPR               select records matching this expression.\n\
+  -n, --number                        select the NUMBERth record.\n\
 \n\
 If no FILE is specified then the command acts like a filter, getting\n\
 the data from the standard input and writing the result in the\n\
