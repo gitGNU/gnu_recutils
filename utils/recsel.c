@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-09 17:16:59 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-13 15:16:30 jco"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -109,7 +109,8 @@ char *recsel_sex_str = NULL;
 rec_sex_t recsel_sex = NULL;
 
 /* Field list.  */
-char *recsel_expr = NULL;
+char *recsel_fex_str = NULL;
+rec_fex_t recsel_fex = NULL;
 
 /* Record type.  */
 char *recsel_type = NULL;
@@ -219,11 +220,19 @@ recsel_parse_args (int argc,
                 exit (1);
               }
 
-            recsel_expr = strdup (optarg);
+            recsel_fex_str = strdup (optarg);
 
-            if (!rec_resolver_check (recsel_expr))
+            if (!rec_fex_check (recsel_fex_str))
               {
-                fprintf (stderr, "Invalid field list.\n");
+                fprintf (stderr, "parse error: invalid field expression in -p.\n");
+                exit (1);
+              }
+
+            /* Create the field expresion.  */
+            recsel_fex = rec_fex_new (recsel_fex_str);
+            if (!recsel_fex)
+              {
+                fprintf (stderr, "internal error: creating the field expression.\n");
                 exit (1);
               }
 
@@ -244,7 +253,7 @@ recsel_parse_args (int argc,
         case COUNT_ARG:
         case 'c':
           {
-            if (recsel_expr)
+            if (recsel_fex_str)
               {
                 fprintf (stderr, "%s: cannot specify -c and also -p.\n",
                          argv[0]);
@@ -344,6 +353,84 @@ recsel_build_db (int argc,
   return db;
 }
 
+char *
+recsel_eval_field_expression (rec_fex_t fex,
+                              rec_record_t record)
+{
+  char *res;
+  size_t res_size;
+  FILE *stm;
+  rec_writer_t writer;
+  rec_fex_elem_t elem;
+  rec_field_t field;
+  rec_field_name_t field_name;
+  int i, j, min, max;
+  char prefix;
+
+  stm = open_memstream (&res, &res_size);
+
+  for (i = 0; i < rec_fex_size (fex); i++)
+    {
+      elem = rec_fex_get (fex, i);
+      
+      field_name = rec_fex_elem_field_name (elem);
+      prefix = rec_fex_elem_prefix (elem);
+      min = rec_fex_elem_min (elem);
+      max = rec_fex_elem_max (elem);
+
+      if ((min == -1) && (max == -1))
+        {
+          /* Print all the fields with that name.  */
+          min = 0;
+          max = rec_record_get_num_fields_by_name (record, field_name);
+        }
+      else if (max == -1)
+        {
+          /* Print just one field: Field[min].  */
+          max = min + 1;
+        }
+      else
+        {
+          /* Print the interval min..max, max inclusive.  */
+          max++;
+        }
+
+      for (j = min; j < max; j++)
+        {
+          field = rec_record_get_field_by_name (record, field_name, j);
+          if (!field)
+            {
+              continue;
+            }
+
+          if (prefix == '/')
+            {
+              /* Write just the value of the field.  */
+              fprintf (stm, rec_field_value (field));
+              fprintf (stm, "\n");
+            }
+          else
+            {
+              /* Write the whole field.  */
+              writer = rec_writer_new (stm);
+              rec_write_field (writer, field);
+              rec_writer_destroy (writer);
+            }
+        }
+      
+    }
+
+  fclose (stm);
+
+  if (res_size == 0)
+    {
+      free (res);
+      res = NULL;
+    }
+
+  return res;
+}
+
 bool
 recsel_process_data (rec_db_t db)
 {
@@ -358,6 +445,7 @@ recsel_process_data (rec_db_t db)
   bool parse_status;
   bool wrote_descriptor;
   rec_rset_elem_t elem_rset;
+  rec_fex_t fex;
 
   ret = true;
 
@@ -402,83 +490,79 @@ recsel_process_data (rec_db_t db)
         }
           
       /*  Process this record set.  */
-      num_rec = 0;
+      num_rec = -1;
       elem_rset = rec_rset_null_elem ();
       while (rec_rset_elem_p (elem_rset = rec_rset_next_record (rset, elem_rset)))
         {
           record = rec_rset_elem_record (elem_rset);
-          
-          if (((recsel_num == -1) &&
-               ((!recsel_sex_str) ||
-                (rec_sex_eval (recsel_sex, record, &parse_status))))
-              || (recsel_num == num_rec))
+          num_rec++;
+
+          /* Shall we skip this record?  */
+          if (((recsel_num != -1) && (num_rec != num_rec))
+              || (recsel_sex_str && !(rec_sex_eval (recsel_sex, record, &parse_status)
+                                      && parse_status)))
             {
-              char *resolver_result = NULL;
-              
-              if (recsel_expr)
+              if (recsel_sex_str && (!parse_status))
                 {
-                  resolver_result = rec_resolve_str (db,
-                                                     rec_rset_type (rset),
-                                                     record,
-                                                     recsel_expr);
+                  fprintf (stderr, "recsel: error: evaluating the selection expression.\n");
+                  return false;
                 }
-              
+      
+              continue;
+            }
+
+          /* Process this record.  */
+          if (recsel_count)
+            {
+              /* We just count this record and continue.  */
+              written++;
+            }
+          else
+            {
+              char *output = NULL;
+
+              if (recsel_fex_str)
+                {
+                  output = recsel_eval_field_expression (recsel_fex, record);
+                }
+
+              /* Insert a newline?  */
               if ((written != 0)
                   && (!recsel_collapse)
-                  && (!recsel_count)
-                  && (!resolver_result || strcmp(resolver_result, "") != 0))
+                  && (!recsel_fex_str || output))
                 {
                   fprintf (stdout, "\n");
                 }
-              
-              if (!recsel_count)
+
+              /* Write the record descriptor if required.  */
+              if (recsel_descriptors && !wrote_descriptor)
                 {
-                  if (recsel_expr)
+                  rec_write_record (writer, rec_rset_descriptor (rset));
+                  fprintf (stdout, "\n");
+                  wrote_descriptor = true;
+                }
+
+              if (recsel_fex_str)
+                {
+                  /* Print the field expression.  */
+                  if (output)
                     {
-                      if (strcmp (resolver_result, "") != 0)
-                        {
-                          if (recsel_descriptors && !wrote_descriptor)
-                            {
-                              rec_write_record (writer, rec_rset_descriptor (rset));
-                              fprintf (stdout, "\n");
-                              wrote_descriptor = true;
-                            }
-                          fprintf (stdout, "%s", resolver_result);
-                          written++;
-                        }
-                    }
-                  else
-                    {
-                      if (recsel_descriptors && !wrote_descriptor)
-                        {
-                          rec_write_record (writer, rec_rset_descriptor (rset));
-                          fprintf (stdout, "\n");
-                          wrote_descriptor = true;
-                        }
-                      rec_write_record (writer, record);
+                      fprintf (stdout, "%s", output);
                     }
                 }
-              
-              if (!recsel_expr)
+              else
                 {
-                  written++;
+                  rec_write_record (writer, record);
                 }
+
+              written++;
             }
-          
-          if (recsel_sex_str
-              && (!parse_status))
-            {
-              fprintf (stderr, "recsel: error: evaluating the selection expression.\n");
-              return false;
-            }
-          
-          num_rec++;
         }
     }
 
   if (recsel_count)
     {
-      printf ("%d\n", written);
+      fprintf (stdout, "%d\n", written);
     }
 
   return ret;

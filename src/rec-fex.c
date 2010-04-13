@@ -50,6 +50,7 @@ struct rec_fex_elem_s
 struct rec_fex_s
 {
   int num_elems;
+  char *str;
   rec_fex_elem_t elems[REC_FEX_MAX_ELEMS];
 };
 
@@ -58,6 +59,8 @@ struct rec_fex_s
  */
 
 static bool rec_fex_parse_str (rec_fex_t new, char *str);
+static bool rec_fex_parse_elem (rec_fex_elem_t elem, char *str);
+static bool rec_fex_parse_int (char *p, int *num);
 
 /*
  * Public functions.
@@ -93,8 +96,24 @@ rec_fex_new (char *str)
 void
 rec_fex_destroy (rec_fex_t fex)
 {
-  rec_field_name_destroy (fex->field_name);
-  free (fex->str);
+  int i;
+  
+  for (i = 0; i < fex->num_elems; i++)
+    {
+      if (fex->elems[i]->field_name)
+        {
+          rec_field_name_destroy (fex->elems[i]->field_name);
+        }
+      if (fex->elems[i]->str)
+        {
+          free (fex->elems[i]->str);
+        }
+      free (fex->elems[i]);
+    }
+  if (fex->str)
+    {
+      free (fex->str);
+    }
   free (fex);
 }
 
@@ -102,7 +121,7 @@ bool
 rec_fex_check (char *str)
 {
   int ret;
-  static char *regexp_str = "(/?%?[a-zA-Z][a-zA-Z0-9_])+";
+  static char *regexp_str = "(/?%?[a-zA-Z][a-zA-Z0-9_](\\[[0-9]\\])?)+$";
   regex_t regexp;
 
   /* Compile the regexp.  */
@@ -113,7 +132,7 @@ rec_fex_check (char *str)
     }
 
   /* Check.  */
-  return (regexec (&regexp, regexp_str, 0, NULL, 0) == 0);
+  return (regexec (&regexp, str, 0, NULL, 0) == 0);
 }
 
 int
@@ -134,7 +153,7 @@ rec_fex_get (rec_fex_t fex,
   return fex->elems[position];
 }
 
-bool
+char
 rec_fex_elem_prefix (rec_fex_elem_t elem)
 {
   return elem->prefix;
@@ -187,9 +206,9 @@ rec_fex_parse_str (rec_fex_t new,
       if (!rec_fex_parse_elem (elem, elem_str))
         {
           /* Parse error.  */
-          for (i = 0; i < fex->num_elems; i++)
+          for (i = 0; i < new->num_elems; i++)
             {
-              free (fex->elem[i]);
+              free (new->elems[i]);
             }
 
           res = false;
@@ -197,14 +216,13 @@ rec_fex_parse_str (rec_fex_t new,
         }
 
       /* Add the elem to the FEX.  */
-      fex->elems[fex->num_elems] = elem;
-      fex->num_elems++;
+      new->elems[new->num_elems++] = elem;
     }
   while ((elem_str = strsep (&fex_str, ",")));
 
   if (res)
     {
-      fex->str = strdup (str);
+      new->str = strdup (str);
     }
 
   free (fex_str);
@@ -217,8 +235,112 @@ static bool
 rec_fex_parse_elem (rec_fex_elem_t elem,
                     char *str)
 {
+  bool ret;
+  char *b, *p;
+  char *field_name_str;
 
+  ret = true;
+  p = str;
 
+  /* 'Empty' part.  */
+  elem->field_name = NULL;
+  elem->prefix = 0;
+  elem->min = -1;
+  elem->max = -1;
+
+  /* Syntax:
+   *
+   *    [/]FNAME[min-max]
+   */
+
+  /* Process the optional slash.  */
+  if (p[0] == '/')
+    {
+      elem->prefix = p[0];
+      p++;
+    }
+
+  /* Get the field name.  */
+  b = p;
+  while ((*p != 0) && (*p != '['))
+    {
+      p++;
+    }
+
+  if ((p - b) > 0)
+    {
+      size_t size = (p - b) + 1;
+
+      field_name_str = malloc (size + 1);
+      strncpy (field_name_str, b, size - 1);
+      field_name_str[size - 1] = ':';
+      field_name_str[size] = '0';
+      
+      elem->field_name = rec_parse_field_name_str (field_name_str);
+    }
+
+  /* Get the subscript, if any.  */
+  if ((elem->field_name)
+      && (*p == '['))
+    {
+      char number[100];
+      size_t number_size = 0;
+
+      p++;
+      while ((*p != 0) && (*p <= '9') && (*p >= '0'))
+        {
+          number[number_size++] = *p;
+          p++;
+        }
+      number[number_size] = 0;
+
+      if (*p == ']')
+        {
+          /* The following call cannot fail.  */
+          rec_atoi (number, &(elem->min));
+        }
+      else 
+        {
+          /* Expected ]: parse error. */
+          ret = false;
+        }
+    }
+  
+
+  if (!(elem->field_name))
+    {
+      /* No field name: parse error.  */
+      ret = false;
+    }
+
+  return ret;
+}
+
+bool
+rec_fex_parse_int (char *p,
+                   int *num)
+{
+  bool res;
+  char number[100];
+  size_t number_size;
+  
+  res = true;
+
+  number_size = 0;
+  while ((*p != 0) && (*p <= '9') && (*p >= '0'))
+    {
+      /* Add a digit.  */
+      number[number_size++] = *p;
+      p++;
+    }
+  number[number_size] = 0;
+
+  if ((number_size == 0) || (!rec_atoi (number, num)))
+    {
+      res = false;
+    }
+
+  return res;
 }
 
 /* End of rec-fex.c */

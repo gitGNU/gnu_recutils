@@ -515,7 +515,21 @@ void rec_sex_print_ast (rec_sex_t sex);
 /*
  * FIELD EXPRESSIONS
  *
- * XXX.
+ * A Field expression is composed by a sequence of "elements".  Each
+ * element makes a reference to one or more fields in a record with a
+ * given name:
+ *
+ *  - Name:  Field name.
+ *  - Range: [min..max]
+ *  - Prefix: One-character prefix.
+ *
+ * FEXs can be parsed from strings following this syntax:
+ *
+ *      ELEM_DESCRIPTOR1,...,ELEM_DESCRIPTORn
+ *
+ * Where each element descriptor is:
+ *
+ *      /?FIELD_NAME([N(..N)?])?
  */
 
 typedef struct rec_fex_s *rec_fex_t;
@@ -524,12 +538,12 @@ typedef struct rec_fex_elem_s *rec_fex_elem_t;
 rec_fex_t rec_fex_new (char *str);
 void rec_fex_destroy (rec_fex_t fex);
 
-bool rec_fex_check (char *str);
+bool prec_fex_check (char *str);
 
 int rec_fex_size (rec_fex_t fex);
 rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
 
-bool rec_fex_elem_prefix (rec_fex_elem_t elem);
+char rec_fex_elem_prefix (rec_fex_elem_t elem);
 rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
 int rec_fex_elem_min (rec_fex_elem_t elem);
 int rec_fex_elem_max (rec_fex_elem_t elem);

@@ -40,7 +40,7 @@ librec_la_SOURCES = rec-mset.h \
                     rec-sex.lex.c \
                     rec-sex.lex.h \
                     rec-sex.tab.c \
-                    rec-resolver.c
+                    rec-fex.c
 
 librec_la_LDFLAGS =
 librec_la_CPPFLAGS = -I$(top_srcdir)/lib
