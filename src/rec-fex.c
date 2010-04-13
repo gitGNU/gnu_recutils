@@ -121,7 +121,12 @@ bool
 rec_fex_check (char *str)
 {
   int ret;
-  static char *regexp_str = "(/?%?[a-zA-Z][a-zA-Z0-9_](\\[[0-9]\\])?)+$";
+  static char *regexp_str =
+    "^" /* Beginning of the string.  */
+    "/?[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?"     /* First element name.  */
+    "(,/?[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?)*" /* Subsequent element names. */
+    "$" /* End of the string.  */
+    ;
   regex_t regexp;
 
   /* Compile the regexp.  */
@@ -132,7 +137,20 @@ rec_fex_check (char *str)
     }
 
   /* Check.  */
-  return (regexec (&regexp, str, 0, NULL, 0) == 0);
+  ret = regexec (&regexp, str, 0, NULL, 0);
+  if (ret != 0)
+    {
+      char *str_error;
+      size_t str_error_size;
+
+      str_error_size = regerror (ret, &regexp, 0, 0);
+      str_error = malloc (str_error_size + 1);
+      regerror (ret, &regexp, str_error, str_error_size);
+
+      fprintf (stderr, "error: invalid field expression in -p: %s.\n", str_error);
+    }
+  
+  return (ret == 0);
 }
 
 int
@@ -274,8 +292,8 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
       field_name_str = malloc (size + 1);
       strncpy (field_name_str, b, size - 1);
       field_name_str[size - 1] = ':';
-      field_name_str[size] = '0';
-      
+      field_name_str[size] = '\0';
+
       elem->field_name = rec_parse_field_name_str (field_name_str);
     }
 

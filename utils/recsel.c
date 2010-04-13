@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-13 15:16:30 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-13 16:08:10 jco"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -224,7 +224,6 @@ recsel_parse_args (int argc,
 
             if (!rec_fex_check (recsel_fex_str))
               {
-                fprintf (stderr, "parse error: invalid field expression in -p.\n");
                 exit (1);
               }
 
@@ -397,8 +396,7 @@ recsel_eval_field_expression (rec_fex_t fex,
 
       for (j = min; j < max; j++)
         {
-          field = rec_record_get_field_by_name (record, field_name, j);
-          if (!field)
+          if (!(field = rec_record_get_field_by_name (record, field_name, j)))
             {
               continue;
             }
