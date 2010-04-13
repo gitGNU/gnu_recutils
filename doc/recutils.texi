@@ -631,8 +631,9 @@ part of records) based in some criteria specified by the user.
 
 @menu
 * recsel Invocation::      Command line options.
-* Selection Expressions::  Expressions for record matching.
-* recsel Examples::        Examples of the usage of @command{recsel}
+* Selection Expressions::  Selecting records of a database.
+* Field Expressions::      Selecting fields of a record.
+* recsel Examples::        Examples of the usage of @command{recsel}.
 @end menu
 
 @node recsel Invocation
@@ -642,7 +643,7 @@ part of records) based in some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [OPTION]... [FILE]...
+recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...
 @end example
 
 In addition of the common options described earlier (@pxref{Common
@@ -654,7 +655,7 @@ the records in the input.
 @table @samp
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
-A record matching expression (@pxref{Selection Expressions}).  Only
+A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will get taken into account to
 compute the output.
 @item -t TYPE
@@ -677,6 +678,9 @@ means to print the Name and the Email of every matching record.
 
 If this option is not specified then all the fields of the matching
 records are printed in the standard output.
+@item -P @var{name_list}
+@itemx @w{@kbd{--print-values}=@var{name_list}}
+Same than @samp{-p}, but print the values of the selected fields.
 @item -c
 @itemx @w{@kbd{--count}}
 If this option is specified then recsel will print the number of
@@ -764,7 +768,39 @@ instead of using the full field name:
 $ recsel -e "Hacker:Name:OpenedBy = 'John Smith'"
 @end example
 
-XXX: subscripts.
+When the name of a field appears in an expression, the expression is
+applied to all the fields in the record featuring that name.  So, for
+example, the expression:
+
+@example
+Email ~ "\\.org"
+@end example
+
+Will match any record in which there is a field named @samp{Email}
+whose value terminates in @samp{.org}.  If we are interested in the
+value of some specific email, we can specify its relative position
+into the containing record by using @dfn{subscripts}.  Consider, for
+example:
+
+@example
+Email[0] ~ "\\.org"
+@end example
+
+Will match for:
+
+@example
+Name: Mr. Foo
+Email: foo@@foo.org
+Email: mr.foo@@foo.com
+@end example
+
+But not for:
+
+@example
+Name: Mr. Foo
+Email: mr.foo@@foo.com
+Email: foo@@foo.org
+@end example
 
 @subsubsection Parenthesized Expressions
 
@@ -829,6 +865,73 @@ have a field with that name.
 
 @node SEX Examples
 @subsection Examples
+
+@node Field Expressions
+@section Field Expressions
+
+@dfn{Field expressions} (also known as FEXs) are a way to select
+fields of a record.
+
+A FEX is composed by a sequence of @dfn{elements} separated by commas:
+
+@example
+ELEM_1,ELEM_2,...,ELEM_N
+@end example
+
+Each element makes a reference to one or more fields in a record
+identified by a given name and an optional subscript:
+
+@example
+@var{Field_Name}[@var{min}..@var{max}]
+@end example
+
+@var{min} and @var{max} are zero-based indexes.  It is possible to
+refer to a field occupying a given position.  For example, consider
+the following record:
+
+@example
+Name: Mr. Foo
+Email: foo@@foo.com
+Email: foo@@foo.org
+Email: mr.foo@@foo.org
+@end example
+
+We would select all the emails of the record with:
+
+@example
+Email
+@end example
+
+The first email with:
+
+@example
+Email[0]
+@end example
+
+The third email with:
+
+@example
+Email[2]
+@end example
+
+The second and the third email with:
+
+@example
+Email[1..2]
+@end example
+
+And so on.  Note that a selection is an ordered set not allowing
+duplicated values.  Thus, the field expression:
+
+@example
+Email[0],Name,Email
+@end example
+
+is equivalent to
+
+@example
+Email[0],Name,Email[1..2]
+@end example
 
 @node recsel Examples
 @section recsel Examples

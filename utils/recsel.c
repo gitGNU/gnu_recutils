@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-13 16:51:59 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-13 18:25:08 jco"
  *
  *       File:         recsel.c
  *       Date:         Fri Jan  1 23:12:38 2010
@@ -55,6 +55,7 @@ static const struct option GNU_longOptions[] =
     {"version", no_argument, NULL, VERSION_ARG},
     {"expression", required_argument, NULL, EXPRESSION_ARG},
     {"print", required_argument, NULL, PRINT_ARG},
+    {"print-values", required_argument, NULL, PRINT_VALUES_ARG},
     {"type", required_argument, NULL, TYPE_ARG},
     {"collapse", no_argument, NULL, COLLAPSE_ARG},
     {"count", no_argument, NULL, COUNT_ARG},
@@ -75,7 +76,7 @@ There is NO WARRANTY, to the extent permitted by law.\n\
 Written by Jose E. Marchesi.";
 
 char *recsel_help_msg = "\
-Usage: recsel [OPTION]... [FILE]...\n\
+Usage: recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n\
 Select and print rec data.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
@@ -84,25 +85,33 @@ Mandatory arguments to long options are mandatory for short options too.\n\
                                         expressions.\n\
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
-  -e, --expression=EXPR               selection expression.\n\
-  -n, --number=NUM                    select an specific record.\n\
-  -p, --print=FIELDS                  comma-separated list of fields to print for each\n\
-                                        matching record.\n\
-  -c, --count                         provide a count of the matching records instead of\n\
-                                        the records themselves.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
       --help                          print a help message and exit.\n\
       --version                       show recsel version and exit.\n\
 \n\
+Record selection options:\n\
+  -e, --expression=EXPR               selection expression.\n\
+  -n, --number=NUM                    select an specific record.\n\
+\n\
+Output options:\n\
+  -p, --print=FIELDS                  comma-separated list of fields to print for each\n\
+                                        matching record.\n\
+  -P, --print-values=FIELDS           same than -p, but print the values of the selected\n\
+                                        fields.\n\
+  -c, --count                         provide a count of the matching records instead of\n\
+                                        the records themselves.\n\
+\n\
 Examples:\n\
 \n\
         recsel -e \"Name ~ 'Smith'\" friends.rec\n\
-        recsel -C -e \"#Email && Wiki = 'no'\" -p /Email[0] gnupdf-hackers.rec\n\
+        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n\
 \n\
 Report recsel bugs to bug-recutils@gnu.org\n\
 GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
 General help using GNU software: <http://www.gnu.org/gethelp/>\
 ";
+
+bool recsel_print_values = false;
 
 /* String containing the selection expression.  */
 char *recsel_sex_str = NULL;
@@ -140,7 +149,7 @@ recsel_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "Cdict:e:n:p:",
+                             "Cdict:e:n:p:P:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -212,12 +221,18 @@ recsel_parse_args (int argc,
           }
         case PRINT_ARG:
         case 'p':
+        case 'P':
           {
             if (recsel_count)
               {
-                fprintf (stderr, "%s: cannot specify -p and also -c.\n",
+                fprintf (stderr, "%s: cannot specify -[pP] and also -c.\n",
                          argv[0]);
                 exit (1);
+              }
+
+            if (c == 'P')
+              {
+                recsel_print_values = true;
               }
 
             recsel_fex_str = strdup (optarg);
@@ -364,7 +379,6 @@ recsel_eval_field_expression (rec_fex_t fex,
   rec_field_t field;
   rec_field_name_t field_name;
   int i, j, min, max;
-  char prefix;
 
   stm = open_memstream (&res, &res_size);
 
@@ -373,7 +387,6 @@ recsel_eval_field_expression (rec_fex_t fex,
       elem = rec_fex_get (fex, i);
       
       field_name = rec_fex_elem_field_name (elem);
-      prefix = rec_fex_elem_prefix (elem);
       min = rec_fex_elem_min (elem);
       max = rec_fex_elem_max (elem);
 
@@ -401,7 +414,7 @@ recsel_eval_field_expression (rec_fex_t fex,
               continue;
             }
 
-          if (prefix == '/')
+          if (recsel_print_values)
             {
               /* Write just the value of the field.  */
               fprintf (stm, rec_field_value (field));

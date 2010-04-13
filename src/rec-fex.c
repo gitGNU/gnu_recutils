@@ -40,7 +40,6 @@ struct rec_fex_elem_s
   char *str;
 
   rec_field_name_t field_name;
-  char prefix;
   int max;
   int min;
 };
@@ -123,8 +122,8 @@ rec_fex_check (char *str)
   int ret;
   static char *regexp_str =
     "^" /* Beginning of the string.  */
-    "/?[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?"     /* First element name.  */
-    "(,/?[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?)*" /* Subsequent element names. */
+    "[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?"     /* First element name.  */
+    "(,[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?)*" /* Subsequent element names. */
     "$" /* End of the string.  */
     ;
   regex_t regexp;
@@ -169,12 +168,6 @@ rec_fex_get (rec_fex_t fex,
     }
 
   return fex->elems[position];
-}
-
-char
-rec_fex_elem_prefix (rec_fex_elem_t elem)
-{
-  return elem->prefix;
 }
 
 rec_field_name_t
@@ -262,7 +255,6 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
 
   /* 'Empty' part.  */
   elem->field_name = NULL;
-  elem->prefix = 0;
   elem->min = -1;
   elem->max = -1;
 
@@ -270,13 +262,6 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
    *
    *    [/]FNAME[min-max]
    */
-
-  /* Process the optional slash.  */
-  if (p[0] == '/')
-    {
-      elem->prefix = p[0];
-      p++;
-    }
 
   /* Get the field name.  */
   b = p;
