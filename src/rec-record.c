@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 20:37:31 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-record.c
  *       Date:         Thu Mar  5 17:11:41 2009

@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 23:32:43 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         recins.h
  *       Date:         Mon Dec 28 08:54:38 2009
  *
- *       GNU Record Utilities - recins
+ *       GNU recutils - recins
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

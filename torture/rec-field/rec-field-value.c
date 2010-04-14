@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "09/12/25 18:34:44 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-value.c
  *       Date:         Sun Mar  1 17:04:00 2009
  *
- *       GNU rec library - rec_field_value unit tests
+ *       GNU recutils - rec_field_value unit tests
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

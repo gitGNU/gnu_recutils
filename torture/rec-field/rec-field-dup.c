@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "09/12/25 18:16:03 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-dup.c
  *       Date:         Thu Mar  5 23:29:56 2009
  *
- *       GNU rec library - rec_field_dup unit tests
+ *       GNU recutils - rec_field_dup unit tests
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

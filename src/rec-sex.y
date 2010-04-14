@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: ""
+/* -*- mode: C -*-
  *
  *       File:         rec-sex.y
  *       Date:         Sat Jan  9 16:36:55 2010

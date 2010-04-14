@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-09 20:12:31 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-sex.l
  *       Date:         Sat Jan  9 16:35:18 2010

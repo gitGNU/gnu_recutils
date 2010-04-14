@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: ""
+/* -*- mode: C -*-
  *
  *       File:         rec.h
  *       Date:         Fri Feb 27 20:04:59 2009

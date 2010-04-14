@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-09 15:41:37 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-sex-ast.c
  *       Date:         Tue Jan 12 17:29:03 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "09/10/01 13:45:37 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         runtests.c
  *       Date:         Sun Mar  1 17:00:14 2009
  *
- *       GNU rec Library - Unit testing driver
+ *       GNU recutils - Unit testing driver
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

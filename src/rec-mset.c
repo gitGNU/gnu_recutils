@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 18:26:14 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-mset.c
  *       Date:         Thu Apr  1 17:07:00 2010

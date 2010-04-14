@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "10/01/13 16:36:29 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-record-new.c
  *       Date:         Thu Mar  5 23:58:33 2009
  *
- *       GNU rec library - rec_record_new unit tests
+ *       GNU recutils - rec_record_new unit tests
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

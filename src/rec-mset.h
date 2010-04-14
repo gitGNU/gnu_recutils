@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: ""
+/* -*- mode: C -*-
  *
  *       File:         rec-mset.h
  *       Date:         Thu Apr  1 16:31:37 2010

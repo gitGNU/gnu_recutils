@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-08 14:46:37 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-record.c
  *       Date:         Thu Mar  5 23:56:38 2009
  *
- *       GNU rec library - rec_record test suite
+ *       GNU recutils - rec_record test suite
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

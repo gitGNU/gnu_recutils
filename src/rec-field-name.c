@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-09 16:25:54 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-name.c
  *       Date:         Fri Dec 25 17:27:05 2009
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

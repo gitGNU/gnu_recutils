@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "09/12/23 20:27:07 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-field.c
  *       Date:         Sun Mar  1 17:06:28 2009
  *
- *       Fairly Light Files - rec_field test suite
+ *       GNU recutils - rec_field test suite
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

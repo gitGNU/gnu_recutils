@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "10/01/14 20:09:17 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-sex-ast.h
  *       Date:         Tue Jan 12 17:07:59 2010

@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-09 13:53:46 jco"
+/* -*- mode: C -*-
  *
  *       File:         recinf.h
  *       Date:         Mon Dec 28 08:54:38 2009
  *
- *       GNU Rec - recinf
+ *       GNU recutils - recinf
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-13 17:51:56 jco"
+/* -*- mode: C -*-
  *
  *       File:         recsel.h
  *       Date:         Fri Jan  1 23:10:08 2010
  *
- *       GNU Rec - recsel
+ *       GNU recutils - recsel
  *
  */
 

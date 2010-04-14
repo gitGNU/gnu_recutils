@@ -1,13 +1,13 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-13 21:25:41 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         recdel.c
  *       Date:         Mon Dec 28 08:54:38 2009
  *
- *       GNU Record Utilities - recdel
+ *       GNU recutils - recdel
  *
  */
 
-/* Copyright (C) 2009 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
