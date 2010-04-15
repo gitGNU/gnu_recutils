@@ -429,7 +429,85 @@ This field contains documentation about the record.
 
 It is like a comment, but this field can be managed in a programmatic
 way easier.
+@item %type
+This field can be used to define types for fields.  Its usage is:
+
+@example
+%type: @var{field_name} @var{type} @var{type_description}
+@end example
+
+Where @var{field_name} is the name of the fields having this type in
+the current record set, @var{type} is the name of a supported field
+type and @var{type_description} is additional information that varies
+from type to type.
+
+The supported types are:
+
+@table @samp
+
+@item integer
+Fields of this type contain integer numbers.  This field type does
+not accept a description.
+
+Example:
+
+@example
+%type: Id integer
+@end example
+
+@item date
+Fields of this type contain dates.  This field type does not accept a
+description.
+
+@c XXX: which formats?
+
+Example:
+
+@example
+%type: Date date
+@end example
+
+@item enum
+Fields of this type contain symbols taken from an enumeration.
+
+The type is described by writing the sequence of symbols conforming
+the enumeration:
+
+@example
+%type: Status enum NEW STARTED DONE CLOSED
+%type: Day enum Monday Tuesday Wednesday Thursday Friday Saturday Sunday
+@end example
+
+The symbols are separated by blank characters (including newlines).
+It is possible to specify a blank as part of a symbol by using single
+quotes:
+
+@c XXX: better example.
+@example
+%type: Title enum 'Mr. Doctor' 'Mrs. Doctor'
+@end example
+
+@item range
+Fields of this type are integers in a given range.
+
+Example:
+
+@example
+%type: PercentComplete range 0..100
+@end example
+
+It is possible to omit the minimum index.  In that case it is
+implicitly zero:
+
+@example
+%type: PercentComplete range 100
+@end example
 @end table
+@end table
+
+
+@c XXX: strings
+@c %type: Summary limit 60
 
 @node Compound Field Names
 @chapter Compound Field Names
