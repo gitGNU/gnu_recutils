@@ -103,7 +103,7 @@ Output options:\n\
 \n\
 Examples:\n\
 \n\
-        recsel -e \"Name ~ 'Smith'\" friends.rec\n\
+        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n\
         recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n\
 \n\
 Report recsel bugs to bug-recutils@gnu.org\n\
@@ -186,7 +186,8 @@ recsel_parse_args (int argc,
                 recsel_sex = rec_sex_new (recsel_insensitive);
                 if (!rec_sex_compile (recsel_sex, recsel_sex_str))
                   {
-                    fprintf (stderr, "recsel: error: invalid selection expression.\n");
+                    fprintf (stderr, "%s: error: invalid selection expression.\n",
+                             argv[0]);
                     exit (1);
                   }
               }

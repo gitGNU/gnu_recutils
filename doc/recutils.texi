@@ -503,6 +503,21 @@ implicitly zero:
 %type: PercentComplete range 100
 @end example
 @end table
+
+@item %order
+This field can be used to define the preferred order of the fields in
+the record.  Its usage is:
+
+@example
+%order: @var{field_name1} @var{field_name2} ... @var{field_nameN}
+@end example
+
+Where the field names are separated by one or more blank characters.
+Example:
+
+@example
+%order: Id Name Email
+@end example
 @end table
 
 

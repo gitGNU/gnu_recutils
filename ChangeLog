@@ -1,3 +1,11 @@
+2010-04-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* utils/recset.c: Help string completed with record selection
+	options, fields selection options and actions.
+
+	* doc/recutils.texi (Record Descriptors): Documentation for the
+	record descriptor field '%order'.
+
 2010-04-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/rec-mset.c: Distribution terms added.

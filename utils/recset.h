@@ -31,7 +31,16 @@
 enum
   {
     HELP_ARG,
-    VERSION_ARG
+    VERSION_ARG,
+    FIELD_EXPR_ARG,
+    EXPRESSION_ARG,
+    APPEND_ACTION_ARG,
+    DELETE_ACTION_ARG,
+    COMMENT_ACTION_ARG,
+    SET_ACTION_ARG,
+    CASE_INSENSITIVE_ARG,
+    NUM_ARG,
+    TYPE_ARG
   };
 
 #endif /* recset.h */

@@ -367,7 +367,7 @@ main (int argc, char *argv[])
       in = fopen (file_name, "r");
       if (in == NULL)
         {
-          fprintf (stderr, "recdel: error: cannot read %s.\n", file_name);
+          fprintf (stderr, "%s: error: cannot read %s.\n", argv[0], file_name);
           exit (1);
         }
     }
@@ -407,7 +407,7 @@ main (int argc, char *argv[])
       des = mkstemp (tmp_file_name);
       if (des == -1)
         {
-          fprintf(stderr, "recdel: error: cannot create a unique name.\n");
+          fprintf(stderr, "%s: error: cannot create a unique name.\n", argv[0]);
           exit (1);
         }
       out = fdopen (des, "w+");
@@ -423,8 +423,8 @@ main (int argc, char *argv[])
       /* Rename the temporary file to file_name.  */
       if (rename (tmp_file_name, file_name) == -1)
         {
-          fprintf (stderr, "recdel: error: moving %s to %s\n",
-                   tmp_file_name, file_name);
+          fprintf (stderr, "%s: error: moving %s to %s\n",
+                   argv[0], tmp_file_name, file_name);
           remove (tmp_file_name);
           exit (1);
         }
