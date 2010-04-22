@@ -176,6 +176,12 @@ rec_fex_elem_field_name (rec_fex_elem_t elem)
   return elem->field_name;
 }
 
+char *
+rec_fex_elem_field_name_str (rec_fex_elem_t elem)
+{
+  return elem->str;
+}
+
 int
 rec_fex_elem_min (rec_fex_elem_t elem)
 {
@@ -186,6 +192,43 @@ int
 rec_fex_elem_max (rec_fex_elem_t elem)
 {
   return elem->max;
+}
+
+void
+rec_fex_sort (rec_fex_t fex)
+{
+  bool done;
+  rec_fex_elem_t aux;
+  int i, j;
+
+  /* XXX: this code only works when 'max' is not specified.  */
+
+  for (i = 1; i < fex->num_elems; i++)
+    {
+      aux = fex->elems[i];
+      j = i - 1;
+      done = false;
+
+      while (!done)
+       {
+         /* If elems[j] > aux  */
+         if ((fex->elems[j]->min == -1) || (fex->elems[j]->min > aux->min))
+           {
+             fex->elems[j + 1] = fex->elems[j];
+             j = j - 1;
+             if (j < 0)
+               {
+                 done = true;
+               }
+           }
+         else
+           {
+             done = true;
+           }
+       }
+
+      fex->elems[j + 1] = aux;
+    }
 }
 
 /*
@@ -280,6 +323,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
       field_name_str[size] = '\0';
 
       elem->field_name = rec_parse_field_name_str (field_name_str);
+      elem->str = strdup (field_name_str);
     }
 
   /* Get the subscript, if any.  */

@@ -132,4 +132,24 @@ rec_field_destroy (rec_field_t field)
   free (field);
 }
 
+rec_comment_t
+rec_field_to_comment (rec_field_t field)
+{
+  rec_comment_t res;
+  char *comment_str;
+  
+  comment_str = rec_write_field_str (field);
+
+  /* Remove a trailing newline.  */
+  if (comment_str[strlen (comment_str) - 1] == '\n')
+    {
+      comment_str[strlen (comment_str) - 1] = '\0';
+    }
+
+  res = rec_comment_new (comment_str);
+  free (comment_str);
+  
+  return res;
+}
+
 /* End of rec-field.c */

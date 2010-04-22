@@ -328,6 +328,29 @@ rec_record_search_field (rec_record_t record,
   return elem;
 }
 
+int
+rec_record_get_field_index (rec_record_t record,
+                            rec_field_t field)
+{
+  int i, res;
+  rec_field_t record_field;
+  
+  res = 0;
+  for (i = 0; i < rec_record_num_fields (record); i++)
+    {
+      record_field = rec_record_elem_field (rec_record_get_field (record, i));
+      
+      if (field == record_field)
+        {
+          break;
+        }
+
+      res++;
+    }
+
+  return res;
+}
+
 rec_record_elem_t
 rec_record_search_field_name (rec_record_t record,
                               rec_field_name_t field_name,
@@ -512,6 +535,32 @@ rec_record_remove_field_by_name (rec_record_t record,
           elem = rec_record_next_field (record, elem);
         }
     }
+}
+
+int
+rec_record_get_field_index_by_name (rec_record_t record,
+                                    rec_field_t field)
+{
+  int i, res;
+  rec_field_t record_field;
+
+  res = 0;
+  for (i = 0; i < rec_record_num_fields (record); i++)
+    {
+      record_field = rec_record_elem_field (rec_record_get_field (record, i));
+
+      if (field == record_field)
+        {
+          break;
+        }
+
+      if (rec_field_equal_p (field, record_field))
+        {
+          res++;
+        }
+    }
+
+  return res;
 }
 
 rec_record_elem_t

@@ -155,6 +155,9 @@ rec_field_t rec_field_dup (rec_field_t field);
 bool rec_field_equal_p (rec_field_t field1,
                         rec_field_t field2);
 
+/* Others.. */
+rec_comment_t rec_field_to_comment (rec_field_t field);
+
 /*
  * RECORDS
  *
@@ -212,6 +215,9 @@ void rec_record_insert_after (rec_record_t record,
 rec_record_elem_t rec_record_search_field (rec_record_t record,
                                            rec_field_t field);
 
+int rec_record_get_field_index (rec_record_t record,
+                                rec_field_t field);
+
 /* Iterating.  */
 rec_record_elem_t rec_record_first (rec_record_t record);
 rec_record_elem_t rec_record_first_field (rec_record_t record);
@@ -236,6 +242,9 @@ rec_field_t rec_record_get_field_by_name (rec_record_t record,
 void rec_record_remove_field_by_name (rec_record_t record,
                                       rec_field_name_t field_name,
                                       int index);
+
+int rec_record_get_field_index_by_name (rec_record_t record,
+                                        rec_field_t field);
 
 /* Elements.  */
 rec_record_elem_t rec_record_null_elem (void);
@@ -540,11 +549,14 @@ void rec_fex_destroy (rec_fex_t fex);
 
 bool prec_fex_check (char *str);
 
+void rec_fex_sort (rec_fex_t fex);
+
 int rec_fex_size (rec_fex_t fex);
 rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
 
 char rec_fex_elem_prefix (rec_fex_elem_t elem);
 rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
+char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
 int rec_fex_elem_min (rec_fex_elem_t elem);
 int rec_fex_elem_max (rec_fex_elem_t elem);
 

@@ -70,7 +70,7 @@ Print information about the types of records stored in the input.\n\
   -n, --names-only                output just the names of the record files\n\
                                     found in the input.\n\
       --help                      print a help message and exit.\n\
-      --version                   show recinf version and exit.\n\   
+      --version                   show recinf version and exit.\n\
 \n\
 Examples:\n\
 \n\
