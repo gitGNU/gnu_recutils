@@ -33,7 +33,6 @@
 #include <recutl.h>
 
 /* Forward declarations.  */
-bool recdel_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 void recdel_delete_records (rec_db_t db);
 void recdel_parse_args (int argc, char **argv);
 
@@ -42,11 +41,12 @@ void recdel_parse_args (int argc, char **argv);
  */
 
 char *program_name; /* Initialized in main() */
-char *recdel_type = NULL;
+char *recutl_type = NULL;
 bool recdel_comment = false;
-rec_sex_t recdel_sex = NULL;
-int recdel_index = -1;
-bool recdel_case_insensitive = false;
+rec_sex_t recutl_sex = NULL;
+char *recutl_sex_str = NULL;
+int recutl_num = -1;
+bool recutl_insensitive = false;
 bool recdel_force = false;
 
 /*
@@ -56,10 +56,7 @@ bool recdel_force = false;
 enum
 {
   COMMON_ARGS,
-  TYPE_ARG,
-  NUMBER_ARG,
-  EXPRESSION_ARG,
-  CASE_INSENSITIVE_ARG,
+  RECORD_SELECTION_ARGS,
   COMMENT_ARG,
   FORCE_ARG
 };
@@ -67,10 +64,7 @@ enum
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
-    {"type", required_argument, NULL, TYPE_ARG},
-    {"number", required_argument, NULL, NUMBER_ARG},
-    {"expression", required_argument, NULL, EXPRESSION_ARG},
-    {"case-insensitive", no_argument, NULL, CASE_INSENSITIVE_ARG},
+    RECORD_SELECTION_LONG_ARGS,
     {"comment", no_argument, NULL, COMMENT_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
     {NULL, 0, NULL, 0}
@@ -78,31 +72,20 @@ static const struct option GNU_longOptions[] =
 
 /* Messages */
 
-char *recdel_version_msg = "recdel (GNU recutils) 1.0\n\
-Copyright (C) 2010 Jose E. Marchesi. \n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \n\
-This is free software: you are free to change and redistribute it. \n\
-There is NO WARRANTY, to the extent permitted by law.\n\
-\n\
-Written by Jose E. Marchesi.";
+RECUTL_COPYRIGHT_DOC ("recdel");
 
-char *recdel_help_msg = "\
+char *recutl_help_msg = "\
 Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n\
 Remove (or comment out) records from a rec file.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
   -c, --comment                       comment the matching records instead of\n\
                                          delete them.\n\
-  -i, --case-insensitive              make the selection expression operators\n\
-                                         case-insensitive.\n\
-      --help                          print a help message and exit.\n\
-      --version                       show recdel version and exit.\n\
-\n\
-Record selection options:\n\
-  -t, --type=TYPE                     specify the type of the new record.\n\
-  -e, --expression=EXPR               select records matching this expression.\n\
-  -n, --number                        select the NUMBERth record.\n\
-\n\
+      --force                         delete even in potentially dangerous situations.\n"
+COMMON_ARGS_DOC
+"\n"
+RECORD_SELECTION_ARGS_DOC
+"\n\
 If no FILE is specified then the command acts like a filter, getting\n\
 the data from the standard input and writing the result in the\n\
 standard output.\n\
@@ -111,51 +94,8 @@ Examples:\n\
 \n\
         recdel -n 10 contacts.rec\n\
         cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n\
-\n\
-Report recdel bugs to bug-recutils@gnu.org\n\
-GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
-General help using GNU software: <http://www.gnu.org/gethelp/>\
-";
-
-bool
-recdel_parse_db_from_file (FILE *in,
-                           char *file_name,
-                           rec_db_t db)
-{
-  bool res;
-  rec_rset_t rset;
-  rec_parser_t parser;
-
-  res = true;
-  parser = rec_parser_new (in);
-
-  while (rec_parse_rset (parser, &rset))
-    {
-      char *rset_type;
-      rset_type = rec_rset_type (rset);
-      if (rec_db_type_p (db, rset_type))
-        {
-          fprintf (stderr, "recdel: error: duplicated record set '%s' from %s.\n",
-                   rset_type, file_name ? file_name : "stdin");
-          exit (1);
-        }
-
-      if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
-        {
-          /* Error.  */
-          res = false;
-          break;
-        }
-    }
-
-  if (rec_parser_error (parser))
-    {
-      res = false;
-      rec_parser_perror (parser, "stdin");
-    }
-  
-  return res;
-}
+\n"
+  RECUTL_HELP_FOOTER_DOC ("recdel");
 
 void
 recdel_delete_records (rec_db_t db)
@@ -174,10 +114,10 @@ recdel_delete_records (rec_db_t db)
   rec_rset_elem_t rec_elem;
   rec_rset_elem_t new_elem;
 
-  if (!rec_db_type_p (db, recdel_type))
+  if (!rec_db_type_p (db, recutl_type))
     {
       fprintf (stderr, "recdel: error: no records of type %s found.\n",
-               recdel_type ? recdel_type : "default");
+               recutl_type ? recutl_type : "default");
       exit (1);
     }
 
@@ -187,8 +127,8 @@ recdel_delete_records (rec_db_t db)
       rset_size = rec_rset_num_records (rset);
 
       if ((rset_size > 0)
-          && (recdel_type && rec_rset_type (rset) && (strcmp (recdel_type, rec_rset_type (rset)) == 0)
-              || (!recdel_type && !rec_rset_type (rset))))
+          && (recutl_type && rec_rset_type (rset) && (strcmp (recutl_type, rec_rset_type (rset)) == 0)
+              || (!recutl_type && !rec_rset_type (rset))))
         {
           numrec = 0;
               
@@ -197,11 +137,11 @@ recdel_delete_records (rec_db_t db)
             {
               record = rec_rset_elem_record (rec_elem);
 
-              if (((recdel_index == -1) && !recdel_sex)
-                  || ((recdel_index == -1) &&
-                      ((recdel_sex &&
-                        (rec_sex_eval (recdel_sex, record, &parse_status))))
-                      || (recdel_index == numrec)))
+              if (((recutl_num == -1) && !recutl_sex)
+                  || ((recutl_num == -1) &&
+                      ((recutl_sex &&
+                        (rec_sex_eval (recutl_sex, record, &parse_status))))
+                      || (recutl_num == numrec)))
                 {
                   /* Delete this record.  */
 
@@ -232,7 +172,6 @@ recdel_delete_records (rec_db_t db)
     }
 }
 
-
 void
 recdel_parse_args (int argc,
                    char **argv)
@@ -243,73 +182,25 @@ recdel_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "in:ct:e:",
+                             RECORD_SELECTION_SHORT_ARGS
+                             "c",
                              GNU_longOptions,
                              NULL)) != -1)
     {
       c = ret;
       switch (c)
         {
-          /* COMMON ARGUMENTS */
-        case HELP_ARG:
-          {
-            fprintf (stdout, "%s\n", recdel_help_msg);
-            exit (0);
-            break;
-          }
-        case VERSION_ARG:
-          {
-            fprintf (stdout, "%s\n", recdel_version_msg);
-            exit (0);
-            break;
-          }
+          COMMON_ARGS_CASES
+          RECORD_SELECTION_ARGS_CASES
         case FORCE_ARG:
           {
             recdel_force = true;
-            break;
-          }
-        case TYPE_ARG:
-        case 't':
-          {
-            recdel_type = strdup (optarg);
-            break;
-          }
-        case CASE_INSENSITIVE_ARG:
-        case 'i':
-          {
-            recdel_case_insensitive = true;
             break;
           }
         case COMMENT_ARG:
         case 'c':
           {
             recdel_comment = true;
-            break;
-          }
-        case NUMBER_ARG:
-        case 'n':
-          {
-            if (sex_str)
-              {
-                fprintf (stderr, "recdel: error: you cannot use both -e and -n.\n");
-                exit (1);
-              }
-
-            /* XXX: check atoi.  */
-            recdel_index = atoi (optarg);
-            break;
-          }
-        case EXPRESSION_ARG:
-        case 'e':
-          {
-            /* Get sex, but incompatible with -n. */
-            if (recdel_index != -1)
-              {
-                fprintf (stderr, "recdel: error: you cannot use both -n and -e.\n");
-                exit (1);
-              }
-
-            sex_str = strdup (optarg);
             break;
           }
         default:
@@ -319,18 +210,18 @@ recdel_parse_args (int argc,
         }
     }
 
-  if ((recdel_index == -1) && !sex_str & !recdel_force)
+  if ((recutl_num == -1) && !sex_str & !recdel_force)
     {
       fprintf (stderr, "recdel: ignoring a request to delete all records of type %s.\n",
-               recdel_type ? recdel_type : "unknown");
+               recutl_type ? recutl_type : "unknown");
       fprintf (stderr, "recdel: use --force if you really want to proceed, or use -n or -e.\n");
       exit (1);
     }
 
   if (sex_str)
     {
-      recdel_sex = rec_sex_new (recdel_case_insensitive);
-      if (!rec_sex_compile (recdel_sex, sex_str))
+      recutl_sex = rec_sex_new (recutl_insensitive);
+      if (!rec_sex_compile (recutl_sex, sex_str))
         {
           fprintf (stderr, "recdel: error: invalid selection expression.\n");
           exit (1);
@@ -363,7 +254,7 @@ main (int argc, char *argv[])
     {
       if ((argc - optind) != 1)
         {
-          fprintf (stdout, "%s\n", recdel_help_msg);
+          fprintf (stdout, "%s\n", recutl_help_msg);
           exit (1);
         }
 
@@ -386,15 +277,15 @@ main (int argc, char *argv[])
       in = stdin;
     }
 
-  if (!recdel_parse_db_from_file (in,
+  if (!recutl_parse_db_from_file (in,
                                   file_name,
                                   db))
     {
       exit (1);
     }
   
-  if (((recdel_index != -1)
-       || recdel_sex)
+  if (((recutl_num != -1)
+       || recutl_sex)
       || recdel_force)
     {
       recdel_delete_records (db);
