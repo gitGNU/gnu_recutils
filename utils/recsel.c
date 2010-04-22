@@ -30,14 +30,11 @@
 #include <stdlib.h>
 
 #include <rec.h>
-
-#include <recsel.h>
+#include <recutl.h>
 
 /* Forward prototypes.  */
 void recsel_parse_args (int argc, char **argv);
-rec_db_t recsel_build_db (int argc, char **argv);
 bool recsel_process_data (rec_db_t db);
-bool recsel_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 
 /*
  * Global variables
@@ -49,50 +46,45 @@ char *program_name; /* Initialized in main() */
  * Command line options management
  */
 
+enum
+{
+  COMMON_ARGS,
+  RECORD_SELECTION_ARGS,
+  PRINT_ARG,
+  PRINT_VALUES_ARG,
+  COLLAPSE_ARG,
+  COUNT_ARG,
+  DESCRIPTOR_ARG
+};
+
 static const struct option GNU_longOptions[] =
   {
-    {"help", no_argument, NULL, HELP_ARG},
-    {"version", no_argument, NULL, VERSION_ARG},
-    {"expression", required_argument, NULL, EXPRESSION_ARG},
+    COMMON_LONG_ARGS,
+    RECORD_SELECTION_LONG_ARGS,
     {"print", required_argument, NULL, PRINT_ARG},
     {"print-values", required_argument, NULL, PRINT_VALUES_ARG},
-    {"type", required_argument, NULL, TYPE_ARG},
     {"collapse", no_argument, NULL, COLLAPSE_ARG},
     {"count", no_argument, NULL, COUNT_ARG},
-    {"num", required_argument, NULL, NUM_ARG},
-    {"case-insensitive", no_argument, NULL, INSENSITIVE_ARG},
     {"include-descriptors", no_argument, NULL, DESCRIPTOR_ARG},
     {NULL, 0, NULL, 0}
   };
 
 /* Messages */
 
-char *recsel_version_msg = "recsel (GNU recutils) 1.0\n\
-Copyright (C) 2010 Jose E. Marchesi.\n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
-This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n\
-\n\
-Written by Jose E. Marchesi.";
+RECUTL_COPYRIGHT_DOC ("recsel");
 
-char *recsel_help_msg = "\
+char *recutl_help_msg = "\
 Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n\
 Select and print rec data.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
-  -i, --case-insensitive              make strings case-insensitive in selection\n\
-                                        expressions.\n\
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
-  -C, --collapse                      do not section the result in records with newlines.\n\
-      --help                          print a help message and exit.\n\
-      --version                       show recsel version and exit.\n\
-\n\
-Record selection options:\n\
-  -t, --type=TYPE                     print records of the specified type only.\n\
-  -e, --expression=EXPR               selection expression.\n\
-  -n, --number=NUM                    select an specific record.\n\
-\n\
+  -C, --collapse                      do not section the result in records with newlines.\n"
+COMMON_ARGS_DOC
+"\n"
+RECORD_SELECTION_ARGS_DOC
+"\n\
 Output options:\n\
   -p, --print=FIELDS                  comma-separated list of fields to print for each\n\
                                         matching record.\n\
@@ -105,24 +97,21 @@ Examples:\n\
 \n\
         recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n\
         recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n\
-\n\
-Report recsel bugs to bug-recutils@gnu.org\n\
-GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
-General help using GNU software: <http://www.gnu.org/gethelp/>\
-";
+\n"
+  RECUTL_HELP_FOOTER_DOC ("recsel");
 
 bool recsel_print_values = false;
 
 /* String containing the selection expression.  */
-char *recsel_sex_str = NULL;
-rec_sex_t recsel_sex = NULL;
+char *recutl_sex_str = NULL;
+rec_sex_t recutl_sex = NULL;
 
 /* Field list.  */
 char *recsel_fex_str = NULL;
 rec_fex_t recsel_fex = NULL;
 
 /* Record type.  */
-char *recsel_type = NULL;
+char *recutl_type = NULL;
 
 /* Whether to collapse the output.  */
 bool recsel_collapse = false;
@@ -132,13 +121,13 @@ bool recsel_count = false;
 
 /* Whether to be case-insensitive while evaluating
    selection expressions.  */
-bool recsel_insensitive = false;
+bool recutl_insensitive = false;
 
 /* Whether to include record descriptors in the selection results.  */
 bool recsel_descriptors = false;
 
 /* Whether to provide an specific record.  */
-long recsel_num = -1;
+long recutl_num = -1;
 
 void
 recsel_parse_args (int argc,
@@ -149,75 +138,20 @@ recsel_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "Cdict:e:n:p:P:",
+                             RECORD_SELECTION_SHORT_ARGS
+                             "Cdcp:P:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
       c = ret;
       switch (c)
         {
-        case HELP_ARG:
-          {
-            fprintf (stdout, "%s\n", recsel_help_msg);
-            exit (0);
-            break;
-          }
-        case VERSION_ARG:
-          {
-            fprintf (stdout, "%s\n", recsel_version_msg);
-            exit (0);
-            break;
-          }
-        case EXPRESSION_ARG:
-        case 'e':
-          {
-            if (recsel_num != -1)
-              {
-                fprintf (stderr, "%s: cannot specify -e and also -n.\n",
-                         argv[0]);
-                exit (1);
-              }
-            
-            recsel_sex_str = strdup (optarg);
-
-            /* Compile the search expression.  */
-            if (recsel_sex_str)
-              {
-                recsel_sex = rec_sex_new (recsel_insensitive);
-                if (!rec_sex_compile (recsel_sex, recsel_sex_str))
-                  {
-                    fprintf (stderr, "%s: error: invalid selection expression.\n",
-                             argv[0]);
-                    exit (1);
-                  }
-              }
-            
-            break;
-          }
-        case INSENSITIVE_ARG:
-        case 'i':
-          {
-            recsel_insensitive = true;
-            break;
-          }
+        COMMON_ARGS_CASES
+        RECORD_SELECTION_ARGS_CASES
         case DESCRIPTOR_ARG:
         case 'd':
           {
             recsel_descriptors = true;
-            break;
-          }
-        case NUM_ARG:
-        case 'n':
-          {
-            if (recsel_sex)
-              {
-                fprintf (stderr, "%s: cannot specify -n and also -e.\n",
-                         argv[0]);
-                exit (1);
-              }
-
-            /* XXX: check for conversion errors.  */
-            recsel_num = atoi (optarg);
             break;
           }
         case PRINT_ARG:
@@ -253,12 +187,6 @@ recsel_parse_args (int argc,
 
             break;
           }
-        case TYPE_ARG:
-        case 't':
-          {
-            recsel_type = strdup (optarg);
-            break;
-          }
         case COLLAPSE_ARG:
         case 'C':
           {
@@ -288,162 +216,6 @@ recsel_parse_args (int argc,
 }
 
 bool
-recsel_parse_db_from_file (FILE *in,
-                           char *file_name,
-                           rec_db_t db)
-{
-  bool res;
-  rec_rset_t rset;
-  rec_parser_t parser;
-
-  res = true;
-  parser = rec_parser_new (in);
-
-  while (rec_parse_rset (parser, &rset))
-    {
-      char *rset_type;
-      /* XXX: check for consistency!!!.  */
-      rset_type = rec_rset_type (rset);
-      if (rec_db_type_p (db, rset_type))
-        {
-          fprintf (stderr, "recsel: error: duplicated record set '%s' from %s.\n",
-                   rset_type, file_name);
-          exit (1);
-        }
-
-      if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
-        {
-          /* Error.  */
-          res = false;
-          break;
-        }
-    }
-  
-  return res;
-}
-
-rec_db_t
-recsel_build_db (int argc,
-                 char **argv)
-{
-  rec_db_t db;
-  char *file_name;
-  FILE *in;
-
-  db = rec_db_new ();
-
-  /* Process the input files, if any.  Otherwise use the standard
-     input to read the rec data.  */
-  if (optind < argc)
-    {
-      while (optind < argc)
-        {
-          file_name = argv[optind++];
-          if (!(in = fopen (file_name, "r")))
-            {
-              printf("%s: cannot read file %s\n", argv[0], file_name);
-              exit (1);
-            }
-          else
-            {
-              if (!recsel_parse_db_from_file (in, file_name, db))
-                {
-                  free (db);
-                  db = NULL;
-                }
-              
-              fclose (in);
-            }
-        }
-    }
-  else
-    {
-      if (!recsel_parse_db_from_file (stdin, "stdin", db))
-        {
-          free (db);
-          db = NULL;
-        }
-    }
-
-  return db;
-}
-
-char *
-recsel_eval_field_expression (rec_fex_t fex,
-                              rec_record_t record)
-{
-  char *res;
-  size_t res_size;
-  FILE *stm;
-  rec_writer_t writer;
-  rec_fex_elem_t elem;
-  rec_field_t field;
-  rec_field_name_t field_name;
-  int i, j, min, max;
-
-  stm = open_memstream (&res, &res_size);
-
-  for (i = 0; i < rec_fex_size (fex); i++)
-    {
-      elem = rec_fex_get (fex, i);
-      
-      field_name = rec_fex_elem_field_name (elem);
-      min = rec_fex_elem_min (elem);
-      max = rec_fex_elem_max (elem);
-
-      if ((min == -1) && (max == -1))
-        {
-          /* Print all the fields with that name.  */
-          min = 0;
-          max = rec_record_get_num_fields_by_name (record, field_name);
-        }
-      else if (max == -1)
-        {
-          /* Print just one field: Field[min].  */
-          max = min + 1;
-        }
-      else
-        {
-          /* Print the interval min..max, max inclusive.  */
-          max++;
-        }
-
-      for (j = min; j < max; j++)
-        {
-          if (!(field = rec_record_get_field_by_name (record, field_name, j)))
-            {
-              continue;
-            }
-
-          if (recsel_print_values)
-            {
-              /* Write just the value of the field.  */
-              fprintf (stm, rec_field_value (field));
-              fprintf (stm, "\n");
-            }
-          else
-            {
-              /* Write the whole field.  */
-              writer = rec_writer_new (stm);
-              rec_write_field (writer, field);
-              rec_writer_destroy (writer);
-            }
-        }
-      
-    }
-
-  fclose (stm);
-
-  if (res_size == 0)
-    {
-      free (res);
-      res = NULL;
-    }
-
-  return res;
-}
-
-bool
 recsel_process_data (rec_db_t db)
 {
   bool ret;
@@ -464,9 +236,9 @@ recsel_process_data (rec_db_t db)
   writer = rec_writer_new (stdout);
 
   /* If the database contains more than one type of records and the
-     user did'nt specify the recsel_type then ask the user to clear
+     user did'nt specify the recutl_type then ask the user to clear
      the request.  */
-  if (!recsel_type && (rec_db_size (db) > 1))
+  if (!recutl_type && (rec_db_size (db) > 1))
     {
       fprintf (stderr, "Several record types found.  Please use -t to specify one.\n");
       exit (1);
@@ -488,9 +260,9 @@ recsel_process_data (rec_db_t db)
 
       /* If the user specified a type, print the record set only if it
        * is of the given size.  */
-      if (recsel_type
+      if (recutl_type
           && (!rec_rset_type (rset)
-              || (strcmp (recsel_type, rec_rset_type (rset)) != 0)))
+              || (strcmp (recutl_type, rec_rset_type (rset)) != 0)))
         {
           continue;
         }
@@ -502,7 +274,7 @@ recsel_process_data (rec_db_t db)
        * -  The file contains just one record set.
        */
 
-      if (!recsel_type
+      if (!recutl_type
           && rec_rset_type (rset)
           && (rec_db_size (db) > 1))
         {
@@ -518,11 +290,11 @@ recsel_process_data (rec_db_t db)
           num_rec++;
 
           /* Shall we skip this record?  */
-          if (((recsel_num != -1) && (num_rec != num_rec))
-              || (recsel_sex_str && !(rec_sex_eval (recsel_sex, record, &parse_status)
+          if (((recutl_num != -1) && (num_rec != num_rec))
+              || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
                                       && parse_status)))
             {
-              if (recsel_sex_str && (!parse_status))
+              if (recutl_sex_str && (!parse_status))
                 {
                   fprintf (stderr, "recsel: error: evaluating the selection expression.\n");
                   return false;
@@ -543,7 +315,9 @@ recsel_process_data (rec_db_t db)
 
               if (recsel_fex_str)
                 {
-                  output = recsel_eval_field_expression (recsel_fex, record);
+                  output = recutl_eval_field_expression (recsel_fex,
+                                                         record,
+                                                         recsel_print_values);
                 }
 
               /* Insert a newline?  */
@@ -601,7 +375,7 @@ main (int argc, char *argv[])
   recsel_parse_args (argc, argv);
 
   /* Get the input data.  */
-  db = recsel_build_db (argc, argv);
+  db = recutl_build_db (argc, argv);
   if (!db)
     {
       res = 1;

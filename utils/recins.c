@@ -30,8 +30,7 @@
 #include <stdlib.h>
 
 #include <rec.h>
-
-#include <recins.h>
+#include <recutl.h>
 
 /* Forward declarations.  */
 bool recins_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
@@ -48,10 +47,17 @@ char *program_name; /* Initialized in main() */
  * Command line options management
  */
 
+enum
+{
+  COMMON_ARGS,
+  TYPE_ARG,
+  NAME_ARG,
+  VALUE_ARG
+};
+
 static const struct option GNU_longOptions[] =
   {
-    {"help", no_argument, NULL, HELP_ARG},
-    {"version", no_argument, NULL, VERSION_ARG},
+    COMMON_LONG_ARGS,
     {"type", required_argument, NULL, TYPE_ARG},
     {"name", required_argument, NULL, NAME_ARG},
     {"value", required_argument, NULL, VALUE_ARG},

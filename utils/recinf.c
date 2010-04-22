@@ -30,8 +30,7 @@
 #include <stdlib.h>
 
 #include <rec.h>
-
-#include <recinf.h>
+#include <recutl.h>
 
 /*
  * Global variables
@@ -43,10 +42,16 @@ char *program_name; /* Initialized in main() */
  * Command line options management
  */
 
+enum
+{
+  COMMON_ARGS,
+  VERBOSE_ARG,
+  NAMES_ARG
+};
+
 static const struct option GNU_longOptions[] =
   {
-    {"help", no_argument, NULL, HELP_ARG},
-    {"version", no_argument, NULL, VERSION_ARG},
+    COMMON_LONG_ARGS,
     {"verbose", no_argument, NULL, VERBOSE_ARG},
     {"names-only", no_argument, NULL, NAMES_ARG},
     {NULL, 0, NULL, 0}

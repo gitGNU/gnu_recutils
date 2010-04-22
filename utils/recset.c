@@ -30,7 +30,7 @@
 #include <stdlib.h>
 
 #include <rec.h>
-#include <recset.h>
+#include <recutl.h>
 
 /*
  * Forward prototypes.
@@ -50,10 +50,23 @@ char *program_name; /* Initialized in main().  */
  * Command line options management
  */
 
+enum
+  {
+    COMMON_ARGS,
+    FIELD_EXPR_ARG,
+    EXPRESSION_ARG,
+    APPEND_ACTION_ARG,
+    DELETE_ACTION_ARG,
+    COMMENT_ACTION_ARG,
+    SET_ACTION_ARG,
+    CASE_INSENSITIVE_ARG,
+    NUM_ARG,
+    TYPE_ARG
+  };
+
 static const struct option GNU_longOptions[] =
   {
-    {"help", no_argument, NULL, HELP_ARG},
-    {"version", no_argument, NULL, VERSION_ARG},
+    COMMON_LONG_ARGS,
     {"fields", required_argument, NULL, FIELD_EXPR_ARG},
     {"expression", required_argument, NULL, EXPRESSION_ARG},
     {"append", required_argument, NULL, APPEND_ACTION_ARG},

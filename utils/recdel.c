@@ -30,8 +30,7 @@
 #include <stdlib.h>
 
 #include <rec.h>
-
-#include <recdel.h>
+#include <recutl.h>
 
 /* Forward declarations.  */
 bool recdel_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
@@ -54,10 +53,20 @@ bool recdel_force = false;
  * Command line options management
  */
 
+enum
+{
+  COMMON_ARGS,
+  TYPE_ARG,
+  NUMBER_ARG,
+  EXPRESSION_ARG,
+  CASE_INSENSITIVE_ARG,
+  COMMENT_ARG,
+  FORCE_ARG
+};
+
 static const struct option GNU_longOptions[] =
   {
-    {"help", no_argument, NULL, HELP_ARG},
-    {"version", no_argument, NULL, VERSION_ARG},
+    COMMON_LONG_ARGS,
     {"type", required_argument, NULL, TYPE_ARG},
     {"number", required_argument, NULL, NUMBER_ARG},
     {"expression", required_argument, NULL, EXPRESSION_ARG},

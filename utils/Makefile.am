@@ -18,35 +18,38 @@
 
 bin_PROGRAMS = recinf recsel recins recdel recset
 
-recinf_SOURCES = recinf.h \
+COMMONSRC = recutl.h recutl.c
+
+recinf_SOURCES = $(COMMONSRC) \
+                 recinf.h \
                  recinf.c
 
 recinf_LDFLAGS = -L$(top_builddir)/src
 recinf_CPPFLAGS = -I$(top_srcdir)/lib
 recinf_LDADD = $(top_builddir)/lib/libgnu.la -lrec
 
-recsel_SOURCES = recsel.h \
+recsel_SOURCES = $(COMMONSRC) \
                  recsel.c
 
 recsel_LDFLAGS = -L$(top_builddir)/src
 recsel_CPPFLAGS = -I$(top_srcdir)/lib
 recsel_LDADD = $(top_builddir)/lib/libgnu.la -lrec
 
-recins_SOURCES = recins.h \
+recins_SOURCES = $(COMMONSRC) \
                  recins.c
 
 recins_LDFLAGS = -L$(top_builddir)/src
 recins_CPPFLAGS = -I$(top_srcdir)/lib
 recins_LDADD = $(top_builddir)/lib/libgnu.la -lrec
 
-recdel_SOURCES = recdel.h \
+recdel_SOURCES = $(COMMONSRC) \
                  recdel.c
 
 recdel_LDFLAGS = -L$(top_builddir)/src
 recdel_CPPFLAGS = -I$(top_srcdir)/lib
 recdel_LDADD = $(top_builddir)/lib/libgnu.la -lrec
 
-recset_SOURCES = recset.h \
+recset_SOURCES = $(COMMONSRC) \
                  recset.c
 
 recset_LDFLAGS = -L$(top_builddir)/src
