@@ -259,7 +259,7 @@ recsel_process_data (rec_db_t db)
         }
 
       /* If the user specified a type, print the record set only if it
-       * is of the given size.  */
+       * is of the given type.  */
       if (recutl_type
           && (!rec_rset_type (rset)
               || (strcmp (recutl_type, rec_rset_type (rset)) != 0)))
@@ -270,8 +270,8 @@ recsel_process_data (rec_db_t db)
       /* If the user didn't specify a type, print a record set if and
        * only if:
        *
-       * -  It is the default record set.
-       * -  The file contains just one record set.
+       * - It is the default record set.
+       * - The file contains just one record set.
        */
 
       if (!recutl_type
@@ -290,7 +290,7 @@ recsel_process_data (rec_db_t db)
           num_rec++;
 
           /* Shall we skip this record?  */
-          if (((recutl_num != -1) && (num_rec != num_rec))
+          if (((recutl_num != -1) && (recutl_num != num_rec))
               || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
                                       && parse_status)))
             {

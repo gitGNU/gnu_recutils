@@ -59,33 +59,23 @@ static const struct option GNU_longOptions[] =
 
 /* Messages */
 
-char *recinf_version_msg = "recinf (GNU recutils) 1.0\n\
-Copyright (C) 2010 Jose E. Marchesi. \n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \n\
-This is free software: you are free to change and redistribute it. \n\
-There is NO WARRANTY, to the extent permitted by law.\n\
-\n\
-Written by Jose E. Marchesi.";
+RECUTL_COPYRIGHT_DOC ("recinf");
 
-char *recinf_help_msg = "\
+char *recutl_help_msg = "\
 Usage: recinf [OPTION]... [FILE]...\n\
 Print information about the types of records stored in the input.\n\
 \n\
   -v, --verbose                   include the full record descriptors.\n\
   -n, --names-only                output just the names of the record files\n\
-                                    found in the input.\n\
-      --help                      print a help message and exit.\n\
-      --version                   show recinf version and exit.\n\
-\n\
+                                    found in the input.\n"
+COMMON_ARGS_DOC
+"\n\
 Examples:\n\
 \n\
         recinf mydata.rec\n\
         recinf -V mydata.rec moredata.rec\n\
-\n\
-Report recinf bugs to bug-recutils@gnu.org\n\
-GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
-General help using GNU software: <http://www.gnu.org/gethelp/>\
-";
+\n"
+  RECUTL_HELP_FOOTER_DOC ("recinf");
 
 bool recinf_verbose = false;
 bool recinf_names_only = false;
@@ -182,19 +172,7 @@ main (int argc, char *argv[])
       c = ret;
       switch (c)
         {
-          /* COMMON ARGUMENTS */
-        case HELP_ARG:
-          {
-            fprintf (stdout, "%s\n", recinf_help_msg);
-            exit (0);
-            break;
-          }
-        case VERSION_ARG:
-          {
-            fprintf (stdout, "%s\n", recinf_version_msg);
-            exit (0);
-            break;
-          }
+          COMMON_ARGS_CASES
         case VERBOSE_ARG:
         case 'v':
           {

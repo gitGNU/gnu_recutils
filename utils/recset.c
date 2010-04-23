@@ -36,7 +36,6 @@
  * Forward prototypes.
  */
 
-static bool recset_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 static void recset_parse_args (int argc, char **argv);
 static void recset_process_actions (rec_db_t db);
 
@@ -44,7 +43,23 @@ static void recset_process_actions (rec_db_t db);
  * Global variables.
  */
 
-char *program_name; /* Initialized in main().  */
+#define RECSET_ACT_NONE    0
+#define RECSET_ACT_SET     1
+#define RECSET_ACT_ADD     2
+#define RECSET_ACT_DELETE  3
+#define RECSET_ACT_COMMENT 4
+
+char      *program_name       = NULL;
+char      *recutl_sex_str     = NULL;
+rec_sex_t  recutl_sex         = NULL;
+char      *recutl_fex_str     = NULL;
+rec_fex_t  recutl_fex         = NULL;
+char      *recutl_type        = NULL;
+int        recset_action      = RECSET_ACT_NONE;
+char      *recset_value       = NULL;
+bool       recutl_insensitive = false;
+long       recutl_num         = -1;
+char      *recset_file        = NULL;
 
 /*
  * Command line options management
@@ -53,62 +68,46 @@ char *program_name; /* Initialized in main().  */
 enum
   {
     COMMON_ARGS,
+    RECORD_SELECTION_ARGS,
     FIELD_EXPR_ARG,
-    EXPRESSION_ARG,
-    APPEND_ACTION_ARG,
+    ADD_ACTION_ARG,
     DELETE_ACTION_ARG,
     COMMENT_ACTION_ARG,
     SET_ACTION_ARG,
-    CASE_INSENSITIVE_ARG,
-    NUM_ARG,
-    TYPE_ARG
   };
 
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
+    RECORD_SELECTION_LONG_ARGS,
     {"fields", required_argument, NULL, FIELD_EXPR_ARG},
-    {"expression", required_argument, NULL, EXPRESSION_ARG},
-    {"append", required_argument, NULL, APPEND_ACTION_ARG},
+    {"add", required_argument, NULL, ADD_ACTION_ARG},
     {"delete", no_argument, NULL, DELETE_ACTION_ARG},
     {"comment", no_argument, NULL, COMMENT_ACTION_ARG},
     {"set", required_argument, NULL, SET_ACTION_ARG},
-    {"case-insensitive", required_argument, NULL, CASE_INSENSITIVE_ARG},
-    {"num", required_argument, NULL, NUM_ARG},
-    {"type", required_argument, NULL, TYPE_ARG},
     {NULL, 0, NULL, 0}
   };
 
 /* Messages */
 
-char *recset_version_msg = "recset (GNU recutils) 1.0\n\
-Copyright (C) 2010 Jose E. Marchesi.\n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
-This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n\
-\n\
-Written by Jose E. Marchesi.";
+RECUTL_COPYRIGHT_DOC ("recset");
 
-char *recset_help_msg = "\
+char *recutl_help_msg = "\
 Usage: recset [OPTION]... [FILE]...\n\
 Alter or delete fields in records.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
-  -i, --case-insensitive              make strings case-insensitive in selection\n\
-      --help                          print a help message and exit.\n\
-      --version                       show recset version and exit.\n\
-\n\
-Record selection options:\n\
-  -t, --type=TYPE                     print records of the specified type only.\n\
-  -e, --expression=EXPR               selection expression.\n\
-  -n, --number=NUM                    select an specific record.\n\
-\n\
+  -i, --case-insensitive              make strings case-insensitive in selection\n"
+COMMON_ARGS_DOC
+"\n"
+RECORD_SELECTION_ARGS_DOC
+"\n\
 Fields selection options:\n\
   -f, --fields=FIELDS                 comma-separated list of field names with optional\n\
                                         subscripts.\n\
 Actions:\n\
   -s, --set=VALUE                     change the value of the selected fields.\n\
-  -a, --append=VALUE                  append the selected fields with the given value.\n\
+  -a, --add=VALUE                  add the selected fields with the given value.\n\
   -d, --delete                        delete the selected fields.\n\
   -c, --comment                       comment out the selected fields.\n\
 \n\
@@ -117,84 +116,8 @@ Examples:\n\
         recset -f TmpName -d data.rec\n\
         recset -f Email[1] -s invalid@email.com friends.rec\n\
         recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n\
-\n\
-Report recset bugs to bug-recutils@gnu.org\n\
-GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
-General help using GNU software: <http://www.gnu.org/gethelp/>\
-";
-
-/* String containing the selection expression.  */
-char *recset_sex_str = NULL;
-rec_sex_t recset_sex = NULL;
-
-/* Field expression.  */
-char *recset_fex_str = NULL;
-rec_fex_t recset_fex = NULL;
-
-/* Record type.  */
-char *recset_type = NULL;
-
-/* Action.  */
-
-#define RECSET_ACT_NONE    0
-#define RECSET_ACT_SET     1
-#define RECSET_ACT_APPEND  2
-#define RECSET_ACT_DELETE  3
-#define RECSET_ACT_COMMENT 4
-
-int recset_action = RECSET_ACT_NONE;
-
-/* Field value.  */
-
-char *recset_value = NULL;
-
-/* Whether to be case-insensitive while evaluating selection
-   expressions.  */
-bool recset_insensitive = false;
-
-/* Whether to process an specific record.  */
-long recset_index = -1;
-
-
-static bool
-recset_parse_db_from_file (FILE *in,
-                           char *file_name,
-                           rec_db_t db)
-{
-  bool res;
-  rec_rset_t rset;
-  rec_parser_t parser;
-
-  res = true;
-  parser = rec_parser_new (in);
-
-  while (rec_parse_rset (parser, &rset))
-    {
-      char *rset_type;
-      rset_type = rec_rset_type (rset);
-      if (rec_db_type_p (db, rset_type))
-        {
-          fprintf (stderr, "recset: error: duplicated record set '%s' from %s.\n",
-                   rset_type, file_name ? file_name : "stdin");
-          exit (1);
-        }
-
-      if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
-        {
-          /* Error.  */
-          res = false;
-          break;
-        }
-    }
-
-  if (rec_parser_error (parser))
-    {
-      res = false;
-      rec_parser_perror (parser, "stdin");
-    }
-  
-  return res;
-}
+\n"
+  RECUTL_HELP_FOOTER_DOC ("recset");
 
 static void
 recset_parse_args (int argc,
@@ -205,106 +128,52 @@ recset_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "idce:n:t:s:a:f:",
+                             RECORD_SELECTION_SHORT_ARGS
+                             "dct:s:a:f:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
       c = ret;
       switch (c)
         {
-        case HELP_ARG:
-          {
-            fprintf (stdout, "%s\n", recset_help_msg);
-            exit (0);
-            break;
-          }
-        case VERSION_ARG:
-          {
-            fprintf (stdout, "%s\n", recset_version_msg);
-            exit (0);
-            break;
-          }
+          COMMON_ARGS_CASES
+          RECORD_SELECTION_ARGS_CASES
         case FIELD_EXPR_ARG:
         case 'f':
           {
-            recset_fex_str = strdup (optarg);
-            if (!rec_fex_check (recset_fex_str))
+            recutl_fex_str = strdup (optarg);
+            if (!rec_fex_check (recutl_fex_str))
               {
                 exit (1);
               }
 
             /* Create the field expression.  */
-            recset_fex = rec_fex_new (recset_fex_str);
-            if (!recset_fex)
+            recutl_fex = rec_fex_new (recutl_fex_str);
+            if (!recutl_fex)
               {
-                fprintf (stderr, "%s: internal error: creating the field expression.\n", argv[0]);
+                fprintf (stderr, "%s: error: creating the field expression.\n", program_name);
                 exit (1);
               }
 
             /* Sort it.  */
-            rec_fex_sort (recset_fex);
+            rec_fex_sort (recutl_fex);
 
-            break;
-          }
-        case EXPRESSION_ARG:
-        case 'e':
-          {
-            if (recset_index != -1)
-              {
-                fprintf (stderr, "%s: cannot specify -e and also -n.\n",
-                         argv[0]);
-                exit (1);
-              }
-
-            recset_sex_str = strdup (optarg);
-
-            /* Compile the search expression.  */
-            if (recset_sex_str)
-              {
-                recset_sex = rec_sex_new (recset_insensitive);
-                if (!rec_sex_compile (recset_sex, recset_sex_str))
-                  {
-                    fprintf (stderr, "%s: error: invalid selection expression.\n",
-                             argv[0]);
-                    exit (1);
-                  }
-              }
-
-            break;
-          }
-        case CASE_INSENSITIVE_ARG:
-        case 'i':
-          {
-            recset_insensitive = true;
-            break;
-          }
-        case NUM_ARG:
-        case 'n':
-          {
-            if (recset_sex)
-              {
-                fprintf (stderr, "%s: cannot specify -n and also -e.\n",
-                         argv[0]);
-                exit (1);
-              }
-            
-            /* XXX: check for conversion errors.  */
-            recset_index = atoi (optarg);
-            break;
-          }
-        case TYPE_ARG:
-        case 't':
-          {
-            recset_type = strdup (optarg);
             break;
           }
         case SET_ACTION_ARG:
         case 's':
           {
+            if (!recutl_fex)
+              {
+                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                         program_name);
+                exit (1);
+              }
+
             if (recset_action != RECSET_ACT_NONE)
               {
-                fprintf (stderr, "s: please specify just one action.\n",
-                         argv[0]);
+                fprintf (stderr, "%s: error: please specify just one action.\n",
+                         program_name);
                 exit (1);
               }
             
@@ -312,27 +181,41 @@ recset_parse_args (int argc,
             recset_value = strdup (optarg);
             break;
           }
-        case APPEND_ACTION_ARG:
+        case ADD_ACTION_ARG:
         case 'a':
           {
-            if (recset_action != RECSET_ACT_NONE)
+            if (!recutl_fex)
               {
-                fprintf (stderr, "s: please specify just one action.\n",
-                         argv[0]);
+                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                         program_name);
                 exit (1);
               }
 
-            recset_action = RECSET_ACT_APPEND;
+            if (recset_action != RECSET_ACT_NONE)
+              {
+                fprintf (stderr, "%s: please specify just one action.\n",
+                         program_name);
+                exit (1);
+              }
+
+            recset_action = RECSET_ACT_ADD;
             recset_value = strdup (optarg);
             break;
           }
         case DELETE_ACTION_ARG:
         case 'd':
           {
+            if (!recutl_fex)
+              {
+                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                         program_name);
+                exit (1);
+              }
+
             if (recset_action != RECSET_ACT_NONE)
               {
-                fprintf (stderr, "s: please specify just one action.\n",
-                         argv[0]);
+                fprintf (stderr, "%s: error: please specify just one action.\n",
+                         program_name);
                 exit (1);
               }
 
@@ -342,10 +225,17 @@ recset_parse_args (int argc,
         case COMMENT_ACTION_ARG:
         case 'c':
           {
+            if (!recutl_fex)
+              {
+                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                         program_name);
+                exit (1);
+              }
+
             if (recset_action != RECSET_ACT_NONE)
               {
-                fprintf (stderr, "s: please specify just one action.\n",
-                         argv[0]);
+                fprintf (stderr, "%s: error: please specify just one action.\n",
+                         program_name);
                 exit (1);
               }
 
@@ -359,6 +249,19 @@ recset_parse_args (int argc,
           }
         }
     }
+
+  /* Read the name of the data source.  */
+  if (optind < argc)
+    {
+      if ((argc - optind) != 1)
+        {
+          fprintf (stderr, "%s\n", recutl_help_msg);
+          exit (1);
+        }
+
+      recset_file = argv[optind++];
+    }
+
 }
 
 static void
@@ -393,9 +296,9 @@ recset_process_actions (rec_db_t db)
 
       /* If the user specified a type, process the record set only if
        * it is of the given size.  */
-      if (recset_type
+      if (recutl_type
           && (!rec_rset_type (rset)
-              || (strcmp (recset_type, rec_rset_type (rset)) != 0)))
+              || (strcmp (recutl_type, rec_rset_type (rset)) != 0)))
         {
           continue;
         }
@@ -407,7 +310,7 @@ recset_process_actions (rec_db_t db)
        * -  The file contains just one record set.
        */
 
-      if (!recset_type
+      if (!recutl_type
           && rec_rset_type (rset)
           && (rec_db_size (db) > 1))
         {
@@ -422,11 +325,11 @@ recset_process_actions (rec_db_t db)
         {
           record = rec_rset_elem_record (rec_elem);
           
-          if (((recset_index == -1) && !recset_sex)
-              || ((recset_index == -1) &&
-                  ((recset_sex &&
-                    (rec_sex_eval (recset_sex, record, &parse_status))))
-                  || (recset_index == numrec)))
+          if (((recutl_num == -1) && !recutl_sex)
+              || ((recutl_num == -1) &&
+                  ((recutl_sex &&
+                    (rec_sex_eval (recutl_sex, record, &parse_status))))
+                  || (recutl_num == numrec)))
             {
               /* Process this record.  */
 
@@ -436,9 +339,9 @@ recset_process_actions (rec_db_t db)
                   {
                     /* Set the value of the specified existing fields
                        to the specified values.  */
-                    for (i = 0; i < rec_fex_size (recset_fex); i++)
+                    for (i = 0; i < rec_fex_size (recutl_fex); i++)
                       {
-                        fex_elem = rec_fex_get (recset_fex, i);
+                        fex_elem = rec_fex_get (recutl_fex, i);
                         field_name = rec_fex_elem_field_name (fex_elem);
                         min = rec_fex_elem_min (fex_elem);
                         max = rec_fex_elem_max (fex_elem);
@@ -476,17 +379,19 @@ recset_process_actions (rec_db_t db)
 
                     break;
                   }
-                case RECSET_ACT_APPEND:
+                case RECSET_ACT_ADD:
                   {
-                    /* Create new fields and append them to the
+                    /* Create new fields and add them to the
                        record.  */
-                    for (i = 0; i < rec_fex_size (recset_fex); i++)
+                    for (i = 0; i < rec_fex_size (recutl_fex); i++)
                       {
-                        fex_elem = rec_fex_get (recset_fex, i);
+                        fex_elem = rec_fex_get (recutl_fex, i);
                         field_name = rec_fex_elem_field_name (fex_elem);
                         field = rec_field_new (rec_field_name_dup (field_name), recset_value);
                         
+                        /* XXX: sort the record afterwards.  */
                         rec_record_append_field (record, field);
+                        /* rec_rset_sort_record (rset, record);  */
                       }
                     
                     break;
@@ -502,9 +407,9 @@ recset_process_actions (rec_db_t db)
                       }
                     
                     /* Mark fields that will be deleted from the record.  */
-                    for (i = 0; i < rec_fex_size (recset_fex); i++)
+                    for (i = 0; i < rec_fex_size (recutl_fex); i++)
                       {
-                        fex_elem = rec_fex_get (recset_fex, i);
+                        fex_elem = rec_fex_get (recutl_fex, i);
                         field_name = rec_fex_elem_field_name (fex_elem);
                         min = rec_fex_elem_min (fex_elem);
                         max = rec_fex_elem_max (fex_elem);
@@ -581,92 +486,16 @@ recset_process_actions (rec_db_t db)
 int
 main (int argc, char *argv[])
 {
-  char *file_name = NULL;
-  char *tmp_file_name = NULL;
-  FILE *in;
-  FILE *out;
   rec_db_t db;
-  rec_writer_t writer;
   
   program_name = strdup (argv[0]);
 
   /* Parse arguments.  */
   recset_parse_args (argc, argv);
 
-  db = rec_db_new ();
-
-  /* Read the name of the data source.  */
-  if (optind < argc)
-    {
-      if ((argc - optind) != 1)
-        {
-          fprintf (stderr, "%s\n", recset_help_msg);
-          exit (1);
-        }
-
-      file_name = argv[optind++];
-    }
-
-  if (file_name)
-    {
-      in = fopen (file_name, "r");
-      if (in == NULL)
-        {
-          fprintf (stderr, "%s: error: cannot read %s.\n", argv[0], file_name);
-          exit (1);
-        }
-    }
-  else
-    {
-      /* Process the standard input.  */
-      in = stdin;
-    }
-
-  if (!recset_parse_db_from_file (in, file_name, db))
-    {
-      exit (1);
-    }
-
-  /* ACTION... */
+  db = recutl_read_db_from_file (recset_file);
   recset_process_actions (db);
-
-  /* Output.  */
-  if (!file_name)
-    {
-      out = stdout;
-    }
-  else
-    {
-      int des;
-
-      /* Create a temporary file with the results. */
-      tmp_file_name = malloc (100);
-      strcpy (tmp_file_name, "recXXXXXX");
-      des = mkstemp (tmp_file_name);
-      if (des == -1)
-        {
-          fprintf(stderr, "%s: error: cannot create a unique name.\n", argv[0]);
-          exit (1);
-        }
-      out = fdopen (des, "w+");
-    }
-
-  writer = rec_writer_new (out);
-  rec_write_db (writer, db);
-  fclose (out);
-  rec_db_destroy (db);
-
-  if (file_name)
-    {
-      /* Rename the temporary file to file_name.  */
-      if (rename (tmp_file_name, file_name) == -1)
-        {
-          fprintf (stderr, "%s: error: moving %s to %s\n",
-                   argv[0], tmp_file_name, file_name);
-          remove (tmp_file_name);
-          exit (1);
-        }
-    }
+  recutl_write_db_to_file (db, recset_file);
 
   return 0;
 }

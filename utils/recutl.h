@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-22 23:10:51 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-04-23 10:47:46 jco"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -148,6 +148,9 @@ General help using GNU software: <http://www.gnu.org/gethelp/>"
 bool recutl_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 rec_db_t recutl_build_db (int argc, char **argv);
 char *recutl_eval_field_expression (rec_fex_t fex, rec_record_t record, bool print_values_p);
+
+rec_db_t recutl_read_db_from_file (char *file_name);
+void recutl_write_db_to_file (rec_db_t db, char *file_name);
 
 #endif /* recutl.h */
 

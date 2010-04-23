@@ -48,6 +48,8 @@ char *recutl_sex_str = NULL;
 int recutl_num = -1;
 bool recutl_insensitive = false;
 bool recdel_force = false;
+char *recdel_file = NULL;  /* File from where to delete the
+                              records.  */
 
 /*
  * Command line options management
@@ -116,8 +118,9 @@ recdel_delete_records (rec_db_t db)
 
   if (!rec_db_type_p (db, recutl_type))
     {
-      fprintf (stderr, "recdel: error: no records of type %s found.\n",
-               recutl_type ? recutl_type : "default");
+      fprintf (stderr, "%s: error: no records of type %s found.\n",
+               program_name,
+               recutl_type ? recutl_type : "<default>");
       exit (1);
     }
 
@@ -126,48 +129,70 @@ recdel_delete_records (rec_db_t db)
       rset = rec_db_get_rset (db, n_rset);
       rset_size = rec_rset_num_records (rset);
 
-      if ((rset_size > 0)
-          && (recutl_type && rec_rset_type (rset) && (strcmp (recutl_type, rec_rset_type (rset)) == 0)
-              || (!recutl_type && !rec_rset_type (rset))))
+      /* Don't process empty record sets.  */
+      if (rset_size == 0)
         {
-          numrec = 0;
-              
-          rec_elem = rec_rset_first_record (rset);
-          while (rec_rset_elem_p (rec_elem))
+          continue;
+        }
+
+      /* If the user specified a type, print the record set only if it
+         is of the given type.  */
+      if (recutl_type
+          && (!rec_rset_type (rset)
+              || (strcmp (recutl_type, rec_rset_type (rset)) != 0)))
+        {
+          continue;
+        }
+
+      /* If the user didn't specified a type, process the record set if and only if:
+       *
+       * - It is the default record set.
+       * - The file contains just one record set.
+       */
+      if (!recutl_type
+          && rec_rset_type (rset)
+          && (rec_db_size (db) > 1))
+        {
+          continue;
+        }
+
+      /* Process this record set.  */
+      numrec = 0;
+      rec_elem = rec_rset_first_record (rset);
+      while (rec_rset_elem_p (rec_elem))
+        {
+          record = rec_rset_elem_record (rec_elem);
+          
+          if (((recutl_num == -1) && !recutl_sex)
+              || ((recutl_num == -1) &&
+                  ((recutl_sex &&
+                    (rec_sex_eval (recutl_sex, record, &parse_status))))
+                  || (recutl_num == numrec)))
             {
-              record = rec_rset_elem_record (rec_elem);
-
-              if (((recutl_num == -1) && !recutl_sex)
-                  || ((recutl_num == -1) &&
-                      ((recutl_sex &&
-                        (rec_sex_eval (recutl_sex, record, &parse_status))))
-                      || (recutl_num == numrec)))
+              /* Delete this record.  */
+              if (recdel_comment)
                 {
-                  /* Delete this record.  */
-
-                  if (recdel_comment)
-                    {
-                      comment = rec_record_to_comment (record);
-                      new_elem = rec_rset_elem_comment_new (rset, comment);
-                      rec_rset_insert_after (rset, rec_elem, new_elem);
-                    }
-
-                  rec_elem = rec_rset_remove_record (rset, rec_elem);
-                }
-              else
-                {
-                  /* Process the next record. */
-                  rec_elem = rec_rset_next_record (rset, rec_elem);
+                  comment = rec_record_to_comment (record);
+                  new_elem = rec_rset_elem_comment_new (rset, comment);
+                  rec_rset_insert_after (rset, rec_elem, new_elem);
                 }
 
-              if (!parse_status)
-                {
-                  fprintf (stderr, "recdel: error: evaluating selection expression.\n");
-                  exit (1);
-                }
-
-              numrec++;
+              rec_elem = rec_rset_remove_record (rset, rec_elem);
             }
+          else
+            {
+              /* Process the next record. */
+              rec_elem = rec_rset_next_record (rset, rec_elem);
+            }
+          
+          if (!parse_status)
+            {
+              fprintf (stderr, "%s: error: evaluating selection expression.\n",
+                       program_name);
+              exit (1);
+            }
+          
+          numrec++;
         }
     }
 }
@@ -227,27 +252,6 @@ recdel_parse_args (int argc,
           exit (1);
         }
     }
-}
-
-int
-main (int argc, char *argv[])
-{
-  char c;
-  char *file_name = NULL;
-  char *tmp_file_name = NULL;
-  FILE *in;
-  FILE *out;
-  rec_db_t db;
-  rec_writer_t writer;
-  char *type;
-  rec_record_t record;
-
-  program_name = strdup (argv[0]);
-
-  record = rec_record_new ();
-  recdel_parse_args (argc, argv);
-
-  db = rec_db_new ();
 
   /* Read the name of the file where to delete the records.  */
   if (optind < argc)
@@ -258,77 +262,25 @@ main (int argc, char *argv[])
           exit (1);
         }
 
-      file_name = argv[optind++];
+      recdel_file = argv[optind++];
     }
+}
 
+int
+main (int argc, char *argv[])
+{
+  rec_db_t db;
 
-  if (file_name)
-    {
-      in = fopen (file_name, "r");
-      if (in == NULL)
-        {
-          fprintf (stderr, "%s: error: cannot read %s.\n", argv[0], file_name);
-          exit (1);
-        }
-    }
-  else
-    {
-      /* Process the standard input.  */
-      in = stdin;
-    }
+  program_name = strdup (argv[0]);
 
-  if (!recutl_parse_db_from_file (in,
-                                  file_name,
-                                  db))
-    {
-      exit (1);
-    }
-  
-  if (((recutl_num != -1)
-       || recutl_sex)
-      || recdel_force)
+  recdel_parse_args (argc, argv);
+
+  db = recutl_read_db_from_file (recdel_file);
+  if (((recutl_num != -1) || recutl_sex) || recdel_force)
     {
       recdel_delete_records (db);
     }
-
-  /* Output.  */
-             
-  if (!file_name)
-    {
-      out = stdout;
-    }
-  else
-    {
-      int des;
-
-      /* Create a temporary file with the results. */
-      tmp_file_name = malloc (100);
-      strcpy (tmp_file_name, "recXXXXXX");
-      des = mkstemp (tmp_file_name);
-      if (des == -1)
-        {
-          fprintf(stderr, "%s: error: cannot create a unique name.\n", argv[0]);
-          exit (1);
-        }
-      out = fdopen (des, "w+");
-    }
-
-  writer = rec_writer_new (out);
-  rec_write_db (writer, db);
-  fclose (out);
-  rec_db_destroy (db);
-
-  if (file_name)
-    {
-      /* Rename the temporary file to file_name.  */
-      if (rename (tmp_file_name, file_name) == -1)
-        {
-          fprintf (stderr, "%s: error: moving %s to %s\n",
-                   argv[0], tmp_file_name, file_name);
-          remove (tmp_file_name);
-          exit (1);
-        }
-    }
+  recutl_write_db_to_file (db, recdel_file);
 
   return 0;
 }

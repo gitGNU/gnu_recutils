@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-22 18:40:07 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-23 10:50:44 jco"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -12,6 +12,9 @@
 #include <stdlib.h>
 
 #include <getopt.h>
+#include <stdio.h>
+#include <string.h>
+
 #include <rec.h>
 #include <recutl.h>
 
@@ -173,6 +176,88 @@ recutl_eval_field_expression (rec_fex_t fex,
     }
 
   return res;
+}
+
+rec_db_t
+recutl_read_db_from_file (char *file_name)
+{
+  rec_db_t db;
+  FILE *in;
+
+  db = rec_db_new ();
+  if (file_name)
+    {
+      in = fopen (file_name, "r");
+      if (in == NULL)
+        {
+          fprintf (stderr, "%s: error: cannot read %s.\n",
+                   program_name, file_name);
+          exit (1);
+        }
+    }
+  else
+    {
+      /* Process the standard input.  */
+      in = stdin;
+    }
+
+  if (!recutl_parse_db_from_file (in,
+                                  file_name,
+                                  db))
+    {
+      rec_db_destroy (db);
+      db = NULL;
+    }
+
+  return db;
+}
+
+void
+recutl_write_db_to_file (rec_db_t db,
+                         char *file_name)
+{
+  FILE *out;
+  char *tmp_file_name;
+  rec_writer_t writer;
+  int des;
+
+  if (!file_name)
+    {
+      out = stdout;
+    }
+  else
+    {
+      /* Create a temporary file with the results. */
+      tmp_file_name = malloc (100);
+      strcpy (tmp_file_name, "recXXXXXX");
+      des = mkstemp (tmp_file_name);
+      if (des == -1)
+        {
+          fprintf(stderr, "%s: error: cannot create a unique name.\n",
+                  program_name);
+          exit (1);
+        }
+      out = fdopen (des, "w+");
+    }
+
+  writer = rec_writer_new (out);
+  rec_write_db (writer, db);
+  fclose (out);
+  rec_db_destroy (db);
+
+  if (file_name)
+    {
+      /* Rename the temporary file to file_name.  */
+      if (rename (tmp_file_name, file_name) == -1)
+        {
+          fprintf (stderr, "%s: error: moving %s to %s\n",
+                   program_name, tmp_file_name, file_name);
+          remove (tmp_file_name);
+          exit (1);
+        }
+    }
+
+
 }
 
 /* End of recutl.c */
