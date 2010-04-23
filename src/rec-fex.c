@@ -131,7 +131,7 @@ rec_fex_check (char *str)
   /* Compile the regexp.  */
   if ((ret = regcomp (&regexp, regexp_str, REG_EXTENDED)) != 0)
     {
-      fprintf (stderr, "rec_resolver_check: error compiling regexp.\n");
+      fprintf (stderr, "internal error: rec_resolver_check: error compiling regexp.\n");
       return false;
     }
 

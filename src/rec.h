@@ -560,6 +560,45 @@ char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
 int rec_fex_elem_min (rec_fex_elem_t elem);
 int rec_fex_elem_max (rec_fex_elem_t elem);
 
+/*
+ * FIELD TYPES
+ *
+ */
+
+enum rec_type_kind_e
+  {
+    /* Unrestricted.  */
+    REC_TYPE_NONE = 0,
+    /* An integer number.  */
+    REC_TYPE_INT,
+    /* An integer number within a given range.  */
+    REC_TYPE_RANGE,
+    /* A real number.  */
+    REC_TYPE_REAL,
+    /* A string with a limitation on its size.  */
+    REC_TYPE_SIZE,
+    /* A line.  */
+    REC_TYPE_LINE,
+    /* A regexp.  */
+    REC_TYPE_REGEXP,
+    /* A date.  */
+    REC_TYPE_DATE,
+    /* An Enumeration.  */
+    REC_TYPE_ENUM,
+    /* A field name.  */
+    REC_TYPE_FIELD
+  };
+
+typedef struct rec_type_s *rec_type_t;
+
+bool rec_type_descr_p (char *str);
+
+rec_type_t rec_type_new (char *str);
+void rec_type_destroy (rec_type_t type);
+
+enum rec_type_kind_e rec_type_kind (rec_type_t type);
+bool rec_type_check (rec_type_t type, char *str);
+
 #endif /* !REC_H */
 
 /* End of rec.h */

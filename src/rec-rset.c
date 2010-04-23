@@ -36,10 +36,13 @@
  * intermixed with comments, maybe preceded by a record descriptor.
  */
 
+#define REC_RSET_MAX_ORDER 256
+
 struct rec_rset_s
 {
   rec_record_t descriptor;
 
+  /* Storage for records and comments.  */
   int record_type;
   int comment_type;
   rec_mset_t mset;
