@@ -109,58 +109,35 @@ rec_write_field (rec_writer_t writer,
 
   /* Write the field name */
   fname = rec_field_name (field);
-  if (rec_field_name_size (fname) == 0)
-    {
-      /* This is a comment */
-      if (!rec_writer_putc (writer, '#'))
-        {
-          return false;
-        }
-      if (!rec_writer_puts (writer,
-                            rec_field_value (field)))
-        {
-          return false;
-        }
-    }
-  else
-    {
-      for (i = 0; i < rec_field_name_size (fname); i++)
-        {
-          if (!rec_writer_puts (writer,
-                                rec_field_name_get (fname, i)))
-            {
-              return false;
-            }
-          if (!rec_writer_putc (writer, ':'))
-            {
-              return false;
-            }
-        }
-      
-      if (!rec_writer_putc (writer, ' '))
-        {
-          return false;
-        }
 
-      /* Write the field value */
-      fvalue = rec_field_value (field);
-      for (pos = 0; pos < strlen (fvalue); pos++)
+  if (!rec_write_field_name (writer, fname))
+    {
+      return false;
+    }
+  
+  if (!rec_writer_putc (writer, ' '))
+    {
+      return false;
+    }
+  
+  /* Write the field value */
+  fvalue = rec_field_value (field);
+  for (pos = 0; pos < strlen (fvalue); pos++)
+    {
+      if (fvalue[pos] == '\n')
         {
-          if (fvalue[pos] == '\n')
+          if (!rec_writer_puts (writer, "\n+ "))
             {
-              if (!rec_writer_puts (writer, "\n+ "))
-                {
-                  /* EOF on output */
-                  return false;
-                }
+              /* EOF on output */
+              return false;
             }
-          else
+        }
+      else
+        {
+          if (!rec_writer_putc (writer, fvalue[pos]))
             {
-              if (!rec_writer_putc (writer, fvalue[pos]))
-                {
-                  /* EOF on output */
-                  return false;
-                }
+              /* EOF on output */
+              return false;
             }
         }
     }
@@ -171,6 +148,28 @@ rec_write_field (rec_writer_t writer,
       return false;
     }
   
+  return true;
+}
+
+bool
+rec_write_field_name (rec_writer_t writer,
+                      rec_field_name_t field_name)
+{
+  int i;
+
+  for (i = 0; i < rec_field_name_size (field_name); i++)
+    {
+      if (!rec_writer_puts (writer,
+                            rec_field_name_get (field_name, i)))
+        {
+          return false;
+        }
+      if (!rec_writer_putc (writer, ':'))
+        {
+          return false;
+        }
+    }
+
   return true;
 }
 
@@ -324,6 +323,32 @@ rec_write_field_str (rec_field_t field)
       if (writer)
         {
           rec_write_field (writer, field);
+          rec_writer_destroy (writer);
+        }
+
+      fclose (stm);
+    }
+  
+  return result;
+}
+
+char *
+rec_write_field_name_str (rec_field_name_t field)
+{
+  rec_writer_t writer;
+  char *result;
+  size_t result_size;
+  FILE *stm;
+  
+  result = NULL;
+  stm = open_memstream (&result, &result_size);
+  if (stm)
+    {
+      writer = rec_writer_new (stm);
+
+      if (writer)
+        {
+          rec_write_field_name (writer, field);
           rec_writer_destroy (writer);
         }
 

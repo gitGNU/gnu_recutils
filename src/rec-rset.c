@@ -26,6 +26,7 @@
 #include <config.h>
 
 #include <malloc.h>
+#include <stdlib.h>
 
 #include <rec-mset.h>
 #include <rec.h>
@@ -493,6 +494,64 @@ rec_rset_type (rec_rset_t rset)
       if (field)
         {
           res = rec_field_value (field);
+        }
+    }
+
+  return res;
+}
+
+bool
+rec_rset_check_field (rec_rset_t rset,
+                      rec_field_t field)
+{
+  bool res;
+  rec_record_t descriptor;
+  rec_record_elem_t rec_elem;
+  rec_field_t descr_field;
+  char *descr_field_value;
+  char *descr_field_name_str;
+  rec_field_name_t field_name;
+  rec_type_t type;
+
+  res = true;
+
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      rec_elem = rec_record_null_elem ();
+      while (rec_record_elem_p (rec_elem = rec_record_next_field (descriptor, rec_elem)))
+        {
+          descr_field = rec_record_elem_field (rec_elem);
+          descr_field_name_str = rec_write_field_name_str (rec_field_name (descr_field));
+          descr_field_value = rec_field_value (descr_field);
+
+          if (strcmp (descr_field_name_str, "%type:") == 0)
+            {
+              /* Only valid type descriptors are considered.  Invalid
+                 descriptors are ignored.  */
+              if (rec_type_descr_p (descr_field_value))
+                {
+                  type = rec_type_new (descr_field_value);
+
+                  if (type)
+                    {
+                      field_name = rec_type_descr_field_name (descr_field_value);
+                      if (rec_field_name_equal_p (field_name,
+                                                  rec_field_name (field)))
+                        {
+                          if (!rec_type_check (type, rec_field_value (field)))
+                            {
+                              fprintf (stderr, "INVALID VALUE %s FOR TYPE %s\n",
+                                       rec_field_value (field), rec_type_kind_str (type));
+                              exit (1);
+                            }
+                        }
+
+                      rec_type_destroy (type);
+                    }
+                          
+                }
+            }
         }
     }
 

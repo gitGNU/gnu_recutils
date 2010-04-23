@@ -342,6 +342,9 @@ void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
 char *rec_rset_type (rec_rset_t rset);
 void rec_rset_set_type (rec_rset_t rset, char *type);
 
+/* Integrity.  */
+
+bool rec_rset_check_field (rec_rset_t rset, rec_field_t field);
 
 /*
  * DATABASES
@@ -485,11 +488,13 @@ void rec_writer_destroy (rec_writer_t writer);
  */
 
 bool rec_write_comment (rec_writer_t writer, rec_comment_t comment);
+bool rec_write_field_name (rec_writer_t writer, rec_field_name_t field_name);
 bool rec_write_field (rec_writer_t writer, rec_field_t field);
 bool rec_write_record (rec_writer_t writer, rec_record_t record);
 bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
 bool rec_write_db (rec_writer_t writer, rec_db_t db);
 
+char *rec_write_field_name_str (rec_field_name_t field_name);
 char *rec_write_field_str (rec_field_t field);
 char *rec_write_comment_str (rec_comment_t comment);
 
@@ -592,11 +597,14 @@ enum rec_type_kind_e
 typedef struct rec_type_s *rec_type_t;
 
 bool rec_type_descr_p (char *str);
+rec_field_name_t rec_type_descr_field_name (char *str);
 
 rec_type_t rec_type_new (char *str);
 void rec_type_destroy (rec_type_t type);
 
 enum rec_type_kind_e rec_type_kind (rec_type_t type);
+char *rec_type_kind_str (rec_type_t type);
+
 bool rec_type_check (rec_type_t type, char *str);
 
 #endif /* !REC_H */

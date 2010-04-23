@@ -99,7 +99,9 @@ recins_insert_record (rec_db_t db,
   bool res;
   rec_rset_t rset;
   rec_record_t rec;
+  rec_field_t field;
   rec_rset_elem_t last_elem, new_elem;
+  rec_record_elem_t rec_elem;
 
   if (rec_record_num_fields (record) == 0)
     {
@@ -112,6 +114,20 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
+      /* Check the values of the fields in the new record.  */
+      rec_elem = rec_record_null_elem ();
+      while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+        {
+          field = rec_record_elem_field (rec_elem);
+
+          if (!rec_rset_check_field (rset, field))
+            {
+              fprintf ("%s: error: incorrect value for field %s.\n",
+                       program_name, rec_write_field_name_str (rec_field_name (field)));
+              exit (1);
+            }
+        }
+
       new_elem = rec_rset_elem_record_new (rset, record);
 
       if (rec_rset_num_records (rset) == 0)
@@ -130,7 +146,8 @@ recins_insert_record (rec_db_t db,
     }
   else
     {
-      /* Create a new type and insert the record there.  */
+      /* Create a new type and insert the record there.  We don't need
+         to check for the type of the field in this case.  */
       rset = rec_rset_new ();
       rec_rset_set_type (rset, type);
       rec_rset_append_record (rset, record);

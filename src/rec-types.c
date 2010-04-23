@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-23 19:17:17 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-types.c
  *       Date:         Fri Apr 23 14:10:05 2010
@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <regex.h>
+#include <string.h>
 
 #include <rec.h>
 
@@ -53,6 +54,31 @@
 #define REC_TYPE_BLANKS_RE REC_TYPE_BLANK_RE "+"
 #define REC_TYPE_ZBLANKS_RE REC_TYPE_BLANK_RE "*"
 
+/* Regular expressions denoting values.  */
+#define REC_TYPE_INT_VALUE_RE                   \
+  "^" REC_TYPE_ZBLANKS_RE "[0-9]+" REC_TYPE_ZBLANKS_RE "$"
+
+#define REC_TYPE_REAL_VALUE_RE                  \
+  "^" REC_TYPE_ZBLANKS_RE "[0-9]+(\\.[0-9]+)?" REC_TYPE_ZBLANKS_RE "$"
+
+#define REC_TYPE_LINE_VALUE_RE                  \
+  "^[^\n]*$"
+
+#define REC_TYPE_REGEXP_VALUE_RE                \
+  "XXX_TO_BE_DEFINED_DONT_USE"
+
+#define REC_TYPE_DATE_VALUE_RE                  \
+  "XXX_TO_BE_DEFINED_DONT_USE"
+
+#define REC_TYPE_ENUM_NAME_RE                   \
+  "[a-zA-Z0-9][a-zA-Z0-9_-]*"
+#define REC_TYPE_ENUM_VALUE_RE                  \
+  "^"                                           \
+  REC_TYPE_ZBLANKS_RE                           \
+  REC_TYPE_ENUM_NAME_RE                         \
+  REC_TYPE_ZBLANKS_RE                           \
+  "$"
+  
 /* Regular expression denoting a type name.  */
 #define REC_TYPE_NAME_RE                              \
   "(" REC_TYPE_INT_NAME  "|" REC_TYPE_RANGE_NAME  "|" \
@@ -101,8 +127,6 @@
   REC_TYPE_DATE_NAME
 
 /* enum NAME NAME NAME*/
-#define REC_TYPE_ENUM_NAME_RE                   \
-  "[a-zA-Z0-9][a-zA-Z0-9_-]*"
 #define REC_TYPE_ENUM_DESCR_RE                  \
   REC_TYPE_ENUM_NAME                            \
   REC_TYPE_BLANKS_RE                            \
@@ -111,28 +135,34 @@
 
 /* field FIELD_NAME  */
 #define REC_TYPE_FIELD_PART_RE                  \
-  "[a-zA-Z%][a-zA-Z0-9_]"
+  "[a-zA-Z%][a-zA-Z0-9_]*"
+#define REC_TYPE_FIELD_NAME_RE                  \
+  REC_TYPE_FIELD_PART_RE                        \
+  "(" ":" REC_TYPE_FIELD_PART_RE ")*" ":?"
 #define REC_TYPE_FIELD_DESCR_RE                 \
   REC_TYPE_FIELD_NAME                           \
   REC_TYPE_BLANKS_RE                            \
-  REC_TYPE_FIELD_PART_RE                        \
-  "(" ":" REC_TYPE_FIELD_PART_RE ")*" ":?"
+  REC_TYPE_FIELD_NAME_RE
 
 /* Regexp denoting any type description.  */
 #define REC_TYPE_DESCR_RE                       \
+  "^"                                           \
+  REC_TYPE_ZBLANKS_RE                           \
+  REC_TYPE_FIELD_NAME_RE                        \
   REC_TYPE_ZBLANKS_RE                           \
   "("                                           \
-         REC_TYPE_INT_DESCR_RE                  \
-     "|" REC_TYPE_RANGE_DESCR_RE                \
-     "|" REC_TYPE_REAL_DESCR_RE                 \
-     "|" REC_TYPE_SIZE_DESCR_RE                 \
-     "|" REC_TYPE_LINE_DESCR_RE                 \
-     "|" REC_TYPE_REGEXP_DESCR_RE               \
-     "|" REC_TYPE_DATE_DESCR_RE                 \
-     "|" REC_TYPE_ENUM_DESCR_RE                 \
-     "|" REC_TYPE_FIELD_DESCR_RE                \
-  "("                                           \
-  REC_TYPE_ZBLANKS_RE
+         "(" REC_TYPE_INT_DESCR_RE ")"          \
+     "|" "(" REC_TYPE_RANGE_DESCR_RE ") "       \
+     "|" "(" REC_TYPE_REAL_DESCR_RE ")"         \
+     "|" "(" REC_TYPE_SIZE_DESCR_RE ")"         \
+     "|" "(" REC_TYPE_LINE_DESCR_RE ")"         \
+     "|" "(" REC_TYPE_REGEXP_DESCR_RE ")"       \
+     "|" "(" REC_TYPE_DATE_DESCR_RE ")"         \
+     "|" "(" REC_TYPE_ENUM_DESCR_RE ")"         \
+     "|" "(" REC_TYPE_FIELD_DESCR_RE ")"        \
+  ")"                                           \
+  REC_TYPE_ZBLANKS_RE                           \
+  "$"
       
 /*
  * Data types.
@@ -183,6 +213,50 @@ rec_type_descr_p (char *str)
   return rec_type_check_re (REC_TYPE_DESCR_RE, str);
 }
 
+rec_field_name_t
+rec_type_descr_field_name (char *str)
+{
+  rec_field_name_t field_name = NULL;
+  char *p, *b;
+  char name[100];
+
+  if (rec_type_descr_p (str))
+    {
+      /* Skip blank characters.  */
+      p = str;
+      while (p && rec_type_blank_p (*p))
+        {
+          p++;
+        }
+
+      /* Get the field name.  */
+      b = p;
+      while (p && (rec_type_letter_p (*p)
+                   || rec_type_digit_p (*p)
+                   || (*p == '%') || (*p == '_') || (*p == ':')
+                   || (*p == '-')))
+        {
+          name[p - b] = *p;
+          p++;
+        }
+
+      if (*p == ':')
+        {
+          name[p - b] = '\0';
+        }
+      else
+        {
+          name[p - b] = ':';
+          name[(p - b) + 1] = '\0';
+        }
+
+      /* Parse the field name.  */
+      field_name = rec_parse_field_name_str (name);
+    }
+
+  return field_name;
+}
+
 rec_type_t
 rec_type_new (char *str)
 {
@@ -206,6 +280,21 @@ rec_type_new (char *str)
           p++;
         }
 
+      /* Skip field name.  */
+      while (p && (rec_type_letter_p (*p)
+                   || rec_type_digit_p (*p)
+                   || (*p == '%') || (*p == '_') || (*p == ':')
+                   || (*p == '-')))
+        {
+          p++;
+        }
+
+      /* Skip blanks.  */
+      while (p && rec_type_blank_p (*p))
+        {
+          p++;
+        }
+
       /* Get the type name.  */
       b = p;
       while (p && rec_type_letter_p (*p))
@@ -214,7 +303,7 @@ rec_type_new (char *str)
           p++;
         }
       name[p - b] = '\0';
-      
+
       new->kind = rec_type_parse_type_kind (name);
       switch (new->kind)
         {
@@ -273,6 +362,68 @@ enum rec_type_kind_e
 rec_type_kind (rec_type_t type)
 {
   return type->kind;
+}
+
+char *
+rec_type_kind_str (rec_type_t type)
+{
+  char *res;
+
+  switch (type->kind)
+    {
+    case REC_TYPE_NONE:
+      {
+        res = "";
+        break;
+      }
+    case REC_TYPE_INT:
+      {
+        res = REC_TYPE_INT_NAME;
+        break;
+      }
+    case REC_TYPE_RANGE:
+      {
+        res = REC_TYPE_RANGE_NAME;
+        break;
+      }
+    case REC_TYPE_REAL:
+      {
+        res = REC_TYPE_REAL_NAME;
+        break;
+      }
+    case REC_TYPE_SIZE:
+      {
+        res = REC_TYPE_SIZE_NAME;
+        break;
+      }
+    case REC_TYPE_LINE:
+      {
+        res = REC_TYPE_LINE_NAME;
+        break;
+      }
+    case REC_TYPE_REGEXP:
+      {
+        res = REC_TYPE_REGEXP_NAME;
+        break;
+      }
+    case REC_TYPE_DATE:
+      {
+        res = REC_TYPE_DATE_NAME;
+        break;
+      }
+    case REC_TYPE_ENUM:
+      {
+        res = REC_TYPE_ENUM_NAME;
+        break;
+      }
+    case REC_TYPE_FIELD:
+      {
+        res = REC_TYPE_FIELD_NAME;
+        break;
+      }
+    }
+
+  return res;
 }
 
 bool
@@ -338,6 +489,12 @@ rec_type_check (rec_type_t type,
   return res;
 }
 
+void
+rec_type_destroy (rec_type_t type)
+{
+  free (type);
+}
+
 /*
  * Private functions.
  */
@@ -353,6 +510,7 @@ rec_type_check_re (char *regexp_str,
   if ((status = regcomp (&regexp, regexp_str, REG_EXTENDED)) != 0)
     {
       fprintf (stderr, "internal error: rec-types: error compiling regexp.\n");
+      printf("YYY: %s\n", regexp_str);
       return false;
     }
 
@@ -428,6 +586,76 @@ rec_type_letter_p (char c)
 {
   return (((c >= 'a') && (c <= 'z'))
           || ((c >= 'A') && (c <= 'Z')));
+}
+
+static bool
+rec_type_check_int (rec_type_t type,
+                    char *str)
+{
+  return rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
+}
+
+static bool
+rec_type_check_range (rec_type_t type,
+                      char *str)
+{
+  /* XXX: TODO.  */
+  /* Check string.  */
+  /* Get min and max numbers.  */
+  /* Cross-check with the data in 'type'.  */
+  
+  return false;
+}
+
+static bool
+rec_type_check_real (rec_type_t type,
+                     char *str)
+{
+  return rec_type_check_re (REC_TYPE_REAL_VALUE_RE, str);
+}
+
+static bool
+rec_type_check_size (rec_type_t type,
+                     char *str)
+{
+  return (strlen (str) <= type->data.max_size);
+}
+
+static bool
+rec_type_check_line (rec_type_t type,
+                     char *str)
+{
+  return rec_type_check_re (REC_TYPE_LINE_VALUE_RE, str);
+}
+
+static bool
+rec_type_check_regexp (rec_type_t type,
+                       char *str)
+{
+  return rec_type_check_re (type->data.regexp, str);
+}
+
+static bool
+rec_type_check_date (rec_type_t type,
+                     char *str)
+{
+  return rec_type_check_re (REC_TYPE_DATE_VALUE_RE, str);
+}
+
+static bool
+rec_type_check_enum (rec_type_t type,
+                     char *str)
+{
+  /* XXX: todo.  */
+  return false;
+}
+
+static bool
+rec_type_check_field (rec_type_t type,
+                      char *str)
+{
+  /* XXX: todo.  */
+  return false;
 }
 
 /* End of rec-types.c */
