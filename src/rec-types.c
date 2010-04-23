@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-23 16:40:26 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-23 19:17:17 jemarch"
  *
  *       File:         rec-types.c
  *       Date:         Fri Apr 23 14:10:05 2010
@@ -163,6 +163,16 @@ static bool rec_type_blank_p (char c);
 static bool rec_type_digit_p (char c);
 static bool rec_type_letter_p (char c);
 
+static bool rec_type_check_int (rec_type_t type, char *str);
+static bool rec_type_check_range (rec_type_t type, char *str);
+static bool rec_type_check_real (rec_type_t type, char *str);
+static bool rec_type_check_size (rec_type_t type, char *str);
+static bool rec_type_check_line (rec_type_t type, char *str);
+static bool rec_type_check_regexp (rec_type_t type, char *str);
+static bool rec_type_check_date (rec_type_t type, char *str);
+static bool rec_type_check_enum (rec_type_t type, char *str);
+static bool rec_type_check_field (rec_type_t type, char *str);
+
 /*
  * Public functions.
  */
@@ -257,6 +267,75 @@ rec_type_new (char *str)
     }
 
   return new;
+}
+
+enum rec_type_kind_e
+rec_type_kind (rec_type_t type)
+{
+  return type->kind;
+}
+
+bool
+rec_type_check (rec_type_t type,
+                char *str)
+{
+  bool res;
+
+  switch (type->kind)
+    {
+    case REC_TYPE_NONE:
+      {
+        res = true;
+        break;
+      }
+    case REC_TYPE_INT:
+      {
+        res = rec_type_check_int (type, str);
+        break;
+      }
+    case REC_TYPE_RANGE:
+      {
+        res = rec_type_check_range (type, str);
+        break;
+      }
+    case REC_TYPE_REAL:
+      {
+        res = rec_type_check_real (type, str);
+        break;
+      }
+    case REC_TYPE_SIZE:
+      {
+        res = rec_type_check_size (type, str);
+        break;
+      }
+    case REC_TYPE_LINE:
+      {
+        res = rec_type_check_line (type, str);
+        break;
+      }
+    case REC_TYPE_REGEXP:
+      {
+        res = rec_type_check_regexp (type, str);
+        break;
+      }
+    case REC_TYPE_DATE:
+      {
+        res = rec_type_check_date (type, str);
+        break;
+      }
+    case REC_TYPE_ENUM:
+      {
+        res = rec_type_check_enum (type, str);
+        break;
+      }
+    case REC_TYPE_FIELD:
+      {
+        res = rec_type_check_field (type, str);
+        break;
+      }
+    }
+
+  return res;
 }
 
 /*
