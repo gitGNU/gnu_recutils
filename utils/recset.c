@@ -60,6 +60,7 @@ char      *recset_value       = NULL;
 bool       recutl_insensitive = false;
 long       recutl_num         = -1;
 char      *recset_file        = NULL;
+bool       recset_force       = false;
 
 /*
  * Command line options management
@@ -74,6 +75,7 @@ enum
     DELETE_ACTION_ARG,
     COMMENT_ACTION_ARG,
     SET_ACTION_ARG,
+    FORCE_ARG
   };
 
 static const struct option GNU_longOptions[] =
@@ -85,6 +87,7 @@ static const struct option GNU_longOptions[] =
     {"delete", no_argument, NULL, DELETE_ACTION_ARG},
     {"comment", no_argument, NULL, COMMENT_ACTION_ARG},
     {"set", required_argument, NULL, SET_ACTION_ARG},
+    {"force", no_argument, NULL, FORCE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -97,7 +100,9 @@ Usage: recset [OPTION]... [FILE]...\n\
 Alter or delete fields in records.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
-  -i, --case-insensitive              make strings case-insensitive in selection\n"
+  -i, --case-insensitive              make strings case-insensitive in selection\n\
+      --force                         alter the records even if violating record\n\
+                                        restrictions.\n"
 COMMON_ARGS_DOC
 "\n"
 RECORD_SELECTION_ARGS_DOC
@@ -138,6 +143,11 @@ recset_parse_args (int argc,
         {
           COMMON_ARGS_CASES
           RECORD_SELECTION_ARGS_CASES
+        case FORCE_ARG:
+          {
+            recset_force = true;
+            break;
+          }
         case FIELD_EXPR_ARG:
         case 'f':
           {
@@ -282,6 +292,7 @@ recset_process_actions (rec_db_t db)
   rec_comment_t comment;
   rec_record_elem_t comment_elem;
   bool *deletion_mask;
+  char *field_type;
 
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
@@ -389,9 +400,22 @@ recset_process_actions (rec_db_t db)
                         field_name = rec_fex_elem_field_name (fex_elem);
                         field = rec_field_new (rec_field_name_dup (field_name), recset_value);
                         
-                        /* XXX: sort the record afterwards.  */
-                        rec_record_append_field (record, field);
-                        /* rec_rset_sort_record (rset, record);  */
+                        if (recset_force || rec_rset_check_field (rset, field, &field_type))
+                          {
+                            /* XXX: sort the record afterwards.  */
+                            rec_record_append_field (record, field);
+                            /* rec_rset_sort_record (rset, record);  */
+                          }
+                        else
+                          {
+                            fprintf (stderr,
+                                     "%s: error: Invalid value for field %s of type '%s'.\n",
+                                     program_name, rec_write_field_name_str (rec_field_name (field)), field_type);
+                            fprintf (stderr,
+                                     "%s: error: Use --force to add the field anyway.\n",
+                                     program_name);
+                            exit (1);
+                          }
                       }
                     
                     break;

@@ -45,6 +45,7 @@ char *program_name; /* Initialized in main() */
 char *recins_type = NULL;
 rec_record_t recins_record = NULL;
 char *recins_file = NULL;
+bool recins_force = false;
 
 /*
  * Command line options management
@@ -55,7 +56,8 @@ enum
   COMMON_ARGS,
   TYPE_ARG,
   NAME_ARG,
-  VALUE_ARG
+  VALUE_ARG,
+  FORCE_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -64,6 +66,7 @@ static const struct option GNU_longOptions[] =
     {"type", required_argument, NULL, TYPE_ARG},
     {"name", required_argument, NULL, NAME_ARG},
     {"value", required_argument, NULL, VALUE_ARG},
+    {"force", no_argument, NULL, FORCE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -77,7 +80,9 @@ Insert a record in a rec file.\n\
 \n\
   -t, --type=TYPE                     specify the type of the new record.\n\
   -f, --field=STR                     field name.  Should be followed by a -v.\n\
-  -v, --value=STR                     field value.  Should be preceded by a -f.\n"
+  -v, --value=STR                     field value.  Should be preceded by a -f.\n\
+      --force                         insert the record even if it is violating\n\
+                                        record restrictions.\n"
 COMMON_ARGS_DOC
 "\n\
 If no FILE is specified then the command acts like a filter, getting\n\
@@ -102,6 +107,7 @@ recins_insert_record (rec_db_t db,
   rec_field_t field;
   rec_rset_elem_t last_elem, new_elem;
   rec_record_elem_t rec_elem;
+  char *field_type;
 
   if (rec_record_num_fields (record) == 0)
     {
@@ -120,10 +126,14 @@ recins_insert_record (rec_db_t db,
         {
           field = rec_record_elem_field (rec_elem);
 
-          if (!rec_rset_check_field (rset, field))
+          if (!(recins_force || rec_rset_check_field (rset, field, &field_type)))
             {
-              fprintf ("%s: error: incorrect value for field %s.\n",
-                       program_name, rec_write_field_name_str (rec_field_name (field)));
+              fprintf (stderr,
+                       "%s: error: Invalid value for field %s of type '%s'.\n",
+                       program_name, rec_write_field_name_str (rec_field_name (field)), field_type);
+              fprintf (stderr,
+                       "%s: error: Use --force to insert the new record anyway.\n",
+                       program_name);
               exit (1);
             }
         }
@@ -188,6 +198,11 @@ void recins_parse_args (int argc,
       switch (c)
         {
           COMMON_ARGS_CASES
+        case FORCE_ARG:
+          {
+            recins_force = true;
+            break;
+          }
         case TYPE_ARG:
         case 't':
           {

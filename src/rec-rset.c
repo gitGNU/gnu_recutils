@@ -502,7 +502,8 @@ rec_rset_type (rec_rset_t rset)
 
 bool
 rec_rset_check_field (rec_rset_t rset,
-                      rec_field_t field)
+                      rec_field_t field,
+                      char **type_str)
 {
   bool res;
   rec_record_t descriptor;
@@ -541,9 +542,9 @@ rec_rset_check_field (rec_rset_t rset,
                         {
                           if (!rec_type_check (type, rec_field_value (field)))
                             {
-                              fprintf (stderr, "INVALID VALUE %s FOR TYPE %s\n",
-                                       rec_field_value (field), rec_type_kind_str (type));
-                              exit (1);
+                              *type_str = rec_type_kind_str (type);
+                              res = false;
+                              break;
                             }
                         }
 
