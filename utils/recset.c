@@ -400,7 +400,7 @@ recset_process_actions (rec_db_t db)
                         field_name = rec_fex_elem_field_name (fex_elem);
                         field = rec_field_new (rec_field_name_dup (field_name), recset_value);
                         
-                        if (recset_force || rec_rset_check_field (rset, field, &field_type))
+                        if (recset_force || rec_rset_check_field_type (rset, field, &field_type))
                           {
                             /* XXX: sort the record afterwards.  */
                             rec_record_append_field (record, field);

@@ -501,9 +501,9 @@ rec_rset_type (rec_rset_t rset)
 }
 
 bool
-rec_rset_check_field (rec_rset_t rset,
-                      rec_field_t field,
-                      char **type_str)
+rec_rset_check_field_type (rec_rset_t rset,
+                           rec_field_t field,
+                           char **type_str)
 {
   bool res;
   rec_record_t descriptor;

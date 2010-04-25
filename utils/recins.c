@@ -126,7 +126,7 @@ recins_insert_record (rec_db_t db,
         {
           field = rec_record_elem_field (rec_elem);
 
-          if (!(recins_force || rec_rset_check_field (rset, field, &field_type)))
+          if (!(recins_force || rec_rset_check_field_type (rset, field, &field_type)))
             {
               fprintf (stderr,
                        "%s: error: Invalid value for field %s of type '%s'.\n",
