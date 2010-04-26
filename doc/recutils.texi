@@ -274,20 +274,9 @@ _:
 @end example
 
 The value of a field is a sequence of characters terminated by a
-single newline character (@code{\n}).  Any prefix or suffix composed
-by blank characters only are stripped.  This is done in order to
-improve the readability of the values since blank characters are not
-easily recognizable.  The following fields contain the same value (the
-underscore character is denoting a blank character in this example):
-
-@example
-Foo1:_bar
-Foo2:__bar
-Foo3:___bar
-Foo1: bar
-Foo2: bar_
-Foo3: bar___
-@end example
+single newline character (@code{\n}).  The value of a field shall be
+separated from the field name by a blank character other than a
+newline.
 
 Sometimes a value is long enough to exceed the usual width of
 terminals and screens.  In that case, depending on the specific tool
@@ -312,16 +301,6 @@ Foo: bar1
 +  bar3
 @end example
              
-The newline sequence described above is also interpreted as a blank
-character for prefix stripping.  That means that the following fields
-are encoding exactly the same value (@code{bar}):
-
-@example             
-Foo: bar
-Foo:
-+ bar
-@end example
-
 A record is a group of one or more fields written one after the other:
 
 @example

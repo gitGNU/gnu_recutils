@@ -249,16 +249,7 @@ rec_type_descr_field_name (char *str)
           name[p - b] = *p;
           p++;
         }
-
-      if (*p == ':')
-        {
-          name[p - b] = '\0';
-        }
-      else
-        {
-          name[p - b] = ':';
-          name[(p - b) + 1] = '\0';
-        }
+      name[p - b] = '\0';
 
       /* Parse the field name.  */
       field_name = rec_parse_field_name_str (name);

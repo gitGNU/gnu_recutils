@@ -122,11 +122,10 @@ recins_insert_record (rec_db_t db,
     {
       if (!recins_force)
         {
-          if (rec_rset_check_record (rset, record, program_name, &errors) > 0)
+          if (rec_rset_check_record (rset, record, program_name, stderr) > 0)
             {
-              fprintf (stderr, "%s", errors);
               fprintf (stderr,
-                       "%s: error: Use --force to insert the new record anyway.\n",
+                       "%s: use --force to insert the new record anyway\n",
                        program_name);
 
               exit (1);
@@ -209,7 +208,7 @@ void recins_parse_args (int argc,
           {
             if (field != NULL)
               {
-                fprintf (stderr, "recins: error: a -f should be followed by a -v.\n");
+                fprintf (stderr, "recins: error: a -f should be followed by a -v\n");
                 exit (1);
               }
 
@@ -247,7 +246,7 @@ void recins_parse_args (int argc,
           {
             if (field == NULL)
               {
-                fprintf (stderr, "%s: error: a -v should be preceded by a -f.\n",
+                fprintf (stderr, "%s: error: a -v should be preceded by a -f\n",
                          program_name);
                 exit (1);
               }

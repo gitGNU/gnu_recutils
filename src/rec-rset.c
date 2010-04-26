@@ -76,6 +76,17 @@ static bool rec_rset_comment_equal_fn (void *data1, void *data2);
 static void rec_rset_comment_disp_fn (void *data);
 static void *rec_rset_comment_dup_fn (void *data);
 
+static int rec_rset_check_record_key (rec_rset_t rset, rec_record_t record,
+                                      char *program_name, FILE *errors);
+static int rec_rset_check_record_types (rec_rset_t rset, rec_record_t record,
+                                        char *program_name, FILE *errors);
+static int rec_rset_check_record_mandatory (rec_rset_t rset, rec_record_t record,
+                                            char *program_name, FILE *errors);
+static int rec_rset_check_record_unique (rec_rset_t rset, rec_record_t record,
+                                         char *program_name, FILE *errors);
+static int rec_rset_check_record_prohibit (rec_rset_t rset, rec_record_t record,
+                                           char *program_name, FILE *errors);
+
 /*
  * Public functions.
  */
@@ -504,56 +515,16 @@ int
 rec_rset_check_record (rec_rset_t rset,
                        rec_record_t record,
                        char *program_name,
-                       char **errors)
+                       FILE *errors)
 {
   int res;
-  rec_record_elem_t rec_elem;
-  rec_field_t field;
-  char *type;
-  FILE *errors_stm;
-  size_t nfield;
-  size_t errors_size;
-  rec_field_t key;
-  rec_field_name_t key_field_name;
-  rec_record_t descriptor;
 
-  res = 0;
-
-  errors_stm = open_memstream (errors, &errors_size);
-
-  /* Get the field name of the key in the record set, if any.  Note
-     that the first field named "%key:" is used.  */
-  key = NULL;
-  descriptor = rec_rset_descriptor (rset);
-  if (descriptor)
-    {
-      key_field_name = rec_parse_field_name_str ("%key:");
-      key = rec_record_get_field_by_name (descriptor, key_field_name, 0);
-      rec_field_name_destroy (key_field_name);
-      key_field_name = rec_parse_field_name_str (rec_field_value (key));
-    }
-  
-  /* Iterate on every field in the record and check them.  */
-  rec_elem = rec_record_null_elem ();
-  while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
-    {
-      field = rec_record_elem_field (rec_elem);
-
-      /* Check for the type.  */
-      if (!rec_rset_check_field_type (rset, field, &type))
-        {
-          /* Invalid value for the field: log an error.  */
-          fprintf (errors_stm,
-                   "%s: error: Invalid value for field %s[%d] of type '%s'.\n",
-                   program_name,
-                   rec_field_name_str (field),
-                   rec_record_get_field_index_by_name (record, field),
-                   type);
-          res++;
-        }
-    }
-
-  fclose (errors_stm);
+  res =
+    rec_rset_check_record_key (rset, record, program_name, errors)
+    + rec_rset_check_record_types     (rset, record, program_name, errors)
+    + rec_rset_check_record_mandatory (rset, record, program_name, errors)
+    + rec_rset_check_record_unique    (rset, record, program_name, errors)
+    + rec_rset_check_record_prohibit  (rset, record, program_name, errors);
 
   return res;
 }
@@ -661,6 +632,282 @@ static void *
 rec_rset_comment_dup_fn (void *data)
 {
   return (void *) rec_comment_dup ((rec_comment_t) data);
+}
+
+static int
+rec_rset_check_record_types (rec_rset_t rset,
+                             rec_record_t record,
+                             char *program_name,
+                             FILE *errors)
+{
+  int res;
+  rec_record_elem_t rec_elem;
+  rec_field_t field;
+  char *type_str;
+
+  res = 0;
+
+  rec_elem = rec_record_null_elem ();
+  while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+    {
+      field = rec_record_elem_field (rec_elem);
+
+      /* Check for the type.  */
+      if (!rec_rset_check_field_type (rset, field, &type_str))
+        {
+          fprintf (errors,
+                   "%s: error: invalid value for field %s[%d] of type '%s'\n",
+                   program_name,
+                   rec_field_name_str (field),
+                   rec_record_get_field_index_by_name (record, field),
+                   type_str);
+
+          res++;
+        }
+    }
+
+  return res;
+}
+
+static int
+rec_rset_check_record_mandatory (rec_rset_t rset,
+                                 rec_record_t record,
+                                 char *program_name,
+                                 FILE *errors)
+{
+  int res;
+  rec_record_t descriptor;
+  rec_field_name_t field_name;
+  rec_field_name_t mandatory_field_name;
+  rec_field_t field;
+  size_t i;
+  
+  res = 0;
+
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      field_name = rec_parse_field_name_str ("%mandatory:");
+      for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
+                                                         field_name);
+           i++)
+        {
+          field = rec_record_get_field_by_name (descriptor, field_name, i);
+
+          /* Parse the field name from the value of %mandatory:  */
+          mandatory_field_name = rec_parse_field_name_str (rec_field_value (field));
+          if (mandatory_field_name)
+            {
+              if (rec_record_get_num_fields_by_name (record, mandatory_field_name)
+                  == 0)
+                {
+                  fprintf (errors,
+                           "%s: error: mandatory field '%s' not found in record\n",
+                           program_name, rec_field_value (field));
+                  res++;
+                }
+
+              rec_field_name_destroy (mandatory_field_name);
+            }
+        }                                          
+      
+      rec_field_name_destroy (field_name);
+    }
+
+  return res;
+}
+
+static int
+rec_rset_check_record_unique (rec_rset_t rset,
+                              rec_record_t record,
+                              char *program_name,
+                              FILE *errors)
+{
+  int res;
+  rec_record_t descriptor;
+  rec_field_name_t field_name;
+  rec_field_name_t unique_field_name;
+  rec_field_t field;
+  size_t i;
+  
+  res = 0;
+
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      field_name = rec_parse_field_name_str ("%unique:");
+      for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
+                                                         field_name);
+           i++)
+        {
+          field = rec_record_get_field_by_name (descriptor, field_name, i);
+
+          /* Parse the field name from the value of %unique:  */
+          unique_field_name = rec_parse_field_name_str (rec_field_value (field));
+          if (unique_field_name)
+            {
+              if (rec_record_get_num_fields_by_name (record, unique_field_name)
+                  > 1)
+                {
+                  fprintf (errors,
+                           "%s: error: field '%s' shall be unique in this record\n",
+                           program_name, rec_field_value (field));
+                  res++;
+                }
+
+              rec_field_name_destroy (unique_field_name);
+            }
+        }                                          
+      
+      rec_field_name_destroy (field_name);
+    }
+
+  return res;
+}
+
+static int
+rec_rset_check_record_prohibit (rec_rset_t rset,
+                                rec_record_t record,
+                                char *program_name,
+                                FILE *errors)
+{
+  int res;
+  rec_record_t descriptor;
+  rec_field_name_t field_name;
+  rec_field_name_t prohibit_field_name;
+  rec_field_t field;
+  size_t i;
+  
+  res = 0;
+
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      field_name = rec_parse_field_name_str ("%prohibit:");
+      for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
+                                                         field_name);
+           i++)
+        {
+          field = rec_record_get_field_by_name (descriptor, field_name, i);
+
+          /* Parse the field name from the value of %prohibit:  */
+          prohibit_field_name = rec_parse_field_name_str (rec_field_value (field));
+          if (prohibit_field_name)
+            {
+              if (rec_record_get_num_fields_by_name (record, prohibit_field_name)
+                  > 0)
+                {
+                  fprintf (errors,
+                           "%s: error: prohibited field '%s' found in record\n",
+                           program_name, rec_field_value (field));
+                  res++;
+                }
+
+              rec_field_name_destroy (prohibit_field_name);
+            }
+        }                                          
+      
+      rec_field_name_destroy (field_name);
+    }
+
+  return res;
+}
+
+static int
+rec_rset_check_record_key (rec_rset_t rset,
+                           rec_record_t record,
+                           char *program_name,
+                           FILE *errors)
+{
+  int res;
+  rec_record_t descriptor;
+  rec_record_t other_record;
+  rec_rset_elem_t rset_elem;
+  rec_field_name_t field_name;
+  rec_field_name_t key_field_name;
+  rec_field_t field;
+  rec_field_t key;
+  rec_field_t other_key;
+  bool duplicated_key;
+  size_t i;
+  
+  res = 0;
+
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      field_name = rec_parse_field_name_str ("%key:");
+      for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
+                                                         field_name);
+           i++)
+        {
+          field = rec_record_get_field_by_name (descriptor, field_name, i);
+
+          /* Parse the field name from the value of %key:  */
+          key_field_name = rec_parse_field_name_str (rec_field_value (field));
+          if (key_field_name)
+            {
+              if (rec_record_get_num_fields_by_name (record, key_field_name)
+                  == 1)
+                {
+                  /* Check that the value specified as the key is
+                     unique in the whole record set.  */
+                  key = rec_record_get_field_by_name (record,
+                                                      key_field_name,
+                                                      0);
+                  duplicated_key = false;
+                  
+                  rset_elem = rec_rset_null_elem ();
+                  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
+                    {
+                      other_record = rec_rset_elem_record (rset_elem);
+
+                      if (other_record != record)
+                        {
+                          /* XXX: Only the first key field is considered.  */
+                          other_key = rec_record_get_field_by_name (other_record,
+                                                                    key_field_name,
+                                                                    0);
+                          if (other_key)
+                            {
+                              if (strcmp (rec_field_value (other_key),
+                                          rec_field_value (key)) == 0)
+                                {
+                                  /* Found a key field with the same
+                                     value in other record.  */
+                                  duplicated_key = true;
+                                  break;
+                                }
+                            }
+                        }
+                    }
+
+                  if (duplicated_key)
+                    {
+                      fprintf (errors,
+                               "%s: error: duplicated key value in field '%s' in record\n",
+                               program_name,
+                               rec_field_name_str (key));
+                      res++;
+                      break;
+                    }
+                }
+              else
+                {
+                  fprintf (errors,
+                           "%s: error: key field '%s' not found in record\n",
+                           program_name, rec_field_value (field));
+                  res++;
+                }
+
+              rec_field_name_destroy (key_field_name);
+            }
+        }                                          
+      
+      rec_field_name_destroy (field_name);
+    }
+
+  return res;
 }
 
 /* End of rec-rset.c */

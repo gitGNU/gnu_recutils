@@ -546,9 +546,25 @@ rec_parse_field_name_str (char *str)
   rec_parser_t parser;
   rec_field_name_t field_name;
   FILE *stm;
+  char *str2;
+  size_t str_size;
 
+  /* Make sure the input string ends with a colon character.  */
+  str_size = strlen (str);
+  str2 = malloc (str_size + 2);
+  strncpy (str2, str, str_size);
+  if (str2[str_size - 1] == ':')
+    {
+      str2[str_size] = '\0';
+    }
+  else
+    {
+      str2[str_size] = ':';
+      str2[str_size + 1] = '\0';
+    }
+  
   field_name = NULL;
-  stm = fmemopen (str, strlen (str), "r");
+  stm = fmemopen (str2, strlen (str2), "r");
   if (stm)
     {
       parser = rec_parser_new (stm);
@@ -563,6 +579,8 @@ rec_parse_field_name_str (char *str)
 
       fclose (stm);
     }
+
+  free (str2);
   
   return field_name;
 }
