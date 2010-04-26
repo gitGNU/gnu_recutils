@@ -843,6 +843,7 @@ rec_rset_check_record_key (rec_rset_t rset,
   rec_field_t other_key;
   bool duplicated_key;
   size_t i;
+  size_t num_fields;
   
   res = 0;
 
@@ -860,8 +861,23 @@ rec_rset_check_record_key (rec_rset_t rset,
           key_field_name = rec_parse_field_name_str (rec_field_value (field));
           if (key_field_name)
             {
-              if (rec_record_get_num_fields_by_name (record, key_field_name)
-                  == 1)
+              num_fields = rec_record_get_num_fields_by_name (record, key_field_name);
+
+              if (num_fields == 0)
+                {
+                  fprintf (errors,
+                           "%s: error: key field '%s' not found in record\n",
+                           program_name, rec_field_value (field));
+                  res++;
+                }
+              else if (num_fields > 1)
+                {
+                  fprintf (errors,
+                           "%s: error: multiple key fields '%s' in record\n",
+                           program_name, rec_field_value (field));
+                  res++;
+                }
+              else  /* num_fields == 1 */
                 {
                   /* Check that the value specified as the key is
                      unique in the whole record set.  */
@@ -904,13 +920,6 @@ rec_rset_check_record_key (rec_rset_t rset,
                       res++;
                       break;
                     }
-                }
-              else
-                {
-                  fprintf (errors,
-                           "%s: error: key field '%s' not found in record\n",
-                           program_name, rec_field_value (field));
-                  res++;
                 }
 
               rec_field_name_destroy (key_field_name);
