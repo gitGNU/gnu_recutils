@@ -122,7 +122,7 @@ recins_insert_record (rec_db_t db,
     {
       if (!recins_force)
         {
-          if (rec_rset_check_record (rset, record, program_name, stderr) > 0)
+          if (rec_rset_check_record (rset, record, record, program_name, stderr) > 0)
             {
               fprintf (stderr,
                        "%s: use --force to insert the new record anyway\n",

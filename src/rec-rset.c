@@ -76,7 +76,8 @@ static bool rec_rset_comment_equal_fn (void *data1, void *data2);
 static void rec_rset_comment_disp_fn (void *data);
 static void *rec_rset_comment_dup_fn (void *data);
 
-static int rec_rset_check_record_key (rec_rset_t rset, rec_record_t record,
+static int rec_rset_check_record_key (rec_rset_t rset,
+                                      rec_record_t orig_record, rec_record_t record,
                                       char *program_name, FILE *errors);
 static int rec_rset_check_record_types (rec_rset_t rset, rec_record_t record,
                                         char *program_name, FILE *errors);
@@ -513,6 +514,7 @@ rec_rset_type (rec_rset_t rset)
 
 int
 rec_rset_check_record (rec_rset_t rset,
+                       rec_record_t orig_record,
                        rec_record_t record,
                        char *program_name,
                        FILE *errors)
@@ -520,7 +522,7 @@ rec_rset_check_record (rec_rset_t rset,
   int res;
 
   res =
-    rec_rset_check_record_key (rset, record, program_name, errors)
+    rec_rset_check_record_key (rset, orig_record, record, program_name, errors)
     + rec_rset_check_record_types     (rset, record, program_name, errors)
     + rec_rset_check_record_mandatory (rset, record, program_name, errors)
     + rec_rset_check_record_unique    (rset, record, program_name, errors)
@@ -536,53 +538,54 @@ rec_rset_check_field_type (rec_rset_t rset,
 {
   bool res;
   rec_record_t descriptor;
-  rec_record_elem_t rec_elem;
   rec_field_t descr_field;
   char *descr_field_value;
   char *descr_field_name_str;
+  rec_field_name_t type_field_name;
   rec_field_name_t field_name;
   rec_type_t type;
+  size_t i, num_fields;
 
   res = true;
 
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      rec_elem = rec_record_null_elem ();
-      while (rec_record_elem_p (rec_elem = rec_record_next_field (descriptor, rec_elem)))
+      type_field_name = rec_parse_field_name_str ("%type:");
+      num_fields = rec_record_get_num_fields_by_name (descriptor, type_field_name);
+      for (i = 0; i < num_fields; i++)
         {
-          descr_field = rec_record_elem_field (rec_elem);
-          descr_field_name_str = rec_write_field_name_str (rec_field_name (descr_field));
+          descr_field = rec_record_get_field_by_name (descriptor, type_field_name, i);
+          descr_field_name_str = rec_field_name_str (descr_field);
           descr_field_value = rec_field_value (descr_field);
 
-          if (strcmp (descr_field_name_str, "%type:") == 0)
+          /* Only valid type descriptors are considered.  Invalid
+             descriptors are ignored.  */
+          if (rec_type_descr_p (descr_field_value))
             {
-              /* Only valid type descriptors are considered.  Invalid
-                 descriptors are ignored.  */
-              if (rec_type_descr_p (descr_field_value))
+              type = rec_type_new (descr_field_value);
+              
+              if (type)
                 {
-                  type = rec_type_new (descr_field_value);
-
-                  if (type)
+                  field_name = rec_type_descr_field_name (descr_field_value);
+                  if (rec_field_name_equal_p (field_name,
+                                              rec_field_name (field)))
                     {
-                      field_name = rec_type_descr_field_name (descr_field_value);
-                      if (rec_field_name_equal_p (field_name,
-                                                  rec_field_name (field)))
+                      if (!rec_type_check (type, rec_field_value (field)))
                         {
-                          if (!rec_type_check (type, rec_field_value (field)))
-                            {
-                              *type_str = rec_type_kind_str (type);
-                              res = false;
-                              break;
-                            }
+                          *type_str = rec_type_kind_str (type);
+                          res = false;
+                          break;
                         }
-
-                      rec_type_destroy (type);
                     }
-                          
+                  
+                  rec_type_destroy (type);
                 }
+              
             }
         }
+
+      rec_field_name_destroy (type_field_name);
     }
 
   return res;
@@ -680,7 +683,7 @@ rec_rset_check_record_mandatory (rec_rset_t rset,
   rec_field_name_t field_name;
   rec_field_name_t mandatory_field_name;
   rec_field_t field;
-  size_t i;
+  size_t i, num_fields;
   
   res = 0;
 
@@ -688,9 +691,8 @@ rec_rset_check_record_mandatory (rec_rset_t rset,
   if (descriptor)
     {
       field_name = rec_parse_field_name_str ("%mandatory:");
-      for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
-                                                         field_name);
-           i++)
+      num_fields = rec_record_get_num_fields_by_name (descriptor, field_name);
+      for (i = 0; i < num_fields; i++)
         {
           field = rec_record_get_field_by_name (descriptor, field_name, i);
 
@@ -815,6 +817,7 @@ rec_rset_check_record_prohibit (rec_rset_t rset,
 
 static int
 rec_rset_check_record_key (rec_rset_t rset,
+                           rec_record_t orig_record,
                            rec_record_t record,
                            char *program_name,
                            FILE *errors)
@@ -862,7 +865,7 @@ rec_rset_check_record_key (rec_rset_t rset,
                     {
                       other_record = rec_rset_elem_record (rset_elem);
 
-                      if (other_record != record)
+                      if (other_record != orig_record)
                         {
                           /* XXX: Only the first key field is considered.  */
                           other_key = rec_record_get_field_by_name (other_record,

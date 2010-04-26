@@ -38,6 +38,9 @@
 
 static void recset_parse_args (int argc, char **argv);
 static void recset_process_actions (rec_db_t db);
+static void recset_process_add (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
+static void recset_process_set (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
+static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
 
 /*
  * Global variables.
@@ -278,21 +281,14 @@ static void
 recset_process_actions (rec_db_t db)
 {
   int n_rset, n_rec, rset_size;
-  int numrec, i, j, min, max;
-  int num_fields;
+  int numrec;
   rec_rset_t rset;
   rec_record_t record;
+  rec_record_t new_record;
   rec_field_t field;
   bool parse_status = true;
   rec_rset_elem_t rec_elem;
-  rec_fex_elem_t fex_elem;
-  rec_field_name_t field_name;
-  rec_record_elem_t field_elem;
-  rec_record_t record_aux;
-  rec_comment_t comment;
-  rec_record_elem_t comment_elem;
-  bool *deletion_mask;
-  char *field_type;
+  rec_rset_elem_t new_rec_elem;
 
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
@@ -342,155 +338,44 @@ recset_process_actions (rec_db_t db)
                     (rec_sex_eval (recutl_sex, record, &parse_status))))
                   || (recutl_num == numrec)))
             {
-              /* Process this record.  */
-
+              /* Process a copy of this record.  */
+              new_record = rec_record_dup (record);
               switch (recset_action)
                 {
                 case RECSET_ACT_SET:
                   {
-                    /* Set the value of the specified existing fields
-                       to the specified values.  */
-                    for (i = 0; i < rec_fex_size (recutl_fex); i++)
-                      {
-                        fex_elem = rec_fex_get (recutl_fex, i);
-                        field_name = rec_fex_elem_field_name (fex_elem);
-                        min = rec_fex_elem_min (fex_elem);
-                        max = rec_fex_elem_max (fex_elem);
-
-                        num_fields =
-                          rec_record_get_num_fields_by_name (record, field_name);
-                        if (min == -1)
-                          {
-                            /* Process all the fields with the given name.  */
-                            min = 0;
-                            max = num_fields - 1;
-                          }
-                        if (max == -1)
-                          {
-                            max = min;
-                          }
-
-                        for (j = 0; j < num_fields; j++)
-                          {
-                            if ((j >= min) && (j <= max))
-                              {
-                                /* Set the value of the Jth field
-                                   named FIELD_NAME, if it exists.*/
-                                field = rec_record_get_field_by_name (record,
-                                                                      field_name,
-                                                                      j);
-                                if (field)
-                                  {
-                                    rec_field_set_value (field, recset_value);
-                                  }
-                              }
-                          }
-
-                      }
-
+                    recset_process_set (rset, new_record, recutl_fex);
                     break;
                   }
                 case RECSET_ACT_ADD:
                   {
-                    /* Create new fields and add them to the
-                       record.  */
-                    for (i = 0; i < rec_fex_size (recutl_fex); i++)
-                      {
-                        fex_elem = rec_fex_get (recutl_fex, i);
-                        field_name = rec_fex_elem_field_name (fex_elem);
-                        field = rec_field_new (rec_field_name_dup (field_name), recset_value);
-                        
-                        if (recset_force || rec_rset_check_field_type (rset, field, &field_type))
-                          {
-                            /* XXX: sort the record afterwards.  */
-                            rec_record_append_field (record, field);
-                            /* rec_rset_sort_record (rset, record);  */
-                          }
-                        else
-                          {
-                            fprintf (stderr,
-                                     "%s: error: Invalid value for field %s of type '%s'.\n",
-                                     program_name, rec_write_field_name_str (rec_field_name (field)), field_type);
-                            fprintf (stderr,
-                                     "%s: error: Use --force to add the field anyway.\n",
-                                     program_name);
-                            exit (1);
-                          }
-                      }
-                    
+                    recset_process_add (rset, new_record, recutl_fex);
                     break;
                   }
                 case RECSET_ACT_DELETE:
                 case RECSET_ACT_COMMENT:
                   {
-                    /* Initialize the deletion mask.  */
-                    deletion_mask = malloc (sizeof (bool) * rec_record_num_fields (record));
-                    for (i = 0; i < rec_record_num_fields (record); i++)
-                      {
-                        deletion_mask[i] = false;
-                      }
-                    
-                    /* Mark fields that will be deleted from the record.  */
-                    for (i = 0; i < rec_fex_size (recutl_fex); i++)
-                      {
-                        fex_elem = rec_fex_get (recutl_fex, i);
-                        field_name = rec_fex_elem_field_name (fex_elem);
-                        min = rec_fex_elem_min (fex_elem);
-                        max = rec_fex_elem_max (fex_elem);
-
-                        num_fields =
-                          rec_record_get_num_fields_by_name (record, field_name);
-                        if (min == -1)
-                          {
-                            /* Delete all the fields with the given name.  */
-                            min = 0;
-                            max = num_fields - 1;
-                          }
-                        if (max == -1)
-                          {
-                            max = min;
-                          }
-
-                        for (j = 0; j < num_fields; j++)
-                          {
-                            if ((j >= min) && (j <= max))
-                              {
-                                /* Mark this field for deletion.  */
-                                field = rec_record_get_field_by_name (record,
-                                                                      rec_fex_elem_field_name (fex_elem),
-                                                                      j);
-                                deletion_mask[rec_record_get_field_index (record, field)] = true;
-                              }
-                          }
-                      }
-                    
-                    /* Delete the marked fields.  */
-                    i = 0;
-                    field_elem = rec_record_first_field (record);
-                    while (rec_record_elem_p (field_elem))
-                      {
-                        if (deletion_mask[i])
-                          {
-                            if (recset_action == RECSET_ACT_COMMENT)
-                              {
-                                comment = rec_field_to_comment (rec_record_elem_field (field_elem));
-                                comment_elem = rec_record_elem_comment_new (record, comment);
-                                rec_record_insert_after (record, field_elem, comment_elem);
-                              }
-
-                            field_elem = rec_record_remove_field (record, field_elem);
-                          }
-                        else
-                          {
-                            field_elem = rec_record_next_field (record, field_elem);
-                          }
-
-                        i++;
-                      }
-
+                    recset_process_del (rset, new_record, recutl_fex);
                     break;
                   }
                 }
+
+              /* Check for integrity.  */
+              if (!recset_force)
+                {
+                  if (rec_rset_check_record (rset, record, new_record, program_name, stderr) > 0)
+                    {
+                      fprintf (stderr,
+                               "%s: use --force to proceed anyway\n",
+                               program_name);
+                      exit (1);
+                    }
+                }
+
+                /* Replace the record in the rset.  */
+              new_rec_elem = rec_rset_elem_record_new (rset, new_record);
+              rec_rset_insert_after (rset, rec_elem, new_rec_elem);
+              rec_elem = rec_rset_remove_record (rset, rec_elem);
             }
           
           /* Process the next record.  */
@@ -504,6 +389,158 @@ recset_process_actions (rec_db_t db)
           
           numrec++;
         }
+    }
+}
+
+static void
+recset_process_add (rec_rset_t rset,
+                    rec_record_t record,
+                    rec_fex_t fex)
+{
+  rec_field_t field;
+  rec_field_name_t field_name;
+  rec_fex_elem_t fex_elem;
+  size_t i;
+
+  /* Create new fields from the FEX and add them to the record.  */
+  for (i = 0; i < rec_fex_size (fex); i++)
+    {
+      fex_elem = rec_fex_get (fex, i);
+      field_name = rec_fex_elem_field_name (fex_elem);
+      field = rec_field_new (rec_field_name_dup (field_name), recset_value);
+
+      /* XXX: sort the record afterwards.  */
+      rec_record_append_field (record, field);
+    }
+}
+
+static void
+recset_process_set (rec_rset_t rset,
+                    rec_record_t record,
+                    rec_fex_t fex)
+{
+  size_t i, j, min, max;
+  size_t num_fields;
+  rec_fex_elem_t fex_elem;
+  rec_field_t field;
+  rec_field_name_t field_name;
+
+  for (i = 0; i < rec_fex_size (recutl_fex); i++)
+    {
+      fex_elem = rec_fex_get (recutl_fex, i);
+      field_name = rec_fex_elem_field_name (fex_elem);
+      min = rec_fex_elem_min (fex_elem);
+      max = rec_fex_elem_max (fex_elem);
+      
+      num_fields =
+        rec_record_get_num_fields_by_name (record, field_name);
+      if (min == -1)
+        {
+          /* Process all the fields with the given name.  */
+          min = 0;
+          max = num_fields - 1;
+        }
+      if (max == -1)
+        {
+          max = min;
+        }
+      
+      for (j = 0; j < num_fields; j++)
+        {
+          if ((j >= min) && (j <= max))
+            {
+              /* Set the value of the Jth field
+                 named FIELD_NAME, if it exists.*/
+              field = rec_record_get_field_by_name (record,
+                                                    field_name,
+                                                    j);
+              if (field)
+                {
+                  rec_field_set_value (field, recset_value);
+                }
+            }
+        }
+    }
+}
+
+static void
+recset_process_del (rec_rset_t rset,
+                    rec_record_t record,
+                    rec_fex_t fex)
+{
+  size_t i, j, min, max;
+  size_t num_fields;
+  bool *deletion_mask;
+  rec_fex_elem_t fex_elem;
+  rec_field_t field;
+  rec_field_name_t field_name;
+  rec_comment_t comment;
+  rec_record_elem_t comment_elem;
+  rec_record_elem_t field_elem;
+
+  /* Initialize the deletion mask.  */
+  deletion_mask = malloc (sizeof (bool) * rec_record_num_fields (record));
+  for (i = 0; i < rec_record_num_fields (record); i++)
+    {
+      deletion_mask[i] = false;
+    }
+                    
+  /* Mark fields that will be deleted from the record.  */
+  for (i = 0; i < rec_fex_size (recutl_fex); i++)
+    {
+      fex_elem = rec_fex_get (recutl_fex, i);
+      field_name = rec_fex_elem_field_name (fex_elem);
+      min = rec_fex_elem_min (fex_elem);
+      max = rec_fex_elem_max (fex_elem);
+
+      num_fields =
+        rec_record_get_num_fields_by_name (record, field_name);
+      if (min == -1)
+        {
+          /* Delete all the fields with the given name.  */
+          min = 0;
+          max = num_fields - 1;
+        }
+      if (max == -1)
+        {
+          max = min;
+        }
+
+      for (j = 0; j < num_fields; j++)
+        {
+          if ((j >= min) && (j <= max))
+            {
+              /* Mark this field for deletion.  */
+              field = rec_record_get_field_by_name (record,
+                                                    rec_fex_elem_field_name (fex_elem),
+                                                    j);
+              deletion_mask[rec_record_get_field_index (record, field)] = true;
+            }
+        }
+    }
+                    
+  /* Delete the marked fields.  */
+  i = 0;
+  field_elem = rec_record_first_field (record);
+  while (rec_record_elem_p (field_elem))
+    {
+      if (deletion_mask[i])
+        {
+          if (recset_action == RECSET_ACT_COMMENT)
+            {
+              comment = rec_field_to_comment (rec_record_elem_field (field_elem));
+              comment_elem = rec_record_elem_comment_new (record, comment);
+              rec_record_insert_after (record, field_elem, comment_elem);
+            }
+
+          field_elem = rec_record_remove_field (record, field_elem);
+        }
+      else
+        {
+          field_elem = rec_record_next_field (record, field_elem);
+        }
+
+      i++;
     }
 }
 
