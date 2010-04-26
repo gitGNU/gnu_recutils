@@ -81,7 +81,8 @@ bool recinf_verbose = false;
 bool recinf_names_only = false;
 
 bool
-print_info_file (FILE *in)
+print_info_file (FILE *in,
+                 char *file_name)
 {
   bool ret;
   rec_db_t db;
@@ -94,7 +95,7 @@ print_info_file (FILE *in)
   int position;
 
   ret = true;
-  parser = rec_parser_new (in);
+  parser = rec_parser_new (in, file_name);
   if (rec_parse_db (parser, &db))
     {
       for (position = 0; position < rec_db_size (db); position++)
@@ -206,7 +207,7 @@ main (int argc, char *argv[])
             }
           else
             {
-              if (!print_info_file (in))
+              if (!print_info_file (in, file_name))
                 {
                   /* Parse error */
                   return 1;
@@ -218,7 +219,7 @@ main (int argc, char *argv[])
     }
   else
     {
-      print_info_file (stdin);
+      print_info_file (stdin, "stdin");
     }
 
   return 0;

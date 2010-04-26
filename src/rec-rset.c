@@ -669,8 +669,9 @@ rec_rset_check_record_types (rec_rset_t rset,
       if (!rec_rset_check_field_type (rset, field, &type_str))
         {
           fprintf (errors,
-                   "%s: error: invalid value for field %s[%d] of type '%s'\n",
-                   program_name,
+                   "%s:%s: error: invalid value for field %s[%d] of type '%s'\n",
+                   rec_record_source (record),
+                   rec_record_location_str (record),
                    rec_field_name_str (field),
                    rec_record_get_field_index_by_name (record, field),
                    type_str);
@@ -914,8 +915,9 @@ rec_rset_check_record_key (rec_rset_t rset,
                   if (duplicated_key)
                     {
                       fprintf (errors,
-                               "%s: error: duplicated key value in field '%s' in record\n",
-                               program_name,
+                               "%s:%s: error: duplicated key value in field '%s' in record\n",
+                               rec_record_source (orig_record),
+                               rec_record_location_str (orig_record),
                                rec_field_name_str (key));
                       res++;
                       break;

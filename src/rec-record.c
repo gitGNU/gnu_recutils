@@ -40,6 +40,11 @@ struct rec_record_s
   int field_type;
   int comment_type;
 
+  /* Localization.  */
+  char *source;
+  size_t location;
+  char *location_str;
+
   /* The mset.  */
   rec_mset_t mset;
 };
@@ -67,6 +72,11 @@ rec_record_new (void)
 
   if (record)
     {
+      /* Localization is unused by default.  */
+      record->source = NULL;
+      record->location = 0;
+      record->location_str = NULL;
+
       /* Create the mset.  */
       record->mset = rec_mset_new ();
       if (record->mset)
@@ -98,6 +108,11 @@ rec_record_new (void)
 void
 rec_record_destroy (rec_record_t record)
 {
+  if (record->source)
+    {
+      free (record->source);
+    }
+
   rec_mset_destroy (record->mset);
   free (record);
 }
@@ -669,6 +684,64 @@ rec_record_to_comment (rec_record_t record)
   free (comment_str);
 
   return res;
+}
+
+char *
+rec_record_source (rec_record_t record)
+{
+  char *res;
+
+  if (record->source)
+    {
+      res = record->source;
+    }
+  else
+    {
+      res = "";
+    }
+
+  return res;
+}
+
+void
+rec_record_set_source (rec_record_t record,
+                       char *source)
+{
+  if (record->source)
+    {
+      free (record->source);
+      record->source = NULL;
+    }
+
+  record->source = strdup (source);
+}
+
+size_t
+rec_record_location (rec_record_t record)
+{
+  return record->location;
+}
+
+char *
+rec_record_location_str (rec_record_t record)
+{
+  return record->location_str;
+}
+
+void
+rec_record_set_location (rec_record_t record,
+                         size_t location)
+{
+  record->location = location;
+
+  if (record->location_str)
+    {
+      free (record->location_str);
+      record->location_str = NULL;
+    }
+
+  record->location_str = malloc (30);
+  sprintf (record->location_str, "%d", record->location);
 }
 
 /*

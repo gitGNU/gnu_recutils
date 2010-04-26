@@ -88,6 +88,7 @@ enum rec_parser_error_e
 struct rec_parser_s
 {
   FILE *in; /* File stream used by the parser. */
+  char *file_name;
   
   rec_record_t prev_descriptor;
 
@@ -111,7 +112,8 @@ const char *rec_parser_error_strings[] =
 };
 
 rec_parser_t
-rec_parser_new (FILE *in)
+rec_parser_new (FILE *in,
+                char *file_name)
 {
   rec_parser_t parser;
 
@@ -119,6 +121,14 @@ rec_parser_new (FILE *in)
   if (parser != NULL)
     {
       parser->in = in;
+      if (file_name)
+        {
+          parser->file_name = strdup (file_name);
+        }
+      else
+        {
+          parser->file_name = NULL;
+        }
       parser->eof = false;
       parser->error = false;
       parser->line = 1;
@@ -131,6 +141,11 @@ rec_parser_new (FILE *in)
 void
 rec_parser_destroy (rec_parser_t parser)
 {
+  if (parser->file_name)
+    {
+      free (parser->file_name);
+    }
+
   free (parser);
 }
 
@@ -318,6 +333,10 @@ rec_parse_record (rec_parser_t parser,
       parser->error = REC_PARSER_ENOMEM;
       return false;
     }
+
+  /* Localize the potential record.  */
+  rec_record_set_source (new, parser->file_name);
+  rec_record_set_location (new, parser->line);
 
   /* A record is a list of mixed fields and comments, containing at
    * least one field starting it:
@@ -567,7 +586,7 @@ rec_parse_field_name_str (char *str)
   stm = fmemopen (str2, strlen (str2), "r");
   if (stm)
     {
-      parser = rec_parser_new (stm);
+      parser = rec_parser_new (stm, "dummy");
       if (parser)
         {
           if (!rec_parse_field_name (parser, &field_name))

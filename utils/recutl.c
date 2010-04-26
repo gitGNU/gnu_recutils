@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-23 10:50:44 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-26 19:21:36 jco"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -30,7 +30,7 @@ recutl_parse_db_from_file (FILE *in,
   rec_parser_t parser;
 
   res = true;
-  parser = rec_parser_new (in);
+  parser = rec_parser_new (in, file_name);
 
   while (rec_parse_rset (parser, &rset))
     {
@@ -198,6 +198,7 @@ recutl_read_db_from_file (char *file_name)
   else
     {
       /* Process the standard input.  */
+      file_name = "stdin";
       in = stdin;
     }
 

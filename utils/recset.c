@@ -172,7 +172,8 @@ recset_parse_args (int argc,
             recutl_fex = rec_fex_new (recutl_fex_str);
             if (!recutl_fex)
               {
-                fprintf (stderr, "%s: error: creating the field expression.\n", program_name);
+                fprintf (stderr, "%s: creating the field expression.\n",
+                         program_name);
                 exit (1);
               }
 
@@ -186,14 +187,14 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                fprintf (stderr, "%s: please specify some field with -f.\n",
                          program_name);
                 exit (1);
               }
 
             if (recset_action != RECSET_ACT_NONE)
               {
-                fprintf (stderr, "%s: error: please specify just one action.\n",
+                fprintf (stderr, "%s: please specify just one action.\n",
                          program_name);
                 exit (1);
               }
@@ -207,7 +208,7 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                fprintf (stderr, "%s: please specify some field with -f.\n",
                          program_name);
                 exit (1);
               }
@@ -228,14 +229,14 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                fprintf (stderr, "%s: please specify some field with -f.\n",
                          program_name);
                 exit (1);
               }
 
             if (recset_action != RECSET_ACT_NONE)
               {
-                fprintf (stderr, "%s: error: please specify just one action.\n",
+                fprintf (stderr, "%s: please specify just one action.\n",
                          program_name);
                 exit (1);
               }
@@ -248,14 +249,14 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                fprintf (stderr, "%s: error: please specify some field with -f.\n",
+                fprintf (stderr, "%s: please specify some field with -f.\n",
                          program_name);
                 exit (1);
               }
 
             if (recset_action != RECSET_ACT_NONE)
               {
-                fprintf (stderr, "%s: error: please specify just one action.\n",
+                fprintf (stderr, "%s: please specify just one action.\n",
                          program_name);
                 exit (1);
               }
@@ -381,11 +382,9 @@ recset_process_actions (rec_db_t db)
 
                       if (!recset_verbose)
                         {
-                          fprintf (stderr,
-                                   "%s: operation aborted due to integrity failures\n",
+                          fprintf (stderr, "%s: operation aborted due to integrity failures\n",
                                    program_name);
-                          fprintf (stderr,
-                                   "%s: use --verbose to get a detailed report\n",
+                          fprintf (stderr, "%s: use --verbose to get a detailed report\n",
                                    program_name);
                         }
                       else
@@ -393,13 +392,10 @@ recset_process_actions (rec_db_t db)
                           fprintf (stderr, "%s", errors_str);
                         }
 
-                      fprintf (stderr,
-                               "%s: use --force to proceed anyway\n",
+                      fprintf (stderr,"%s: use --force to proceed anyway\n",
                                program_name);
                       exit (1);
                     }
-
-                  free (errors_str);
                 }
 
                 /* Replace the record in the rset.  */
@@ -413,7 +409,8 @@ recset_process_actions (rec_db_t db)
 
           if (!parse_status)
             {
-              fprintf (stderr, "recset: error: evaluating selection expression.\n");
+              fprintf (stderr, "%s: invalid selection expression.\n",
+                       program_name);
               exit (1);
             }
           
@@ -579,7 +576,7 @@ main (int argc, char *argv[])
 {
   rec_db_t db;
   
-  program_name = strdup (argv[0]);
+  program_name = "recset";
 
   /* Parse arguments.  */
   recset_parse_args (argc, argv);

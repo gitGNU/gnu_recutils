@@ -193,6 +193,14 @@ int rec_record_num_elems (rec_record_t record);
 int rec_record_num_fields (rec_record_t record);
 int rec_record_num_comments (rec_record_t record);
 
+/* Location properties.  */
+char *rec_record_source (rec_record_t record);
+void rec_record_set_source (rec_record_t record, char *source);
+
+size_t rec_record_location (rec_record_t record);
+char *rec_record_location_str (rec_record_t record);
+void rec_record_set_location (rec_record_t record, size_t location);
+
 /* Getting and setting elements.  */
 
 rec_record_elem_t rec_record_get_elem (rec_record_t record, int position);
@@ -428,7 +436,7 @@ typedef struct rec_parser_s *rec_parser_t;
 
 /* Create a parser associated with a given file stream.  If not enough
    memory, return NULL. */
-rec_parser_t rec_parser_new (FILE *in);
+rec_parser_t rec_parser_new (FILE *in, char *file_name);
 
 /* Destroy a parser.
  *
