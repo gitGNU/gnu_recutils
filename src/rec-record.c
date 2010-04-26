@@ -128,6 +128,20 @@ rec_record_dup (rec_record_t record)
       new->field_type = record->field_type;
       new->comment_type = record->comment_type;
       new->mset = rec_mset_dup (record->mset);
+
+      new->source = NULL;
+      if (record->source)
+        {
+          new->source = strdup (record->source);
+        }
+
+      new->location = record->location;
+
+      new->location_str = NULL;
+      if (record->location_str)
+        {
+          new->location_str = strdup (record->location_str);
+        }
     }
 
   return new;
@@ -725,7 +739,18 @@ rec_record_location (rec_record_t record)
 char *
 rec_record_location_str (rec_record_t record)
 {
-  return record->location_str;
+  char *res;
+
+  if (record->location_str)
+    {
+      res = record->location_str;
+    }
+  else
+    {
+      res = "";
+    }
+
+  return res;
 }
 
 void
