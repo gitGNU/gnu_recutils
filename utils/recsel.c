@@ -240,7 +240,8 @@ recsel_process_data (rec_db_t db)
      the request.  */
   if (!recutl_type && (rec_db_size (db) > 1))
     {
-      fprintf (stderr, "Several record types found.  Please use -t to specify one.\n");
+      fprintf (stderr, "%s: several record types found.  Please use -t to specify one.\n",
+               program_name);
       exit (1);
     }
 
@@ -369,7 +370,7 @@ main (int argc, char *argv[])
   rec_db_t db;
 
   res = 0;
-  program_name = strdup (argv[0]);
+  program_name = "recsel";
 
   /* Parse arguments.  */
   recsel_parse_args (argc, argv);
