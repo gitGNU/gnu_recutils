@@ -64,6 +64,7 @@ bool       recutl_insensitive = false;
 long       recutl_num         = -1;
 char      *recset_file        = NULL;
 bool       recset_force       = false;
+bool       recset_verbose     = false;
 
 /*
  * Command line options management
@@ -78,7 +79,8 @@ enum
     DELETE_ACTION_ARG,
     COMMENT_ACTION_ARG,
     SET_ACTION_ARG,
-    FORCE_ARG
+    FORCE_ARG,
+    VERBOSE_ARG
   };
 
 static const struct option GNU_longOptions[] =
@@ -91,6 +93,7 @@ static const struct option GNU_longOptions[] =
     {"comment", no_argument, NULL, COMMENT_ACTION_ARG},
     {"set", required_argument, NULL, SET_ACTION_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
+    {"verbose", no_argument, NULL, VERBOSE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -149,6 +152,11 @@ recset_parse_args (int argc,
         case FORCE_ARG:
           {
             recset_force = true;
+            break;
+          }
+        case VERBOSE_ARG:
+          {
+            recset_verbose = true;
             break;
           }
         case FIELD_EXPR_ARG:
@@ -289,6 +297,9 @@ recset_process_actions (rec_db_t db)
   bool parse_status = true;
   rec_rset_elem_t rec_elem;
   rec_rset_elem_t new_rec_elem;
+  FILE *errors_stm;
+  char *errors_str;
+  size_t errors_str_size;
 
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
@@ -363,13 +374,32 @@ recset_process_actions (rec_db_t db)
               /* Check for integrity.  */
               if (!recset_force)
                 {
-                  if (rec_rset_check_record (rset, record, new_record, program_name, stderr) > 0)
+                  errors_stm = open_memstream (&errors_str, &errors_str_size);
+                  if (rec_rset_check_record (rset, record, new_record, program_name, errors_stm) > 0)
                     {
+                      fclose (errors_stm);
+
+                      if (!recset_verbose)
+                        {
+                          fprintf (stderr,
+                                   "%s: operation aborted due to integrity failures\n",
+                                   program_name);
+                          fprintf (stderr,
+                                   "%s: use --verbose to get a detailed report\n",
+                                   program_name);
+                        }
+                      else
+                        {
+                          fprintf (stderr, "%s", errors_str);
+                        }
+
                       fprintf (stderr,
                                "%s: use --force to proceed anyway\n",
                                program_name);
                       exit (1);
                     }
+
+                  free (errors_str);
                 }
 
                 /* Replace the record in the rset.  */
