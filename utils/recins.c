@@ -107,7 +107,7 @@ recins_insert_record (rec_db_t db,
   rec_field_t field;
   rec_rset_elem_t last_elem, new_elem;
   rec_record_elem_t rec_elem;
-  char *field_type;
+  char *errors;
 
   if (rec_record_num_fields (record) == 0)
     {
@@ -120,20 +120,15 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
-      /* Check the values of the fields in the new record.  */
-      rec_elem = rec_record_null_elem ();
-      while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+      if (!recins_force)
         {
-          field = rec_record_elem_field (rec_elem);
-
-          if (!(recins_force || rec_rset_check_field_type (rset, field, &field_type)))
+          if (rec_rset_check_record (rset, record, program_name, &errors) > 0)
             {
-              fprintf (stderr,
-                       "%s: error: Invalid value for field %s of type '%s'.\n",
-                       program_name, rec_write_field_name_str (rec_field_name (field)), field_type);
+              fprintf (stderr, "%s", errors);
               fprintf (stderr,
                        "%s: error: Use --force to insert the new record anyway.\n",
                        program_name);
+
               exit (1);
             }
         }

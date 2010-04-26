@@ -39,6 +39,7 @@
 /* Textual name of the types expected in the type description
    strings.  */
 #define REC_TYPE_INT_NAME    "int"
+#define REC_TYPE_BOOL_NAME   "bool"
 #define REC_TYPE_RANGE_NAME  "range"
 #define REC_TYPE_REAL_NAME   "real"
 #define REC_TYPE_SIZE_NAME   "size"
@@ -57,6 +58,9 @@
 /* Regular expressions denoting values.  */
 #define REC_TYPE_INT_VALUE_RE                   \
   "^" REC_TYPE_ZBLANKS_RE "[0-9]+" REC_TYPE_ZBLANKS_RE "$"
+
+#define REC_TYPE_BOOL_VALUE_RE                  \
+  "^(yes|no|true|false|0|1)$"
 
 #define REC_TYPE_REAL_VALUE_RE                  \
   "^" REC_TYPE_ZBLANKS_RE "[0-9]+(\\.[0-9]+)?" REC_TYPE_ZBLANKS_RE "$"
@@ -80,12 +84,12 @@
   "$"
   
 /* Regular expression denoting a type name.  */
-#define REC_TYPE_NAME_RE                              \
-  "(" REC_TYPE_INT_NAME  "|" REC_TYPE_RANGE_NAME  "|" \
-      REC_TYPE_REAL_NAME "|" REC_TYPE_SIZE_NAME   "|" \
-      REC_TYPE_LINE_NAME "|" REC_TYPE_REGEXP_NAME "|" \
-      REC_TYPE_DATE_NAME "|" REC_TYPE_ENUM_NAME   "|" \
-      REC_TYPE_FIELD_NAME                             \
+#define REC_TYPE_NAME_RE                               \
+  "(" REC_TYPE_INT_NAME   "|" REC_TYPE_RANGE_NAME  "|" \
+      REC_TYPE_REAL_NAME  "|" REC_TYPE_SIZE_NAME   "|" \
+      REC_TYPE_LINE_NAME  "|" REC_TYPE_REGEXP_NAME "|" \
+      REC_TYPE_DATE_NAME  "|" REC_TYPE_ENUM_NAME   "|" \
+      REC_TYPE_FIELD_NAME "|" REC_TYPE_BOOL_NAME       \
   ")"
 
 /* Regular expressions for the type descriptions.  */
@@ -93,6 +97,10 @@
 /* int  */
 #define REC_TYPE_INT_DESCR_RE                      \
   REC_TYPE_INT_NAME
+
+/* bool */
+#define REC_TYPE_BOOL_DESCR_RE                  \
+  REC_TYPE_BOOL_NAME
 
 /* range MIN..MAX  */
 #define REC_TYPE_RANGE_DESCR_RE                    \
@@ -151,15 +159,16 @@
   REC_TYPE_FIELD_NAME_RE                        \
   REC_TYPE_ZBLANKS_RE                           \
   "("                                           \
-         "(" REC_TYPE_INT_DESCR_RE ")"          \
-     "|" "(" REC_TYPE_RANGE_DESCR_RE ") "       \
-     "|" "(" REC_TYPE_REAL_DESCR_RE ")"         \
-     "|" "(" REC_TYPE_SIZE_DESCR_RE ")"         \
-     "|" "(" REC_TYPE_LINE_DESCR_RE ")"         \
+         "(" REC_TYPE_INT_DESCR_RE    ")"       \
+     "|" "(" REC_TYPE_BOOL_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_RANGE_DESCR_RE  ")"       \
+     "|" "(" REC_TYPE_REAL_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_SIZE_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_LINE_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_REGEXP_DESCR_RE ")"       \
-     "|" "(" REC_TYPE_DATE_DESCR_RE ")"         \
-     "|" "(" REC_TYPE_ENUM_DESCR_RE ")"         \
-     "|" "(" REC_TYPE_FIELD_DESCR_RE ")"        \
+     "|" "(" REC_TYPE_DATE_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_ENUM_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_FIELD_DESCR_RE  ")"       \
   ")"                                           \
   REC_TYPE_ZBLANKS_RE                           \
   "$"
@@ -194,6 +203,7 @@ static bool rec_type_digit_p (char c);
 static bool rec_type_letter_p (char c);
 
 static bool rec_type_check_int (rec_type_t type, char *str);
+static bool rec_type_check_bool (rec_type_t type, char *str);
 static bool rec_type_check_range (rec_type_t type, char *str);
 static bool rec_type_check_real (rec_type_t type, char *str);
 static bool rec_type_check_size (rec_type_t type, char *str);
@@ -316,6 +326,7 @@ rec_type_new (char *str)
             break;
           }
         case REC_TYPE_INT:
+        case REC_TYPE_BOOL:
         case REC_TYPE_REAL:
         case REC_TYPE_LINE:
           {
@@ -381,6 +392,11 @@ rec_type_kind_str (rec_type_t type)
         res = REC_TYPE_INT_NAME;
         break;
       }
+    case REC_TYPE_BOOL:
+      {
+        res = REC_TYPE_BOOL_NAME;
+        break;
+      }
     case REC_TYPE_RANGE:
       {
         res = REC_TYPE_RANGE_NAME;
@@ -442,6 +458,11 @@ rec_type_check (rec_type_t type,
     case REC_TYPE_INT:
       {
         res = rec_type_check_int (type, str);
+        break;
+      }
+    case REC_TYPE_BOOL:
+      {
+        res = rec_type_check_bool (type, str);
         break;
       }
     case REC_TYPE_RANGE:
@@ -531,6 +552,10 @@ rec_type_parse_type_kind (char *str)
     {
       res = REC_TYPE_INT;
     }
+  if (strcmp (str, REC_TYPE_BOOL_NAME) == 0)
+    {
+      res = REC_TYPE_BOOL;
+    }
   if (strcmp (str, REC_TYPE_RANGE_NAME) == 0)
     {
       res = REC_TYPE_RANGE;
@@ -593,6 +618,13 @@ rec_type_check_int (rec_type_t type,
                     char *str)
 {
   return rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
+}
+
+static bool
+rec_type_check_bool (rec_type_t type,
+                     char *str)
+{
+  return rec_type_check_re (REC_TYPE_BOOL_VALUE_RE, str);
 }
 
 static bool

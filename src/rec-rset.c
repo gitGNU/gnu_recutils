@@ -500,6 +500,64 @@ rec_rset_type (rec_rset_t rset)
   return res;
 }
 
+int
+rec_rset_check_record (rec_rset_t rset,
+                       rec_record_t record,
+                       char *program_name,
+                       char **errors)
+{
+  int res;
+  rec_record_elem_t rec_elem;
+  rec_field_t field;
+  char *type;
+  FILE *errors_stm;
+  size_t nfield;
+  size_t errors_size;
+  rec_field_t key;
+  rec_field_name_t key_field_name;
+  rec_record_t descriptor;
+
+  res = 0;
+
+  errors_stm = open_memstream (errors, &errors_size);
+
+  /* Get the field name of the key in the record set, if any.  Note
+     that the first field named "%key:" is used.  */
+  key = NULL;
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      key_field_name = rec_parse_field_name_str ("%key:");
+      key = rec_record_get_field_by_name (descriptor, key_field_name, 0);
+      rec_field_name_destroy (key_field_name);
+      key_field_name = rec_parse_field_name_str (rec_field_value (key));
+    }
+  
+  /* Iterate on every field in the record and check them.  */
+  rec_elem = rec_record_null_elem ();
+  while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+    {
+      field = rec_record_elem_field (rec_elem);
+
+      /* Check for the type.  */
+      if (!rec_rset_check_field_type (rset, field, &type))
+        {
+          /* Invalid value for the field: log an error.  */
+          fprintf (errors_stm,
+                   "%s: error: Invalid value for field %s[%d] of type '%s'.\n",
+                   program_name,
+                   rec_field_name_str (field),
+                   rec_record_get_field_index_by_name (record, field),
+                   type);
+          res++;
+        }
+    }
+
+  fclose (errors_stm);
+
+  return res;
+}
+
 bool
 rec_rset_check_field_type (rec_rset_t rset,
                            rec_field_t field,

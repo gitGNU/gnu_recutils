@@ -48,6 +48,12 @@ rec_field_name (rec_field_t field)
   return field->name;
 }
 
+char *
+rec_field_name_str (rec_field_t field)
+{
+  return rec_write_field_name_str (rec_field_name (field));
+}
+
 void
 rec_field_set_name (rec_field_t field,
                     rec_field_name_t fname)

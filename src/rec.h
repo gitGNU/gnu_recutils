@@ -135,6 +135,7 @@ void rec_field_destroy (rec_field_t field);
 
 /* Return a pointer to the string containing the field name. */
 rec_field_name_t rec_field_name (rec_field_t field);
+char *rec_field_name_str (rec_field_t field);
 
 /* Set the name of a field to a given string. */
 void rec_field_set_name (rec_field_t field, rec_field_name_t fname);
@@ -344,6 +345,7 @@ void rec_rset_set_type (rec_rset_t rset, char *type);
 
 /* Integrity.  */
 
+int rec_rset_check_record (rec_rset_t rset, rec_record_t rec, char *program_name, char **errors);
 bool rec_rset_check_field_type (rec_rset_t rset, rec_field_t field, char **type);
 
 /*
@@ -576,6 +578,8 @@ enum rec_type_kind_e
     REC_TYPE_NONE = 0,
     /* An integer number.  */
     REC_TYPE_INT,
+    /* A Boolean.  */
+    REC_TYPE_BOOL,
     /* An integer number within a given range.  */
     REC_TYPE_RANGE,
     /* A real number.  */
