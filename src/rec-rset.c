@@ -43,6 +43,9 @@ struct rec_rset_s
 {
   rec_record_t descriptor;
 
+  /* Type registry.  */
+  rec_type_reg_t type_reg;
+
   /* Storage for records and comments.  */
   int record_type;
   int comment_type;
@@ -106,6 +109,7 @@ rec_rset_new (void)
         {
           /* No descriptor, initially.  */
           rset->descriptor = NULL;
+          rset->type_reg = NULL;
 
           /* register the types.  */
           rset->record_type = rec_mset_register_type (rset->mset,
@@ -136,6 +140,10 @@ rec_rset_destroy (rec_rset_t rset)
   if (rset->descriptor)
     {
       rec_record_destroy (rset->descriptor);
+    }
+  if (rset->type_reg)
+    {
+      rec_type_reg_destroy (rset->type_reg);
     }
 
   rec_mset_destroy (rset->mset);
@@ -443,12 +451,51 @@ rec_rset_descriptor (rec_rset_t rset)
 void
 rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
 {
+  rec_field_t descr_field;
+  rec_field_name_t type_field_name;
+  char *descr_field_value;
+  size_t i, num_fields;
+  rec_type_t type;
+
   if (rset->descriptor)
     {
       rec_record_destroy (rset->descriptor);
       rset->descriptor = NULL;
     }
   rset->descriptor = record;
+
+  if (rset->descriptor)
+    {
+      /* Update the types registry.  */
+      if (rset->type_reg)
+        {
+          rec_type_reg_destroy (rset->type_reg);
+        }
+      rset->type_reg = rec_type_reg_new ();
+      
+      type_field_name = rec_parse_field_name_str ("%type:");
+      num_fields = rec_record_get_num_fields_by_name (record, type_field_name);
+      for (i = 0; i < num_fields; i++)
+        {
+          descr_field = rec_record_get_field_by_name (record, type_field_name, i);
+          descr_field_value = rec_field_value (descr_field);
+          
+          /* Only valid type descriptors are considered.  Invalid
+             descriptors are ignored.  */
+          if (rec_type_descr_p (descr_field_value))
+            {
+              type = rec_type_new (descr_field_value);
+              if (type)
+                {
+                  rec_type_reg_register (rset->type_reg,
+                                         rec_type_descr_field_name (descr_field_value),
+                                         type);
+                }
+            }
+        }
+
+      rec_field_name_destroy (type_field_name);
+    }
 }
 
 void
@@ -537,55 +584,18 @@ rec_rset_check_field_type (rec_rset_t rset,
                            char **type_str)
 {
   bool res;
-  rec_record_t descriptor;
-  rec_field_t descr_field;
-  char *descr_field_value;
-  char *descr_field_name_str;
-  rec_field_name_t type_field_name;
-  rec_field_name_t field_name;
   rec_type_t type;
-  size_t i, num_fields;
 
   res = true;
 
-  descriptor = rec_rset_descriptor (rset);
-  if (descriptor)
+  type = rec_type_reg_get (rset->type_reg, rec_field_name (field));
+  if (type)
     {
-      type_field_name = rec_parse_field_name_str ("%type:");
-      num_fields = rec_record_get_num_fields_by_name (descriptor, type_field_name);
-      for (i = 0; i < num_fields; i++)
+      if (!rec_type_check (type, rec_field_value (field)))
         {
-          descr_field = rec_record_get_field_by_name (descriptor, type_field_name, i);
-          descr_field_name_str = rec_field_name_str (descr_field);
-          descr_field_value = rec_field_value (descr_field);
-
-          /* Only valid type descriptors are considered.  Invalid
-             descriptors are ignored.  */
-          if (rec_type_descr_p (descr_field_value))
-            {
-              type = rec_type_new (descr_field_value);
-              
-              if (type)
-                {
-                  field_name = rec_type_descr_field_name (descr_field_value);
-                  if (rec_field_name_equal_p (field_name,
-                                              rec_field_name (field)))
-                    {
-                      if (!rec_type_check (type, rec_field_value (field)))
-                        {
-                          *type_str = rec_type_kind_str (type);
-                          res = false;
-                          break;
-                        }
-                    }
-                  
-                  rec_type_destroy (type);
-                }
-              
-            }
+          *type_str = rec_type_kind_str (type);
+          res = false;
         }
-
-      rec_field_name_destroy (type_field_name);
     }
 
   return res;

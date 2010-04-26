@@ -612,6 +612,19 @@ char *rec_type_kind_str (rec_type_t type);
 
 bool rec_type_check (rec_type_t type, char *str);
 
+/*
+ * TYPE REGISTRIES.
+ *
+ */
+
+typedef struct rec_type_reg_s *rec_type_reg_t;
+
+rec_type_reg_t rec_type_reg_new (void);
+void rec_type_reg_destroy (rec_type_reg_t reg);
+
+void rec_type_reg_register (rec_type_reg_t reg, rec_field_name_t name, rec_type_t value);
+rec_type_t rec_type_reg_get (rec_type_reg_t reg, rec_field_name_t name);
+                             
 #endif /* !REC_H */
 
 /* End of rec.h */

@@ -194,8 +194,16 @@ struct rec_type_s
 
 struct rec_type_reg_entry_s
 {
-  char *name;
-  rec_type_t value;
+  rec_field_name_t name;
+  rec_type_t type;
+};
+
+#define REC_TYPE_REG_MAX_ENTRIES 100
+
+struct rec_type_reg_s
+{
+  size_t num_entries;
+  struct rec_type_reg_entry_s entries[REC_TYPE_REG_MAX_ENTRIES];
 };
 
 /*
@@ -511,6 +519,64 @@ void
 rec_type_destroy (rec_type_t type)
 {
   free (type);
+}
+
+rec_type_reg_t
+rec_type_reg_new (void)
+{
+  rec_type_reg_t new;
+
+  new = malloc (sizeof (struct rec_type_reg_s));
+  if (new)
+    {
+      new->num_entries = 0;
+    }
+
+  return new;
+}
+
+void
+rec_type_reg_destroy (rec_type_reg_t reg)
+{
+  size_t i;
+
+  for (i = 0; i < reg->num_entries; i++)
+    {
+      rec_field_name_destroy (reg->entries[i].name);
+      rec_type_destroy (reg->entries[i].type);
+    }
+  
+  free (reg);
+}
+
+void
+rec_type_reg_register (rec_type_reg_t reg,
+                       rec_field_name_t name,
+                       rec_type_t type)
+{
+  reg->entries[reg->num_entries].name = rec_field_name_dup (name);
+  reg->entries[reg->num_entries].type = type;
+  reg->num_entries++;
+}
+
+rec_type_t
+rec_type_reg_get (rec_type_reg_t reg,
+                  rec_field_name_t name)
+{
+  rec_type_t res;
+  size_t i;
+
+  res = NULL;
+  for (i = 0; i < reg->num_entries; i++)
+    {
+      if (rec_field_name_equal_p (reg->entries[i].name, name))
+        {
+          res = reg->entries[i].type;
+          break;
+        }
+    }
+
+  return res;
 }
 
 /*
