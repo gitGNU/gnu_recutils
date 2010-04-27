@@ -708,12 +708,12 @@ rec_rset_check_record_types (rec_rset_t rset,
       if (!rec_rset_check_field_type (rset, field, &type_str))
         {
           fprintf (errors,
-                   "%s:%s: error: invalid value for field %s[%d] of type '%s'\n",
+                   "%s:%s: error: expected '%s' value in %s[%d]\n",
                    rec_record_source (record),
                    rec_record_location_str (record),
+                   type_str,
                    rec_field_name_str (field),
-                   rec_record_get_field_index_by_name (record, field),
-                   type_str);
+                   rec_record_get_field_index_by_name (record, field));
 
           res++;
         }
