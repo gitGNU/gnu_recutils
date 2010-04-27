@@ -81,15 +81,15 @@ static void *rec_rset_comment_dup_fn (void *data);
 
 static int rec_rset_check_record_key (rec_rset_t rset,
                                       rec_record_t orig_record, rec_record_t record,
-                                      char *program_name, FILE *errors);
+                                      FILE *errors);
 static int rec_rset_check_record_types (rec_rset_t rset, rec_record_t record,
-                                        char *program_name, FILE *errors);
+                                        FILE *errors);
 static int rec_rset_check_record_mandatory (rec_rset_t rset, rec_record_t record,
-                                            char *program_name, FILE *errors);
+                                            FILE *errors);
 static int rec_rset_check_record_unique (rec_rset_t rset, rec_record_t record,
-                                         char *program_name, FILE *errors);
+                                         FILE *errors);
 static int rec_rset_check_record_prohibit (rec_rset_t rset, rec_record_t record,
-                                           char *program_name, FILE *errors);
+                                           FILE *errors);
 
 /*
  * Public functions.
@@ -560,20 +560,42 @@ rec_rset_type (rec_rset_t rset)
 }
 
 int
+rec_rset_check (rec_rset_t rset,
+                FILE *errors)
+{
+  int res;
+  rec_rset_elem_t rset_elem;
+  rec_record_t record;
+
+  res = 0;
+
+  rset_elem = rec_rset_null_elem ();
+  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
+    {
+      record = rec_rset_elem_record (rset_elem);
+
+      res += rec_rset_check_record (rset,
+                                    record, record,
+                                    errors);
+    }
+
+  return res;
+}
+
+int
 rec_rset_check_record (rec_rset_t rset,
                        rec_record_t orig_record,
                        rec_record_t record,
-                       char *program_name,
                        FILE *errors)
 {
   int res;
 
   res =
-    rec_rset_check_record_key (rset, orig_record, record, program_name, errors)
-    + rec_rset_check_record_types     (rset, record, program_name, errors)
-    + rec_rset_check_record_mandatory (rset, record, program_name, errors)
-    + rec_rset_check_record_unique    (rset, record, program_name, errors)
-    + rec_rset_check_record_prohibit  (rset, record, program_name, errors);
+    rec_rset_check_record_key (rset, orig_record, record, errors)
+    + rec_rset_check_record_types     (rset, record, errors)
+    + rec_rset_check_record_mandatory (rset, record, errors)
+    + rec_rset_check_record_unique    (rset, record, errors)
+    + rec_rset_check_record_prohibit  (rset, record, errors);
 
   return res;
 }
@@ -588,13 +610,16 @@ rec_rset_check_field_type (rec_rset_t rset,
 
   res = true;
 
-  type = rec_type_reg_get (rset->type_reg, rec_field_name (field));
-  if (type)
+  if (rset->type_reg)
     {
-      if (!rec_type_check (type, rec_field_value (field)))
+      type = rec_type_reg_get (rset->type_reg, rec_field_name (field));
+      if (type)
         {
-          *type_str = rec_type_kind_str (type);
-          res = false;
+          if (!rec_type_check (type, rec_field_value (field)))
+            {
+              *type_str = rec_type_kind_str (type);
+              res = false;
+            }
         }
     }
 
@@ -650,7 +675,6 @@ rec_rset_comment_dup_fn (void *data)
 static int
 rec_rset_check_record_types (rec_rset_t rset,
                              rec_record_t record,
-                             char *program_name,
                              FILE *errors)
 {
   int res;
@@ -686,7 +710,6 @@ rec_rset_check_record_types (rec_rset_t rset,
 static int
 rec_rset_check_record_mandatory (rec_rset_t rset,
                                  rec_record_t record,
-                                 char *program_name,
                                  FILE *errors)
 {
   int res;
@@ -715,8 +738,10 @@ rec_rset_check_record_mandatory (rec_rset_t rset,
                   == 0)
                 {
                   fprintf (errors,
-                           "%s: error: mandatory field '%s' not found in record\n",
-                           program_name, rec_field_value (field));
+                           "%s:%s: error: mandatory field '%s' not found in record\n",
+                           rec_record_source (record),
+                           rec_record_location_str (record),
+                           rec_field_value (field));
                   res++;
                 }
 
@@ -733,7 +758,6 @@ rec_rset_check_record_mandatory (rec_rset_t rset,
 static int
 rec_rset_check_record_unique (rec_rset_t rset,
                               rec_record_t record,
-                              char *program_name,
                               FILE *errors)
 {
   int res;
@@ -763,8 +787,10 @@ rec_rset_check_record_unique (rec_rset_t rset,
                   > 1)
                 {
                   fprintf (errors,
-                           "%s: error: field '%s' shall be unique in this record\n",
-                           program_name, rec_field_value (field));
+                           "%s:%s: error: field '%s' shall be unique in this record\n",
+                           rec_record_source (record),
+                           rec_record_location_str (record),
+                           rec_field_value (field));
                   res++;
                 }
 
@@ -781,7 +807,6 @@ rec_rset_check_record_unique (rec_rset_t rset,
 static int
 rec_rset_check_record_prohibit (rec_rset_t rset,
                                 rec_record_t record,
-                                char *program_name,
                                 FILE *errors)
 {
   int res;
@@ -811,8 +836,10 @@ rec_rset_check_record_prohibit (rec_rset_t rset,
                   > 0)
                 {
                   fprintf (errors,
-                           "%s: error: prohibited field '%s' found in record\n",
-                           program_name, rec_field_value (field));
+                           "%s:%s: error: prohibited field '%s' found in record\n",
+                           rec_record_source (record),
+                           rec_record_location_str (record),
+                           rec_field_value (field));
                   res++;
                 }
 
@@ -830,7 +857,6 @@ static int
 rec_rset_check_record_key (rec_rset_t rset,
                            rec_record_t orig_record,
                            rec_record_t record,
-                           char *program_name,
                            FILE *errors)
 {
   int res;
@@ -867,15 +893,19 @@ rec_rset_check_record_key (rec_rset_t rset,
               if (num_fields == 0)
                 {
                   fprintf (errors,
-                           "%s: error: key field '%s' not found in record\n",
-                           program_name, rec_field_value (field));
+                           "%s:%s: error: key field '%s' not found in record\n",
+                           rec_record_source (record),
+                           rec_record_location_str (record),
+                           rec_field_value (field));
                   res++;
                 }
               else if (num_fields > 1)
                 {
                   fprintf (errors,
-                           "%s: error: multiple key fields '%s' in record\n",
-                           program_name, rec_field_value (field));
+                           "%s:%s: error: multiple key fields '%s' in record\n",
+                           rec_record_source (record),
+                           rec_record_location_str (record),
+                           rec_field_value (field));
                   res++;
                 }
               else  /* num_fields == 1 */

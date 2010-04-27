@@ -353,8 +353,9 @@ void rec_rset_set_type (rec_rset_t rset, char *type);
 
 /* Integrity.  */
 
+int rec_rset_check (rec_rset_t rset, FILE *errors);
 int rec_rset_check_record (rec_rset_t rset, rec_record_t orig_rec,
-                           rec_record_t rec, char *program_name, FILE *errors);
+                           rec_record_t rec, FILE *errors);
 bool rec_rset_check_field_type (rec_rset_t rset, rec_field_t field, char **type);
 
 /*

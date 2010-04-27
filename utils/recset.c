@@ -293,7 +293,6 @@ recset_process_actions (rec_db_t db)
   int numrec;
   rec_rset_t rset;
   rec_record_t record;
-  rec_record_t new_record;
   rec_field_t field;
   bool parse_status = true;
   rec_rset_elem_t rec_elem;
@@ -351,57 +350,25 @@ recset_process_actions (rec_db_t db)
                   || (recutl_num == numrec)))
             {
               /* Process a copy of this record.  */
-              new_record = rec_record_dup (record);
               switch (recset_action)
                 {
                 case RECSET_ACT_SET:
                   {
-                    recset_process_set (rset, new_record, recutl_fex);
+                    recset_process_set (rset, record, recutl_fex);
                     break;
                   }
                 case RECSET_ACT_ADD:
                   {
-                    recset_process_add (rset, new_record, recutl_fex);
+                    recset_process_add (rset, record, recutl_fex);
                     break;
                   }
                 case RECSET_ACT_DELETE:
                 case RECSET_ACT_COMMENT:
                   {
-                    recset_process_del (rset, new_record, recutl_fex);
+                    recset_process_del (rset, record, recutl_fex);
                     break;
                   }
                 }
-
-              /* Check for integrity.  */
-              if (!recset_force)
-                {
-                  errors_stm = open_memstream (&errors_str, &errors_str_size);
-                  if (rec_rset_check_record (rset, record, new_record, program_name, errors_stm) > 0)
-                    {
-                      fclose (errors_stm);
-
-                      if (!recset_verbose)
-                        {
-                          fprintf (stderr, "%s: operation aborted due to integrity failures\n",
-                                   program_name);
-                          fprintf (stderr, "%s: use --verbose to get a detailed report\n",
-                                   program_name);
-                        }
-                      else
-                        {
-                          fprintf (stderr, "%s", errors_str);
-                        }
-
-                      fprintf (stderr,"%s: use --force to proceed anyway\n",
-                               program_name);
-                      exit (1);
-                    }
-                }
-
-                /* Replace the record in the rset.  */
-              new_rec_elem = rec_rset_elem_record_new (rset, new_record);
-              rec_rset_insert_after (rset, rec_elem, new_rec_elem);
-              rec_elem = rec_rset_remove_record (rset, rec_elem);
             }
           
           /* Process the next record.  */
@@ -415,6 +382,31 @@ recset_process_actions (rec_db_t db)
             }
           
           numrec++;
+        }
+
+      /* Check for integrity in the modified rset.  */
+      if (!recset_force)
+        {
+          errors_stm = open_memstream (&errors_str, &errors_str_size);
+          if (rec_rset_check (rset, errors_stm) > 0)
+            {
+              fclose (errors_stm);
+              if (!recset_verbose)
+                {
+                  fprintf (stderr, "%s: operation aborted due to integrity failures\n",
+                           program_name);
+                  fprintf (stderr, "%s: use --verbose to get a detailed report\n",
+                           program_name);
+                }
+              else
+                {
+                  fprintf (stderr, "%s", errors_str);
+                }
+              
+              fprintf (stderr, "%s: use --force to skip the integrity check\n",
+                       program_name);
+              exit (1);
+            }
         }
     }
 }

@@ -40,12 +40,12 @@ void recins_parse_args (int argc, char **argv);
  * Global variables
  */
 
-char *program_name; /* Initialized in main() */
-
-char *recins_type = NULL;
-rec_record_t recins_record = NULL;
-char *recins_file = NULL;
-bool recins_force = false;
+char         *program_name   = NULL;
+char         *recins_type    = NULL;
+rec_record_t  recins_record  = NULL;
+char         *recins_file    = NULL;
+bool          recins_force   = false;
+bool          recins_verbose = false;
 
 /*
  * Command line options management
@@ -57,7 +57,8 @@ enum
   TYPE_ARG,
   NAME_ARG,
   VALUE_ARG,
-  FORCE_ARG
+  FORCE_ARG,
+  VERBOSE_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -67,6 +68,7 @@ static const struct option GNU_longOptions[] =
     {"name", required_argument, NULL, NAME_ARG},
     {"value", required_argument, NULL, VALUE_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
+    {"verbose", no_argument, NULL, VERBOSE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -82,7 +84,9 @@ Insert a record in a rec file.\n\
   -f, --field=STR                     field name.  Should be followed by a -v.\n\
   -v, --value=STR                     field value.  Should be preceded by a -f.\n\
       --force                         insert the record even if it is violating\n\
-                                        record restrictions.\n"
+                                        record restrictions.\n\
+      --verbose                       get a detailed report if the integrity check\n\
+                                        fails.\n"
 COMMON_ARGS_DOC
 "\n\
 If no FILE is specified then the command acts like a filter, getting\n\
@@ -108,6 +112,9 @@ recins_insert_record (rec_db_t db,
   rec_rset_elem_t last_elem, new_elem;
   rec_record_elem_t rec_elem;
   char *errors;
+  FILE *errors_stm;
+  char *errors_str;
+  size_t errors_str_size;
 
   if (rec_record_num_fields (record) == 0)
     {
@@ -120,18 +127,6 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
-      if (!recins_force)
-        {
-          if (rec_rset_check_record (rset, record, record, program_name, stderr) > 0)
-            {
-              fprintf (stderr,
-                       "%s: use --force to insert the new record anyway\n",
-                       program_name);
-
-              exit (1);
-            }
-        }
-
       new_elem = rec_rset_elem_record_new (rset, record);
 
       if (rec_rset_num_records (rset) == 0)
@@ -167,7 +162,31 @@ recins_insert_record (rec_db_t db,
           rec_db_insert_rset (db, rset, -1);
         }
     }
-  
+
+  if (!recins_force && rset)
+    {
+      errors_stm = open_memstream (&errors_str, &errors_str_size);
+      if (rec_rset_check (rset, errors_stm) > 0)
+        {
+          fclose (errors_stm);
+          if (!recins_verbose)
+            {
+              fprintf (stderr, "%s: operation aborted due to integrity failures\n",
+                       program_name);
+              fprintf (stderr, "%s: use --verbose to get a detailed report\n",
+                       program_name);
+            }
+          else
+            {
+              fprintf (stderr, "%s", errors_str);
+            }
+
+          fprintf (stderr, "%s: use --force to skip the integrity check\n",
+                   program_name);
+          exit (1);
+        }
+    }
+
   return res;
 }
 
@@ -197,6 +216,11 @@ void recins_parse_args (int argc,
             recins_force = true;
             break;
           }
+        case VERBOSE_ARG:
+          {
+            recins_verbose = true;
+            break;
+          }
         case TYPE_ARG:
         case 't':
           {
@@ -215,6 +239,8 @@ void recins_parse_args (int argc,
             if (recins_record == NULL)
               {
                 recins_record = rec_record_new ();
+                rec_record_set_source (recins_record, "cmdli");
+                rec_record_set_location (recins_record, 0);
               }
 
             /* Make sure that the field name ends with a colon ':'.  */
