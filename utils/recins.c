@@ -116,7 +116,7 @@ recins_insert_record (rec_db_t db,
   char *errors_str;
   size_t errors_str_size;
 
-  if (rec_record_num_fields (record) == 0)
+  if (!record || (rec_record_num_fields (record) == 0))
     {
       /* Do nothing.  */
       return true;
