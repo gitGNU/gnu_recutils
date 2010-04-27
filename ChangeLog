@@ -1,3 +1,7 @@
+2010-04-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* .gitignore: Ignore /utils/recfix.
+
 2010-04-22  Jose E. Marchesi  <jco@terma.com>
 
 	* utils/recset.c (recset_parse_args): Stop the program with an
