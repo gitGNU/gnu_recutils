@@ -40,10 +40,21 @@ bool recsel_process_data (rec_db_t db);
  * Global variables
  */
 
-char *program_name; /* Initialized in main() */
+char      *program_name        = NULL;
+bool       recsel_print_values = false;
+char      *recutl_sex_str      = NULL;
+rec_sex_t  recutl_sex          = NULL;
+char      *recsel_fex_str      = NULL;
+rec_fex_t  recsel_fex          = NULL;
+char      *recutl_type         = NULL;
+bool       recsel_collapse     = false;
+bool       recsel_count        = false;
+bool       recutl_insensitive  = false;
+bool       recsel_descriptors  = false;
+size_t     recutl_num          = -1;
 
 /*
- * Command line options management
+ * Command line options management.
  */
 
 enum
@@ -99,35 +110,6 @@ Examples:\n\
         recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n\
 \n"
   RECUTL_HELP_FOOTER_DOC ("recsel");
-
-bool recsel_print_values = false;
-
-/* String containing the selection expression.  */
-char *recutl_sex_str = NULL;
-rec_sex_t recutl_sex = NULL;
-
-/* Field list.  */
-char *recsel_fex_str = NULL;
-rec_fex_t recsel_fex = NULL;
-
-/* Record type.  */
-char *recutl_type = NULL;
-
-/* Whether to collapse the output.  */
-bool recsel_collapse = false;
-
-/* Whether to provide a count of the matching records.  */
-bool recsel_count = false;
-
-/* Whether to be case-insensitive while evaluating
-   selection expressions.  */
-bool recutl_insensitive = false;
-
-/* Whether to include record descriptors in the selection results.  */
-bool recsel_descriptors = false;
-
-/* Whether to provide an specific record.  */
-long recutl_num = -1;
 
 void
 recsel_parse_args (int argc,

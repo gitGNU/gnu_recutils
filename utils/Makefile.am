@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-bin_PROGRAMS = recinf recsel recins recdel recset
+bin_PROGRAMS = recinf recsel recins recdel recset recfix
 
 COMMONSRC = recutl.h recutl.c
 
@@ -55,5 +55,12 @@ recset_SOURCES = $(COMMONSRC) \
 recset_LDFLAGS = -L$(top_builddir)/src
 recset_CPPFLAGS = -I$(top_srcdir)/lib
 recset_LDADD = $(top_builddir)/lib/libgnu.la -lrec
+
+recfix_SOURCES = $(COMMONSRC) \
+                 recfix.c
+
+recfix_LDFLAGS = -L$(top_builddir)/src
+recfix_CPPFLAGS = -I$(top_srcdir)/lib
+recfix_LDADD = $(top_builddir)/lib/libgnu.la -lrec
 
 # End of Makefile.am
