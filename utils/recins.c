@@ -166,7 +166,7 @@ recins_insert_record (rec_db_t db,
   if (!recins_force && rset)
     {
       errors_stm = open_memstream (&errors_str, &errors_str_size);
-      if (rec_rset_check (rset, errors_stm) > 0)
+      if (rec_rset_check (rset, false, errors_stm) > 0)
         {
           fclose (errors_stm);
           if (!recins_verbose)

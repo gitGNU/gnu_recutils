@@ -79,6 +79,7 @@ static bool rec_rset_comment_equal_fn (void *data1, void *data2);
 static void rec_rset_comment_disp_fn (void *data);
 static void *rec_rset_comment_dup_fn (void *data);
 
+static int rec_rset_check_descriptor (rec_rset_t rset, FILE *errors);
 static int rec_rset_check_record_key (rec_rset_t rset,
                                       rec_record_t orig_record, rec_record_t record,
                                       FILE *errors);
@@ -561,13 +562,27 @@ rec_rset_type (rec_rset_t rset)
 
 int
 rec_rset_check (rec_rset_t rset,
+                bool check_descriptor_p,
                 FILE *errors)
 {
   int res;
   rec_rset_elem_t rset_elem;
   rec_record_t record;
+  rec_record_t descriptor;
 
   res = 0;
+
+  if (check_descriptor_p)
+    {
+      res += rec_rset_check_descriptor (rset, errors);
+    }
+
+  if (res > 0)
+    {
+      /* Stop here, since a lot of errors in the records will be
+         generated due to errors in the record descriptor.  */
+      return res;
+    }
 
   rset_elem = rec_rset_null_elem ();
   while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
@@ -959,6 +974,101 @@ rec_rset_check_record_key (rec_rset_t rset,
         }                                          
       
       rec_field_name_destroy (field_name);
+    }
+
+  return res;
+}
+
+static int
+rec_rset_check_descriptor (rec_rset_t rset,
+                           FILE *errors)
+{
+  int res;
+  rec_record_t descriptor;
+  rec_record_elem_t rec_elem;
+  rec_field_t field;
+  rec_field_name_t field_name;
+  rec_field_name_t key_fname;
+  rec_field_name_t type_fname;
+  rec_field_name_t mandatory_fname;
+  rec_field_name_t unique_fname;
+  rec_field_name_t prohibit_fname;
+  char *field_value;
+  rec_field_name_t parsed_field;
+
+  res = 0;
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      /* Prepare fnames.  */
+      key_fname = rec_parse_field_name_str ("%key:");
+      type_fname = rec_parse_field_name_str ("%type:");
+      mandatory_fname = rec_parse_field_name_str ("%mandatory:");
+      unique_fname = rec_parse_field_name_str ("%unique:");
+      prohibit_fname = rec_parse_field_name_str ("%prohibit:");
+
+      /* Only one 'key:' entry is allowed, if any.  */
+      if (rec_record_get_num_fields_by_name (descriptor, key_fname) > 1)
+        {
+          fprintf (errors,
+                   "%s:%s: error: only one %%key field is allowed in a record descriptor\n",
+                   rec_record_source (descriptor),
+                   rec_record_location_str (descriptor));
+          res++;
+        }
+
+      /* Iterate on fields.  */
+      rec_elem = rec_record_null_elem ();
+      while (rec_record_elem_p (rec_elem = rec_record_next_field (descriptor, rec_elem)))
+        {
+          field = rec_record_elem_field (rec_elem);
+          field_name = rec_field_name (field);
+          field_value = rec_field_value (field);
+
+          if (rec_field_name_equal_p (field_name, type_fname))
+            {
+              /* Check the type descriptor.  */
+              if (!rec_type_descr_p (field_value))
+                {
+                  /* XXX: make rec_type_descr_p to report more details.  */
+                  fprintf (errors,
+                           "%s:%s: error: invalid type specification in %%type[%d]\n",
+                           rec_record_source (descriptor),
+                           rec_record_location_str (descriptor),
+                           rec_record_get_field_index_by_name (descriptor, field));
+                  res++;
+                }
+            }
+          else if (rec_field_name_equal_p (field_name, mandatory_fname)
+                   || rec_field_name_equal_p (field_name, unique_fname)
+                   || rec_field_name_equal_p (field_name, prohibit_fname))
+            {
+              /* Check that the value of this field is a parseable
+                 field name.  */
+              parsed_field = rec_parse_field_name_str (field_value);
+              if (!parsed_field)
+                {
+                  fprintf (errors,
+                           "%s:%s: error: value for %s[%d] is not a field name\n",
+                           rec_record_source (descriptor),
+                           rec_record_location_str (descriptor),
+                           rec_field_name_str (field),
+                           rec_record_get_field_index_by_name (descriptor, field));
+                  res++;
+                }
+              else
+                {
+                  rec_field_name_destroy (parsed_field);
+                }
+            }
+        }
+
+      /* Destroy names.  */
+      rec_field_name_destroy (key_fname);
+      rec_field_name_destroy (type_fname);
+      rec_field_name_destroy (mandatory_fname);
+      rec_field_name_destroy (unique_fname);
+      rec_field_name_destroy (prohibit_fname);
     }
 
   return res;

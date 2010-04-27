@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-27 13:52:49 jco"
+/* -*- mode: C -*- Time-stamp: "2010-04-27 14:56:21 jco"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -116,7 +116,9 @@ recfix_process_data (rec_db_t db)
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-      if (rec_rset_check (rset, stderr) > 0)
+      if (rec_rset_check (rset,
+                          true, /* Check descriptor.  */
+                          stderr) > 0)
         {
           ret = false;
         }
