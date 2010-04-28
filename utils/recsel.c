@@ -160,7 +160,8 @@ recsel_parse_args (int argc,
               }
 
             /* Create the field expresion.  */
-            recsel_fex = rec_fex_new (recsel_fex_str);
+            recsel_fex = rec_fex_new (recsel_fex_str,
+                                      REC_FEX_SUBSCRIPTS);
             if (!recsel_fex)
               {
                 fprintf (stderr, "internal error: creating the field expression.\n");

@@ -57,7 +57,8 @@ struct rec_fex_s
  * Static function declarations.
  */
 
-static bool rec_fex_parse_str (rec_fex_t new, char *str);
+static bool rec_fex_parse_str_simple (rec_fex_t new, char *str);
+static bool rec_fex_parse_str_subscripts (rec_fex_t new, char *str);
 static bool rec_fex_parse_elem (rec_fex_elem_t elem, char *str);
 static bool rec_fex_parse_int (char *p, int *num);
 
@@ -66,7 +67,8 @@ static bool rec_fex_parse_int (char *p, int *num);
  */
 
 rec_fex_t
-rec_fex_new (char *str)
+rec_fex_new (char *str,
+             enum rec_fex_kind_e kind)
 {
   rec_fex_t new;
   int i;
@@ -82,10 +84,22 @@ rec_fex_new (char *str)
         }
 
       /* Parse the string.  */
-      if (!rec_fex_parse_str (new, str))
+      if (kind == REC_FEX_SUBSCRIPTS)
         {
-          free (new);
-          new = NULL;
+          if (!rec_fex_parse_str_subscripts (new, str))
+            {
+              free (new);
+              new = NULL;
+            }
+        }
+      else
+        {
+          /* Simple FEX.  */
+          if (!rec_fex_parse_str_simple (new, str))
+            {
+              free (new);
+              new = NULL;
+            }
         }
     }
   
@@ -236,8 +250,80 @@ rec_fex_sort (rec_fex_t fex)
  */
 
 static bool
-rec_fex_parse_str (rec_fex_t new,
-                   char *str)
+rec_fex_parse_str_simple (rec_fex_t new,
+                          char *str)
+{
+  bool res;
+  rec_fex_elem_t elem;
+  rec_field_name_t field_name;
+  char *fex_str;
+  char *elem_str;
+  size_t i;
+
+  if (!str)
+    {
+      return false;
+    }
+
+  fex_str = strdup (str);
+  if (!fex_str)
+    {
+      return false;
+    }
+
+  res = true;
+
+  elem_str = strsep (&fex_str, " \t\n");
+  do
+    {
+      if (strlen (elem_str) > 0)
+        {
+          if (field_name = rec_parse_field_name_str (elem_str))
+            {
+              /* Add an element to the FEX.  */
+              elem = malloc (sizeof (struct rec_fex_elem_s));
+              elem->field_name = field_name;
+              elem->str = strdup (elem_str);
+              elem->min = -1;
+              elem->max = -1;
+              new->elems[new->num_elems++] = elem;              
+            }
+          else
+            {
+              res = false;
+              break;
+            }
+        }
+    }
+  while ((elem_str = strsep (&fex_str, " \t\n")));
+
+  if (new->num_elems == 0)
+    {
+      /* No elements were recognized.  */
+      res = false;
+    }
+
+  if (res)
+    {
+      new->str = strdup (str);
+    }
+  else
+    {
+      /* Destroy parsed elements.  */
+      for (i = 0; i < new->num_elems; i++)
+        {
+          rec_field_name_destroy (new->elems[i]->field_name);
+          free (new->elems[i]->str);
+          free (new->elems[i]);
+        }
+    }
+
+  return res;
+}
+
+static bool
+rec_fex_parse_str_subscripts (rec_fex_t new,
+                              char *str)
 {
   bool res;
   char *elem_str;

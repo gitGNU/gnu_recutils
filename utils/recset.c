@@ -169,7 +169,8 @@ recset_parse_args (int argc,
               }
 
             /* Create the field expression.  */
-            recutl_fex = rec_fex_new (recutl_fex_str);
+            recutl_fex = rec_fex_new (recutl_fex_str,
+                                      REC_FEX_SUBSCRIPTS);
             if (!recutl_fex)
               {
                 fprintf (stderr, "%s: creating the field expression.\n",

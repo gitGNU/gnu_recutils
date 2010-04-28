@@ -561,7 +561,14 @@ void rec_sex_print_ast (rec_sex_t sex);
 typedef struct rec_fex_s *rec_fex_t;
 typedef struct rec_fex_elem_s *rec_fex_elem_t;
 
-rec_fex_t rec_fex_new (char *str);
+enum rec_fex_kind_e
+{
+  REC_FEX_SIMPLE,
+  REC_FEX_SUBSCRIPTS
+};
+
+rec_fex_t rec_fex_new (char *str,
+                       enum rec_fex_kind_e kind);
 void rec_fex_destroy (rec_fex_t fex);
 
 bool prec_fex_check (char *str);

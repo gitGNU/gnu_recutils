@@ -729,10 +729,12 @@ rec_rset_check_record_mandatory (rec_rset_t rset,
 {
   int res;
   rec_record_t descriptor;
+  rec_fex_t mandatory_fex;
   rec_field_name_t field_name;
   rec_field_name_t mandatory_field_name;
+  char *mandatory_field_str;
   rec_field_t field;
-  size_t i, num_fields;
+  size_t i, j, num_fields;
   
   res = 0;
 
@@ -746,9 +748,18 @@ rec_rset_check_record_mandatory (rec_rset_t rset,
           field = rec_record_get_field_by_name (descriptor, field_name, i);
 
           /* Parse the field name from the value of %mandatory:  */
-          mandatory_field_name = rec_parse_field_name_str (rec_field_value (field));
-          if (mandatory_field_name)
+          mandatory_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+          if (!mandatory_fex)
             {
+              /* Invalid value in %mandatory:.  Ignore it.  */
+              break;
+            }
+
+          for (j = 0; j < rec_fex_size (mandatory_fex); j++)
+            {
+              mandatory_field_name = rec_fex_elem_field_name (rec_fex_get (mandatory_fex, j));
+              mandatory_field_str = rec_fex_elem_field_name_str (rec_fex_get (mandatory_fex, j));
+
               if (rec_record_get_num_fields_by_name (record, mandatory_field_name)
                   == 0)
                 {
@@ -756,13 +767,11 @@ rec_rset_check_record_mandatory (rec_rset_t rset,
                            "%s:%s: error: mandatory field '%s' not found in record\n",
                            rec_record_source (record),
                            rec_record_location_str (record),
-                           rec_field_value (field));
+                           mandatory_field_str);
                   res++;
                 }
-
-              rec_field_name_destroy (mandatory_field_name);
             }
-        }                                          
+        }
       
       rec_field_name_destroy (field_name);
     }
@@ -777,10 +786,12 @@ rec_rset_check_record_unique (rec_rset_t rset,
 {
   int res;
   rec_record_t descriptor;
+  rec_fex_t unique_fex;
   rec_field_name_t field_name;
   rec_field_name_t unique_field_name;
+  char *unique_field_str;
   rec_field_t field;
-  size_t i;
+  size_t i, j, num_fields;
   
   res = 0;
 
@@ -788,16 +799,24 @@ rec_rset_check_record_unique (rec_rset_t rset,
   if (descriptor)
     {
       field_name = rec_parse_field_name_str ("%unique:");
-      for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
-                                                         field_name);
-           i++)
+      num_fields = rec_record_get_num_fields_by_name (descriptor, field_name);
+      for (i = 0; i < num_fields; i++)
         {
           field = rec_record_get_field_by_name (descriptor, field_name, i);
 
           /* Parse the field name from the value of %unique:  */
-          unique_field_name = rec_parse_field_name_str (rec_field_value (field));
-          if (unique_field_name)
+          unique_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+          if (!unique_fex)
             {
+              /* Invalid value in %unique:.  Ignore it.  */
+              break;
+            }
+
+          for (j = 0; j < rec_fex_size (unique_fex); j++)
+            {
+              unique_field_name = rec_fex_elem_field_name (rec_fex_get (unique_fex, j));
+              unique_field_str = rec_fex_elem_field_name_str (rec_fex_get (unique_fex, j));
+
               if (rec_record_get_num_fields_by_name (record, unique_field_name)
                   > 1)
                 {
@@ -805,13 +824,11 @@ rec_rset_check_record_unique (rec_rset_t rset,
                            "%s:%s: error: field '%s' shall be unique in this record\n",
                            rec_record_source (record),
                            rec_record_location_str (record),
-                           rec_field_value (field));
+                           unique_field_str);
                   res++;
                 }
-
-              rec_field_name_destroy (unique_field_name);
             }
-        }                                          
+        }
       
       rec_field_name_destroy (field_name);
     }
@@ -826,10 +843,12 @@ rec_rset_check_record_prohibit (rec_rset_t rset,
 {
   int res;
   rec_record_t descriptor;
+  rec_fex_t prohibit_fex;
   rec_field_name_t field_name;
   rec_field_name_t prohibit_field_name;
+  char *prohibit_field_str;
   rec_field_t field;
-  size_t i;
+  size_t i, j, num_fields;
   
   res = 0;
 
@@ -837,16 +856,24 @@ rec_rset_check_record_prohibit (rec_rset_t rset,
   if (descriptor)
     {
       field_name = rec_parse_field_name_str ("%prohibit:");
-      for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
-                                                         field_name);
-           i++)
+      num_fields = rec_record_get_num_fields_by_name (descriptor, field_name);
+      for (i = 0; i < num_fields; i++)
         {
           field = rec_record_get_field_by_name (descriptor, field_name, i);
 
           /* Parse the field name from the value of %prohibit:  */
-          prohibit_field_name = rec_parse_field_name_str (rec_field_value (field));
-          if (prohibit_field_name)
+          prohibit_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+          if (!prohibit_fex)
             {
+              /* Invalid value in %prohibit:.  Ignore it.  */
+              break;
+            }
+
+          for (j = 0; j < rec_fex_size (prohibit_fex); j++)
+            {
+              prohibit_field_name = rec_fex_elem_field_name (rec_fex_get (prohibit_fex, j));
+              prohibit_field_str = rec_fex_elem_field_name_str (rec_fex_get (prohibit_fex, j));
+
               if (rec_record_get_num_fields_by_name (record, prohibit_field_name)
                   > 0)
                 {
@@ -854,13 +881,11 @@ rec_rset_check_record_prohibit (rec_rset_t rset,
                            "%s:%s: error: prohibited field '%s' found in record\n",
                            rec_record_source (record),
                            rec_record_location_str (record),
-                           rec_field_value (field));
+                           prohibit_field_str);
                   res++;
                 }
-
-              rec_field_name_destroy (prohibit_field_name);
             }
-        }                                          
+        }
       
       rec_field_name_destroy (field_name);
     }
@@ -994,7 +1019,7 @@ rec_rset_check_descriptor (rec_rset_t rset,
   rec_field_name_t unique_fname;
   rec_field_name_t prohibit_fname;
   char *field_value;
-  rec_field_name_t parsed_field;
+  rec_fex_t fex;
 
   res = 0;
   descriptor = rec_rset_descriptor (rset);
@@ -1044,21 +1069,21 @@ rec_rset_check_descriptor (rec_rset_t rset,
                    || rec_field_name_equal_p (field_name, prohibit_fname))
             {
               /* Check that the value of this field is a parseable
-                 field name.  */
-              parsed_field = rec_parse_field_name_str (field_value);
-              if (!parsed_field)
+                 list of field names.  */
+              fex = rec_fex_new (field_value, REC_FEX_SIMPLE);
+              if (fex)
+                {
+                  rec_fex_destroy (fex);
+                }
+              else
                 {
                   fprintf (errors,
-                           "%s:%s: error: value for %s[%d] is not a field name\n",
+                           "%s:%s: error: value for %s[%d] is not a list of field names\n",
                            rec_record_source (descriptor),
                            rec_record_location_str (descriptor),
                            rec_field_name_str (field),
                            rec_record_get_field_index_by_name (descriptor, field));
                   res++;
-                }
-              else
-                {
-                  rec_field_name_destroy (parsed_field);
                 }
             }
         }
