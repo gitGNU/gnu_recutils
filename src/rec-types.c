@@ -143,7 +143,7 @@
 
 /* field FIELD_NAME  */
 #define REC_TYPE_FIELD_PART_RE                  \
-  "[a-zA-Z%][a-zA-Z0-9_]*"
+  "[a-zA-Z%][a-zA-Z0-9_-]*"
 #define REC_TYPE_FIELD_NAME_RE                  \
   REC_TYPE_FIELD_PART_RE                        \
   "(" ":" REC_TYPE_FIELD_PART_RE ")*" ":?"
