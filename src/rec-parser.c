@@ -762,6 +762,7 @@ rec_parse_field_name_part (rec_parser_t parser,
 
           if (rec_parser_letter_p (c)
               || rec_parser_digit_p (c)
+              || (c == '-')
               || (c == '_'))
             {
               if (!rec_parser_buf_add (buf, c))
