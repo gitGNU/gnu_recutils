@@ -43,6 +43,9 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
   :type 'symbol
   :group 'rec-mode)
 
+(defvar rec-recsel "recsel"
+  "Name of the 'recsel' utility from the GNU recutils.")
+
 ;;;; Variables and constants that the user does not want to touch (really!)
 
 (defconst rec-keyword-rec "%rec"
@@ -680,20 +683,27 @@ If no such record exist then don't move and return nil."
     (when pos
       (goto-char pos))))
 
-(defun rec-count (&optional type descriptors)
+(defun rec-count (&optional type)
   "If TYPE is a string, return the number of records of the
-specified type in the current file.
-
-If TYPE is nil, return the number of records in the current file
-not including the record descriptors.
-
-If TYPE is t, return the number of records in the current file,
-including the record descriptors.
-
-XXX Update documentation"
-  (let ((count 0))
-    (rec-do (lambda () (setq count (+ count 1))) type descriptors)
-    count))
+specified type in the current file."
+  (let (num
+        (rec-file-name (if buffer-file-name
+                           buffer-file-name
+                         "")))
+    (with-temp-buffer
+      (if (stringp type)
+        (call-process rec-recsel
+                      nil ; infile
+                      t   ; output to current buffer.
+                      nil ; display
+                      "-t" type "-c" rec-file-name)
+        (call-process rec-recsel
+                      nil ; infile
+                      t   ; output to current buffer.
+                      nil ; display
+                      "-c" rec-file-name))
+      (setq num (buffer-substring-no-properties (point-min) (point-max))))
+    (string-to-number num)))
 
 (defun rec-do (rec-do-func &optional type descriptors)
   "Apply REC-DO-FUNC for each record of type TYPE.  If TYPE is nil
