@@ -1,3 +1,8 @@
+2010-04-30  Jose E. Marchesi  <jco@terma.com>
+
+	* lisp/rec-mode.el (rec-count): New implementation based on
+	'recsel'.
+
 2010-04-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* .gitignore: Ignore /utils/recfix.
