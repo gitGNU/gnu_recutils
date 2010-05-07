@@ -30,11 +30,11 @@
 
 #include <stdbool.h>
 
-/* Parse an integer in the NULL-terminated string STR and store it at
-   NUMBER.  Return true if the conversion was successful.  false
+/* Parse an integer/real in the NULL-terminated string STR and store
+   it at NUMBER.  Return true if the conversion was successful.  false
    otherwise. */
 bool rec_atoi (char *str, int *number);
-
+bool rec_atof (char *str, float *number);
 
 #endif /* rec-utils.h */
 

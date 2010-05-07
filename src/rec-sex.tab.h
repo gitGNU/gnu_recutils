@@ -40,27 +40,28 @@
       know about them.  */
    enum yytokentype {
      REC_SEX_TOK_INT = 258,
-     REC_SEX_TOK_STR = 259,
-     REC_SEX_TOK_NAM = 260,
-     REC_SEX_TOK_OR = 261,
-     REC_SEX_TOK_AND = 262,
-     REC_SEX_TOK_GT = 263,
-     REC_SEX_TOK_LT = 264,
-     REC_SEX_TOK_NEQ = 265,
-     REC_SEX_TOK_EQL = 266,
-     REC_SEX_TOK_ADD = 267,
-     REC_SEX_TOK_SUB = 268,
-     REC_SEX_TOK_MAT = 269,
-     REC_SEX_TOK_MOD = 270,
-     REC_SEX_TOK_DIV = 271,
-     REC_SEX_TOK_MUL = 272,
-     REC_SEX_TOK_MIN = 273,
-     REC_SEX_TOK_NEG = 274,
-     REC_SEX_TOK_NOT = 275,
-     REC_SEX_TOK_BP = 276,
-     REC_SEX_TOK_EP = 277,
-     REC_SEX_TOK_ERR = 278,
-     REC_SEX_TOK_SHARP = 279
+     REC_SEX_TOK_REAL = 259,
+     REC_SEX_TOK_STR = 260,
+     REC_SEX_TOK_NAM = 261,
+     REC_SEX_TOK_OR = 262,
+     REC_SEX_TOK_AND = 263,
+     REC_SEX_TOK_GT = 264,
+     REC_SEX_TOK_LT = 265,
+     REC_SEX_TOK_NEQ = 266,
+     REC_SEX_TOK_EQL = 267,
+     REC_SEX_TOK_ADD = 268,
+     REC_SEX_TOK_SUB = 269,
+     REC_SEX_TOK_MAT = 270,
+     REC_SEX_TOK_MOD = 271,
+     REC_SEX_TOK_DIV = 272,
+     REC_SEX_TOK_MUL = 273,
+     REC_SEX_TOK_MIN = 274,
+     REC_SEX_TOK_NEG = 275,
+     REC_SEX_TOK_NOT = 276,
+     REC_SEX_TOK_BP = 277,
+     REC_SEX_TOK_EP = 278,
+     REC_SEX_TOK_ERR = 279,
+     REC_SEX_TOK_SHARP = 280
    };
 #endif
 
@@ -79,7 +80,7 @@ typedef union YYSTYPE
 
 
 /* Line 1676 of yacc.c  */
-#line 83 "rec-sex.tab.h"
+#line 84 "rec-sex.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

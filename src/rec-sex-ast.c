@@ -42,6 +42,7 @@ struct rec_sex_ast_node_s
   enum rec_sex_ast_node_type_e type;
   union {
     int integer;
+    float real;
     char *string;
     char *name;
   } val;
@@ -157,6 +158,20 @@ rec_sex_ast_node_set_int (rec_sex_ast_node_t node,
 {
   node->type = REC_SEX_INT;
   node->val.integer = num;
+}
+
+float
+rec_sex_ast_node_real (rec_sex_ast_node_t node)
+{
+  return node->val.real;
+}
+
+void
+rec_sex_ast_node_set_real (rec_sex_ast_node_t node,
+                           float num)
+{
+  node->type = REC_SEX_REAL;
+  node->val.real = num;
 }
 
 char *

@@ -50,4 +50,23 @@ rec_atoi (char *str,
   return res;
 }
 
+bool
+rec_atof (char *str,
+          float *number)
+{
+  bool res;
+  char *end;
+
+  res = false;
+  
+  *number = strtof (str, &end);
+  if ((*str != '\0') && (*end == '\0'))
+    {
+      /* The entire string is valid.  */
+      res = true;
+    }
+  
+  return res;
+}
+
 /* End of rec-utils.c */

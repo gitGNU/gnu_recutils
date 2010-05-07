@@ -81,6 +81,7 @@
 /* Bison declarations.  */
 
 %token <node> REC_SEX_TOK_INT
+%token <node> REC_SEX_TOK_REAL
 %token <node> REC_SEX_TOK_STR
 %token <node> REC_SEX_TOK_NAM
 %left <node> REC_SEX_TOK_AND REC_SEX_TOK_OR
@@ -116,6 +117,7 @@ input: /* Empty */
      ;
 
 exp : REC_SEX_TOK_INT          { $$ = $1; }
+    | REC_SEX_TOK_REAL         { $$ = $1; }
     | REC_SEX_TOK_STR          { $$ = $1; }
     | REC_SEX_TOK_NAM          { $$ = $1; }
     | exp REC_SEX_TOK_EQL exp  { CREATE_NODE_OP2 (REC_SEX_OP_EQL, $$, $1, $3); }

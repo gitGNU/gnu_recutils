@@ -53,6 +53,7 @@ enum rec_sex_ast_node_type_e
 
   /* Values.  */
   REC_SEX_INT,
+  REC_SEX_REAL,
   REC_SEX_STR,
   REC_SEX_NAME
 };
@@ -85,6 +86,8 @@ void rec_sex_ast_node_set_type (rec_sex_ast_node_t node,
 
 int rec_sex_ast_node_int (rec_sex_ast_node_t node);
 void rec_sex_ast_node_set_int (rec_sex_ast_node_t node, int num);
+float rec_sex_ast_node_real (rec_sex_ast_node_t node);
+void rec_set_ast_node_set_real (rec_sex_ast_node_t node, float num);
 char *rec_sex_ast_node_str (rec_sex_ast_node_t node);
 void rec_sex_ast_node_set_str (rec_sex_ast_node_t node, char *str);
 char *rec_sex_ast_node_name (rec_sex_ast_node_t node);

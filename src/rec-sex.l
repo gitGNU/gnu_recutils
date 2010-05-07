@@ -89,6 +89,19 @@ STRING             '([^'\n]|\\(.|\n))*'
 "||"     { return REC_SEX_TOK_OR; }
 "#"      { return REC_SEX_TOK_SHARP; }
 
+{DIGIT}*\.{DIGIT}+ {
+  /*
+   * Create a real node.
+   */
+  float real_value;
+  
+  yylval->node = rec_sex_ast_node_new ();
+  rec_atof (yytext, &real_value);
+  rec_sex_ast_node_set_real (yylval->node, real_value);
+
+  return REC_SEX_TOK_REAL;
+}
+
 {DIGIT}+ {
   /*
    * Create an integer node.

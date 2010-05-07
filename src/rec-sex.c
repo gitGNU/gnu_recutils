@@ -43,14 +43,16 @@ struct rec_sex_s
   rec_sex_parser_t parser;
 };
 
-#define REC_SEX_VAL_INT 0
-#define REC_SEX_VAL_STR 1
+#define REC_SEX_VAL_INT  0
+#define REC_SEX_VAL_REAL 1
+#define REC_SEX_VAL_STR  2
 
 struct rec_sex_val_s
 {
   int type;
 
   int int_val;
+  float real_val;
   char *str_val;
 };
 
@@ -59,6 +61,8 @@ static struct rec_sex_val_s rec_sex_eval_node (rec_sex_t sex,
                                                rec_record_t record,
                                                rec_sex_ast_node_t node,
                                                bool *status);
+static int rec_sex_op_type (struct rec_sex_val_s op1,
+                            struct rec_sex_val_s op2);
 
 /*
  * Public functions.
@@ -124,6 +128,11 @@ rec_sex_compile (rec_sex_t sex,
         case REC_SEX_VAL_INT:                                           \
           {                                                             \
             res = (val.int_val != 0);                                   \
+            break;                                                      \
+          }                                                             \
+        case REC_SEX_VAL_REAL:                                          \
+          {                                                             \
+            res = true;                                                 \
             break;                                                      \
           }                                                             \
         case REC_SEX_VAL_STR:                                           \
@@ -281,7 +290,7 @@ rec_sex_eval_node (rec_sex_t sex,
     case REC_SEX_NOVAL:
       {
         fprintf (stderr, "Application bug: REC_SEX_NOVAL node found.\nPlease report this!\n");
-        *status = false;
+        exit (1);
         break;
       }
       /* Operations.  */
@@ -628,6 +637,47 @@ rec_sex_eval_node (rec_sex_t sex,
 
         break;
       }
+    }
+
+  return res;
+}
+
+static int
+rec_sex_op_type (struct rec_sex_val_s op1,
+                 struct rec_sex_val_s op2)
+{
+  int res;
+  int int_val1;
+  int int_val2;
+  float real_val1;
+  float real_val2;
+
+  /* Determine the type of the result of a binary numeric operator
+     operating on OP1 and OP2.  The rule here is:
+
+     - If some of the values can be read as a real value, the
+       operation is real.  Otherwise..
+     - If some of the values can be read as an integer value, the
+       operation is integer.  Otherwise...
+     - The operation is a string.
+  */
+
+  if ((op1.type == REC_SEX_VAL_REAL)
+      || (op2.type == REC_SEX_VAL_REAL))
+    {
+      res = REC_SEX_VAL_REAL;
+    }
+  else
+    {
+      if ((op1.type == REC_SEX_VAL_INT)
+          || (op2.type == REC_SEX_VAL_INT))
+        {
+          res = REC_SEX_VAL_INT;
+        }
+      else
+        {
+          res = REC_SEX_VAL_STR;
+        }
     }
 
   return res;
