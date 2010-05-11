@@ -29,53 +29,38 @@
 # The following variables contain the names of the recutils that will
 # be used by the script.
 
-tt_p_recsel=recsel
-tt_p_recins=recins
-tt_p_recdel=recdel
-tt_p_recset=recset
-tt_p_recfix=recfix
-tt_p_recinf=recinf
+tt_recsel=recsel
+tt_recins=recins
+tt_recdel=recdel
+tt_recset=recset
+tt_recfix=recfix
+tt_recinf=recinf
 
 ## Recutils Interface ##
 
-# Run the utilities
-tt_recsel()
-{
-    ${tt_p_recsel} $*
-}
-
-tt_recins()
-{
-    ${tt_p_recins} $*
-}
-
-tt_recdel()
-{
-    ${tt_p_recdel} $*
-}
-
-tt_recset()
-{
-    ${tt_p_recset} $*
-}
-
-tt_recfix()
-{
-    ${tt_p_recfix} $*
-}
-
-tt_recinf()
-{
-    ${tt_p_recinf} $*
-}
-
 # Check the availability of the GNU recutils.  If they are not found,
 # notify the user and exit.
-tt_rec_check_utilities()
+tt_rec_check_utility ()
 {
-    echo foo
+    # Parameters:
+    # $1 => The name of the utility to check.
+    test "$#" -gt "0" && {
+        ${1} --version 2>&1 > /dev/null < /dev/null || tt_error "$1 not found"
+    }
 }
 
+tt_rec_check_utilities ()
+{
+    for u in $tt_recinf \
+             $tt_recfix \
+             $tt_recsel \
+             $tt_recins \
+             $tt_recdel \
+             $tt_recset
+    do
+        tt_rec_check_utility $u
+    done
+}
 
 ## VC Interface ##
 #
@@ -89,18 +74,21 @@ tt_rec_check_utilities()
 #
 # tt_vc_XXX_OP
 #
-#    Where XXX is the name of a version control system.
+#    Where XXX is the name of a supported version control system.
+
+# Supported VCs
+tt_supported_vcs="cvs git bzr"
 
 ## Utility Functions ##
 #
 # Misc functions used by the script.
 
 # Print a message and exit with an error status.
-tt_error()
+tt_error ()
 {
     if test "$#" -gt "0"
     then
-        echo $1 2>&1
+        echo "error: $1" 2>&1
     fi
     
     exit 1
@@ -108,6 +96,6 @@ tt_error()
 
 ## Start! ##
 
-tt_recsel $*
+tt_rec_check_utilities
 
 # End of tasktool
