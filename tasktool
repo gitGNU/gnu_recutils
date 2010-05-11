@@ -1,0 +1,113 @@
+#!/bin/bash
+
+# Simple Task Manager, yay!
+
+# Copyright (C) 2010 Jose E. Marchesi
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+## Configuration ##
+#
+# This section contains variables that can be tweaked by the user to
+# adapt the behavior of tasktool.
+
+# Tasktool depends on the GNU record utilities to work.  If they are
+# not installed in your system please get them from
+# ftp://ftp.gnu.org/gnu/recutils
+#
+# The following variables contain the names of the recutils that will
+# be used by the script.
+
+tt_p_recsel=recsel
+tt_p_recins=recins
+tt_p_recdel=recdel
+tt_p_recset=recset
+tt_p_recfix=recfix
+tt_p_recinf=recinf
+
+## Recutils Interface ##
+
+# Run the utilities
+tt_recsel()
+{
+    ${tt_p_recsel} $*
+}
+
+tt_recins()
+{
+    ${tt_p_recins} $*
+}
+
+tt_recdel()
+{
+    ${tt_p_recdel} $*
+}
+
+tt_recset()
+{
+    ${tt_p_recset} $*
+}
+
+tt_recfix()
+{
+    ${tt_p_recfix} $*
+}
+
+tt_recinf()
+{
+    ${tt_p_recinf} $*
+}
+
+# Check the availability of the GNU recutils.  If they are not found,
+# notify the user and exit.
+tt_rec_check_utilities()
+{
+    echo foo
+}
+
+
+## VC Interface ##
+#
+# Functions to interact with version control systems and hide its
+# details.  Each operation OP implemented in this interface involves
+# the creation of a couple of functions:
+#
+# tt_vc_OP
+#
+#    The VC-independent function.
+#
+# tt_vc_XXX_OP
+#
+#    Where XXX is the name of a version control system.
+
+## Utility Functions ##
+#
+# Misc functions used by the script.
+
+# Print a message and exit with an error status.
+tt_error()
+{
+    if test "$#" -gt "0"
+    then
+        echo $1 2>&1
+    fi
+    
+    exit 1
+}
+
+## Start! ##
+
+tt_recsel $*
+
+# End of tasktool
