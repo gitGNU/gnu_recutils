@@ -14,11 +14,12 @@ Email: jemarch@gnu.org
 %rec: Task
 %key: Id
 %type: Title line
-%fsort: Id Title Status Originator Description
+# %type: State enum open closed
+%fsort: Id Title State Originator Description
 
 Id: 203
 Title: Update to autoconf 2.64
-Status: closed
+State: closed
 Originator: jemarch@gnu.org
 Description: 
 + Both libfoo and footool source trees shall be updated to support
@@ -29,7 +30,7 @@ Description:
 
 Id: 204
 Title: Other task
-Status: closed
+State: open
 Originator: jemarch@gnu.org
 Description: 
 + Description of other task.

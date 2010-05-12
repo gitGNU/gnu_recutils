@@ -93,10 +93,15 @@ List tasks.
 
 Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
+  -s, --state                         list tasks with the given state:
+                                       'closed' or 'open'.
+  -o, --originator                    list tasks with the given originator.
 
 Examples:
 
         tasktool list
+        tasktool list -s closed
+        tasktool list -o jemarch@gnu.org
 
 $tt_help_footer"
 
@@ -137,6 +142,13 @@ tt_rec_check_utilities ()
 ## DB Interface ##
 #
 # Accessing the tasks database.
+
+# Test whether the database can be read.
+tt_db_check ()
+{
+    test -f ${tt_db} || \
+        { echo "$tt_recsel: cannot read tasks database ${tt_db}"; exit 1; }
+}
 
 # Test whether a task with the given ID exists in the database.
 tt_db_task_p ()
@@ -181,7 +193,7 @@ tt_supported_vcs="cvs git bzr"
 #
 # Misc functions used by the script.
 
-# Print a message and exit with an error status.
+# Print a message and exit with an error state.
 tt_error ()
 {
     if test "$#" -gt "0"
@@ -232,7 +244,7 @@ tt_process_cmd_show ()
 # Process the 'list' subcommand
 tt_process_cmd_list ()
 {
-    TEMP=`getopt -o -e: --long help -n 'tasktool: list' -- "$@"`
+    TEMP=`getopt -o -e:s:o: --long help,state,originator -n 'tasktool: list' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -240,6 +252,8 @@ tt_process_cmd_list ()
     eval set -- "$TEMP" || exit 1;
 
     selection_expression="1"
+    state=""
+    originator=""
     while true
     do
         case "$1" in
@@ -247,8 +261,14 @@ tt_process_cmd_list ()
                 echo "$tt_help_list"
                 exit 1;
                 ;;
-            -e)
-                selection_expression="$2"
+            -s|--state)
+                state="$2"
+                shift
+                shift
+                ;;
+            -o|--originator)
+                originator="$2"
+                shift
                 shift
                 ;;
             *)
@@ -262,6 +282,17 @@ tt_process_cmd_list ()
     then
         echo "$tt_help_list"
         exit 1
+    fi
+
+    # Prepare the selection expression
+    if test -n "$state"
+    then
+        selection_expression="$selection_expression && (State = '$state')"
+    fi
+
+    if test -n "$originator"
+    then
+        selection_expression="$selection_expression && (Originator = '$originator')"
     fi
     
     tasks=`${tt_recsel} -t Task -e "$selection_expression" ${tt_db}`
@@ -320,6 +351,7 @@ tt_parse_arguments ()
 
 ## Start! ##
 
+tt_db_check
 tt_rec_check_utilities
 tt_parse_arguments $*
 
