@@ -97,7 +97,6 @@ Mandatory arguments to long options are mandatory for short options too.
 Examples:
 
         tasktool list
-        tasktool list -e \"Status = 'closed'\"
 
 $tt_help_footer"
 
