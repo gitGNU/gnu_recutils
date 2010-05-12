@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Simple Task Manager, yay!
+# Simple Tasks Manager, yay!
 
 # Copyright (C) 2010 Jose E. Marchesi
 
@@ -22,6 +22,9 @@
 # This section contains variables that can be tweaked by the user to
 # adapt the behavior of tasktool.
 
+# File containing the tasks database.
+tt_db=TODO
+
 # Tasktool depends on the GNU record utilities to work.  If they are
 # not installed in your system please get them from
 # ftp://ftp.gnu.org/gnu/recutils
@@ -35,6 +38,76 @@ tt_recdel=recdel
 tt_recset=recset
 tt_recfix=recfix
 tt_recinf=recinf
+
+## Internal Variables ##
+#
+# The user don't want to touch them.
+
+tt_tasktool=tasktool
+tt_version="0.1"
+tt_copyright_holder="Jose E. Marchesi"
+tt_copyright_years="2010"
+
+# Help messages
+tt_help_footer="\
+Report tasktool bugs to bug-recutils@gnu.org
+tasktool home page: <http://www.gnu.org/software/recutils/tasktool/>
+General help using GNU software: <http://www.gnu.org/gethelp/>"
+
+tt_help="\
+Usage: $tt_tasktool [OPTION]... ACTION [OPTION]...
+Very simple tasks manager.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+      --version                       print a version message and exit.
+
+$tt_tasktool supports the following sub commands.
+
+       list                           get a list of issues.
+       show                           print information about a given task.
+
+To get detailed help on a specific sub command use '$tt_tasktool CMD
+--help', like in:
+
+       tasktool show --help
+
+$tt_help_footer"
+
+tt_help_show="\
+Usage: $tt_tasktool show [OPTION]... TASK_ID
+Show information about a given task.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+
+Examples:
+
+        tasktool show 203
+
+$tt_help_footer"
+
+tt_help_list="\
+Usage: $tt_tasktool list [OPTION]...
+List tasks.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+
+Examples:
+
+        tasktool list
+        tasktool list -e \"Status = 'closed'\"
+
+$tt_help_footer"
+
+# Version message
+tt_version="\
+$tt_tasktool $tt_version
+Copyright (C) $tt_copyright_years $tt_copyright_holder
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law."
 
 ## Recutils Interface ##
 
@@ -60,6 +133,32 @@ tt_rec_check_utilities ()
     do
         tt_rec_check_utility $u
     done
+}
+
+## DB Interface ##
+#
+# Accessing the tasks database.
+
+# Test whether a task with the given ID exists in the database.
+tt_db_task_p ()
+{
+    # Parameters:
+    # $1 => Id of a task.
+    COUNT=`${tt_recsel} -t Task -e "Id = '$1'" -c ${tt_db}`
+    if test "$COUNT" -gt "0"
+    then
+        return 0
+    fi
+
+    return 1
+}
+
+# Show a given task
+tt_db_show_task ()
+{
+    # Parameters:
+    # $1 => Id of the task to show.
+    ${tt_recsel} -t Task -e "Id = '$1'" ${tt_db}
 }
 
 ## VC Interface ##
@@ -94,8 +193,135 @@ tt_error ()
     exit 1
 }
 
+# Process the 'show' subcommand
+tt_process_cmd_show ()
+{
+    TEMP=`getopt -o f:: --long help -n 'tasktool: show' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_show"
+                exit 1
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    # Get the ID of the task to show.
+    if test "$#" != "1"
+    then
+        echo "$tt_help_show"
+        exit 1
+    fi
+
+    # Check if a task with a given ID exists.
+    tt_db_task_p "$1" || \
+        { echo "$tt_tasktool: task '$1' not found."; exit 1; }
+    tt_db_show_task "$1"
+}
+
+# Process the 'list' subcommand
+tt_process_cmd_list ()
+{
+    TEMP=`getopt -o -e: --long help -n 'tasktool: list' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    selection_expression="1"
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_list"
+                exit 1;
+                ;;
+            -e)
+                selection_expression="$2"
+                shift
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    if test "$#" != "0"
+    then
+        echo "$tt_help_list"
+        exit 1
+    fi
+    
+    tasks=`${tt_recsel} -t Task -e "$selection_expression" ${tt_db}`
+    ntasks=`echo "$tasks" | ${tt_recsel} -c`
+    ntask="0"
+    while test "$ntask" -lt "$ntasks"
+    do
+        task=`echo "$tasks" | ${tt_recsel} -n $ntask`
+        task_id=`echo "$task" | ${tt_recsel} -P Id`
+        task_title=`echo "$task" | ${tt_recsel} -P Title`
+        
+        echo "$task_id $task_title"
+
+        ntask=`expr $ntask + 1`
+    done
+}
+
+# Parse arguments and set some variables.
+tt_parse_arguments ()
+{
+    TEMP=`getopt -o +:: --long help,version -n 'tasktool' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+    
+    while true
+    do
+        case "$1" in
+            --version)
+                echo "$tt_version"
+                shift
+                break
+                ;;
+            show)
+                shift
+                tt_process_cmd_show $*
+                break
+                ;;
+            list)
+                shift
+                tt_process_cmd_list $*
+                break
+                ;;
+            --)
+                shift
+                ;;
+            --help|*)
+                echo "$tt_help"
+                exit 1
+                ;;
+        esac
+    done
+}
+
 ## Start! ##
 
 tt_rec_check_utilities
+tt_parse_arguments $*
 
 # End of tasktool
