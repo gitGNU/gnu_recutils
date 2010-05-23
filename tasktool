@@ -142,10 +142,14 @@ Examples:
 $tt_help_footer"
 
 tt_help_create="\
-Usage: $tt_tasktool create TITLE
+Usage: $tt_tasktool create -t TITLE
 Create a new issue in the database.
 
 Mandatory arguments to long options are mandatory for short options too.
+  -t, --title=STR                     title for the new issue.  This option is
+                                        mandatory.
+  -i, --id=NUMBER                     the ID of the new issue.  If this option is not
+                                        used then an ID is created for the new issue.
       --help                          print this help message and exit.
 
 Examples:
@@ -192,14 +196,20 @@ tt_rec_check_utilities ()
 #
 # Accessing the tasks database.
 
-# Test whether the database can be read.
-# If it is not present then create a new one.
+# Test whether the database can be read and is correct.
 tt_db_check ()
 {
     test -f ${tt_db} || \
         {
            tt_error "cannot open database in $tt_db.  Use 'init' to create one."
         }
+
+    recfix ${tt_db}
+    if test "$?" != "0"
+    then
+        tt_error "data integrity problem in ${tt_cb}.  See the errors above."
+        exit 1
+    fi
 }
 
 # Create a new, empty database.
@@ -230,11 +240,26 @@ tt_db_task_p ()
 }
 
 # Show a given issue
+# Parameters:
+# $1 => Id of the task to show.
 tt_db_show_task ()
 {
-    # Parameters:
-    # $1 => Id of the task to show.
     ${tt_recsel} -t Issue -e "Id = '$1'" ${tt_db}
+}
+
+# Get a free ID for an issue.
+tt_db_free_id ()
+{
+    max_id=0
+    for id in `${tt_recsel} -t Issue -P Id ${tt_db}`
+    do
+        if test $id -gt $max_id
+        then
+            max_id=$id
+        fi
+    done
+
+    echo `expr $max_id + 1`
 }
 
 ## VC Interface ##
@@ -406,7 +431,7 @@ tt_process_cmd_list ()
 # Process the 'create' subcommand
 tt_process_cmd_create ()
 {
-    TEMP=`getopt -o -:: --long help -n 'tasktool: create' -- "$@"`
+    TEMP=`getopt -o -:t: --long help,title: -n 'tasktool: create' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -420,6 +445,11 @@ tt_process_cmd_create ()
                 echo "$tt_help_create"
                 exit 1
                 ;;
+            -t|--title)
+                title=$2
+                shift
+                shift
+                ;;
             *)
                 shift
                 break
@@ -427,14 +457,23 @@ tt_process_cmd_create ()
         esac
     done
 
-    if test "$#" != "1"
+    if test "$#" != "0"
     then
+        echo $*
         echo "$tt_help_create"
         exit 1
     fi
 
+    test -n $title || {
+        tt_error "you must specify a title for the new issue."
+        exit 1
+    }
+
+    new_id=`tt_db_free_id`
+
     # Add the new issue to the database.
-    echo "TODO: ADD THE ISSUE WITH TITLE: $*"
+    $tt_recins -t Issue -f Id -v $new_id -f Title -v $title $tt_db
+    echo "tasktool: issue $new_id added to $tt_db."
 }
 
 # Parse arguments and set some variables.
