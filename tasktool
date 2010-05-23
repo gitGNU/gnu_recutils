@@ -58,14 +58,13 @@ tt_db_template="\
 %doc:
 + Contributor to GNU recutils.
 
-%rec: Task
+%rec: Issue
 %key: Id
 %type: Title line
 # %type: State enum open closed
 %fsort: Id Title State Originator Description
 
-# End of TODO
-"
+# End of TODO"
 
 # Help messages
 tt_help_footer="\
@@ -74,17 +73,21 @@ tasktool home page: <http://www.gnu.org/software/recutils/tasktool/>
 General help using GNU software: <http://www.gnu.org/gethelp/>"
 
 tt_help="\
-Usage: $tt_tasktool [OPTION]... ACTION [OPTION]...
+Usage: $tt_tasktool [OPTION]... SUBCOMMAND [OPTION]...
 Very simple tasks manager.
 
 Mandatory arguments to long options are mandatory for short options too.
+  -d, --database=FILE                 location of the database to use.  It
+                                        defaults to $tt_db.                                  
       --help                          print this help message and exit.
       --version                       print a version message and exit.
 
 $tt_tasktool supports the following sub commands.
 
+       init                           initialize a new database in the default
+                                        location.
        list                           get a list of issues.
-       show                           print information about a given task.
+       show                           print information about a given issue.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
 --help', like in:
@@ -93,9 +96,22 @@ To get detailed help on a specific sub command use '$tt_tasktool CMD
 
 $tt_help_footer"
 
+tt_help_init="\
+Usage: $tt_tasktool init
+Initialize a tasktool database.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+
+Examples:
+
+        tasktool -d my-database.rec init
+
+$tt_help_footer"
+
 tt_help_show="\
-Usage: $tt_tasktool show [OPTION]... TASK_ID
-Show information about a given task.
+Usage: $tt_tasktool show [OPTION]... ISSUE_ID
+Show information about a given issue.
 
 Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
@@ -108,13 +124,13 @@ $tt_help_footer"
 
 tt_help_list="\
 Usage: $tt_tasktool list [OPTION]...
-List tasks.
+List issues.
 
 Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
-  -s, --state                         list tasks with the given state:
+  -s, --state                         list issues with the given state:
                                        'closed' or 'open'.
-  -o, --originator                    list tasks with the given originator.
+  -o, --originator                    list issues with the given originator.
 
 Examples:
 
@@ -168,9 +184,20 @@ tt_db_check ()
 {
     test -f ${tt_db} || \
         {
-           echo "$tt_db_template" > ${tt_db}
-           echo "$tt_tasktool: database initialized in ${tt_db}."
+           tt_error "cannot open database in $tt_db.  Use 'init' to create one."
         }
+}
+
+# Create a new, empty database.
+tt_db_create ()
+{
+    test -f ${tt_db} && {
+        tt_error "database already exists in $tt_db."
+        return
+    }
+
+    echo "$tt_db_template" > ${tt_db}
+    echo "$tt_tasktool: database initialized in ${tt_db}."
 }
 
 # Test whether a task with the given ID exists in the database.
@@ -178,7 +205,7 @@ tt_db_task_p ()
 {
     # Parameters:
     # $1 => Id of a task.
-    COUNT=`${tt_recsel} -t Task -e "Id = '$1'" -c ${tt_db}`
+    COUNT=`${tt_recsel} -t Issue -e "Id = '$1'" -c ${tt_db}`
     if test "$COUNT" -gt "0"
     then
         return 0
@@ -187,12 +214,12 @@ tt_db_task_p ()
     return 1
 }
 
-# Show a given task
+# Show a given issue
 tt_db_show_task ()
 {
     # Parameters:
     # $1 => Id of the task to show.
-    ${tt_recsel} -t Task -e "Id = '$1'" ${tt_db}
+    ${tt_recsel} -t Issue -e "Id = '$1'" ${tt_db}
 }
 
 ## VC Interface ##
@@ -225,6 +252,34 @@ tt_error ()
     fi
     
     exit 1
+}
+
+# Process the 'init' subcommand
+tt_process_cmd_init ()
+{
+    TEMP=`getopt -o f:: --long help -n 'tasktool: init' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_init"
+                exit 1
+                ;;
+            *)
+                shift
+                break;
+                ;;
+        esac
+    done
+
+    # Initialize the database
+    tt_db_create
 }
 
 # Process the 'show' subcommand
@@ -318,7 +373,7 @@ tt_process_cmd_list ()
         selection_expression="$selection_expression && (Originator = '$originator')"
     fi
     
-    tasks=`${tt_recsel} -t Task -e "$selection_expression" ${tt_db}`
+    tasks=`${tt_recsel} -t Issue -e "$selection_expression" ${tt_db}`
     ntasks=`echo "$tasks" | ${tt_recsel} -c`
     ntask="0"
     while test "$ntask" -lt "$ntasks"
@@ -336,7 +391,7 @@ tt_process_cmd_list ()
 # Parse arguments and set some variables.
 tt_parse_arguments ()
 {
-    TEMP=`getopt -o +:: --long help,version -n 'tasktool' -- "$@"`
+    TEMP=`getopt -o +d: --long help,database:,version -n 'tasktool' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -351,15 +406,26 @@ tt_parse_arguments ()
                 shift
                 break
                 ;;
+            init)
+                shift
+                tt_process_cmd_init $*
+                break
+                ;;
             show)
                 shift
+                tt_db_check
                 tt_process_cmd_show $*
                 break
                 ;;
             list)
                 shift
+                tt_db_check
                 tt_process_cmd_list $*
                 break
+                ;;
+            -d|--database)
+                tt_db="$2"
+                shift; shift;
                 ;;
             --)
                 shift
@@ -378,7 +444,6 @@ tt_parse_arguments ()
 
 ## Start! ##
 
-tt_db_check
 tt_rec_check_utilities
 tt_parse_arguments $*
 
