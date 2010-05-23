@@ -47,6 +47,25 @@ tt_tasktool=tasktool
 tt_version="0.1"
 tt_copyright_holder="Jose E. Marchesi"
 tt_copyright_years="2010"
+tt_db_template="\
+# -*- mode: rec -*-
+#
+# TODO file for the GNU recutils.
+
+%rec: Hacker
+%key: Email
+%fsort: Name Email
+%doc:
++ Contributor to GNU recutils.
+
+%rec: Task
+%key: Id
+%type: Title line
+# %type: State enum open closed
+%fsort: Id Title State Originator Description
+
+# End of TODO
+"
 
 # Help messages
 tt_help_footer="\
@@ -144,10 +163,14 @@ tt_rec_check_utilities ()
 # Accessing the tasks database.
 
 # Test whether the database can be read.
+# If it is not present then create a new one.
 tt_db_check ()
 {
     test -f ${tt_db} || \
-        { echo "$tt_recsel: cannot read tasks database ${tt_db}"; exit 1; }
+        {
+           echo "$tt_db_template" > ${tt_db}
+           echo "$tt_tasktool: database initialized in ${tt_db}."
+        }
 }
 
 # Test whether a task with the given ID exists in the database.
@@ -341,9 +364,13 @@ tt_parse_arguments ()
             --)
                 shift
                 ;;
-            --help|*)
+            --help)
                 echo "$tt_help"
                 exit 1
+                ;;
+            *)
+                # Do nothing
+                break;
                 ;;
         esac
     done
