@@ -88,6 +88,7 @@ $tt_tasktool supports the following sub commands.
                                         location.
        list                           get a list of issues.
        show                           print information about a given issue.
+       create                         create a new issue.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
 --help', like in:
@@ -137,6 +138,19 @@ Examples:
         tasktool list
         tasktool list -s closed
         tasktool list -o jemarch@gnu.org
+
+$tt_help_footer"
+
+tt_help_create="\
+Usage: $tt_tasktool create TITLE
+Create a new issue in the database.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+
+Examples:
+
+        tasktool create \"The function 'parse_field_name' is buggy.\"
 
 $tt_help_footer"
 
@@ -201,10 +215,11 @@ tt_db_create ()
 }
 
 # Test whether a task with the given ID exists in the database.
+#
+# Parameters:
+# $1 => Id of a task.
 tt_db_task_p ()
 {
-    # Parameters:
-    # $1 => Id of a task.
     COUNT=`${tt_recsel} -t Issue -e "Id = '$1'" -c ${tt_db}`
     if test "$COUNT" -gt "0"
     then
@@ -337,7 +352,7 @@ tt_process_cmd_list ()
         case "$1" in
             --help)
                 echo "$tt_help_list"
-                exit 1;
+                exit 1
                 ;;
             -s|--state)
                 state="$2"
@@ -388,6 +403,40 @@ tt_process_cmd_list ()
     done
 }
 
+# Process the 'create' subcommand
+tt_process_cmd_create ()
+{
+    TEMP=`getopt -o -:: --long help -n 'tasktool: create' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_create"
+                exit 1
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    if test "$#" != "1"
+    then
+        echo "$tt_help_create"
+        exit 1
+    fi
+
+    # Add the new issue to the database.
+    echo "TODO: ADD THE ISSUE WITH TITLE: $*"
+}
+
 # Parse arguments and set some variables.
 tt_parse_arguments ()
 {
@@ -421,6 +470,12 @@ tt_parse_arguments ()
                 shift
                 tt_db_check
                 tt_process_cmd_list $*
+                break
+                ;;
+            create)
+                shift
+                tt_db_check
+                tt_process_cmd_create $*
                 break
                 ;;
             -d|--database)
