@@ -8,31 +8,10 @@
 %doc:
 + Contributor to GNU recutils.
 
-Name: Jose E. Marchesi
-Email: jemarch@gnu.org
-
-%rec: Task
+%rec: Issue
 %key: Id
 %type: Title line
 # %type: State enum open closed
 %fsort: Id Title State Originator Description
-
-Id: 203
-Title: Update to autoconf 2.64
-State: closed
-Originator: jemarch@gnu.org
-Description: 
-+ Both libfoo and footool source trees shall be updated to support
-+ autoconf 2.64.
-+ 
-+ Obsolete macros shall be replaced by the recommended ones.  Backward
-+ compatibility with previous versions of autoconf is not a must.
-
-Id: 204
-Title: Other task
-State: open
-Originator: jemarch@gnu.org
-Description: 
-+ Description of other task.
 
 # End of TODO
