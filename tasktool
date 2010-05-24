@@ -52,17 +52,24 @@ tt_db_template="\
 #
 # TODO file for the GNU recutils.
 
-%rec: Hacker
-%key: Email
-%fsort: Name Email
-%doc:
-+ Contributor to GNU recutils.
-
 %rec: Issue
 %key: Id
-%type: Title line
+%type: Summary line
+%mandatory: Summary
+# %type: Type enum improvement bug
 # %type: State enum open closed
-%fsort: Id Title State Originator Description
+# %type: Originator email
+# %type: Assignee email
+# %type: Assigned email
+%fsort: Id Summary State Originator Description
+%doc:
++ An issue.  It contains, at least, the following
++ fields:
++
++ Type: the type of the issue.  An improvement or
++       a bug.
++ Originator: an email identifying the person/entity
++             that originated the issue.
 
 # End of TODO"
 
@@ -142,12 +149,13 @@ Examples:
 $tt_help_footer"
 
 tt_help_create="\
-Usage: $tt_tasktool create -t TITLE
+Usage: $tt_tasktool create -t SUMMARY
 Create a new issue in the database.
 
 Mandatory arguments to long options are mandatory for short options too.
-  -t, --title=STR                     title for the new issue.  This option is
+  -s, --summary=STR                   summary for the new issue.  This option is
                                         mandatory.
+  -o, --originator=EMAIL              originator of the Issue.  An email.
   -i, --id=NUMBER                     the ID of the new issue.  If this option is not
                                         used then an ID is created for the new issue.
       --help                          print this help message and exit.
@@ -313,7 +321,7 @@ tt_process_cmd_init ()
                 ;;
             *)
                 shift
-                break;
+                break
                 ;;
         esac
     done
@@ -325,7 +333,7 @@ tt_process_cmd_init ()
 # Process the 'show' subcommand
 tt_process_cmd_show ()
 {
-    TEMP=`getopt -o f:: --long help -n 'tasktool: show' -- "$@"`
+    TEMP=`getopt -o f: --long help -n 'tasktool: show' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -420,9 +428,9 @@ tt_process_cmd_list ()
     do
         task=`echo "$tasks" | ${tt_recsel} -n $ntask`
         task_id=`echo "$task" | ${tt_recsel} -P Id`
-        task_title=`echo "$task" | ${tt_recsel} -P Title`
+        task_summary=`echo "$task" | ${tt_recsel} -P Summary`
         
-        echo "$task_id $task_title"
+        echo "$task_id $task_summary"
 
         ntask=`expr $ntask + 1`
     done
@@ -431,7 +439,7 @@ tt_process_cmd_list ()
 # Process the 'create' subcommand
 tt_process_cmd_create ()
 {
-    TEMP=`getopt -o -:t: --long help,title: -n 'tasktool: create' -- "$@"`
+    TEMP=`getopt -o -s: --long help,summary: -n 'tasktool: create' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -445,8 +453,8 @@ tt_process_cmd_create ()
                 echo "$tt_help_create"
                 exit 1
                 ;;
-            -t|--title)
-                title=$2
+            -t|--summary)
+                summary=$2
                 shift
                 shift
                 ;;
@@ -464,15 +472,15 @@ tt_process_cmd_create ()
         exit 1
     fi
 
-    test -n $title || {
-        tt_error "you must specify a title for the new issue."
+    test -n $summary || {
+        tt_error "you must specify a summary for the new issue."
         exit 1
     }
 
     new_id=`tt_db_free_id`
 
     # Add the new issue to the database.
-    $tt_recins -t Issue -f Id -v $new_id -f Title -v $title $tt_db
+    $tt_recins -t Issue -f Id -v $new_id -f Summary -v $summary $tt_db
     echo "tasktool: issue $new_id added to $tt_db."
 }
 
