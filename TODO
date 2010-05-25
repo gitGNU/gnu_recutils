@@ -16,7 +16,9 @@
 + An issue.  It contains, at least, the following
 + fields:
 +
-+ Originator: and email identifying the person/entity
++ Type: the type of the issue.  An improvement or
++       a bug.
++ Originator: an email identifying the person/entity
 +             that originated the issue.
 
 # End of TODO
