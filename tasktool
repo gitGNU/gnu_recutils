@@ -204,7 +204,7 @@ tt_db_check ()
            tt_error "cannot open database in $tt_db.  Use 'init' to create one."
         }
 
-    recfix ${tt_db}
+    $tt_recfix ${tt_db}
     if test "$?" != "0"
     then
         tt_error "data integrity problem in ${tt_cb}.  See the errors above."
