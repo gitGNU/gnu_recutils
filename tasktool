@@ -56,12 +56,13 @@ tt_db_template="\
 %key: Id
 %type: Summary line
 %mandatory: Summary
-# %type: Type enum improvement bug
-# %type: State enum open closed
-# %type: Originator email
-# %type: Assignee email
-# %type: Assigned email
-%fsort: Id Summary State Originator Description
+%type: Type enum improvement bug
+%type: Status enum TODO NEXT STARTED WAITING DISCARDED
+%type: Originator email
+%type: Assignee email
+%type: Assigned email
+%type: Component enum librec utils rec-mode
+%fsort: Id Summary Status Originator Description
 %doc:
 + An issue.  It contains, at least, the following
 + fields:
@@ -136,14 +137,13 @@ List issues.
 
 Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
-  -s, --state                         list issues with the given state:
-                                       'closed' or 'open'.
+  -s, --status=STATUS                 list issues with the given status.
   -o, --originator                    list issues with the given originator.
 
 Examples:
 
         tasktool list
-        tasktool list -s closed
+        tasktool list -s discarded
         tasktool list -o jemarch@gnu.org
 
 $tt_help_footer"
@@ -291,7 +291,7 @@ tt_supported_vcs="cvs git bzr"
 #
 # Misc functions used by the script.
 
-# Print a message and exit with an error state.
+# Print a message and exit with an error status.
 tt_error ()
 {
     if test "$#" -gt "0"
@@ -370,7 +370,7 @@ tt_process_cmd_show ()
 # Process the 'list' subcommand
 tt_process_cmd_list ()
 {
-    TEMP=`getopt -o -e:s:o: --long help,state,originator -n 'tasktool: list' -- "$@"`
+    TEMP=`getopt -o -e:s:o: --long help,status,originator -n 'tasktool: list' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -378,7 +378,7 @@ tt_process_cmd_list ()
     eval set -- "$TEMP" || exit 1;
 
     selection_expression="1"
-    state=""
+    status=""
     originator=""
     while true
     do
@@ -387,8 +387,8 @@ tt_process_cmd_list ()
                 echo "$tt_help_list"
                 exit 1
                 ;;
-            -s|--state)
-                state="$2"
+            -s|--status)
+                status="$2"
                 shift
                 shift
                 ;;
@@ -411,9 +411,9 @@ tt_process_cmd_list ()
     fi
 
     # Prepare the selection expression
-    if test -n "$state"
+    if test -n "$status"
     then
-        selection_expression="$selection_expression && (State = '$state')"
+        selection_expression="$selection_expression && (Status = '$status')"
     fi
 
     if test -n "$originator"
@@ -453,7 +453,7 @@ tt_process_cmd_create ()
                 echo "$tt_help_create"
                 exit 1
                 ;;
-            -t|--summary)
+            -s|--summary)
                 summary=$2
                 shift
                 shift
@@ -467,7 +467,6 @@ tt_process_cmd_create ()
 
     if test "$#" != "0"
     then
-        echo $*
         echo "$tt_help_create"
         exit 1
     fi
@@ -478,9 +477,14 @@ tt_process_cmd_create ()
     }
 
     new_id=`tt_db_free_id`
+    date=`date`
 
     # Add the new issue to the database.
-    $tt_recins -t Issue -f Id -v $new_id -f Summary -v $summary $tt_db
+    eval $tt_recins -t Issue \
+                    -f Id -v $new_id \
+                    -f Summary -v $summary \
+                    -f Date -v \'$date\' \
+               $tt_db
     echo "tasktool: issue $new_id added to $tt_db."
 }
 

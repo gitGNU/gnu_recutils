@@ -362,10 +362,7 @@ rec_type_new (char *str)
         case REC_TYPE_ENUM:
         case REC_TYPE_FIELD:
           {
-            /* Not implemented yet.  */
-            fprintf (stderr,
-                     "rec-types: internal error: type not implemented.\n");
-            exit (1);
+            /* XXX: Not implemented yet.  */
             break;
           }
         }

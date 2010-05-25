@@ -6,19 +6,29 @@
 %key: Id
 %type: Summary line
 %mandatory: Summary
-# %type: Type enum improvement bug
-# %type: State enum open closed
-# %type: Originator email
-# %type: Assignee email
-# %type: Assigned email
-%fsort: Id Summary State Originator Description
-%doc:
-+ An issue.  It contains, at least, the following
+%type: Type enum improvement bug
+%type: Status enum TODO NEXT STARTED WAITING DISCARDED
+#%type: Originator email
+#%type: Assignee email
+#%type: Assigned email
+%type: Component enum librec utils rec-mode
+%type: OpenedAt date
+%type: ClosedAt date
+%fsort: Id Summary Status Originator Description
+%doc: + An issue.  It contains, at least, the following
 + fields:
-+
++ 
 + Type: the type of the issue.  An improvement or
 +       a bug.
 + Originator: an email identifying the person/entity
 +             that originated the issue.
+
+Id: 1
+Summary: A_new_issue
+Date: Tue May 25 14:43:19 CEST 2010
+
+Id: 2
+Summary: Another_issue
+Date: Tue May 25 14:43:25 CEST 2010
 
 # End of TODO
