@@ -2,16 +2,21 @@
 #
 # TODO file for the GNU recutils.
 
-%rec: Hacker
-%key: Email
-%fsort: Name Email
-%doc:
-+ Contributor to GNU recutils.
-
 %rec: Issue
 %key: Id
-%type: Title line
+%type: Summary line
+%mandatory: Summary
+# %type: Type enum improvement bug
 # %type: State enum open closed
-%fsort: Id Title State Originator Description
+# %type: Originator email
+# %type: Assignee email
+# %type: Assigned email
+%fsort: Id Summary State Originator Description
+%doc:
++ An issue.  It contains, at least, the following
++ fields:
++
++ Originator: and email identifying the person/entity
++             that originated the issue.
 
 # End of TODO
