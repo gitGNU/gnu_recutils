@@ -132,7 +132,7 @@ Exceptions are @acronym{xml} and @emph{org} files.
 
 Everyone loves to grow a nice book collection at home.  Unfortunately,
 in most cases the management of our private books gets uncontrolled:
-some books gets lost, some of them may be loaned to some friend, there
+some books get lost, some of them may be loaned to some friend, there
 are some duplicated (or even triplicated!) titles because we forgot
 about the existence of the previous copy, and a large etc.
 
@@ -225,7 +225,7 @@ the file.  For example, we could get a list of the names of loaned
 books invoking @command{recsel} in the following way:
 
 @example
-$ recsel -e "Location = 'loaned'" -p /Title books.rec
+$ recsel -e "Location = 'loaned'" -P Title books.rec
 The Colour of Magic
 @end example
 
@@ -1024,12 +1024,6 @@ Print the name of the partners of all the persons less than twenty:
 
 @example
 $ recsel -e 'Age < 20' -p Partner foo.rec
-@end example
-
-Print the number of partners of all the persons less than twenty:
-
-@example
-$ recsel -e 'Age < 20' -p #Partner foo.rec
 @end example
 
 @node recins
