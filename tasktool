@@ -99,7 +99,7 @@ $tt_tasktool supports the following sub commands.
        create                         create a new issue.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
---help', like in:
+--help'.  For example:
 
        tasktool show --help
 
