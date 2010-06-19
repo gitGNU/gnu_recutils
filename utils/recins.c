@@ -78,7 +78,7 @@ RECUTL_COPYRIGHT_DOC ("recins");
 
 char *recutl_help_msg = "\
 Usage: recins [OPTION]... [-f STR -v STR]... [FILE]\n\
-Insert a record in a rec file.\n\
+Insert new records in a rec database.\n\
 \n\
   -t, --type=TYPE                     specify the type of the new record.\n\
   -f, --field=STR                     field name.  Should be followed by a -v.\n\
