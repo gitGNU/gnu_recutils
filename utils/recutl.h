@@ -1,10 +1,26 @@
-/* -*- mode: C -*- Time-stamp: "2010-04-23 10:47:46 jco"
+/* -*- mode: C -*- Time-stamp: "2010-07-05 16:37:44 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
  *
  *       GNU recutils - Common code for the utilities.
  *
+ */
+
+/* Copyright (C) 2010 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef RECUTL_H
