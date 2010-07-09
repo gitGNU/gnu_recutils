@@ -420,20 +420,8 @@ tt_process_cmd_list ()
     then
         selection_expression="$selection_expression && (Originator = '$originator')"
     fi
-    
-    tasks=`${tt_recsel} -t Issue -e "$selection_expression" ${tt_db}`
-    ntasks=`echo "$tasks" | ${tt_recsel} -c`
-    ntask="0"
-    while test "$ntask" -lt "$ntasks"
-    do
-        task=`echo "$tasks" | ${tt_recsel} -n $ntask`
-        task_id=`echo "$task" | ${tt_recsel} -P Id`
-        task_summary=`echo "$task" | ${tt_recsel} -P Summary`
-        
-        echo "$task_id $task_summary"
 
-        ntask=`expr $ntask + 1`
-    done
+    ${tt_recsel} -t Issue -e "$selection_expression" -C -R Id,Summary ${tt_db}
 }
 
 # Process the 'create' subcommand
