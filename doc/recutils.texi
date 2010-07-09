@@ -963,7 +963,7 @@ part of records) based in some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...
+recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P|-R) FIELD_EXPR] [FILE]...
 @end example
 
 In addition of the common options described earlier (@pxref{Common
@@ -1004,11 +1004,15 @@ records are printed in the standard output.
 @item -P @var{name_list}
 @itemx @w{@kbd{--print-values}=@var{name_list}}
 Same than @samp{-p}, but print the values of the selected fields.
+@item -R @var{name_list}
+@itemx @w{@kbd{--print-row}=@var{name_list}}
+Same than @samp{-P}, but print the values separated by single
+spaces instead of newlines.
 @item -c
 @itemx @w{@kbd{--count}}
 If this option is specified then recsel will print the number of
 matching records instead of the records themselves.  This option is
-incompatible with @option{-p}.
+incompatible with @option{-p}, @option{-P} and @option{-R}.
 @end table
 
 @node recsel Examples
