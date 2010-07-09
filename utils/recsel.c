@@ -42,6 +42,7 @@ bool recsel_process_data (rec_db_t db);
 
 char      *program_name        = NULL;
 bool       recsel_print_values = false;
+bool       recsel_print_row    = false;
 char      *recutl_sex_str      = NULL;
 rec_sex_t  recutl_sex          = NULL;
 char      *recsel_fex_str      = NULL;
@@ -63,6 +64,7 @@ enum
   RECORD_SELECTION_ARGS,
   PRINT_ARG,
   PRINT_VALUES_ARG,
+  PRINT_IN_A_ROW_ARG,
   COLLAPSE_ARG,
   COUNT_ARG,
   DESCRIPTOR_ARG
@@ -74,6 +76,7 @@ static const struct option GNU_longOptions[] =
     RECORD_SELECTION_LONG_ARGS,
     {"print", required_argument, NULL, PRINT_ARG},
     {"print-values", required_argument, NULL, PRINT_VALUES_ARG},
+    {"print-row", required_argument, NULL, PRINT_IN_A_ROW_ARG},
     {"collapse", no_argument, NULL, COLLAPSE_ARG},
     {"count", no_argument, NULL, COUNT_ARG},
     {"include-descriptors", no_argument, NULL, DESCRIPTOR_ARG},
@@ -101,6 +104,8 @@ Output options:\n\
                                         matching record.\n\
   -P, --print-values=FIELDS           same than -p, but print the values of the selected\n\
                                         fields.\n\
+  -R, --print-row=FIELDS              same than -P, but the values are printed separated by\n\
+                                        a blank character instead of newlines.\n\
   -c, --count                         provide a count of the matching records instead of\n\
                                         the records themselves.\n\
 \n\
@@ -121,7 +126,7 @@ recsel_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "Cdcp:P:",
+                             "Cdcp:P:R:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -139,10 +144,11 @@ recsel_parse_args (int argc,
         case PRINT_ARG:
         case 'p':
         case 'P':
+        case 'R':
           {
             if (recsel_count)
               {
-                fprintf (stderr, "%s: cannot specify -[pP] and also -c.\n",
+                fprintf (stderr, "%s: cannot specify -[pPR] and also -c.\n",
                          argv[0]);
                 exit (1);
               }
@@ -150,6 +156,12 @@ recsel_parse_args (int argc,
             if (c == 'P')
               {
                 recsel_print_values = true;
+              }
+
+            if (c == 'R')
+              {
+                recsel_print_values = true;
+                recsel_print_row = true;
               }
 
             recsel_fex_str = strdup (optarg);
@@ -301,7 +313,8 @@ recsel_process_data (rec_db_t db)
                 {
                   output = recutl_eval_field_expression (recsel_fex,
                                                          record,
-                                                         recsel_print_values);
+                                                         recsel_print_values,
+                                                         recsel_print_row);
                 }
 
               /* Insert a newline?  */

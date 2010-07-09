@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-05-25 15:34:35 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-07-09 21:52:52 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -121,10 +121,12 @@ recutl_build_db (int argc, char **argv)
 char *
 recutl_eval_field_expression (rec_fex_t fex,
                               rec_record_t record,
-                              bool print_values_p)
+                              bool print_values_p,
+                              bool print_in_a_row_p)
 {
   char *res;
   size_t res_size;
+  size_t fex_size;
   FILE *stm;
   rec_writer_t writer;
   rec_fex_elem_t elem;
@@ -133,8 +135,9 @@ recutl_eval_field_expression (rec_fex_t fex,
   int i, j, min, max;
 
   stm = open_memstream (&res, &res_size);
+  fex_size = rec_fex_size (fex);
 
-  for (i = 0; i < rec_fex_size (fex); i++)
+  for (i = 0; i < fex_size; i++)
     {
       elem = rec_fex_get (fex, i);
       
@@ -170,7 +173,20 @@ recutl_eval_field_expression (rec_fex_t fex,
             {
               /* Write just the value of the field.  */
               fprintf (stm, rec_field_value (field));
-              fprintf (stm, "\n");
+              if (print_in_a_row_p)
+                {
+                  if (i < (fex_size - 1))
+                    {
+                      fprintf (stm, " ");
+                    }
+                }
+              else
+                {
+                  if (i < (fex_size - 1))
+                    {
+                      fprintf (stm, "\n");
+                    }
+                }
             }
           else
             {
@@ -180,7 +196,11 @@ recutl_eval_field_expression (rec_fex_t fex,
               rec_writer_destroy (writer);
             }
         }
-      
+    }
+
+  if (print_values_p)
+    {
+      fprintf (stm, "\n");
     }
 
   fclose (stm);
