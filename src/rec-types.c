@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <regex.h>
 #include <string.h>
+#include <regex.h>
 
 #include <rec.h>
 
@@ -52,7 +53,9 @@
 /* Regular expression denoting a blank character in a type
    description.  */
 #define REC_TYPE_BLANK_RE "[ \t\n]"
+#define REC_TYPE_NO_BLANK_RE "[^ \t\n]"
 #define REC_TYPE_BLANKS_RE REC_TYPE_BLANK_RE "+"
+#define REC_TYPE_NO_BLANKS_RE REC_TYPE_NO_BLANK_RE "+"
 #define REC_TYPE_ZBLANKS_RE REC_TYPE_BLANK_RE "*"
 
 /* Regular expressions denoting values.  */
@@ -67,9 +70,6 @@
 
 #define REC_TYPE_LINE_VALUE_RE                  \
   "^[^\n]*$"
-
-#define REC_TYPE_REGEXP_VALUE_RE                \
-  "XXX_TO_BE_DEFINED_DONT_USE"
 
 #define REC_TYPE_DATE_VALUE_RE                  \
   "XXX_TO_BE_DEFINED_DONT_USE"
@@ -125,10 +125,9 @@
   REC_TYPE_LINE_NAME
 
 /* regexp /RE/  */
-#define REC_TYPE_REGEXP_DESCR_RE                \
-  REC_TYPE_REGEXP_NAME                          \
-  REC_TYPE_BLANKS_RE                            \
-  "/([^/]|\\/)*/"
+#define REC_TYPE_REGEXP_DESCR_RE                 \
+  REC_TYPE_REGEXP_NAME                           \
+  ".+"
 
 /* date  */
 #define REC_TYPE_DATE_DESCR_RE                  \
@@ -187,8 +186,10 @@ struct rec_type_s
     size_t max_size;          /* Size of string.  */
     int min;                  /* Range.  */
     int max;
-    char *regexp;             /* Regular expression.  */
-    char **names;             /* Names in enumeration.  */
+    regex_t regexp;           /* Regular expression.  */
+
+#define REC_ENUM_MAX_NAMES 50
+    char *names[REC_ENUM_MAX_NAMES];   /* Names in enumeration.  */
   } data;
 };
 
@@ -277,8 +278,13 @@ rec_type_new (char *str)
 {
   rec_type_t new;
   char *p, *b;
+  char delim_char;
+  size_t i;
+  bool escaping;
+  bool end_regexp;
   char name[100];
   char number[30];
+  char re[200];
 
   if (!rec_type_descr_p (str))
     {
@@ -357,9 +363,106 @@ rec_type_new (char *str)
 
             break;
           }
-        case REC_TYPE_RANGE:
-        case REC_TYPE_REGEXP:
         case REC_TYPE_ENUM:
+          {
+            i = 0;
+            while (*p && (i < REC_ENUM_MAX_NAMES))
+              {
+                /* Skip blanks.  */
+                while (p && rec_type_blank_p (*p))
+                  {
+                    p++;
+                  }
+
+                if (*p)
+                  {
+                    /* Parse an enum entry.  */
+                    b = p;
+                    while (p && (rec_type_digit_p (*p)
+                                 || rec_type_letter_p (*p)
+                                 || (*p == '_')
+                                 || (*p == '-')))
+                      {
+                        name[p - b] = *p;
+                        p++;
+                      }
+                    name[p - b] = '\0';
+                    new->data.names[i++] = strdup (name);
+                  }
+                else
+                  {
+                    new->data.names[i] = NULL;
+                    break;
+                  }
+              }
+
+            break;
+          }
+        case REC_TYPE_REGEXP:
+          {
+            /* The regexp type descriptor is like:
+
+               BLANKS BEGIN_RE CHARS END_RE BLANKS
+               
+               where BEGIN_RE == END_RE and is the first non-blank
+               character found in the string.  Escaped apperances of
+               BEGIN_RE in CHARS are un-escaped.
+            */
+
+            /* Skip blanks.  */
+            while (p && rec_type_blank_p (*p))
+              {
+                p++;
+              }
+
+            end_regexp = false;
+            delim_char = *p;
+            p++;
+
+            i = 0;
+            while (*p)
+              {
+                if (*p == delim_char)
+                  {
+                    if (*(p + 1) == delim_char)
+                      {
+                        re[i++] = delim_char;
+                        p++;
+                      }
+                    else
+                      {
+                        /* End of the regexp.  */
+                        end_regexp = true;
+                        break;
+                      }
+                  }
+                else
+                  {
+                    re[i++] = *p;
+                  }
+
+                p++;
+              }
+            re[i] = '\0';
+
+            if (!end_regexp)
+              {
+                /* Error.  */
+                free (new);
+                /* XXX: how to report the error??? */
+                return NULL;
+              }
+
+            /* Compile the regexp.  */
+            if (regcomp (&new->data.regexp, re,
+                         REG_EXTENDED) != 0)
+              {
+                free (new);
+                return NULL;
+              }
+            break;
+          }
+        case REC_TYPE_RANGE:
         case REC_TYPE_FIELD:
           {
             /* XXX: Not implemented yet.  */
@@ -724,7 +827,11 @@ static bool
 rec_type_check_regexp (rec_type_t type,
                        char *str)
 {
-  return rec_type_check_re (type->data.regexp, str);
+  return (regexec (&type->data.regexp,
+                   str,
+                   0,
+                   NULL,
+                   0) == 0);
 }
 
 static bool
@@ -738,7 +845,46 @@ static bool
 rec_type_check_enum (rec_type_t type,
                      char *str)
 {
-  /* XXX: todo.  */
+  size_t i;
+  char *p, *b;
+  char name[100];
+
+  if (!rec_type_check_re (REC_TYPE_ENUM_VALUE_RE, str))
+    {
+      return false;
+    }
+
+  /* Get the name from STR.  */
+  p = str;
+
+  while (p && rec_type_blank_p (*p))
+    {
+      p++;
+    }
+
+  b = p;
+  while (p && (rec_type_digit_p (*p)
+               || rec_type_letter_p (*p)
+               || (*p == '_')
+               || (*p == '-')))
+    {
+      name[p - b] = *p;
+      p++;
+    }
+  name[p - b] = '\0';
+
+  /* Check for the name in the enum types.  */
+  i = 0;
+  while (type->data.names[i])
+    {
+      if (strcmp (name, type->data.names[i]) == 0)
+        {
+          return true;
+        }
+      
+      i++;
+    }
+
   return false;
 }
 
