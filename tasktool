@@ -54,8 +54,8 @@ tt_db_template="\
 
 %rec: Issue
 %key: Id
-%type: Summary line
 %mandatory: Summary
+%type: Summary line
 %type: Type enum improvement bug
 %type: Status enum TODO NEXT STARTED WAITING DISCARDED
 %type: Originator email
@@ -427,7 +427,7 @@ tt_process_cmd_list ()
 # Process the 'create' subcommand
 tt_process_cmd_create ()
 {
-    TEMP=`getopt -o -s: --long help,summary: -n 'tasktool: create' -- "$@"`
+    TEMP=`getopt -o -s:o: --long help,originator,summary: -n 'tasktool: create' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -446,6 +446,11 @@ tt_process_cmd_create ()
                 shift
                 shift
                 ;;
+            -o|--originator)
+                originator=$2
+                shift
+                shift
+                ;;
             *)
                 shift
                 break
@@ -459,21 +464,29 @@ tt_process_cmd_create ()
         exit 1
     fi
 
-    test -n $summary || {
-        tt_error "you must specify a summary for the new issue."
+    if [ "$summary" = "" ]; then
+        tt_error "you must specify a summary for the new issue.  Use -s SUMMARY."
         exit 1
-    }
+    fi
 
     new_id=`tt_db_free_id`
     date=`date`
 
     # Add the new issue to the database.
-    eval $tt_recins -t Issue \
+    eval $tt_recins --verbose \
+                    -t Issue \
                     -f Id -v $new_id \
                     -f Summary -v $summary \
                     -f Date -v \'$date\' \
-               $tt_db
-    echo "tasktool: issue $new_id added to $tt_db."
+                    -f Originator -v \'$originator\' \
+                    $tt_db
+    if test "$?" != "0"
+    then
+        tt_error "data integrity problem.  See the errors above and review your parameters."
+        exit 1
+    else
+        echo "tasktool: issue $new_id added to $tt_db."
+    fi
 }
 
 # Parse arguments and set some variables.
