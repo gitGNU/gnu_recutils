@@ -612,7 +612,9 @@ enum rec_type_kind_e
     /* An Enumeration.  */
     REC_TYPE_ENUM,
     /* A field name.  */
-    REC_TYPE_FIELD
+    REC_TYPE_FIELD,
+    /* An email.  */
+    REC_TYPE_EMAIL
   };
 
 typedef struct rec_type_s *rec_type_t;

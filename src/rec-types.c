@@ -49,6 +49,7 @@
 #define REC_TYPE_DATE_NAME   "date"
 #define REC_TYPE_ENUM_NAME   "enum"
 #define REC_TYPE_FIELD_NAME  "field"
+#define REC_TYPE_EMAIL_NAME  "email"
 
 /* Regular expression denoting a blank character in a type
    description.  */
@@ -74,6 +75,11 @@
 #define REC_TYPE_DATE_VALUE_RE                  \
   "XXX_TO_BE_DEFINED_DONT_USE"
 
+#define REC_TYPE_EMAIL_VALUE_RE                 \
+  "^[ \n\t]*"                                   \
+  "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}" \
+  "[ \n\t]*$"
+
 #define REC_TYPE_ENUM_NAME_RE                   \
   "[a-zA-Z0-9][a-zA-Z0-9_-]*"
 #define REC_TYPE_ENUM_VALUE_RE                  \
@@ -89,7 +95,8 @@
       REC_TYPE_REAL_NAME  "|" REC_TYPE_SIZE_NAME   "|" \
       REC_TYPE_LINE_NAME  "|" REC_TYPE_REGEXP_NAME "|" \
       REC_TYPE_DATE_NAME  "|" REC_TYPE_ENUM_NAME   "|" \
-      REC_TYPE_FIELD_NAME "|" REC_TYPE_BOOL_NAME       \
+      REC_TYPE_FIELD_NAME "|" REC_TYPE_BOOL_NAME   "|" \
+      REC_TYPE_EMAIL_NAME                              \
   ")"
 
 /* Regular expressions for the type descriptions.  */
@@ -151,6 +158,10 @@
   REC_TYPE_BLANKS_RE                            \
   REC_TYPE_FIELD_NAME_RE
 
+/* email */
+#define REC_TYPE_EMAIL_DESCR_RE                 \
+  REC_TYPE_EMAIL_NAME
+
 /* Regexp denoting any type description.  */
 #define REC_TYPE_DESCR_RE                       \
   "^"                                           \
@@ -166,6 +177,7 @@
      "|" "(" REC_TYPE_LINE_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_REGEXP_DESCR_RE ")"       \
      "|" "(" REC_TYPE_DATE_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_EMAIL_DESCR_RE  ")"       \
      "|" "(" REC_TYPE_ENUM_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_FIELD_DESCR_RE  ")"       \
   ")"                                           \
@@ -225,6 +237,7 @@ static bool rec_type_check_size (rec_type_t type, char *str);
 static bool rec_type_check_line (rec_type_t type, char *str);
 static bool rec_type_check_regexp (rec_type_t type, char *str);
 static bool rec_type_check_date (rec_type_t type, char *str);
+static bool rec_type_check_email (rec_type_t type, char *str);
 static bool rec_type_check_enum (rec_type_t type, char *str);
 static bool rec_type_check_field (rec_type_t type, char *str);
 
@@ -532,6 +545,11 @@ rec_type_kind_str (rec_type_t type)
         res = REC_TYPE_DATE_NAME;
         break;
       }
+    case REC_TYPE_EMAIL:
+      {
+        res = REC_TYPE_EMAIL_NAME;
+        break;
+      }
     case REC_TYPE_ENUM:
       {
         res = REC_TYPE_ENUM_NAME;
@@ -598,6 +616,11 @@ rec_type_check (rec_type_t type,
     case REC_TYPE_DATE:
       {
         res = rec_type_check_date (type, str);
+        break;
+      }
+    case REC_TYPE_EMAIL:
+      {
+        res = rec_type_check_email (type, str);
         break;
       }
     case REC_TYPE_ENUM:
@@ -743,6 +766,10 @@ rec_type_parse_type_kind (char *str)
     {
       res = REC_TYPE_DATE;
     }
+  if (strcmp (str, REC_TYPE_EMAIL_NAME) == 0)
+    {
+      res = REC_TYPE_EMAIL;
+    }
   if (strcmp (str, REC_TYPE_ENUM_NAME) == 0)
     {
       res = REC_TYPE_ENUM;
@@ -839,6 +866,13 @@ rec_type_check_date (rec_type_t type,
                      char *str)
 {
   return rec_type_check_re (REC_TYPE_DATE_VALUE_RE, str);
+}
+
+static bool
+rec_type_check_email (rec_type_t type,
+                      char *str)
+{
+  return rec_type_check_re (REC_TYPE_EMAIL_VALUE_RE, str);
 }
 
 static bool
