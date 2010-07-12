@@ -8,14 +8,15 @@
 %mandatory: Summary
 %type: Type enum improvement bug
 %type: Status enum TODO NEXT STARTED WAITING DISCARDED
-#%type: Originator email
-#%type: Assignee email
-#%type: Assigned email
+%type: Originator email
+%type: Assignee email
+%type: Assigned email
 %type: Component enum librec utils rec-mode
-%type: OpenedAt date
-%type: ClosedAt date
+#%type: Date date
+%type: Closed date
 %fsort: Id Summary Status Originator Description
-%doc: + An issue.  It contains, at least, the following
+%doc: 
++ An issue.  It contains, at least, the following
 + fields:
 + 
 + Type: the type of the issue.  An improvement or
@@ -26,9 +27,98 @@
 Id: 1
 Summary: A_new_issue
 Date: Tue May 25 14:43:19 CEST 2010
+Status: TODO
 
 Id: 2
 Summary: Another_issue
 Date: Tue May 25 14:43:25 CEST 2010
+Status: TODO
+
+Id: 3
+Summary: foobar
+Date: Mon Jul 12 22:13:51 CEST 2010
+Originator: ja@jo.ju
+Status: TODO
+
+Id: 4
+Summary: jajaja
+Date: Mon Jul 12 22:13:57 CEST 2010
+Originator: ja@jo.ju
+Status: TODO
+
+Id: 5
+Summary: jijiji
+Date: Mon Jul 12 22:14:02 CEST 2010
+Originator: ja@jo.ju
+Status: TODO
+
+Id: 6
+Summary: humhum
+Date: Mon Jul 12 22:14:10 CEST 2010
+Originator: ja@jo.ju
+Status: TODO
+
+Id: 7
+Summary: homhum
+Date: Mon Jul 12 22:14:15 CEST 2010
+Originator: ja@jo.ju
+Status: TODO
+
+Id: 8
+Summary: fufafe
+Date: Mon Jul 12 22:14:21 CEST 2010
+Originator: ja@jo.ju
+Status: TODO
+
+Id: 9
+Summary: jajoja
+Date: Mon Jul 12 22:14:30 CEST 2010
+Originator: jemarch@gnu.org
+Status: TODO
+
+Id: 10
+Summary: Fix getopt quoting in tasktool.
+Date: Mon Jul 12 22:20:45 CEST 2010
+Originator: jemarch@gnu.org
+Status: TODO
+
+Id: 11
+Summary: jorl
+Date: Mon Jul 12 22:22:34 CEST 2010
+Originator: jurl@jo.ja
+Status: TODO
+
+Id: 12
+Summary: A test issue
+Date: Mon Jul 12 22:33:38 CEST 2010
+Originator: jemarch@gnu.org
+Status: TODO
+
+Id: 13
+Summary: Another test issue
+Date: Mon Jul 12 22:35:59 CEST 2010
+Originator: jemarch@gnu.org
+Status: TODO
+Description: This is the description of a test issue. For real issues (tasks or problems) this would include a detailed description of the issue, and even excerpts of code: if test "$?" != "0" then tt_error "data integrity problem. See the errors above and review your parameters." exit 1 else echo "tasktool: issue $new_id added to $tt_db." fi But this one is just a test :D
+
+Id: 14
+Summary: And yet another issue
+Date: Mon Jul 12 22:37:43 CEST 2010
+Originator: jemarch@gnu.org
+Status: TODO
+Description: This is the description of a test issue.
++ 
++ For real issues (tasks or problems) this would include a detailed
++ description of the issue, and even excerpts of code:
++ 
++       if test "$?" != "0"
++       then
++          tt_error "data integrity problem. See the errors above and review your parameters."
++          exit 1
++       else
++          echo "tasktool: issue $new_id added to $tt_db."
++       fi
++ 
++ But this one is just a test :D
 
 # End of TODO

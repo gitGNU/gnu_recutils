@@ -97,6 +97,7 @@ $tt_tasktool supports the following sub commands.
        list                           get a list of issues.
        show                           print information about a given issue.
        create                         create a new issue.
+       note                           insert a note for an issue.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
 --help'.  For example:
@@ -163,6 +164,19 @@ Mandatory arguments to long options are mandatory for short options too.
 Examples:
 
         tasktool create \"The function 'parse_field_name' is buggy.\"
+
+$tt_help_footer"
+
+tt_help_note="\
+Usage: $tt_tasktool note [OPTION...] ISSUE_ID
+Add a note to the given issue.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+
+Examples:
+
+        tasktool note 120
 
 $tt_help_footer"
 
@@ -330,6 +344,84 @@ tt_process_cmd_init ()
     tt_db_create
 }
 
+# Process the 'note' subcommand
+tt_process_cmd_note ()
+{
+    TEMP=`getopt -o f: --long help -n 'tasktool: note' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_note"
+                exit 1
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    # Get the ID of the task to annotate.
+    if test "$#" != "1"
+    then
+        echo "$tt_help_note"
+        exit 1
+    fi
+
+    # Check if a task with a given ID exists.
+    tt_db_task_p "$1" || \
+        { echo "$tt_tasktool: issue '$1' not found."; exit 1; }
+
+
+    # Get the contents of the note from EDITOR
+    if test "$note" = ""; then
+        tmpfile=$$.tmp
+        if test -w $tmpfile; then
+            rm -f $tmpfile
+        fi
+        echo "Please replace this line with the annotation for the issue." > $tmpfile
+        $EDITOR $tmpfile
+        description=`cat $tmpfile`
+
+        if test "$description" = ""; then
+            while test "$yesno" != "yes" -a "$yesno" != "no"
+            do
+                echo -n "Got an empty annotation! Continue? (yes/no): "
+                read yesno
+            done
+
+            if test "$yesno" = "no"; then
+                echo "Creation of issue aborted."
+                exit 0
+            fi
+        fi
+    fi
+
+    # Prepend a date.
+    date=`date`
+    note="$date\n$note"
+
+    # Add the annotation to the database.
+    $tt_recset --verbose \
+        -t Issue -e \""Id = $1"\" \
+        -f Note -a \'"$note"\' \
+        $tt_db
+    if test "$?" != "0"
+    then
+        tt_error "error adding the annotation.  See the errors above."
+        exit 1
+    else
+        echo "tasktool: issue $1 annotated."
+    fi
+}
+
 # Process the 'show' subcommand
 tt_process_cmd_show ()
 {
@@ -363,7 +455,7 @@ tt_process_cmd_show ()
 
     # Check if a task with a given ID exists.
     tt_db_task_p "$1" || \
-        { echo "$tt_tasktool: task '$1' not found."; exit 1; }
+        { echo "$tt_tasktool: issue '$1' not found."; exit 1; }
     tt_db_show_task "$1"
 }
 
@@ -464,9 +556,44 @@ tt_process_cmd_create ()
         exit 1
     fi
 
-    if [ "$summary" = "" ]; then
-        tt_error "you must specify a summary for the new issue.  Use -s SUMMARY."
-        exit 1
+    if test "$summary" = ""; then
+        while test "$summary" = ""
+        do
+            echo -n "Summary (line): "
+            read summary
+        done
+    fi
+
+    if test "$originator" = ""; then
+        while test "$originator" = ""
+        do
+            echo -n "Originator (email): "
+            read originator
+        done
+    fi
+
+    if test "$description" = ""; then
+
+        tmpfile=$$.tmp
+        if test -w $tmpfile; then
+            rm -f $tmpfile
+        fi
+        echo "Please replace this line with the description of the issue." > $tmpfile
+        $EDITOR $tmpfile
+        description=`cat $tmpfile`
+
+        if test "$description" = ""; then
+            while test "$yesno" != "yes" -a "$yesno" != "no"
+            do
+                echo -n "Got an empty description! Continue? (yes/no): "
+                read yesno
+            done
+
+            if test "$yesno" = "no"; then
+                echo "Creation of issue aborted."
+                exit 0
+            fi
+        fi
     fi
 
     new_id=`tt_db_free_id`
@@ -476,9 +603,11 @@ tt_process_cmd_create ()
     eval $tt_recins --verbose \
                     -t Issue \
                     -f Id -v $new_id \
-                    -f Summary -v $summary \
+                    -f Summary -v \'$summary\' \
                     -f Date -v \'$date\' \
                     -f Originator -v \'$originator\' \
+                    -f Status -v TODO \
+                    -f Description -v \'"$description"\' \
                     $tt_db
     if test "$?" != "0"
     then
@@ -516,6 +645,12 @@ tt_parse_arguments ()
                 shift
                 tt_db_check
                 tt_process_cmd_show $*
+                break
+                ;;
+            note)
+                shift
+                tt_db_check
+                tt_process_cmd_note $*
                 break
                 ;;
             list)
