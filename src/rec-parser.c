@@ -829,11 +829,6 @@ rec_parse_field_name_part (rec_parser_t parser,
   return ret;
 }
 
-/* XXX: the following function fails in the case:
- 
-   foo:
-   EOF
-*/
 static bool
 rec_parse_field_value (rec_parser_t parser,
                        char **str)
