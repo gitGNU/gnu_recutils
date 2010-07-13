@@ -1,5 +1,12 @@
 2010-07-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Bug preventing empty fields without a beginning space fixed.
+	* src/rec-parser.c (rec_parse_field_name): If a newline is found
+	terminating a field name then push it back to the input stream, so
+	it will be part of the field value.
+
+2010-07-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Keep information about the position of the record descriptor in a
 	record set.
 	* src/rec-rset.c (rec_rset_set_descriptor_pos): New function.

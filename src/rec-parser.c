@@ -234,14 +234,24 @@ rec_parse_field_name (rec_parser_t parser,
            * - A blank character or
            * - A newline or
            * - The end of the file
+           *
+           * Note that if the field name ends with a newline it is
+           * pushed back to the input stream, since (unlike a blank
+           * character) it will be part of the field value.
            */
           ci = rec_parser_getc (parser);
           if (ci != EOF)
             {
               c = (char) ci;
-              if ((c == '\n') || (c == ' '))
+              if (c == ' ')
                 {
                   parser->error = REC_PARSER_NOERROR;
+                  break;
+                }
+              else if (c == '\n')
+                {
+                  parser->error = REC_PARSER_NOERROR;
+                  rec_parser_ungetc (parser, c);
                   break;
                 }
               else
