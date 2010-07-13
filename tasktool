@@ -392,6 +392,7 @@ tt_process_cmd_note ()
 Please replace this line with the annotation for the issue." > $tmpfile
         $EDITOR $tmpfile
         note=`cat $tmpfile`
+        rm -f $tmpfile
 
         if test "$note" = ""; then
             while test "$yesno" != "yes" -a "$yesno" != "no"
@@ -580,6 +581,7 @@ tt_process_cmd_create ()
         echo "Please replace this line with the description of the issue." > $tmpfile
         $EDITOR $tmpfile
         description=`cat $tmpfile`
+        rm -f $tmpfile
 
         if test "$description" = ""; then
             while test "$yesno" != "yes" -a "$yesno" != "no"
