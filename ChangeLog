@@ -1,5 +1,11 @@
 2010-07-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Support for the type 'field' removed.
+	* src/rec-types.c: Data types, constants and functions removed for
+	the 'field' type.
+
+2010-07-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Bug preventing empty fields without a beginning space fixed.
 	* src/rec-parser.c (rec_parse_field_name): If a newline is found
 	terminating a field name then push it back to the input stream, so
