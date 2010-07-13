@@ -347,6 +347,8 @@ rec_comment_t rec_rset_elem_comment (rec_rset_elem_t elem);
 
 rec_record_t rec_rset_descriptor (rec_rset_t rset);
 void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
+size_t rec_rset_descriptor_pos (rec_rset_t rset);
+void rec_rset_set_descriptor_pos (rec_rset_t rset, size_t position);
 
 char *rec_rset_type (rec_rset_t rset);
 void rec_rset_set_type (rec_rset_t rset, char *type);

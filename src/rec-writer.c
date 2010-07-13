@@ -221,56 +221,60 @@ rec_write_rset (rec_writer_t writer,
   bool wrote_descriptor;
   rec_rset_elem_t elem;
   rec_record_t record;
-  int position;
+  size_t position;
+  size_t descriptor_pos;
 
   ret = true;
   wrote_descriptor = false;
+  position = 0;
+  descriptor_pos = rec_rset_descriptor_pos (rset);
 
-  descriptor = rec_rset_descriptor (rset);
-  if (descriptor
-      && (!(wrote_descriptor = rec_write_record (writer, rec_rset_descriptor (rset)))))
+  elem = rec_rset_null_elem ();
+  while (rec_rset_elem_p (elem = rec_rset_next (rset, elem)))
     {
-      ret = false;
-    }
-  else
-    {
-      if (wrote_descriptor)
+      if (position != 0)
         {
           if (!rec_writer_putc (writer, '\n'))
-
             {
               ret = false;
             }
         }
 
-      position = 0;
-      elem = rec_rset_null_elem ();
-      while (rec_rset_elem_p (elem = rec_rset_next (rset, elem)))
+      if (position == descriptor_pos)
         {
-          if (position != 0)
+          descriptor = rec_rset_descriptor (rset);
+          if (descriptor 
+              && (!(wrote_descriptor = rec_write_record (writer, rec_rset_descriptor (rset)))))
             {
-              if (!rec_writer_putc (writer, '\n'))
-                {
-                  ret = false;
-                }
-            }
-
-          if (rec_rset_elem_record_p (rset, elem))
-            {
-              ret = rec_write_record (writer, rec_rset_elem_record (elem));
+              ret = false;
             }
           else
             {
-              ret = rec_write_comment (writer, rec_rset_elem_comment (elem));
+              if (wrote_descriptor)
+                {
+                  if (!rec_writer_putc (writer, '\n'))
+                    {
+                      ret = false;
+                    }
+                }
             }
-
-          if (!ret)
-            {
-              break;
-            }
-
-          position++;
         }
+      
+      if (rec_rset_elem_record_p (rset, elem))
+        {
+          ret = rec_write_record (writer, rec_rset_elem_record (elem));
+        }
+      else
+        {
+          ret = rec_write_comment (writer, rec_rset_elem_comment (elem));
+        }
+      
+      if (!ret)
+        {
+          break;
+        }
+      
+      position++;
     }
 
   return ret;

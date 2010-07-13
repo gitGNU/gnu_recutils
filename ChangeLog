@@ -1,3 +1,24 @@
+2010-07-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Keep information about the position of the record descriptor in a
+	record set.
+	* src/rec-rset.c (rec_rset_set_descriptor_pos): New function.
+	(rec_rset_descriptor_pos): New function.
+	(rec_rset_new): Initialize new->descriptor_pos to 0.
+	(struct rec_rset_s): New field descriptor_pos.
+
+	* src/rec.h: Prototypes for 'rec_rset_descriptor_pos' and
+	'rec_rset_set_descriptor_pos'.
+
+	* src/rec-parser.c (rec_parse_rset): New local variable to store
+	the number of comments added to the record set.  In the special
+	case where some comments are preceding the first record descriptor
+	in the file, store the relative position of the descriptor in the
+	record set using rec_rset_descriptor_pos.
+
+	* src/rec-writer.c (rec_write_rset): Write the descriptor in its
+	relative position into the record set.
+
 2010-06-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* utils/recins.c: Help string improved.
@@ -92,7 +113,7 @@
 
 2009-07-13  Jose E. Marchesi  <jemarch@gnu.org>
 
-	* torture/runtests.c (main): Use CK_ENV instead of CK_VERbOSE in
+	* torture/runtests.c (main): Use CK_ENV instead of CK_VERBOSE in
 	srunner_run_all.
 
 	* Begin of the change log.

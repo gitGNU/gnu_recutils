@@ -417,6 +417,7 @@ rec_parse_rset (rec_parser_t parser,
   rec_record_t record;
   rec_field_name_t rec_fname;
   rec_comment_t comment;
+  size_t comments_added = 0;
 
   ret = false;
 
@@ -458,6 +459,8 @@ rec_parse_rset (rec_parser_t parser,
 
           /* Add the comment to the record set.  */
           rec_rset_append_comment (new, comment);
+
+          comments_added++;
         }
       else
         {
@@ -467,8 +470,13 @@ rec_parse_rset (rec_parser_t parser,
             {
               /* Check if the parsed record is a descriptor.  In that
                  case, set it as the previous descriptor in the parser
-                 state and stop parsing.  Otherwise, add the record to
-                 the current record set. */
+                 state and stop parsing.  In the special case where
+                 the previous descriptor is NULL (we did not find a
+                 descriptor yet) then record the position of the
+                 descriptor as well.
+
+                 Otherwise, add the record to the current record
+                 set. */
               if (rec_record_field_p (record,
                                       rec_fname))
                 {
@@ -478,6 +486,7 @@ rec_parse_rset (rec_parser_t parser,
                       /* Special case: the first record found in the
                          input stream is a descriptor. */
                       rec_rset_set_descriptor (new, record);
+                      rec_rset_set_descriptor_pos (new, comments_added);
                     }
                   else
                     {

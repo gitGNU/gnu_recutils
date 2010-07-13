@@ -42,6 +42,11 @@
 struct rec_rset_s
 {
   rec_record_t descriptor;
+  size_t descriptor_pos; /* Position of the descriptor into the record
+                            set.  Some comments can appear before the
+                            record descriptor in the rec file, so we
+                            need to track it in order to write back
+                            the record properly.  */
 
   /* Type registry.  */
   rec_type_reg_t type_reg;
@@ -110,6 +115,7 @@ rec_rset_new (void)
         {
           /* No descriptor, initially.  */
           rset->descriptor = NULL;
+          rset->descriptor_pos = 0;
           rset->type_reg = NULL;
 
           /* register the types.  */
@@ -497,6 +503,19 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
 
       rec_field_name_destroy (type_field_name);
     }
+}
+
+size_t
+rec_rset_descriptor_pos (rec_rset_t rset)
+{
+  return rset->descriptor_pos;
+}
+
+void
+rec_rset_set_descriptor_pos (rec_rset_t rset,
+                             size_t position)
+{
+  rset->descriptor_pos = position;
 }
 
 void
