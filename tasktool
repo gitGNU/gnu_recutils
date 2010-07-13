@@ -386,11 +386,14 @@ tt_process_cmd_note ()
         if test -w $tmpfile; then
             rm -f $tmpfile
         fi
-        echo "Please replace this line with the annotation for the issue." > $tmpfile
-        $EDITOR $tmpfile
-        description=`cat $tmpfile`
+        date=`date`
+        echo "$date
 
-        if test "$description" = ""; then
+Please replace this line with the annotation for the issue." > $tmpfile
+        $EDITOR $tmpfile
+        note=`cat $tmpfile`
+
+        if test "$note" = ""; then
             while test "$yesno" != "yes" -a "$yesno" != "no"
             do
                 echo -n "Got an empty annotation! Continue? (yes/no): "
@@ -404,14 +407,10 @@ tt_process_cmd_note ()
         fi
     fi
 
-    # Prepend a date.
-    date=`date`
-    note="$date\n$note"
-
     # Add the annotation to the database.
     $tt_recset --verbose \
-        -t Issue -e \""Id = $1"\" \
-        -f Note -a \'"$note"\' \
+        -t Issue -e "Id = $1" \
+        -f Note -a "$note" \
         $tt_db
     if test "$?" != "0"
     then
@@ -590,7 +589,7 @@ tt_process_cmd_create ()
             done
 
             if test "$yesno" = "no"; then
-                echo "Creation of issue aborted."
+                echo "Annotation aborted."
                 exit 0
             fi
         fi
