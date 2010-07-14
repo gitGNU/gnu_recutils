@@ -1,3 +1,9 @@
+2010-07-14  Jose E. Marchesi  <jco@terma.com>
+
+	Fix a regression in the definition of the REC_TYPE_DESCR_RE
+	regexp.
+	* src/rec-types.c (REC_TYPE_DESCR_RE): Regexp fixed.
+
 2010-07-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Support for the type 'field' removed.

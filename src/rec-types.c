@@ -164,6 +164,7 @@
 #define REC_TYPE_DESCR_RE                       \
   "^"                                           \
   REC_TYPE_ZBLANKS_RE                           \
+  REC_TYPE_FIELD_NAME_RE                        \
   REC_TYPE_ZBLANKS_RE                           \
   "("                                           \
          "(" REC_TYPE_INT_DESCR_RE    ")"       \
