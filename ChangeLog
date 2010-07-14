@@ -1,5 +1,14 @@
 2010-07-14  Jose E. Marchesi  <jco@terma.com>
 
+	Little fixes in tasktool.
+	* tasktool (tt_db_show_task): Use a selection expression implying
+	that Id is an integer, not a string.
+	(tt_supported_vcs): Typo fixed.
+
+	* tasktool (tt_db_task_p): Likewise.
+
+2010-07-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Fix a regression in the definition of the REC_TYPE_DESCR_RE
 	regexp.
 	* src/rec-types.c (REC_TYPE_DESCR_RE): Regexp fixed.

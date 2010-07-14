@@ -252,7 +252,7 @@ tt_db_create ()
 # $1 => Id of a task.
 tt_db_task_p ()
 {
-    COUNT=`${tt_recsel} -t Issue -e "Id = '$1'" -c ${tt_db}`
+    COUNT=`${tt_recsel} -t Issue -e "Id = $1" -c ${tt_db}`
     if test "$COUNT" -gt "0"
     then
         return 0
@@ -266,7 +266,7 @@ tt_db_task_p ()
 # $1 => Id of the task to show.
 tt_db_show_task ()
 {
-    ${tt_recsel} -t Issue -e "Id = '$1'" ${tt_db}
+    ${tt_recsel} -t Issue -e "Id = $1" ${tt_db}
 }
 
 # Get a free ID for an issue.
@@ -281,7 +281,21 @@ tt_db_free_id ()
         fi
     done
 
-    echo `expr $max_id + 1`
+    max_id=`expr $max_id + 1`
+
+    if test "$max_id -lt 10"; then
+        id_prefix="0000"
+    elif test "$max_id -lt 100"; then
+        id_prefix="000"
+    elif test "$max_id -lt 1000"; then
+        id_prefix="00"
+    elif test "$max_id -lt 10000"; then
+        id_prefix="0"
+    else
+        id_prefix=""
+    fi
+
+    echo "$id_prefix$max_id"
 }
 
 ## VC Interface ##
@@ -578,7 +592,7 @@ tt_process_cmd_create ()
         if test -w $tmpfile; then
             rm -f $tmpfile
         fi
-        echo "Please replace this line with the description of the issue." > $tmpfile
+        echo "Please replace this line with a description of the issue." > $tmpfile
         $EDITOR $tmpfile
         description=`cat $tmpfile`
         rm -f $tmpfile
