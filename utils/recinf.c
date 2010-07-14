@@ -46,7 +46,8 @@ enum
 {
   COMMON_ARGS,
   VERBOSE_ARG,
-  NAMES_ARG
+  NAMES_ARG,
+  TYPE_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -54,6 +55,7 @@ static const struct option GNU_longOptions[] =
     COMMON_LONG_ARGS,
     {"verbose", no_argument, NULL, VERBOSE_ARG},
     {"names-only", no_argument, NULL, NAMES_ARG},
+    {"type", required_argument, NULL, TYPE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -65,6 +67,8 @@ char *recutl_help_msg = "\
 Usage: recinf [OPTION]... [FILE]...\n\
 Print information about the types of records stored in the input.\n\
 \n\
+  -t, --type=RECORD_TYPE          print information on the records having the\n\
+                                    specified type.\n\
   -v, --verbose                   include the full record descriptors.\n\
   -n, --names-only                output just the names of the record files\n\
                                     found in the input.\n"
@@ -74,11 +78,13 @@ Examples:\n\
 \n\
         recinf mydata.rec\n\
         recinf -V mydata.rec moredata.rec\n\
+        recinf -t Issue TODO\n\
 \n"
   RECUTL_HELP_FOOTER_DOC ("recinf");
 
 bool recinf_verbose = false;
 bool recinf_names_only = false;
+char *recinf_type = NULL;
 
 bool
 print_info_file (FILE *in,
@@ -102,6 +108,13 @@ print_info_file (FILE *in,
         {
           rset = rec_db_get_rset (db, position);
           descriptor = rec_rset_descriptor (rset);
+
+          if (recinf_type
+              && descriptor
+              && (strcmp (rec_rset_type (rset), recinf_type) != 0))
+            {
+              continue;
+            }
 
           if (recinf_verbose)
             {
@@ -166,7 +179,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "vn",
+                             "vnt:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -184,6 +197,12 @@ main (int argc, char *argv[])
         case 'n':
           {
             recinf_names_only = true;
+            break;
+          }
+        case TYPE_ARG:
+        case 't':
+          {
+            recinf_type = strdup (optarg);
             break;
           }
         default:

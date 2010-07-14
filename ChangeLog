@@ -1,4 +1,14 @@
-2010-07-14  Jose E. Marchesi  <jco@terma.com>
+2010-07-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Support for the --type option in recinf.
+	* utils/recinf.c (COMMON_ARGS): New argument 'TYPE_ARG'.
+	(GNU_longOptions): New argument '--type'.
+	(recutl_help_msg): Doc for the new argument 'type'.
+	(recinf_type): New global variable.
+	(print_info_file): If a type was specified at command line, skip
+	records not having that type.
+
+2010-07-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Keep the descriptor relative position when inserting records in an
 	empty record set.
