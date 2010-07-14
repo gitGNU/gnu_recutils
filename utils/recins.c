@@ -131,8 +131,12 @@ recins_insert_record (rec_db_t db,
 
       if (rec_rset_num_records (rset) == 0)
         {
-          /* The rset is empty => prepend to it.  */
-          rec_rset_insert_at (rset, new_elem, -1);
+          /* The rset is empty => Insert the new record just after the
+             relative position of the record descriptor.
+
+             XXX: move this logic into an 'rec_rset_prepend_record' function.
+          */
+          rec_rset_insert_at (rset, new_elem, rec_rset_descriptor_pos (rset));
         }
       else
         {

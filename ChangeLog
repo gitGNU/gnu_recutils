@@ -1,5 +1,13 @@
 2010-07-14  Jose E. Marchesi  <jco@terma.com>
 
+	Keep the descriptor relative position when inserting records in an
+	empty record set.
+	* utils/recins.c (recins_insert_record): Take into account the
+	descriptor relative position in the record set when inserting a
+	record into an empty rset.
+
+2010-07-14  Jose E. Marchesi  <jco@terma.com>
+
 	Little fixes in tasktool.
 	* tasktool (tt_db_show_task): Use a selection expression implying
 	that Id is an integer, not a string.
