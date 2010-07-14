@@ -1,3 +1,11 @@
+2010-07-14  Jose E. Marchesi  <jemarch@gnu.com>
+
+	Change -v|--verbose in recinf for -d|--descriptor.
+	* utils/recinf.c (COMMON_ARGS): VERBOSE_ARG renamed to
+	DESCRIPTOR_ARG.
+	(print_info_file): Process the -d|--descriptor command line
+	argument instead of -v|--verbose.
+
 2010-07-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Support for the --type option in recinf.
