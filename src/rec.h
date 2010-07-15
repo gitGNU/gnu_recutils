@@ -117,6 +117,66 @@ bool rec_field_name_set (rec_field_name_t fname,
  */
 const char *rec_field_name_get (rec_field_name_t fname,
                                 int index);
+
+/*
+ * FIELD TYPES
+ *
+ */
+
+enum rec_type_kind_e
+  {
+    /* Unrestricted.  */
+    REC_TYPE_NONE = 0,
+    /* An integer number.  */
+    REC_TYPE_INT,
+    /* A Boolean.  */
+    REC_TYPE_BOOL,
+    /* An integer number within a given range.  */
+    REC_TYPE_RANGE,
+    /* A real number.  */
+    REC_TYPE_REAL,
+    /* A string with a limitation on its size.  */
+    REC_TYPE_SIZE,
+    /* A line.  */
+    REC_TYPE_LINE,
+    /* A regexp.  */
+    REC_TYPE_REGEXP,
+    /* A date.  */
+    REC_TYPE_DATE,
+    /* An Enumeration.  */
+    REC_TYPE_ENUM,
+    /* A field name.  */
+    REC_TYPE_FIELD,
+    /* An email.  */
+    REC_TYPE_EMAIL
+  };
+
+typedef struct rec_type_s *rec_type_t;
+
+bool rec_type_descr_p (char *str);
+rec_field_name_t rec_type_descr_field_name (char *str);
+
+rec_type_t rec_type_new (char *str);
+void rec_type_destroy (rec_type_t type);
+
+enum rec_type_kind_e rec_type_kind (rec_type_t type);
+char *rec_type_kind_str (rec_type_t type);
+
+bool rec_type_check (rec_type_t type, char *str);
+
+/*
+ * TYPE REGISTRIES.
+ *
+ */
+
+typedef struct rec_type_reg_s *rec_type_reg_t;
+
+rec_type_reg_t rec_type_reg_new (void);
+void rec_type_reg_destroy (rec_type_reg_t reg);
+
+void rec_type_reg_register (rec_type_reg_t reg, rec_field_name_t name, rec_type_t value);
+rec_type_t rec_type_reg_get (rec_type_reg_t reg, rec_field_name_t name);
+
 /*
  * FIELDS
  *
@@ -353,12 +413,9 @@ void rec_rset_set_descriptor_pos (rec_rset_t rset, size_t position);
 char *rec_rset_type (rec_rset_t rset);
 void rec_rset_set_type (rec_rset_t rset, char *type);
 
-/* Integrity.  */
+/* Type registry.  */
 
-int rec_rset_check (rec_rset_t rset, bool check_descriptor_p, FILE *errors);
-int rec_rset_check_record (rec_rset_t rset, rec_record_t orig_rec,
-                           rec_record_t rec, FILE *errors);
-bool rec_rset_check_field_type (rec_rset_t rset, rec_field_t field, char **type);
+rec_type_reg_t rec_rset_get_type_reg (rec_rset_t rset);
 
 /*
  * DATABASES
@@ -427,6 +484,22 @@ bool rec_db_type_p (rec_db_t db, char *type);
 
 /* Get the rset with the given type from db.  */
 rec_rset_t rec_db_get_rset_by_type (rec_db_t db, char *type);
+
+/*
+ * INTEGRITY.
+ *
+ */
+
+int rec_int_check_rset (rec_rset_t rset,
+                        bool check_descriptor_p,
+                        FILE *errors);
+int rec_int_check_record (rec_rset_t rset,
+                          rec_record_t orig_rec,
+                          rec_record_t rec,
+                          FILE *errors);
+bool rec_int_check_field_type (rec_rset_t rset,
+                               rec_field_t field,
+                               char **type);
 
 /*
  * PARSER
@@ -585,65 +658,6 @@ rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
 char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
 int rec_fex_elem_min (rec_fex_elem_t elem);
 int rec_fex_elem_max (rec_fex_elem_t elem);
-
-/*
- * FIELD TYPES
- *
- */
-
-enum rec_type_kind_e
-  {
-    /* Unrestricted.  */
-    REC_TYPE_NONE = 0,
-    /* An integer number.  */
-    REC_TYPE_INT,
-    /* A Boolean.  */
-    REC_TYPE_BOOL,
-    /* An integer number within a given range.  */
-    REC_TYPE_RANGE,
-    /* A real number.  */
-    REC_TYPE_REAL,
-    /* A string with a limitation on its size.  */
-    REC_TYPE_SIZE,
-    /* A line.  */
-    REC_TYPE_LINE,
-    /* A regexp.  */
-    REC_TYPE_REGEXP,
-    /* A date.  */
-    REC_TYPE_DATE,
-    /* An Enumeration.  */
-    REC_TYPE_ENUM,
-    /* A field name.  */
-    REC_TYPE_FIELD,
-    /* An email.  */
-    REC_TYPE_EMAIL
-  };
-
-typedef struct rec_type_s *rec_type_t;
-
-bool rec_type_descr_p (char *str);
-rec_field_name_t rec_type_descr_field_name (char *str);
-
-rec_type_t rec_type_new (char *str);
-void rec_type_destroy (rec_type_t type);
-
-enum rec_type_kind_e rec_type_kind (rec_type_t type);
-char *rec_type_kind_str (rec_type_t type);
-
-bool rec_type_check (rec_type_t type, char *str);
-
-/*
- * TYPE REGISTRIES.
- *
- */
-
-typedef struct rec_type_reg_s *rec_type_reg_t;
-
-rec_type_reg_t rec_type_reg_new (void);
-void rec_type_reg_destroy (rec_type_reg_t reg);
-
-void rec_type_reg_register (rec_type_reg_t reg, rec_field_name_t name, rec_type_t value);
-rec_type_t rec_type_reg_get (rec_type_reg_t reg, rec_field_name_t name);
                              
 #endif /* !REC_H */
 

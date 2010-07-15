@@ -32,6 +32,7 @@ librec_la_SOURCES = rec-mset.h \
                     rec-db.c \
                     rec-parser.c \
                     rec-writer.c \
+                    rec-int.c \
                     rec-sex-parser.h \
                     rec-sex-parser.c \
                     rec-sex-ast.h \
@@ -46,5 +47,7 @@ librec_la_SOURCES = rec-mset.h \
 librec_la_LDFLAGS =
 librec_la_CPPFLAGS = -I$(top_srcdir)/lib
 librec_la_LIBADD = $(top_builddir)/lib/libgnu.la
+
+check-syntax: all
 
 # End of Makefile.am

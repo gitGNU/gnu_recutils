@@ -1,3 +1,29 @@
+2010-07-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Relocate data integrity related code to rec-int.c.
+	* src/rec-int.c (rec_int_check_field_type): Use
+	'rec_rset_get_type_reg' to get the type registry of records sets
+	instead of accessing the data structure.
+
+	* src/rec.h: New function 'rec_rset_get_type_reg'.
+
+	* src/rec-rset.c (rec_rset_get_type_reg): New function.
+
+	* src/Makefile.am (librec_la_SOURCES): 'rec-int.c' added.
+
+	* utils/recfix.c (recfix_process_data): Use 'rec_int_check_rset'
+	instead of 'rec_rset_check'.
+
+	* utils/recins.c (recins_insert_record): Likewise.
+
+	* utils/recset.c (recset_process_actions): Likewise.
+
+	* src/rec-int.c: New file.
+
+	* src/rec.h: 'rec_rset_check' renamed to 'rec_int_check_rset'.
+	'rec_rset_check_record' renamed to 'rec_int_check_record'.
+	'rec_rset_check_field_type' renamed to 'rec_int_check_field_type'.
+
 2010-07-14  Jose E. Marchesi  <jemarch@gnu.com>
 
 	Change -v|--verbose in recinf for -d|--descriptor.
