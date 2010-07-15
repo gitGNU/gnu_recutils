@@ -1,5 +1,14 @@
 2010-07-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	New function re_int_check_db to check the integrity of a database.
+	* utils/recfix.c (recfix_process_data): Use 'rec_int_check_db'.
+
+	* src/rec-int.h: New function 'rec_int_check_db'.
+
+	* src/rec-int.c (rec_int_check_db): New function.
+
+2010-07-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Relocate data integrity related code to rec-int.c.
 	* src/rec-int.c (rec_int_check_field_type): Use
 	'rec_rset_get_type_reg' to get the type registry of records sets

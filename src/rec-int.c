@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-07-15 18:49:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-07-15 18:59:40 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -31,6 +31,34 @@ static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
 /*
  * Public functions.
  */
+
+int
+rec_int_check_db (rec_db_t db,
+                  bool check_descriptors_p,
+                  FILE *errors)
+{
+  int res;
+  bool ret;
+  size_t db_size;
+  size_t n_rset;
+  rec_rset_t rset;
+  
+  ret = true;
+
+  db_size = rec_db_size (db);
+  for (n_rset = 0; n_rset < db_size; n_rset++)
+    {
+      rset = rec_db_get_rset (db, n_rset);
+      if (rec_int_check_rset (rset,
+                              check_descriptors_p,
+                              errors) > 0)
+        {
+          ret = false;
+        }
+    }
+
+  return ret;
+}
 
 int
 rec_int_check_rset (rec_rset_t rset,

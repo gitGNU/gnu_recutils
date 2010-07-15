@@ -490,6 +490,10 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, char *type);
  *
  */
 
+int rec_int_check_db (rec_db_t db,
+                      bool check_descriptors_p,
+                      FILE *errors);
+
 int rec_int_check_rset (rec_rset_t rset,
                         bool check_descriptor_p,
                         FILE *errors);

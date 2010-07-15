@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-07-15 18:35:09 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-07-15 19:02:07 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -101,30 +101,9 @@ recfix_parse_args (int argc,
 bool
 recfix_process_data (rec_db_t db)
 {
-  bool ret;
-  int res;
-  size_t db_size;
-  size_t n_rset;
-  rec_rset_t rset;
-  rec_writer_t writer;
-
-  ret = true;
-
-  writer = rec_writer_new (stdout);
-  
-  db_size = rec_db_size (db);
-  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
-    {
-      rset = rec_db_get_rset (db, n_rset);
-      if (rec_int_check_rset (rset,
-                              true, /* Check descriptor.  */
-                              stderr) > 0)
-        {
-          ret = false;
-        }
-    }
-
-  return ret;
+  return (rec_int_check_db (db,
+                            true, /* Check descriptors.  */
+                            stderr) == 0);
 }
 
 int
