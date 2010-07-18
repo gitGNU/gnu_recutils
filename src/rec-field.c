@@ -40,6 +40,11 @@ struct rec_field_s
   rec_field_name_t name;
   char *value; /* NULL-terminated string containing the text value of
                   the field. */
+
+  /* Localization.  */
+  char *source;
+  size_t location;
+  char *location_str;
 };
 
 rec_field_name_t
@@ -103,6 +108,11 @@ rec_field_new (rec_field_name_t name,
 
       rec_field_set_name (field, name);
       rec_field_set_value (field, value);
+
+      /* Localization is unused by default.  */
+      field->source = NULL;
+      field->location = 0;
+      field->location_str = NULL;
     }
   
   return field;
@@ -115,6 +125,19 @@ rec_field_dup (rec_field_t field)
 
   new_field = rec_field_new (rec_field_name_dup (rec_field_name (field)),
                              rec_field_value (field));
+
+
+  new_field->location = field->location;
+
+  if (field->source)
+    {
+      new_field->source = strdup (field->source);
+    }
+
+  if (field->location_str)
+    {
+      new_field->location_str = strdup (field->location_str);
+    }
 
   return new_field;
 }
@@ -133,6 +156,15 @@ rec_field_destroy (rec_field_t field)
   if (field->name)
     {
       rec_field_name_destroy (field->name);
+    }
+
+  if (field->source)
+    {
+      free (field->source);
+    }
+  if (field->location_str)
+    {
+      free (field->location_str);
     }
 
   free (field);
@@ -155,6 +187,64 @@ rec_field_to_comment (rec_field_t field)
   res = rec_comment_new (comment_str);
   free (comment_str);
   
+  return res;
+}
+
+char *
+rec_field_source (rec_field_t field)
+{
+  return field->source;
+}
+
+void
+rec_field_set_source (rec_field_t field,
+                      char *source)
+{
+  if (field->source)
+    {
+      free (field->source);
+      field->source = NULL;
+    }
+
+  field->source = strdup (source);
+}
+
+size_t
+rec_field_location (rec_field_t field)
+{
+  return field->location;
+}
+
+void
+rec_field_set_location (rec_field_t field,
+                        size_t location)
+{
+  field->location = location;
+
+  if (field->location_str)
+    {
+      free (field->location_str);
+      field->location_str = NULL;
+    }
+
+  field->location_str = malloc (30);
+  sprintf (field->location_str, "%d", field->location);
+}
+
+char *
+rec_field_location_str (rec_field_t field)
+{
+  char *res;
+
+  if (field->location_str)
+    {
+      res = field->location_str;
+    }
+  else
+    {
+      res = "";
+    }
+
   return res;
 }
 

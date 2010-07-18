@@ -176,7 +176,7 @@ rec_parser_perror (rec_parser_t parser,
      of digits of a given number.  Sorry, I am a bit drunk while
      writing this and cannot think clearly :D -jemarch */
   number_str = malloc (10); /* 10 is a big arbitrary number */
-  sprintf(number_str, "%d", parser->line - 1);
+  sprintf(number_str, "%d", parser->line);
   fputs (number_str, stderr);
   fputs (": error: ", stderr);
   fputs (rec_parser_error_strings[parser->error], stderr);
@@ -290,6 +290,7 @@ rec_parse_field (rec_parser_t parser,
   rec_field_t new;
   rec_field_name_t field_name;
   char *field_value;
+  size_t location;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -298,6 +299,7 @@ rec_parse_field (rec_parser_t parser,
       return false;
     }
 
+  location = parser->line;
   ret = rec_parse_field_name (parser, &field_name);
   if (ret)
     {
@@ -307,6 +309,9 @@ rec_parse_field (rec_parser_t parser,
         {
           new = rec_field_new (field_name,
                                field_value);
+
+          rec_field_set_source (new, parser->file_name);
+          rec_field_set_location (new, location);
           *field = new;
         }
       else

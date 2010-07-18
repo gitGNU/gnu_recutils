@@ -1,5 +1,28 @@
 2010-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Localization of fields and better error reporting.
+	* src/rec-int.c (rec_int_check_record_types): Improve error
+	localization.
+
+	* utils/recutl.c (recutl_parse_db_from_file): Report parse errors.
+
+	* src/rec-int.c (rec_int_check_field_type): Use localization
+	information in the warning.
+
+	* src/rec-parser.c (rec_parse_field): Annotate the fields with
+	their location in the source file.
+
+	* src/rec-field.c (rec_field_destroy): Free memory occupied by the
+	location properties upon field destruction.
+
+	* src/rec.h: New functions 'rec_field_source',
+	'rec_field_set_source', 'rec_field_location',
+	'rec_field_set_location' and 'rec_field_location_str'.
+
+	* src/rec-field.c: Implementation of the functions listed above.
+
+2010-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/rec-int.c: Copyright notification added.
 
 2010-07-15  Jose E. Marchesi  <jemarch@gnu.org>

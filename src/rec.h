@@ -220,6 +220,14 @@ rec_field_t rec_field_dup (rec_field_t field);
 bool rec_field_equal_p (rec_field_t field1,
                         rec_field_t field2);
 
+/* Location properties.  */
+char *rec_field_source (rec_field_t field);
+void rec_field_set_source (rec_field_t field, char *source);
+
+size_t rec_field_location (rec_field_t field);
+char *rec_field_location_str (rec_field_t field);
+void rec_field_set_location (rec_field_t field, size_t location);
+
 /* Others.. */
 rec_comment_t rec_field_to_comment (rec_field_t field);
 

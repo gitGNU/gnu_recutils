@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-07-09 21:52:52 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-07-18 14:55:04 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -66,6 +66,12 @@ recutl_parse_db_from_file (FILE *in,
           res = false;
           break;
         }
+    }
+
+  if (rec_parser_error (parser))
+    {
+      /* Report parsing errors.  */
+      rec_parser_perror (parser, "%s", file_name);
     }
   
   return res;

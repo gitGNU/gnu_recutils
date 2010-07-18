@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-07-18 13:30:17 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-07-18 14:57:17 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -214,7 +214,7 @@ rec_int_check_field_type (rec_db_t db,
           /* Emit a warning.  */
           /* XXX: we need the location of the field!.  */
           fprintf (errors, "%s:%s: warning: type %s conflicts with referred type %s in the rset %s.\n",
-                   "x", "y",
+                   rec_field_source (field), rec_field_location_str (field),
                    rec_type_kind_str (referred_type),
                    rec_type_kind_str (referring_type),
                    rset_name);
@@ -263,13 +263,10 @@ rec_int_check_record_types (rec_db_t db,
       if (!rec_int_check_field_type (db, rset, field, &type_str, errors))
         {
           fprintf (errors,
-                   "%s:%s: error: expected '%s' value in %s[%d]\n",
-                   rec_record_source (record),
-                   rec_record_location_str (record),
-                   type_str,
-                   rec_field_name_str (field),
-                   rec_record_get_field_index_by_name (record, field));
-
+                   "%s:%s: error: expected '%s' value\n",
+                   rec_field_source (field),
+                   rec_field_location_str (field),
+                   type_str);
           res++;
         }
     }
