@@ -678,7 +678,8 @@ rec_type_reg_get (rec_type_reg_t reg,
   res = NULL;
   for (i = 0; i < reg->num_entries; i++)
     {
-      if (rec_field_name_equal_p (reg->entries[i].name, name))
+      if (rec_field_name_equal_p (reg->entries[i].name, name)
+          || rec_field_name_ref_p (reg->entries[i].name, name))
         {
           res = reg->entries[i].type;
           break;

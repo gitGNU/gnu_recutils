@@ -193,32 +193,31 @@ bool
 rec_field_name_equal_p (rec_field_name_t fname1,
                         rec_field_name_t fname2)
 {
-  int i;
-  bool ret;
   char *role1;
   char *role2;
 
-  ret = true;
+  role1 = fname1->parts [rec_field_name_size (fname1) - 1];
+  role2 = fname2->parts [rec_field_name_size (fname2) - 1];
 
-  if ((rec_field_name_size (fname1) == 1)
-      && (rec_field_name_size (fname2) == 3))
+  return (strcmp (role1, role2) == 0);
+}
+
+bool
+rec_field_name_ref_p (rec_field_name_t fname1,
+                      rec_field_name_t fname2)
+{
+  char *role1;
+  char *role2;
+  bool ret;
+
+  ret = false;
+
+  if (rec_field_name_size (fname2) > 1)
     {
-      role1 = fname1->parts[0];
-      role2 = fname2->parts[2];
+      role1 = fname1->parts [rec_field_name_size (fname1) - 1];
+      role2 = fname2->parts [1];
 
       ret = (strcmp (role1, role2) == 0);
-    }
-  else if ((rec_field_name_size (fname1) == 3)
-           && (rec_field_name_size (fname2) == 1))
-    {
-      role1 = fname1->parts[2];
-      role2 = fname2->parts[0];
-
-      ret = (strcmp (role1, role2) == 0);
-    }
-  else
-    {
-      return rec_field_name_eql_p (fname1, fname2);
     }
 
   return ret;

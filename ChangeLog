@@ -1,3 +1,26 @@
+2010-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-int.c: Copyright notification added.
+
+2010-07-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-field-name.c (rec_field_name_ref_p): New function.
+
+	* src/rec-int.c (rec_int_check_rset): Pass 'db' to
+	'rec_rset_elem_record'.
+
+	* utils/recins.c (recins_insert_record): Pass the database
+	containing the rset containing the record to 'rec_int_check_rset'.
+
+	* utils/recset.c (recset_process_actions): Likewise.
+
+	* src/rec.h: 'rec_int_check_rset' gets a parameter (optional using
+	NULL) 'db'.
+	Likewise for 'rec_int_check_record'.
+	Likewise for 'rec_int_check_field_type'.
+
+	* src/rec-int.c (rec_int_check_rset): Likewise.
+
 2010-07-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	New function re_int_check_db to check the integrity of a database.

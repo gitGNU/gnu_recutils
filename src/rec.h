@@ -100,6 +100,10 @@ bool rec_field_name_eql_p (rec_field_name_t fname1,
 bool rec_field_name_equal_p (rec_field_name_t fname1,
                              rec_field_name_t fname2);
 
+/* XXX: explain.  */
+bool rec_field_name_ref_p (rec_field_name_t fname1,
+                           rec_field_name_t fname2);
+
 /* Get the size of a field name measured in number of parts.  */
 int rec_field_name_size (rec_field_name_t fname);
 
@@ -483,7 +487,7 @@ bool rec_db_remove_rset (rec_db_t db, int position);
 bool rec_db_type_p (rec_db_t db, char *type);
 
 /* Get the rset with the given type from db.  */
-rec_rset_t rec_db_get_rset_by_type (rec_db_t db, char *type);
+rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 
 /*
  * INTEGRITY.
@@ -494,16 +498,20 @@ int rec_int_check_db (rec_db_t db,
                       bool check_descriptors_p,
                       FILE *errors);
 
-int rec_int_check_rset (rec_rset_t rset,
+int rec_int_check_rset (rec_db_t db,
+                        rec_rset_t rset,
                         bool check_descriptor_p,
                         FILE *errors);
-int rec_int_check_record (rec_rset_t rset,
+int rec_int_check_record (rec_db_t db,
+                          rec_rset_t rset,
                           rec_record_t orig_rec,
                           rec_record_t rec,
                           FILE *errors);
-bool rec_int_check_field_type (rec_rset_t rset,
+bool rec_int_check_field_type (rec_db_t db,
+                               rec_rset_t rset,
                                rec_field_t field,
-                               char **type);
+                               char **type,
+                               FILE *errors);
 
 /*
  * PARSER

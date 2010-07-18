@@ -189,7 +189,7 @@ rec_db_type_p (rec_db_t db,
 
 rec_rset_t
 rec_db_get_rset_by_type (rec_db_t db,
-                         char *type)
+                         const char *type)
 {
   int i;
   rec_rset_t rset;

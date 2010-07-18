@@ -389,7 +389,7 @@ recset_process_actions (rec_db_t db)
       if (!recset_force)
         {
           errors_stm = open_memstream (&errors_str, &errors_str_size);
-          if (rec_int_check_rset (rset, false, errors_stm) > 0)
+          if (rec_int_check_rset (db, rset, false, errors_stm) > 0)
             {
               fclose (errors_stm);
               if (!recset_verbose)

@@ -1,10 +1,26 @@
-/* -*- mode: C -*- Time-stamp: "2010-07-15 18:59:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-07-18 13:30:17 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
  *
  *       GNU recutils - Data integrity.
  *
+ */
+
+/* Copyright (C) 2010 Jose E. Marchesi */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -19,7 +35,9 @@ static int rec_int_check_descriptor (rec_rset_t rset, FILE *errors);
 static int rec_int_check_record_key (rec_rset_t rset,
                                      rec_record_t orig_record, rec_record_t record,
                                      FILE *errors);
-static int rec_int_check_record_types (rec_rset_t rset, rec_record_t record,
+static int rec_int_check_record_types (rec_db_t db,
+                                       rec_rset_t rset,
+                                       rec_record_t record,
                                        FILE *errors);
 static int rec_int_check_record_mandatory (rec_rset_t rset, rec_record_t record,
                                            FILE *errors);
@@ -49,7 +67,8 @@ rec_int_check_db (rec_db_t db,
   for (n_rset = 0; n_rset < db_size; n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-      if (rec_int_check_rset (rset,
+      if (rec_int_check_rset (db,
+                              rset,
                               check_descriptors_p,
                               errors) > 0)
         {
@@ -61,7 +80,8 @@ rec_int_check_db (rec_db_t db,
 }
 
 int
-rec_int_check_rset (rec_rset_t rset,
+rec_int_check_rset (rec_db_t db,
+                    rec_rset_t rset,
                     bool check_descriptor_p,
                     FILE *errors)
 {
@@ -89,7 +109,8 @@ rec_int_check_rset (rec_rset_t rset,
     {
       record = rec_rset_elem_record (rset_elem);
 
-      res += rec_int_check_record (rset,
+      res += rec_int_check_record (db,
+                                   rset,
                                    record, record,
                                    errors);
     }
@@ -98,7 +119,8 @@ rec_int_check_rset (rec_rset_t rset,
 }
 
 int
-rec_int_check_record (rec_rset_t rset,
+rec_int_check_record (rec_db_t db,
+                      rec_rset_t rset,
                       rec_record_t orig_record,
                       rec_record_t record,
                       FILE *errors)
@@ -107,7 +129,7 @@ rec_int_check_record (rec_rset_t rset,
 
   res =
     rec_int_check_record_key (rset, orig_record, record, errors)
-    + rec_int_check_record_types     (rset, record, errors)
+    + rec_int_check_record_types     (db, rset, record, errors)
     + rec_int_check_record_mandatory (rset, record, errors)
     + rec_int_check_record_unique    (rset, record, errors)
     + rec_int_check_record_prohibit  (rset, record, errors);
@@ -116,27 +138,103 @@ rec_int_check_record (rec_rset_t rset,
 }
 
 bool
-rec_int_check_field_type (rec_rset_t rset,
+rec_int_check_field_type (rec_db_t db,
+                          rec_rset_t rset,
                           rec_field_t field,
-                          char **type_str)
+                          char **type_str,
+                          FILE *errors)
 {
   bool res;
-  rec_type_t type;
   rec_type_reg_t type_reg;
+  rec_field_name_t field_name;
+  const char *rset_name;
+  rec_rset_t referred_rset;
+  rec_type_t type;
+  rec_type_t referring_type;
+  rec_type_t referred_type;
 
   res = true;
-  type_reg = rec_rset_get_type_reg (rset);
+  referred_type = NULL;
+  referring_type = NULL;
 
-  if (type_reg)
+  field_name = rec_field_name (field);
+
+  /* Get the proper type to check 'field' with.  The algorithm differs
+     depending on the kind of field:
+     
+     - For normal fields, we check with the type from the type
+       registry of 'rset', if any.
+
+     - For compound fields (reference), we check with the type from
+       the type registry of the referenced rset, if such an rset is
+       found.
+
+     Note that if a type declaration in the referring rset exist for
+     the field and a conflict arises then the type descriptor in the
+     referred record takes precedence and a warning is emitted.  (XXX:
+     maybe a configurable error?).
+
+  */
+
+  /* Get the referred type, if any.  */
+  if (rec_field_name_size (field_name) > 1)
     {
-      type = rec_type_reg_get (type_reg, rec_field_name (field));
-      if (type)
+      rset_name = rec_field_name_get (field_name, 0);
+      if (rset_name)
         {
-          if (!rec_type_check (type, rec_field_value (field)))
+          referred_rset = rec_db_get_rset_by_type (db, rset_name);
+        }
+
+      if (referred_rset)
+        {
+          type_reg = rec_rset_get_type_reg (referred_rset);
+          if (type_reg)
             {
-              *type_str = rec_type_kind_str (type);
-              res = false;
+              referred_type = rec_type_reg_get (type_reg, rec_field_name (field));
             }
+        }
+    }
+
+  /* Get the referring type, if any.  */
+  if (!type)
+    {
+      type_reg = rec_rset_get_type_reg (rset);
+      if (type_reg)
+        {
+          referring_type = rec_type_reg_get (type_reg, rec_field_name (field));
+        }
+    }
+
+  /* The referring type takes precedence.  */
+  if (referring_type)
+    {
+      if (referred_type
+          && errors)
+        {
+          /* Emit a warning.  */
+          /* XXX: we need the location of the field!.  */
+          fprintf (errors, "%s:%s: warning: type %s conflicts with referred type %s in the rset %s.\n",
+                   "x", "y",
+                   rec_type_kind_str (referred_type),
+                   rec_type_kind_str (referring_type),
+                   rset_name);
+        }
+
+      type = referring_type;
+    }
+  else
+    {
+      type = referred_type;
+    }
+
+  /* Check the field with the type.  */
+
+  if (type)
+    {
+      if (!rec_type_check (type, rec_field_value (field)))
+        {
+          *type_str = rec_type_kind_str (type);
+          res = false;
         }
     }
 
@@ -144,7 +242,8 @@ rec_int_check_field_type (rec_rset_t rset,
 }
 
 static int
-rec_int_check_record_types (rec_rset_t rset,
+rec_int_check_record_types (rec_db_t db,
+                            rec_rset_t rset,
                             rec_record_t record,
                             FILE *errors)
 {
@@ -161,7 +260,7 @@ rec_int_check_record_types (rec_rset_t rset,
       field = rec_record_elem_field (rec_elem);
 
       /* Check for the type.  */
-      if (!rec_int_check_field_type (rset, field, &type_str))
+      if (!rec_int_check_field_type (db, rset, field, &type_str, errors))
         {
           fprintf (errors,
                    "%s:%s: error: expected '%s' value in %s[%d]\n",
