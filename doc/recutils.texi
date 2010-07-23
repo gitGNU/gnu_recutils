@@ -9,6 +9,9 @@
 
 @copying
 Copyright @copyright{} 2009, 2010 Jose E. Marchesi
+Copyright @copyright{} 1994, 1995, 1996, 1997, 1998, 1999, 2000,
+2001, 2002, 2003, 2004, 2005, 2006, 2009, 2010 Free Software
+Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -58,6 +61,8 @@ The Rec Format
 * Record Descriptors::  Describing different types of records.
 * Compound Field Names:: Referencing record instances.
 * Comments::            Comments are useful to store meta data.
+* Date input formats::  Textual date representations that can be used
+                          in Rec files.
 
 Utilities
 * Common Options::      Common command line arguments for the record
@@ -344,11 +349,27 @@ Age: 969
 @chapter Record Descriptors
 
 It is possible to specify certain properties of a set of consecutive
-records by using @dfn{record descriptors}.  A record descriptor is
-itself a record and precedes the rest of the records affected by the
-restrictions.  The presence of another record descriptor mark the end
-of the application of the previous one.  So, in a file with the
-following structure:
+records by preceding them by a @dfn{record descriptor}.  A record
+descriptor is itself a record and stores the properties of the record
+set in fields with certain names.  The most basic property that can be
+specified for a set of records is its @dfn{type}, that should appear
+as the value of a field of name @code{%rec}.  See for example:
+
+@example
+%rec: Entry
+
+Id: 1
+Name: Entry 1
+
+Id: 2
+Name: Entry 2
+@end example
+
+In the example above the record descriptor is composed by one fiel:The @code{%rec} 
+
+The presence of another record descriptor
+mark the end of the application of the previous one.  So, in a file
+with the following structure:
 
 @example
 REC0
@@ -620,6 +641,8 @@ kind of markers:
 
 # End of Bug.rec
 @end example
+
+@include getdate.texi
 
 @node Common Options
 @chapter Common Options

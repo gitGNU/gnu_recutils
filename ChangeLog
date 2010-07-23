@@ -1,5 +1,13 @@
 2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Integrate getdate documentation in the manual.
+	* doc/recutils.texi (Top): Entry for the "Date input formats"
+	chapter added.
+	Include 'getdate.texi'.
+	FSF copyright added in the manual.
+
+2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Implementation of the 'date' field type.
 	* tasktool (tt_db_template): Declare Date as a field of type
 	'date'.
