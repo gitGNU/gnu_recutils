@@ -1,3 +1,23 @@
+2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Implementation of the 'date' field type.
+	* tasktool (tt_db_template): Declare Date as a field of type
+	'date'.
+
+	* src/Makefile.am (librec_la_LIBADD): LIB_CLOCK_GETTIME added to
+	find the definition of 'clock_gettime'.
+
+	* src/rec-types.c (rec_type_check_date): Implemented using
+	'get_date'.
+	Include getdate.h.
+
+2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Gnulib work.
+	* Gnulib updated.
+
+	* Module 'getdate' imported.
+
 2010-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Localization of fields and better error reporting.

@@ -46,7 +46,8 @@ librec_la_SOURCES = rec-mset.h \
 
 librec_la_LDFLAGS =
 librec_la_CPPFLAGS = -I$(top_srcdir)/lib
-librec_la_LIBADD = $(top_builddir)/lib/libgnu.la
+librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \
+                   $(LIB_CLOCK_GETTIME)
 
 check-syntax: all
 

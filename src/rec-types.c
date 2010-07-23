@@ -30,6 +30,7 @@
 #include <regex.h>
 #include <string.h>
 #include <regex.h>
+#include <getdate.h>
 
 #include <rec.h>
 
@@ -70,9 +71,6 @@
 
 #define REC_TYPE_LINE_VALUE_RE                  \
   "^[^\n]*$"
-
-#define REC_TYPE_DATE_VALUE_RE                  \
-  "XXX_TO_BE_DEFINED_DONT_USE"
 
 #define REC_TYPE_EMAIL_VALUE_RE                 \
   "^[ \n\t]*"                                   \
@@ -848,7 +846,8 @@ static bool
 rec_type_check_date (rec_type_t type,
                      char *str)
 {
-  return rec_type_check_re (REC_TYPE_DATE_VALUE_RE, str);
+  struct timespec tm;
+  return get_date (&tm, str, NULL);
 }
 
 static bool

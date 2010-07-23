@@ -62,6 +62,7 @@ tt_db_template="\
 %type: Assignee email
 %type: Assigned email
 %type: Component enum librec utils rec-mode
+%type: Date date
 %fsort: Id Summary Status Originator Description
 %doc:
 + An issue.  It contains, at least, the following
