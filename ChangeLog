@@ -1,5 +1,12 @@
 2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Avoid build dependency with bison.
+	* lib/getdate.c: New file.
+
+	* build-aux/.gitignore: Ignore ylwrap.
+
+2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Integrate getdate documentation in the manual.
 	* doc/recutils.texi (Top): Entry for the "Date input formats"
 	chapter added.
