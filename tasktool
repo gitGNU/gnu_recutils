@@ -47,33 +47,37 @@ tt_tasktool=tasktool
 tt_version="0.1"
 tt_copyright_holder="Jose E. Marchesi"
 tt_copyright_years="2010"
+
+tt_db_issue="Issue"
+tt_db_field_id="Id"
+tt_db_field_summary="Summary"
+tt_db_field_type="Type"
+tt_db_field_status="Status"
+tt_db_field_description="Description"
+tt_db_field_originator="Originator"
+tt_db_field_assignee="Assignee"
+tt_db_field_assigned="Assigned"
+tt_db_field_component="Component"
+tt_db_field_created="Created"
+tt_db_field_note="Note"
+
 tt_db_template="\
 # -*- mode: rec -*-
 #
 # TODO file for the GNU recutils.
 
 %rec: Issue
-%key: Id
-%mandatory: Summary
-%type: Summary line
-%type: Type enum improvement bug
-%type: Status enum TODO NEXT STARTED WAITING DISCARDED
-%type: Originator email
-%type: Assignee email
-%type: Assigned email
-%type: Component enum librec utils rec-mode
-%type: Date date
-%fsort: Id Summary Status Originator Description
-%doc:
-+ An issue.  It contains, at least, the following
-+ fields:
-+
-+ Type: the type of the issue.  An improvement or
-+       a bug.
-+ Originator: an email identifying the person/entity
-+             that originated the issue.
-
-# End of TODO"
+%key: ${tt_db_field_id}
+%mandatory: ${tt_db_field_summary}
+%type: ${tt_db_field_summary} line
+%type: ${tt_db_field_type} enum improvement bug
+%type: ${tt_db_field_status} enum TODO NEXT STARTED WAITING DISCARDED
+%type: ${tt_db_field_originator} email
+%type: ${tt_db_field_assignee} email
+%type: ${tt_db_field_assigned} email
+%type: ${tt_db_field_component} enum librec utils rec-mode
+%type: ${tt_db_field_created} date
+"
 
 # Help messages
 tt_help_footer="\
@@ -253,7 +257,7 @@ tt_db_create ()
 # $1 => Id of a task.
 tt_db_task_p ()
 {
-    COUNT=`${tt_recsel} -t Issue -e "Id = $1" -c ${tt_db}`
+    COUNT=`${tt_recsel} -t ${tt_db_issue} -e "${tt_db_field_id} = $1" -c ${tt_db}`
     if test "$COUNT" -gt "0"
     then
         return 0
@@ -267,14 +271,14 @@ tt_db_task_p ()
 # $1 => Id of the task to show.
 tt_db_show_task ()
 {
-    ${tt_recsel} -t Issue -e "Id = $1" ${tt_db}
+    ${tt_recsel} -t ${tt_db_issue} -e "${tt_db_field_id} = $1" ${tt_db}
 }
 
 # Get a free ID for an issue.
 tt_db_free_id ()
 {
     max_id=0
-    for id in `${tt_recsel} -t Issue -P Id ${tt_db}`
+    for id in `${tt_recsel} -t ${tt_db_issue} -P ${tt_db_field_id} ${tt_db}`
     do
         if test $id -gt $max_id
         then
@@ -425,8 +429,8 @@ Please replace this line with the annotation for the issue." > $tmpfile
 
     # Add the annotation to the database.
     $tt_recset --verbose \
-        -t Issue -e "Id = $1" \
-        -f Note -a "$note" \
+        -t ${tt_db_issue} -e "${tt_db_field_id} = $1" \
+        -f ${tt_db_field_note} -a "$note" \
         $tt_db
     if test "$?" != "0"
     then
@@ -528,7 +532,8 @@ tt_process_cmd_list ()
         selection_expression="$selection_expression && (Originator = '$originator')"
     fi
 
-    ${tt_recsel} -t Issue -e "$selection_expression" -C -R Id,Summary ${tt_db}
+    ${tt_recsel} -t ${tt_db_issue} -e "$selection_expression" -C \
+                 -R ${tt_db_field_id},${tt_db_field_summary} ${tt_db}
 }
 
 # Process the 'create' subcommand
@@ -617,13 +622,13 @@ tt_process_cmd_create ()
 
     # Add the new issue to the database.
     eval $tt_recins --verbose \
-                    -t Issue \
-                    -f Id -v $new_id \
-                    -f Summary -v \'$summary\' \
-                    -f Date -v \'$date\' \
-                    -f Originator -v \'$originator\' \
-                    -f Status -v TODO \
-                    -f Description -v \'"$description"\' \
+                    -t ${tt_db_issue} \
+                    -f ${tt_db_field_id} -v $new_id \
+                    -f ${tt_db_field_summary} -v \'$summary\' \
+                    -f ${tt_db_field_created} -v \'$date\' \
+                    -f ${tt_db_field_originator} -v \'$originator\' \
+                    -f ${tt_db_field_status} -v TODO \
+                    -f ${tt_db_field_description} -v \'"$description"\' \
                     $tt_db
     if test "$?" != "0"
     then

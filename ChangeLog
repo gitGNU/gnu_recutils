@@ -1,5 +1,20 @@
 2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Parametrize the name of the fields in the issues.
+	* tasktool: New variables containing the names of the issue
+	fields: tt_db_field_id, tt_db_field_summary, tt_db_field_type,
+	tt_db_field_status, tt_db_field_originator, tt_db_field_assignee,
+	tt_db_field_assigned, tt_db_field_component, tt_db_field_created,
+	tt_db_field_note, tt_db_field_description.
+	(tt_db_template): Use the variables described above.
+	(tt_version): Likewise.
+	(tt_version): Likewise.
+	(tt_version): Likewise.
+	(tt_supported_vcs): Likewise.
+	(tt_supported_vcs): Likewise.
+
+2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Avoid build dependency with bison.
 	* lib/getdate.c: New file.
 
