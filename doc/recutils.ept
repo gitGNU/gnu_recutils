@@ -424,6 +424,7 @@
 
 (ept-page
  (ept-title "Get the recutils!")
- (ept-text "\n\n\n\n                   git clone http://jemarch.net/git/recutils.git")))
+ (ept-text "\n\n\n                   wget http://jemarch.net/downloads/recutils-git.tar.gz")
+ (ept-text "\n                   git clone fp.gnu.org:/home/jemarch/git/recutils.git"))
 
 ;; End of recutils.ept
