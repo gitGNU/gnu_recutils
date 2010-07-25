@@ -40,6 +40,7 @@ librec_la_SOURCES = rec-mset.h \
                     rec-sex.c \
                     rec-sex.lex.c \
                     rec-sex.lex.h \
+                    rec-sex.tab.h \
                     rec-sex.tab.c \
                     rec-fex.c \
                     rec-types.c
