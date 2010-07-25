@@ -21,7 +21,6 @@ bin_PROGRAMS = recinf recsel recins recdel recset recfix
 COMMONSRC = recutl.h recutl.c
 
 recinf_SOURCES = $(COMMONSRC) \
-                 recinf.h \
                  recinf.c
 
 recinf_LDFLAGS = -L$(top_builddir)/src
