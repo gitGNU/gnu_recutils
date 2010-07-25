@@ -1,5 +1,10 @@
 2010-07-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Manual: misc improvements.
+	* doc/recutils.texi: Misc improvements.
+
+2010-07-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	GHM 2010 slides.
 	* doc/recutils.ept: New file.
 

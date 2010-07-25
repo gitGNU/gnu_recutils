@@ -83,54 +83,7 @@ Utilities
 @node Introduction
 @chapter Introduction
 
-There are a lot of available data storage systems in these days, that
-are suitable to satisfy a quite broad set of requirements.
-
-Complex data management systems pose a demanding set of requirements
-when it comes to the storage of data: integrity, performance, support
-for transactions, stored procedures, support for extremely big
-databases, etc.  Banking and data gathering applications fall in that
-category.  Full-fledged relational systems, such as PostgreSQL, are
-widely used in that kind of applications.
-
-Some other applications use custom binary file formats to store the
-application data.
-
-XML files are also used for that purpose, using structured text
-instead.  XML allows to express hierarchical structures, but it is not
-very readable.
-
-If we had to elaborate a taxonomy of those systems, we could make use
-of the following properties:
-
-@table @emph
-@item Compactness
-It is usually a good feature for a data storage system to use a
-compact representation of the data.  Redundant or useless information
-increase the amount of memory/disk space required to hold the data.
-
-Both relational systems and custom binary file formats use a quite
-compact physical representation of the data when written to a disk or
-dumped into memory.  On the contrary, @dfn{xml} files contain a lot of
-redundant data to improve human readability.
-@item Complexity
-Complex problems require complex tools.
-@item Efficiency
-Efficiency is a quite important factor in systems designed to store a
-big amount of data.  The operations performed on the storage system
-(namely search, insertion and deletion) shall not feature a bad
-asymptotic behavior when the amount of data stored in the system
-increases a lot.
-
-The usage of both logical and physical indexes is common to avoid
-performance problems.  The physical format used to store the data has
-a quite direct impact in the feasibility of having such indexes.
-@item Human readability
-Contrary to the previous listed properties, this one is not usually
-found in data storage systems.
-
-Exceptions are @acronym{xml} and @emph{org} files.
-@end table
+XXX
 
 @node A Little Example
 @chapter A Little Example
@@ -145,7 +98,7 @@ In order to improve the management of our little book collection we
 could make use of a complex data storage system such as a relational
 database.  The problem with that approach, as explained in the
 previous section, is that the tool is too complicated for the simple
-task: we do not need the power of a RDBS to maintain a simple
+task: we do not need the full power of a RDBS to maintain a simple
 collection of books.
 
 With GNU recutils it is possible to maintain such a little database in
@@ -153,25 +106,17 @@ a text file.  Let's call it @file{books.rec}.  The following table
 resumes the information items that we want to store for each title,
 along with some common-sense restrictions.
 
-@table @emph
-@item Title
 @itemize @minus
 @item
 Every book has a title, even if it is ``No Title''.
 @item
 A book can have several titles.
-@end itemize
-@item Authors
-@itemize @minus
 @item
 A book can have more than one author.
 @item
 Sometimes the author is not known.
 @item
 Sometimes we don't care about who the author of a book is.
-@end itemize
-@item Location
-@itemize
 @item
 We usually store our books in home.
 @item
@@ -181,7 +126,6 @@ Sometimes we are not sure about the physical location of a book.  Did
 we loan it to someone?  Was it lost in the last move?  Is it in some
 hidden place at home?
 @end itemize
-@end table
 
 The contents of the rec file follows:
 
@@ -237,23 +181,22 @@ The Colour of Magic
 @node Fields and Records
 @chapter Fields and Records
 
-A field is the written expression of an association between a label
-and a value.  For example, if we want to associate the label
-@code{Name} with the value @code{Ada Lovelace} we would write the
-field:
+A field is the written form of an association between a label and a
+value.  For example, if we wanted to associate the label @code{Name}
+with the value @code{Ada Lovelace} we would write the field:
 
 @example
 Name: Ada Lovelace
 @end example
 
 The separator between the field name and the field value is a colon
-followed by zero or more blank characters (space and tabs, but not
+followed by one or more blank characters (space and tabs, but not
 newlines).  The name of the field shall begin in the first column of
 the line.
 
-A field name is composed by any alphanumeric character plus dashes
-(@code{-}) and underscores (@code{_}).  The regular expression
-denoting a field name is:
+A field name is a sequence of alphanumeric characters plus dashes
+(@code{-}) and underscores (@code{_}), starting with a letter or the
+character @code{%}.  The regular expression denoting a field name is:
 
 @example
 [a-zA-Z%][a-zA-Z0-9_-]+
@@ -269,19 +212,12 @@ not part of the names):
 Foo:
 foo:
 A23:
-_23:
--dash:
 ab1:
-a-b:
 A_Field:
--:
-_:
 @end example
 
 The value of a field is a sequence of characters terminated by a
-single newline character (@code{\n}).  The value of a field shall be
-separated from the field name by a blank character other than a
-newline.
+single newline character (@code{\n}).
 
 Sometimes a value is long enough to exceed the usual width of
 terminals and screens.  In that case, depending on the specific tool
@@ -292,7 +228,7 @@ a backslash character, as in:
 @example
 LongLine: This is a quite long value \
 composed by a unique logical line \
-splitted in several lines.
+splitted in several physical lines.
 @end example
 
 The sequence @code{\n} (newline) @code{+} (PLUS) and an optional
@@ -305,7 +241,7 @@ Foo: bar1
 + bar2
 +  bar3
 @end example
-             
+
 A record is a group of one or more fields written one after the other:
 
 @example
@@ -348,12 +284,12 @@ Age: 969
 @node Record Descriptors
 @chapter Record Descriptors
 
-It is possible to specify certain properties of a set of consecutive
-records by preceding them by a @dfn{record descriptor}.  A record
-descriptor is itself a record and stores the properties of the record
-set in fields with certain names.  The most basic property that can be
-specified for a set of records is its @dfn{type}, that should appear
-as the value of a field of name @code{%rec}.  See for example:
+It is possible to specify certain properties of a set of records by
+preceding them by a @dfn{record descriptor}.  A record descriptor is
+itself a record, and uses fields with specific names to store
+properties.  The most basic property that can be specified for a set
+of records is the @dfn{type} of the records.  The special field name
+@code{%rec} is used for that purpose:
 
 @example
 %rec: Entry
@@ -365,11 +301,9 @@ Id: 2
 Name: Entry 2
 @end example
 
-In the example above the record descriptor is composed by one fiel:The @code{%rec} 
-
-The presence of another record descriptor
-mark the end of the application of the previous one.  So, in a file
-with the following structure:
+The presence of another record descriptor mark the end of the
+application of the previous one.  So, in a file with the following
+structure:
 
 @example
 REC0
