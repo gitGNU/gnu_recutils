@@ -1,0 +1,429 @@
+;; Slides for a talk at the GNU Hackers Meeting 2010 at The Hague.
+;;
+;; Copyright (C) 2010 Jose E. Marchesi
+;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+(defface ept-example-face
+  `((t (:foreground "Red" ,@(if window-system
+				  (list :font ept-body-face-font)))))
+  nil)
+
+(defun ept-example (string)
+  (insert (propertize string 'face 'default)))
+
+(ept-page
+ (ept-align-center
+  (ept-text '("\n\nGNU(?) recutils\n" . ept-title-face))
+  (ept-text "\nJose E. Marchesi\njemarch@gnu.org\n")))
+
+(ept-page
+ (ept-title "Contents")
+ (ept-itemize
+  (ept-item "Purpose of the GNU recutils.")
+  (ept-item "The Rec Format.")
+  (ept-item "The Software.")
+  (ept-itemize
+   (ept-item "The librec library.")
+   (ept-item "The utilities.")
+   (ept-item "The Emacs mode."))
+  (ept-item "Current status and plans.")))
+
+(ept-page
+ (ept-title "Purpose")
+ (ept-text "   Sometimes it is useful to create medium-size "
+           '("simple" . ept-highlight-face)
+           " databases.\n")
+ (ept-text "   Let's consider some existing solutions.\n")
+ (ept-itemize
+  (ept-item "Full fledged relational DBMS: mysql, postgresql.")
+  (ept-item "SQLite.")
+  (ept-item "Tree-structured text files (XML, sexps, ...)")
+  (ept-item "csv files.")
+  (ept-item "...")))
+
+(ept-page
+ (ept-title "The Rec Format: Fields and Records")
+ (ept-itemize
+  (ept-item "A rec file contains a sequence of records.")
+  (ept-item "Records are sequences of fields.")
+  (ept-item "Fields are pairs name->value.")
+  (ept-item "Example, a list of contacts:"))
+ (ept-example "      Name: Jose E. Marchesi
+      Email: jemarch@gnu.org
+      Email: jco@terma.com
+      
+      Name: John Thompson
+      
+      Name: Thomas Johnson
+      Email: tom@johnson.com\n"))
+
+(ept-page
+ (ept-title "The Rec Format: Field Values")
+ (ept-itemize
+  (ept-item "Fields have the form:")
+  (ept-example "      FIELD_NAME: VALUE\n\n")
+  (ept-item "It is possible to split a logical line into several physical lines:")
+  (ept-example "      LongLine: This is a quite long value \\
+      composed by a unique logical line \\
+      splitted in several physical lines.\n\n")
+  (ept-item "Continuation-lines allow the usage of multi-line values:")
+  (ept-example "      Address: DonCojon GmbH
+      + Einbahnstrasse 100
+      + 60231 Ausfahrt am Main
+      + Germany")))
+
+(ept-page
+ (ept-title "The Rec Format: Comments")
+ (ept-itemize
+  (ept-item "Comments can appear anywhere in rec files:")
+  (ept-example "      # -*- mode: rec -*-
+      # 
+      # This file contains a list of contacts.
+      
+      Name: Mr. Foo
+      Email: foo@foo.com
+
+      Name: Mr. Bar
+      # Not valid since 2009:
+      # Email: bar@bar.com
+      Email: altbar@bar.com
+
+      # End of contacts.rec\n\n")))
+
+(ept-page
+ (ept-title "The Rec Format: Record Descriptors")
+ (ept-itemize
+  (ept-item "Record descriptors are records describing other records.")
+  (ept-item "Their main purpose is to define different \"types\" of records.")
+  (ept-item "Descriptors use %-fields.")
+  (ept-item "They affect the records following them in the rec data stream.")
+  (ept-example "      %rec: Foo
+      
+      ... records of type Foo ...
+      
+      %rec: Bar
+      
+      ... records of type Bar ...
+      
+      ")))
+   
+
+(ept-page
+ (ept-title "The Rec Format: gnu.rec")
+ (ept-example "      %rec: Maintainer
+      
+      Name: John Thompson
+      Email: john@thompson.com
+      
+      Name: Thomas Johnson
+      Email: tom@johnson.com
+
+      %rec: Package
+      
+      Name: GNU Foo
+      URL: http://www.gnu.org/software/foo
+
+      Name: GNU Bar
+      URL: http://www.gnu.org/software/bar"))
+
+(ept-page
+ (ept-title "The Rec Format: %-fields")
+ (ept-itemize
+  (ept-item "%rec: TYPE")
+  (ept-text "       Type of the records.\n")
+  (ept-item "%mandatory: FNAME...")
+  (ept-item "%unique: FNAME...")
+  (ept-item "%key: FNAME...")
+  (ept-item "%type: FNAME TYPE")
+  (ept-text "       Data integrity.  Key = mandatory + unique\n")
+  (ept-item "%fsort, %prohibit, ..., more?")))
+
+(ept-page
+ (ept-title "The Rec Format: gnu.rec with data integrity")
+ (ept-example "      %rec: Maintainer
+      %key: Name
+      %type: Email email
+      
+      Name: John Thompson
+      Email: john@thompson.com
+      
+      %rec: Package
+      %key: Name
+      %mandatory: URL
+      
+      Name: GNU Foo
+      URL: http://www.gnu.org/software/foo
+
+      Name: GNU Bar
+      URL: http://www.gnu.org/software/bar"))
+
+(ept-page
+ (ept-title "The Rec Format: %type")
+ (ept-itemize
+  (ept-item "Simple types:")
+  (ept-text "      %type: FNAME (int|bool|real|line|date|email)\n")
+  (ept-item "Strings with maximum size:")
+  (ept-text "      %type: FNAME size NUMBER\n")
+  (ept-item "Regular expressions:")
+  (ept-text "      %type: FNAME regexp /REGEXP/\n")
+  (ept-item "Enumerations:")
+  (ept-text "      %type: FNAME enum VAL1 VAL2 VAL3")))
+
+(ept-page
+ (ept-title "The Rec Format: Enumeration type")
+ (ept-itemize
+  (ept-item "An example of an enumeration type:")
+  (ept-example "      %rec: Task
+      %type: Task enum TODO ASSIGNED DONE DISCARDED\n\n")
+  (ept-item "Text enclosed in parenthesis is ignored:")
+  (ept-example "      %rec: Task
+      %type: Task enum
+      + TODO      (New task, unassigned)
+      + ASSIGNED  (Someone is working in the task)
+      + DONE      (Task is done)
+      + DISCARDED (Task was discarded)\n")))
+
+(ept-page
+ (ept-title "The Rec Format: Regexp type")
+ (ept-itemize
+  (ept-item "An example of a regular expression type:")
+  (ept-example "      %rec: Product
+      %type: Id regexp /[A-Z][0-9]{4}/
+      
+      Id: B0006\n\n")
+  (ept-item "Like sed, any character can delimit the regexp:")
+  (ept-example "      %rec: File
+      %type: Path regexp ,(/[a-zA-Z0-9]+)+,
+      
+      Path: /foo/bar\n\n")
+  (ept-item "Same syntax than glibc's reg* functions.")))
+
+(ept-page
+ (ept-title "The Rec Format: References")
+ (ept-itemize
+  (ept-item "References are implemented using compound fields:")
+  (ept-example "      TYPE:FNAME:[ROLE:]\n\n")
+  (ept-item "A Package is maintained by someone (implicit role):")
+  (ept-example "      %rec: Package
+      
+      Name: GNU recutils
+      Maintainer:Name: Jose E. Marchesi\n\n")
+  (ept-item "The optional role part avoids ambiguity:")
+  (ept-example "      %rec: Task
+      
+      Id: 23
+      Hacker:Email:Originator: reporter@gnu.org
+      Hacker:Email:Assignee: jemarch@gnu.org\n\n")))
+
+(ept-page
+ (ept-title "The Software")
+ (ept-itemize
+  (ept-item "librec")
+  (ept-text "      A C library\n")
+  (ept-item "recutils")
+  (ept-text "      A set of little C utilities\n")
+  (ept-item "rec-mode.el")
+  (ept-text "      An Emacs mode :D")))
+
+(ept-page
+ (ept-title "The librec Library")
+ (ept-text "   Provides a rich C API to manage Rec files.\n")
+ (ept-itemize
+  (ept-item "Management of fields, records, record sets and databases.")
+  (ept-item "Management of types.")
+  (ept-item "Record selection expressions.")
+  (ept-item "Field resolvers.")
+  (ept-item "Rec parser.")
+  (ept-item "Rec writer.")
+  (ept-item "...")))
+
+(ept-page
+ (ept-title "The Utilities")
+ (ept-itemize
+  (ept-item "recinf: Printing information about rec files")
+  (ept-item "recsel: Selecting records")
+  (ept-item "recins: Inserting records")
+  (ept-item "recdel: Deleting records")
+  (ept-item "recset: Adding/Setting/Deleting fields in a record")
+  (ept-item "recfix: Checking data integrity")))
+
+(ept-page
+ (ept-title "recinf - Printing information about rec files")
+ (ept-text "   Usage: recinf [OPTION]... [FILE]...
+   Print information about the contents of rec files.\n")
+ (ept-itemize
+  (ept-item "Examples:")
+  (ept-example "      $ recinf gnu.rec
+      3 Maintainer
+      4 Package\n\n")
+ (ept-example "      $ recinf -d -t Package gnu.rec
+      %rec: Maintainer
+      %type: Email email
+      
+      %rec: Package
+      %key: Name\n")))
+
+(ept-page
+ (ept-title "recsel - Selecting records")
+ (ept-text "Usage: recsel [OPT]... [-t TYPE] [-n NUM | -e EXPR] [-c | (-p|-P) FLIST] [FILE]...
+   Select and print rec data.\n")
+ (ept-itemize
+  (ept-item "Getting records of a given type:")
+  (ept-example "      $ recsel -t Package gnu.rec
+      Name: GNU Foo
+      URL: http://www.gnu.org/software/foo
+      
+      Name: GNU Bar
+      URL: http://www.gnu.org/software/bar\n\n")))
+
+(ept-page
+ (ept-title "recsel - Selecting records")
+ (ept-itemize
+  (ept-item "Printing the nth record of a given type:")
+  (ept-example "      $ recsel -t Package -n 1 gnu.rec
+      Name: GNU Bar
+      URL: http://www.gnu.org/software/bar\n\n")
+  (ept-item "Printing records satisfying a given expression:")
+  (ept-example "      $ recsel -t Maintainer -e \"#Email > 0\" gnu.rec
+      $ recsel -t Maintainer -e \"Email ~ '.org'\" gnu.rec
+      $ recsel -t Maintainer -e \"Email[0] ~ '.org'\" gnu.rec
+      $ recsel -e \"Cyclo > 10 && !Tested\" functions.rec\n\n")))
+
+(ept-page
+ (ept-title "recsel - Selecting records")
+ (ept-itemize
+  (ept-item "Selection expressions are applied to records.")
+  (ept-item "They evaluate to a boolean value.")
+  (ept-item "Operators:")
+  (ept-itemize
+   (ept-item "Simple logic: = != !")
+   (ept-item "Simple arithmetic: + - / % *")
+   (ept-item "Regexp match: ~")
+   (ept-item "Subscripts in names: Email[0]"))
+  (ept-item "Backtracking.")))
+ 
+(ept-page
+ (ept-title "recsel - Selecting records")
+ (ept-itemize
+  (ept-item "Printing a subset of the fields:")
+  (ept-example "      $ recsel -t Maintainer -p Email gnu.rec
+      Email: john@thompson.com
+      
+      Email: tom@johnson.com\n\n")
+  (ept-item "Printing values instead of fields:")
+  (ept-example "      $ recsel -t Maintainer -P Email gnu.rec
+      john@thompson.com
+      
+      tom@johnson.com\n\n")))
+
+(ept-page
+ (ept-title "recsel - Selecting records")
+ (ept-itemize
+  (ept-item "Collapsing the output:")
+  (ept-example "      $ recsel -C -t Maintainer -P Email gnu.rec
+      john@thompson.com
+      tom@johnson.com\n\n")
+  (ept-item "Row printing:")
+  (ept-example "      $ recsel -C -R Id,Title tasks.rec
+      1 First task title.
+      2 Second task title.
+      3 Third task title.\n\n")))
+
+(ept-page
+ (ept-title "recins - Inserting records")
+ (ept-text "   Usage: recins [OPTION]... [-f STR -v STR]... [FILE]
+   Insert records in a rec file.\n")
+ (ept-itemize
+  (ept-item "Altering the contents of a file:")
+  (ept-example "      $ recins -t Package -f Name -v \"GNU foo\" -f URL -v \"http://foo.org\" gnu.rec\n\n")
+  (ept-item "Working as a filter:")
+  (ept-example "      $ recins -t Package -f Name -v \"GNU foo\" \\
+                          -f URL  -v \"http://foo.org\" < gnu.rec
+      ... existing records ...
+      
+      Name: GNU foo
+      URL: http://foo.org\n\n")))
+
+(ept-page
+ (ept-title "recdel - Deleting records")
+ (ept-text "   Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]
+   Remove (or comment out) records from a rec file.\n")
+ (ept-itemize
+  (ept-item "Remove all records of a given type:")
+  (ept-example "      $ recdel -t Package gnu.rec\n\n")
+  (ept-item "Comment out the 10th contact:")
+  (ept-example "      $ recdel -n 10 -c contacts.rec\n\n")
+  (ept-item "Using a record selection expression:")
+  (ept-example "      $ recdel -e \"Email[0] = 'foo@bar.com'\" contacts.rec\n\n")))
+
+(ept-page
+ (ept-title "recset - Adding/Setting/Deleting fields in a record")
+ (ept-text "   Usage: recset [OPTION]... [FILE]...
+   Alter or delete fields in records.\n")
+ (ept-itemize
+  (ept-item "Adding a field to a given record:")
+  (ept-example "      $ recset -t Maintainer -e \"Email ~ \"hotmail.com\" -f Note -a \"WTF\" gnu.rec\n\n")
+  (ept-item "Changing the value of a field:")
+  (ept-example "      $ recset -t Package -n 10 -f URL -s \"http://new.url\" gnu.rec\n\n")
+  (ept-item "Removing/commenting out fields in a record:")
+  (ept-example "      $ recset -t Maintainer -f Email[1],Email[2] -d
+      $ recset -t Maintainer -f Email[1],Email[2] -c\n\n")))
+
+(ept-page
+ (ept-title "recfix - Checking data integrity")
+ (ept-text "   Usage: recfix [OPTION]... [FILE]...
+   Check and fix rec files.\n")
+ (ept-itemize
+  (ept-item "Checking a rec file:")
+  (ept-example "      $ recfix gnu.rec
+      gnu.rec:6: error: expected 'int' value
+      gnu.rec:15: error: mandatory field 'URL' not found in record\n\n")
+  (ept-item "Planned: Interactive fixing mode.")))
+
+(ept-page
+ (ept-title "The Emacs Mode")
+ (ept-itemize
+  (ept-item "Emacs mode to edit rec files: rec-mode")
+  (ept-item "Font lock")
+  (ept-item "Navigation through records")
+  (ept-item "Planned:")
+  (ept-itemize
+   (ept-item "API to access rec data")
+   (ept-item "Column view mode")
+   (ept-item "Forms")
+   (ept-item "A big wish list..."))))
+
+(ept-page
+ (ept-title "Current Status")
+ (ept-itemize
+  (ept-item "librec is ready.")
+  (ept-item "All the described recutils are available.")
+  (ept-item "rec-mode.el needs a lot of love.")
+  (ept-item "Published today! :D")))
+
+(ept-page
+ (ept-title "Plans")
+ (ept-itemize
+  (ept-item "Fix pending bugs and problems in librec and the utilities.")
+  (ept-item "Get rec-mode.el to use the C utilities.")
+  (ept-item "Finish the user manual.")
+  (ept-item "Apply in gnu-eval to become a GNU program.")
+  (ept-item "Deliver.")))
+
+(ept-page
+ (ept-title "Get the recutils!")
+ (ept-text "\n\n\n\n                   git clone http://jemarch.net/git/recutils.git")))
+
+;; End of recutils.ept

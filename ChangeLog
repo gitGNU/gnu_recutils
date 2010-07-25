@@ -1,3 +1,8 @@
+2010-07-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	GHM 2010 slides.
+	* doc/recutils.ept: New file.
+
 2010-07-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Parametrize the name of the fields in the issues.
