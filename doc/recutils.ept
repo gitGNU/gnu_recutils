@@ -186,10 +186,10 @@
  (ept-itemize
   (ept-item "An example of an enumeration type:")
   (ept-example "      %rec: Task
-      %type: Task enum TODO ASSIGNED DONE DISCARDED\n\n")
+      %type: Status enum TODO ASSIGNED DONE DISCARDED\n\n")
   (ept-item "Text enclosed in parenthesis is ignored:")
   (ept-example "      %rec: Task
-      %type: Task enum
+      %type: Status enum
       + TODO      (New task, unassigned)
       + ASSIGNED  (Someone is working in the task)
       + DONE      (Task is done)
@@ -226,6 +226,11 @@
       Id: 23
       Hacker:Email:Originator: reporter@gnu.org
       Hacker:Email:Assignee: jemarch@gnu.org\n\n")))
+
+(ept-page
+ (ept-text "\n\n\n\n")
+ (ept-align-center
+  (ept-inline "turtles.jpg")))
 
 (ept-page
  (ept-title "The Software")
@@ -425,6 +430,6 @@
 (ept-page
  (ept-title "Get the recutils!")
  (ept-text "\n\n\n                   wget http://jemarch.net/downloads/recutils-git.tar.gz")
- (ept-text "\n                   git clone fp.gnu.org:/home/jemarch/git/recutils.git"))
+ (ept-text "\n                   git clone fp.gnu.org:/home/j/jemarch/git/recutils.git"))
 
 ;; End of recutils.ept
