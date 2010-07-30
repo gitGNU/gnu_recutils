@@ -37,6 +37,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module exitfail:
   # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  # Code from module gendocs:
   # Code from module getdate:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
@@ -106,6 +107,7 @@ AC_DEFUN([gl_INIT],
      AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
   # Code from module exitfail:
   # Code from module extensions:
+  # Code from module gendocs:
   # Code from module getdate:
   gl_GETDATE
   # Code from module getopt-gnu:
@@ -314,7 +316,9 @@ AC_DEFUN([gltests_LIBSOURCES], [
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/arg-nonnull.h
   build-aux/c++defs.h
+  build-aux/gendocs.sh
   build-aux/warn-on-use.h
+  doc/gendocs_template
   doc/getdate.texi
   lib/alloca.in.h
   lib/c-ctype.c
