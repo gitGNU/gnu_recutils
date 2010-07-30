@@ -12,6 +12,10 @@
 
 2010-07-30  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
 
+	Simplify makefile rules.
+	* utils/Makefile.am: Simplify.
+	* src/Makefile.am: Likewise.
+
 	Typos and formatting nits.
 	* configure.ac: Fix typo.
 	* doc/recutils.texi: Fix typo, add some @noindents.

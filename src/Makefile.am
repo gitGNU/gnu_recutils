@@ -1,7 +1,7 @@
 # src/ Makefile.am
 # GNU rec
 
-# Copyright (C) 2009 Jose E. Marchesi
+# Copyright (C) 2009, 2010 Jose E. Marchesi
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,8 +45,8 @@ librec_la_SOURCES = rec-mset.h \
                     rec-fex.c \
                     rec-types.c
 
-librec_la_LDFLAGS =
-librec_la_CPPFLAGS = -I$(top_srcdir)/lib
+AM_LDFLAGS =
+AM_CPPFLAGS = -I$(top_srcdir)/lib
 librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \
                    $(LIB_CLOCK_GETTIME)
 
