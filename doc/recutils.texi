@@ -228,7 +228,7 @@ a backslash character, as in:
 @example
 LongLine: This is a quite long value \
 composed by a unique logical line \
-splitted in several physical lines.
+split in several physical lines.
 @end example
 
 The sequence @code{\n} (newline) @code{+} (PLUS) and an optional
@@ -370,7 +370,8 @@ This field can be used to define types for fields.  Its usage is:
 %type: @var{field_name} @var{type} @var{type_description}
 @end example
 
-Where @var{field_name} is the name of the fields having this type in
+@noindent
+where @var{field_name} is the name of the fields having this type in
 the current record set, @var{type} is the name of a supported field
 type and @var{type_description} is additional information that varies
 from type to type.
@@ -674,6 +675,7 @@ So, for example, if we are searching for the issues opened by
 $ recsel -e "OpenedBy = 'John Smith'"
 @end example
 
+@noindent
 instead of using the full field name:
 
 @example
@@ -698,6 +700,7 @@ example:
 Email[0] ~ "\\.org"
 @end example
 
+@noindent
 Will match for:
 
 @example
@@ -706,6 +709,7 @@ Email: foo@@foo.org
 Email: mr.foo@@foo.com
 @end example
 
+@noindent
 But not for:
 
 @example
@@ -797,6 +801,7 @@ identified by a given name and an optional subscript:
 @var{Field_Name}[@var{min}..@var{max}]
 @end example
 
+@noindent
 @var{min} and @var{max} are zero-based indexes.  It is possible to
 refer to a field occupying a given position.  For example, consider
 the following record:
@@ -808,24 +813,28 @@ Email: foo@@foo.org
 Email: mr.foo@@foo.org
 @end example
 
+@noindent
 We would select all the emails of the record with:
 
 @example
 Email
 @end example
 
+@noindent
 The first email with:
 
 @example
 Email[0]
 @end example
 
+@noindent
 The third email with:
 
 @example
 Email[2]
 @end example
 
+@noindent
 The second and the third email with:
 
 @example
@@ -839,6 +848,7 @@ duplicated values.  Thus, the field expression:
 Email[0],Name,Email
 @end example
 
+@noindent
 is equivalent to
 
 @example

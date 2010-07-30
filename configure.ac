@@ -1,9 +1,9 @@
 dnl configure.ac for GNU rec
 dnl
-dnl Please process this file with autoconf to getq a 'configure'
+dnl Please process this file with autoconf to get a 'configure'
 dnl script.
 
-dnl Copyright (C) 2009 Jose E. Marchesi
+dnl Copyright (C) 2009, 2010 Jose E. Marchesi
 
 dnl This program is free software: you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by

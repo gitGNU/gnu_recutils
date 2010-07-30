@@ -10,6 +10,12 @@
 	lib/sys, lib/time.h, lib/warn-on-use.h, lib/wchar.h.
 	Ignore torture/test
 
+2010-07-30  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	Typos and formatting nits.
+	* configure.ac: Fix typo.
+	* doc/recutils.texi: Fix typo, add some @noindents.
+
 2010-07-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* gendocs gnulib module imported.
