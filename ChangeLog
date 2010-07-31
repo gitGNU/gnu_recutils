@@ -1,3 +1,9 @@
+2010-07-31  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	Fix distcheck: linking tests in torture/.
+	* torture/Makefile.am: Simplify.  Use relative path to librec.la
+	so dependencies are tracked correctly and distcheck works.
+
 2010-07-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Information for the Free Software Directory added in FSD.

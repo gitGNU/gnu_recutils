@@ -34,10 +34,8 @@ runtests_SOURCES = runtests.c \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE)
 
-runtests_CPPFLAGS = -I$(top_srcdir)/src
-runtests_LDFLAGS = -L$(top_srcdir)/src
-runtests_LDADD = $(CHECK_LIBS) \
-                 -lrec
+AM_CPPFLAGS = -I$(top_srcdir)/src
+runtests_LDADD = $(CHECK_LIBS) ../src/librec.la
 
 clean-local:
 	-rm -f tests.log
