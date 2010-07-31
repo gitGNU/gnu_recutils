@@ -6,6 +6,7 @@
 %rec: FSD_Entry
 %mandatory: Title
 %type: Title line
+%type: GNU bool
 %type: MaturityLevel enum
 + Undefined Planning PreAlpha Alpha Beta
 + Production Mature Orphaned
@@ -23,6 +24,7 @@ Description:
 + (librec) providing a rich set of functions to access rec files, a set
 + of C utilities (recinf, recsel, recins, recset and recfix) that can be
 + used in shell scripts, and an Emacs mode (rec-mode).
+GNU: yes
 Homepage: http://www.gnu.org/software/recutils
 PublicVCSCheckout: git clone git://git.sv.gnu.org/recutils.git
 License: GPLv3+
