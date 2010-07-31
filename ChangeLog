@@ -1,3 +1,15 @@
+2010-07-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Make git to ignore some more generated files.
+	* .gitignore: Ignore doc/recutils.aux, doc/recutils.cp, doc/recutils.cps,
+	doc/recutils.fn, doc/recutils.fns, doc/recutils.ky,
+	doc/recutils.log, doc/recutils.pg,
+	doc/recutils.toc, doc/recutils.tp, doc/recutils.vr and
+	doc/recutils.vrs.
+	Ignore lib/alloca.h, lib/c++defs.h, lib/stdlib.h, lib/string.h,
+	lib/sys, lib/time.h, lib/warn-on-use.h, lib/wchar.h.
+	Ignore torture/test
+
 2010-07-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* gendocs gnulib module imported.
