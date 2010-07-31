@@ -1,0 +1,37 @@
+# -*- mode: rec -*-
+#
+# Information for the Free Software Directory maintained
+# by the Free Software Foundation at http://www.fsf.org/directory
+
+%rec: FSD_Entry
+%mandatory: Title
+%type: Title line
+%type: MaturityLevel enum
++ Undefined Planning PreAlpha Alpha Beta
++ Production Mature Orphaned
+%type: License enum
++ GPLv2 GPLv2+ GPLv3 GPLv3+
++ GFDLv2.1+
+%type: InterfaceStyle enum
++ CommandLine Console Daemon XWindow Web Email
+
+Title: GNU Recutils
+Description: 
++ GNU Recutils is a set of tools and libraries to access human-editable
++ text-based databases called recfiles.  The GNU recutils suite
++ comprises a Texinfo manual describing the rec format, a C library
++ (librec) providing a rich set of functions to access rec files, a set
++ of C utilities (recinf, recsel, recins, recset and recfix) that can be
++ used in shell scripts, and an Emacs mode (rec-mode).
+Homepage: http://www.gnu.org/software/recutils
+PublicVCSCheckout: git clone git://git.sv.gnu.org/recutils.git
+License: GPLv3+
+License: GFDLv2.1+
+Maintainer: Jose E. Marchesi <jemarch@gnu.org>
+Version: not released
+MaturityLevel: Beta
+DevelList: http://www.gnu.org/mailman/listinfo/bug-recutils
+InterfaceStyle: CommandLine
+InterfaceStyle: Console
+
+# End of FSD
