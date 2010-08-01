@@ -1,5 +1,13 @@
 2010-08-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recutl: avoid printing spurious newline characters when -P or -R
+	is used.
+	* utils/recutl.c (recutl_eval_field_expression): New variable
+	'written_field'.
+	(recutl_eval_field_expression): Add a newline to a sequence of
+	field values only if some field was actually written.
+
+	rec-record: Tiny improvement in an algorithm.
 	* src/rec-record.c (rec_record_get_field_by_name): Don't return
 	from the middle of the function.  Use a variable and break
 	instead.

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-07-18 14:55:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-01 21:35:14 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -139,6 +139,7 @@ recutl_eval_field_expression (rec_fex_t fex,
   rec_field_t field;
   rec_field_name_t field_name;
   int i, j, min, max;
+  size_t written_fields = 0;
 
   stm = open_memstream (&res, &res_size);
   fex_size = rec_fex_size (fex);
@@ -175,6 +176,8 @@ recutl_eval_field_expression (rec_fex_t fex,
               continue;
             }
 
+          written_fields++;
+
           if (print_values_p)
             {
               /* Write just the value of the field.  */
@@ -204,7 +207,7 @@ recutl_eval_field_expression (rec_fex_t fex,
         }
     }
 
-  if (print_values_p)
+  if (print_values_p && (written_fields > 0))
     {
       fprintf (stm, "\n");
     }
