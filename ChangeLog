@@ -1,3 +1,10 @@
+2010-08-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recsel: avoid a segmentation fault while printing record descriptors.
+	* utils/recsel.c (recsel_process_data): Test for NULL before
+	printing the record descriptor of a record set.  Reported by Kai
+	via savannah.
+
 2010-07-31  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
 
 	Fix distcheck: linking tests in torture/.

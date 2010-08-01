@@ -326,7 +326,9 @@ recsel_process_data (rec_db_t db)
                 }
 
               /* Write the record descriptor if required.  */
-              if (recsel_descriptors && !wrote_descriptor)
+              if (recsel_descriptors
+                  && !wrote_descriptor
+                  && rec_rset_descriptor (rset))
                 {
                   rec_write_record (writer, rec_rset_descriptor (rset));
                   fprintf (stdout, "\n");
