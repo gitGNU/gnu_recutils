@@ -136,8 +136,8 @@ rec_fex_check (char *str)
   int ret;
   static char *regexp_str =
     "^" /* Beginning of the string.  */
-    "[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?"     /* First element name.  */
-    "(,[a-zA-Z%][a-zA-Z0-9_]*(\\[[0-9]\\])?)*" /* Subsequent element names. */
+    "[a-zA-Z%][a-zA-Z0-9_-]*(\\[[0-9]\\])?"     /* First element name.  */
+    "(,[a-zA-Z%][a-zA-Z0-9_-]*(\\[[0-9]\\])?)*" /* Subsequent element names. */
     "$" /* End of the string.  */
     ;
   regex_t regexp;

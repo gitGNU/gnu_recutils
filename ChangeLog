@@ -1,5 +1,10 @@
 2010-08-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recsel: allow dashes in field names when checking the field
+	expressions.
+	* src/rec-fex.c (rec_fex_check): Allow dashes '-' in field names
+	in field expressions.
+
 	recsel: avoid a segmentation fault while printing record descriptors.
 	* utils/recsel.c (recsel_process_data): Test for NULL before
 	printing the record descriptor of a record set.  Reported by Kai
