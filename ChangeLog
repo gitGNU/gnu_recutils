@@ -1,5 +1,9 @@
 2010-08-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/rec-record.c (rec_record_get_field_by_name): Don't return
+	from the middle of the function.  Use a variable and break
+	instead.
+
 	recsel: allow dashes in field names when checking the field
 	expressions.
 	* src/rec-fex.c (rec_fex_check): Allow dashes '-' in field names

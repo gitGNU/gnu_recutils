@@ -515,6 +515,7 @@ rec_record_get_field_by_name (rec_record_t record,
   rec_field_t field;
 
   num_fields = 0;
+  field = NULL;
   elem = NULL;
 
   while (elem = rec_mset_next (record->mset, elem, record->field_type))
@@ -524,14 +525,14 @@ rec_record_get_field_by_name (rec_record_t record,
         {
           if (n == num_fields)
             {
-              return field;
+              break;
             }
 
           num_fields++;
         }
     }
 
-  return NULL;
+  return field;
 }
 
 void
