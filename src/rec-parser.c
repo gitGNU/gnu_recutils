@@ -176,11 +176,16 @@ rec_parser_perror (rec_parser_t parser,
      of digits of a given number.  Sorry, I am a bit drunk while
      writing this and cannot think clearly :D -jemarch */
   number_str = malloc (10); /* 10 is a big arbitrary number */
-  sprintf(number_str, "%d", parser->line);
-  fputs (number_str, stderr);
-  fputs (": error: ", stderr);
-  fputs (rec_parser_error_strings[parser->error], stderr);
-  fputc ('\n', stderr);
+
+  if (number_str)
+    {
+      sprintf(number_str, "%d", parser->line);
+      fputs (number_str, stderr);
+      fputs (": error: ", stderr);
+      fputs (rec_parser_error_strings[parser->error], stderr);
+      fputc ('\n', stderr);
+    }
+
   va_end (ap);
 }
 
@@ -595,6 +600,12 @@ rec_parse_field_name_str (char *str)
   /* Make sure the input string ends with a colon character.  */
   str_size = strlen (str);
   str2 = malloc (str_size + 2);
+  if (!str2)
+    {
+      /* Out of memory.  */
+      return NULL;
+    }
+
   strncpy (str2, str, str_size);
   if (str2[str_size - 1] == ':')
     {

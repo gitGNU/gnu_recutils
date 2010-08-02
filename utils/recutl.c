@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-01 21:35:14 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-02 21:41:05 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -275,6 +275,15 @@ recutl_write_db_to_file (rec_db_t db,
     {
       /* Create a temporary file with the results. */
       tmp_file_name = malloc (100);
+      if (!tmp_file_name)
+        {
+          /* Out of memory.  */
+          fprintf (stderr,
+                   "%s: error: out of memory.\n",
+                   program_name);
+          exit (1);
+        }
+
       strcpy (tmp_file_name, "recXXXXXX");
       des = mkstemp (tmp_file_name);
       if (des == -1)

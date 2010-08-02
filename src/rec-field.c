@@ -228,7 +228,10 @@ rec_field_set_location (rec_field_t field,
     }
 
   field->location_str = malloc (30);
-  sprintf (field->location_str, "%d", field->location);
+  if (field->location_str)
+    {
+      sprintf (field->location_str, "%d", field->location);
+    }
 }
 
 char *

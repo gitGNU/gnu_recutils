@@ -158,9 +158,11 @@ rec_fex_check (char *str)
 
       str_error_size = regerror (ret, &regexp, 0, 0);
       str_error = malloc (str_error_size + 1);
-      regerror (ret, &regexp, str_error, str_error_size);
-
-      fprintf (stderr, "error: invalid field expression in -p: %s.\n", str_error);
+      if (str_error)
+        {
+          regerror (ret, &regexp, str_error, str_error_size);
+          fprintf (stderr, "error: invalid field expression in -p: %s.\n", str_error);
+        }
     }
   
   return (ret == 0);
@@ -278,10 +280,10 @@ rec_fex_parse_str_simple (rec_fex_t new,
     {
       if (strlen (elem_str) > 0)
         {
-          if (field_name = rec_parse_field_name_str (elem_str))
+          if ((field_name = rec_parse_field_name_str (elem_str))
+              && (elem = malloc (sizeof (struct rec_fex_elem_s))))
             {
               /* Add an element to the FEX.  */
-              elem = malloc (sizeof (struct rec_fex_elem_s));
               elem->field_name = field_name;
               elem->str = strdup (elem_str);
               elem->min = -1;
@@ -343,6 +345,12 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
   do
     {
       elem = malloc (sizeof (struct rec_fex_elem_s));
+      if (!elem)
+        {
+          /* Out of memory.  */
+          res = false;
+          break;
+        }
       if (!rec_fex_parse_elem (elem, elem_str))
         {
           /* Parse error.  */
@@ -404,6 +412,12 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
       size_t size = (p - b) + 1;
 
       field_name_str = malloc (size + 1);
+      if (!field_name_str)
+        {
+          /* End of memory.  */
+          return false;
+        }
+
       strncpy (field_name_str, b, size - 1);
       field_name_str[size - 1] = ':';
       field_name_str[size] = '\0';

@@ -767,7 +767,10 @@ rec_record_set_location (rec_record_t record,
     }
 
   record->location_str = malloc (30);
-  sprintf (record->location_str, "%d", record->location);
+  if (record->location)
+    {    
+      sprintf (record->location_str, "%d", record->location);
+    }
 }
 
 /*

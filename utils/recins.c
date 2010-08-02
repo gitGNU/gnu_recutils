@@ -249,6 +249,15 @@ void recins_parse_args (int argc,
 
             /* Make sure that the field name ends with a colon ':'.  */
             field_name_str = malloc (strlen (optarg) + 2);
+            if (!field_name_str)
+              {
+                /* Out of memory.  */
+                fprintf (stderr,
+                         "%s: error: out of memory.\n",
+                         program_name);
+                exit (1);
+              }
+
             field_name_str = strncpy (field_name_str, optarg, strlen (optarg));
             if (field_name_str[strlen (optarg) - 1] != ':')
               {

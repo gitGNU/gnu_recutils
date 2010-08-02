@@ -1,3 +1,26 @@
+2010-08-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	lib+utils: check the values returned by malloc.
+	* src/rec-field.c (rec_field_set_location): Check for the return
+	value of 'malloc'.
+
+	* src/rec-parser.c (rec_parser_perror): Likewise.
+
+	* src/rec-parser.c (rec_parse_field_name_str): Likewise.
+
+	* src/rec-record.c (rec_record_set_location): Likewise.
+
+	* utils/recins.c (recins_parse_args): Likewise.
+
+	* utils/recutl.c (recutl_write_db_to_file): Likewise.
+
+	* src/rec-fex.c (rec_fex_check): Emit error message only if there
+	is enough memory to build the message.
+	(rec_fex_parse_str_simple): Check for the return value of
+	'malloc'.
+	(rec_fex_parse_str_subscripts): Likewise.
+	(rec_fex_parse_elem): Likewise.
+
 2010-08-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recutl: avoid printing spurious newline characters when -P or -R
