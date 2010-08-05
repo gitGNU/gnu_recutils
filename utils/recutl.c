@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-02 21:41:05 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-05 20:53:26 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -30,11 +30,51 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
+#include <closeout.h>
 
 #include <rec.h>
 #include <recutl.h>
 
 extern char *program_name;
+
+void
+recutl_init (char *util_name)
+{
+  program_name = strdup (util_name);
+
+  /* Even exiting has subtleties.  On exit, if any writes failed, change
+     the exit status.  The /dev/full device on GNU/Linux can be used for
+     testing; for instance, hello >/dev/full should exit unsuccessfully.
+     This is implemented in the Gnulib module "closeout".  */
+  atexit (close_stdout);
+}
+
+void
+recutl_fatal (char *fmt, ...)
+{
+  va_list ap;
+
+  va_start (ap, fmt);
+  fputs (program_name, stderr);
+  fputs (": error: ", stderr);
+  vfprintf (stderr, fmt, ap);
+  va_end (ap);
+
+  exit (1);
+}
+
+void
+recutl_error (char *fmt, ...)
+{
+  va_list ap;
+
+  va_start (ap, fmt);
+  fputs (program_name, stderr);
+  fputs (": error: ", stderr);
+  vfprintf (stderr, fmt, ap);
+  va_end (ap);
+}
 
 bool
 recutl_parse_db_from_file (FILE *in,
@@ -55,9 +95,8 @@ recutl_parse_db_from_file (FILE *in,
       rset_type = rec_rset_type (rset);
       if (rec_db_type_p (db, rset_type))
         {
-          fprintf (stderr, "%s: error: duplicated record set '%s' from %s.\n",
-                   program_name, rset_type, file_name);
-          exit (1);
+          recutl_fatal ("duplicated record set '%s' from %s.\n",
+                        rset_type, file_name);
         }
 
       if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
@@ -95,10 +134,7 @@ recutl_build_db (int argc, char **argv)
           file_name = argv[optind++];
           if (!(in = fopen (file_name, "r")))
             {
-              printf("%s: cannot read file %s\n",
-                     program_name,
-                     file_name);
-              exit (1);
+              recutl_fatal ("cannot read file %s\n", file_name);
             }
           else
             {
@@ -235,8 +271,7 @@ recutl_read_db_from_file (char *file_name)
       in = fopen (file_name, "r");
       if (in == NULL)
         {
-          fprintf (stderr, "%s: error: cannot read %s.\n",
-                   program_name, file_name);
+          recutl_fatal ("cannot read file %s\n", file_name);
           exit (1);
         }
     }
@@ -277,20 +312,14 @@ recutl_write_db_to_file (rec_db_t db,
       tmp_file_name = malloc (100);
       if (!tmp_file_name)
         {
-          /* Out of memory.  */
-          fprintf (stderr,
-                   "%s: error: out of memory.\n",
-                   program_name);
-          exit (1);
+          recutl_fatal ("out of memory\n");
         }
 
       strcpy (tmp_file_name, "recXXXXXX");
       des = mkstemp (tmp_file_name);
       if (des == -1)
         {
-          fprintf(stderr, "%s: error: cannot create a unique name.\n",
-                  program_name);
-          exit (1);
+          recutl_fatal ("cannot create a unique name.\n");
         }
       out = fdopen (des, "w+");
     }
@@ -305,14 +334,10 @@ recutl_write_db_to_file (rec_db_t db,
       /* Rename the temporary file to file_name.  */
       if (rename (tmp_file_name, file_name) == -1)
         {
-          fprintf (stderr, "%s: error: moving %s to %s\n",
-                   program_name, tmp_file_name, file_name);
           remove (tmp_file_name);
-          exit (1);
+          recutl_fatal ("renaming file %s to %s\n", tmp_file_name, file_name);
         }
     }
-
-
 }
 
 /* End of recutl.c */

@@ -175,19 +175,15 @@ recins_insert_record (rec_db_t db,
           fclose (errors_stm);
           if (!recins_verbose)
             {
-              fprintf (stderr, "%s: operation aborted due to integrity failures\n",
-                       program_name);
-              fprintf (stderr, "%s: use --verbose to get a detailed report\n",
-                       program_name);
+              recutl_error ("operation aborted due to integrity failures.\n");
+              recutl_error ("use --verbose to get a detailed report.\n");
             }
           else
             {
-              fprintf (stderr, "%s", errors_str);
+              recutl_error ("%s", errors_str);
             }
 
-          fprintf (stderr, "%s: use --force to skip the integrity check\n",
-                   program_name);
-          exit (1);
+          recutl_fatal ("use --force to skip the integrity chech\n");
         }
     }
 
@@ -236,7 +232,7 @@ void recins_parse_args (int argc,
           {
             if (field != NULL)
               {
-                fprintf (stderr, "recins: error: a -f should be followed by a -v\n");
+                recutl_fatal ("a -f should be followed by a -v\n");
                 exit (1);
               }
 
@@ -251,11 +247,7 @@ void recins_parse_args (int argc,
             field_name_str = malloc (strlen (optarg) + 2);
             if (!field_name_str)
               {
-                /* Out of memory.  */
-                fprintf (stderr,
-                         "%s: error: out of memory.\n",
-                         program_name);
-                exit (1);
+                recutl_fatal ("out of memory.\n");
               }
 
             field_name_str = strncpy (field_name_str, optarg, strlen (optarg));
@@ -271,9 +263,7 @@ void recins_parse_args (int argc,
 
             if (!(field_name = rec_parse_field_name_str (field_name_str)))
               {
-                fprintf (stderr, "%s: error: invalid field name %s\n",
-                         program_name, optarg);
-                exit (1);
+                recutl_fatal ("invalid field name %s\n", optarg);
               }
             
             field = rec_field_new (field_name,
@@ -285,9 +275,7 @@ void recins_parse_args (int argc,
           {
             if (field == NULL)
               {
-                fprintf (stderr, "%s: error: a -v should be preceded by a -f\n",
-                         program_name);
-                exit (1);
+                recutl_fatal ("a -v should be preceded by a -f\n");
               }
 
             rec_field_set_value (field, optarg);
@@ -305,10 +293,7 @@ void recins_parse_args (int argc,
 
   if (field != NULL)
     {
-      fprintf (stderr,
-               "recins: error: you should specify a value for the field %s\n",
-               field_name_str);
-      exit (1);
+      recutl_fatal ("please provide a value for the field %s\n", field_name_str);
     }
 
   /* Read the name of the file where to make the insertions.  */
@@ -331,7 +316,7 @@ main (int argc, char *argv[])
   rec_db_t db;
 
 
-  program_name = strdup (argv[0]);
+  recutl_init ("recins");
 
   recins_parse_args (argc, argv);
 

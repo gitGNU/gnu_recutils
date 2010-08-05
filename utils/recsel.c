@@ -148,9 +148,7 @@ recsel_parse_args (int argc,
           {
             if (recsel_count)
               {
-                fprintf (stderr, "%s: cannot specify -[pPR] and also -c.\n",
-                         argv[0]);
-                exit (1);
+                recutl_fatal ("cannot specify -[pPR] and also -c.\n");
               }
 
             if (c == 'P')
@@ -176,8 +174,7 @@ recsel_parse_args (int argc,
                                       REC_FEX_SUBSCRIPTS);
             if (!recsel_fex)
               {
-                fprintf (stderr, "internal error: creating the field expression.\n");
-                exit (1);
+                recutl_fatal ("internal error creating the field expression.\n");
               }
 
             break;
@@ -193,8 +190,7 @@ recsel_parse_args (int argc,
           {
             if (recsel_fex_str)
               {
-                fprintf (stderr, "%s: cannot specify -c and also -p.\n",
-                         argv[0]);
+                recutl_fatal ("cannot specify -c and also -p.\n");
                 exit (1);
               }
 
@@ -235,9 +231,7 @@ recsel_process_data (rec_db_t db)
      the request.  */
   if (!recutl_type && (rec_db_size (db) > 1))
     {
-      fprintf (stderr, "%s: several record types found.  Please use -t to specify one.\n",
-               program_name);
-      exit (1);
+      recutl_fatal ("several record types found.  Please use -t to specify one.\n");
     }
 
   written = 0;
@@ -292,7 +286,7 @@ recsel_process_data (rec_db_t db)
             {
               if (recutl_sex_str && (!parse_status))
                 {
-                  fprintf (stderr, "recsel: error: evaluating the selection expression.\n");
+                  recutl_error ("evaluating the selection expression.\n");
                   return false;
                 }
       
@@ -368,7 +362,8 @@ main (int argc, char *argv[])
   rec_db_t db;
 
   res = 0;
-  program_name = "recsel";
+
+  recutl_init ("recsel");
 
   /* Parse arguments.  */
   recsel_parse_args (argc, argv);

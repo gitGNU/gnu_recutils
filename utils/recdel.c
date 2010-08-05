@@ -118,10 +118,8 @@ recdel_delete_records (rec_db_t db)
 
   if (!rec_db_type_p (db, recutl_type))
     {
-      fprintf (stderr, "%s: error: no records of type %s found.\n",
-               program_name,
-               recutl_type ? recutl_type : "<default>");
-      exit (1);
+      recutl_fatal ("no records of type %s found.\n",
+                    recutl_type ? recutl_type : "<default>");
     }
 
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
@@ -187,9 +185,7 @@ recdel_delete_records (rec_db_t db)
           
           if (!parse_status)
             {
-              fprintf (stderr, "%s: error: evaluating selection expression.\n",
-                       program_name);
-              exit (1);
+              recutl_fatal ("evaluating selection expression.\n");
             }
           
           numrec++;
@@ -237,10 +233,9 @@ recdel_parse_args (int argc,
 
   if ((recutl_num == -1) && !sex_str & !recdel_force)
     {
-      fprintf (stderr, "recdel: ignoring a request to delete all records of type %s.\n",
-               recutl_type ? recutl_type : "unknown");
-      fprintf (stderr, "recdel: use --force if you really want to proceed, or use -n or -e.\n");
-      exit (1);
+      recutl_error ("ignoring a request to delete all records of type %s.\n",
+                    recutl_type ? recutl_type : "unknown");
+      recutl_fatal ("use --force if you really want to proceed, or use either -n or -e.\n");
     }
 
   if (sex_str)
@@ -248,8 +243,7 @@ recdel_parse_args (int argc,
       recutl_sex = rec_sex_new (recutl_insensitive);
       if (!rec_sex_compile (recutl_sex, sex_str))
         {
-          fprintf (stderr, "recdel: error: invalid selection expression.\n");
-          exit (1);
+          recutl_fatal ("invalid selection expression.\n");
         }
     }
 
@@ -271,7 +265,7 @@ main (int argc, char *argv[])
 {
   rec_db_t db;
 
-  program_name = strdup (argv[0]);
+  recutl_init ("recdel");
 
   recdel_parse_args (argc, argv);
 

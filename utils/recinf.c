@@ -175,7 +175,7 @@ main (int argc, char *argv[])
   char *file_name;
   FILE *in;
 
-  program_name = strdup (argv[0]);
+  recutl_init ("recinf");
 
   while ((ret = getopt_long (argc,
                              argv,
@@ -240,7 +240,7 @@ main (int argc, char *argv[])
     {
       print_info_file (stdin, "stdin");
     }
-
+  
   return 0;
 }
 

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-07-09 21:25:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-05 20:49:25 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -160,6 +160,11 @@ General help using GNU software: <http://www.gnu.org/gethelp/>"
 /*
  * Function prototypes.
  */
+
+void recutl_init (char *util_name);
+
+void recutl_error (char *fmt, ...);
+void recutl_fatal (char *fmt, ...);
 
 bool recutl_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 rec_db_t recutl_build_db (int argc, char **argv);

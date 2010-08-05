@@ -1,5 +1,45 @@
 2010-08-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Assure proper exit values when redirecting output and some common
+	facilities in recutl.c
+	* utils/recset.c (recset_parse_args): Use 'recutl_fatal' and
+	'recutl_error'.
+	(main): Use 'recutl_init'.
+
+	* utils/recins.c (recins_insert_record): Use 'recutl_error'.
+	(main): Use 'recutl_init'.
+
+	* utils/recinf.c (main): Use 'recutl_init'.
+
+	* utils/recfix.c (main): Use 'recutl_init'.
+
+	* utils/recdel.c (recdel_delete_records): Use 'recutl_fatal'.
+	(recdel_delete_records): Likewise.
+	(recdel_parse_args): Likewise.
+	(main): Use 'recutl_init'.
+
+	* utils/recsel.c (main): Use 'recutl_init'.
+
+	* utils/recutl.c (recutl_error): New function.
+
+	* utils/recsel.c (recsel_parse_args): Use 'recutl_fatal'.
+	(recsel_parse_args): Likewise.
+	(recsel_process_data): Use 'recutl_error'.
+
+	* utils/recutl.c: Include 'closeout.h'.
+	(recutl_init): New function.
+	(recutl_init): Initialize the global variable 'program_name' with
+	'util_name'.
+	(recutl_init): Install the 'close_stdout' handler to be executed
+	upon exit.
+	(recutl_fini): New function.
+	(recutl_fatal): New function.
+	Include stdarg.
+
+	* Module 'closeout' imported from gnulib.
+
+2010-08-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* README-dev: Imported and adapted from GNU hello.
 
 	* NEWS: Likewise.
