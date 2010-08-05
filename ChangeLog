@@ -1,3 +1,15 @@
+2010-08-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* README-dev: Imported and adapted from GNU hello.
+
+	* NEWS: Likewise.
+
+	* README: Rephrased to follow the GNU hello style.
+
+	* configure.ac: Invoke AC_PROG_YACC.
+
+	* autogen.sh: Imported and adapted from GNU hello.
+
 2010-08-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	lib+utils: check the values returned by malloc.
