@@ -1,3 +1,8 @@
+2010-08-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Import the gnulib gettext module.
+	* 'gettext' gnulib module imported.
+
 2010-08-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Minor fixes in documentation.

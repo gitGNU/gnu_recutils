@@ -45,9 +45,11 @@ AC_DEFUN([gl_EARLY],
   # Code from module getdate:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
+  # Code from module gettext:
   # Code from module gettext-h:
   # Code from module gettime:
   # Code from module gettimeofday:
+  # Code from module havelib:
   # Code from module include_next:
   # Code from module inline:
   # Code from module intprops:
@@ -134,6 +136,9 @@ AC_DEFUN([gl_INIT],
   gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
   # Code from module getopt-posix:
   gl_FUNC_GETOPT_POSIX
+  # Code from module gettext:
+  dnl you must add AM_GNU_GETTEXT([external]) or similar to configure.ac.
+  AM_GNU_GETTEXT_VERSION([0.18.1])
   # Code from module gettext-h:
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
@@ -142,6 +147,7 @@ AC_DEFUN([gl_INIT],
   # Code from module gettimeofday:
   gl_FUNC_GETTIMEOFDAY
   gl_SYS_TIME_MODULE_INDICATOR([gettimeofday])
+  # Code from module havelib:
   # Code from module include_next:
   # Code from module inline:
   gl_INLINE
@@ -351,6 +357,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/arg-nonnull.h
   build-aux/c++defs.h
+  build-aux/config.rpath
   build-aux/gendocs.sh
   build-aux/warn-on-use.h
   doc/gendocs_template
@@ -435,17 +442,32 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fpending.m4
   m4/getdate.m4
   m4/getopt.m4
+  m4/gettext.m4
   m4/gettime.m4
   m4/gettimeofday.m4
   m4/gl_list.m4
+  m4/glibc2.m4
   m4/glibc21.m4
   m4/gnulib-common.m4
+  m4/iconv.m4
   m4/include_next.m4
   m4/inline.m4
+  m4/intdiv0.m4
+  m4/intl.m4
+  m4/intldir.m4
+  m4/intlmacosx.m4
+  m4/intmax.m4
+  m4/inttypes-pri.m4
+  m4/inttypes_h.m4
+  m4/lcmessage.m4
+  m4/lib-ld.m4
+  m4/lib-link.m4
+  m4/lib-prefix.m4
   m4/localcharset.m4
   m4/locale-fr.m4
   m4/locale-ja.m4
   m4/locale-zh.m4
+  m4/lock.m4
   m4/longlong.m4
   m4/malloca.m4
   m4/mbrtowc.m4
@@ -453,22 +475,30 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbstate_t.m4
   m4/mktime.m4
   m4/multiarch.m4
+  m4/nls.m4
   m4/onceonly.m4
+  m4/po.m4
+  m4/printf-posix.m4
+  m4/progtest.m4
   m4/quotearg.m4
   m4/setenv.m4
   m4/size_max.m4
   m4/stdbool.m4
   m4/stddef_h.m4
   m4/stdint.m4
+  m4/stdint_h.m4
   m4/stdlib_h.m4
   m4/strerror.m4
   m4/string_h.m4
   m4/sys_time_h.m4
+  m4/threadlib.m4
   m4/time_h.m4
   m4/time_r.m4
   m4/timespec.m4
   m4/tm_gmtoff.m4
+  m4/uintmax_t.m4
   m4/unistd_h.m4
+  m4/visibility.m4
   m4/warn-on-use.m4
   m4/wchar_h.m4
   m4/wchar_t.m4

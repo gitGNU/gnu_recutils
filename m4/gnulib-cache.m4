@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl array-list closeout gendocs getdate getopt-gnu list
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl array-list closeout gendocs getdate getopt-gnu gettext list
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -25,6 +25,7 @@ gl_MODULES([
   gendocs
   getdate
   getopt-gnu
+  gettext
   list
 ])
 gl_AVOID([])
