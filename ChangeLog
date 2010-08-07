@@ -1,3 +1,16 @@
+2010-08-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Minor fixes in documentation.
+	* src/rec-int.c (rec_int_check_field_type): Out to date comment
+	removed.
+
+	* doc/recutils.texi (Field Types): New chapter.
+	(Escalar types): New section.
+	(String types): New section.
+	(Enumerated types): New section.
+	(Time related types): New section.
+	(Selection Expressions): New section.
+
 2010-08-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Assure proper exit values when redirecting output and some common
