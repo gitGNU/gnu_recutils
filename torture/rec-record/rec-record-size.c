@@ -28,14 +28,15 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_record_size_001
+/*-
+ * Test: rec_record_size_empty
+ * Unit: rec_record_size
  * Description:
- *   Get the size of a newly created record.
- * Success conditions:
- *   1. The call to rec_record_size should return 0.
+ * + Get the size of a newly created record.
+ * +
+ * + 1. The call to rec_record_size should return 0.
  */
-START_TEST(rec_record_size_001)
+START_TEST(rec_record_size_empty)
 {
   rec_record_t record;
 
@@ -47,14 +48,15 @@ START_TEST(rec_record_size_001)
 }
 END_TEST
 
-/*
- * Test: rec_record_size_002
+/*-
+ * Test: rec_record_size_nonempty
+ * Unit: rec_record_size
  * Description:
- *   Get the size of a record containing 3 fields.
- * Success conditions:
- *   1. The call to rec_record_size should return 3.
+ * + Get the size of a record containing 3 fields.
+ * +
+ * + 1. The call to rec_record_size should return 3.
  */
-START_TEST(rec_record_size_002)
+START_TEST(rec_record_size_nonempty)
 {
   rec_record_t record;
   rec_field_t field1;
@@ -99,7 +101,8 @@ TCase *
 test_rec_record_size (void)
 {
   TCase *tc = tcase_create("rec_record_size");
-  tcase_add_test (tc, rec_record_size_001);
+  tcase_add_test (tc, rec_record_size_empty);
+  tcase_add_test (tc, rec_record_size_nonempty);
 
   return tc;
 }

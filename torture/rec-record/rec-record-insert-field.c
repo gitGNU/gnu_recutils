@@ -28,15 +28,16 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_record_insert_field_001
+/*-
+ * Test: rec_record_insert_field_empty
+ * Unit: rec_record_insert_field
  * Description:
- *   Insert a field into an empty record.
- * Success conditions:
- *   1. The call to rec_record_insert_field should
- *      return true.
+ * + Insert a field into an empty record.
+ * +
+ * + 1. The call to rec_record_insert_field should
+ * +    return true.
  */
-START_TEST(rec_record_insert_field_001)
+START_TEST(rec_record_insert_field_empty)
 {
   rec_record_t record;
   rec_field_t field;
@@ -60,15 +61,16 @@ START_TEST(rec_record_insert_field_001)
 }
 END_TEST
 
-/*
- * Test: rec_record_insert_field_002
+/*-
+ * Test: rec_record_insert_field_nonempty
+ * Unit: rec_record_insert_field
  * Description:
- *   Insert a field into a non empy record.
- * Success conditions:
- *   1. The call to rec_record_insert_field should
- *      success.
+ * +  Insert a field into a non empy record.
+ * +
+ * + 1. The call to rec_record_insert_field should
+ * +    success.
  */
-START_TEST(rec_record_insert_field_002)
+START_TEST(rec_record_insert_field_nonempty)
 {
   rec_record_t record;
   rec_field_t field;
@@ -101,15 +103,16 @@ START_TEST(rec_record_insert_field_002)
 }
 END_TEST
 
-/*
- * Test: rec_record_insert_field_003
+/*-
+ * Test: rec_record_insert_field_duplicated
+ * Unit: rec_record_insert_field
  * Description:
- *   Fields with duplicated names are not allowed.
- * Success conditions:
- *   1. The attempt to insert a duplicated field
- *      should success.
+ * + Fields with duplicated names are not allowed.
+ * +
+ * + 1. The attempt to insert a duplicated field
+ * +    should success.
  */
-START_TEST(rec_record_insert_field_003)
+START_TEST(rec_record_insert_field_duplicated)
 {
   rec_record_t record;
   rec_field_t field;
@@ -149,9 +152,9 @@ TCase *
 test_rec_record_insert_field (void)
 {
   TCase *tc = tcase_create("rec_record_insert_field");
-  tcase_add_test (tc, rec_record_insert_field_001);
-  tcase_add_test (tc, rec_record_insert_field_002);
-  tcase_add_test (tc, rec_record_insert_field_003);
+  tcase_add_test (tc, rec_record_insert_field_empty);
+  tcase_add_test (tc, rec_record_insert_field_nonempty);
+  tcase_add_test (tc, rec_record_insert_field_duplicated);
 
   return tc;
 }

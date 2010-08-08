@@ -38,3 +38,14 @@ is necessary to run gettextize -f in this hierarchy to update the po/
 infrastructure.  After doing so, rerun gnulib-tool --import since
 otherwise older files will have been imported.  See the Gnulib manual
 for more information.
+
+
+Adding new Tests
+----------------
+When adding new unit tests to the test suite in 'torture/', please
+remember to update the TESTS recfile launching the following command
+from the root of the distribution:
+  $ ./build-aux/get-test-data torture > TESTS
+And then make sure everything is ok in the file with:
+  $ recfix TESTS
+

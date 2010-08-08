@@ -1,0 +1,47 @@
+#!/bin/sh
+# get-test-data - Extract test descriptions from source comments.
+#
+# Copyright (C) 2010 Jose E. Marchesi
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+awk '
+
+BEGIN { print "\
+# -*- mode: rec -*-\n\
+\n\
+%rec: Test\n\
+%key: Test\n\
+%mandatory: Unit\n"; }
+
+/^\/\*-/,/ \*\// {
+
+     beginning = match ($0, /^\ *\/\*- *$/);
+     end = match ($0, /^ *\*\/ *$/);
+
+     if (!beginning && !end)
+     {
+        sub(/\ *\* */, "", $0);
+        print $0;
+     }
+
+     if (end)
+     {
+       print "";
+     }
+}
+
+END { print "# End of Tests";}' `find $1 -name "*.c"`
+
+# End of get-test-data

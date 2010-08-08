@@ -1,0 +1,172 @@
+# -*- mode: rec -*-
+
+%rec: Test
+%key: Test
+%mandatory: Unit
+
+Test: rec_field_set_name_empty
+Unit: rec_field_set_name
+Description:
++ Set the name of a field to the empty string
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
+
+Test: rec_field_set_name_nonempty
+Unit: rec_field_set_name
+Description:
++ Set the name of a field to a non-empty name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
+
+Test: rec_field_value_empty
+Unit: rec_field_value
+Description:
++ Get the value of a field with an empy value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
+
+Test: rec_field_value_nonempty
+Unit: rec_field_value
+Description:
++ Get the value of a field with a non-empty value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
+
+Test: rec_field_set_value_empty
+Unit: rec_field_set_value
+Description:
++ Set the value of a field to the empty string
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
+
+Test: rec_field_set_value_nonempty
+Unit: rec_field_set_value
+Description:
++ Set the value of a field to a non-empty value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
+
+Test: rec_field_dup_empty
+Unit: rec_field_dup
+Description:
++ Dup a field with empty name and empty value.
++
++ 1. The name of the copied field should be the
++    empty string.
++ 2. The value of the copied field should be the
++    empty string.
+
+Test: rec_field_dup_non_empty
+Unit: rec_field_dup
+Description:
++ Dup a field with non-empty name and non-empty value.
++
++ 1. The name of the copied field should be the
++    appropriate.
++ 2. The value of the copied field should be the
++    appropriate.
+
+Test: rec_field_name_empty
+Unit: rec_field_name
+Description:
++ Get the name of a field with an empy name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
+
+Test: rec_field_name_nonempty
+Unit: rec_field_name
+Description:
++ Get the name of a field with a non-empty name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
+
+Test: rec_record_remove_field_existing
+Unit: rec_record_remove_field
+Description:
++  Remove a field from a record.
++
++ 1. The call to rec_record_remove_field should
++    return true.
++ 2. The field should be removed from the record.
+
+Test: rec_record_new_and_destroy
+Unit: rec_record_new
+Description:
++ Create a new record and destroy it.
++
++  1. The call to rec_record_new should not fail.
++  2. The call to rec_record_destroy should not fail.
+
+Test: rec_record_insert_field_empty
+Unit: rec_record_insert_field
+Description:
++ Insert a field into an empty record.
++
++ 1. The call to rec_record_insert_field should
++    return true.
+
+Test: rec_record_insert_field_nonempty
+Unit: rec_record_insert_field
+Description:
++  Insert a field into a non empy record.
++
++ 1. The call to rec_record_insert_field should
++    success.
+
+Test: rec_record_insert_field_duplicated
+Unit: rec_record_insert_field
+Description:
++ Fields with duplicated names are not allowed.
++
++ 1. The attempt to insert a duplicated field
++    should success.
+
+Test: rec_record_size_empty
+Unit: rec_record_size
+Description:
++ Get the size of a newly created record.
++
++ 1. The call to rec_record_size should return 0.
+
+Test: rec_record_size_nonempty
+Unit: rec_record_size
+Description:
++ Get the size of a record containing 3 fields.
++
++ 1. The call to rec_record_size should return 3.
+
+Test: rec_record_field_p_existing
+Unit: rec_record_field_p
+Description:
++ Check for the existence of a field included
++ in the record.
++
++ 1. The call to rec_record_field_p should 
++    return true
+
+Test: rec_record_field_p_nonexisting
+Unit: rec_record_field_p
+Description:
++ Check for the existence of a field not included
++ in the record.
++
++ 1. The call to rec_record_field_p should 
++    return false.
+
+# End of Tests

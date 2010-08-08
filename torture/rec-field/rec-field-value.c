@@ -29,16 +29,17 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_field_value_001
+/*-
+ * Test: rec_field_value_empty
+ * Unit: rec_field_value
  * Description:
- *   Get the value of a field with an empy value
- * Success conditions:
- *   1. The call should not produce an error.
- *   2. The value of the field should be properly
- *      returned.
+ * + Get the value of a field with an empy value
+ * +
+ * + 1. The call should not produce an error.
+ * + 2. The value of the field should be properly
+ * +    returned.
  */
-START_TEST(rec_field_value_001)
+START_TEST(rec_field_value_empty)
 {
   rec_field_t field;
   rec_field_name_t fname;
@@ -54,16 +55,17 @@ START_TEST(rec_field_value_001)
 }
 END_TEST
 
-/*
- * Test: rec_field_value_002
+/*-
+ * Test: rec_field_value_nonempty
+ * Unit: rec_field_value
  * Description:
- *   Get the value of a field with a non-empty value
- * Success conditions:
- *   1. The call should not produce an error.
- *   2. The value of the field should be properly
- *      returned.
+ * + Get the value of a field with a non-empty value
+ * +
+ * + 1. The call should not produce an error.
+ * + 2. The value of the field should be properly
+ * +    returned.
  */
-START_TEST(rec_field_value_002)
+START_TEST(rec_field_value_nonempty)
 {
   rec_field_t field;
   rec_field_name_t fname;
@@ -86,8 +88,8 @@ TCase *
 test_rec_field_value (void)
 {
   TCase *tc = tcase_create("rec_field_value");
-  tcase_add_test (tc, rec_field_value_001);
-  tcase_add_test (tc, rec_field_value_002);
+  tcase_add_test (tc, rec_field_value_empty);
+  tcase_add_test (tc, rec_field_value_nonempty);
 
   return tc;
 }

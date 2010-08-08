@@ -1,3 +1,76 @@
+2010-08-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Generate information about tests in rec format and store it in
+	TESTS.
+	* README-dev: Added a note on updating the TESTS file when a test
+	is added to the test suite.
+
+	* TESTS (Test): New file, generated ith 'get-test-data'.
+
+	* build-aux/get-test-data: New file.
+
+	* torture/rec-record/rec-record-size.c: rec_record_size_001
+	renamed to rec_record_size_empty.
+	rec_record_size_002 renamed to rec_record_size_nonempty.
+	(test_rec_record_size): Call to rec_record_size_empty and
+	rec_record_size_nonempty.
+
+	* torture/rec-record/rec-record-remove-field.c:
+	rec_record_remove_field_001 renamed to
+	rec_record_remove_field_existing.
+	(test_rec_record_remove_field): Call to
+	rec_record_remove_field_existing.
+
+	* torture/rec-record/rec-record-new.c: rec_record_new_001 renamed
+	to rec_record_new_and_destroy.
+
+	* torture/rec-record/rec-record-insert-field.c:
+	rec_record_insert_field_001 renamed to
+	rec_record_insert_field_empty.
+	rec_record_insert_field_002 renamed to
+	rec_record_insert_field_nonempty.
+	rec_record_insert_field_003 renamed to
+	rec_record_insert_field_duplicated.
+	(test_rec_record_insert_field): Call
+	rec_record_insert_field_empty, rec_record_insert_field_nonempty
+	and rec_record_insert_field_duplicated.
+
+	* torture/rec-record/rec-record-field-p.c: rec_record_field_p_001
+	renamed to rec_record_field_existing.
+	rec_record_field_p_002 renamed to rec_record_field_nonexisting.
+
+	* torture/rec-field/rec-field-value.c: rec_field_value_001 renamed
+	to rec_field_value_empty.
+	rec_field_value_002 renamed to rec_field_value_nonempty.
+	(test_rec_field_value): Call to rec_field_value_empty and
+	rec_field_value_nonempty.
+
+	* torture/rec-field/rec-field-set-value.c: rec_field_set_value_001
+	renamed to rec_field_set_value_empty.
+	rec_field_set_value_002 renamed to rec_field_set_value_nonempty.
+	(test_rec_field_set_value): Call to rec_field_set_value_empty and
+	rec_field_set_value_nonempty.
+
+	* torture/rec-field/rec-field-set-name.c: rec_field_set_name_001
+	renamed to rec_field_set_name_empty.
+	rec_field_set_name_002 renamed to rec_field_set_name_nonempty.
+	(test_rec_field_set_name): Call to rec_field_set_name_empty and
+	rec_field_set_name_nonempty.
+
+	* torture/rec-field/rec-field-name.c: rec_field_name_001 renamed
+	to rec_field_name_empty.
+	rec_field_name_002 renamed to rec_field_name_nonempty.
+	(test_rec_field_name): Call to 'rec_field_name_empty' and
+	'rec_field_name_nonempty'.
+	Comments reformatted to contain rec data.
+
+	* torture/rec-field/rec-field-dup.c: rec_field_dup_001 renamed to
+	rec_field_dup_empty.
+	rec_field_dup_002 renamed to rec_field_dup_nonempty.
+	(test_rec_field_dup): Call to 'rec_field_dup_empty' and
+	'rec_field_dup_nonempty'.
+	Comments reformated to contain rec data.
+
 2010-08-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Import the gnulib gettext module.

@@ -29,16 +29,17 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_field_set_name_001
+/*-
+ * Test: rec_field_set_name_empty
+ * Unit: rec_field_set_name
  * Description:
- *   Set the name of a field to the empty string
- * Success conditions:
- *   1. The call should not produce an error.
- *   2. The name of the field should be properly
- *      set.
+ * + Set the name of a field to the empty string
+ * +
+ * + 1. The call should not produce an error.
+ * + 2. The name of the field should be properly
+ * +    set.
  */
-START_TEST(rec_field_set_name_001)
+START_TEST(rec_field_set_name_empty)
 {
   rec_field_t field;
   rec_field_name_t field_name;
@@ -60,16 +61,17 @@ START_TEST(rec_field_set_name_001)
 }
 END_TEST
 
-/*
- * Test: rec_field_set_name_002
+/*-
+ * Test: rec_field_set_name_nonempty
+ * Unit: rec_field_set_name
  * Description:
- *   Set the name of a field to a non-empty name
- * Success conditions:
- *   1. The call should not produce an error.
- *   2. The name of the field should be properly
- *      set.
+ * + Set the name of a field to a non-empty name
+ * +
+ * + 1. The call should not produce an error.
+ * + 2. The name of the field should be properly
+ * +    set.
  */
-START_TEST(rec_field_set_name_002)
+START_TEST(rec_field_set_name_nonempty)
 {
   rec_field_t field;
   rec_field_name_t field_name;
@@ -98,8 +100,8 @@ TCase *
 test_rec_field_set_name (void)
 {
   TCase *tc = tcase_create("rec_field_set_name");
-  tcase_add_test (tc, rec_field_set_name_001);
-  tcase_add_test (tc, rec_field_set_name_002);
+  tcase_add_test (tc, rec_field_set_name_empty);
+  tcase_add_test (tc, rec_field_set_name_nonempty);
 
   return tc;
 }

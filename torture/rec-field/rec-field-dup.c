@@ -29,17 +29,18 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_field_dup_001
+/*-
+ * Test: rec_field_dup_empty
+ * Unit: rec_field_dup
  * Description:
- *   Dup a field with empty name and empty value.
- * Success conditions:
- *   1. The name of the copied field should be the
- *      empty string.
- *   2. The value of the copied field should be the
- *      empty string.
+ * + Dup a field with empty name and empty value.
+ * +
+ * + 1. The name of the copied field should be the
+ * +    empty string.
+ * + 2. The value of the copied field should be the
+ * +    empty string.
  */
-START_TEST(rec_field_dup_001)
+START_TEST(rec_field_dup_empty)
 {
   rec_field_t field;
   rec_field_t field_copy;
@@ -69,17 +70,18 @@ START_TEST(rec_field_dup_001)
 }
 END_TEST
 
-/*
- * Test: rec_field_dup_002
+/*-
+ * Test: rec_field_dup_non_empty
+ * Unit: rec_field_dup
  * Description:
- *   Dup a field with non-empty name and non-empty value.
- * Success conditions:
- *   1. The name of the copied field should be the
- *      appropriate.
- *   2. The value of the copied field should be the
- *      appropriate.
+ * + Dup a field with non-empty name and non-empty value.
+ * +
+ * + 1. The name of the copied field should be the
+ * +    appropriate.
+ * + 2. The value of the copied field should be the
+ * +    appropriate.
  */
-START_TEST(rec_field_dup_002)
+START_TEST(rec_field_dup_nonempty)
 {
   rec_field_t field;
   rec_field_t field_copy;
@@ -116,8 +118,8 @@ TCase *
 test_rec_field_dup (void)
 {
   TCase *tc = tcase_create("rec_field_dup");
-  tcase_add_test (tc, rec_field_dup_001);
-  tcase_add_test (tc, rec_field_dup_002);
+  tcase_add_test (tc, rec_field_dup_empty);
+  tcase_add_test (tc, rec_field_dup_nonempty);
 
   return tc;
 }

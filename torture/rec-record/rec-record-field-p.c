@@ -28,16 +28,17 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_record_field_p_001
+/*-
+ * Test: rec_record_field_p_existing
+ * Unit: rec_record_field_p
  * Description:
- *   Check for the existence of a field included
- *   in the record.
- * Success conditions:
- *   1. The call to rec_record_field_p should 
- *      return true
+ * + Check for the existence of a field included
+ * + in the record.
+ * +
+ * + 1. The call to rec_record_field_p should 
+ * +    return true
  */
-START_TEST(rec_record_field_p_001)
+START_TEST(rec_record_field_p_existing)
 {
   rec_record_t record;
   rec_field_t field;
@@ -61,16 +62,17 @@ START_TEST(rec_record_field_p_001)
 }
 END_TEST
 
-/*
- * Test: rec_record_field_p_002
+/*-
+ * Test: rec_record_field_p_nonexisting
+ * Unit: rec_record_field_p
  * Description:
- *   Check for the existence of a field not included
- *   in the record.
- * Success conditions:
- *   1. The call to rec_record_field_p should 
- *      return false.
+ * + Check for the existence of a field not included
+ * + in the record.
+ * +
+ * + 1. The call to rec_record_field_p should 
+ * +    return false.
  */
-START_TEST(rec_record_field_p_002)
+START_TEST(rec_record_field_p_nonexisting)
 {
   rec_record_t record;
   rec_field_t field;
@@ -104,8 +106,8 @@ TCase *
 test_rec_record_field_p (void)
 {
   TCase *tc = tcase_create("rec_record_field_p");
-  tcase_add_test (tc, rec_record_field_p_001);
-  tcase_add_test (tc, rec_record_field_p_002);
+  tcase_add_test (tc, rec_record_field_p_existing);
+  tcase_add_test (tc, rec_record_field_p_nonexisting);
   
   return tc;
 }

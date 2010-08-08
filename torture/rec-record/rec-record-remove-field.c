@@ -28,16 +28,17 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_record_remove_field_001
+/*-
+ * Test: rec_record_remove_field_existing
+ * Unit: rec_record_remove_field
  * Description:
- *   Remove a field from a record.
- * Success condition:
- *   1. The call to rec_record_remove_field should
- *      return true.
- *   2. The field should be removed from the record.
+ * +  Remove a field from a record.
+ * +
+ * + 1. The call to rec_record_remove_field should
+ * +    return true.
+ * + 2. The field should be removed from the record.
  */
-START_TEST(rec_record_remove_field_001)
+START_TEST(rec_record_remove_field_existing)
 {
   rec_record_t record;
   rec_field_t field;
@@ -69,7 +70,7 @@ TCase *
 test_rec_record_remove_field (void)
 {
   TCase *tc = tcase_create("rec_record_remove_field");
-  tcase_add_test (tc, rec_record_remove_field_001);
+  tcase_add_test (tc, rec_record_remove_field_existing);
 
   return tc;
 }

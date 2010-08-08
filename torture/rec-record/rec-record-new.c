@@ -28,15 +28,16 @@
 
 #include <rec.h>
 
-/*
- * Test: rec_record_new_001
+/*-
+ * Test: rec_record_new_and_destroy
+ * Unit: rec_record_new
  * Description:
- *   Create a new record and destroy it.
- * Success conditions:
- *   1. The call to rec_record_new should not fail.
- *   2. The call to rec_record_destroy should not fail.
+ * + Create a new record and destroy it.
+ * +
+ * +  1. The call to rec_record_new should not fail.
+ * +  2. The call to rec_record_destroy should not fail.
  */
-START_TEST(rec_record_new_001)
+START_TEST(rec_record_new_and_destroy)
 {
   rec_record_t record;
 
@@ -54,7 +55,7 @@ TCase *
 test_rec_record_new (void)
 {
   TCase *tc = tcase_create("rec_record_new");
-  tcase_add_test (tc, rec_record_new_001);
+  tcase_add_test (tc, rec_record_new_and_destroy);
 
   return tc;
 }
