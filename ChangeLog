@@ -1,5 +1,11 @@
 2010-08-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Fix source in parse error messages in recinf.
+	* utils/recinf.c (print_info_file): Specify the file name in parse
+	errors instead of 'stdin'.
+
+2010-08-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Generate information about tests in rec format and store it in
 	TESTS.
 	* README-dev: Added a note on updating the TESTS file when a test

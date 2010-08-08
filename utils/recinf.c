@@ -159,7 +159,7 @@ print_info_file (FILE *in,
   
   if (rec_parser_error (parser))
     {
-      rec_parser_perror (parser, "stdin");
+      rec_parser_perror (parser, file_name);
     }
 
   rec_parser_destroy (parser);
