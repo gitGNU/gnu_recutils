@@ -1,3 +1,8 @@
+2010-08-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Little script to get cyclomatic metrics from pmccabe.
+	* build-aux/pmccabe2rec: New file.
+
 2010-08-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Fix source in parse error messages in recinf.
