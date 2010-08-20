@@ -16,7 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-bin_PROGRAMS = recinf recsel recins recdel recset recfix
+if LIBCSV
+   CSV2REC = csv2rec
+else
+   CSV2REC =
+endif
+
+bin_PROGRAMS = recinf recsel recins recdel recset recfix \
+               $(CSV2REC)
 
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
@@ -46,5 +53,9 @@ recset_LDADD = $(COMMONLIBS)
 recfix_SOURCES = $(COMMONSRC) \
                  recfix.c
 recfix_LDADD = $(COMMONLIBS)
+
+csv2rec_SOURCES = $(COMMONSRC) \
+                  csv2rec.c
+csv2rec_LDADD = $(COMMONLIBS) $(CSVLIBS)
 
 # End of Makefile.am

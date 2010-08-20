@@ -1,5 +1,19 @@
 2010-08-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: new util csv2rec.
+	* doc/recutils.texi (csv2rec): New chapter.
+
+	* configure.ac: Check for libcsv and define the LIBCSV automake
+	conditional accondingly.
+
+	* utils/Makefile.am (bin_PROGRAMS): csv2rec added.
+	(csv2rec_SOURCES): New variable.
+	(csv2rec_LDADD): New variable.
+
+	* utils/csv2rec.c: New file.
+
+2010-08-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	build: fix autogen.sh.
 	* autogen.sh: Call libtoolize.
 	Invoke automake with --add-missing.

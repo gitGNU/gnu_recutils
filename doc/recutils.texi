@@ -76,6 +76,10 @@ Utilities
 * recset::              Managing fields.
 * recfix::              Fixing broken rec files, and diagnostics.
 
+Conversion Utilities
+* csv2rec::             Converting comma-separated-values data into
+                          rec data.
+
 * The Rec Library::     Writing C programs to manipulate rec files.
 * Usage Example::       A full-fledged rec-based project management
                           system.
@@ -1071,6 +1075,48 @@ XXX
 
 @node recfix
 @chapter recfix
+
+XXX
+
+@node csv2rec
+@chapter csv2rec
+
+@command{csv2rec} reads the given comma-separated-values file (or the
+data in the standard input if no file is specified) and prints out the
+converted rec data, if possible.
+
+@menu
+* csv2rec Invocation::     Command line options.
+* csv2rec Examples::       Examples of the usage of @command{csv2rec}.
+@end menu
+
+@node csv2rec Invocation
+@section csv2rec Invocation
+
+@command{csv2rec} converts CSV data into rec data.  Synopsis:
+
+@example
+csv2rec [OPTION]... [CSV_FILE]
+@end example
+
+In addition of the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -t @var{type}
+@itemx @w{@kbd{--type}=@var{type}}
+Type of the converted records.  If no type is specified then no type
+is used.
+@item -s
+@itemx @w{@kbd{--strict}}
+Be strict parsing the csv file.
+@item -e
+@itemx @w{@kbd{--omit-empty}}
+Omit empty fields.
+@end table
+
+@node csv2rec Examples
+@section csv2rec Examples
 
 XXX
 

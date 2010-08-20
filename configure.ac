@@ -53,6 +53,14 @@ have_check=yes
 AC_CHECK_LIB([check],[suite_create],,[have_check=no])
 AM_CONDITIONAL([CHECK], [test "x$have_check" != "xno"])
 
+have_csv=no
+AC_CHECK_LIB([csv],[csv_init],[have_csv=yes],)
+AM_CONDITIONAL([LIBCSV], [test "x$have_csv" = "xyes"])
+if test "x$have_csv" = "xyes"; then
+   CSVLIBS=-lcsv
+fi
+AC_SUBST([CSVLIBS])
+
 dnl Search for required programs
 
 AM_PROG_LEX
