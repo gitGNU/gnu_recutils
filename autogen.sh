@@ -19,11 +19,12 @@ echo "Preparing git recutils infrastructure:"
 
 : ${ACLOCAL=aclocal}
 : ${AUTOHEADER=autoheader}
-: ${AUTOMAKE=automake}
+: ${LIBTOOLIZE=libtoolize}
+: ${AUTOMAKE=automake --add-missing}
 : ${AUTOCONF=autoconf}
 
 # So instead:
-cmd="$ACLOCAL -I m4 && $AUTOCONF && $AUTOHEADER && $AUTOMAKE"
+cmd="$ACLOCAL -I m4 && $AUTOCONF && $AUTOHEADER && $LIBTOOLIZE && $AUTOMAKE"
 echo "  $cmd"
 $chicken eval $cmd || exit 1
 
