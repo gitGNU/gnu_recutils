@@ -78,4 +78,11 @@ esac
 dnl Generate output files
 AC_OUTPUT(Makefile lib/Makefile src/Makefile utils/Makefile doc/Makefile torture/Makefile)
 
+dnl Report warnings
+
+if test "x$have_csv" = "xno"; then
+   echo "warning: libcsv was not found in the system."
+   echo "warning: the csv2rec utility won't be built."
+fi
+
 dnl End of configure.ac

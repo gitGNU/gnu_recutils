@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-20 19:06:16 jco"
+/* -*- mode: C -*- Time-stamp: "2010-08-20 22:10:45 jemarch"
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010
@@ -388,11 +388,14 @@ main (int argc, char *argv[])
   parse_args (argc, argv);
   db = process_csv ();
 
-  writer = rec_writer_new (stdout);
-  rec_write_db (writer, db);
+  if (db)
+    {
+      writer = rec_writer_new (stdout);
+      rec_write_db (writer, db);
 
-  rec_writer_destroy (writer);
-  rec_db_destroy (db);
+      rec_writer_destroy (writer);
+      rec_db_destroy (db);
+    }
 
   return ret;
 }

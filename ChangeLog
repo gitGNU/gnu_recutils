@@ -1,4 +1,13 @@
-2010-08-20  Jose E. Marchesi  <jco@terma.com>
+2010-08-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	csv2rec: several minor fixes.
+	* utils/csv2rec.c (main): Make sure a rec database was created
+	before to attempt to write it.
+
+	* configure.ac: Emit a warning if libcsv is not found, noticing
+	the user that csv2rec won't build.
+
+2010-08-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Fixing of memory errors.
 	* src/rec-sex.c (rec_sex_eval_node): Free the memory used by the
