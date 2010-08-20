@@ -1,3 +1,22 @@
+2010-08-20  Jose E. Marchesi  <jco@terma.com>
+
+	Fixing of memory errors.
+	* src/rec-sex.c (rec_sex_eval_node): Free the memory used by the
+	compiled regexps.
+
+	* utils/recfix.c (main): Free the memory used by the rec database.
+
+	* utils/recsel.c (main): Likewise.
+
+	* utils/recsel.c (recsel_process_data): Free the memory used by
+	the rec writer.
+
+	* src/rec-parser.c (rec_parser_buf_adjust): Realloc to adjust the
+	memory used by the buffer.
+
+	* src/rec-sex.l (rec_sex_lex_extract_name): Avoid an invalid write
+	after the res[] buffer.
+
 2010-08-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: new util csv2rec.

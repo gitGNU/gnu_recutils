@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-05 20:49:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-20 19:56:30 jco"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -131,6 +131,8 @@ main (int argc, char *argv[])
     {
       res = 1;
     }
+
+  rec_db_destroy (db);
 
   return res;
 }

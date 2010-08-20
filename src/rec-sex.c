@@ -466,6 +466,8 @@ rec_sex_eval_node (rec_sex_t sex,
                                     0,
                                     NULL,
                                     0) == 0);
+
+            regfree (&regexp);
           }
         else
           {

@@ -352,6 +352,8 @@ recsel_process_data (rec_db_t db)
       fprintf (stdout, "%d\n", written);
     }
 
+  rec_writer_destroy (writer);
+
   return ret;
 }
 
@@ -380,6 +382,8 @@ main (int argc, char *argv[])
     {
       res = 1;
     }
+
+  rec_db_destroy (db);
 
   return res;
 }

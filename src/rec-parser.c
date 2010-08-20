@@ -1111,8 +1111,11 @@ rec_parser_buf_data (rec_parser_buf_t buf)
 static void
 rec_parser_buf_adjust (rec_parser_buf_t buf)
 {
-  /* The following realloc fails and I don't know why -jemarch */
-  /* buf->data = realloc (buf->data, buf->used); */
+  if (buf->used > 0)
+    {
+      buf->data = realloc (buf->data, buf->used + 1);
+    }
+
   buf->data[buf->used] = '\0';
 }
 
