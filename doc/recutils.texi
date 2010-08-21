@@ -79,6 +79,7 @@ Utilities
 Conversion Utilities
 * csv2rec::             Converting comma-separated-values data into
                           rec data.
+* mdb2rec::             Converting mdb files into rec files.
 
 * The Rec Library::     Writing C programs to manipulate rec files.
 * Usage Example::       A full-fledged rec-based project management
@@ -1117,6 +1118,40 @@ Omit empty fields.
 
 @node csv2rec Examples
 @section csv2rec Examples
+
+XXX
+
+@node mdb2rec
+@section mdb2rec
+
+@command{mdb2rec} reads the given mdb file and prints out the
+converted rec data, if possible.
+
+@menu
+*mdb2rec Invocation::      Command line options.
+*mdb2rec Examples::        Examples of the usage of @command{mdb2rec}.
+@end menu
+
+@node mdb2rec Invocation
+@section mdb2rec Invocation
+
+@command {mdb2rec} converts mdb files into rec data.  Synopsis:
+
+@example
+mdb2rec [OPTION]... [MDB_FILE]
+@end example
+
+In addition of the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -s
+@itemx @w{@kbd{--system-tables}}
+Include system tables in the output.
+@end table
+
+@node mdb2rec Examples
+@section mdb2rec Examples
 
 XXX
 

@@ -22,8 +22,14 @@ else
    CSV2REC =
 endif
 
+if LIBMDB
+   MDB2REC = mdb2rec
+else
+   MDB2REC =
+endif
+
 bin_PROGRAMS = recinf recsel recins recdel recset recfix \
-               $(CSV2REC)
+               $(CSV2REC) $(MDB2REC)
 
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
@@ -57,5 +63,9 @@ recfix_LDADD = $(COMMONLIBS)
 csv2rec_SOURCES = $(COMMONSRC) \
                   csv2rec.c
 csv2rec_LDADD = $(COMMONLIBS) $(CSVLIBS)
+
+mdb2rec_SOURCES = $(COMMONSRC) \
+                  mdb2rec.c
+mdb2rec_LDADD = $(COMMONLIBS) $(MDBLIBS)
 
 # End of Makefile.am

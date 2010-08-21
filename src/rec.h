@@ -194,6 +194,9 @@ typedef struct rec_field_s *rec_field_t;
 rec_field_t rec_field_new (const rec_field_name_t name,
                            const char *value);
 
+rec_field_t rec_field_new_str (const char *name,
+                               const char *value);
+
 /* Destroy a field, freeing any occupied memory. */
 void rec_field_destroy (rec_field_t field);
 

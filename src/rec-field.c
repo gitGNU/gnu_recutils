@@ -119,6 +119,24 @@ rec_field_new (rec_field_name_t name,
 }
 
 rec_field_t
+rec_field_new_str (const char *name,
+                   const char *value)
+{
+  rec_field_t field;
+  rec_field_name_t field_name;
+  
+  field = NULL;
+
+  field_name = rec_parse_field_name_str ((char *) name);
+  if (field_name)
+    {
+      field = rec_field_new (field_name, value);
+    }
+
+  return field;
+}
+
+rec_field_t
 rec_field_dup (rec_field_t field)
 {
   rec_field_t new_field;

@@ -1,3 +1,21 @@
+2010-08-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	utils: new util mdb2rec.
+	* src/rec-writer.c (rec_write_rset): Manage special case: empty
+	record sets with a record descriptor.
+
+	* src/rec.h: New function 'rec_field_new_str'.
+
+	* src/rec-field.c (rec_field_new_str): Idem.
+
+2010-08-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Search for libmdbtools and define MDBLIBS.
+
+	* utils/Makefile.am: Build mdb2rec.
+
+	* utils/mdb2rec.c: New file.
+
 2010-08-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	csv2rec: several minor fixes.

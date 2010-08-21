@@ -228,6 +228,13 @@ rec_write_rset (rec_writer_t writer,
   wrote_descriptor = false;
   position = 0;
   descriptor_pos = rec_rset_descriptor_pos (rset);
+  descriptor = rec_rset_descriptor (rset);
+
+  if ((rec_rset_num_elems (rset) == 0) && descriptor)
+    {
+      rec_write_record (writer, rec_rset_descriptor (rset));
+      return true;
+    }
 
   elem = rec_rset_null_elem ();
   while (rec_rset_elem_p (elem = rec_rset_next (rset, elem)))
@@ -242,7 +249,6 @@ rec_write_rset (rec_writer_t writer,
 
       if (position == descriptor_pos)
         {
-          descriptor = rec_rset_descriptor (rset);
           if (descriptor 
               && (!(wrote_descriptor = rec_write_record (writer, rec_rset_descriptor (rset)))))
             {

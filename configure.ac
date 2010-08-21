@@ -61,6 +61,14 @@ if test "x$have_csv" = "xyes"; then
 fi
 AC_SUBST([CSVLIBS])
 
+have_mdb=no
+AC_CHECK_LIB([mdb],[mdb_init],[have_mdb=yes],)
+AM_CONDITIONAL([LIBMDB], [test "x$have_mdb" = "xyes"])
+if test "x$have_mdb" = "xyes"; then
+   MDBLIBS=-lmdb
+fi
+AC_SUBST([MDBLIBS])
+
 dnl Search for required programs
 
 AM_PROG_LEX
@@ -82,7 +90,12 @@ dnl Report warnings
 
 if test "x$have_csv" = "xno"; then
    echo "warning: libcsv was not found in the system."
-   echo "warning: the csv2rec utility won't be built."
+   echo "warning: the csv2rec utility won't get built."
+fi
+
+if test "x$have_mdb" = "xno"; then
+   echo "warning: libmdb was not found in the system."
+   echo "warning: the mdb2rec utility won't get built."
 fi
 
 dnl End of configure.ac
