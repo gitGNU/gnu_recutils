@@ -16,13 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if LIBCSV
+if COMPILE_CSV2REC
    CSV2REC = csv2rec
 else
    CSV2REC =
 endif
 
-if LIBMDB
+if COMPILE_MDB2REC
    MDB2REC = mdb2rec
 else
    MDB2REC =
@@ -66,6 +66,7 @@ csv2rec_LDADD = $(COMMONLIBS) $(CSVLIBS)
 
 mdb2rec_SOURCES = $(COMMONSRC) \
                   mdb2rec.c
-mdb2rec_LDADD = $(COMMONLIBS) $(MDBLIBS)
+mdb2rec_CFLAGS = $(GLIB_CFLAGS)
+mdb2rec_LDADD = $(COMMONLIBS) $(MDBLIBS) $(GLIB_LIBS)
 
 # End of Makefile.am

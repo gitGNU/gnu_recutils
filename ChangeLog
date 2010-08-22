@@ -1,5 +1,12 @@
 2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	build: check for glib as a dependency to build mdb2rec.
+	* configure.ac: Check for glib.
+
+	* utils/mdb2rec.c: Include glib.h.
+
+2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	mdb2rec: normalize field names and new option to keep empty fields
 	in the rec output.
 	* doc/recutils.texi (mdb2rec Invocation): Document '-e'.

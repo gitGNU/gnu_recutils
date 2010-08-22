@@ -30,9 +30,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include <glib.h>
+#include <mdbtools.h>
+
 #include <rec.h>
 #include <recutl.h>
-#include <mdbtools.h>
 
 /* Forward declarations. */
 static void parse_args (int argc, char **argv);

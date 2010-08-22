@@ -55,7 +55,6 @@ AM_CONDITIONAL([CHECK], [test "x$have_check" != "xno"])
 
 have_csv=no
 AC_CHECK_LIB([csv],[csv_init],[have_csv=yes],)
-AM_CONDITIONAL([LIBCSV], [test "x$have_csv" = "xyes"])
 if test "x$have_csv" = "xyes"; then
    CSVLIBS=-lcsv
 fi
@@ -63,11 +62,18 @@ AC_SUBST([CSVLIBS])
 
 have_mdb=no
 AC_CHECK_LIB([mdb],[mdb_init],[have_mdb=yes],)
-AM_CONDITIONAL([LIBMDB], [test "x$have_mdb" = "xyes"])
 if test "x$have_mdb" = "xyes"; then
    MDBLIBS=-lmdb
 fi
 AC_SUBST([MDBLIBS])
+
+have_glib=no
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
+                  [have_glib=yes], [have_glib=no])
+
+AM_CONDITIONAL([COMPILE_CSV2REC], [test "x$have_csv" = "xyes"])
+AM_CONDITIONAL([COMPILE_MDB2REC],
+               [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])
 
 dnl Search for required programs
 
@@ -95,6 +101,11 @@ fi
 
 if test "x$have_mdb" = "xno"; then
    echo "warning: libmdb was not found in the system."
+   echo "warning: the mdb2rec utility won't get built."
+fi
+
+if test "x$have_glib" = "xno"; then
+   echo "warning: glib was not found in the system."
    echo "warning: the mdb2rec utility won't get built."
 fi
 
