@@ -354,19 +354,25 @@ rec_type_new (char *str)
         case REC_TYPE_SIZE:
           {
             /* Skip blanks.  */
-            while (p && rec_type_blank_p (*p))
+            while (*p && rec_type_blank_p (*p))
               {
                 p++;
               }
 
             /* Get the number.  */
             b = p;
-            while (p && rec_type_digit_p (*p))
+            while (*p && rec_type_digit_p (*p))
               {
                 number[p - b] = *p;
                 p++;
               }
-            rec_atoi (number, &(new->data.max_size));
+            number[p-b] = '\0';
+
+            if (!rec_atoi (number, &(new->data.max_size)))
+              {
+                /* ??? */
+                return NULL;
+              }
 
             break;
           }

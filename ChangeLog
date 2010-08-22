@@ -1,5 +1,13 @@
 2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	mdb2rec: emit field types for VARCHAR columns.
+	* src/rec-types.c (rec_type_new): Finish the number[] string with
+	a null value.
+
+	* utils/mdb2rec.c (process_table): Process case when col_size > 0.
+
+2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-int: warn on colling types only if the types are different.
 	* src/rec-int.c (rec_int_check_field_type): Emit warning on
 	colliding types only if the types are not equal.

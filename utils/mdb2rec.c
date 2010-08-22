@@ -40,6 +40,20 @@
 static void parse_args (int argc, char **argv);
 static rec_db_t process_mdb (void);
 static rec_rset_t process_table (MdbCatalogEntry *entry);
+static rec_field_name_t get_field_name (MdbHandle *mdb, char *table_name, char *col_name);
+static void get_relationships (MdbHandle *mdb);
+
+/*
+ * Data types
+ */
+
+struct relationship_s
+{
+  char *table;
+  char *column;
+  char *referenced_table;
+  char *referenced_column;
+};
 
 /*
  * Global variables
@@ -49,6 +63,8 @@ char *program_name; /* Initialized in main() */
 char *mdb2rec_mdb_file = NULL;
 bool mdb2rec_include_system = false;
 bool mdb2rec_keep_empty_fields = false;
+struct relationship_s *relationships;
+size_t num_relationships = 0;
 
 /*
  * Command line options management
@@ -135,6 +151,120 @@ parse_args (int argc,
     {
       mdb2rec_mdb_file = argv[optind++];
     }
+}
+
+static void
+get_relationships (MdbHandle *mdb)
+{
+  char *bound[4];
+  MdbTableDef *table;
+  size_t i;
+
+  table = mdb_read_table_by_name (mdb,
+                                  "MsysRelationships",
+                                  MDB_TABLE);
+  if ((!table) || (table->num_rows == 0))
+    {
+      return;
+    }
+
+  mdb_read_columns (table);
+  for (i = 0; i < 4; i++)
+    {
+      bound[i] = (char *) malloc (MDB_BIND_SIZE);
+    }
+
+  mdb_bind_column_by_name (table, "szColumn", bound[0], NULL);
+  mdb_bind_column_by_name (table, "szObject", bound[1], NULL);
+  mdb_bind_column_by_name (table, "szReferencedColumn", bound[2], NULL);
+  mdb_bind_column_by_name (table, "szReferencedObject", bound[3], NULL);
+  mdb_rewind_table (table);
+  
+  num_relationships = table->num_rows;
+  relationships = malloc (sizeof (struct relationship_s) * num_relationships);
+
+  i = 0;
+  while (mdb_fetch_row (table))
+    {
+      relationships[i].column = strdup (bound[0]);
+      relationships[i].table = strdup (bound[1]);
+      relationships[i].referenced_column = strdup (bound[2]);
+      relationships[i].referenced_table = strdup (bound[3]);
+      i++;
+    }
+}
+
+static rec_field_name_t
+get_field_name (MdbHandle *mdb,
+                char *table_name,
+                char *col_name)
+{
+  rec_field_name_t field_name;
+  char *field_name_str;
+  char *field_part_0;
+  char *field_part_1;
+  char *field_part_2;
+  char *referenced_table;
+  char *referenced_column;
+  size_t i;
+
+  /* If this field is a relationship to other table, build a compound
+     field name.  */
+
+  referenced_table = NULL;
+  referenced_column = NULL;
+  for (i = 0; i < num_relationships; i++)
+    {
+      if ((strcmp (relationships[i].table, table_name) == 0) 
+          && (strcmp (relationships[i].column, col_name) == 0))
+        {
+          referenced_table =
+            rec_field_name_part_normalise (relationships[i].referenced_table);
+          if (!referenced_table)
+            {
+              recutl_fatal ("failed to normalise record type name %s\n",
+                            relationships[i].referenced_table);
+            }
+
+          referenced_column = 
+            rec_field_name_part_normalise (relationships[i].referenced_column);
+          if (!referenced_column)
+            {
+              recutl_fatal ("failed to normalise field name %s\n",
+                            relationships[i].referenced_column);
+            }
+
+          break;
+        }
+    }
+
+  field_name = rec_field_name_new ();
+  field_name_str = rec_field_name_part_normalise (col_name);
+  if (!field_name_str)
+    {
+      recutl_fatal ("failed to normalise field name %s\n",
+                    table_name);
+    }
+
+  if (referenced_table && referenced_column)
+    {
+      /* Compound field name, but take care about the default
+         role.  */
+      rec_field_name_set (field_name, 0, referenced_table);
+      rec_field_name_set (field_name, 1, referenced_column);
+      if (strcmp (field_name_str, referenced_column) != 0)
+        {
+          rec_field_name_set (field_name, 2, field_name_str);
+        }
+    }
+  else
+    {
+      /* Simple field name.  */
+      rec_field_name_set (field_name, 0, field_name_str);
+    }
+
+  free (field_name_str);
+  return field_name;
 }
 
 static rec_rset_t
@@ -230,14 +360,21 @@ process_table (MdbCatalogEntry *entry)
                       "%s date", col->name);
             break;
           }
+        case MDB_TEXT:
+          {
+            if (col->col_size > 0)
+              {
+                snprintf (type_value, TYPE_VALUE_SIZE,
+                          "%s size %d", col->name, col->col_size);
+              }
+            break;
+          }
         case MDB_REPID:
         case MDB_MEMO:
         case MDB_OLE:
-        case MDB_TEXT:
         case MDB_MONEY:
         default:
           {
-            /* Don't include a type specification.  */
             break;
           }
         }
@@ -281,13 +418,7 @@ process_table (MdbCatalogEntry *entry)
             }
 
           /* Compute the name of the field.  */
-          /* XXX: manage foreign keys.  */
-          field_name_str = rec_field_name_part_normalise (col->name);
-          if (!field_name_str)
-            {
-              recutl_fatal ("failed to normalise field name %s\n",
-                            table_name);
-            }
+          field_name = get_field_name (mdb, table_name, col->name); 
 
           /* Compute the value of the field.  */
           field_value = malloc (bound_lens[i] + 1);
@@ -297,7 +428,7 @@ process_table (MdbCatalogEntry *entry)
           if (mdb2rec_keep_empty_fields || (strlen (field_value) > 0))
             {
               /* Create the field and append it into the record.  */
-              field = rec_field_new_str (field_name_str, field_value);
+              field = rec_field_new (field_name, field_value);
               if (!field)
                 {
                   recutl_fatal ("invalid field name %s\n", col->name);
@@ -306,7 +437,6 @@ process_table (MdbCatalogEntry *entry)
               rec_record_append_field (record, field);
             }
 
-          free (field_name_str);
           free (field_value);
         }
 
@@ -351,6 +481,10 @@ process_mdb (void)
     {
       recutl_fatal ("file does not appear to be an Access database\n");
     }
+
+  /* Read relationships from the database.  Relationships in mdb files
+     are stored in the MSysRelationships table.  */
+  get_relationships (mdb);
 
   /* Iterate on the catalogs.  */
   for (i = 0; i < mdb->num_catalog; i++)
