@@ -1124,20 +1124,20 @@ Omit empty fields.
 XXX
 
 @node mdb2rec
-@section mdb2rec
+@chapter mdb2rec
 
 @command{mdb2rec} reads the given mdb file and prints out the
 converted rec data, if possible.
 
 @menu
-*mdb2rec Invocation::      Command line options.
-*mdb2rec Examples::        Examples of the usage of @command{mdb2rec}.
+* mdb2rec Invocation::      Command line options.
+* mdb2rec Examples::        Examples of the usage of @command{mdb2rec}.
 @end menu
 
 @node mdb2rec Invocation
 @section mdb2rec Invocation
 
-@command {mdb2rec} converts mdb files into rec data.  Synopsis:
+@command{mdb2rec} converts mdb files into rec data.  Synopsis:
 
 @example
 mdb2rec [OPTION]... [MDB_FILE]

@@ -1,5 +1,11 @@
 2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: texinfo fixes.
+	* doc/recutils.texi: mdb2rec is a chapter.
+	Fix mdb2rec menu.
+
+2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	build: advertise third-party dependencies.
 	* README-dev: Add a note on the dependencies on third party
 	products.
