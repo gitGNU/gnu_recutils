@@ -1148,6 +1148,9 @@ Options}) the program accepts the following options.
 @item -s
 @itemx @w{@kbd{--system-tables}}
 Include system tables in the output.
+@item -e
+@itemx @w{@kbd{--keep-empty-fields}}
+Don't prune empty fields in the rec output.
 @end table
 
 @node mdb2rec Examples

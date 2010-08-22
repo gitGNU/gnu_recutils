@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -44,7 +45,8 @@ static rec_rset_t process_table (MdbCatalogEntry *entry);
 
 char *program_name; /* Initialized in main() */
 char *mdb2rec_mdb_file = NULL;
-bool mdb2rec_include_system;
+bool mdb2rec_include_system = false;
+bool mdb2rec_keep_empty_fields = false;
 
 /*
  * Command line options management
@@ -53,13 +55,15 @@ bool mdb2rec_include_system;
 enum
   {
     COMMON_ARGS,
-    SYSTEM_TABLES_ARG
+    SYSTEM_TABLES_ARG,
+    KEEP_EMPTY_FIELDS_ARG
   };
 
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
     {"system-tables", no_argument, NULL, SYSTEM_TABLES_ARG},
+    {"keep-empty-fields", no_argument, NULL, KEEP_EMPTY_FIELDS_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -72,7 +76,9 @@ Usage: mdb2rec [OPTIONS]... MDB_FILE\n\
 Convert an mdb file into a rec file.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
-  -s, --system-tables                 include system tables.\n"
+  -s, --system-tables                 include system tables.\n\
+  -e, --keep-empty-fields             don't prune empty fields in the rec\n\
+                                        output\n"
 COMMON_ARGS_DOC
 "\n\
 Examples:\n\
@@ -90,7 +96,7 @@ parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "s",
+                             "se",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -102,6 +108,12 @@ parse_args (int argc,
         case 's':
           {
             mdb2rec_include_system = true;
+            break;
+          }
+        case KEEP_EMPTY_FIELDS_ARG:
+        case 'e':
+          {
+            mdb2rec_keep_empty_fields = true;
             break;
           }
         default:
@@ -129,10 +141,11 @@ process_table (MdbCatalogEntry *entry)
   rec_rset_t rset;
   MdbTableDef *table;
   MdbHandle *mdb;
-  size_t i;
+  size_t i, j;
   MdbColumn *col;
   char *table_name;
   char *column_name;
+  char *field_name_str;
   char *field_value;
   char **bound_values;
   int *bound_lens;
@@ -257,19 +270,43 @@ process_table (MdbCatalogEntry *entry)
               continue;
             }
 
-          /* XXX: manage foreign keys.  */
 
+          /* Compute the name of the field.  */
+          /* XXX: manage foreign keys.  */
+          field_name_str = malloc (strlen (col->name) + 1);
+          strncpy (field_name_str, col->name, strlen (col->name));
+          field_name_str[strlen(col->name)] = '\0';
+
+          for (j = 0; j < strlen(col->name); j++)
+            {
+              if (!((isalnum (field_name_str[j]))
+                    || (field_name_str[j] == '_')
+                    || (field_name_str[j] == '-')
+                    || (field_name_str[j] == '%')))
+                {
+                  field_name_str[j] = '_';
+                }
+            }
+
+          /* Compute the value of the field.  */
           field_value = malloc (bound_lens[i] + 1);
           strncpy (field_value, bound_values[i], bound_lens[i]);
           field_value[bound_lens[i]] = '\0';
-          field = rec_field_new_str (col->name, field_value);
-          if (!field)
-            {
-              recutl_fatal ("invalid field name %s\n", col->name);
-            }
-          free (field_value);
 
-          rec_record_append_field (record, field);
+          if (mdb2rec_keep_empty_fields || (strlen (field_value) > 0))
+            {
+              /* Create the field and append it into the record.  */
+              field = rec_field_new_str (field_name_str, field_value);
+              if (!field)
+                {
+                  recutl_fatal ("invalid field name %s\n", col->name);
+                }
+
+              rec_record_append_field (record, field);
+            }
+
+          free (field_name_str);
+          free (field_value);
         }
 
       rec_rset_append_record (rset, record);

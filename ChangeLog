@@ -1,3 +1,12 @@
+2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	mdb2rec: normalize field names and new option to keep empty fields
+	in the rec output.
+	* doc/recutils.texi (mdb2rec Invocation): Document '-e'.
+
+	* utils/mdb2rec.c (parse_args): Manage '-e'.
+	(process_table): Normalize field names.
+
 2010-08-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: new util mdb2rec.
