@@ -1,5 +1,11 @@
 2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	build: advertise third-party dependencies.
+	* README-dev: Add a note on the dependencies on third party
+	products.
+
+2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Validation of record type names and minor fixes.
 	* utils/mdb2rec.c (process_table): Use
 	'rec_field_name_part_normalise'.

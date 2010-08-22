@@ -20,6 +20,16 @@ are getting the sources from git (or change configure.ac), you'll need
 to have these tools installed to (re)build.  You'll also need help2man.
 All of these programs are available from ftp://ftp.gnu.org/gnu.
 
+Dependencies
+------------
+
+There are some third party dependencies needed to build some of the
+utilities shipped in this distribution.  The configure script checks
+for the needed packages and drives the conditional compilation of the
+impacted utitilities.  The dependencies are:
+- csv2rec depends on libcsv, available at http://libcsv.sf.net
+- mdb2rec depends on glib 2.0 and libmdb, available at
+  http://mdbtools.sf.net.
 
 Building
 --------
