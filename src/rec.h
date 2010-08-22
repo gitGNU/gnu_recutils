@@ -181,6 +181,7 @@ enum rec_type_kind_e rec_type_kind (rec_type_t type);
 char *rec_type_kind_str (rec_type_t type);
 
 bool rec_type_check (rec_type_t type, char *str);
+bool rec_type_equal_p (rec_type_t type1, rec_type_t type2);
 
 /*
  * TYPE REGISTRIES.

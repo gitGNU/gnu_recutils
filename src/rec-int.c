@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-22 15:29:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-22 21:07:19 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -209,10 +209,11 @@ rec_int_check_field_type (rec_db_t db,
   if (referring_type)
     {
       if (referred_type
+          && (!rec_type_equal_p (referred_type, referring_type))
           && errors)
         {
           /* Emit a warning.  */
-          fprintf (errors, "%s:%s: warning: type %s conflicts with referred type %s in the rset %s.\n",
+          fprintf (errors, "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n",
                    rec_field_source (field), rec_field_location_str (field),
                    rec_type_kind_str (referred_type),
                    rec_type_kind_str (referring_type),

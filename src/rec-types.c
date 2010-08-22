@@ -687,6 +687,51 @@ rec_type_reg_get (rec_type_reg_t reg,
   return res;
 }
 
+bool
+rec_type_equal_p (rec_type_t type1,
+                  rec_type_t type2)
+{
+  bool ret;
+  size_t i;
+
+  ret = true;
+
+  if (type1->kind != type2->kind)
+    {
+      ret = false;
+    }
+  else
+    {
+      if (type1->kind == REC_TYPE_SIZE)
+        {
+          ret = (type1->data.max_size == type2->data.max_size);
+        }
+      else if (type1->kind == REC_TYPE_RANGE)
+        {
+          ret = ((type1->data.min == type2->data.min)
+                 && (type1->data.max == type2->data.max));
+        }
+      else if (type1->kind == REC_TYPE_ENUM)
+        {
+          i = 0;
+          while (type1->data.names[i])
+            {
+              ret = (type2->data.names[i]
+                     && (strcmp (type1->data.names[i],
+                                 type2->data.names[i]) == 0));
+            }
+        }
+      else if (type1->kind == REC_TYPE_REGEXP)
+        {
+          /* Since there is noway to determine whether two
+             regex_t variables refer to equivalent regexps.  */
+          ret = false;
+        }
+    }
+
+  return ret;
+}
+
 /*
  * Private functions.
  */
