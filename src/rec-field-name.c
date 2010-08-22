@@ -27,6 +27,8 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <regex.h>
+#include <ctype.h>
 
 #include <rec.h>
 
@@ -221,6 +223,83 @@ rec_field_name_ref_p (rec_field_name_t fname1,
     }
 
   return ret;
+}
+
+bool
+rec_field_name_str_p (const char *str)
+{
+  int ret;
+  regex_t regexp;
+
+  /* Compile the regexp.  */
+  if ((ret = regcomp (&regexp, REC_FNAME_RE, REG_EXTENDED)) != 0)
+    {
+      fprintf (stderr, "internal error: rec_field_name_str_p: error compiling regexp.\n");
+      return false;
+    }
+
+  /* Check.  */
+  ret = regexec (&regexp, str, 0, NULL, 0);
+
+  regfree (&regexp);
+  return (ret == 0);
+}
+
+bool
+rec_field_name_part_str_p (const char *str)
+{
+  int ret;
+  regex_t regexp;
+
+  /* Compile the regexp.  */
+  if ((ret = regcomp (&regexp,
+                      "^" REC_FNAME_PART_RE "$",
+                      REG_EXTENDED)) != 0)
+    {
+      fprintf (stderr, "internal error: rec_field_name_part_str_p: error compiling regexp.\n");
+      return false;
+    }
+
+  /* Check.  */
+  ret = regexec (&regexp, str, 0, NULL, 0);
+
+  regfree (&regexp);
+  return (ret == 0);
+}
+
+char *
+rec_field_name_part_normalise (const char *str)
+{
+  char *normalised_name;
+  int i;
+
+  normalised_name = malloc (strlen (str) + 1);
+  if (normalised_name)
+    {
+      strncpy (normalised_name, str, strlen (str));
+      normalised_name[strlen(str)] = '\0';
+      
+      for (i = 0; i < strlen (normalised_name); i++)
+        {
+          if (!((isalnum (normalised_name[i]))
+                || (normalised_name[i] == '_')
+                || (normalised_name[i] == '-')
+                || (normalised_name[i] == '%')))
+            {
+              normalised_name[i] = '_';
+            }
+        }
+    }
+
+  /* Check that the normalisation leaded to a proper field name
+     part.  */
+  if (!rec_field_name_part_str_p (normalised_name))
+    {
+      free (normalised_name);
+      normalised_name = NULL;
+    }
+
+  return normalised_name;
 }
 
 /* End of rec-field-name.c */

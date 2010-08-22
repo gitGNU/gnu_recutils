@@ -338,7 +338,9 @@ The record descriptor can contain the following fields:
 @table @code
 @item %rec
 The value of this field is interpreted as the name of the kind of
-record described by the record descriptor.
+record described by the record descriptor.  The string used as the
+record type has the same restrictions that the field
+names. @xref{Fields and Records}.
 
 This field is unique.
 

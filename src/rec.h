@@ -75,6 +75,13 @@ bool rec_comment_equal_p (rec_comment_t comment1, rec_comment_t comment2);
 
 typedef struct rec_field_name_s *rec_field_name_t;
 
+/* Regexps for field names and field name parts.  */
+#define REC_FNAME_PART_RE "[a-zA-Z%][a-zA-Z0-9_-]*"
+#define REC_FNAME_RE                                                  \
+  "^"                                                                 \
+  REC_FNAME_PART_RE "(" ":" REC_FNAME_PART_RE ")*:?"                  \
+  "$"
+
 /* Creating a field name.
  *
  * In the case of an error NULL is returned.
@@ -121,6 +128,13 @@ bool rec_field_name_set (rec_field_name_t fname,
  */
 const char *rec_field_name_get (rec_field_name_t fname,
                                 int index);
+
+/* Check if a given string conforms a valid field name.  */
+bool rec_field_name_part_str_p (const char *str);
+bool rec_field_name_str_p (const char *str);
+
+/* Normalise a field name part.  */
+char *rec_field_name_part_normalise (const char *str);
 
 /*
  * FIELD TYPES

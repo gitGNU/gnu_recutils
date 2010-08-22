@@ -1,5 +1,34 @@
 2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Validation of record type names and minor fixes.
+	* utils/mdb2rec.c (process_table): Use
+	'rec_field_name_part_normalise'.
+
+	* src/rec-field-name.c (rec_field_name_part_normalise): New
+	function.
+
+	* utils/mdb2rec.c (process_mdb): Configure libmdb to dump dates in
+	ISO 8601 format.
+
+	* src/rec-int.c (rec_int_check_descriptor): Check for the validity
+	of the record set type.
+
+	* utils/recutl.h (RECORD_SELECTION_ARGS_CASES): Check for the
+	validity of the record types passed using -t.
+
+	* src/rec.h: New function 'rec_field_name_str_p'.
+	New function 'rec_field_name_part_str_p'.
+	(REC_FNAME_PART_RE): Defined.
+	(REC_FNAME_RE): Defined.
+
+	* src/rec-field-name.c (rec_field_name_str_p): New function.
+	(rec_field_name_part_str_p): New function.
+
+	* doc/recutils.texi (Record Descriptors): Clarify that the record
+	types have the same format restrictions that field names.
+
+2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	build: check for glib as a dependency to build mdb2rec.
 	* configure.ac: Check for glib.
 

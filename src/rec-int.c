@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-06 23:42:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-22 15:29:40 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -564,6 +564,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_record_elem_t rec_elem;
   rec_field_t field;
   rec_field_name_t field_name;
+  rec_field_name_t rec_fname;
   rec_field_name_t key_fname;
   rec_field_name_t type_fname;
   rec_field_name_t mandatory_fname;
@@ -577,11 +578,32 @@ rec_int_check_descriptor (rec_rset_t rset,
   if (descriptor)
     {
       /* Prepare fnames.  */
+      rec_fname = rec_parse_field_name_str ("%rec:");
       key_fname = rec_parse_field_name_str ("%key:");
       type_fname = rec_parse_field_name_str ("%type:");
       mandatory_fname = rec_parse_field_name_str ("%mandatory:");
       unique_fname = rec_parse_field_name_str ("%unique:");
       prohibit_fname = rec_parse_field_name_str ("%prohibit:");
+
+      /* Check the type of the record set.  */
+      field = rec_record_get_field_by_name (descriptor, rec_fname, 0);
+      if (!field)
+        {
+          fprintf (errors,
+                   "%s:%s: error: missing %%rec field in record descriptor\n",
+                   rec_record_source (descriptor),
+                   rec_record_location_str (descriptor));
+          res++;
+        }
+      if (!rec_field_name_part_str_p (rec_field_value (field)))
+        {
+          fprintf (errors,
+                   "%s:%s: error: invalid record type %s\n",
+                   rec_field_source (field),
+                   rec_field_location_str (field),
+                   rec_field_value (field));
+          res++;
+        }
 
       /* Only one 'key:' entry is allowed, if any.  */
       if (rec_record_get_num_fields_by_name (descriptor, key_fname) > 1)
@@ -640,6 +662,7 @@ rec_int_check_descriptor (rec_rset_t rset,
         }
 
       /* Destroy names.  */
+      rec_field_name_destroy (rec_fname);
       rec_field_name_destroy (key_fname);
       rec_field_name_destroy (type_fname);
       rec_field_name_destroy (mandatory_fname);

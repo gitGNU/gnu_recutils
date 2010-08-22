@@ -172,9 +172,17 @@ process_table (MdbCatalogEntry *entry)
     }
 
   /* Create the record descriptor and add the %rec: entry.  */
+  field_name_str = rec_field_name_part_normalise (table_name);
+  if (!field_name_str)
+    {
+      recutl_fatal ("failed to normalise record type name %s\n",
+                    table_name);
+    }
+
   record = rec_record_new ();
-  field = rec_field_new_str ("%rec", table_name);
+  field = rec_field_new_str ("%rec", field_name_str);
   rec_record_append_field (record, field);
+  free (field_name_str);
 
   /* Get the columns of the table.  */
   mdb_read_columns (table);
@@ -272,22 +280,13 @@ process_table (MdbCatalogEntry *entry)
               continue;
             }
 
-
           /* Compute the name of the field.  */
           /* XXX: manage foreign keys.  */
-          field_name_str = malloc (strlen (col->name) + 1);
-          strncpy (field_name_str, col->name, strlen (col->name));
-          field_name_str[strlen(col->name)] = '\0';
-
-          for (j = 0; j < strlen(col->name); j++)
+          field_name_str = rec_field_name_part_normalise (col->name);
+          if (!field_name_str)
             {
-              if (!((isalnum (field_name_str[j]))
-                    || (field_name_str[j] == '_')
-                    || (field_name_str[j] == '-')
-                    || (field_name_str[j] == '%')))
-                {
-                  field_name_str[j] = '_';
-                }
+              recutl_fatal ("failed to normalise field name %s\n",
+                            table_name);
             }
 
           /* Compute the value of the field.  */
@@ -338,6 +337,8 @@ process_mdb (void)
 
   /* Initialize libmdb and open the input file.  */
   mdb_init();
+  mdb_set_date_fmt ("%Y-%m-%dT%H:%M:%S%z"); /* ISO 8601 */
+
   mdb = mdb_open (mdb2rec_mdb_file, MDB_NOFLAGS);
   if (!mdb)
     {
