@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-20 22:10:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-23 17:55:38 jco"
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010
@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
+#include <xalloc.h>
 
 #include <libcsv/csv.h>
 #include <rec.h>
@@ -132,12 +133,7 @@ parse_args (int argc,
         case RECORD_TYPE_ARG:
         case 't':
           {
-            csv2rec_record_type = strdup (optarg);
-            if (!csv2rec_record_type)
-              {
-                recutl_fatal ("out of memory");
-              }
-
+            csv2rec_record_type = xstrdup (optarg);
             break;
           }
         case STRICT_ARG:
@@ -194,7 +190,7 @@ field_cb (void *s, size_t len, void *data)
   size_t i;
 
   ctx = (struct csv2rec_ctx *) data;
-  str = malloc (len + 1);
+  str = xmalloc (len + 1);
   strncpy (str, s, len);
   str[len] = '\0';
 

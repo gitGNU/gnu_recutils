@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-22 15:20:29 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-23 17:57:01 jco"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -96,7 +96,7 @@ General help using GNU software: <http://www.gnu.org/gethelp/>"
     case TYPE_ARG:                                             \
     case 't':                                                  \
       {                                                        \
-        recutl_type = strdup (optarg);                         \
+        recutl_type = xstrdup (optarg);                        \
         if (!rec_field_name_part_str_p (recutl_type))          \
           {                                                    \
              recutl_fatal ("invalid record type %s\n",         \
@@ -115,7 +115,7 @@ General help using GNU software: <http://www.gnu.org/gethelp/>"
              exit (1);                                         \
           }                                                    \
                                                                \
-         recutl_sex_str = strdup (optarg);                     \
+         recutl_sex_str = xstrdup (optarg);                    \
                                                                \
          /* Compile the search expression.  */                 \
          if (recutl_sex_str)                                   \

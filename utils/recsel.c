@@ -162,7 +162,7 @@ recsel_parse_args (int argc,
                 recsel_print_row = true;
               }
 
-            recsel_fex_str = strdup (optarg);
+            recsel_fex_str = xstrdup (optarg);
 
             if (!rec_fex_check (recsel_fex_str))
               {

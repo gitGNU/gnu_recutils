@@ -202,7 +202,7 @@ main (int argc, char *argv[])
         case TYPE_ARG:
         case 't':
           {
-            recinf_type = strdup (optarg);
+            recinf_type = xstrdup (optarg);
             break;
           }
         default:

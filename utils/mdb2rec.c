@@ -29,6 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <xalloc.h>
 
 #include <glib.h>
 #include <mdbtools.h>
@@ -189,7 +190,7 @@ get_relationships (MdbHandle *mdb)
   mdb_read_columns (table);
   for (i = 0; i < 4; i++)
     {
-      bound[i] = (char *) malloc (MDB_BIND_SIZE);
+      bound[i] = (char *) xmalloc (MDB_BIND_SIZE);
     }
 
   mdb_bind_column_by_name (table, "szColumn", bound[0], NULL);
@@ -199,15 +200,15 @@ get_relationships (MdbHandle *mdb)
   mdb_rewind_table (table);
   
   num_relationships = table->num_rows;
-  relationships = malloc (sizeof (struct relationship_s) * num_relationships);
+  relationships = xmalloc (sizeof (struct relationship_s) * num_relationships);
 
   i = 0;
   while (mdb_fetch_row (table))
     {
-      relationships[i].column = strdup (bound[0]);
-      relationships[i].table = strdup (bound[1]);
-      relationships[i].referenced_column = strdup (bound[2]);
-      relationships[i].referenced_table = strdup (bound[3]);
+      relationships[i].column = xstrdup (bound[0]);
+      relationships[i].table = xstrdup (bound[1]);
+      relationships[i].referenced_column = xstrdup (bound[2]);
+      relationships[i].referenced_table = xstrdup (bound[3]);
       i++;
     }
 }
@@ -407,11 +408,11 @@ process_table (MdbCatalogEntry *entry)
   /* Add the records for this table.  */
   mdb_rewind_table (table);
 
-  bound_values = (char **) malloc (table->num_cols * sizeof(char *));
-  bound_lens = (int *) g_malloc(table->num_cols * sizeof(int));
+  bound_values = (char **) xmalloc (table->num_cols * sizeof(char *));
+  bound_lens = (int *) xmalloc(table->num_cols * sizeof(int));
   for (i = 0; i < table->num_cols; i++)
     {
-      bound_values[i] = (char *) malloc (MDB_BIND_SIZE);
+      bound_values[i] = (char *) xmalloc (MDB_BIND_SIZE);
       mdb_bind_column (table, i+1, bound_values[i], &bound_lens[i]);
     }
 
@@ -436,7 +437,7 @@ process_table (MdbCatalogEntry *entry)
           field_name = get_field_name (mdb, table_name, col->name); 
 
           /* Compute the value of the field.  */
-          field_value = malloc (bound_lens[i] + 1);
+          field_value = xmalloc (bound_lens[i] + 1);
           strncpy (field_value, bound_values[i], bound_lens[i]);
           field_value[bound_lens[i]] = '\0';
 

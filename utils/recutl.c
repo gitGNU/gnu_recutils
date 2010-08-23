@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-20 20:05:22 jco"
+/* -*- mode: C -*- Time-stamp: "2010-08-23 17:56:49 jco"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -26,12 +26,12 @@
 #include <config.h>
 
 #include <stdlib.h>
-
 #include <getopt.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
 #include <closeout.h>
+#include <xalloc.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -41,7 +41,7 @@ extern char *program_name;
 void
 recutl_init (char *util_name)
 {
-  program_name = strdup (util_name);
+  program_name = xstrdup (util_name);
 
   /* Even exiting has subtleties.  On exit, if any writes failed, change
      the exit status.  The /dev/full device on GNU/Linux can be used for
@@ -309,12 +309,7 @@ recutl_write_db_to_file (rec_db_t db,
   else
     {
       /* Create a temporary file with the results. */
-      tmp_file_name = malloc (100);
-      if (!tmp_file_name)
-        {
-          recutl_fatal ("out of memory\n");
-        }
-
+      tmp_file_name = xmalloc (100);
       strcpy (tmp_file_name, "recXXXXXX");
       des = mkstemp (tmp_file_name);
       if (des == -1)

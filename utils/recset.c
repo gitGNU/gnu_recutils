@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
+#include <xalloc.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -162,7 +163,7 @@ recset_parse_args (int argc,
         case FIELD_EXPR_ARG:
         case 'f':
           {
-            recutl_fex_str = strdup (optarg);
+            recutl_fex_str = xstrdup (optarg);
             if (!rec_fex_check (recutl_fex_str))
               {
                 exit (1);
@@ -195,7 +196,7 @@ recset_parse_args (int argc,
               }
             
             recset_action = RECSET_ACT_SET;
-            recset_value = strdup (optarg);
+            recset_value = xstrdup (optarg);
             break;
           }
         case ADD_ACTION_ARG:
@@ -212,7 +213,7 @@ recset_parse_args (int argc,
               }
 
             recset_action = RECSET_ACT_ADD;
-            recset_value = strdup (optarg);
+            recset_value = xstrdup (optarg);
             break;
           }
         case DELETE_ACTION_ARG:
@@ -475,7 +476,7 @@ recset_process_del (rec_rset_t rset,
   rec_record_elem_t field_elem;
 
   /* Initialize the deletion mask.  */
-  deletion_mask = malloc (sizeof (bool) * rec_record_num_fields (record));
+  deletion_mask = xmalloc (sizeof (bool) * rec_record_num_fields (record));
   for (i = 0; i < rec_record_num_fields (record); i++)
     {
       deletion_mask[i] = false;

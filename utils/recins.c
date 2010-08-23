@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
+#include <xalloc.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -224,7 +225,7 @@ void recins_parse_args (int argc,
         case TYPE_ARG:
         case 't':
           {
-            recins_type = strdup (optarg);
+            recins_type = xstrdup (optarg);
             break;
           }
         case NAME_ARG:
@@ -244,12 +245,7 @@ void recins_parse_args (int argc,
               }
 
             /* Make sure that the field name ends with a colon ':'.  */
-            field_name_str = malloc (strlen (optarg) + 2);
-            if (!field_name_str)
-              {
-                recutl_fatal ("out of memory.\n");
-              }
-
+            field_name_str = xmalloc (strlen (optarg) + 2);
             field_name_str = strncpy (field_name_str, optarg, strlen (optarg));
             if (field_name_str[strlen (optarg) - 1] != ':')
               {
