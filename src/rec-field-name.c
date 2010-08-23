@@ -232,7 +232,7 @@ rec_field_name_str_p (const char *str)
   regex_t regexp;
 
   /* Compile the regexp.  */
-  if ((ret = regcomp (&regexp, REC_FNAME_RE, REG_EXTENDED)) != 0)
+  if ((ret = regcomp (&regexp, "^" REC_FNAME_RE "$", REG_EXTENDED)) != 0)
     {
       fprintf (stderr, "internal error: rec_field_name_str_p: error compiling regexp.\n");
       return false;

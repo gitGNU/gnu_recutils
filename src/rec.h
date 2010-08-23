@@ -78,9 +78,7 @@ typedef struct rec_field_name_s *rec_field_name_t;
 /* Regexps for field names and field name parts.  */
 #define REC_FNAME_PART_RE "[a-zA-Z%][a-zA-Z0-9_-]*"
 #define REC_FNAME_RE                                                  \
-  "^"                                                                 \
-  REC_FNAME_PART_RE "(" ":" REC_FNAME_PART_RE ")*:?"                  \
-  "$"
+  REC_FNAME_PART_RE "(" ":" REC_FNAME_PART_RE ")*:?"
 
 /* Creating a field name.
  *

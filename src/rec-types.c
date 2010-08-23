@@ -50,6 +50,7 @@
 #define REC_TYPE_DATE_NAME   "date"
 #define REC_TYPE_ENUM_NAME   "enum"
 #define REC_TYPE_EMAIL_NAME  "email"
+#define REC_TYPE_FIELD_NAME  "field"
 
 /* Regular expression denoting a blank character in a type
    description.  */
@@ -85,6 +86,14 @@
   REC_TYPE_ENUM_NAME_RE                         \
   REC_TYPE_ZBLANKS_RE                           \
   "$"
+
+/* REC_FNAME_RE is defined in rec.h */
+#define REC_TYPE_FIELD_VALUE_RE                 \
+  "^"                                           \
+  REC_TYPE_ZBLANKS_RE                           \
+  REC_FNAME_RE                                  \
+  REC_TYPE_ZBLANKS_RE                           \
+  "$"
   
 /* Regular expression denoting a type name.  */
 #define REC_TYPE_NAME_RE                               \
@@ -92,7 +101,8 @@
       REC_TYPE_REAL_NAME  "|" REC_TYPE_SIZE_NAME   "|" \
       REC_TYPE_LINE_NAME  "|" REC_TYPE_REGEXP_NAME "|" \
       REC_TYPE_DATE_NAME  "|" REC_TYPE_ENUM_NAME   "|" \
-      REC_TYPE_EMAIL_NAME "|" REC_TYPE_BOOL_NAME \
+      REC_TYPE_EMAIL_NAME "|" REC_TYPE_BOOL_NAME   "|" \
+      REC_TYPE_FIELD_NAME \
   ")"
 
 /* Regular expressions for the type descriptions.  */
@@ -143,16 +153,9 @@
   REC_TYPE_ENUM_NAME_RE                         \
   "(" REC_TYPE_BLANKS_RE REC_TYPE_ENUM_NAME_RE ")*"
 
-/* field FIELD_NAME  */
-#define REC_TYPE_FIELD_PART_RE                  \
-  "[a-zA-Z%][a-zA-Z0-9_-]*"
-#define REC_TYPE_FIELD_NAME_RE                  \
-  REC_TYPE_FIELD_PART_RE                        \
-  "(" ":" REC_TYPE_FIELD_PART_RE ")*" ":?"
+  /* field */
 #define REC_TYPE_FIELD_DESCR_RE                 \
-  REC_TYPE_FIELD_NAME                           \
-  REC_TYPE_BLANKS_RE                            \
-  REC_TYPE_FIELD_NAME_RE
+  REC_TYPE_FIELD_NAME
 
 /* email */
 #define REC_TYPE_EMAIL_DESCR_RE                 \
@@ -162,7 +165,7 @@
 #define REC_TYPE_DESCR_RE                       \
   "^"                                           \
   REC_TYPE_ZBLANKS_RE                           \
-  REC_TYPE_FIELD_NAME_RE                        \
+  REC_FNAME_RE                                  \
   REC_TYPE_ZBLANKS_RE                           \
   "("                                           \
          "(" REC_TYPE_INT_DESCR_RE    ")"       \
@@ -175,6 +178,7 @@
      "|" "(" REC_TYPE_DATE_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_EMAIL_DESCR_RE  ")"       \
      "|" "(" REC_TYPE_ENUM_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_FIELD_DESCR_RE  ")"       \
   ")"                                           \
   REC_TYPE_ZBLANKS_RE                           \
   "$"
@@ -234,6 +238,7 @@ static bool rec_type_check_regexp (rec_type_t type, char *str);
 static bool rec_type_check_date (rec_type_t type, char *str);
 static bool rec_type_check_email (rec_type_t type, char *str);
 static bool rec_type_check_enum (rec_type_t type, char *str);
+static bool rec_type_check_field (rec_type_t type, char *str);
 
 /*
  * Public functions.
@@ -347,6 +352,7 @@ rec_type_new (char *str)
         case REC_TYPE_BOOL:
         case REC_TYPE_REAL:
         case REC_TYPE_LINE:
+        case REC_TYPE_FIELD:
           {
             /* We are done.  */
             break;
@@ -476,7 +482,6 @@ rec_type_new (char *str)
             break;
           }
         case REC_TYPE_RANGE:
-        case REC_TYPE_FIELD:
           {
             /* XXX: Not implemented yet.  */
             break;
@@ -555,6 +560,11 @@ rec_type_kind_str (rec_type_t type)
         res = REC_TYPE_ENUM_NAME;
         break;
       }
+    case REC_TYPE_FIELD:
+      {
+        res = REC_TYPE_FIELD_NAME;
+        break;
+      }
     }
 
   return res;
@@ -621,6 +631,11 @@ rec_type_check (rec_type_t type,
     case REC_TYPE_ENUM:
       {
         res = rec_type_check_enum (type, str);
+        break;
+      }
+    case REC_TYPE_FIELD:
+      {
+        res = rec_type_check_field (type, str);
         break;
       }
     }
@@ -810,6 +825,10 @@ rec_type_parse_type_kind (char *str)
     {
       res = REC_TYPE_ENUM;
     }
+  if (strcmp (str, REC_TYPE_FIELD_NAME) == 0)
+    {
+      res = REC_TYPE_FIELD;
+    }
 
   return res;
 }
@@ -840,6 +859,13 @@ rec_type_check_int (rec_type_t type,
                     char *str)
 {
   return rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
+}
+
+static bool
+rec_type_check_field (rec_type_t type,
+                      char *str)
+{
+  return rec_type_check_re (REC_TYPE_FIELD_VALUE_RE, str);
 }
 
 static bool
