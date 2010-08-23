@@ -587,6 +587,12 @@ rec_sex_eval_node (rec_sex_t sex,
         res.int_val = rec_sex_ast_node_int (node);
         break;
       }
+    case REC_SEX_REAL:
+      {
+        res.type = REC_SEX_VAL_REAL;
+        res.real_val = rec_sex_ast_node_real (node);
+        break;
+      }
     case REC_SEX_STR:
       {
         res.type = REC_SEX_VAL_STR;
