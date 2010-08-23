@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
+#include <xalloc.h>
 
 #include <rec.h>
 #include <recutl.h>
