@@ -97,7 +97,7 @@ STRING             '([^'\n]|\\(.|\n))*'
   double real_value;
   
   yylval->node = rec_sex_ast_node_new ();
-  rec_atof (yytext, &real_value);
+  rec_atod (yytext, &real_value);
   rec_sex_ast_node_set_real (yylval->node, real_value);
 
   return REC_SEX_TOK_REAL;

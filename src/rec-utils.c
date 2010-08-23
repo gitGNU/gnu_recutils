@@ -51,7 +51,7 @@ rec_atoi (char *str,
 }
 
 bool
-rec_atof (char *str,
+rec_atod (char *str,
           double *number)
 {
   bool res;
