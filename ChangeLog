@@ -1,5 +1,13 @@
 2010-08-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	mdb2rec: documentation and management of money fields.
+	* utils/mdb2rec.c (process_table): Declare MONEY fields as real
+	values.
+
+	* doc/recutils.texi (mdb2rec Examples): Written.
+
+2010-08-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-types: support for the 'field' type.
 	* src/rec-types.c (REC_TYPE_FIELD_NAME): Defined.
 	(REC_TYPE_FIELD_VALUE_RE): Defined in terms of REC_FNAME_RE.

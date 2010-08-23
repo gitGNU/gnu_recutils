@@ -1165,7 +1165,121 @@ Don't prune empty fields in the rec output.
 @node mdb2rec Examples
 @section mdb2rec Examples
 
-XXX
+Access files (@dfn{mdb files}) are collections of several relations,
+also known as tables.  Tables can be either @dfn{user tables} storing
+user data, or @dfn{system tables} storing information such as forms,
+queries or the relationships between the tables.
+
+It is possible to get a listing with the names of all tables stored in
+a mdb file by calling @command{mdb2rec} in the following way:
+
+@example
+$ mdb2rec -l sales.mdb
+Customers
+Products
+Orders
+@end example
+
+So @file{sales.mdb} stores user information in the tables Customers,
+Products and Orders.  If we want to include system tables in the
+listing we can use the @kbd{-s} command line option:
+
+@example
+$ mdb2rec -s -l sales.mdb
+MSysObjects
+MSysACEs
+MSysQueries
+MSysRelationships
+Customers
+Products
+Orders
+@end example
+
+The tables with names starting with @command{MSys} are system tables.
+The data stored in those tables is either not relevant to the recutils
+user (used by the Access program to create forms and the like) or is
+used in an indirect way by @command{mdb2rec} (such as the information
+from MSysRelationships).
+
+Let's read some data from the @file{mdb} file.  We can get the
+relation of Products in rec format:
+
+@example
+$ mdb2rec sales.mdb Products
+%rec: Products
+%type: ProductID int
+%type: ProductName size 80
+%type: Discontinued bool
+
+ProductID: 1
+ProductName: GNU generation T-shirt
+Discontinued: 0
+
+...
+@end example
+
+A @dfn{record descriptor} is created for the record set containing the
+generated records, called Products.  Note that @command{mdb2rec} is
+able to generate type information for the fields.  The list of
+customers is similar:
+
+@example
+$ mdb2rec sales.mdb Customers
+%rec: Customers
+%type: CustomerID size 4
+%type: CompanyName size 80
+%type: ContactName size 60
+
+CustomerID: GSOFT
+CompanyName: GNU Soft
+ContactName: Jose E. Marchesi
+
+...
+@end example
+
+The list of orders is a bit more interesting, since it shows how
+@command{mdb2rec} manages the relationships between tables in the
+@file{mdb} file.
+
+@example
+$ mdb2rec sales.mdb Orders
+%rec: Orders
+%type: OrderID int
+%type: CustomerID size 10
+%type: ProductID int
+%type: OrderDate date
+
+OrderID: 10248
+Customers:CustomerID: FBFOU
+Product:ProductID: 1
+OrderDate: 2010-08-01T12:30:01
+
+...
+@end example
+
+Both CustomerID and ProductID are compound fields reflecting
+references to the record sets Customers and Products.
+
+Note that @command{mdb2rec} always uses the default role when the name
+of the column in the referring table is the same than the name of the
+column in the referred table.  This is to avoid redundant compound
+field names like Customers:CustomerID:CustomerID:.
+
+If no table is specified in the invocation to @command{mdb2rec} all
+the tables in the file are processed, with the exception of the system
+tables, for which @kbd{-s} shall be used:
+
+@example
+$ mdb2rec sales.mdb
+%rec: Products
+...
+
+%rec: Customers
+...
+
+%rec: Orders
+...
+@end example
 
 @node The Rec Library
 @chapter The Rec Library

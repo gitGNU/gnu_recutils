@@ -362,6 +362,7 @@ process_table (MdbCatalogEntry *entry)
                       "%s int", col->name);
             break;
           }
+        case MDB_MONEY:
         case MDB_FLOAT:
         case MDB_DOUBLE:
           {
@@ -387,7 +388,6 @@ process_table (MdbCatalogEntry *entry)
         case MDB_REPID:
         case MDB_MEMO:
         case MDB_OLE:
-        case MDB_MONEY:
         default:
           {
             break;
