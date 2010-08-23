@@ -1,3 +1,21 @@
+2010-08-23  Jose E. Marchesi  <jemarch@terma.com>
+
+	mdb2rec: specification of the table in the command line and the
+	list-tables option.
+	* doc/recutils.texi (mdb2rec Invocation): Document the
+	--list-tables command line option.
+
+	* utils/mdb2rec.c (process_mdb): Print the names of the tables,
+	one per line, if mdb2rec_list_tables was specified.
+
+	* doc/recutils.texi (mdb2rec Invocation): Document the usage of
+	TABLE in the command line.
+
+	* utils/mdb2rec.c: New global variable 'mdb2rec_mdb_table'.
+	(parse_args): Set mdb2rec_mdb_table.
+	(process_mdb): Process the requested table only if
+	mdb2rec_mdb_table is initialized.
+
 2010-08-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	mdb2rec: emit field types for VARCHAR columns.

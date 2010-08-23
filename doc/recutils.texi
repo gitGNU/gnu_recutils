@@ -1140,8 +1140,11 @@ converted rec data, if possible.
 @command{mdb2rec} converts mdb files into rec data.  Synopsis:
 
 @example
-mdb2rec [OPTION]... [MDB_FILE]
+mdb2rec [OPTION]... MDB_FILE [TABLE]
 @end example
+
+All the tables contained in the mdb file are exported unless a table
+is specified in the command line.
 
 In addition of the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
@@ -1150,6 +1153,10 @@ Options}) the program accepts the following options.
 @item -s
 @itemx @w{@kbd{--system-tables}}
 Include system tables in the output.
+@item -l
+@itemx @w{@kbd{--list-tables}}
+Dump a list of the table names contained in the mdb file, one per
+line.
 @item -e
 @itemx @w{@kbd{--keep-empty-fields}}
 Don't prune empty fields in the rec output.

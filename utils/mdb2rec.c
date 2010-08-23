@@ -61,8 +61,10 @@ struct relationship_s
 
 char *program_name; /* Initialized in main() */
 char *mdb2rec_mdb_file = NULL;
+char *mdb2rec_mdb_table = NULL;
 bool mdb2rec_include_system = false;
 bool mdb2rec_keep_empty_fields = false;
+bool mdb2rec_list_tables = false;
 struct relationship_s *relationships;
 size_t num_relationships = 0;
 
@@ -74,7 +76,8 @@ enum
   {
     COMMON_ARGS,
     SYSTEM_TABLES_ARG,
-    KEEP_EMPTY_FIELDS_ARG
+    KEEP_EMPTY_FIELDS_ARG,
+    LIST_TABLES_ARG
   };
 
 static const struct option GNU_longOptions[] =
@@ -82,6 +85,7 @@ static const struct option GNU_longOptions[] =
     COMMON_LONG_ARGS,
     {"system-tables", no_argument, NULL, SYSTEM_TABLES_ARG},
     {"keep-empty-fields", no_argument, NULL, KEEP_EMPTY_FIELDS_ARG},
+    {"list-tables", no_argument, NULL, LIST_TABLES_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -90,18 +94,21 @@ static const struct option GNU_longOptions[] =
 RECUTL_COPYRIGHT_DOC ("mdb2rec");
 
 char *recutl_help_msg="\
-Usage: mdb2rec [OPTIONS]... MDB_FILE\n\
+Usage: mdb2rec [OPTIONS]... MDB_FILE [TABLE]\n\
 Convert an mdb file into a rec file.\n\
 \n\
 Mandatory arguments to long options are mandatory for short options too.\n\
   -s, --system-tables                 include system tables.\n\
   -e, --keep-empty-fields             don't prune empty fields in the rec\n\
-                                        output\n"
+                                        output\n\
+  -l, --list-tables                   dump a list of the table names contained\n\
+                                        in the mdb file.\n"
 COMMON_ARGS_DOC
 "\n\
 Examples:\n\
 \n\
         mdb2rec database.mdb > database.rec\n\
+        mdb2rec database.mdb Customers > customers.rec\n\
 \n"
   RECUTL_HELP_FOOTER_DOC ("mdb2rec");
 
@@ -114,7 +121,7 @@ parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "se",
+                             "sel",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -134,6 +141,12 @@ parse_args (int argc,
             mdb2rec_keep_empty_fields = true;
             break;
           }
+        case LIST_TABLES_ARG:
+        case 'l':
+          {
+            mdb2rec_list_tables = true;
+            break;
+          }
         default:
           {
             exit (1);
@@ -142,7 +155,7 @@ parse_args (int argc,
     }
 
   /* Read the name of the mdb file.  */
-  if ((argc - optind) != 1)
+  if ((argc - optind) > 2)
     {
       fprintf (stdout, "%s\n", recutl_help_msg);
       exit (1);
@@ -150,6 +163,11 @@ parse_args (int argc,
   else
     {
       mdb2rec_mdb_file = argv[optind++];
+
+      if ((argc - optind) > 0)
+        {
+          mdb2rec_mdb_table = argv[optind++];
+        }
     }
 }
 
@@ -290,9 +308,6 @@ process_table (MdbCatalogEntry *entry)
   mdb = entry->mdb;
   table_name = entry->object_name;
   table = mdb_read_table (entry);
-
-  /* XXX: Check for the validity of the table name,
-     and normalize.  */
 
   /* Create the record set.  */
   rset = rec_rset_new ();
@@ -457,6 +472,7 @@ process_mdb (void)
   MdbHandle *mdb;
   MdbCatalogEntry *entry;
   int i;
+  char *table_name;
 
   /* Create the rec database.  */
   db = rec_db_new ();
@@ -491,12 +507,22 @@ process_mdb (void)
     {
       entry = g_ptr_array_index (mdb->catalog, i);
 
+      table_name = rec_field_name_part_normalise (entry->object_name);
+
       if ((entry->object_type == MDB_TABLE)
-          && (mdb_is_user_table (entry) || mdb2rec_include_system))
+          && (mdb_is_user_table (entry) || mdb2rec_include_system)
+          && (!mdb2rec_mdb_table || (strcmp (mdb2rec_mdb_table, table_name) == 0)))
         {
-          rec_db_insert_rset (db,
-                              process_table (entry),
-                              rec_db_size (db));
+          if (mdb2rec_list_tables)
+            {
+              fprintf (stdout, "%s\n", table_name);
+            }
+          else
+            {
+              rec_db_insert_rset (db,
+                                  process_table (entry),
+                                  rec_db_size (db));
+            }
         }
     }
 
