@@ -1,5 +1,11 @@
 2010-08-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-sex: support for real values in some operators.
+	* src/rec-sex.c (rec_sex_op_real_p): New function.
+	(ATOF_VAL): New macro.
+
+2010-08-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utilities: use xmalloc and xstrdup.
 	* utils/csv2rec.c: Use xmalloc instead of malloc.
 	Use xstrdup instead of strdup.

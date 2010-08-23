@@ -517,8 +517,9 @@ static yyconst flex_int16_t yy_chk[100] =
    /* Forward prototypes for functions defined below.  */
    char *rec_sex_lex_extract_name (char *str);
    bool rec_sex_lex_extract_index (char *str, int *num);
+
 /* Please do not touch this comment' */
-#line 522 "rec-sex.lex.c"
+#line 523 "rec-sex.lex.c"
 
 #define INITIAL 0
 
@@ -754,10 +755,10 @@ YY_DECL
 	register int yy_act;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-#line 71 "rec-sex.l"
+#line 72 "rec-sex.l"
 
 
-#line 761 "rec-sex.lex.c"
+#line 762 "rec-sex.lex.c"
 
     yylval = yylval_param;
 
@@ -845,97 +846,97 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 73 "rec-sex.l"
+#line 74 "rec-sex.l"
 { /* Ignore whitespace */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 75 "rec-sex.l"
+#line 76 "rec-sex.l"
 { return REC_SEX_TOK_ADD; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 76 "rec-sex.l"
+#line 77 "rec-sex.l"
 { return REC_SEX_TOK_SUB; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 77 "rec-sex.l"
+#line 78 "rec-sex.l"
 { return REC_SEX_TOK_DIV; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 78 "rec-sex.l"
+#line 79 "rec-sex.l"
 { return REC_SEX_TOK_MOD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 79 "rec-sex.l"
+#line 80 "rec-sex.l"
 { return REC_SEX_TOK_MUL; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 80 "rec-sex.l"
+#line 81 "rec-sex.l"
 { return REC_SEX_TOK_EQL; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 81 "rec-sex.l"
+#line 82 "rec-sex.l"
 { return REC_SEX_TOK_NEQ; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 82 "rec-sex.l"
+#line 83 "rec-sex.l"
 { return REC_SEX_TOK_NOT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 83 "rec-sex.l"
+#line 84 "rec-sex.l"
 { return REC_SEX_TOK_MAT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 84 "rec-sex.l"
+#line 85 "rec-sex.l"
 { return REC_SEX_TOK_GT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 85 "rec-sex.l"
+#line 86 "rec-sex.l"
 { return REC_SEX_TOK_LT; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 86 "rec-sex.l"
+#line 87 "rec-sex.l"
 { return REC_SEX_TOK_BP; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 87 "rec-sex.l"
+#line 88 "rec-sex.l"
 { return REC_SEX_TOK_EP; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 88 "rec-sex.l"
+#line 89 "rec-sex.l"
 { return REC_SEX_TOK_AND; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 89 "rec-sex.l"
+#line 90 "rec-sex.l"
 { return REC_SEX_TOK_OR; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 90 "rec-sex.l"
+#line 91 "rec-sex.l"
 { return REC_SEX_TOK_SHARP; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 92 "rec-sex.l"
+#line 93 "rec-sex.l"
 {
   /*
    * Create a real node.
    */
-  float real_value;
+  double real_value;
   
   yylval->node = rec_sex_ast_node_new ();
   rec_atof (yytext, &real_value);
@@ -946,7 +947,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 105 "rec-sex.l"
+#line 106 "rec-sex.l"
 {
   /*
    * Create an integer node.
@@ -962,7 +963,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 118 "rec-sex.l"
+#line 119 "rec-sex.l"
 {
   int res;
   char *match;
@@ -1002,7 +1003,7 @@ YY_RULE_SETUP
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 154 "rec-sex.l"
+#line 155 "rec-sex.l"
 {
   /*
    * Create a string node.
@@ -1019,15 +1020,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 168 "rec-sex.l"
+#line 169 "rec-sex.l"
 { return REC_SEX_TOK_ERR; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 170 "rec-sex.l"
+#line 171 "rec-sex.l"
 ECHO;
 	YY_BREAK
-#line 1031 "rec-sex.lex.c"
+#line 1032 "rec-sex.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2194,7 +2195,7 @@ void sexfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 170 "rec-sex.l"
+#line 171 "rec-sex.l"
 
 
 

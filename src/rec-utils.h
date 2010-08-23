@@ -34,7 +34,7 @@
    it at NUMBER.  Return true if the conversion was successful.  false
    otherwise. */
 bool rec_atoi (char *str, int *number);
-bool rec_atof (char *str, float *number);
+bool rec_atof (char *str, double *number);
 
 #endif /* rec-utils.h */
 

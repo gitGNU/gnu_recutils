@@ -52,14 +52,14 @@ rec_atoi (char *str,
 
 bool
 rec_atof (char *str,
-          float *number)
+          double *number)
 {
   bool res;
   char *end;
 
   res = false;
   
-  *number = strtof (str, &end);
+  *number = strtod (str, &end);
   if ((*str != '\0') && (*end == '\0'))
     {
       /* The entire string is valid.  */

@@ -52,7 +52,7 @@ struct rec_sex_val_s
   int type;
 
   int int_val;
-  float real_val;
+  double real_val;
   char *str_val;
 };
 
@@ -61,8 +61,8 @@ static struct rec_sex_val_s rec_sex_eval_node (rec_sex_t sex,
                                                rec_record_t record,
                                                rec_sex_ast_node_t node,
                                                bool *status);
-static int rec_sex_op_type (struct rec_sex_val_s op1,
-                            struct rec_sex_val_s op2);
+static bool rec_sex_op_real_p (struct rec_sex_val_s op1,
+                               struct rec_sex_val_s op2);
 
 /*
  * Public functions.
@@ -131,10 +131,6 @@ rec_sex_compile (rec_sex_t sex,
             break;                                                      \
           }                                                             \
         case REC_SEX_VAL_REAL:                                          \
-          {                                                             \
-            res = true;                                                 \
-            break;                                                      \
-          }                                                             \
         case REC_SEX_VAL_STR:                                           \
           {                                                             \
             res = false;                                                \
@@ -270,6 +266,36 @@ rec_sex_print_ast (rec_sex_t sex)
   }                                                     \
   while (0)
 
+#define ATOF_VAL(DEST, VAL)                             \
+  do                                                    \
+    {                                                   \
+      switch ((VAL).type)                               \
+        {                                               \
+        case REC_SEX_VAL_REAL:                          \
+          {                                             \
+            (DEST) = (VAL).real_val;                    \
+            break;                                      \
+          }                                             \
+        case REC_SEX_VAL_STR:                           \
+          {                                             \
+          if (strcmp ((VAL).str_val, "") == 0)          \
+              {                                         \
+                (DEST) = 0.0;                           \
+              }                                         \
+            else                                        \
+              {                                         \
+                if (!rec_atof ((VAL).str_val, &(DEST))) \
+                {                                       \
+                  *status = false;                      \
+                  return res;                           \
+                }                                       \
+              }                                         \
+          break;                                        \
+        }                                               \
+    }                                                   \
+  }                                                     \
+  while (0)
+
 struct rec_sex_val_s
 rec_sex_eval_node (rec_sex_t sex,
                    rec_record_t record,
@@ -299,15 +325,30 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
-        ATOI_VAL (op1, child_val1);
-        ATOI_VAL (op2, child_val2);
+        if (rec_sex_op_real_p (child_val1, child_val2))
+          {
+            /* Real operation.  */
+            ATOF_VAL (op1_real, child_val1);
+            ATOF_VAL (op2_real, child_val2);
 
-        res.type = REC_SEX_VAL_INT;
-        res.int_val = op1 + op2;
+            res.type = REC_SEX_VAL_REAL;
+            res.real_val = op1_real + op2_real;
+          }
+        else
+          {
+            /* Integer operation.  */
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 + op2;
+          }
 
         break;
       }
@@ -315,15 +356,31 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
-        ATOI_VAL (op1, child_val1);
-        ATOI_VAL (op2, child_val2);
+        if (rec_sex_op_real_p (child_val1, child_val2))
+          {
+            /* Real operation.  */
+            ATOF_VAL (op1_real, child_val1);
+            ATOF_VAL (op2_real, child_val2);
 
-        res.type = REC_SEX_VAL_INT;
-        res.int_val = op1 - op2;
+            res.type = REC_SEX_VAL_REAL;
+            res.real_val = op1 - op2;
+          }
+        else
+          {
+            /* Integer operation.  */
+
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 - op2;
+          }
 
         break;
       }
@@ -331,15 +388,30 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
-        ATOI_VAL (op1, child_val1);
-        ATOI_VAL (op2, child_val2);
+        if (rec_sex_op_real_p (child_val1, child_val2))
+          {
+            /* Real operation.  */
+            ATOF_VAL (op1_real, child_val1);
+            ATOF_VAL (op2_real, child_val2);
 
-        res.type = REC_SEX_VAL_INT;
-        res.int_val = op1 * op2;
+            res.type = REC_SEX_VAL_REAL;
+            res.real_val = op1_real * op2_real;
+          }
+        else
+          {
+            /* Integer operation.  */
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+            
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 * op2;
+          }
 
         break;
       }
@@ -347,15 +419,30 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
-        ATOI_VAL (op1, child_val1);
-        ATOI_VAL (op2, child_val2);
+        if (rec_sex_op_real_p (child_val1, child_val2))
+          {
+            /* Real operation.  */
+            ATOF_VAL (op1_real, child_val1);
+            ATOF_VAL (op2_real, child_val2);
 
-        res.type = REC_SEX_VAL_INT;
-        res.int_val = op1 / op2;
+            res.type = REC_SEX_VAL_REAL;
+            res.real_val = op1_real / op2_real;
+          }
+        else
+          {
+            /* Integer operation.  */
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+            
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 / op2;
+          }
 
         break;
       }
@@ -367,6 +454,7 @@ rec_sex_eval_node (rec_sex_t sex,
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
+        /* Integer operation.  */
         ATOI_VAL (op1, child_val1);
         ATOI_VAL (op2, child_val2);
 
@@ -379,6 +467,8 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
@@ -393,12 +483,24 @@ rec_sex_eval_node (rec_sex_t sex,
           }
         else
           {
-            /* Integer comparison.  */
-            ATOI_VAL (op1, child_val1);
-            ATOI_VAL (op2, child_val2);
-            
-            res.type = REC_SEX_VAL_INT;
-            res.int_val = op1 == op2;
+            if (rec_sex_op_real_p (child_val1, child_val2))
+              {
+                /* Real comparison.  */
+                ATOF_VAL (op1_real, child_val1);
+                ATOF_VAL (op2_real, child_val2);
+
+                res.type = REC_SEX_VAL_INT;
+                res.int_val = op1_real == op2_real;
+              }
+            else
+              {
+                /* Integer comparison.  */
+                ATOI_VAL (op1, child_val1);
+                ATOI_VAL (op2, child_val2);
+                
+                res.type = REC_SEX_VAL_INT;
+                res.int_val = op1 == op2;
+              }
           }
 
         break;
@@ -407,6 +509,8 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
@@ -421,12 +525,24 @@ rec_sex_eval_node (rec_sex_t sex,
           }
         else
           {
-            /* Integer comparison.  */
-            ATOI_VAL (op1, child_val1);
-            ATOI_VAL (op2, child_val2);
+            if (rec_sex_op_real_p (child_val1, child_val2))
+              {
+                /* Real comparison.  */
+                ATOF_VAL (op1_real, child_val1);
+                ATOF_VAL (op2_real, child_val2);
+
+                res.type = REC_SEX_VAL_REAL;
+                res.int_val = op1_real != op2_real;
+              }
+            else
+              {
+                /* Integer comparison.  */
+                ATOI_VAL (op1, child_val1);
+                ATOI_VAL (op2, child_val2);
             
-            res.type = REC_SEX_VAL_INT;
-            res.int_val = op1 != op2;
+                res.type = REC_SEX_VAL_INT;
+                res.int_val = op1 != op2;
+              }
           }
 
         break;
@@ -482,15 +598,30 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
-        ATOI_VAL (op1, child_val1);
-        ATOI_VAL (op2, child_val2);
+        if (rec_sex_op_real_p (child_val1, child_val2))
+          {
+            /* Real comparison.  */
+            ATOF_VAL (op1_real, child_val1);
+            ATOF_VAL (op2_real, child_val2);
 
-        res.type = REC_SEX_VAL_INT;
-        res.int_val = op1 < op2;
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1_real < op2_real;
+          }
+        else
+          {
+            /* Integer comparison.  */
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+            
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 < op2;
+          }
 
         break;
       }
@@ -498,15 +629,30 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         int op1;
         int op2;
+        double op1_real;
+        double op2_real;
 
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
-        ATOI_VAL (op1, child_val1);
-        ATOI_VAL (op2, child_val2);
+        if (rec_sex_op_real_p (child_val1, child_val2))
+          {
+            /* Real comparison.  */
+            ATOF_VAL (op1_real, child_val1);
+            ATOF_VAL (op2_real, child_val2);
 
-        res.type = REC_SEX_VAL_INT;
-        res.int_val = op1 > op2;
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1_real > op2_real;
+          }
+        else
+          {
+            /* Integer comparison.  */
+            ATOI_VAL (op1, child_val1);
+            ATOI_VAL (op2, child_val2);
+            
+            res.type = REC_SEX_VAL_INT;
+            res.int_val = op1 > op2;
+          }
 
         break;
       }
@@ -650,45 +796,31 @@ rec_sex_eval_node (rec_sex_t sex,
   return res;
 }
 
-static int
-rec_sex_op_type (struct rec_sex_val_s op1,
-                 struct rec_sex_val_s op2)
+static bool
+rec_sex_op_real_p (struct rec_sex_val_s op1,
+                   struct rec_sex_val_s op2)
 {
-  int res;
-  int int_val1;
-  int int_val2;
-  float real_val1;
-  float real_val2;
+  bool ret;
+  int integer;
+  double real;
 
-  /* Determine the type of the result of a binary numeric operator
-     operating on OP1 and OP2.  The rule here is:
+  ret = true;
 
-     - If some of the values can be read as a real value, the
-       operation is real.  Otherwise..
-     - If some of the values can be read as an integer value, the
-       operation is integer.  Otherwise...
-     - The operation is a string.
-  */
-
-  if ((op1.type == REC_SEX_VAL_REAL)
-      || (op2.type == REC_SEX_VAL_REAL))
+  /* Check first parameter.  */
+  if ((op1.type == REC_SEX_VAL_INT)
+      || ((op1.type == REC_SEX_VAL_STR) && (!rec_atof (op1.str_val, &real))))
     {
-      res = REC_SEX_VAL_REAL;
-    }
-  else
-    {
-      if ((op1.type == REC_SEX_VAL_INT)
-          || (op2.type == REC_SEX_VAL_INT))
-        {
-          res = REC_SEX_VAL_INT;
-        }
-      else
-        {
-          res = REC_SEX_VAL_STR;
-        }
+      ret = false;
     }
 
-  return res;
+  /* Check second parameter.  */
+  if ((op2.type == REC_SEX_VAL_INT)
+      || ((op2.type == REC_SEX_VAL_STR) && (!rec_atof (op2.str_val, &real))))
+    {
+      ret = false;
+    }
+
+  return ret;
 }
  
 /* End of rec-sex.c */

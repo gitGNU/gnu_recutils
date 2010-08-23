@@ -56,6 +56,7 @@
    /* Forward prototypes for functions defined below.  */
    char *rec_sex_lex_extract_name (char *str);
    bool rec_sex_lex_extract_index (char *str, int *num);
+
 %}
 
 NEWLINE            \n
@@ -93,7 +94,7 @@ STRING             '([^'\n]|\\(.|\n))*'
   /*
    * Create a real node.
    */
-  float real_value;
+  double real_value;
   
   yylval->node = rec_sex_ast_node_new ();
   rec_atof (yytext, &real_value);
