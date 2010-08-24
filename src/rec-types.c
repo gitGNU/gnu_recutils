@@ -62,7 +62,7 @@
 
 /* Regular expressions denoting values.  */
 #define REC_TYPE_INT_VALUE_RE                   \
-  "^" REC_TYPE_ZBLANKS_RE "[0-9]+" REC_TYPE_ZBLANKS_RE "$"
+  "^" REC_TYPE_ZBLANKS_RE "-?[0-9]+" REC_TYPE_ZBLANKS_RE "$"
 
 #define REC_TYPE_BOOL_VALUE_RE                  \
   "^(yes|no|true|false|0|1)$"
@@ -119,9 +119,9 @@
 #define REC_TYPE_RANGE_DESCR_RE                    \
   REC_TYPE_RANGE_NAME                              \
   REC_TYPE_BLANKS_RE                               \
-  "[0-9]+"                                         \
-  REC_TYPE_ZBLANKS_RE "\\.\\." REC_TYPE_ZBLANKS_RE   \
-  "[0-9]+"
+  "-?[0-9]+"                                       \
+  REC_TYPE_ZBLANKS_RE                              \
+  "-?[0-9]+"
 
 /* real  */
 #define REC_TYPE_REAL_DESCR_RE                     \
@@ -173,6 +173,7 @@
      "|" "(" REC_TYPE_RANGE_DESCR_RE  ")"       \
      "|" "(" REC_TYPE_REAL_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_SIZE_DESCR_RE   ")"       \
+     "|" "(" REC_TYPE_RANGE_DESCR_RE  ")"       \
      "|" "(" REC_TYPE_LINE_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_REGEXP_DESCR_RE ")"       \
      "|" "(" REC_TYPE_DATE_DESCR_RE   ")"       \
@@ -195,8 +196,7 @@ struct rec_type_s
   union
   {
     size_t max_size;          /* Size of string.  */
-    int min;                  /* Range.  */
-    int max;
+    int range[2];             /* Range.  */
     regex_t regexp;           /* Regular expression.  */
 
 #define REC_ENUM_MAX_NAMES 50
@@ -374,7 +374,6 @@ rec_type_new (char *str)
         exit (1);
         break;
       }
-
     }
 
  exit:
@@ -628,8 +627,8 @@ rec_type_equal_p (rec_type_t type1,
         }
       else if (type1->kind == REC_TYPE_RANGE)
         {
-          ret = ((type1->data.min == type2->data.min)
-                 && (type1->data.max == type2->data.max));
+          ret = ((type1->data.range[0] == type2->data.range[0])
+                 && (type1->data.range[1] == type2->data.range[1]));
         }
       else if (type1->kind == REC_TYPE_ENUM)
         {
@@ -778,12 +777,19 @@ static bool
 rec_type_check_range (rec_type_t type,
                       char *str)
 {
-  /* XXX: TODO.  */
-  /* Check string.  */
-  /* Get min and max numbers.  */
-  /* Cross-check with the data in 'type'.  */
-  
-  return false;
+  char *p;
+  int num;
+
+  p = str;
+
+  rec_type_skip_blanks (&p);
+  if (!rec_type_parse_int (&p, &num))
+    {
+      return false;
+    }
+
+  return ((num >= type->data.range[0])
+          && (num <= type->data.range[1]));
 }
 
 static bool
@@ -1108,20 +1114,17 @@ rec_type_parse_range (char *str, rec_type_t type)
 
   rec_type_skip_blanks (&p);
 
-  if (!rec_type_parse_int (&p, &(type->data.min)))
+  if (!rec_type_parse_int (&p, &(type->data.range[0])))
     {
       return false;
     }
-  printf ("DATA MIN: %d\n", type->data.min);
 
   rec_type_skip_blanks (&p);
 
-  if (!rec_type_parse_int (&p, &(type->data.max)))
+  if (!rec_type_parse_int (&p, &(type->data.range[1])))
     {
       return false;
     }
-
-  printf ("DATA MAX: %d\n", type->data.max);
 
   return true;
 }
