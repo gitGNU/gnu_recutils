@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-22 21:07:19 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-24 23:44:36 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -631,10 +631,9 @@ rec_int_check_descriptor (rec_rset_t rset,
                 {
                   /* XXX: make rec_type_descr_p to report more details.  */
                   fprintf (errors,
-                           "%s:%s: error: invalid type specification in %%type[%d]\n",
-                           rec_record_source (descriptor),
-                           rec_record_location_str (descriptor),
-                           rec_record_get_field_index_by_name (descriptor, field));
+                           "%s:%s: error: invalid type specification\n",
+                           rec_field_source (field),
+                           rec_field_location_str (field));
                   res++;
                 }
             }

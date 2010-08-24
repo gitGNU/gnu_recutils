@@ -1,3 +1,18 @@
+2010-08-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	fixes in the parsing of types.
+	* src/rec-int.c (rec_int_check_descriptor): Localize the error in
+	the concrete field.
+
+	* src/rec-types.c: Parsing routines rewritten.
+
+2010-08-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-types.c (rec_type_skip_blanks): New function.
+	(rec_type_descr_field_name): Use rec_type_skip_blanks.
+	(rec_type_new): Likewise.
+	(rec_type_parse_int): New function.
+
 2010-08-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-sex: support for real values in some operators.
