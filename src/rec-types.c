@@ -228,17 +228,17 @@ static bool rec_type_blank_p (char c);
 static bool rec_type_digit_p (char c);
 static bool rec_type_letter_p (char c);
 
-static bool rec_type_check_int (rec_type_t type, char *str);
-static bool rec_type_check_bool (rec_type_t type, char *str);
-static bool rec_type_check_range (rec_type_t type, char *str);
-static bool rec_type_check_real (rec_type_t type, char *str);
-static bool rec_type_check_size (rec_type_t type, char *str);
-static bool rec_type_check_line (rec_type_t type, char *str);
-static bool rec_type_check_regexp (rec_type_t type, char *str);
-static bool rec_type_check_date (rec_type_t type, char *str);
-static bool rec_type_check_email (rec_type_t type, char *str);
-static bool rec_type_check_enum (rec_type_t type, char *str);
-static bool rec_type_check_field (rec_type_t type, char *str);
+static bool rec_type_check_int (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_bool (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_range (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_real (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_size (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_line (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_regexp (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_date (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_email (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_enum (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_field (rec_type_t type, char *str, FILE *errors);
 
 /* Parsing routines.  */
 
@@ -470,9 +470,14 @@ rec_type_kind_str (rec_type_t type)
 
 bool
 rec_type_check (rec_type_t type,
-                char *str)
+                char *str,
+                char **error_str)
 {
   bool res;
+  FILE *errors;
+  size_t errors_size;
+
+  errors = open_memstream (error_str, &errors_size);
 
   switch (type->kind)
     {
@@ -483,60 +488,64 @@ rec_type_check (rec_type_t type,
       }
     case REC_TYPE_INT:
       {
-        res = rec_type_check_int (type, str);
+        res = rec_type_check_int (type, str, errors);
         break;
       }
     case REC_TYPE_BOOL:
       {
-        res = rec_type_check_bool (type, str);
+        res = rec_type_check_bool (type, str, errors);
         break;
       }
     case REC_TYPE_RANGE:
       {
-        res = rec_type_check_range (type, str);
+        res = rec_type_check_range (type, str, errors);
         break;
       }
     case REC_TYPE_REAL:
       {
-        res = rec_type_check_real (type, str);
+        res = rec_type_check_real (type, str, errors);
         break;
       }
     case REC_TYPE_SIZE:
       {
-        res = rec_type_check_size (type, str);
+        res = rec_type_check_size (type, str, errors);
         break;
       }
     case REC_TYPE_LINE:
       {
-        res = rec_type_check_line (type, str);
+        res = rec_type_check_line (type, str, errors);
         break;
       }
     case REC_TYPE_REGEXP:
       {
-        res = rec_type_check_regexp (type, str);
+        res = rec_type_check_regexp (type, str, errors);
         break;
       }
     case REC_TYPE_DATE:
       {
-        res = rec_type_check_date (type, str);
+        res = rec_type_check_date (type, str, errors);
         break;
       }
     case REC_TYPE_EMAIL:
       {
-        res = rec_type_check_email (type, str);
+        res = rec_type_check_email (type, str, errors);
         break;
       }
     case REC_TYPE_ENUM:
       {
-        res = rec_type_check_enum (type, str);
+        res = rec_type_check_enum (type, str, errors);
         break;
       }
     case REC_TYPE_FIELD:
       {
-        res = rec_type_check_field (type, str);
+        res = rec_type_check_field (type, str, errors);
         break;
       }
     }
+
+  /* Terminate the 'errors' string.  */
+  fclose (errors);
+  (*error_str)[errors_size] = '\0';
 
   return res;
 }
@@ -754,29 +763,58 @@ rec_type_letter_p (char c)
 
 static bool
 rec_type_check_int (rec_type_t type,
-                    char *str)
+                    char *str,
+                    FILE *errors)
 {
-  return rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
+  bool ret;
+
+  ret = rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
+  if (!ret && errors)
+    {
+      fprintf (errors, "invalid integer.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_field (rec_type_t type,
-                      char *str)
+                      char *str,
+                      FILE *errors)
 {
-  return rec_type_check_re (REC_TYPE_FIELD_VALUE_RE, str);
+  bool ret;
+
+  ret = rec_type_check_re (REC_TYPE_FIELD_VALUE_RE, str);
+  if (!ret && errors)
+    {
+      fprintf (errors, "invalid 'field' value.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_bool (rec_type_t type,
-                     char *str)
+                     char *str,
+                     FILE *errors)
 {
-  return rec_type_check_re (REC_TYPE_BOOL_VALUE_RE, str);
+  bool ret;
+
+  ret = rec_type_check_re (REC_TYPE_BOOL_VALUE_RE, str);
+  if (!ret && errors)
+    {
+      fprintf (errors, "invalid 'bool' value.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_range (rec_type_t type,
-                      char *str)
+                      char *str,
+                      FILE *errors)
 {
+  bool ret;
   char *p;
   int num;
 
@@ -785,63 +823,130 @@ rec_type_check_range (rec_type_t type,
   rec_type_skip_blanks (&p);
   if (!rec_type_parse_int (&p, &num))
     {
+      if (errors)
+        {
+          fprintf (errors, "invalid 'range' value.");
+        }
       return false;
     }
 
-  return ((num >= type->data.range[0])
-          && (num <= type->data.range[1]));
+  ret = ((num >= type->data.range[0])
+         && (num <= type->data.range[1]));
+  if (!ret && errors)
+    {
+      fprintf (errors, "expected an integer between %d and %d.",
+               type->data.range[0], type->data.range[1]);
+    }
+  
+  return ret;
 }
 
 static bool
 rec_type_check_real (rec_type_t type,
-                     char *str)
+                     char *str,
+                     FILE *errors)
 {
-  return rec_type_check_re (REC_TYPE_REAL_VALUE_RE, str);
+  bool ret;
+
+  ret = rec_type_check_re (REC_TYPE_REAL_VALUE_RE, str);
+  if (!ret && errors)
+    {
+      fprintf (errors, "invalid 'real' value.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_size (rec_type_t type,
-                     char *str)
+                     char *str,
+                     FILE *errors)
 {
+  bool ret;
+
+  ret = (strlen (str) <= type->data.max_size);
+  if (!ret && errors)
+    {
+      fprintf (errors,
+               "value too large.  Expected a size <= %d.",
+               type->data.max_size);
+    }
+  
   return (strlen (str) <= type->data.max_size);
 }
 
 static bool
 rec_type_check_line (rec_type_t type,
-                     char *str)
+                     char *str, 
+                     FILE *errors)
 {
-  return rec_type_check_re (REC_TYPE_LINE_VALUE_RE, str);
+  bool ret;
+
+  ret = rec_type_check_re (REC_TYPE_LINE_VALUE_RE, str);
+  if (!ret && errors)
+    {
+      fprintf (errors, "invalid 'line' value.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_regexp (rec_type_t type,
-                       char *str)
+                       char *str,
+                       FILE *errors)
 {
-  return (regexec (&type->data.regexp,
-                   str,
-                   0,
-                   NULL,
-                   0) == 0);
+  bool ret;
+  ret = (regexec (&type->data.regexp,
+                  str,
+                  0,
+                  NULL,
+                  0) == 0);
+  if (!ret && errors)
+    {
+      fprintf (errors, "value does not match the regexp.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_date (rec_type_t type,
-                     char *str)
+                     char *str,
+                     FILE *errors)
 {
+  bool ret;
   struct timespec tm;
-  return get_date (&tm, str, NULL);
+
+  ret = get_date (&tm, str, NULL);
+  if (!ret && errors)
+    {
+      fprintf (errors, "invalid date.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_email (rec_type_t type,
-                      char *str)
+                      char *str,
+                      FILE *errors)
 {
-  return rec_type_check_re (REC_TYPE_EMAIL_VALUE_RE, str);
+  bool ret;
+
+  ret = rec_type_check_re (REC_TYPE_EMAIL_VALUE_RE, str);
+  if (!ret && errors)
+    {
+      fprintf (errors, "invalid email.");
+    }
+
+  return ret;
 }
 
 static bool
 rec_type_check_enum (rec_type_t type,
-                     char *str)
+                     char *str,
+                     FILE *errors)
 {
   size_t i;
   char *p, *b;
@@ -881,6 +986,11 @@ rec_type_check_enum (rec_type_t type,
         }
       
       i++;
+    }
+
+  if (errors)
+    {
+      fprintf (errors, "invalid enum value.");
     }
 
   return false;

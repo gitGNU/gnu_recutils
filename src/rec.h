@@ -178,7 +178,7 @@ void rec_type_destroy (rec_type_t type);
 enum rec_type_kind_e rec_type_kind (rec_type_t type);
 char *rec_type_kind_str (rec_type_t type);
 
-bool rec_type_check (rec_type_t type, char *str);
+bool rec_type_check (rec_type_t type, char *str, char **error_str);
 bool rec_type_equal_p (rec_type_t type1, rec_type_t type2);
 
 /*
@@ -534,7 +534,6 @@ int rec_int_check_record (rec_db_t db,
 bool rec_int_check_field_type (rec_db_t db,
                                rec_rset_t rset,
                                rec_field_t field,
-                               char **type,
                                FILE *errors);
 
 /*

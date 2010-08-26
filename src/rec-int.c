@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-24 23:44:36 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-08-26 14:21:20 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -25,6 +25,7 @@
 
 #include <config.h>
 
+#include <stdlib.h>
 #include <rec.h>
 
 /*
@@ -141,7 +142,6 @@ bool
 rec_int_check_field_type (rec_db_t db,
                           rec_rset_t rset,
                           rec_field_t field,
-                          char **type_str,
                           FILE *errors)
 {
   bool res;
@@ -152,6 +152,7 @@ rec_int_check_field_type (rec_db_t db,
   rec_type_t type;
   rec_type_t referring_type;
   rec_type_t referred_type;
+  char *errors_str;
 
   res = true;
   referred_type = NULL;
@@ -231,9 +232,12 @@ rec_int_check_field_type (rec_db_t db,
 
   if (type)
     {
-      if (!rec_type_check (type, rec_field_value (field)))
+      if (!rec_type_check (type, rec_field_value (field), &errors_str))
         {
-          *type_str = rec_type_kind_str (type);
+          fprintf (errors, "%s:%s: error: %s\n",
+                   rec_field_source (field), rec_field_location_str (field),
+                   errors_str);
+          free (errors_str);
           res = false;
         }
     }
@@ -250,7 +254,6 @@ rec_int_check_record_types (rec_db_t db,
   int res;
   rec_record_elem_t rec_elem;
   rec_field_t field;
-  char *type_str;
 
   res = 0;
 
@@ -260,13 +263,8 @@ rec_int_check_record_types (rec_db_t db,
       field = rec_record_elem_field (rec_elem);
 
       /* Check for the type.  */
-      if (!rec_int_check_field_type (db, rset, field, &type_str, errors))
+      if (!rec_int_check_field_type (db, rset, field, errors))
         {
-          fprintf (errors,
-                   "%s:%s: error: expected '%s' value\n",
-                   rec_field_source (field),
-                   rec_field_location_str (field),
-                   type_str);
           res++;
         }
     }
