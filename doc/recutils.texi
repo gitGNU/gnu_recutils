@@ -53,8 +53,8 @@ This manual documents version @value{VERSION} of the GNU rec utilities.
 
 @menu
 Overview
-* Introduction::        Introducing GNU records.
-* A Little Example::    GNU rec in action.
+* Introduction::        Introducing the GNU recutils.
+* A Little Example::    Recutils in action.
 
 The Rec Format
 * Fields and Records::  The basic structures conforming Rec files.
