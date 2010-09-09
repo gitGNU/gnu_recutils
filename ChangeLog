@@ -1,3 +1,18 @@
+2010-09-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Support for lisp output.
+	* utils/recinf.c: Support the -S option.
+
+	* utils/recsel.c: Likewise.
+
+	* src/rec-writer.c (rec_write_record): New 'mode' argument.
+	(rec_write_field_name): Likewise.
+	(rec_write_field): Likewise.
+	(rec_write_field_str): Likewise.
+
+	* src/rec.h: New function.
+	(rec_writer_mode_t): New data type.
+
 2010-08-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	fixes in the parsing of types.

@@ -585,69 +585,6 @@ void rec_parser_reset (rec_parser_t parser);
  */
 void rec_parser_perror (rec_parser_t parser, char *fmt, ...);
 
-
-/*
- * WRITER
- *
- * Writing routines.
- */
-
-typedef struct rec_writer_s *rec_writer_t;
-
-/* Create a writer associated with a given file stream.  If not enough
-   memory, return NULL. */
-rec_writer_t rec_writer_new (FILE *out);
-
-/* Destroy a writer.
- *
- * Note that this call is not closing the associated file stream.
- */
-void rec_writer_destroy (rec_writer_t writer);
-
-/* Writing routines.
- *
- * If EOF occurs, the following functions return NULL.
- */
-
-bool rec_write_comment (rec_writer_t writer, rec_comment_t comment);
-bool rec_write_field_name (rec_writer_t writer, rec_field_name_t field_name);
-bool rec_write_field (rec_writer_t writer, rec_field_t field);
-bool rec_write_record (rec_writer_t writer, rec_record_t record);
-bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
-bool rec_write_db (rec_writer_t writer, rec_db_t db);
-
-char *rec_write_field_name_str (rec_field_name_t field_name);
-char *rec_write_field_str (rec_field_t field);
-char *rec_write_comment_str (rec_comment_t comment);
-
-/* Getting information about the writer */
-bool rec_writer_eof (rec_writer_t writer);
-int rec_writer_line (rec_writer_t writer);
-
-/*
- * SELECTION EXPRESSIONS
- *
- * A selection expression is a written boolean expression that can be
- * applied on a record.
- */
-
-typedef struct rec_sex_s *rec_sex_t;
-
-/* Create a new selection expression and return it.  If there is not
-   enough memory to create the sex, then return NULL.  */
-rec_sex_t rec_sex_new (bool case_insensitive);
-
-/* Destroy a sex.  */
-void rec_sex_destroy (rec_sex_t sex);
-
-/* Compile a sex.  If there is a parse error return false.  */
-bool rec_sex_compile (rec_sex_t sex, char *expr);
-
-/* Apply a sex expression to a record, setting RESULT in accordance.  */
-bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
-
-void rec_sex_print_ast (rec_sex_t sex);
-
 /*
  * FIELD EXPRESSIONS
  *
@@ -693,6 +630,79 @@ rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
 char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
 int rec_fex_elem_min (rec_fex_elem_t elem);
 int rec_fex_elem_max (rec_fex_elem_t elem);
+
+/*
+ * WRITER
+ *
+ * Writing routines.
+ */
+
+typedef struct rec_writer_s *rec_writer_t;
+
+/* Create a writer associated with a given file stream.  If not enough
+   memory, return NULL. */
+rec_writer_t rec_writer_new (FILE *out);
+
+/* Destroy a writer.
+ *
+ * Note that this call is not closing the associated file stream.
+ */
+void rec_writer_destroy (rec_writer_t writer);
+
+/* Writing routines.
+ *
+ * If EOF occurs, the following functions return NULL.
+ */
+
+enum rec_writer_mode_e
+{
+  REC_WRITER_NORMAL,
+  REC_WRITER_SEXP
+};
+  
+typedef enum rec_writer_mode_e rec_writer_mode_t;
+
+bool rec_write_comment (rec_writer_t writer, rec_comment_t comment, rec_writer_mode_t mode);
+bool rec_write_field_name (rec_writer_t writer, rec_field_name_t field_name, rec_writer_mode_t mode);
+bool rec_write_field (rec_writer_t writer, rec_field_t field, rec_writer_mode_t mode);
+bool rec_write_record (rec_writer_t writer, rec_record_t record, rec_writer_mode_t mode);
+bool rec_write_record_with_fex (rec_writer_t writer, rec_record_t record, rec_fex_t fex,
+                                rec_writer_mode_t mode,
+                                bool print_values_p, bool print_in_a_row_p);
+bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
+bool rec_write_db (rec_writer_t writer, rec_db_t db);
+
+char *rec_write_field_name_str (rec_field_name_t field_name, rec_writer_mode_t mode);
+char *rec_write_field_str (rec_field_t field, rec_writer_mode_t mode);
+char *rec_write_comment_str (rec_comment_t comment, rec_writer_mode_t mode);
+
+/* Getting information about the writer */
+bool rec_writer_eof (rec_writer_t writer);
+int rec_writer_line (rec_writer_t writer);
+
+/*
+ * SELECTION EXPRESSIONS
+ *
+ * A selection expression is a written boolean expression that can be
+ * applied on a record.
+ */
+
+typedef struct rec_sex_s *rec_sex_t;
+
+/* Create a new selection expression and return it.  If there is not
+   enough memory to create the sex, then return NULL.  */
+rec_sex_t rec_sex_new (bool case_insensitive);
+
+/* Destroy a sex.  */
+void rec_sex_destroy (rec_sex_t sex);
+
+/* Compile a sex.  If there is a parse error return false.  */
+bool rec_sex_compile (rec_sex_t sex, char *expr);
+
+/* Apply a sex expression to a record, setting RESULT in accordance.  */
+bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
+
+void rec_sex_print_ast (rec_sex_t sex);
                              
 #endif /* !REC_H */
 

@@ -54,6 +54,7 @@ bool       recsel_count        = false;
 bool       recutl_insensitive  = false;
 bool       recsel_descriptors  = false;
 size_t     recutl_num          = -1;
+rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 
 /*
  * Command line options management.
@@ -68,7 +69,8 @@ enum
   PRINT_IN_A_ROW_ARG,
   COLLAPSE_ARG,
   COUNT_ARG,
-  DESCRIPTOR_ARG
+  DESCRIPTOR_ARG,
+  PRINT_SEXPS_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -81,6 +83,7 @@ static const struct option GNU_longOptions[] =
     {"collapse", no_argument, NULL, COLLAPSE_ARG},
     {"count", no_argument, NULL, COUNT_ARG},
     {"include-descriptors", no_argument, NULL, DESCRIPTOR_ARG},
+    {"print-sexps", no_argument, NULL, PRINT_SEXPS_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -109,6 +112,8 @@ Output options:\n\
                                         a blank character instead of newlines.\n\
   -c, --count                         provide a count of the matching records instead of\n\
                                         the records themselves.\n\
+Special options:\n\
+  -S, --print-sexps                   print the data in sexps instead of rec format.\n\
 \n\
 Examples:\n\
 \n\
@@ -127,7 +132,7 @@ recsel_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "Cdcp:P:R:",
+                             "SCdcp:P:R:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -140,6 +145,12 @@ recsel_parse_args (int argc,
         case 'd':
           {
             recsel_descriptors = true;
+            break;
+          }
+        case PRINT_SEXPS_ARG:
+        case 'S':
+          {
+            recsel_write_mode = REC_WRITER_SEXP;
             break;
           }
         case PRINT_ARG:
@@ -308,6 +319,7 @@ recsel_process_data (rec_db_t db)
                 {
                   output = recutl_eval_field_expression (recsel_fex,
                                                          record,
+                                                         recsel_write_mode,
                                                          recsel_print_values,
                                                          recsel_print_row);
                 }
@@ -325,7 +337,7 @@ recsel_process_data (rec_db_t db)
                   && !wrote_descriptor
                   && rec_rset_descriptor (rset))
                 {
-                  rec_write_record (writer, rec_rset_descriptor (rset));
+                  rec_write_record (writer, rec_rset_descriptor (rset), recsel_write_mode);
                   fprintf (stdout, "\n");
                   wrote_descriptor = true;
                 }
@@ -340,7 +352,7 @@ recsel_process_data (rec_db_t db)
                 }
               else
                 {
-                  rec_write_record (writer, record);
+                  rec_write_record (writer, record, recsel_write_mode);
                 }
 
               written++;

@@ -38,6 +38,7 @@
  */
 
 char *program_name; /* Initialized in main() */
+rec_writer_mode_t recinf_write_mode = REC_WRITER_NORMAL;
 
 /*
  * Command line options management
@@ -48,7 +49,8 @@ enum
   COMMON_ARGS,
   DESCRIPTOR_ARG,
   NAMES_ARG,
-  TYPE_ARG
+  TYPE_ARG,
+  PRINT_SEXPS_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -57,6 +59,7 @@ static const struct option GNU_longOptions[] =
     {"descriptor", no_argument, NULL, DESCRIPTOR_ARG},
     {"names-only", no_argument, NULL, NAMES_ARG},
     {"type", required_argument, NULL, TYPE_ARG},
+    {"print-sexps", no_argument, NULL, PRINT_SEXPS_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -74,7 +77,10 @@ Print information about the types of records stored in the input.\n\
   -n, --names-only                output just the names of the record files\n\
                                     found in the input.\n"
 COMMON_ARGS_DOC
-"\n\
+"\
+Special options:\n\
+  -S, --print-sexps                   print the data in sexps instead of rec format.\n\
+\n\
 Examples:\n\
 \n\
         recinf mydata.rec\n\
@@ -124,7 +130,7 @@ print_info_file (FILE *in,
               if (descriptor)
                 {
                   writer = rec_writer_new (stdout);
-                  rec_write_record (writer, descriptor);
+                  rec_write_record (writer, descriptor, recinf_write_mode);
                   rec_writer_destroy (writer);
                 }
               else
@@ -180,7 +186,7 @@ main (int argc, char *argv[])
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "dnt:",
+                             "Sdnt:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -188,6 +194,12 @@ main (int argc, char *argv[])
       switch (c)
         {
           COMMON_ARGS_CASES
+        case PRINT_SEXPS_ARG:
+        case 'S':
+          {
+            recinf_write_mode = REC_WRITER_SEXP;
+            break;
+          }
         case DESCRIPTOR_ARG:
         case 'd':
           {

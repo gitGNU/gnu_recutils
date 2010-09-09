@@ -56,7 +56,8 @@ rec_field_name (rec_field_t field)
 char *
 rec_field_name_str (rec_field_t field)
 {
-  return rec_write_field_name_str (rec_field_name (field));
+  return rec_write_field_name_str (rec_field_name (field),
+                                   REC_WRITER_NORMAL);
 }
 
 void
@@ -194,7 +195,8 @@ rec_field_to_comment (rec_field_t field)
   rec_comment_t res;
   char *comment_str;
   
-  comment_str = rec_write_field_str (field);
+  comment_str = rec_write_field_str (field,
+                                     REC_WRITER_NORMAL);
 
   /* Remove a trailing newline.  */
   if (comment_str[strlen (comment_str) - 1] == '\n')

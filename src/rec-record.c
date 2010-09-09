@@ -677,12 +677,15 @@ rec_record_to_comment (rec_record_t record)
       if (rec_record_elem_field_p (record, elem))
         {
           /* Field.  */
-          fputs (rec_write_field_str (rec_record_elem_field (elem)), stm);
+          fputs (rec_write_field_str (rec_record_elem_field (elem),
+                                      REC_WRITER_NORMAL),
+                 stm);
         }
       else
         {
           /* Comment.  */
-          fputs (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem))),
+          fputs (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem)),
+                                        REC_WRITER_NORMAL),
                  stm);
         }
     }

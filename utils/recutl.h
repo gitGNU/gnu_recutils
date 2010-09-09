@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-23 17:57:01 jco"
+/* -*- mode: C -*- Time-stamp: "2010-09-09 20:12:21 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -175,6 +175,7 @@ bool recutl_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 rec_db_t recutl_build_db (int argc, char **argv);
 char *recutl_eval_field_expression (rec_fex_t fex,
                                     rec_record_t record,
+                                    rec_writer_mode_t mode,
                                     bool print_values_p,
                                     bool print_in_a_row_p);
 
