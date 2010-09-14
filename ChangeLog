@@ -1,3 +1,11 @@
+2010-09-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: make C-a to do the right thing.
+	* lisp/rec-mode.el (rec-mode-map): Bind C-a to
+	rec-cmd-beginning-of-line.
+	(rec-mode-edit-map): Likewise.
+	(rec-cmd-beginning-of-line): New function.
+
 2010-09-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Support for localization on lisp output.

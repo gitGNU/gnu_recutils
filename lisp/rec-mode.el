@@ -111,6 +111,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "\C-cl" 'rec-cmd-sel)
     (define-key map "\C-cs" 'rec-cmd-search)
     (define-key map "\C-cm" 'rec-cmd-trim-field-value)
+    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map (concat "\C-c" (kbd "RET")) 'rec-cmd-jump)
     (define-key map "\C-cb" 'rec-cmd-jump-back)
@@ -132,6 +133,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "s" 'rec-cmd-search)
     (define-key map "m" 'rec-cmd-trim-field-value)
     (define-key map "\C-ct" 'rec-find-type)
+    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
@@ -1531,6 +1533,22 @@ records of the current type"
       (rec-field-trim-value field)
       (rec-delete-field)
       (rec-insert-field field))))
+
+(defun rec-cmd-beginning-of-line ()
+  "Move the point to the beginning of the current line.
+
+If the current line is part of the value of a field then go to
+the first character of the line being part of the value."
+  (interactive)
+  (beginning-of-line)
+  ;; Skip a field name or a continuation line.
+  (cond 
+   ((looking-at rec-field-name-re)
+    (rec-parse-field-name)
+    (when (looking-at " ") (forward-char 1)))
+   ((looking-at "\+ ?")
+    (forward-char 1)
+    (when (looking-at " ") (forward-char 1)))))
                    
 ;;;; Definition of modes
   
