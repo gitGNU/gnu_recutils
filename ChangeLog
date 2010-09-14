@@ -1,5 +1,23 @@
 2010-09-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Support for localization on lisp output.
+	* src/rec-record.c: New fiels 'char_location' and
+	'char_location_str' in the 'rec_record_s' struct.
+
+	* src/rec-parser.c (rec_parse_field): Set the char location of
+	fields.
+	(rec_parser_ungetc): Decrease parser->character.
+
+	* src/rec-field.c: New functions 'rec_field_char_location',
+	'rec_field_set_char_location' and 'rec_field_char_location_str'.
+
+	* src/rec-parser.c: Use size_t instead of int for the 'line' field
+	of the rec_parser_s structure.
+	(rec_parser_getc): Update parser->character as well.
+	(rec_parser_new): Initialize parser->character to 0.
+
+2010-09-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Support for lisp output.
 	* utils/recinf.c: Support the -S option.
 

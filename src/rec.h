@@ -244,6 +244,10 @@ size_t rec_field_location (rec_field_t field);
 char *rec_field_location_str (rec_field_t field);
 void rec_field_set_location (rec_field_t field, size_t location);
 
+size_t rec_field_char_location (rec_field_t field);
+char *rec_field_char_location_str (rec_field_t field);
+void rec_field_set_char_location (rec_field_t field, size_t location);
+
 /* Others.. */
 rec_comment_t rec_field_to_comment (rec_field_t field);
 
@@ -288,6 +292,10 @@ void rec_record_set_source (rec_record_t record, char *source);
 size_t rec_record_location (rec_record_t record);
 char *rec_record_location_str (rec_record_t record);
 void rec_record_set_location (rec_record_t record, size_t location);
+
+size_t rec_record_char_location (rec_record_t record);
+char *rec_record_char_location_str (rec_record_t record);
+void rec_record_set_char_location (rec_record_t record, size_t char_location);
 
 /* Getting and setting elements.  */
 

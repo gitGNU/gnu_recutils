@@ -154,6 +154,14 @@ rec_write_field (rec_writer_t writer,
         {
           return false;
         }
+      if (!rec_writer_puts (writer, rec_field_char_location_str (field)))
+        {
+          return false;
+        }
+      if (!rec_writer_putc (writer, ' '))
+        {
+          return false;
+        }
     }
 
   /* Write the field name */
@@ -321,7 +329,16 @@ rec_write_record (rec_writer_t writer,
         {
           return false;
         }
+      if (!rec_writer_puts (writer, rec_record_char_location_str (record)))
+        {
+          return false;
+        }
+      if (!rec_writer_puts (writer, " (\n"))
+        {
+          return false;
+        }
     }
+
 
   elem = rec_record_null_elem ();
   while (rec_record_elem_p (elem = rec_record_next (record, elem)))
@@ -350,7 +367,7 @@ rec_write_record (rec_writer_t writer,
 
   if (mode == REC_WRITER_SEXP)
     {
-      if (!rec_writer_puts (writer, ")\n"))
+      if (!rec_writer_puts (writer, "))\n"))
         {
           return false;
         }

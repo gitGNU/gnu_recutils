@@ -46,6 +46,9 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
 (defvar rec-recsel "recsel"
   "Name of the 'recsel' utility from the GNU recutils.")
 
+(defvar rec-recinf "recinf"
+  "Name of the 'recinf' utility from the GNU recutils.")
+
 ;;;; Variables and constants that the user does not want to touch (really!)
 
 (defconst rec-keyword-rec "%rec"
@@ -235,11 +238,12 @@ the second element is the value of the field:
 
 If the pointer is not at the beginning of a field
 descriptor then return nil"
-  (let (field-name field-value)
+  (let ((there (point))
+        field-name field-value)
     (and (setq field-name (rec-parse-field-name))
          (setq field-value (rec-parse-field-value)))
     (when (and field-name field-value)
-        (list 'field field-name field-value))))
+        (list 'field there field-name field-value))))
 
 (defun rec-parse-record ()
   "Return a structure describing the record starting from the pointer.
@@ -251,13 +255,14 @@ The returned structure is a list of fields preceded by the symbol
 
 If the pointer is not at the beginning of a record, then return
 nil"
-  (let (record field-or-comment)
+  (let ((there (point))
+        record field-or-comment)
     (while (setq field-or-comment (or (rec-parse-field)
                                       (rec-parse-comment)))
       (setq record (cons field-or-comment record))
       ;; Skip the newline finishing the field or the comment
       (when (looking-at "\n") (goto-char (match-end 0))))
-    (setq record (cons 'record (reverse record)))))
+    (setq record (list 'record there (reverse record)))))
 
 ;;;; Writer functions (rec-insert-*)
 ;;
@@ -323,6 +328,22 @@ Recursive part"
 ;;
 ;; Those functions retrieve or set properties of field structures.
 
+(defun rec-record-p (record)
+  "Determine if the provided structure is a record."
+  (and (listp record)
+       (= (length record) 3)
+       (equal (car record) 'record)))
+
+(defun rec-record-position (record)
+  "Return the start position of the given record."
+  (when (rec-record-p record)
+    (nth 1 record)))
+
+(defun rec-record-fields (record)
+  "Return a list with the fields of the given record."
+  (when (rec-record-p record)
+    (nth 2 record)))
+
 (defun rec-record-assoc (name record)
   "Get a list with the values of the fields in RECORD named NAME.
 
@@ -336,9 +357,9 @@ If no such field exists in RECORD then nil is returned."
     (let (result)
       (mapcar (lambda (field)
                 (when (and (equal (car field) 'field)
-                           (equal name (cadr field)))
-                  (setq result (cons (nth 2 field) result))))
-              (cdr record))
+                           (equal name (rec-field-name field)))
+                  (setq result (cons (nth 3 field) result))))
+              (rec-record-fields record))
       (reverse result))))
 
 (defun rec-record-names (record)
@@ -359,18 +380,23 @@ If no such field exists in RECORD then nil is returned."
 (defun rec-field-p (field)
   "Determine if the provided structure is a field"
   (and (listp field)
-       (= (length field) 3)
+       (= (length field) 4)
        (equal (car field) 'field)))
+
+(defun rec-field-position (field)
+  "Return the start position of the given field."
+  (when (rec-field-p field)
+    (nth 1 field)))
 
 (defun rec-field-name (field)
   "Return the name of the provided field"
   (when (rec-field-p field)
-    (cadr field)))
+    (nth 2 field)))
 
 (defun rec-field-value (field)
   "Return the value of the provided field"
   (when (rec-field-p field)
-    (nth 2 field)))
+    (nth 3 field)))
 
 (defun rec-field-trim-value (field)
   "Trim the value of the given field."
@@ -531,6 +557,37 @@ The current record is the record where the pointer is"
 ;; in the buffer.
 
 (defun rec-update-buffer-descriptors ()
+  "Get a list of the record descriptors in the current buffer."
+  (message "Updating record descriptors...")
+  (setq rec-buffer-descriptors
+        (save-excursion
+          (let ((rec-file-name (if buffer-file-name
+                                   buffer-file-name
+                                 ""))
+                descriptors records)
+            ;; Call 'recinf' to get the list of record descriptors in
+            ;; sexp format.
+            (with-temp-buffer
+              (call-process rec-recinf
+                            nil ; infile
+                            t   ; output to current buffer
+                            nil ; display
+                            "-S" "-d" rec-file-name)
+              (goto-char (point-min))
+              (insert "(")
+              (goto-char (point-max))
+              (insert ")")
+              (setq descriptors (read (buffer-substring-no-properties (point-min) (point-max)))))
+            ;; Calculate the value of 'rec-buffer-descriptors'.
+            (mapcar (lambda (descriptor)
+                      (let ((marker (make-marker)))
+                        (set-marker marker (rec-record-position descriptor))
+                        (setq records (cons (list 'descriptor descriptor marker) records))))
+                    descriptors)
+            (reverse records))))
+  (message ""))
+
+(defun rec-update-buffer-descriptors-xxx ()
   "Get a list of the record descriptors in the current buffer."
   (message "Updating record descriptors...")
   (setq rec-buffer-descriptors
