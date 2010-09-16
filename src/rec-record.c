@@ -44,6 +44,8 @@ struct rec_record_s
   char *source;
   size_t location;
   char *location_str;
+  size_t char_location;
+  char *char_location_str;
 
   /* The mset.  */
   rec_mset_t mset;
@@ -76,6 +78,8 @@ rec_record_new (void)
       record->source = NULL;
       record->location = 0;
       record->location_str = NULL;
+      record->char_location = 0;
+      record->char_location_str = NULL;
 
       /* Create the mset.  */
       record->mset = rec_mset_new ();
@@ -113,6 +117,16 @@ rec_record_destroy (rec_record_t record)
       free (record->source);
     }
 
+  if (record->location_str)
+    {
+      free (record->location_str);
+    }
+
+  if (record->char_location_str)
+    {
+      free (record->char_location_str);
+    }
+
   rec_mset_destroy (record->mset);
   free (record);
 }
@@ -136,11 +150,18 @@ rec_record_dup (rec_record_t record)
         }
 
       new->location = record->location;
+      new->char_location = record->char_location;
 
       new->location_str = NULL;
       if (record->location_str)
         {
           new->location_str = strdup (record->location_str);
+        }
+
+      new->char_location_str = NULL;
+      if (record->char_location_str)
+        {
+          new->char_location_str = strdup (record->char_location_str);
         }
     }
 
@@ -677,12 +698,15 @@ rec_record_to_comment (rec_record_t record)
       if (rec_record_elem_field_p (record, elem))
         {
           /* Field.  */
-          fputs (rec_write_field_str (rec_record_elem_field (elem)), stm);
+          fputs (rec_write_field_str (rec_record_elem_field (elem),
+                                      REC_WRITER_NORMAL),
+                 stm);
         }
       else
         {
           /* Comment.  */
-          fputs (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem))),
+          fputs (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem)),
+                                        REC_WRITER_NORMAL),
                  stm);
         }
     }
@@ -767,9 +791,51 @@ rec_record_set_location (rec_record_t record,
     }
 
   record->location_str = malloc (30);
-  if (record->location)
+  if (record->location_str)
     {    
       sprintf (record->location_str, "%d", record->location);
+    }
+}
+
+size_t
+rec_record_char_location (rec_record_t record)
+{
+  return record->char_location;
+}
+
+char *
+rec_record_char_location_str (rec_record_t record)
+{
+  char *res;
+
+  if (record->char_location_str)
+    {
+      res = record->char_location_str;
+    }
+  else
+    {
+      res = "";
+    }
+
+  return res;
+}
+
+void
+rec_record_set_char_location (rec_record_t record,
+                              size_t location)
+{
+  record->char_location = location;
+
+  if (record->char_location_str)
+    {
+      free (record->char_location_str);
+      record->char_location_str = NULL;
+    }
+  
+  record->char_location_str = malloc (90);
+  if (record->char_location_str)
+    {
+      sprintf (record->char_location_str, "%d", record->char_location);
     }
 }
 

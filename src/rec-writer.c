@@ -72,45 +72,102 @@ rec_writer_destroy (rec_writer_t writer)
 
 bool
 rec_write_comment (rec_writer_t writer,
-                   rec_comment_t comment)
+                   rec_comment_t comment,
+                   rec_writer_mode_t mode)
 {
   char *line;
   char *str;
+  size_t i;
   
-  /* Every line in the comment is written preceded by a '#' character
-     and postceded by a newline character.  */
-
-  str = strdupa (rec_comment_text (comment));
-  line = strsep (&str, "\n");
-  do
+  if (mode == REC_WRITER_SEXP)
     {
-      if (!rec_writer_putc (writer, '#') 
-          || !rec_writer_puts (writer, line)
-          || !rec_writer_putc (writer, '\n'))
+      if (!rec_writer_puts (writer, "(comment "))
+        {
+          return false;
+        }
+      if (!rec_writer_putc (writer, '"'))
+        {
+          return false;
+        }
+
+      str = rec_comment_text (comment);
+      for (i = 0; i < strlen (str); i++)
+        {
+          if (str[i] == '\n')
+            {
+              if (!rec_writer_puts (writer, "\\n"))
+                {
+                  return false;
+                }
+            }
+          else
+            {
+              if (!rec_writer_putc (writer, str[i]))
+                {
+                  return false;
+                }
+            }
+        }
+
+      if (!rec_writer_puts (writer, "\")"))
         {
           return false;
         }
     }
-  while ((line = strsep (&str, "\n")));
+  else
+    {
+      /* Every line in the comment is written preceded by a '#' character
+         and postceded by a newline character.  */
+      
+      str = strdupa (rec_comment_text (comment));
+      line = strsep (&str, "\n");
+      do
+        {
+          if (!rec_writer_putc (writer, '#') 
+              || !rec_writer_puts (writer, line)
+              || !rec_writer_putc (writer, '\n'))
+            {
+              return false;
+            }
+        }
+      while ((line = strsep (&str, "\n")));
 
-  free (str);
+      free (str);
+    }
 
   return true;
 }
 
 bool
 rec_write_field (rec_writer_t writer,
-                 rec_field_t field)
+                 rec_field_t field,
+                 rec_writer_mode_t mode)
 {
   int i;
   size_t pos;
   rec_field_name_t fname;
   const char *fvalue;
 
+  if (mode == REC_WRITER_SEXP)
+    {
+      if (!rec_writer_puts (writer, "(field "))
+        {
+          return false;
+        }
+      if (!rec_writer_puts (writer, rec_field_char_location_str (field)))
+        {
+          return false;
+        }
+      if (!rec_writer_putc (writer, ' '))
+        {
+          return false;
+        }
+    }
+
   /* Write the field name */
   fname = rec_field_name (field);
 
-  if (!rec_write_field_name (writer, fname))
+  if (!rec_write_field_name (writer, fname, mode))
     {
       return false;
     }
@@ -121,15 +178,33 @@ rec_write_field (rec_writer_t writer,
     }
   
   /* Write the field value */
+  if (mode == REC_WRITER_SEXP)
+    {
+      if (!rec_writer_putc (writer, '"'))
+        {
+          return false;
+        }
+    }
+
   fvalue = rec_field_value (field);
   for (pos = 0; pos < strlen (fvalue); pos++)
     {
       if (fvalue[pos] == '\n')
         {
-          if (!rec_writer_puts (writer, "\n+ "))
+          if (mode == REC_WRITER_SEXP)
             {
-              /* EOF on output */
-              return false;
+              if (!rec_writer_puts (writer, "\\n"))
+                {
+                  return false;
+                }
+            }
+          else
+            {
+              if (!rec_writer_puts (writer, "\n+ "))
+                {
+                  /* EOF on output */
+                  return false;
+                }
             }
         }
       else
@@ -142,40 +217,104 @@ rec_write_field (rec_writer_t writer,
         }
     }
 
-  if (!rec_writer_putc (writer, '\n'))
+  if (mode == REC_WRITER_SEXP)
     {
-      /* EOF on output */
-      return false;
+      if (!rec_writer_putc (writer, '"'))
+        {
+          return false;
+        }
     }
-  
+
+  if (mode == REC_WRITER_SEXP)
+    {
+      if (!rec_writer_puts (writer, ")\n"))
+        {
+          return false;
+        }
+    }
+  else
+    {
+      if (!rec_writer_putc (writer, '\n'))
+        {
+          /* EOF on output */
+          return false;
+        }
+    }
+
   return true;
 }
 
 bool
 rec_write_field_name (rec_writer_t writer,
-                      rec_field_name_t field_name)
+                      rec_field_name_t field_name,
+                      rec_writer_mode_t mode)
 {
+  /* Field names can be written in several formats, according to the
+   * desired mode:
+   *
+   * REC_WRITER_NORMAL
+   *    The field name is written in rec format. i.e. NP:NP:...NP:
+   * REC_WRITER_SEXP
+   *    The field name is a list of strings: ("NP" "NP" ... "NP")
+  */
+
   int i;
 
-  for (i = 0; i < rec_field_name_size (field_name); i++)
+  if (mode == REC_WRITER_SEXP)
     {
+      if (!rec_writer_putc (writer, '('))
+        {
+          return false;
+        }
+    }
+ 
+ for (i = 0; i < rec_field_name_size (field_name); i++)
+    {
+      if (mode == REC_WRITER_SEXP)
+        {
+          if (!rec_writer_putc (writer, '"'))
+            {
+              return false;
+            }
+        }
+
       if (!rec_writer_puts (writer,
                             rec_field_name_get (field_name, i)))
         {
           return false;
         }
-      if (!rec_writer_putc (writer, ':'))
+
+      if (mode == REC_WRITER_SEXP)
         {
-          return false;
+          if (!rec_writer_putc (writer, '"'))
+            {
+              return false;
+            }
+        }
+      else
+        {
+          if (!rec_writer_putc (writer, ':'))
+            {
+              return false;
+            }
         }
     }
+
+ if (mode == REC_WRITER_SEXP)
+   {
+     if (!rec_writer_putc (writer, ')'))
+       {
+         return false;
+       }
+   }
 
   return true;
 }
 
 bool
 rec_write_record (rec_writer_t writer,
-                  rec_record_t record)
+                  rec_record_t record,
+                  rec_writer_mode_t mode)
 {
   bool ret;
   rec_field_t field;
@@ -184,6 +323,23 @@ rec_write_record (rec_writer_t writer,
 
   ret = true;
 
+  if (mode == REC_WRITER_SEXP)
+    {
+      if (!rec_writer_puts (writer, "(record "))
+        {
+          return false;
+        }
+      if (!rec_writer_puts (writer, rec_record_char_location_str (record)))
+        {
+          return false;
+        }
+      if (!rec_writer_puts (writer, " (\n"))
+        {
+          return false;
+        }
+    }
+
+
   elem = rec_record_null_elem ();
   while (rec_record_elem_p (elem = rec_record_next (record, elem)))
     {
@@ -191,7 +347,7 @@ rec_write_record (rec_writer_t writer,
         {
           /* Write a field.  */
           field = rec_record_elem_field (elem);
-          if (!rec_write_field (writer, field))
+          if (!rec_write_field (writer, field, mode))
             {
               ret = false;
               break;
@@ -201,7 +357,7 @@ rec_write_record (rec_writer_t writer,
         {
           /* Write a comment.  */
           comment = rec_record_elem_comment (elem);
-          if (!rec_write_comment (writer, comment))
+          if (!rec_write_comment (writer, comment, mode))
             {
               ret = false;
               break;
@@ -209,7 +365,100 @@ rec_write_record (rec_writer_t writer,
         }
     }
 
+  if (mode == REC_WRITER_SEXP)
+    {
+      if (!rec_writer_puts (writer, "))\n"))
+        {
+          return false;
+        }
+    }
+
   return ret;
+}
+
+bool
+rec_write_record_with_fex (rec_writer_t writer,
+                           rec_record_t record,
+                           rec_fex_t fex,
+                           rec_writer_mode_t mode,
+                           bool print_values_p,
+                           bool print_in_a_row_p)
+{
+  rec_fex_elem_t elem;
+  rec_field_t field;
+  rec_field_name_t field_name;
+  int i, j, min, max;
+  size_t fex_size;
+  size_t written_fields = 0;
+
+  fex_size = rec_fex_size (fex);
+  for (i = 0; i < fex_size; i++)
+    {
+      elem = rec_fex_get (fex, i);
+
+      field_name = rec_fex_elem_field_name (elem);
+      min = rec_fex_elem_min (elem);
+      max = rec_fex_elem_max (elem);
+
+      if ((min == -1) && (max == -1))
+        {
+          /* Print all the fields with that name.  */
+          min = 0;
+          max = rec_record_get_num_fields_by_name (record, field_name);
+        }
+      else if (max == -1)
+        {
+          /* Print just one field: Field[min].  */
+          max = min + 1;
+        }
+      else
+        {
+          /* Print the interval min..max, max inclusive.  */
+          max++;
+        }
+
+      for (j = min; j < max; j++)
+        {
+          if (!(field = rec_record_get_field_by_name (record, field_name, j)))
+            {
+              continue;
+            }
+
+          written_fields++;
+
+          if (print_values_p)
+            {
+              /* Write just the value of the field.  */
+              rec_writer_puts (writer, rec_field_value (field));
+              if (print_in_a_row_p)
+                {
+                  if (i < (fex_size - 1))
+                    {
+                      rec_writer_putc (writer, ' ');
+                    }
+                }
+              else
+                {
+                  if (i < (fex_size - 1))
+                    {
+                      rec_writer_putc (writer, '\n');
+                    }
+                }
+            }
+          else
+            {
+              /* Print the field according to the requested mode. */
+              rec_write_field (writer, field, mode);
+            }
+        }
+    }
+
+  if (print_values_p && (written_fields > 0))
+    {
+      rec_writer_putc (writer, '\n');
+    }
+
+  return true;
 }
 
 bool
@@ -232,7 +481,9 @@ rec_write_rset (rec_writer_t writer,
 
   if ((rec_rset_num_elems (rset) == 0) && descriptor)
     {
-      rec_write_record (writer, rec_rset_descriptor (rset));
+      rec_write_record (writer,
+                        rec_rset_descriptor (rset),
+                        REC_WRITER_NORMAL);
       return true;
     }
 
@@ -250,7 +501,9 @@ rec_write_rset (rec_writer_t writer,
       if (position == descriptor_pos)
         {
           if (descriptor 
-              && (!(wrote_descriptor = rec_write_record (writer, rec_rset_descriptor (rset)))))
+              && (!(wrote_descriptor = rec_write_record (writer,
+                                                         rec_rset_descriptor (rset),
+                                                         REC_WRITER_NORMAL))))
             {
               ret = false;
             }
@@ -268,11 +521,15 @@ rec_write_rset (rec_writer_t writer,
       
       if (rec_rset_elem_record_p (rset, elem))
         {
-          ret = rec_write_record (writer, rec_rset_elem_record (elem));
+          ret = rec_write_record (writer,
+                                  rec_rset_elem_record (elem),
+                                  REC_WRITER_NORMAL);
         }
       else
         {
-          ret = rec_write_comment (writer, rec_rset_elem_comment (elem));
+          ret = rec_write_comment (writer,
+                                   rec_rset_elem_comment (elem),
+                                   REC_WRITER_NORMAL);
         }
       
       if (!ret)
@@ -317,7 +574,8 @@ rec_write_db (rec_writer_t writer,
 }
 
 char *
-rec_write_field_str (rec_field_t field)
+rec_write_field_str (rec_field_t field,
+                     rec_writer_mode_t mode)
 {
   rec_writer_t writer;
   char *result;
@@ -332,7 +590,7 @@ rec_write_field_str (rec_field_t field)
 
       if (writer)
         {
-          rec_write_field (writer, field);
+          rec_write_field (writer, field, mode);
           rec_writer_destroy (writer);
         }
 
@@ -343,7 +601,8 @@ rec_write_field_str (rec_field_t field)
 }
 
 char *
-rec_write_field_name_str (rec_field_name_t field)
+rec_write_field_name_str (rec_field_name_t field,
+                          rec_writer_mode_t mode)
 {
   rec_writer_t writer;
   char *result;
@@ -358,7 +617,7 @@ rec_write_field_name_str (rec_field_name_t field)
 
       if (writer)
         {
-          rec_write_field_name (writer, field);
+          rec_write_field_name (writer, field, mode);
           rec_writer_destroy (writer);
         }
 
@@ -369,7 +628,8 @@ rec_write_field_name_str (rec_field_name_t field)
 }
 
 char *
-rec_write_comment_str (rec_comment_t comment)
+rec_write_comment_str (rec_comment_t comment,
+                       rec_writer_mode_t mode)
 {
   rec_writer_t writer;
   char *result;
@@ -384,7 +644,7 @@ rec_write_comment_str (rec_comment_t comment)
 
       if (writer)
         {
-          rec_write_comment (writer, comment);
+          rec_write_comment (writer, comment, mode);
           rec_writer_destroy (writer);
         }
 

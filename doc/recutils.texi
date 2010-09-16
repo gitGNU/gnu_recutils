@@ -1002,6 +1002,16 @@ matching records instead of the records themselves.  This option is
 incompatible with @option{-p}, @option{-P} and @option{-R}.
 @end table
 
+Some special @dfn{special options} are available to ease the
+communication between the recutils and other programs, such as lisp
+interpreters.
+
+@table @samp
+@item -S
+@itemx @w{@kbd{--print-sexps}}
+Print the data using sexps instead of rec format.
+@end table
+
 @node recsel Examples
 @section recsel Examples
 

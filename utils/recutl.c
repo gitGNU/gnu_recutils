@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-23 17:56:49 jco"
+/* -*- mode: C -*- Time-stamp: "2010-09-09 20:10:39 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -163,94 +163,24 @@ recutl_build_db (int argc, char **argv)
 char *
 recutl_eval_field_expression (rec_fex_t fex,
                               rec_record_t record,
+                              rec_writer_mode_t mode,
                               bool print_values_p,
                               bool print_in_a_row_p)
 {
   char *res;
   size_t res_size;
-  size_t fex_size;
   FILE *stm;
   rec_writer_t writer;
-  rec_fex_elem_t elem;
-  rec_field_t field;
-  rec_field_name_t field_name;
-  int i, j, min, max;
-  size_t written_fields = 0;
+  bool wrote_p;
 
   stm = open_memstream (&res, &res_size);
-  fex_size = rec_fex_size (fex);
-
-  for (i = 0; i < fex_size; i++)
-    {
-      elem = rec_fex_get (fex, i);
-      
-      field_name = rec_fex_elem_field_name (elem);
-      min = rec_fex_elem_min (elem);
-      max = rec_fex_elem_max (elem);
-
-      if ((min == -1) && (max == -1))
-        {
-          /* Print all the fields with that name.  */
-          min = 0;
-          max = rec_record_get_num_fields_by_name (record, field_name);
-        }
-      else if (max == -1)
-        {
-          /* Print just one field: Field[min].  */
-          max = min + 1;
-        }
-      else
-        {
-          /* Print the interval min..max, max inclusive.  */
-          max++;
-        }
-
-      for (j = min; j < max; j++)
-        {
-          if (!(field = rec_record_get_field_by_name (record, field_name, j)))
-            {
-              continue;
-            }
-
-          written_fields++;
-
-          if (print_values_p)
-            {
-              /* Write just the value of the field.  */
-              fprintf (stm, rec_field_value (field));
-              if (print_in_a_row_p)
-                {
-                  if (i < (fex_size - 1))
-                    {
-                      fprintf (stm, " ");
-                    }
-                }
-              else
-                {
-                  if (i < (fex_size - 1))
-                    {
-                      fprintf (stm, "\n");
-                    }
-                }
-            }
-          else
-            {
-              /* Write the whole field.  */
-              writer = rec_writer_new (stm);
-              rec_write_field (writer, field);
-              rec_writer_destroy (writer);
-            }
-        }
-    }
-
-  if (print_values_p && (written_fields > 0))
-    {
-      fprintf (stm, "\n");
-    }
-
+  writer = rec_writer_new (stm);
+  wrote_p = rec_write_record_with_fex (writer, record, fex, mode,
+                                       print_values_p, print_in_a_row_p);
+  rec_writer_destroy (writer);
   fclose (stm);
 
-  if (res_size == 0)
+  if (!wrote_p)
     {
       free (res);
       res = NULL;

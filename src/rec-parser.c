@@ -94,7 +94,10 @@ struct rec_parser_s
 
   bool eof;
   enum rec_parser_error_e error;
-  int line; /* Current line number. */
+
+  size_t line; /* Current line number. */
+  size_t character; /* Current offset from the beginning of the file,
+                       in characters.  */
 };
 
 const char *rec_parser_error_strings[] =
@@ -132,6 +135,7 @@ rec_parser_new (FILE *in,
       parser->eof = false;
       parser->error = false;
       parser->line = 1;
+      parser->character = 0;
       parser->prev_descriptor = NULL;
     }
 
@@ -296,6 +300,8 @@ rec_parse_field (rec_parser_t parser,
   rec_field_name_t field_name;
   char *field_value;
   size_t location;
+  size_t char_location;
+  size_t record_char_location;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -305,6 +311,12 @@ rec_parse_field (rec_parser_t parser,
     }
 
   location = parser->line;
+  char_location = parser->character;
+  if (char_location != 0)
+    {
+      char_location++;
+    }
+
   ret = rec_parse_field_name (parser, &field_name);
   if (ret)
     {
@@ -317,6 +329,7 @@ rec_parse_field (rec_parser_t parser,
 
           rec_field_set_source (new, parser->file_name);
           rec_field_set_location (new, location);
+          rec_field_set_char_location (new, char_location);
           *field = new;
         }
       else
@@ -339,6 +352,7 @@ rec_parse_record (rec_parser_t parser,
   int ci;
   char c;
   rec_comment_t comment;
+  size_t char_location;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -357,6 +371,12 @@ rec_parse_record (rec_parser_t parser,
   /* Localize the potential record.  */
   rec_record_set_source (new, parser->file_name);
   rec_record_set_location (new, parser->line);
+  char_location = parser->character;
+  if (char_location != 0)
+    {
+      char_location++;
+    }
+  rec_record_set_char_location (new, char_location);
 
   /* A record is a list of mixed fields and comments, containing at
    * least one field starting it:
@@ -653,9 +673,13 @@ rec_parser_getc (rec_parser_t parser)
     {
       parser->eof = true;
     }
-  else if (((char) ci) == '\n')
+  else 
     {
-      parser->line++;
+      parser->character++;
+      if (((char) ci) == '\n')
+        {
+          parser->line++;
+        }
     }
 
   return ci;
@@ -666,7 +690,8 @@ rec_parser_ungetc (rec_parser_t parser,
                    int ci)
 {
   int res;
-  
+
+  parser->character--;
   if (((char) ci) == '\n')
     {
       parser->line--;

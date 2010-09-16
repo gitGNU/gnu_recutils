@@ -45,6 +45,8 @@ struct rec_field_s
   char *source;
   size_t location;
   char *location_str;
+  size_t char_location;
+  char *char_location_str;
 };
 
 rec_field_name_t
@@ -56,7 +58,8 @@ rec_field_name (rec_field_t field)
 char *
 rec_field_name_str (rec_field_t field)
 {
-  return rec_write_field_name_str (rec_field_name (field));
+  return rec_write_field_name_str (rec_field_name (field),
+                                   REC_WRITER_NORMAL);
 }
 
 void
@@ -113,6 +116,8 @@ rec_field_new (rec_field_name_t name,
       field->source = NULL;
       field->location = 0;
       field->location_str = NULL;
+      field->char_location = 0;
+      field->char_location_str = NULL;
     }
   
   return field;
@@ -146,6 +151,7 @@ rec_field_dup (rec_field_t field)
 
 
   new_field->location = field->location;
+  new_field->char_location = field->char_location;
 
   if (field->source)
     {
@@ -155,6 +161,11 @@ rec_field_dup (rec_field_t field)
   if (field->location_str)
     {
       new_field->location_str = strdup (field->location_str);
+    }
+
+  if (field->char_location_str)
+    {
+      new_field->char_location_str = strdup (field->char_location_str);
     }
 
   return new_field;
@@ -184,6 +195,10 @@ rec_field_destroy (rec_field_t field)
     {
       free (field->location_str);
     }
+  if (field->char_location_str)
+    {
+      free (field->char_location_str);
+    }
 
   free (field);
 }
@@ -194,7 +209,8 @@ rec_field_to_comment (rec_field_t field)
   rec_comment_t res;
   char *comment_str;
   
-  comment_str = rec_write_field_str (field);
+  comment_str = rec_write_field_str (field,
+                                     REC_WRITER_NORMAL);
 
   /* Remove a trailing newline.  */
   if (comment_str[strlen (comment_str) - 1] == '\n')
@@ -266,6 +282,48 @@ rec_field_location_str (rec_field_t field)
       res = "";
     }
 
+  return res;
+}
+
+size_t
+rec_field_char_location (rec_field_t field)
+{
+  return field->char_location;
+}
+
+void
+rec_field_set_char_location (rec_field_t field,
+                             size_t location)
+{
+  field->char_location = location;
+
+  if (field->char_location_str)
+    {
+      free (field->char_location_str);
+      field->char_location_str = NULL;
+    }
+
+  field->char_location_str = malloc (90);
+  if (field->char_location_str)
+    {
+      sprintf (field->char_location_str, "%d", field->char_location);
+    }
+}
+
+char *
+rec_field_char_location_str (rec_field_t field)
+{
+  char *res;
+
+  if (field->char_location_str)
+    {
+      res = field->char_location_str;
+    }
+  else
+    {
+      res = "";
+    }
+  
   return res;
 }
 
