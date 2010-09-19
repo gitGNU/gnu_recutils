@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-09-09 20:12:21 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-09-19 14:06:46 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -71,7 +71,7 @@ General help using GNU software: <http://www.gnu.org/gethelp/>"
 
 #define COMMON_ARGS_DOC                            \
   "      --help                          print a help message and exit.\n\
-      --version                       show recsel version and exit.\n"  
+      --version                       show version and exit.\n"  
 
 /*
  * Record selection arguments.

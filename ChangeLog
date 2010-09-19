@@ -1,3 +1,9 @@
+2010-09-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Simple fix in --help.
+	* utils/recutl.h (COMMON_ARGS_DOC): Don't mention recsel in the
+	description of the --version option.
+
 2010-09-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: make C-a to do the right thing.
