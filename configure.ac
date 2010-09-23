@@ -24,6 +24,9 @@ AM_INIT_AUTOMAKE(recutils, git)
 AM_CONFIG_HEADER(src/config.h)
 AC_CONFIG_MACRO_DIR([m4])
 
+dnl Autobuild
+AB_INIT
+
 gl_EARLY
 
 AC_PROG_LIBTOOL

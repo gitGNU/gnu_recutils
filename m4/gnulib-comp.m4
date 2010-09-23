@@ -29,6 +29,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module alloca-opt:
   # Code from module arg-nonnull:
   # Code from module array-list:
+  # Code from module autobuild:
+  AB_INIT
   # Code from module c++defs:
   # Code from module c-ctype:
   # Code from module clock-time:
@@ -106,6 +108,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ALLOCA
   # Code from module arg-nonnull:
   # Code from module array-list:
+  # Code from module autobuild:
   # Code from module c++defs:
   # Code from module c-ctype:
   # Code from module clock-time:
@@ -434,6 +437,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xsize.h
   m4/00gnulib.m4
   m4/alloca.m4
+  m4/autobuild.m4
   m4/bison.m4
   m4/clock_time.m4
   m4/close-stream.m4

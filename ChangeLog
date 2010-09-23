@@ -1,3 +1,7 @@
+2010-09-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* configure.ac: Invoke AB_INIT.
+
 2010-09-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Simple fix in --help.
