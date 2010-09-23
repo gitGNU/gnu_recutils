@@ -12,7 +12,8 @@
 # This file represents the compiled summary of the specification in
 # gnulib-cache.m4. It lists the computed macro invocations that need
 # to be invoked from configure.ac.
-# In projects using CVS, this file can be treated like other built files.
+# In projects that use version control, this file can be treated like
+# other built files.
 
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -72,6 +73,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module strerror:
   # Code from module string:
   # Code from module sys_time:
+  # Code from module sys_wait:
   # Code from module time:
   # Code from module time_r:
   # Code from module timespec:
@@ -195,6 +197,9 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_STRING_H
   # Code from module sys_time:
   gl_HEADER_SYS_TIME_H
+  AC_PROG_MKDIR_P
+  # Code from module sys_wait:
+  gl_SYS_WAIT_H
   AC_PROG_MKDIR_P
   # Code from module time:
   gl_HEADER_TIME_H
@@ -414,6 +419,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strerror.c
   lib/string.in.h
   lib/sys_time.in.h
+  lib/sys_wait.in.h
   lib/time.in.h
   lib/time_r.c
   lib/timespec.h
@@ -491,6 +497,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strerror.m4
   m4/string_h.m4
   m4/sys_time_h.m4
+  m4/sys_wait_h.m4
   m4/threadlib.m4
   m4/time_h.m4
   m4/time_r.m4

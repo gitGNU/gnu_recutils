@@ -49,6 +49,12 @@
 # define _GL_ATTRIBUTE_PURE /* empty */
 #endif
 
+/* NetBSD 5.0 declares strsignal in <unistd.h>, not in <string.h>.  */
+/* But avoid namespace pollution on glibc systems.  */
+#if (@GNULIB_STRSIGNAL@ || defined GNULIB_POSIXCHECK)  \
+    && ! defined __GLIBC__
+# include <unistd.h>
+#endif
 
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 
@@ -233,6 +239,7 @@ _GL_WARN_ON_USE (stpcpy, "stpcpy is unportable - "
 #if @GNULIB_STPNCPY@
 # if @REPLACE_STPNCPY@
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef stpncpy
 #   define stpncpy rpl_stpncpy
 #  endif
 _GL_FUNCDECL_RPL (stpncpy, char *,
@@ -310,6 +317,10 @@ _GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
 _GL_FUNCDECL_RPL (strdup, char *, (char const *__s) _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (strdup, char *, (char const *__s));
 # else
+#  if defined __cplusplus && defined GNULIB_NAMESPACE && defined strdup
+    /* strdup exists as a function and as a macro.  Get rid of the macro.  */
+#   undef strdup
+#  endif
 #  if !(@HAVE_DECL_STRDUP@ || defined strdup)
 _GL_FUNCDECL_SYS (strdup, char *, (char const *__s) _GL_ARG_NONNULL ((1)));
 #  endif
