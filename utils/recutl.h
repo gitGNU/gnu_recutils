@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-09-19 14:06:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-24 22:07:26 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -26,23 +26,6 @@
 #ifndef RECUTL_H
 #define RECUTL_H
 
-#define RECUTL_VERSION "0.1"
-
-#define RECUTL_COPYRIGHT_DOC(NAME)              \
-  char *recutl_version_msg =                    \
-   NAME " (GNU recutils) " RECUTL_VERSION "\n\
-Copyright (C) 2010 Jose E. Marchesi.\n\
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
-This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n\
-\n\
-Written by Jose E. Marchesi."
-
-#define RECUTL_HELP_FOOTER_DOC(NAME)           \
-  "Report " NAME " bugs to bug-recutils@gnu.org\n\
-GNU recutils home page: <http://www.gnu.org/software/recutils/>\n\
-General help using GNU software: <http://www.gnu.org/gethelp/>"
-
 /*
  * Common arguments.
  */
@@ -58,20 +41,16 @@ General help using GNU software: <http://www.gnu.org/gethelp/>"
 #define COMMON_ARGS_CASES                          \
   case HELP_ARG:                                   \
     {                                              \
-     fprintf (stdout, "%s\n", recutl_help_msg);    \
-     exit (0);                                     \
-     break;                                        \
-   }                                               \
- case VERSION_ARG:                                 \
-   {                                               \
-     fprintf (stdout, "%s\n", recutl_version_msg); \
-     exit (0);                                     \
-     break;                                        \
-   }
-
-#define COMMON_ARGS_DOC                            \
-  "      --help                          print a help message and exit.\n\
-      --version                       show version and exit.\n"  
+      recutl_print_help ();                        \
+      exit (0);                                    \
+      break;                                       \
+    }                                              \
+  case VERSION_ARG:                                \
+    {                                              \
+      recutl_print_version ();                     \
+      exit (0);                                    \
+      break;                                       \
+    }
 
 /*
  * Record selection arguments.
@@ -154,19 +133,16 @@ General help using GNU software: <http://www.gnu.org/gethelp/>"
           break;                                               \
       }
 
-#define RECORD_SELECTION_ARGS_DOC               \
-  "Record selection options:\n\
-  -i, --case-insensitive              make strings case-insensitive in selection\n\
-                                        expressions.\n\
-  -t, --type=TYPE                     print records of the specified type only.\n\
-  -e, --expression=EXPR               selection expression.\n\
-  -n, --number=NUM                    select an specific record.\n"   
-
 /*
  * Function prototypes.
  */
 
 void recutl_init (char *util_name);
+void recutl_print_version (void);
+void recutl_print_help_common (void);
+void recutl_print_help_footer (void);
+void recutl_print_help_record_selection (void);
+
 
 void recutl_error (char *fmt, ...);
 void recutl_fatal (char *fmt, ...);

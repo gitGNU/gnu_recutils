@@ -18,9 +18,11 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT(src/rec.h)
+AC_INIT([GNU recutils], [git], [bug-recutils@gnu.org])
+
+dnl Must come before AM_INIT_AUTOMAKE
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE(recutils, git)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(src/config.h)
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -92,8 +94,18 @@ case "${host}" in
           ;;
 esac
 
+dnl i18n with gettext
+AM_GNU_GETTEXT_VERSION([0.18.1])
+AM_GNU_GETTEXT([external])
+
 dnl Generate output files
-AC_OUTPUT(Makefile lib/Makefile src/Makefile utils/Makefile doc/Makefile torture/Makefile)
+AC_OUTPUT(Makefile
+          lib/Makefile
+          src/Makefile
+          utils/Makefile
+          doc/Makefile
+          po/Makefile.in
+          torture/Makefile)
 
 dnl Report warnings
 

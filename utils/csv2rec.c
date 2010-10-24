@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-23 17:55:38 jco"
+/* -*- mode: C -*- Time-stamp: "2010-10-24 23:05:38 jemarch"
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010
@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <libcsv/csv.h>
 #include <rec.h>
@@ -91,27 +93,46 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-/* Messages */
+/*
+ * Functions.
+ */
 
-RECUTL_COPYRIGHT_DOC ("csv2rec");
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, csv2rec synopsis.
+     no-wrap */
+  printf (_("\
+Usage: csv2rec [OPTIONS]... [CSV_FILE]\n"));
 
-char *recutl_help_msg= "\
-Usage: csv2rec [OPTIONS]... [CSV_FILE]\n\
-Convert csv data into rec data.\n\
-\n\
-Mandatory arguments to long options are mandatory for short options too.\n\
+  /* TRANSLATORS: --help output, csv2rec short description.
+     no-wrap */
+  fputs (_("\
+Convert csv data into rec data.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, csv2rec options.
+     no-wrap */
+  fputs (_("\
   -t, --type                          Type name for the converted records.  If this\n\
                                          parameter is ommited then no type is used.\n\
   -s, --strict                        Be strict parsing the csv file.\n\
-  -e, --omit-empty                    Omit empty fields.\n"
-COMMON_ARGS_DOC
-"\n\
+  -e, --omit-empty                    Omit empty fields.\n"), stdout);
+
+  recutl_print_help_common ();
+
+  puts ("");
+  /* TRANSLATORS: --help output, csv2rec examples.
+     no-wrap */
+  fputs (_("\
 Examples:\n\
 \n\
         csv2rec contacts.csv > contacts.rec\n\
-        cat contacts.csv | csv2rec > contacts.rec\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("csv2rec");
+        cat contacts.csv | csv2rec > contacts.rec\n"), stdout);
+
+  puts ("");
+  recutl_print_help_footer ();
+}
 
 static void
 parse_args (int argc,
@@ -160,7 +181,7 @@ parse_args (int argc,
     {
       if ((argc - optind) != 1)
         {
-          fprintf (stdout, "%s\n", recutl_help_msg);
+          recutl_print_help ();
           exit (1);
         }
 
@@ -200,7 +221,7 @@ field_cb (void *s, size_t len, void *data)
       ctx->num_field_names++;
       if (ctx->num_field_names == MAX_FIELDS)
         {
-          recutl_fatal ("reached maximum number of fields: %d\n",
+          recutl_fatal (_("reached maximum number of fields: %d\n"),
                         ctx->num_field_names);
         }
 
@@ -218,7 +239,7 @@ field_cb (void *s, size_t len, void *data)
       field_name = rec_parse_field_name_str (str);
       if (!field_name)
         {
-          recutl_fatal ("invalid field name '%s' in header\n",
+          recutl_fatal (_("invalid field name '%s' in header\n"),
                         str);
         }
       rec_field_name_destroy (field_name);
@@ -235,7 +256,7 @@ field_cb (void *s, size_t len, void *data)
           ctx->record = rec_record_new ();
           if (!ctx->record)
             {
-              recutl_fatal ("out of memory\n");
+              recutl_fatal (_("out of memory\n"));
             }
         }
       
@@ -245,7 +266,7 @@ field_cb (void *s, size_t len, void *data)
 
           if (ctx->num_fields > ctx->num_field_names)
             {
-              recutl_fatal ("not enough headers");
+              recutl_fatal (_("not enough headers"));
             }
           rec_field_name_set (field_name, 0, ctx->field_names[ctx->num_fields]);
           field = rec_field_new (field_name, str);
@@ -274,7 +295,7 @@ record_cb (int c, void *data)
           ctx->rset = rec_rset_new ();
           if (!ctx->rset)
             {
-              recutl_fatal ("out of memory\n");
+              recutl_fatal (_("out of memory\n"));
             }
 
           /* Add a type, if needed.  */
@@ -289,7 +310,7 @@ record_cb (int c, void *data)
               ctx->db = rec_db_new ();
               if (!ctx->db)
                 {
-                  recutl_fatal ("out of memory\n");
+                  recutl_fatal (_("out of memory\n"));
                 }
             }
           rec_db_insert_rset (ctx->db, ctx->rset, rec_db_size (ctx->db));
@@ -332,7 +353,7 @@ process_csv (void)
     {
       if (!(in = fopen (csv2rec_csv_file, "r")))
         {
-          recutl_fatal ("cannot read file %s\n", csv2rec_csv_file);
+          recutl_fatal (_("cannot read file %s\n"), csv2rec_csv_file);
         }
     }
   else
@@ -345,7 +366,7 @@ process_csv (void)
   /* Initialize the csv library.  */
   if (csv_init (&p, options) != 0)
     {
-      recutl_fatal ("failed to initialize csv parser\n");
+      recutl_fatal (_("failed to initialize csv parser\n"));
     }
 
   /* Set some properties of the parser.  */
@@ -363,7 +384,7 @@ process_csv (void)
     {
       if (csv_parse (&p, buf, bytes_read, field_cb, record_cb, &ctx) != bytes_read)
         {
-          recutl_fatal ("error while parsing CSV file: %s\n",
+          recutl_fatal (_("error while parsing CSV file: %s\n"),
                         csv_strerror (csv_error (&p)));
         }
 

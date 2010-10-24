@@ -20,7 +20,8 @@ lib_LTLIBRARIES = librec.la
 
 include_HEADERS = rec.h
 
-librec_la_SOURCES = rec-mset.h \
+librec_la_SOURCES = rec.c \
+                    rec-mset.h \
                     rec-mset.c \
                     rec-utils.h \
                     rec-utils.c \
@@ -46,7 +47,7 @@ librec_la_SOURCES = rec-mset.h \
                     rec-types.c
 
 AM_LDFLAGS =
-AM_CPPFLAGS = -I$(top_srcdir)/lib
+AM_CPPFLAGS = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \
                    $(LIB_CLOCK_GETTIME)
 

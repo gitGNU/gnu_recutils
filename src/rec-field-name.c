@@ -29,6 +29,8 @@
 #include <string.h>
 #include <regex.h>
 #include <ctype.h>
+#include <libintl.h>
+#define _(str) dgettext (PACKAGE, str)
 
 #include <rec.h>
 
@@ -234,7 +236,7 @@ rec_field_name_str_p (const char *str)
   /* Compile the regexp.  */
   if ((ret = regcomp (&regexp, "^" REC_FNAME_RE "$", REG_EXTENDED)) != 0)
     {
-      fprintf (stderr, "internal error: rec_field_name_str_p: error compiling regexp.\n");
+      fprintf (stderr, _("internal error: rec_field_name_str_p: error compiling regexp.\n"));
       return false;
     }
 
@@ -256,7 +258,7 @@ rec_field_name_part_str_p (const char *str)
                       "^" REC_FNAME_PART_RE "$",
                       REG_EXTENDED)) != 0)
     {
-      fprintf (stderr, "internal error: rec_field_name_part_str_p: error compiling regexp.\n");
+      fprintf (stderr, _("internal error: rec_field_name_part_str_p: error compiling regexp.\n"));
       return false;
     }
 

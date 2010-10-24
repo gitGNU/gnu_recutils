@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <rec.h>
 #include <recutl.h>
@@ -98,38 +100,69 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-/* Messages */
+/*
+ * Functions.
+ */
 
-RECUTL_COPYRIGHT_DOC ("recset");
 
-char *recutl_help_msg = "\
-Usage: recset [OPTION]... [FILE]...\n\
-Alter or delete fields in records.\n\
-\n\
-Mandatory arguments to long options are mandatory for short options too.\n\
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, recset synopsis.
+     no-wrap */
+  printf (_("\
+Usage: recset [OPTION]... [FILE]...\n"));
+
+  /* TRANSLATORS: --help output, recset short description.
+     no-wrap */
+  fputs (_("\
+Alter or delete fields in records.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recset options.
+     no-wrap */
+  fputs (_("\
   -i, --case-insensitive              make strings case-insensitive in selection\n\
       --force                         alter the records even if violating record\n\
-                                        restrictions.\n"
-COMMON_ARGS_DOC
-"\n"
-RECORD_SELECTION_ARGS_DOC
-"\n\
+                                        restrictions.\n"), stdout);
+
+  recutl_print_help_common ();
+
+  puts ("");
+  recutl_print_help_record_selection ();
+
+  puts ("");
+  /* TRANSLATORS: --help output, recset field selection options.
+     no-wrap */
+  fputs (_("\
 Fields selection options:\n\
   -f, --fields=FIELDS                 comma-separated list of field names with optional\n\
-                                        subscripts.\n\
+                                        subscripts.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recset actions.
+     no-wrap */
+  fputs (_("\
 Actions:\n\
   -s, --set=VALUE                     change the value of the selected fields.\n\
   -a, --add=VALUE                  add the selected fields with the given value.\n\
   -d, --delete                        delete the selected fields.\n\
-  -c, --comment                       comment out the selected fields.\n\
-\n\
+  -c, --comment                       comment out the selected fields.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recset examples.
+     no-wrap */
+  fputs (_("\
 Examples:\n\
 \n\
         recset -f TmpName -d data.rec\n\
         recset -f Email[1] -s invalid@email.com friends.rec\n\
-        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("recset");
+        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"),
+         stdout);
+  
+  puts ("");
+  recutl_print_help_footer ();
+}
 
 static void
 recset_parse_args (int argc,
@@ -174,7 +207,7 @@ recset_parse_args (int argc,
                                       REC_FEX_SUBSCRIPTS);
             if (!recutl_fex)
               {
-                recutl_fatal ("creating the field expression.\n");
+                recutl_fatal (_("creating the field expression.\n"));
               }
 
             /* Sort it.  */
@@ -187,12 +220,12 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                recutl_fatal ("please specify some field with -f.\n");
+                recutl_fatal (_("please specify some field with -f.\n"));
               }
 
             if (recset_action != RECSET_ACT_NONE)
               {
-                recutl_fatal ("please specify just one action.\n");
+                recutl_fatal (_("please specify just one action.\n"));
               }
             
             recset_action = RECSET_ACT_SET;
@@ -204,12 +237,12 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                recutl_fatal ("please specify some field with -f.\n");
+                recutl_fatal (_("please specify some field with -f.\n"));
               }
 
             if (recset_action != RECSET_ACT_NONE)
               {
-                recutl_fatal ("please specify just one action.\n");
+                recutl_fatal (_("please specify just one action.\n"));
               }
 
             recset_action = RECSET_ACT_ADD;
@@ -221,12 +254,12 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                recutl_fatal ("please specify some field with -f.\n");
+                recutl_fatal (_("please specify some field with -f.\n"));
               }
 
             if (recset_action != RECSET_ACT_NONE)
               {
-                recutl_fatal ("please specify just one action.\n");
+                recutl_fatal (_("please specify just one action.\n"));
               }
 
             recset_action = RECSET_ACT_DELETE;
@@ -237,12 +270,12 @@ recset_parse_args (int argc,
           {
             if (!recutl_fex)
               {
-                recutl_fatal ("please specify some field with -f.\n");
+                recutl_fatal (_("please specify some field with -f.\n"));
               }
 
             if (recset_action != RECSET_ACT_NONE)
               {
-                recutl_fatal ("please specify just one action.\n");
+                recutl_fatal (_("please specify just one action.\n"));
               }
 
             recset_action = RECSET_ACT_COMMENT;
@@ -261,7 +294,7 @@ recset_parse_args (int argc,
     {
       if ((argc - optind) != 1)
         {
-          fprintf (stderr, "%s\n", recutl_help_msg);
+          recutl_print_help ();
           exit (1);
         }
 
@@ -360,7 +393,7 @@ recset_process_actions (rec_db_t db)
 
           if (!parse_status)
             {
-              recutl_fatal ("invalid selection expression.\n");
+              recutl_fatal (_("invalid selection expression.\n"));
             }
           
           numrec++;
@@ -375,15 +408,15 @@ recset_process_actions (rec_db_t db)
               fclose (errors_stm);
               if (!recset_verbose)
                 {
-                  recutl_error ("operation aborted due to integrity failures\n");
-                  recutl_error ("use --verbose to get a detailed report\n");
+                  recutl_error (_("operation aborted due to integrity failures\n"));
+                  recutl_error (_("use --verbose to get a detailed report\n"));
                 }
               else
                 {
                   recutl_error ("%s", errors_str);
                 }
 
-              recutl_fatal ("use --force to skip the integrity check\n");
+              recutl_fatal (_("use --force to skip the integrity check\n"));
             }
         }
     }

@@ -1,0 +1,34 @@
+# List of source files which contain translatable strings.
+
+# Package source files.
+src/rec.c
+src/rec-comment.c
+src/rec-db.c
+src/rec-fex.c
+src/rec-field.c
+src/rec-field-name.c
+src/rec-int.c
+src/rec-mset.c
+src/rec-parser.c
+src/rec-record.c
+src/rec-rset.c
+src/rec-sex-ast.c
+src/rec-sex.c
+src/rec-sex.lex.c
+src/rec-sex-parser.c
+src/rec-sex.tab.c
+src/rec-types.c
+src/rec-utils.c
+src/rec-writer.c
+utils/csv2rec
+utils/csv2rec.c
+utils/mdb2rec
+utils/mdb2rec.c
+utils/recdel.c
+utils/recfix.c
+utils/recinf.c
+utils/recins.c
+utils/recsel.c
+utils/recset.c
+utils/recutl.c
+

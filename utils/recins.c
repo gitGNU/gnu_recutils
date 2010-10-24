@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <rec.h>
 #include <recutl.h>
@@ -73,33 +75,58 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-/* Messages */
+/*
+ * Functions.
+ */
 
-RECUTL_COPYRIGHT_DOC ("recins");
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, recins synopsis.
+     no-wrap */
+  printf (_("\
+Usage: recins [OPTION]... [-f STR -v STR]... [FILE]\n"));
 
-char *recutl_help_msg = "\
-Usage: recins [OPTION]... [-f STR -v STR]... [FILE]\n\
-Insert new records in a rec database.\n\
-\n\
+  /* TRANSLATORS: --help output, recins short description.
+     no-wrap */
+  fputs (_("\
+Insert new records in a rec database.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recins arguments.
+     no-wrap */
+  fputs (_("\
   -t, --type=TYPE                     specify the type of the new record.\n\
   -f, --field=STR                     field name.  Should be followed by a -v.\n\
   -v, --value=STR                     field value.  Should be preceded by a -f.\n\
       --force                         insert the record even if it is violating\n\
                                         record restrictions.\n\
       --verbose                       get a detailed report if the integrity check\n\
-                                        fails.\n"
-COMMON_ARGS_DOC
-"\n\
+                                        fails.\n"), stdout);
+
+  recutl_print_help_common ();
+
+  puts ("");
+  /* TRANSLATORS: --help output, notes on recins.
+     no-wrap */
+  fputs (_("\
 If no FILE is specified then the command acts like a filter, getting\n\
 the data from the standard input and writing the result in the\n\
-standard output.\n\
-\n\
+standard output.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recins examples.
+     no-wrap */
+  fputs (_("\
 Examples:\n\
 \n\
         recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n\
-        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("recins");
+        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n"),
+         stdout);
+
+  puts ("");
+  recutl_print_help_footer ();
+}
 
 bool
 recins_insert_record (rec_db_t db,
@@ -176,15 +203,15 @@ recins_insert_record (rec_db_t db,
           fclose (errors_stm);
           if (!recins_verbose)
             {
-              recutl_error ("operation aborted due to integrity failures.\n");
-              recutl_error ("use --verbose to get a detailed report.\n");
+              recutl_error (_("operation aborted due to integrity failures.\n"));
+              recutl_error (_("use --verbose to get a detailed report.\n"));
             }
           else
             {
               recutl_error ("%s", errors_str);
             }
 
-          recutl_fatal ("use --force to skip the integrity chech\n");
+          recutl_fatal (_("use --force to skip the integrity chech\n"));
         }
     }
 
@@ -233,7 +260,7 @@ void recins_parse_args (int argc,
           {
             if (field != NULL)
               {
-                recutl_fatal ("a -f should be followed by a -v\n");
+                recutl_fatal (_("a -f should be followed by a -v\n"));
                 exit (1);
               }
 
@@ -259,7 +286,7 @@ void recins_parse_args (int argc,
 
             if (!(field_name = rec_parse_field_name_str (field_name_str)))
               {
-                recutl_fatal ("invalid field name %s\n", optarg);
+                recutl_fatal (_("invalid field name %s\n"), optarg);
               }
             
             field = rec_field_new (field_name,
@@ -271,7 +298,7 @@ void recins_parse_args (int argc,
           {
             if (field == NULL)
               {
-                recutl_fatal ("a -v should be preceded by a -f\n");
+                recutl_fatal (_("a -v should be preceded by a -f\n"));
               }
 
             rec_field_set_value (field, optarg);
@@ -289,7 +316,7 @@ void recins_parse_args (int argc,
 
   if (field != NULL)
     {
-      recutl_fatal ("please provide a value for the field %s\n", field_name_str);
+      recutl_fatal (_("please provide a value for the field %s\n"), field_name_str);
     }
 
   /* Read the name of the file where to make the insertions.  */
@@ -298,7 +325,7 @@ void recins_parse_args (int argc,
 
       if ((argc - optind) != 1)
         {
-          fprintf (stdout, "%s\n", recutl_help_msg);
+          recutl_print_help ();
           exit (1);
         }
 

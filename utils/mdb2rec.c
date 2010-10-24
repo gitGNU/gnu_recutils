@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <glib.h>
 #include <mdbtools.h>
@@ -90,28 +92,49 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-/* Messages */
+/*
+ * Functions.
+ */
 
-RECUTL_COPYRIGHT_DOC ("mdb2rec");
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, mdb2rec synopsis.
+     no-wrap */
+  printf (_("\
+Usage: mdb2rec [OPTIONS]... MDB_FILE [TABLE]\n"));
 
-char *recutl_help_msg="\
-Usage: mdb2rec [OPTIONS]... MDB_FILE [TABLE]\n\
-Convert an mdb file into a rec file.\n\
-\n\
-Mandatory arguments to long options are mandatory for short options too.\n\
+  /* TRANSLATORS: --help output, mdb2rec short description.
+     no-wrap */
+  fputs (_("\
+Convert an mdb file into a rec file.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, mdb2rec options.
+     no-wrap */
+  fputs (_("\
   -s, --system-tables                 include system tables.\n\
   -e, --keep-empty-fields             don't prune empty fields in the rec\n\
                                         output\n\
   -l, --list-tables                   dump a list of the table names contained\n\
-                                        in the mdb file.\n"
-COMMON_ARGS_DOC
-"\n\
+                                        in the mdb file.\n"),
+         stdout);
+
+  recutl_print_help_common ();
+
+  puts ("");
+  /* TRANSLATORS: --help output, mdb2rec examples.
+     no-wrap */
+  fputs (_("\
 Examples:\n\
 \n\
         mdb2rec database.mdb > database.rec\n\
-        mdb2rec database.mdb Customers > customers.rec\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("mdb2rec");
+        mdb2rec database.mdb Customers > customers.rec\n"),
+         stdout);
+
+  puts ("");
+  recutl_print_help_footer ();
+}
 
 static void
 parse_args (int argc,
@@ -158,7 +181,7 @@ parse_args (int argc,
   /* Read the name of the mdb file.  */
   if ((argc - optind) > 2)
     {
-      fprintf (stdout, "%s\n", recutl_help_msg);
+      recutl_print_help ();
       exit (1);
     }
   else
@@ -241,7 +264,7 @@ get_field_name (MdbHandle *mdb,
             rec_field_name_part_normalise (relationships[i].referenced_table);
           if (!referenced_table)
             {
-              recutl_fatal ("failed to normalise record type name %s\n",
+              recutl_fatal (_("failed to normalise record type name %s\n"),
                             relationships[i].referenced_table);
             }
 
@@ -249,7 +272,7 @@ get_field_name (MdbHandle *mdb,
             rec_field_name_part_normalise (relationships[i].referenced_column);
           if (!referenced_column)
             {
-              recutl_fatal ("failed to normalise field name %s\n",
+              recutl_fatal (_("failed to normalise field name %s\n"),
                             relationships[i].referenced_column);
             }
 
@@ -261,7 +284,7 @@ get_field_name (MdbHandle *mdb,
   field_name_str = rec_field_name_part_normalise (col_name);
   if (!field_name_str)
     {
-      recutl_fatal ("failed to normalise field name %s\n",
+      recutl_fatal (_("failed to normalise field name %s\n"),
                     table_name);
     }
 
@@ -314,14 +337,14 @@ process_table (MdbCatalogEntry *entry)
   rset = rec_rset_new ();
   if (!rset)
     {
-      recutl_fatal ("out of memory\n");
+      recutl_fatal (_("out of memory\n"));
     }
 
   /* Create the record descriptor and add the %rec: entry.  */
   field_name_str = rec_field_name_part_normalise (table_name);
   if (!field_name_str)
     {
-      recutl_fatal ("failed to normalise record type name %s\n",
+      recutl_fatal (_("failed to normalise record type name %s\n"),
                     table_name);
     }
 
@@ -421,7 +444,7 @@ process_table (MdbCatalogEntry *entry)
       record = rec_record_new ();
       if (!record)
         {
-          recutl_fatal ("out of memory\n");
+          recutl_fatal (_("out of memory\n"));
         }
 
       for (i = 0; i < table->num_cols; i++)
@@ -447,7 +470,7 @@ process_table (MdbCatalogEntry *entry)
               field = rec_field_new (field_name, field_value);
               if (!field)
                 {
-                  recutl_fatal ("invalid field name %s\n", col->name);
+                  recutl_fatal (_("invalid field name %s\n"), col->name);
                 }
 
               rec_record_append_field (record, field);
@@ -479,7 +502,7 @@ process_mdb (void)
   db = rec_db_new ();
   if (!db)
     {
-      recutl_fatal ("out of memory");
+      recutl_fatal (_("out of memory"));
     }
 
   /* Initialize libmdb and open the input file.  */
@@ -489,14 +512,14 @@ process_mdb (void)
   mdb = mdb_open (mdb2rec_mdb_file, MDB_NOFLAGS);
   if (!mdb)
     {
-      recutl_fatal ("could not open file %s\n",
+      recutl_fatal (_("could not open file %s\n"),
                     mdb2rec_mdb_file);
     }
 
   /* Read the catalog.  */
   if (!mdb_read_catalog (mdb, MDB_TABLE))
     {
-      recutl_fatal ("file does not appear to be an Access database\n");
+      recutl_fatal (_("file does not appear to be an Access database\n"));
     }
 
   /* Read relationships from the database.  Relationships in mdb files

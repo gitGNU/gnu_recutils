@@ -40,6 +40,13 @@
 #define REC_VERSION_MINOR 0
 #define REC_VERSION_STRING "1.0"
 
+/* 
+ * INITIALIZATION of the library
+ */
+
+void rec_init (void);
+void rec_fini (void);
+
 /*
  * COMMENTS
  *

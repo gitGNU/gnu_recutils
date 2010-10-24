@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <rec.h>
 #include <recutl.h>
@@ -63,35 +65,67 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-/* Messages */
-
-RECUTL_COPYRIGHT_DOC ("recinf");
-
-char *recutl_help_msg = "\
-Usage: recinf [OPTION]... [FILE]...\n\
-Print information about the types of records stored in the input.\n\
-\n\
-  -t, --type=RECORD_TYPE          print information on the records having the\n\
-                                    specified type.\n\
-  -d, --descriptor                include the full record descriptors.\n\
-  -n, --names-only                output just the names of the record files\n\
-                                    found in the input.\n"
-COMMON_ARGS_DOC
-"\
-Special options:\n\
-  -S, --print-sexps                   print the data in sexps instead of rec format.\n\
-\n\
-Examples:\n\
-\n\
-        recinf mydata.rec\n\
-        recinf -d mydata.rec moredata.rec\n\
-        recinf -t Issue TODO\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("recinf");
+/*
+ * Global variables.
+ */
 
 bool recinf_descriptor = false;
 bool recinf_names_only = false;
 char *recinf_type = NULL;
+
+/*
+ * Functions.
+ */
+
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, recinf synopsis.
+     no-wrap */
+  printf (_("\
+Usage: recinf [OPTION]... [FILE]...\n"));
+
+  /* TRANSLATORS: --help output, recinf short description.
+     no-wrap */
+  fputs (_("\
+Print information about the types of records stored in the input.\n"),
+         stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recinf arguments.
+     no-wrap */
+  fputs (_("\
+  -t, --type=RECORD_TYPE          print information on the records having the\n\
+                                    specified type.\n\
+  -d, --descriptor                include the full record descriptors.\n\
+  -n, --names-only                output just the names of the record files\n\
+                                    found in the input.\n"),
+         stdout);
+
+  recutl_print_help_common ();
+
+  puts ("");
+  /* TRANSLATORS: --help output, recinf special options.
+     no-wrap */
+  fputs (_("\
+Special options:\n\
+  -S, --print-sexps                   print the data in sexps instead of rec format.\n"),
+         stdout);
+  
+  puts ("");
+  /* TRANSLATORS: --help output, recinf examples.
+     no-wrap */
+  fputs (_("\
+Examples:\n\
+\n\
+        recinf mydata.rec\n\
+        recinf -d mydata.rec moredata.rec\n\
+        recinf -t Issue TODO\n"),
+         stdout);
+
+  puts ("");
+  recutl_print_help_footer ();
+}
 
 bool
 print_info_file (FILE *in,
@@ -234,7 +268,7 @@ main (int argc, char *argv[])
           file_name = argv[optind++];
           if (!(in = fopen (file_name, "r")))
             {
-              printf("error: cannot read file %s\n", file_name);
+              printf(_("error: cannot read file %s\n"), file_name);
               return 1;
             }
           else

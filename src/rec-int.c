@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-26 14:21:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-24 19:59:07 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -26,6 +26,9 @@
 #include <config.h>
 
 #include <stdlib.h>
+#include <libintl.h>
+#define _(str) dgettext (PACKAGE, str)
+
 #include <rec.h>
 
 /*
@@ -214,7 +217,7 @@ rec_int_check_field_type (rec_db_t db,
           && errors)
         {
           /* Emit a warning.  */
-          fprintf (errors, "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n",
+          fprintf (errors, _("%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"),
                    rec_field_source (field), rec_field_location_str (field),
                    rec_type_kind_str (referred_type),
                    rec_type_kind_str (referring_type),
@@ -314,7 +317,7 @@ rec_int_check_record_mandatory (rec_rset_t rset,
                   == 0)
                 {
                   fprintf (errors,
-                           "%s:%s: error: mandatory field '%s' not found in record\n",
+                           _("%s:%s: error: mandatory field '%s' not found in record\n"),
                            rec_record_source (record),
                            rec_record_location_str (record),
                            mandatory_field_str);
@@ -371,7 +374,7 @@ rec_int_check_record_unique (rec_rset_t rset,
                   > 1)
                 {
                   fprintf (errors,
-                           "%s:%s: error: field '%s' shall be unique in this record\n",
+                           _("%s:%s: error: field '%s' shall be unique in this record\n"),
                            rec_record_source (record),
                            rec_record_location_str (record),
                            unique_field_str);
@@ -428,7 +431,7 @@ rec_int_check_record_prohibit (rec_rset_t rset,
                   > 0)
                 {
                   fprintf (errors,
-                           "%s:%s: error: prohibited field '%s' found in record\n",
+                           _("%s:%s: error: prohibited field '%s' found in record\n"),
                            rec_record_source (record),
                            rec_record_location_str (record),
                            prohibit_field_str);
@@ -483,7 +486,7 @@ rec_int_check_record_key (rec_rset_t rset,
               if (num_fields == 0)
                 {
                   fprintf (errors,
-                           "%s:%s: error: key field '%s' not found in record\n",
+                           _("%s:%s: error: key field '%s' not found in record\n"),
                            rec_record_source (record),
                            rec_record_location_str (record),
                            rec_field_value (field));
@@ -492,7 +495,7 @@ rec_int_check_record_key (rec_rset_t rset,
               else if (num_fields > 1)
                 {
                   fprintf (errors,
-                           "%s:%s: error: multiple key fields '%s' in record\n",
+                           _("%s:%s: error: multiple key fields '%s' in record\n"),
                            rec_record_source (record),
                            rec_record_location_str (record),
                            rec_field_value (field));
@@ -535,7 +538,7 @@ rec_int_check_record_key (rec_rset_t rset,
                   if (duplicated_key)
                     {
                       fprintf (errors,
-                               "%s:%s: error: duplicated key value in field '%s' in record\n",
+                               _("%s:%s: error: duplicated key value in field '%s' in record\n"),
                                rec_record_source (orig_record),
                                rec_record_location_str (orig_record),
                                rec_field_name_str (key));
@@ -589,7 +592,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       if (!field)
         {
           fprintf (errors,
-                   "%s:%s: error: missing %%rec field in record descriptor\n",
+                   _("%s:%s: error: missing %%rec field in record descriptor\n"),
                    rec_record_source (descriptor),
                    rec_record_location_str (descriptor));
           res++;
@@ -597,7 +600,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       if (!rec_field_name_part_str_p (rec_field_value (field)))
         {
           fprintf (errors,
-                   "%s:%s: error: invalid record type %s\n",
+                   _("%s:%s: error: invalid record type %s\n"),
                    rec_field_source (field),
                    rec_field_location_str (field),
                    rec_field_value (field));
@@ -608,7 +611,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       if (rec_record_get_num_fields_by_name (descriptor, key_fname) > 1)
         {
           fprintf (errors,
-                   "%s:%s: error: only one %%key field is allowed in a record descriptor\n",
+                   _("%s:%s: error: only one %%key field is allowed in a record descriptor\n"),
                    rec_record_source (descriptor),
                    rec_record_location_str (descriptor));
           res++;
@@ -629,7 +632,7 @@ rec_int_check_descriptor (rec_rset_t rset,
                 {
                   /* XXX: make rec_type_descr_p to report more details.  */
                   fprintf (errors,
-                           "%s:%s: error: invalid type specification\n",
+                           _("%s:%s: error: invalid type specification\n"),
                            rec_field_source (field),
                            rec_field_location_str (field));
                   res++;
@@ -649,7 +652,7 @@ rec_int_check_descriptor (rec_rset_t rset,
               else
                 {
                   fprintf (errors,
-                           "%s:%s: error: value for %s[%d] is not a list of field names\n",
+                           _("%s:%s: error: value for %s[%d] is not a list of field names\n"),
                            rec_record_source (descriptor),
                            rec_record_location_str (descriptor),
                            rec_field_name_str (field),

@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <rec.h>
 #include <recutl.h>
@@ -73,32 +75,56 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-/* Messages */
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, recdel synopsis.
+     no-wrap */
+  printf (_("\
+Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n"));
 
-RECUTL_COPYRIGHT_DOC ("recdel");
+  /* TRANSLATORS: --help output, recdel short description.
+     no-wrap */
+  fputs (_("\
+Remove (or comment out) records from a rec file.\n"),
+         stdout);
 
-char *recutl_help_msg = "\
-Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n\
-Remove (or comment out) records from a rec file.\n\
-\n\
-Mandatory arguments to long options are mandatory for short options too.\n\
+  puts ("");
+  /* TRANSLATORS: --help output, recdel arguments.
+     no-wrap */
+  fputs (_("\
   -c, --comment                       comment the matching records instead of\n\
                                          delete them.\n\
-      --force                         delete even in potentially dangerous situations.\n"
-COMMON_ARGS_DOC
-"\n"
-RECORD_SELECTION_ARGS_DOC
-"\n\
+      --force                         delete even in potentially dangerous situations.\n"),
+         stdout);
+
+  recutl_print_help_common ();
+  
+  puts ("");
+  recutl_print_help_record_selection ();
+
+  puts ("");
+  /* TRANSLATORS: --help output, notes on recdel.
+     no-wrap */
+  fputs (_("\
 If no FILE is specified then the command acts like a filter, getting\n\
 the data from the standard input and writing the result in the\n\
-standard output.\n\
-\n\
+standard output.\n"),
+         stdout);
+
+  puts("");
+  /* TRANSLATORS: --help output, recdel examples.
+     no-wrap */
+  fputs (_("\
 Examples:\n\
 \n\
         recdel -n 10 contacts.rec\n\
-        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("recdel");
+        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n"),
+         stdout);
+  
+  puts ("");
+  recutl_print_help_footer ();
+}
 
 void
 recdel_delete_records (rec_db_t db)
@@ -119,7 +145,7 @@ recdel_delete_records (rec_db_t db)
 
   if (!rec_db_type_p (db, recutl_type))
     {
-      recutl_fatal ("no records of type %s found.\n",
+      recutl_fatal (_("no records of type %s found.\n"),
                     recutl_type ? recutl_type : "<default>");
     }
 
@@ -186,7 +212,7 @@ recdel_delete_records (rec_db_t db)
           
           if (!parse_status)
             {
-              recutl_fatal ("evaluating selection expression.\n");
+              recutl_fatal (_("evaluating selection expression.\n"));
             }
           
           numrec++;
@@ -234,9 +260,9 @@ recdel_parse_args (int argc,
 
   if ((recutl_num == -1) && !sex_str & !recdel_force)
     {
-      recutl_error ("ignoring a request to delete all records of type %s.\n",
+      recutl_error (_("ignoring a request to delete all records of type %s.\n"),
                     recutl_type ? recutl_type : "unknown");
-      recutl_fatal ("use --force if you really want to proceed, or use either -n or -e.\n");
+      recutl_fatal (_("use --force if you really want to proceed, or use either -n or -e.\n"));
     }
 
   if (sex_str)
@@ -244,7 +270,7 @@ recdel_parse_args (int argc,
       recutl_sex = rec_sex_new (recutl_insensitive);
       if (!rec_sex_compile (recutl_sex, sex_str))
         {
-          recutl_fatal ("invalid selection expression.\n");
+          recutl_fatal (_("invalid selection expression.\n"));
         }
     }
 
@@ -253,7 +279,7 @@ recdel_parse_args (int argc,
     {
       if ((argc - optind) != 1)
         {
-          fprintf (stdout, "%s\n", recutl_help_msg);
+          recutl_print_help ();
           exit (1);
         }
 

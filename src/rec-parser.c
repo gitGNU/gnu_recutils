@@ -28,6 +28,9 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdarg.h>
+#include <libintl.h>
+#define _(str) dgettext (PACKAGE, str)
+#define N_(str) gettext_noop (str)
 
 #include <rec.h>
 
@@ -186,7 +189,7 @@ rec_parser_perror (rec_parser_t parser,
       sprintf(number_str, "%d", parser->line);
       fputs (number_str, stderr);
       fputs (": error: ", stderr);
-      fputs (rec_parser_error_strings[parser->error], stderr);
+      fputs (gettext (rec_parser_error_strings[parser->error]), stderr);
       fputc ('\n', stderr);
     }
 

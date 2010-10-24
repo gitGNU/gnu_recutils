@@ -31,6 +31,8 @@
 #include <string.h>
 #include <regex.h>
 #include <getdate.h>
+#include <libintl.h>
+#define _(str) dgettext (PACKAGE, str)
 
 #include <rec.h>
 
@@ -369,8 +371,7 @@ rec_type_new (char *str)
       {
         /* This point should not be reached.  */
         fprintf (stderr,
-                 "rec-types: internal error: got REC_TYPE_NONE from"
-                 "rec_type_parse_type kind in rec_type_new.\n");
+                 _("rec-types: internal error: got REC_TYPE_NONE from rec_type_parse_type kind in rec_type_new.\n"));
         exit (1);
         break;
       }
@@ -674,7 +675,7 @@ rec_type_check_re (char *regexp_str,
   /* Compile the regexp.  */
   if ((status = regcomp (&regexp, regexp_str, REG_EXTENDED)) != 0)
     {
-      fprintf (stderr, "internal error: rec-types: error compiling regexp.\n");
+      fprintf (stderr, _("internal error: rec-types: error compiling regexp.\n"));
       printf("YYY: %s\n", regexp_str);
       return false;
     }
@@ -771,7 +772,7 @@ rec_type_check_int (rec_type_t type,
   ret = rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, "invalid integer.");
+      fprintf (errors, _("invalid integer."));
     }
 
   return ret;
@@ -787,7 +788,7 @@ rec_type_check_field (rec_type_t type,
   ret = rec_type_check_re (REC_TYPE_FIELD_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, "invalid 'field' value.");
+      fprintf (errors, _("invalid 'field' value."));
     }
 
   return ret;
@@ -803,7 +804,7 @@ rec_type_check_bool (rec_type_t type,
   ret = rec_type_check_re (REC_TYPE_BOOL_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, "invalid 'bool' value.");
+      fprintf (errors, _("invalid 'bool' value."));
     }
 
   return ret;
@@ -825,7 +826,7 @@ rec_type_check_range (rec_type_t type,
     {
       if (errors)
         {
-          fprintf (errors, "invalid 'range' value.");
+          fprintf (errors, _("invalid 'range' value."));
         }
       return false;
     }
@@ -834,7 +835,7 @@ rec_type_check_range (rec_type_t type,
          && (num <= type->data.range[1]));
   if (!ret && errors)
     {
-      fprintf (errors, "expected an integer between %d and %d.",
+      fprintf (errors, _("expected an integer between %d and %d."),
                type->data.range[0], type->data.range[1]);
     }
   
@@ -851,7 +852,7 @@ rec_type_check_real (rec_type_t type,
   ret = rec_type_check_re (REC_TYPE_REAL_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, "invalid 'real' value.");
+      fprintf (errors, _("invalid 'real' value."));
     }
 
   return ret;
@@ -868,7 +869,7 @@ rec_type_check_size (rec_type_t type,
   if (!ret && errors)
     {
       fprintf (errors,
-               "value too large.  Expected a size <= %d.",
+               _("value too large.  Expected a size <= %d."),
                type->data.max_size);
     }
   
@@ -885,7 +886,7 @@ rec_type_check_line (rec_type_t type,
   ret = rec_type_check_re (REC_TYPE_LINE_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, "invalid 'line' value.");
+      fprintf (errors, _("invalid 'line' value."));
     }
 
   return ret;
@@ -904,7 +905,7 @@ rec_type_check_regexp (rec_type_t type,
                   0) == 0);
   if (!ret && errors)
     {
-      fprintf (errors, "value does not match the regexp.");
+      fprintf (errors, _("value does not match the regexp."));
     }
 
   return ret;
@@ -921,7 +922,7 @@ rec_type_check_date (rec_type_t type,
   ret = get_date (&tm, str, NULL);
   if (!ret && errors)
     {
-      fprintf (errors, "invalid date.");
+      fprintf (errors, _("invalid date."));
     }
 
   return ret;
@@ -937,7 +938,7 @@ rec_type_check_email (rec_type_t type,
   ret = rec_type_check_re (REC_TYPE_EMAIL_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, "invalid email.");
+      fprintf (errors, _("invalid email."));
     }
 
   return ret;
@@ -990,7 +991,7 @@ rec_type_check_enum (rec_type_t type,
 
   if (errors)
     {
-      fprintf (errors, "invalid enum value.");
+      fprintf (errors, _("invalid enum value."));
     }
 
   return false;

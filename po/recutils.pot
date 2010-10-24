@@ -1,0 +1,752 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Jose E. Marchesi
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GNU recutils git\n"
+"Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
+"POT-Creation-Date: 2010-10-24 23:09+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/rec-fex.c:150
+#, c-format
+msgid "internal error: rec_resolver_check: error compiling regexp.\n"
+msgstr ""
+
+#: src/rec-fex.c:166
+#, c-format
+msgid "error: invalid field expression in -p: %s.\n"
+msgstr ""
+
+#: src/rec-field-name.c:239
+#, c-format
+msgid "internal error: rec_field_name_str_p: error compiling regexp.\n"
+msgstr ""
+
+#: src/rec-field-name.c:261
+#, c-format
+msgid "internal error: rec_field_name_part_str_p: error compiling regexp.\n"
+msgstr ""
+
+#: src/rec-int.c:220
+#, c-format
+msgid ""
+"%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
+msgstr ""
+
+#: src/rec-int.c:320
+#, c-format
+msgid "%s:%s: error: mandatory field '%s' not found in record\n"
+msgstr ""
+
+#: src/rec-int.c:377
+#, c-format
+msgid "%s:%s: error: field '%s' shall be unique in this record\n"
+msgstr ""
+
+#: src/rec-int.c:434
+#, c-format
+msgid "%s:%s: error: prohibited field '%s' found in record\n"
+msgstr ""
+
+#: src/rec-int.c:489
+#, c-format
+msgid "%s:%s: error: key field '%s' not found in record\n"
+msgstr ""
+
+#: src/rec-int.c:498
+#, c-format
+msgid "%s:%s: error: multiple key fields '%s' in record\n"
+msgstr ""
+
+#: src/rec-int.c:541
+#, c-format
+msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
+msgstr ""
+
+#: src/rec-int.c:595
+#, c-format
+msgid "%s:%s: error: missing %%rec field in record descriptor\n"
+msgstr ""
+
+#: src/rec-int.c:603
+#, c-format
+msgid "%s:%s: error: invalid record type %s\n"
+msgstr ""
+
+#: src/rec-int.c:614
+#, c-format
+msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
+msgstr ""
+
+#: src/rec-int.c:635
+#, c-format
+msgid "%s:%s: error: invalid type specification\n"
+msgstr ""
+
+#: src/rec-int.c:655
+#, c-format
+msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
+msgstr ""
+
+#: src/rec-types.c:374
+#, c-format
+msgid ""
+"rec-types: internal error: got REC_TYPE_NONE from rec_type_parse_type kind "
+"in rec_type_new.\n"
+msgstr ""
+
+#: src/rec-types.c:678
+#, c-format
+msgid "internal error: rec-types: error compiling regexp.\n"
+msgstr ""
+
+#: src/rec-types.c:775
+#, c-format
+msgid "invalid integer."
+msgstr ""
+
+#: src/rec-types.c:791
+#, c-format
+msgid "invalid 'field' value."
+msgstr ""
+
+#: src/rec-types.c:807
+#, c-format
+msgid "invalid 'bool' value."
+msgstr ""
+
+#: src/rec-types.c:829
+#, c-format
+msgid "invalid 'range' value."
+msgstr ""
+
+#: src/rec-types.c:838
+#, c-format
+msgid "expected an integer between %d and %d."
+msgstr ""
+
+#: src/rec-types.c:855
+#, c-format
+msgid "invalid 'real' value."
+msgstr ""
+
+#: src/rec-types.c:872
+#, c-format
+msgid "value too large.  Expected a size <= %d."
+msgstr ""
+
+#: src/rec-types.c:889
+#, c-format
+msgid "invalid 'line' value."
+msgstr ""
+
+#: src/rec-types.c:908
+#, c-format
+msgid "value does not match the regexp."
+msgstr ""
+
+#: src/rec-types.c:925
+#, c-format
+msgid "invalid date."
+msgstr ""
+
+#: src/rec-types.c:941
+#, c-format
+msgid "invalid email."
+msgstr ""
+
+#: src/rec-types.c:994
+#, c-format
+msgid "invalid enum value."
+msgstr ""
+
+#. TRANSLATORS: --help output, csv2rec synopsis.
+#. no-wrap
+#: utils/csv2rec.c:105
+#, c-format
+msgid "Usage: csv2rec [OPTIONS]... [CSV_FILE]\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, csv2rec short description.
+#. no-wrap
+#: utils/csv2rec.c:110
+msgid "Convert csv data into rec data.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, csv2rec options.
+#. no-wrap
+#: utils/csv2rec.c:116
+msgid ""
+"  -t, --type                          Type name for the converted records.  "
+"If this\n"
+"                                         parameter is ommited then no type "
+"is used.\n"
+"  -s, --strict                        Be strict parsing the csv file.\n"
+"  -e, --omit-empty                    Omit empty fields.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, csv2rec examples.
+#. no-wrap
+#: utils/csv2rec.c:127
+msgid ""
+"Examples:\n"
+"\n"
+"        csv2rec contacts.csv > contacts.rec\n"
+"        cat contacts.csv | csv2rec > contacts.rec\n"
+msgstr ""
+
+#: utils/csv2rec.c:224
+#, c-format
+msgid "reached maximum number of fields: %d\n"
+msgstr ""
+
+#: utils/csv2rec.c:242
+#, c-format
+msgid "invalid field name '%s' in header\n"
+msgstr ""
+
+#: utils/csv2rec.c:259 utils/csv2rec.c:298 utils/csv2rec.c:313
+#: utils/mdb2rec.c:340 utils/mdb2rec.c:447
+msgid "out of memory\n"
+msgstr ""
+
+#: utils/csv2rec.c:269
+msgid "not enough headers"
+msgstr ""
+
+#: utils/csv2rec.c:356 utils/recutl.c:220 utils/recutl.c:287
+#, c-format
+msgid "cannot read file %s\n"
+msgstr ""
+
+#: utils/csv2rec.c:369
+msgid "failed to initialize csv parser\n"
+msgstr ""
+
+#: utils/csv2rec.c:387
+#, c-format
+msgid "error while parsing CSV file: %s\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, mdb2rec synopsis.
+#. no-wrap
+#: utils/mdb2rec.c:104
+#, c-format
+msgid "Usage: mdb2rec [OPTIONS]... MDB_FILE [TABLE]\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, mdb2rec short description.
+#. no-wrap
+#: utils/mdb2rec.c:109
+msgid "Convert an mdb file into a rec file.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, mdb2rec options.
+#. no-wrap
+#: utils/mdb2rec.c:115
+msgid ""
+"  -s, --system-tables                 include system tables.\n"
+"  -e, --keep-empty-fields             don't prune empty fields in the rec\n"
+"                                        output\n"
+"  -l, --list-tables                   dump a list of the table names "
+"contained\n"
+"                                        in the mdb file.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, mdb2rec examples.
+#. no-wrap
+#: utils/mdb2rec.c:128
+msgid ""
+"Examples:\n"
+"\n"
+"        mdb2rec database.mdb > database.rec\n"
+"        mdb2rec database.mdb Customers > customers.rec\n"
+msgstr ""
+
+#: utils/mdb2rec.c:267 utils/mdb2rec.c:347
+#, c-format
+msgid "failed to normalise record type name %s\n"
+msgstr ""
+
+#: utils/mdb2rec.c:275 utils/mdb2rec.c:287
+#, c-format
+msgid "failed to normalise field name %s\n"
+msgstr ""
+
+#: utils/mdb2rec.c:473 utils/recins.c:289
+#, c-format
+msgid "invalid field name %s\n"
+msgstr ""
+
+#: utils/mdb2rec.c:505
+msgid "out of memory"
+msgstr ""
+
+#: utils/mdb2rec.c:515
+#, c-format
+msgid "could not open file %s\n"
+msgstr ""
+
+#: utils/mdb2rec.c:522
+msgid "file does not appear to be an Access database\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recdel synopsis.
+#. no-wrap
+#: utils/recdel.c:83
+#, c-format
+msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recdel short description.
+#. no-wrap
+#: utils/recdel.c:88
+msgid "Remove (or comment out) records from a rec file.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recdel arguments.
+#. no-wrap
+#: utils/recdel.c:95
+msgid ""
+"  -c, --comment                       comment the matching records instead "
+"of\n"
+"                                         delete them.\n"
+"      --force                         delete even in potentially dangerous "
+"situations.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, notes on recdel.
+#. no-wrap
+#. TRANSLATORS: --help output, notes on recins.
+#. no-wrap
+#: utils/recdel.c:109 utils/recins.c:112
+msgid ""
+"If no FILE is specified then the command acts like a filter, getting\n"
+"the data from the standard input and writing the result in the\n"
+"standard output.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recdel examples.
+#. no-wrap
+#: utils/recdel.c:118
+msgid ""
+"Examples:\n"
+"\n"
+"        recdel -n 10 contacts.rec\n"
+"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
+"rec\n"
+msgstr ""
+
+#: utils/recdel.c:148
+#, c-format
+msgid "no records of type %s found.\n"
+msgstr ""
+
+#: utils/recdel.c:215
+msgid "evaluating selection expression.\n"
+msgstr ""
+
+#: utils/recdel.c:263
+#, c-format
+msgid "ignoring a request to delete all records of type %s.\n"
+msgstr ""
+
+#: utils/recdel.c:265
+msgid "use --force if you really want to proceed, or use either -n or -e.\n"
+msgstr ""
+
+#: utils/recdel.c:273 utils/recset.c:396
+msgid "invalid selection expression.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfix synopsis.
+#. no-wrap
+#: utils/recfix.c:66
+#, c-format
+msgid "Usage: recfix [OPTION]... [FILE]...\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfix short description.
+#. no-wrap
+#: utils/recfix.c:71
+msgid "Check and fix rec files.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfix examples.
+#. no-wrap
+#: utils/recfix.c:80
+msgid ""
+"Examples:\n"
+"\n"
+"        recfix data.rec\n"
+"        recfix data1.rec data2.rec\n"
+"        cat data1.rec data2.rec | recfix\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recinf synopsis.
+#. no-wrap
+#: utils/recinf.c:85
+#, c-format
+msgid "Usage: recinf [OPTION]... [FILE]...\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recinf short description.
+#. no-wrap
+#: utils/recinf.c:90
+msgid "Print information about the types of records stored in the input.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recinf arguments.
+#. no-wrap
+#: utils/recinf.c:97
+msgid ""
+"  -t, --type=RECORD_TYPE          print information on the records having "
+"the\n"
+"                                    specified type.\n"
+"  -d, --descriptor                include the full record descriptors.\n"
+"  -n, --names-only                output just the names of the record files\n"
+"                                    found in the input.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recinf special options.
+#. no-wrap
+#. TRANSLATORS: --help output, recsel special options.
+#. no-wrap
+#: utils/recinf.c:110 utils/recsel.c:140
+msgid ""
+"Special options:\n"
+"  -S, --print-sexps                   print the data in sexps instead of rec "
+"format.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recinf examples.
+#. no-wrap
+#: utils/recinf.c:118
+msgid ""
+"Examples:\n"
+"\n"
+"        recinf mydata.rec\n"
+"        recinf -d mydata.rec moredata.rec\n"
+"        recinf -t Issue TODO\n"
+msgstr ""
+
+#: utils/recinf.c:271
+#, c-format
+msgid "error: cannot read file %s\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recins synopsis.
+#. no-wrap
+#: utils/recins.c:87
+#, c-format
+msgid "Usage: recins [OPTION]... [-f STR -v STR]... [FILE]\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recins short description.
+#. no-wrap
+#: utils/recins.c:92
+msgid "Insert new records in a rec database.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recins arguments.
+#. no-wrap
+#: utils/recins.c:98
+msgid ""
+"  -t, --type=TYPE                     specify the type of the new record.\n"
+"  -f, --field=STR                     field name.  Should be followed by a -"
+"v.\n"
+"  -v, --value=STR                     field value.  Should be preceded by a -"
+"f.\n"
+"      --force                         insert the record even if it is "
+"violating\n"
+"                                        record restrictions.\n"
+"      --verbose                       get a detailed report if the integrity "
+"check\n"
+"                                        fails.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recins examples.
+#. no-wrap
+#: utils/recins.c:120
+msgid ""
+"Examples:\n"
+"\n"
+"        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
+"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other."
+"rec\n"
+msgstr ""
+
+#: utils/recins.c:206
+msgid "operation aborted due to integrity failures.\n"
+msgstr ""
+
+#: utils/recins.c:207
+msgid "use --verbose to get a detailed report.\n"
+msgstr ""
+
+#: utils/recins.c:214
+msgid "use --force to skip the integrity chech\n"
+msgstr ""
+
+#: utils/recins.c:263
+msgid "a -f should be followed by a -v\n"
+msgstr ""
+
+#: utils/recins.c:301
+msgid "a -v should be preceded by a -f\n"
+msgstr ""
+
+#: utils/recins.c:319
+#, c-format
+msgid "please provide a value for the field %s\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recsel synopsis.
+#. no-wrap
+#: utils/recsel.c:101
+#, c-format
+msgid ""
+"Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) "
+"FIELD_EXPR] [FILE]...\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recsel arguments.
+#. no-wrap
+#: utils/recsel.c:106
+msgid "Select and print rec data.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recsel arguments.
+#. no-wrap
+#: utils/recsel.c:112
+msgid ""
+"  -d, --include-descriptors           print record descriptors along with "
+"the matched\n"
+"                                        records.\n"
+"  -C, --collapse                      do not section the result in records "
+"with newlines.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recsel output options.
+#. no-wrap
+#: utils/recsel.c:126
+msgid ""
+"Output options:\n"
+"  -p, --print=FIELDS                  comma-separated list of fields to "
+"print for each\n"
+"                                        matching record.\n"
+"  -P, --print-values=FIELDS           same than -p, but print the values of "
+"the selected\n"
+"                                        fields.\n"
+"  -R, --print-row=FIELDS              same than -P, but the values are "
+"printed separated by\n"
+"                                        a blank character instead of "
+"newlines.\n"
+"  -c, --count                         provide a count of the matching "
+"records instead of\n"
+"                                        the records themselves.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recsel examples.
+#. no-wrap
+#: utils/recsel.c:148
+msgid ""
+"Examples:\n"
+"\n"
+"        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
+"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+"rec\n"
+msgstr ""
+
+#: utils/recsel.c:197
+msgid "cannot specify -[pPR] and also -c.\n"
+msgstr ""
+
+#: utils/recsel.c:223
+msgid "internal error creating the field expression.\n"
+msgstr ""
+
+#: utils/recsel.c:239
+msgid "cannot specify -c and also -p.\n"
+msgstr ""
+
+#: utils/recsel.c:280
+msgid "several record types found.  Please use -t to specify one.\n"
+msgstr ""
+
+#: utils/recsel.c:335
+msgid "evaluating the selection expression.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recset synopsis.
+#. no-wrap
+#: utils/recset.c:113
+#, c-format
+msgid "Usage: recset [OPTION]... [FILE]...\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recset short description.
+#. no-wrap
+#: utils/recset.c:118
+msgid "Alter or delete fields in records.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recset options.
+#. no-wrap
+#: utils/recset.c:124
+msgid ""
+"  -i, --case-insensitive              make strings case-insensitive in "
+"selection\n"
+"      --force                         alter the records even if violating "
+"record\n"
+"                                        restrictions.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recset field selection options.
+#. no-wrap
+#: utils/recset.c:137
+msgid ""
+"Fields selection options:\n"
+"  -f, --fields=FIELDS                 comma-separated list of field names "
+"with optional\n"
+"                                        subscripts.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recset actions.
+#. no-wrap
+#: utils/recset.c:145
+msgid ""
+"Actions:\n"
+"  -s, --set=VALUE                     change the value of the selected "
+"fields.\n"
+"  -a, --add=VALUE                  add the selected fields with the given "
+"value.\n"
+"  -d, --delete                        delete the selected fields.\n"
+"  -c, --comment                       comment out the selected fields.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recset examples.
+#. no-wrap
+#: utils/recset.c:155
+msgid ""
+"Examples:\n"
+"\n"
+"        recset -f TmpName -d data.rec\n"
+"        recset -f Email[1] -s invalid@email.com friends.rec\n"
+"        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
+msgstr ""
+
+#: utils/recset.c:210
+msgid "creating the field expression.\n"
+msgstr ""
+
+#: utils/recset.c:223 utils/recset.c:240 utils/recset.c:257 utils/recset.c:273
+msgid "please specify some field with -f.\n"
+msgstr ""
+
+#: utils/recset.c:228 utils/recset.c:245 utils/recset.c:262 utils/recset.c:278
+msgid "please specify just one action.\n"
+msgstr ""
+
+#: utils/recset.c:411
+msgid "operation aborted due to integrity failures\n"
+msgstr ""
+
+#: utils/recset.c:412
+msgid "use --verbose to get a detailed report\n"
+msgstr ""
+
+#: utils/recset.c:419
+msgid "use --force to skip the integrity check\n"
+msgstr ""
+
+#. TRANSLATORS: --help output 5+ (reports)
+#. TRANSLATORS: the placeholder indicates the bug-reporting address
+#. for this application.  Please add _another line_ with the
+#. address for translation bugs.
+#. no-wrap
+#: utils/recutl.c:70
+#, c-format
+msgid "Report bugs to: %s\n"
+msgstr ""
+
+#: utils/recutl.c:73
+#, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr ""
+
+#: utils/recutl.c:77
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr ""
+
+#: utils/recutl.c:79
+#, c-format
+msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
+msgstr ""
+
+#: utils/recutl.c:82
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, common arguments.
+#. no-wrap
+#: utils/recutl.c:91
+msgid ""
+"      --help                          print a help message and exit.\n"
+"      --version                       show version and exit.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, record selection arguments
+#. no-wrap
+#: utils/recutl.c:102
+msgid ""
+"Record selection options:\n"
+"  -i, --case-insensitive              make strings case-insensitive in "
+"selection\n"
+"                                        expressions.\n"
+"  -t, --type=TYPE                     print records of the specified type "
+"only.\n"
+"  -e, --expression=EXPR               selection expression.\n"
+"  -n, --number=NUM                    select an specific record.\n"
+msgstr ""
+
+#: utils/recutl.c:125
+#, c-format
+msgid ""
+"Copyright (C) %s Jose E. Marchesi.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+msgstr ""
+
+#: utils/recutl.c:131
+msgid ""
+"\n"
+"Written by Jose E. Marchesi."
+msgstr ""
+
+#: utils/recutl.c:181
+#, c-format
+msgid "duplicated record set '%s' from %s.\n"
+msgstr ""
+
+#: utils/recutl.c:330
+msgid "cannot create a unique name.\n"
+msgstr ""
+
+#: utils/recutl.c:346
+#, c-format
+msgid "renaming file %s to %s\n"
+msgstr ""

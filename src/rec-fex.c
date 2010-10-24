@@ -28,6 +28,8 @@
 #include <malloc.h>
 #include <string.h>
 #include <regex.h>
+#include <libintl.h>
+#define _(str) dgettext (PACKAGE, str)
 
 #include <rec.h>
 
@@ -145,7 +147,7 @@ rec_fex_check (char *str)
   /* Compile the regexp.  */
   if ((ret = regcomp (&regexp, regexp_str, REG_EXTENDED)) != 0)
     {
-      fprintf (stderr, "internal error: rec_resolver_check: error compiling regexp.\n");
+      fprintf (stderr, _("internal error: rec_resolver_check: error compiling regexp.\n"));
       return false;
     }
 
@@ -161,7 +163,7 @@ rec_fex_check (char *str)
       if (str_error)
         {
           regerror (ret, &regexp, str_error, str_error_size);
-          fprintf (stderr, "error: invalid field expression in -p: %s.\n", str_error);
+          fprintf (stderr, _("error: invalid field expression in -p: %s.\n"), str_error);
         }
     }
   

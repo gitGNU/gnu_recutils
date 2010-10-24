@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-09-09 20:10:39 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-24 23:07:26 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -32,11 +32,15 @@
 #include <stdarg.h>
 #include <closeout.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <rec.h>
 #include <recutl.h>
 
 extern char *program_name;
+
+void recutl_print_help (void); /* Forward prototype.  */
 
 void
 recutl_init (char *util_name)
@@ -48,6 +52,85 @@ recutl_init (char *util_name)
      testing; for instance, hello >/dev/full should exit unsuccessfully.
      This is implemented in the Gnulib module "closeout".  */
   atexit (close_stdout);
+
+  /* i18n */
+  setlocale (LC_ALL, "");
+  bindtextdomain (PACKAGE, LOCALEDIR);
+  textdomain (PACKAGE);
+}
+
+void
+recutl_print_help_footer (void)
+{
+  /* TRANSLATORS: --help output 5+ (reports)
+     TRANSLATORS: the placeholder indicates the bug-reporting address
+     for this application.  Please add _another line_ with the
+     address for translation bugs.
+     no-wrap */
+  printf (_("\
+Report bugs to: %s\n"), PACKAGE_BUGREPORT);
+#ifdef PACKAGE_PACKAGER_BUG_REPORTS
+  printf (_("Report %s bugs to: %s\n"), PACKAGE_PACKAGER,
+          PACKAGE_PACKAGER_BUG_REPORTS);
+#endif
+#ifdef PACKAGE_URL
+  printf (_("%s home page: <%s>\n"), PACKAGE_NAME, PACKAGE_URL);
+#else
+  printf (_("%s home page: <http://www.gnu.org/software/recutils/>\n"),
+          PACKAGE_NAME, PACKAGE);
+#endif
+  fputs (_("General help using GNU software: <http://www.gnu.org/gethelp/>\n"),
+         stdout);
+}
+
+void
+recutl_print_help_common (void)
+{
+  /* TRANSLATORS: --help output, common arguments.
+     no-wrap */
+  fputs (_("\
+      --help                          print a help message and exit.\n\
+      --version                       show version and exit.\n"),
+         stdout);
+}
+
+void
+recutl_print_help_record_selection (void)
+{
+  /* TRANSLATORS: --help output, record selection arguments
+     no-wrap */
+  fputs (_("\
+Record selection options:\n\
+  -i, --case-insensitive              make strings case-insensitive in selection\n\
+                                        expressions.\n\
+  -t, --type=TYPE                     print records of the specified type only.\n\
+  -e, --expression=EXPR               selection expression.\n\
+  -n, --number=NUM                    select an specific record.\n"),
+         stdout);
+}
+
+void
+recutl_print_version (void)
+{
+  printf ("%s (GNU %s) %s\n",
+          program_name,
+          PACKAGE,
+          VERSION);
+  /* xgettext: no-wrap */
+  puts ("");
+
+  /* It is important to separate the year from the rest of the message,
+     as done here, to avoid having to retranslate the message when a new
+     year comes around.  */  
+  printf (_("\
+Copyright (C) %s Jose E. Marchesi.\n\
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
+This is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n"), "2010");
+
+  puts (_("\
+\n\
+Written by Jose E. Marchesi."));
 }
 
 void
@@ -95,7 +178,7 @@ recutl_parse_db_from_file (FILE *in,
       rset_type = rec_rset_type (rset);
       if (rec_db_type_p (db, rset_type))
         {
-          recutl_fatal ("duplicated record set '%s' from %s.\n",
+          recutl_fatal (_("duplicated record set '%s' from %s.\n"),
                         rset_type, file_name);
         }
 
@@ -134,7 +217,7 @@ recutl_build_db (int argc, char **argv)
           file_name = argv[optind++];
           if (!(in = fopen (file_name, "r")))
             {
-              recutl_fatal ("cannot read file %s\n", file_name);
+              recutl_fatal (_("cannot read file %s\n"), file_name);
             }
           else
             {
@@ -201,7 +284,7 @@ recutl_read_db_from_file (char *file_name)
       in = fopen (file_name, "r");
       if (in == NULL)
         {
-          recutl_fatal ("cannot read file %s\n", file_name);
+          recutl_fatal (_("cannot read file %s\n"), file_name);
           exit (1);
         }
     }
@@ -244,7 +327,7 @@ recutl_write_db_to_file (rec_db_t db,
       des = mkstemp (tmp_file_name);
       if (des == -1)
         {
-          recutl_fatal ("cannot create a unique name.\n");
+          recutl_fatal (_("cannot create a unique name.\n"));
         }
       out = fdopen (des, "w+");
     }
@@ -260,7 +343,7 @@ recutl_write_db_to_file (rec_db_t db,
       if (rename (tmp_file_name, file_name) == -1)
         {
           remove (tmp_file_name);
-          recutl_fatal ("renaming file %s to %s\n", tmp_file_name, file_name);
+          recutl_fatal (_("renaming file %s to %s\n"), tmp_file_name, file_name);
         }
     }
 }

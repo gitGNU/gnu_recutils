@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-08-20 19:56:30 jco"
+/* -*- mode: C -*- Time-stamp: "2010-10-24 22:14:34 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -27,6 +27,8 @@
 
 #include <getopt.h>
 #include <stdlib.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <rec.h>
 #include <recutl.h>
@@ -56,22 +58,35 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-RECUTL_COPYRIGHT_DOC ("recfix");
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, recfix synopsis.
+     no-wrap */
+  printf (_("\
+Usage: recfix [OPTION]... [FILE]...\n"));
 
-char *recutl_help_msg = "\
-Usage: recfix [OPTION]... [FILE]...\n\
-Check and fix rec files.\n\
-\n\
-Mandatory arguments to long options are mandatory for short options too.\n"
-COMMON_ARGS_DOC
-"\n\
+  /* TRANSLATORS: --help output, recfix short description.
+     no-wrap */
+  fputs (_("\
+Check and fix rec files.\n"),
+         stdout);
+
+  recutl_print_help_common ();
+
+  puts("");
+  /* TRANSLATORS: --help output, recfix examples.
+     no-wrap */
+  fputs (_("\
 Examples:\n\
 \n\
         recfix data.rec\n\
         recfix data1.rec data2.rec\n\
-        cat data1.rec data2.rec | recfix\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("recfix");
+        cat data1.rec data2.rec | recfix\n"),
+         stdout);
+
+  recutl_print_help_footer ();
+}
 
 void
 recfix_parse_args (int argc,

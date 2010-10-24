@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
+#include <libintl.h>
+#define _(str) gettext (str)
 
 #include <rec.h>
 #include <recutl.h>
@@ -87,22 +89,41 @@ static const struct option GNU_longOptions[] =
     {NULL, 0, NULL, 0}
   };
 
-/* Messages */
+/*
+ * Functions.
+ */
 
-RECUTL_COPYRIGHT_DOC ("recsel");
+void
+recutl_print_help (void)
+{
+  /* TRANSLATORS: --help output, recsel synopsis.
+     no-wrap */
+  printf (_("\
+Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
 
-char *recutl_help_msg = "\
-Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n\
-Select and print rec data.\n\
-\n\
-Mandatory arguments to long options are mandatory for short options too.\n\
+  /* TRANSLATORS: --help output, recsel arguments.
+     no-wrap */
+  fputs(_("\
+Select and print rec data.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recsel arguments.
+     no-wrap */
+  fputs (_("\
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
-  -C, --collapse                      do not section the result in records with newlines.\n"
-COMMON_ARGS_DOC
-"\n"
-RECORD_SELECTION_ARGS_DOC
-"\n\
+  -C, --collapse                      do not section the result in records with newlines.\n"),
+         stdout);
+  
+  recutl_print_help_common ();
+
+  puts ("");
+  recutl_print_help_record_selection ();
+
+  puts ("");
+  /* TRANSLATORS: --help output, recsel output options.
+     no-wrap */
+  fputs (_("\
 Output options:\n\
   -p, --print=FIELDS                  comma-separated list of fields to print for each\n\
                                         matching record.\n\
@@ -111,16 +132,29 @@ Output options:\n\
   -R, --print-row=FIELDS              same than -P, but the values are printed separated by\n\
                                         a blank character instead of newlines.\n\
   -c, --count                         provide a count of the matching records instead of\n\
-                                        the records themselves.\n\
+                                        the records themselves.\n"), stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recsel special options.
+     no-wrap */
+  fputs (_("\
 Special options:\n\
-  -S, --print-sexps                   print the data in sexps instead of rec format.\n\
-\n\
+  -S, --print-sexps                   print the data in sexps instead of rec format.\n"),
+         stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recsel examples.
+     no-wrap */
+  fputs (_("\
 Examples:\n\
 \n\
         recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n\
-        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n\
-\n"
-  RECUTL_HELP_FOOTER_DOC ("recsel");
+        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"),
+         stdout);
+
+  puts ("");
+  recutl_print_help_footer ();
+}
 
 void
 recsel_parse_args (int argc,
@@ -160,7 +194,7 @@ recsel_parse_args (int argc,
           {
             if (recsel_count)
               {
-                recutl_fatal ("cannot specify -[pPR] and also -c.\n");
+                recutl_fatal (_("cannot specify -[pPR] and also -c.\n"));
               }
 
             if (c == 'P')
@@ -186,7 +220,7 @@ recsel_parse_args (int argc,
                                       REC_FEX_SUBSCRIPTS);
             if (!recsel_fex)
               {
-                recutl_fatal ("internal error creating the field expression.\n");
+                recutl_fatal (_("internal error creating the field expression.\n"));
               }
 
             break;
@@ -202,7 +236,7 @@ recsel_parse_args (int argc,
           {
             if (recsel_fex_str)
               {
-                recutl_fatal ("cannot specify -c and also -p.\n");
+                recutl_fatal (_("cannot specify -c and also -p.\n"));
                 exit (1);
               }
 
@@ -243,7 +277,7 @@ recsel_process_data (rec_db_t db)
      the request.  */
   if (!recutl_type && (rec_db_size (db) > 1))
     {
-      recutl_fatal ("several record types found.  Please use -t to specify one.\n");
+      recutl_fatal (_("several record types found.  Please use -t to specify one.\n"));
     }
 
   written = 0;
@@ -298,7 +332,7 @@ recsel_process_data (rec_db_t db)
             {
               if (recutl_sex_str && (!parse_status))
                 {
-                  recutl_error ("evaluating the selection expression.\n");
+                  recutl_error (_("evaluating the selection expression.\n"));
                   return false;
                 }
       
