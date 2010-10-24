@@ -1,5 +1,6 @@
 2010-10-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	i18n with gettext.
 	* m4/gettext.m4: Upgrade to gettext-0.18.1.
 	* m4/iconv.m4: Upgrade to gettext-0.18.1.
 	* m4/lib-ld.m4: Upgrade to gettext-0.18.1.

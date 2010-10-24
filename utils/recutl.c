@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-24 23:07:26 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-24 23:13:26 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -46,6 +46,9 @@ void
 recutl_init (char *util_name)
 {
   program_name = xstrdup (util_name);
+
+  /* Initialize librec */
+  rec_init ();
 
   /* Even exiting has subtleties.  On exit, if any writes failed, change
      the exit status.  The /dev/full device on GNU/Linux can be used for
