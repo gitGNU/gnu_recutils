@@ -81,8 +81,7 @@ Utilities
 
 Developing with Recutils
 * The Rec Library::     Writing C programs to manipulate rec files.
-* Usage Example::       A full-fledged rec-based project management
-                          system.
+
 * GNU Free Documentation License:: Distribution terms for this document.
 @end menu
 
