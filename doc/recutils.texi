@@ -61,10 +61,10 @@ The Rec Format
 * Record Descriptors::  Describing different types of records.
 * Compound Field Names:: Referencing record instances.
 * Comments::            Comments are useful to store meta data.
-* Date input formats::  Textual date representations that can be used
-                          in Rec files.
 * Field Types::         Types for fields can be defined in record
                           descriptors.
+* Date input formats::  Textual date representations that can be used
+                          in Rec files.
 
 Utilities
 * Common Options::      Common command line arguments for the record
@@ -76,11 +76,10 @@ Utilities
 * recset::              Managing fields.
 * recfix::              Fixing broken rec files, and diagnostics.
 
-Conversion Utilities
-* csv2rec::             Converting comma-separated-values data into
-                          rec data.
+* csv2rec::             Converting csv data into rec data.
 * mdb2rec::             Converting mdb files into rec files.
 
+Developing with Recutils
 * The Rec Library::     Writing C programs to manipulate rec files.
 * Usage Example::       A full-fledged rec-based project management
                           system.
@@ -90,7 +89,29 @@ Conversion Utilities
 @node Introduction
 @chapter Introduction
 
-XXX
+GNU Recutils is a set of tools and libraries to access human-editable,
+text-based databases called @emph{recfiles}.  The data is stored as a
+sequence of records, each record containing an arbitrary number of
+named fields.
+
+Some advanced capabilities usually found in other data storage systems
+are supported: data types, data integrity (keys, mandatory fields,
+etc) as well as the ability of records to refer to other records (sort
+of foreign keys).  Despite its simplicity, recfiles can be used to
+store medium-sized databases.
+
+This suite comprises:
+
+@itemize @minus
+@item This texinfo manual, describing the Rec format and the
+accompaying software.
+@item A C library (librec) that provides a rich set of functions to
+manipulate rec data.
+@item A set of C utilities (recinf, recsel, recins, recdel, recset and
+recfix) that can be used in shell scripts and in the command line to
+operate on rec files.
+@item An emacs mode, @code{rec-mode}.
+@end itemize
 
 @node A Little Example
 @chapter A Little Example
@@ -190,16 +211,15 @@ The Colour of Magic
 
 A field is the written form of an association between a label and a
 value.  For example, if we wanted to associate the label @code{Name}
-with the value @code{Ada Lovelace} we would write the field:
+with the value @code{Ada Lovelace} we would write:
 
 @example
 Name: Ada Lovelace
 @end example
 
 The separator between the field name and the field value is a colon
-followed by one or more blank characters (space and tabs, but not
-newlines).  The name of the field shall begin in the first column of
-the line.
+followed by a blank character (space and tabs, but not newlines).  The
+name of the field shall begin in the first column of the line.
 
 A field name is a sequence of alphanumeric characters plus dashes
 (@code{-}) and underscores (@code{_}), starting with a letter or the
@@ -226,11 +246,11 @@ A_Field:
 The value of a field is a sequence of characters terminated by a
 single newline character (@code{\n}).
 
-Sometimes a value is long enough to exceed the usual width of
-terminals and screens.  In that case, depending on the specific tool
-used to access the file, the readability of the data decreases.  It is
-possible to physically split a logical line by escaping a newline with
-a backslash character, as in:
+Sometimes a value is too long to fit in the usual width of terminals
+and screens.  In that case, depending on the specific tool used to
+access the file, the readability of the data decreases.  It is
+therefore possible to physically split a logical line by escaping a
+newline with a backslash character, as in:
 
 @example
 LongLine: This is a quite long value \
@@ -267,11 +287,11 @@ Email: john.smith@@foomail.com
 Email: john@@smith.name
 @end example
 
-The @dfn{size of a record} is defined as the number of fields
-contained in that record.  There is no such like an empty record, so
-the minimum size for a record is 1.  The maximum number of fields for
-a record shall be considered as an implementation limit.  The size of
-the previous record is 3.
+The @dfn{size of a record} is defined as the number of fields that it
+contains.  There is no such like an empty record, so the minimum size
+for a record is 1.  The maximum number of fields for a record is only
+limited by the available physical resources.  The size of the previous
+record is 3.
 
 Records are separated by one or more blank lines.  For instance, the
 following example shows a file named @file{personalities.rec}
@@ -509,8 +529,6 @@ kind of markers:
 # End of Bug.rec
 @end example
 
-@include getdate.texi
-
 @node Field Types
 @chapter Field Types
 
@@ -530,41 +548,114 @@ from type to type.
 The following sections describe the supported types.
 
 @menu
-* Escalar types::       Numbers, ranges and boolean values.
+* Escalar types::       Numbers and ranges.
 * String types::        Lines, limited strings and regular
                           expressions. 
-* Enumerated types::    Enumerations.
+* Enumerated types::    Enumerations and boolean values.
 * Time related types::  Dates and times.
 @end menu
 
 @node Escalar types
 @section Escalar types
 
-XXX:
+The rec format supports the declaration of fields of the following
+escalar types: integer numbers, ranges and reals.
+
+Signed @dfn{integers} are supported by using the @code{integer}
+declaration:
 
 @example
 %type: Id integer
-%type: PercentComplete range 0..100
-%type: Myreal real
-%type: Yesno boolean
 @end example
 
-It is possible to omit the minimum index in ranges.  In that case it
-is implicitly zero:
+Given that declaration, @code{Id} fields must contain integers, that
+may be negative.  Valid examples are:
+
+@example
+Id: 100
+Id: -23
+Id: 0020
+@end example
+
+Sometimes it is desirable to reduce the @dfn{range} of integers allowed in a
+field.  That can be achieved by using a range type declaration:
+
+@example
+%type: PercentComplete range 0..100
+@end example
+
+Note that it is possible to omit the minimum index in ranges.  In that
+case it is implicitly zero:
 
 @example
 %type: PercentComplete range 100
 @end example
 
+@dfn{Real} fields can be declared with the @code{real} type
+specifier.  A wide range of real numbers can be represented this way,
+only limited by the underlying floating point representation.  Example
+of the declaration of a real field:
+
+@example
+%type: Myreal real
+@end example
+
 @node String types
 @section String types
 
-XXX:
+The default way to interpret the contents of fields in recfiles is as
+unrestricted text strings.  However, sometimes it is useful to impose
+some restrictions on the strings composing the values of some fields.
+
+The @code{line} field type specifier can be used to restrict the value
+of a field to a single line, i.e. no newline characters are allowed.
+An example of a declaration and some fields:
 
 @example
-%type: Foo line
-%type: Bar size 10
+%type: Name line
+
+Name: Mr. Foo Bar
+Name: Mss. Bar Baz
+Name: This is
++ invalid
+@end example
+
+Sometimes it is the maximum size of the field value that shall be
+restricted.  The @code{size} field type specifier can be used to
+define the maximum number of characters a field value can have.  For
+example, if we were collecting input that will get written in a
+paper-based forms system allowing up to 25 characters width entries,
+we could declare the entries as:
+
+@example
+%type: Address size 25
+@end example
+
+Arbitrary restrictions can be defined by using regular expressions.
+The @dfn{regexp} field type specifier introduces an ERE (extended
+regular expression) that will be matched against fields having that
+name.  The synopsis is:
+
+@example
 %type: Baz regexp /RE/
+@end example
+
+For example, consider the @code{ID_card} field containing numbers of
+ID cards of some country:
+
+@example
+%type: ID_card regexp /[0-9]@{9@}[a-zA-Z]/
+
+ID_card: 123456789Z
+ID_card: invalid id card
+@end example
+
+Note that the slashes delimiting the @code{RE} can be replaced with
+any other character that is not itself used as part of the regexp.
+That is useful in some cases such as:
+
+@example
+%type: Filename regexp |(/[^/]/?)+|
 @end example
 
 @node Enumerated types
@@ -589,15 +680,36 @@ quotes:
 %type: Title enum 'Mr. Doctor' 'Mrs. Doctor'
 @end example
 
+@dfn{Boolean} fields can be seen as special enumerations holding the
+binary values.
+
+@example
+%type: Yesno boolean
+@end example
+
+The literals allowed in boolean fields are @code{yes/no}, @code{0/1}
+and @code{true/false}.  Examples are:
+
+@example
+Yesno: 1
+Yesno: yes
+Yesno: false
+@end example
+
 @node Time related types
 @section Time related types
 
-XXX:
+The @dfn{Date} field type specifier can be used to declare dates and
+times.  The synopsis is:
 
 @example
-%type: Date date
+%type: Born date
 @end example
 
+The several date/time syntax supported by librec is provided by the
+@code{date} module from gnulib.  @xref{Date input formats}.
+
+@include getdate.texi
 
 @node Common Options
 @chapter Common Options
@@ -799,8 +911,12 @@ have a field with that name.
 @node SEX Evaluation
 @subsection Evaluation of Selection Expressions
 
+XXX
+
 @node SEX Examples
 @subsection Examples
+
+XXX
 
 @node Field Expressions
 @section Field Expressions
@@ -921,14 +1037,21 @@ In addition of the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
 @table @samp
-@item -v
-@itemx @w{@kbd{--verbose}}
-Be verbose by printing all the record descriptors present in the file.
+@item -t TYPE
+@itemx @w{@kbd{--type}=@var{type}}
+Select records of a given type only.
+@item -d
+@itemx @w{@kbd{--descriptor}}
+Print all the record descriptors present in the file.
 @item -n
 @itemx @w{@kbd{--names-only}}
 Output just the names of the record types found in the input.  If the
 input is composed by anonymous records only then don't emit any
 output.
+@item -S
+@itemx @w{@kbd{--print-sexps}}
+Print the data in the form of sexps (lisp expressions) instead of rec
+format.  This option is intended to be used by lisp programs.
 @end table
 
 @node recsel

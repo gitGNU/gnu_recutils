@@ -1,3 +1,14 @@
+2010-10-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	User manual work.
+	* doc/recutils.texi (Fields and Records): Wording improvements.
+	(Escalar types): Completed.
+	(String types): Completed.
+	(Time related types): Completed.
+	(recinf Invocation): Document -S|--print-sexps.
+
+	* doc/recutils.texi (Top): Improve the menu layout.
+
 2010-10-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	i18n with gettext.
