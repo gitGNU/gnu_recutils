@@ -4,6 +4,121 @@
 %key: Test
 %mandatory: Unit
 
+Test: rec_mset_dup_empty
+Unit: rec_mset_dup
+Description:
++ Dup an empty mset.
++
++ 1. The copy shall be successfully returned.
++ 2. The copy shall be empty.
+
+Test: rec_mset_dup_nonempty
+Unit: rec_mset_dup
+Description:
++ Dup an mset containing two elements of a nonempty type.
++
++ 1. The copy shall be successfully returned.
++ 2. The copy shall contain the same elements.
+
+Test: rec_mset_new_and_destroy
+Unit: rec_mset_new
+Description:
++ Create an empty record set and destroy it.
++
++ 1. The value returned by rec_mset_new shall not
++    be NULL.
+
+Test: rec_mset_type_p_any
+Unit: rec_mset_type_p
+Description:
++ Check for the MSET_ANY type with rec_mset_type_p.
++
++ 1. The MSET_ANY type shall exist.
+
+Test: rec_mset_type_p_existing
+Unit: rec_mset_type_p
+Description:
++ Register a type in an empty mset and check
++ for it with rec_mset_type_p.
++
++ 1. The function shall report that the type
++    exists.
+
+Test: rec_mset_type_p_nonexisting
+Unit: rec_mset_type_p
+Description:
++ Register a type in an empty mset and check
++ for other type with rec_mset_type_p.
++
++ 1. The function shall report that the type
++    does not exist.
+
+Test: rec_mset_count_empty
+Unit: rec_mset_count
+Description:
++ Count the number of total elements of an
++ empty mset.
++
++ 1. The function shall return 0.
+
+Test: rec_mset_count_existing
+Unit: rec_mset_count
+Description:
++ Count the number of elements of a non empty
++ mset.
++
++ 1. The function shall return the number of
++    elements.
+
+Test: rec_mset_count_nonexisting
+Unit: rec_mset_count
+Description:
++ Count the number of total elements pertaining to
++ an unexisting type in a mset.
++
++ 1. The function shall return 0.
+
+Test: rec_mset_register_type_nominal
+Unit: rec_mset_register_type
+Description:
++ Register a type in a mset.
++
++ 1. The registration should succeed.
++ 2. The number returned by rec_mset_register_type shall
++    be bigger than 0.
+
+Test: rec_mset_get_empty
+Unit: rec_mset_get
+Description:
++ Try to get an element from an empty mset.
++
++ 1. The function shall return NULL.
+
+Test: rec_mset_get_existing
+Unit: rec_mset_get
+Description:
++ Get an existing element from a mset.
++
++ 1. The function shall return a pointer to
++    the element.
+
+Test: rec_mset_get_any
+Unit: rec_mset_get
+Description:
++ Get an existing element from a mset using
++ the ANY index.
++
++ 1. The function shall return a pointer to
++    the element.
+
+Test: rec_mset_get_invalid
+Unit: rec_mset_get
+Description:
++ Get the first element of a mset by using invalid
++ indexes.
++
++ 1. The function shall return NULL.
+
 Test: rec_field_set_name_empty
 Unit: rec_field_set_name
 Description:

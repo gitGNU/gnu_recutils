@@ -1,5 +1,10 @@
 2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Regenerate TESTS.
+	* TESTS: Regenerated.
+
+2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Unit tests for rec_mset_get.
 	* torture/rec-mset/rec-mset-get.c: New file
 	(test_rec_mset_get): New function.
