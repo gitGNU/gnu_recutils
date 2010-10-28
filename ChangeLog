@@ -1,5 +1,17 @@
 2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Unit tests for rec_mset_dup, and a bug fixed.
+	* src/rec-mset.c (rec_mset_dup): Avoid duplicating the counter of
+	nodes of the element types.
+
+	* torture/Makefile.am (REC_MSET_TSUITE): rec-mset-dup.c added.
+
+	* torture/rec-mset/rec-mset-dup.c: New file.
+	(test_rec_mset_dup): New function.
+	(rec_mset_dup_empty): New test.
+
+2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec_mset test suite.
 	* torture/runtests.c: rec_mset test suite added.
 

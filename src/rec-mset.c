@@ -136,7 +136,7 @@ rec_mset_dup (rec_mset_t mset)
       new->ntypes = mset->ntypes;
       for (i = 0; i < new->ntypes; i++)
         {
-          new->count[i] = mset->count[i];
+          new->count[i] = 0;
           if (new->name[i])
             {
               new->name[i] = strdup (mset->name[i]);

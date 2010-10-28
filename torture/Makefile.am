@@ -22,6 +22,7 @@ TESTS = runtests
 noinst_PROGRAMS = runtests
 
 REC_MSET_TSUITE = rec-mset/rec-mset-new.c \
+                  rec-mset/rec-mset-dup.c \
                   rec-mset/tsuite-rec-mset.c
 
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
