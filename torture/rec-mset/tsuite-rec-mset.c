@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:16:35 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-28 20:25:03 jemarch"
  *
  *       File:         tsuite-rec-mset.c
  *       Date:         Thu Oct 28 16:45:34 2010
@@ -30,6 +30,7 @@ extern TCase *test_rec_mset_new (void);
 extern TCase *test_rec_mset_dup (void);
 extern TCase *test_rec_mset_type_p (void);
 extern TCase *test_rec_mset_register_type (void);
+extern TCase *test_rec_mset_count (void);
 
 Suite *
 tsuite_rec_mset ()
@@ -41,6 +42,7 @@ tsuite_rec_mset ()
   suite_add_tcase (s, test_rec_mset_dup ());
   suite_add_tcase (s, test_rec_mset_type_p ());
   suite_add_tcase (s, test_rec_mset_register_type ());
+  suite_add_tcase (s, test_rec_mset_count ());
 
   return s;
 }

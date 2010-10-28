@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:02:05 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-28 20:26:09 jemarch"
  *
  *       File:         elem-types.h
  *       Date:         Thu Oct 28 20:01:31 2010
@@ -22,6 +22,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <config.h>
+#include <stdlib.h>
 
 /* mset types used by the tests in this file:
  * 

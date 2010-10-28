@@ -1,5 +1,14 @@
 2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Unit tests for rec_mset_count.
+	* torture/rec-mset/rec-mset-count.c: New file.
+	(test_rec_mset_count): New function.
+	(rec_mset_count_empty): New test.
+	(rec_mset_count_existing): New test.
+	(rec_mset_count_nonexisting): New test.
+
+2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Unit tests for rec_mset_register_type.
 	* torture/rec-mset/rec-mset-register-type.c: New file.
 	(test_rec_mset_register_type): New function.
