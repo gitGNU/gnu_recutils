@@ -24,6 +24,7 @@ noinst_PROGRAMS = runtests
 REC_MSET_TSUITE = rec-mset/rec-mset-new.c \
                   rec-mset/rec-mset-dup.c \
                   rec-mset/rec-mset-type-p.c \
+                  rec-mset/rec-mset-register-type.c \
                   rec-mset/tsuite-rec-mset.c
 
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
