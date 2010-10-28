@@ -1,3 +1,13 @@
+2010-10-28  Jose E. Marchesi  <jco@terma.com>
+
+	* tasktool (tt_db_template_header): New variable.
+	(tt_db_template_issue): New variable.
+	(tt_db_template): Use tt_db_template_header and tt_db_template_issue.
+	(tt_db_wish): New variable.
+	(tt_db_wish_id): New variable.
+	(tt_db_wish_summary): New variable.
+	(tt_db_wish_description): New variable.
+
 2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Documentation improvements.
