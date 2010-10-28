@@ -1,4 +1,4 @@
-2010-10-28  Jose E. Marchesi  <jco@terma.com>
+2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* tasktool (tt_db_template_header): New variable.
 	(tt_db_template_issue): New variable.
