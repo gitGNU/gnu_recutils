@@ -531,7 +531,10 @@ kind of markers:
 @node Field Types
 @chapter Field Types
 
-It is possible to declare in a record descriptor that fields with a
+The default way to interpret the contents of fields in recfiles is as
+unrestricted text strings.  However, sometimes it is useful to impose
+some restrictions on the strings composing the values of fields. It is
+thus possible to declare in a record descriptor that fields with a
 given name shall contain values of a given type.  The syntax is:
 
 @example
@@ -602,10 +605,6 @@ of the declaration of a real field:
 @node String types
 @section String types
 
-The default way to interpret the contents of fields in recfiles is as
-unrestricted text strings.  However, sometimes it is useful to impose
-some restrictions on the strings composing the values of some fields.
-
 The @code{line} field type specifier can be used to restrict the value
 of a field to a single line, i.e. no newline characters are allowed.
 An example of a declaration and some fields:
@@ -671,13 +670,6 @@ the enumeration:
 @end example
 
 The symbols are separated by blank characters (including newlines).
-It is possible to specify a blank as part of a symbol by using single
-quotes:
-
-@c XXX: better example.
-@example
-%type: Title enum 'Mr. Doctor' 'Mrs. Doctor'
-@end example
 
 @dfn{Boolean} fields can be seen as special enumerations holding the
 binary values.
@@ -743,7 +735,6 @@ typically interpreted as a Boolean value.
 * SEX Operands::        Literal values, fields and sub-expressions.
 * SEX Operators::       Arithmetic, logical and other operators.
 * SEX Evaluation::      Selection expressions are like generators.
-* SEX Examples::        Examples of selection expressions.
 @end menu
 
 @node SEX Operands
@@ -754,13 +745,16 @@ parenthesized expressions.
 
 @subsubsection Numeric Literals
 
-The supported numeric literals are integer numbers.  The usual sign
-character @samp{-} is used to denote negative values.  Examples are:
+The supported numeric literals are integer numbers and real numbers.
+The usual sign character @samp{-} is used to denote negative values.
+Examples are:
 
 @example
 10000
 0
 -1342
+.12
+-3.14
 @end example
 
 Additional zeroes in the left of the number are allowed, so both
@@ -789,8 +783,9 @@ multi lines string.'
 
 The value of a field value can be included in a selection expression
 by writing its name.  The field name is replaced by a string
-containing the field value.  The last colon character (@code{:}) of
-the field name is optional.  Examples:
+containing the field value, covering any possibility with records with
+more than one field featuring that name.  The last colon character
+(@code{:}) of the field name is optional.  Examples:
 
 @example
 Name
@@ -867,8 +862,8 @@ Arithmetic operators for addition (@code{+}), subtraction (@code{-}),
 multiplication (@code{*}), integer division (@code{/}) and modulus
 (@code{%}) are supported with their usual meanings.
 
-These operators require either integer operands or string operands
-whose value can be interpreted as an integer literal.
+These operators require either numeric operands or string operands
+whose value can be interpreted as numbers (integer or real).
 
 @subsubsection Boolean Operators
 
@@ -876,9 +871,8 @@ The boolean operators @strong{and} (@code{&&}), @strong{or}
 (@code{||}) and  @strong{not} (@code{!}) are supported with the same
 semantics as their C counterparts.
 
-Like the arithmetic operators, the boolean operators expect integer
-operands, and will try to convert any string operand to an integer
-value.
+The boolean operators expect integer operands, and will try to convert
+any string operand to an integer value.
 
 @subsubsection Comparison Operators
 
@@ -910,12 +904,38 @@ have a field with that name.
 @node SEX Evaluation
 @subsection Evaluation of Selection Expressions
 
-XXX
+Given that:
 
-@node SEX Examples
-@subsection Examples
+@itemize @minus
+@item It is possible to refer to fields by name in selection expressions.
+@item Records can have several fields featuring the same name.
+@end itemize
 
-XXX
+It is clear that some backtracking mechanism is needed in the
+evaluation of the selection expressions.  For example, consider the
+following expression that is deciding whether a ``registration'' in a
+webpage shall be rejected:
+
+@example
+((Email ~ "foomail\.com") || (Age <= 18)) && !#Fixed
+@end example
+
+The previous expression will be evaluated for every possible
+permutation of the fields ``Email'', ``Age'' and ``Fixed'' present in
+the record, until one of the combinations succeeds.  At that point the
+computation is interrupted.
+
+The goal of a selection expression is to decide whether it applies to
+a candidate.  It is thus a boolean expression.  The final value of the
+expression depends on both the type and the value of the result
+launched by the top-most subexpression:
+
+@itemize @minus
+@item If the result is an @b{integer}, the expression is true if its
+value is not zero.
+@item If the result is a @b{real}, or a @b{string}, the expression
+evaluates to false.
+@end itemize
 
 @node Field Expressions
 @section Field Expressions
@@ -1078,6 +1098,10 @@ recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P|-R) FIELD_EXPR] [FILE]
 In addition of the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
+If no FILE is specified then the command acts like a filter, getting
+the data from the standard input and writing the result in the
+standard output.
+
 The @dfn{selection options} are used to select a subset of
 the records in the input.
 
@@ -1088,7 +1112,7 @@ set.
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
-the records matched by the expression will get taken into account to
+the records matched by the expression will be taken into account to
 compute the output.
 @item -t TYPE
 @itemx @w{@kbd{--type}=@var{type}}
@@ -1124,9 +1148,9 @@ matching records instead of the records themselves.  This option is
 incompatible with @option{-p}, @option{-P} and @option{-R}.
 @end table
 
-Some special @dfn{special options} are available to ease the
-communication between the recutils and other programs, such as lisp
-interpreters.
+Some @dfn{special options} are available to ease the communication
+between the recutils and other programs, such as lisp interpreters.
+Those options are not intended to be used by human operators.
 
 @table @samp
 @item -S
@@ -1137,16 +1161,16 @@ Print the data using sexps instead of rec format.
 @node recsel Examples
 @section recsel Examples
 
-XXX
+Print the closed bugs:
 
 @example
-$ recsel -e 'Name ~ Jo' foo.rec
+$ recsel -t Issue -e "Status = 'CLOSED'" TODO.rec
 @end example
 
-Print the name of the partners of all the persons less than twenty:
+Print the name of all the registrants less than twenty:
 
 @example
-$ recsel -e 'Age < 20' -p Partner foo.rec
+$ recsel -e 'Age < 20' -P Partner registrants.rec
 @end example
 
 @node recins
@@ -1174,6 +1198,10 @@ The new record that will be inserted by the command is constructed by
 using pairs of @samp{-f} and @samp{-v} options.  Each pair defines a
 field.  The order of the parameters is significant.
 
+If no FILE is specified then the command acts like a filter, getting
+the data from the standard input and writing the result in the
+standard output.
+
 In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
@@ -1196,22 +1224,219 @@ The value of the field being defined.
 @node recins Examples
 @section recins Examples
 
-XXX
+Create a new issue in the bugs database:
+
+@example
+$ recins -t Issue -f Id     -v 10           \
+                  -f Title  -v "New issue." \
+                  -f Status -v NEW          \
+         TODO.rec
+@end example
+
+Register a new event in a log file, using recins as a filter:
+
+@example
+cat $LOGFILE | recins -f Date -v `date` -f Entry -v "$HW_ADDR device connected" >> $LOGFILE
+@end example
 
 @node recdel
 @chapter recdel
 
-XXX
+@command{recdel} removes records from a rec file, or from rec data
+read from the standard input.
+
+@menu
+* recdel Invocation::     Command line options.
+* recdel Examples::       Examples of the usage of @command{recdel}.
+@end menu
+
+@node recdel Invocation
+@section recdel Invocation
+
+@command{recdel} removes records from a rec file, or from rec data
+read from the standard input.  Synopsis:
+
+@example
+recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]
+@end example
+
+If no FILE is specified then the command acts like a filter, getting
+the data from the standard input and writing the result in the
+standard output.
+
+In addition to the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -t
+@itemx @w{@kbd{--type}=@var{expr}}
+Remove records of the given type.  If this parameter is not specified
+then records of any type will be removed.
+@item -n @var{num}
+Remove the record occupying the @var{num}th position in its record
+set.
+@item -e @var{expr}
+@itemx @w{@kbd{--expression}=@var{expr}}
+A record selection expression (@pxref{Selection Expressions}).  Only
+the records matched by the expression will be removed from the file.
+@item -c
+@itemx @w{@kbd{--comment}}
+Comment the matching records out instead of removing them.
+@item -f
+@itemx @w{@kbd{--force}}
+Delete even in potentially dangerous situations, such as the request
+to delete all the records of some type, for example.
+@end table
+
+@node recdel Examples
+@section recdel Examples
+
+Comment out closed issues in the bugs database:
+
+@example
+$ recdel -c -t Issue -e "Status = 'CLOSED'" TODO.rec
+@end example
 
 @node recset
 @chapter recset
 
-XXX
+@command{recset} manipulates the fields of records in a rec file, or
+rec data read from the standard input.
+
+@menu
+* recset Invocation::     Command line options.
+* recset Examples::       Examples of the usage of @command{recset}.
+@end menu
+
+@node recset Invocation
+@section recset Invocation
+
+@command{recset} manipulates the fields of records in a rec file, or
+rec data read from the standard input.  Synopsis:
+
+@example
+recset [OPTION]... [FILE]...
+@end example
+
+If no FILE is specified then the command acts like a filter, getting
+the data from the standard input and writing the result in the
+standard output.
+
+In addition to the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+Record selection options:
+
+@table @samp
+@item -i
+@itemx @w{@kbd{--case-insensitive}}
+Make strings case-insensitive in selection expressions.
+@item -t
+@itemx @w{@kbd{--type}=@var{expr}}
+Operate on the records of the given type.  If this parameter is not
+specified then records of any type will be removed.
+@item -n @var{num}
+Remove the record occupying the @var{num}th position in its record
+set.
+@item -e @var{expr}
+@itemx @w{@kbd{--expression}=@var{expr}}
+A record selection expression (@pxref{Selection Expressions}).  Only
+the records matched by the expression will be removed from the file.
+@end table
+
+Fields selection options:
+
+@table @samp
+@item -f
+@itemx @w{@kbd{--fields}=@var{FEX}}
+Field selection expression (@pxref{Field Expressions}) to select the
+fields to operate.
+@end table
+
+Actions:
+
+@table @samp
+@item -s
+@itemx @w{@kbd{--set=}=@var{VALUE}}
+Set the value of the selected fields to @var{VALUE}.
+@item -a
+@itemx @w{@kbd{--add=}=@var{VALUE}}
+Add a new field to the selected record with value @var{VALUE}.
+@item -d
+@itemx @w{@kbd{--delete}}
+Delete the selected fields in the selected records.
+@item -c
+@itemx @w{@kbd{--comment}}
+Comment out the selected fields in the selected records.
+@end table
+
+@node recset Examples
+@section recset Examples
+
+Remove ``TmpName'' fields from any record in ``data.rec'':
+
+@example
+$ recset -f TmpName -d data.rec
+@end example
+
+Set the secondary email of all friends to @code{invalid@@email.com}:
+
+@example
+$ recset -f Email[1] -s invalid@@email.com friends.rec
+@end example
+
+Add the email @code{new@@email.com} to John Smith:
+
+@example
+$ recset -e "Name = 'John Smith'" -f Email -a new@@email.com friends.rec
+@end example
 
 @node recfix
 @chapter recfix
 
-XXX
+@command{recfix} checks and fixes rec files.
+
+@menu
+* recfix Invocation::     Command line options.
+* recfix Examples::       Examples of the usage of @command{recfix}.
+@end menu
+
+@node recfix Invocation
+@section recfix Invocation
+
+@command{recfix} checks and fixes rec files.  Synopsis:
+
+@example
+recfix [OPTION]... [FILE]...
+@end example
+
+If no FILE is specified then the command acts like a filter, getting
+the data from the standard input and writing the result in the
+standard output.
+
+This program accepts the common options described earlier
+(@pxref{Common Options}).
+
+@node recfix Examples
+@section recfix Examples
+
+Check and fix a rec database:
+
+@example
+$ recfix data.rec
+@end example
+
+The same, but with two files:
+
+@example
+$ recfix data1.rec data2.rec
+@end example
+
+Used as a filter:
+
+@example
+$ cat data1.rec data2.rec | recfix
+@end example
 
 @node csv2rec
 @chapter csv2rec
@@ -1253,7 +1478,17 @@ Omit empty fields.
 @node csv2rec Examples
 @section csv2rec Examples
 
-XXX
+Convert from csv to rec:
+
+@example
+$ csv2rec contacts.csv > contacts.rec
+@end example
+
+Used as a filter, and omitting empty fields:
+
+@example
+$ cat contacts.csv | csv2rec -e > contacts.rec
+@end example
 
 @node mdb2rec
 @chapter mdb2rec

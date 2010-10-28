@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-24 22:14:34 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-28 15:11:36 jco"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -85,6 +85,7 @@ Examples:\n\
         cat data1.rec data2.rec | recfix\n"),
          stdout);
 
+  puts("");
   recutl_print_help_footer ();
 }
 

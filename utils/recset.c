@@ -122,7 +122,6 @@ Alter or delete fields in records.\n"), stdout);
   /* TRANSLATORS: --help output, recset options.
      no-wrap */
   fputs (_("\
-  -i, --case-insensitive              make strings case-insensitive in selection\n\
       --force                         alter the records even if violating record\n\
                                         restrictions.\n"), stdout);
 

@@ -1,3 +1,15 @@
+2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Documentation improvements.
+	* utils/recset.c (recutl_print_help): Don't duplicate the
+	--case-insensitive option in the output of --help.
+
+	* utils/recinf.c (recutl_print_help): Print a newline before the
+	examples in the output of --help.
+
+	* doc/recutils.texi: Documentation for recdel, recins, recset and
+	recfix added to the reference manual.
+
 2010-10-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	User manual work.
