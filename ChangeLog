@@ -1,5 +1,16 @@
 2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Unit tests for rec_mset_type_p.
+	* torture/rec-mset/rec-mset-type-p.c: New file.
+	(test_rec_mset_type_p): New function.
+	(rec_mset_type_p_any): New test.
+	(rec_mset_type_p_existing): New test.
+	(rec_mset_type_p_nonexisting): New test.
+
+	* torture/rec-mset/elem-types.h: New file.
+
+2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Unit tests for rec_mset_dup, and a bug fixed.
 	* src/rec-mset.c (rec_mset_dup): Avoid duplicating the counter of
 	nodes of the element types.
