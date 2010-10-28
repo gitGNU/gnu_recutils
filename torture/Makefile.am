@@ -21,6 +21,9 @@ if CHECK
 TESTS = runtests
 noinst_PROGRAMS = runtests
 
+REC_MSET_TSUITE = rec-mset/rec-mset-new.c \
+                  rec-mset/tsuite-rec-mset.c
+
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
                   rec-field/rec-field-set-name.c \
                   rec-field/rec-field-value.c \
@@ -31,6 +34,7 @@ REC_FIELD_TSUITE = rec-field/rec-field-name.c \
 REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c
 
 runtests_SOURCES = runtests.c \
+                   $(REC_MSET_TSUITE) \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE)
 

@@ -1,5 +1,18 @@
 2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec_mset test suite.
+	* torture/runtests.c: rec_mset test suite added.
+
+	* torture/Makefile.am: Include files from the rec_mset test suite.
+
+	* torture/rec-mset/rec-mset-new.c: New file.
+	(rec_mset_new_and_destroy): New unit test.
+
+	* torture/rec-mset/tsuite-rec-mset.c: New file.
+	(tsuite_rec_mset): New function.
+
+2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* tasktool (tt_db_template_header): New variable.
 	(tt_db_template_issue): New variable.
 	(tt_db_template): Use tt_db_template_header and tt_db_template_issue.
