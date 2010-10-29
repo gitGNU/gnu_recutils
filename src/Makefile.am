@@ -46,6 +46,11 @@ librec_la_SOURCES = rec.c \
                     rec-fex.c \
                     rec-types.c
 
+AM_CFLAGS = -Wall -fno-strict-aliasing
+if USE_COVERAGE
+  AM_CFLAGS += -fprofile-arcs -ftest-coverage
+endif
+
 AM_LDFLAGS =
 AM_CPPFLAGS = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \

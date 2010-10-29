@@ -98,6 +98,13 @@ dnl i18n with gettext
 AM_GNU_GETTEXT_VERSION([0.18.1])
 AM_GNU_GETTEXT([external])
 
+dnl gcov compilation
+AC_ARG_ENABLE([coverage],
+              AS_HELP_STRING([--enable-coverage],
+                             [Compile the library with code coverage support (default is NO)]),
+              [use_gcov=$enableval], [use_gcov=no])
+AM_CONDITIONAL([USE_COVERAGE], [test "x$use_gcov" = "xyes"])
+
 dnl Generate output files
 AC_OUTPUT(Makefile
           lib/Makefile

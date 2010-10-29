@@ -1,0 +1,37 @@
+#!/bin/sh
+# generate-coverage-report -- Generate a nice html report of code coverage
+
+# Copyright (C) 2008 Free Software Foundation, Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Check parameters
+if test $# != 1; then
+  echo "Usage: generate-coverage-report OUTPUT_DIRECTORY"
+  exit 1
+fi
+
+output_dir=$1
+
+# Invoke lcov to generate the info file
+lcov -b ../src -d ../src -c -o ../src/librec.cov
+genhtml -o $output_dir ../src/librec.cov
+
+# Cleanup
+rm ../src/librec.cov
+
+# Bye
+exit 0
+
+# End of generate-coverage-report
