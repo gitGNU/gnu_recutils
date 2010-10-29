@@ -67,10 +67,10 @@
   "^" REC_TYPE_ZBLANKS_RE "-?[0-9]+" REC_TYPE_ZBLANKS_RE "$"
 
 #define REC_TYPE_BOOL_VALUE_RE                  \
-  "^(yes|no|true|false|0|1)$"
+  "^" REC_TYPE_ZBLANKS_RE "(yes|no|true|false|0|1)" REC_TYPE_ZBLANKS_RE "$"
 
 #define REC_TYPE_REAL_VALUE_RE                  \
-  "^" REC_TYPE_ZBLANKS_RE "[0-9]+(\\.[0-9]+)?" REC_TYPE_ZBLANKS_RE "$"
+  "^" REC_TYPE_ZBLANKS_RE "-?([0-9]+)?(\\.[0-9]+)?" REC_TYPE_ZBLANKS_RE "$"
 
 #define REC_TYPE_LINE_VALUE_RE                  \
   "^[^\n]*$"
@@ -514,9 +514,10 @@ rec_type_check (rec_type_t type,
 {
   bool res;
   FILE *errors;
+  char *err_str;
   size_t errors_size;
 
-  errors = open_memstream (error_str, &errors_size);
+  errors = open_memstream (&err_str, &errors_size);
 
   switch (type->kind)
     {
@@ -584,7 +585,16 @@ rec_type_check (rec_type_t type,
 
   /* Terminate the 'errors' string.  */
   fclose (errors);
-  (*error_str)[errors_size] = '\0';
+  err_str[errors_size] = '\0';
+
+  if (error_str)
+    {
+      *error_str = err_str;
+    }
+  else
+    {
+      free (err_str);
+    }
 
   return res;
 }
@@ -958,6 +968,12 @@ rec_type_check_date (rec_type_t type,
 {
   bool ret;
   struct timespec tm;
+
+  if (strcmp (str, "") == 0)
+    {
+      /* The get_date call accepts the empty string.  */
+      return false;
+    }
 
   ret = get_date (&tm, str, NULL);
   if (!ret && errors)

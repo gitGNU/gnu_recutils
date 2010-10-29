@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 18:55:26 jco"
+/* -*- mode: C -*- Time-stamp: "2010-10-29 20:53:36 jemarch"
  *
  *       File:         rec-type-check.c
  *       Date:         Fri Oct 29 18:50:01 2010
@@ -24,6 +24,7 @@
  */
 
 #include <config.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
@@ -37,8 +38,25 @@
 START_TEST(rec_type_check_int)
 {
   rec_type_t type;
+  char *err_str;
 
-  /* XXX */
+  type = rec_type_new ("foo int");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "10", NULL));
+  fail_if (!rec_type_check (type, "01", NULL));
+  fail_if (!rec_type_check (type, "-10", NULL));
+  fail_if (!rec_type_check (type, "  10  \n\t ", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "abc", NULL));
+  fail_if (rec_type_check (type, "a10", NULL));
+  fail_if (rec_type_check (type, "10a", &err_str));
+  fail_if (err_str == NULL);
+  free (err_str);
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -52,7 +70,19 @@ START_TEST(rec_type_check_bool)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo bool");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "true", NULL));
+  fail_if (!rec_type_check (type, "false", NULL));
+  fail_if (!rec_type_check (type, "1", NULL));
+  fail_if (!rec_type_check (type, "0", NULL));
+  fail_if (!rec_type_check (type, "yes", NULL));
+  fail_if (!rec_type_check (type, "no", NULL));
+  fail_if (!rec_type_check (type, "  yes  \n\t ", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -66,7 +96,24 @@ START_TEST(rec_type_check_range)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo range -10 10");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "-10", NULL));
+  fail_if (!rec_type_check (type, "10", NULL));
+  fail_if (!rec_type_check (type, "010", NULL));
+  fail_if (!rec_type_check (type, "5", NULL));
+  fail_if (!rec_type_check (type, "  5   \n\t  ", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "-100", NULL));
+  fail_if (rec_type_check (type, "100", NULL));
+  fail_if (rec_type_check (type, "-11", NULL));
+  fail_if (rec_type_check (type, "11", NULL));
+  fail_if (rec_type_check (type, "abc", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -80,7 +127,23 @@ START_TEST(rec_type_check_real)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo real");
+  
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "3", NULL));
+  fail_if (!rec_type_check (type, "-3", NULL));
+  fail_if (!rec_type_check (type, "03", NULL));
+  fail_if (!rec_type_check (type, "3.14", NULL));
+  fail_if (!rec_type_check (type, "-3.14", NULL));
+  fail_if (!rec_type_check (type, ".10", NULL));
+  fail_if (!rec_type_check (type, "-.10", NULL));
+  fail_if (!rec_type_check (type, "  3.14  \n\t  ", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "abc", NULL));
+  fail_if (rec_type_check (type, "3.14a", NULL));
+  
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -94,7 +157,19 @@ START_TEST(rec_type_check_size)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo size 5");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "", NULL));
+  fail_if (!rec_type_check (type, "abcde", NULL));
+  fail_if (!rec_type_check (type, "ab", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, " abcde ", NULL));
+  fail_if (rec_type_check (type, "abcdef", NULL));
+  
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -108,7 +183,18 @@ START_TEST(rec_type_check_line)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo line");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "", NULL));
+  fail_if (!rec_type_check (type, "A line.", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "\n", NULL));
+  fail_if (rec_type_check (type, "several\nlines\n", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -122,7 +208,18 @@ START_TEST(rec_type_check_regexp)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo regexp /[abc][abc][abc]$/");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "abc", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "", NULL));
+  fail_if (rec_type_check (type, "abcx", NULL));
+  fail_if (rec_type_check (type, "abc ", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -136,7 +233,17 @@ START_TEST(rec_type_check_date)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo date");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "13 August 1980", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "", NULL));
+  fail_if (rec_type_check (type, "1000 November -10", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -150,7 +257,22 @@ START_TEST(rec_type_check_enum)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo enum A B C");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "A", NULL));
+  fail_if (!rec_type_check (type, "B", NULL));
+  fail_if (!rec_type_check (type, "C", NULL));
+  fail_if (!rec_type_check (type, " B  \n\t  ", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "A B", NULL));
+  fail_if (rec_type_check (type, "XXX", NULL));
+  fail_if (rec_type_check (type, "", NULL));
+  fail_if (rec_type_check (type, " ", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -164,7 +286,21 @@ START_TEST(rec_type_check_field)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo field");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "a", NULL));
+  fail_if (!rec_type_check (type, "a:", NULL));
+  fail_if (!rec_type_check (type, "a:b:c:", NULL));
+  fail_if (!rec_type_check (type, "   a:b:c \n\t ", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "", NULL));
+  fail_if (rec_type_check (type, " ", NULL));
+  fail_if (rec_type_check (type, "a%:b:", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 
@@ -178,7 +314,18 @@ START_TEST(rec_type_check_email)
 {
   rec_type_t type;
 
-  /* XXX */
+  type = rec_type_new ("foo email");
+  fail_if (type == NULL);
+
+  /* Positive tests.  */
+  fail_if (!rec_type_check (type, "jemarch@gnu.org", NULL));
+  fail_if (!rec_type_check (type, " jemarch@gnu.org  \n\t ", NULL));
+
+  /* Negative tests.  */
+  fail_if (rec_type_check (type, "", NULL));
+  fail_if (rec_type_check (type, "invalid@@email.com", NULL));
+
+  rec_type_destroy (type);
 }
 END_TEST
 

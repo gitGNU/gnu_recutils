@@ -701,8 +701,6 @@ times.  The synopsis is:
 The several date/time syntax supported by librec is provided by the
 @code{date} module from gnulib.  @xref{Date input formats}.
 
-@include getdate.texi
-
 @node Other types
 @section Other types
 
@@ -720,6 +718,8 @@ synopsis is:
 @example
 %type: AField field
 @end example
+
+@include getdate.texi
 
 @node Common Options
 @chapter Common Options
