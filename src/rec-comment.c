@@ -37,6 +37,11 @@
 rec_comment_t
 rec_comment_new (char *text)
 {
+  if (!text)
+    {
+      return NULL;
+    }
+
   return strdup (text);
 }
 

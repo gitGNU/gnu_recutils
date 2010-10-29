@@ -4,21 +4,39 @@
 %key: Test
 %mandatory: Unit
 
-Test: rec_mset_dup_empty
-Unit: rec_mset_dup
+Test: rec_mset_register_type_nominal
+Unit: rec_mset_register_type
 Description:
-+ Dup an empty mset.
++ Register a type in a mset.
 +
-+ 1. The copy shall be successfully returned.
-+ 2. The copy shall be empty.
++ 1. The registration should succeed.
++ 2. The number returned by rec_mset_register_type shall
++    be bigger than 0.
 
-Test: rec_mset_dup_nonempty
-Unit: rec_mset_dup
+Test: rec_mset_count_empty
+Unit: rec_mset_count
 Description:
-+ Dup an mset containing two elements of a nonempty type.
++ Count the number of total elements of an
++ empty mset.
 +
-+ 1. The copy shall be successfully returned.
-+ 2. The copy shall contain the same elements.
++ 1. The function shall return 0.
+
+Test: rec_mset_count_existing
+Unit: rec_mset_count
+Description:
++ Count the number of elements of a non empty
++ mset.
++
++ 1. The function shall return the number of
++    elements.
+
+Test: rec_mset_count_nonexisting
+Unit: rec_mset_count
+Description:
++ Count the number of total elements pertaining to
++ an unexisting type in a mset.
++
++ 1. The function shall return 0.
 
 Test: rec_mset_new_and_destroy
 Unit: rec_mset_new
@@ -53,39 +71,21 @@ Description:
 + 1. The function shall report that the type
 +    does not exist.
 
-Test: rec_mset_count_empty
-Unit: rec_mset_count
+Test: rec_mset_dup_empty
+Unit: rec_mset_dup
 Description:
-+ Count the number of total elements of an
-+ empty mset.
++ Dup an empty mset.
 +
-+ 1. The function shall return 0.
++ 1. The copy shall be successfully returned.
++ 2. The copy shall be empty.
 
-Test: rec_mset_count_existing
-Unit: rec_mset_count
+Test: rec_mset_dup_nonempty
+Unit: rec_mset_dup
 Description:
-+ Count the number of elements of a non empty
-+ mset.
++ Dup an mset containing two elements of a nonempty type.
 +
-+ 1. The function shall return the number of
-+    elements.
-
-Test: rec_mset_count_nonexisting
-Unit: rec_mset_count
-Description:
-+ Count the number of total elements pertaining to
-+ an unexisting type in a mset.
-+
-+ 1. The function shall return 0.
-
-Test: rec_mset_register_type_nominal
-Unit: rec_mset_register_type
-Description:
-+ Register a type in a mset.
-+
-+ 1. The registration should succeed.
-+ 2. The number returned by rec_mset_register_type shall
-+    be bigger than 0.
++ 1. The copy shall be successfully returned.
++ 2. The copy shall contain the same elements.
 
 Test: rec_mset_get_empty
 Unit: rec_mset_get
@@ -119,97 +119,64 @@ Description:
 +
 + 1. The function shall return NULL.
 
-Test: rec_field_set_name_empty
-Unit: rec_field_set_name
+Test: rec_comment_new_nominal
+Unit: rec_comment_new
 Description:
-+ Set the name of a field to the empty string
++ Create a new comment from a string.
 +
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    set.
++ 1. rec_comment_new shall return a non-NULL pointer.
 
-Test: rec_field_set_name_nonempty
-Unit: rec_field_set_name
+Test: rec_comment_new_null
+Unit: rec_comment_new
 Description:
-+ Set the name of a field to a non-empty name
++ Create a new comment from a NULL.
 +
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    set.
++ 1. rec_comment_new shall return NULL.
 
-Test: rec_field_value_empty
-Unit: rec_field_value
+Test: rec_comment_dup_nominal
+Unit: rec_comment_dup
 Description:
-+ Get the value of a field with an empy value
++ Dup a properly initialized comment.
 +
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    returned.
++ 1. The call to rec_comment_dup shall return a
++    non-null pointer different that the original.
++ 2. The contents of the copy shall be the same
++    than the contents of the original.
 
-Test: rec_field_value_nonempty
-Unit: rec_field_value
+Test: rec_comment_equal_p_nominal
+Unit: rec_comment_equal_p
 Description:
-+ Get the value of a field with a non-empty value
++ Compare comments.
 +
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    returned.
++ 1. The comparisons shall be correct.
 
-Test: rec_field_set_value_empty
-Unit: rec_field_set_value
+Test: rec_comment_destroy_nominal
+Unit: rec_comment_destroy
 Description:
-+ Set the value of a field to the empty string
++ Destroy a properly created comment.
 +
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    set.
++ 1. The call shall not crash.
 
-Test: rec_field_set_value_nonempty
-Unit: rec_field_set_value
+Test: rec_comment_set_text_nominal
+Unit: rec_comment_set_text
 Description:
-+ Set the value of a field to a non-empty value
++ Set the text of a comment.
 +
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    set.
++ 1. The function shall change the value of the comment.
 
-Test: rec_field_dup_empty
-Unit: rec_field_dup
+Test: rec_comment_text_nominal
+Unit: rec_comment_text
 Description:
-+ Dup a field with empty name and empty value.
++ Get the contents of a comment.
 +
-+ 1. The name of the copied field should be the
-+    empty string.
-+ 2. The value of the copied field should be the
-+    empty string.
++ 1. The function shall return the right contents.
 
-Test: rec_field_dup_non_empty
-Unit: rec_field_dup
+Test: rec_comment_text_empty
+Unit: rec_comment_text
 Description:
-+ Dup a field with non-empty name and non-empty value.
++ Get the contents of an empty comment.
 +
-+ 1. The name of the copied field should be the
-+    appropriate.
-+ 2. The value of the copied field should be the
-+    appropriate.
-
-Test: rec_field_name_empty
-Unit: rec_field_name
-Description:
-+ Get the name of a field with an empy name
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    returned.
-
-Test: rec_field_name_nonempty
-Unit: rec_field_name
-Description:
-+ Get the name of a field with a non-empty name
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    returned.
++ 1. The function shall return the empty string.
 
 Test: rec_record_remove_field_existing
 Unit: rec_record_remove_field
@@ -219,14 +186,6 @@ Description:
 + 1. The call to rec_record_remove_field should
 +    return true.
 + 2. The field should be removed from the record.
-
-Test: rec_record_new_and_destroy
-Unit: rec_record_new
-Description:
-+ Create a new record and destroy it.
-+
-+  1. The call to rec_record_new should not fail.
-+  2. The call to rec_record_destroy should not fail.
 
 Test: rec_record_insert_field_empty
 Unit: rec_record_insert_field
@@ -251,6 +210,14 @@ Description:
 +
 + 1. The attempt to insert a duplicated field
 +    should success.
+
+Test: rec_record_new_and_destroy
+Unit: rec_record_new
+Description:
++ Create a new record and destroy it.
++
++  1. The call to rec_record_new should not fail.
++  2. The call to rec_record_destroy should not fail.
 
 Test: rec_record_size_empty
 Unit: rec_record_size
@@ -283,5 +250,97 @@ Description:
 +
 + 1. The call to rec_record_field_p should 
 +    return false.
+
+Test: rec_field_name_empty
+Unit: rec_field_name
+Description:
++ Get the name of a field with an empy name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
+
+Test: rec_field_name_nonempty
+Unit: rec_field_name
+Description:
++ Get the name of a field with a non-empty name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
+
+Test: rec_field_set_name_empty
+Unit: rec_field_set_name
+Description:
++ Set the name of a field to the empty string
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
+
+Test: rec_field_set_name_nonempty
+Unit: rec_field_set_name
+Description:
++ Set the name of a field to a non-empty name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
+
+Test: rec_field_set_value_empty
+Unit: rec_field_set_value
+Description:
++ Set the value of a field to the empty string
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
+
+Test: rec_field_set_value_nonempty
+Unit: rec_field_set_value
+Description:
++ Set the value of a field to a non-empty value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
+
+Test: rec_field_value_empty
+Unit: rec_field_value
+Description:
++ Get the value of a field with an empy value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
+
+Test: rec_field_value_nonempty
+Unit: rec_field_value
+Description:
++ Get the value of a field with a non-empty value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
+
+Test: rec_field_dup_empty
+Unit: rec_field_dup
+Description:
++ Dup a field with empty name and empty value.
++
++ 1. The name of the copied field should be the
++    empty string.
++ 2. The value of the copied field should be the
++    empty string.
+
+Test: rec_field_dup_non_empty
+Unit: rec_field_dup
+Description:
++ Dup a field with non-empty name and non-empty value.
++
++ 1. The name of the copied field should be the
++    appropriate.
++ 2. The value of the copied field should be the
++    appropriate.
 
 # End of Tests

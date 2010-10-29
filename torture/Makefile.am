@@ -29,17 +29,26 @@ REC_MSET_TSUITE = rec-mset/rec-mset-new.c \
                   rec-mset/rec-mset-get.c \
                   rec-mset/tsuite-rec-mset.c
 
+REC_COMMENT_TSUITE = rec-comment/rec-comment-new.c \
+                     rec-comment/rec-comment-destroy.c \
+                     rec-comment/rec-comment-dup.c \
+                     rec-comment/rec-comment-text.c \
+                     rec-comment/rec-comment-set-text.c \
+                     rec-comment/rec-comment-equal-p.c \
+                     rec-comment/tsuite-rec-comment.c
+
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
-                  rec-field/rec-field-set-name.c \
-                  rec-field/rec-field-value.c \
-                  rec-field/rec-field-set-value.c \
-                  rec-field/rec-field-dup.c \
-                  rec-field/tsuite-rec-field.c
+                   rec-field/rec-field-set-name.c \
+                   rec-field/rec-field-value.c \
+                   rec-field/rec-field-set-value.c \
+                   rec-field/rec-field-dup.c \
+                   rec-field/tsuite-rec-field.c
 
 REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c
 
 runtests_SOURCES = runtests.c \
                    $(REC_MSET_TSUITE) \
+                   $(REC_COMMENT_TSUITE) \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE)
 

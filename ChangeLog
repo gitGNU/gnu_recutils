@@ -1,3 +1,43 @@
+2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-comment unit tests and bug fixes.
+	* TESTS: regenerated.
+
+	* src/rec-comment.c (rec_comment_new): Check for a NULL argument.
+
+	* torture/rec-comment/rec-comment/equal-p.c: New file.
+	(test_rec_comment_equal_p): New function.
+	(rec_comment_equal_p_nominal): New test.
+
+	* torture/rec-comment/rec-comment-set-text.c: New file.
+	(test_rec_comment_set_text): New function.
+	(rec_comment_set_text_nominal): New test.
+
+	* torture/rec-comment/rec-commment-text.c: New file.
+	(test_rec_comment_text): New function.
+	(rec_comment_text_nominal): New test.
+	(rec_comment_text_empty): New test.
+
+	* torture/rec-comment/rec-comment-dup.c: New file.
+	(test_rec_comment_dup): New function.
+	(rec_comment_dup_nominal): New test.
+
+	* torture/rec-comment/rec-comment-new.c: New file.
+	(test_rec_comment_new): New function.
+	(rec_comment_new_nominal): New test.
+	(rec_comment_new_null): New test.
+
+	* torture/rec-comment/rec-comment-destroy.c: New file.
+	(test_rec_comment_destroy): New function.
+	(rec_comment_destroy_nominal): New test.
+
+	* torture/runtests.c (main): rec-comment test suite added.
+
+	* torture/Makefile.am: rec-comment files added.
+
+	* torture/rec-comment/tsuite-rec-comment.c: New file.
+	(tsuite_rec_comment): New function.
+
 2010-10-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Regenerate TESTS.
