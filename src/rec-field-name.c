@@ -200,6 +200,12 @@ rec_field_name_equal_p (rec_field_name_t fname1,
   char *role1;
   char *role2;
 
+  if ((rec_field_name_size (fname1) == 0)
+      && (rec_field_name_size (fname2) == 0))
+    {
+      return true;
+    }
+
   role1 = fname1->parts [rec_field_name_size (fname1) - 1];
   role2 = fname2->parts [rec_field_name_size (fname2) - 1];
 

@@ -1,5 +1,66 @@
 2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-field-name unit tests and bug fixes.
+	* TESTS: Regenerated.
+
+	* torture/rec-field-name/rec-field-name-part-normalise.c: New
+	file.
+	(test_rec_field_name_part_normalise): New function.
+	(rec_field_name_part_normalise_nominal): New test.
+
+	* torture/rec-field-name/rec-field-name-str-p.c: New file.
+	(test_rec_field_name_str_p): New function.
+	(rec_field_name_str_p_nominal): New test.
+
+	* torture/rec-field-name/rec-field-name-part-str-p.c: New file.
+	(test_rec_field_name_part_str_p): New function.
+	(rec_field_name_part_str_p_nominal): New test.
+
+	* torture/rec-field-name/rec-field-name-get.c: New file.
+	(test_rec_field_name_get): New function.
+	(rec_field_name_get_nominal): New test.
+
+	* torture/rec-field-name/rec-field-name-set.c: New file.
+	(test_rec_field_name_set): New function.
+	(rec_field_name_set_nominal): New test.
+
+	* torture/rec-field-name/rec-field-name-size.c: New file.
+	(test_rec_field_name_size): New function.
+	(rec_field_name_size_empty): New test.
+	(rec_field_name_size_nonempty): New test.
+
+	* torture/rec-field-name/rec-field-name-ref-p.c: New file.
+	(test_rec_field_name_ref_p): New function.
+	(rec_field_name_ref_p_empty): New test.
+	(rec_field_naem_ref_p_nonempty): New test.
+
+	* torture/rec-field-name/rec-field-name-equal-p.c: New file.
+	(test_rec_field_name_equal_p): New function.
+	(rec_field_name_equal_p_empty): New test.
+	(rec_field_name_equal_p_nonempty): New test.
+
+	* torture/rec-field-name/rec-field-name-eql-p.c: New file.
+	(test_rec_field_name_eql_p): New function.
+	(rec_field_name_eql_p_empty): New test.
+	(rec_field_naem_eql_p_nonempty): New test.
+
+	* torture/rec-field-name/rec-field-name-dup.c: New file.
+	(test_rec_field_name_dup): New function.
+	(rec_field_name_dup_empty): New test.
+	(rec_field_name_dup_nominal): New test.
+
+	* torture/rec-field-name/rec-field-name-destroy.c: New file.
+	(test_rec_field_name_destroy): New function.
+	(rec_field_name_destroy_nominal): New test.
+
+	* torture/rec-field-name/tsuite-rec-field-name.c: New file.
+
+	* torture/rec-field-name/rec-field-name-new.c: New file.
+	(test_rec_field_name_new): New function.
+	(rec_field_name_new_nominal): New test.
+
+2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-comment unit tests and bug fixes.
 	* TESTS: regenerated.
 

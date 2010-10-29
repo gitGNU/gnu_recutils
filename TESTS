@@ -178,6 +178,112 @@ Description:
 +
 + 1. The function shall return the empty string.
 
+Test: rec_field_name_set_nominal
+Unit: rec_field_name_set
+Description:
++ Check the setting of name parts.
+
+Test: rec_field_name_part_normalise_nominal
+Unit: rec_field_name_part_normalise
+Description:
++ Check normalisation of name parts.
+
+Test: rec_field_name_dup_empty
+Unit: rec_field_name_dup
+Description:
++ Make a copy of an empty field name.
++
++ 1. A non-null copy shall be returned.
++ 2. The copy shall be equal to the original.
+
+Test: rec_field_name_dup_nominal
+Unit: rec_field_name_dup
+Description:
++ Make a copy of a field name.
++
++ 1. A non-null copy shall be returned.
++ 2. The copy shall be equal to the original.
+
+Test: rec_field_name_destroy_nominal
+Unit: rec_field_name_destroy
+Description:
++ Destroy a field name.
++
++ 1. The function call shall succeed.
+
+Test: rec_field_name_part_str_p_nominal
+Unit: rec_field_name_part_str_p
+Description:
++ Check field name parts.
+
+Test: rec_field_name_ref_p_empty
+Unit: rec_field_name_ref_p
+Description:
++ Check if an empty field name if a reference
++ of an empty field name.
++
++ 1. The function shall return false.
+
+Test: rec_field_name_ref_p_nonempty
+Unit: rec_field_name_ref_p
+Description:
++ Check if a field name is a reference of another field name.
+
+Test: rec_field_name_get_nominal
+Unit: rec_field_name_get
+Description:
++ Get the name parts of a field name.
+
+Test: rec_field_name_str_p_nominal
+Unit: rec_field_name_str_p
+Description:
++ Check field name strings.
+
+Test: rec_field_name_size_empty
+Unit: rec_field_name_size
+Description:
++ Get the size of an empty field name.
++
++ 1. The returned size shall be 0.
+
+Test: rec_field_name_size_nonempty
+Unit: rec_field_name_size
+Description:
++ Check the size of a non empty field name.
+
+Test: rec_field_name_equal_p_empty
+Unit: rec_field_name_equal_p
+Description:
++ Compare two empty field names with
++ rec_field_name_equal_p.
++
++ 1. The function call shall return true.
+
+Test: rec_field_name_equal_p_nonempty
+Unit: rec_field_name_equal_p
+Description:
++ Compare two field names with
++ rec_field_name_equal_p.
+
+Test: rec_field_name_eql_p_empty
+Unit: rec_field_name_eql_p
+Description:
++ Check for the equality of empty field names.
++
++ 1. Two empty field names are EQuaL.
+
+Test: rec_field_name_eql_p_nonempty
+Unit: rec_field_name_eql_p
+Description:
++ Check for the equality of non empty field names.
+
+Test: rec_field_name_new_nominal
+Unit: rec_field_name_new
+Description:
++ Create a field name.
++
++ 1. rec_field_name_new should return a non-NULL pointer.
+
 Test: rec_record_remove_field_existing
 Unit: rec_record_remove_field
 Description:

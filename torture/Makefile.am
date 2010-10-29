@@ -37,6 +37,20 @@ REC_COMMENT_TSUITE = rec-comment/rec-comment-new.c \
                      rec-comment/rec-comment-equal-p.c \
                      rec-comment/tsuite-rec-comment.c
 
+REC_FIELD_NAME_TSUITE = rec-field-name/rec-field-name-new.c \
+                        rec-field-name/rec-field-name-destroy.c \
+                        rec-field-name/rec-field-name-dup.c \
+                        rec-field-name/rec-field-name-eql-p.c \
+                        rec-field-name/rec-field-name-equal-p.c \
+                        rec-field-name/rec-field-name-ref-p.c \
+                        rec-field-name/rec-field-name-size.c \
+                        rec-field-name/rec-field-name-set.c \
+                        rec-field-name/rec-field-name-get.c \
+                        rec-field-name/rec-field-name-part-str-p.c \
+                        rec-field-name/rec-field-name-str-p.c \
+                        rec-field-name/rec-field-name-part-normalise.c \
+                        rec-field-name/tsuite-rec-field-name.c
+
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
                    rec-field/rec-field-set-name.c \
                    rec-field/rec-field-value.c \
@@ -49,6 +63,7 @@ REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c
 runtests_SOURCES = runtests.c \
                    $(REC_MSET_TSUITE) \
                    $(REC_COMMENT_TSUITE) \
+                   $(REC_FIELD_NAME_TSUITE) \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE)
 

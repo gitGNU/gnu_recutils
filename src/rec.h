@@ -101,18 +101,36 @@ rec_field_name_t rec_field_name_dup (rec_field_name_t fname);
 
 /* Comparing field names.
  *
- * Two given field names are equal if and only if they contain the
- * same number of name parts and they are identical.
+ * The library supports three different notions of equality for field
+ * names:
+ *
+ * - Two given field names are EQL if and only if they contain the
+ *   same number of name parts, they are identical and they appear in
+ *   the same order.  The following names are thus eql:
+ *
+ *         A:B:C:  .EQL.  A:B:C:
+ *
+ * - Two given field names are EQUAL if and only if their name parts
+ *   with the biggest index are identical.  The following names are
+ *   thus equal:
+ *   
+ *         A:B:C:  .EQUAL. X:Y:C:  .EQUAL. C:
+ *
+ * - A given field name NAME2 is a reference of a field name NAME1 if
+ *   and only if size(NAME2) > 1 and NAME1[size(NAME1)-1] == NAME2[1].
+ *   Thus, the following is true:
+ *
+ *         A:B: is a reference to B: and to X:Y:B:.
+ *
+ * The following functions implement those criterias.
  */
 
 bool rec_field_name_eql_p (rec_field_name_t fname1,
                            rec_field_name_t fname2);
 
-/* XXX: explain.  */
 bool rec_field_name_equal_p (rec_field_name_t fname1,
                              rec_field_name_t fname2);
 
-/* XXX: explain.  */
 bool rec_field_name_ref_p (rec_field_name_t fname1,
                            rec_field_name_t fname2);
 
@@ -134,11 +152,14 @@ bool rec_field_name_set (rec_field_name_t fname,
 const char *rec_field_name_get (rec_field_name_t fname,
                                 int index);
 
-/* Check if a given string conforms a valid field name.  */
+/* Check if a given string conforms a valid field name.  See the
+   regular expressions REC_FNAME_RE and REC_FNAME_PART_RE above for
+   the definition of a well conformed field name.  */
 bool rec_field_name_part_str_p (const char *str);
 bool rec_field_name_str_p (const char *str);
 
-/* Normalise a field name part.  */
+/* Normalise a field name part.  Any non alphanumeric character,
+   including '_', '-' and '%', are transformed into '_'. */
 char *rec_field_name_part_normalise (const char *str);
 
 /*
