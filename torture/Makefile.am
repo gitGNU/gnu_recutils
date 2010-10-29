@@ -51,6 +51,16 @@ REC_FIELD_NAME_TSUITE = rec-field-name/rec-field-name-new.c \
                         rec-field-name/rec-field-name-part-normalise.c \
                         rec-field-name/tsuite-rec-field-name.c
 
+REC_TYPE_TSUITE = rec-type/rec-type-new.c \
+                  rec-type/rec-type-destroy.c \
+                  rec-type/rec-type-descr-p.c \
+                  rec-type/rec-type-descr-field-name.c \
+                  rec-type/rec-type-kind.c \
+                  rec-type/rec-type-kind-str.c \
+                  rec-type/rec-type-equal-p.c \
+                  rec-type/rec-type-check.c \
+                  rec-type/tsuite-rec-type.c
+
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
                    rec-field/rec-field-set-name.c \
                    rec-field/rec-field-value.c \
@@ -64,6 +74,7 @@ runtests_SOURCES = runtests.c \
                    $(REC_MSET_TSUITE) \
                    $(REC_COMMENT_TSUITE) \
                    $(REC_FIELD_NAME_TSUITE) \
+                   $(REC_TYPE_TSUITE) \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE)
 

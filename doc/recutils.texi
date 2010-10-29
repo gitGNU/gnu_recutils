@@ -555,6 +555,7 @@ The following sections describe the supported types.
                           expressions. 
 * Enumerated types::    Enumerations and boolean values.
 * Time related types::  Dates and times.
+* Other types::         Emails, fields, ...
 @end menu
 
 @node Escalar types
@@ -583,7 +584,7 @@ Sometimes it is desirable to reduce the @dfn{range} of integers allowed in a
 field.  That can be achieved by using a range type declaration:
 
 @example
-%type: PercentComplete range 0..100
+%type: PercentComplete range 0 100
 @end example
 
 Note that it is possible to omit the minimum index in ranges.  In that
@@ -701,6 +702,24 @@ The several date/time syntax supported by librec is provided by the
 @code{date} module from gnulib.  @xref{Date input formats}.
 
 @include getdate.texi
+
+@node Other types
+@section Other types
+
+The @dfn{Email} field type specifier is used to declare electronic
+addresses such as emails.  The synopsis is:
+
+@example
+%type: Email email
+@end example
+
+Sometimes it is useful to make fields to store field names.  For that
+purpose the @dfn{Field} field type specifier is supported.  The
+synopsis is:
+
+@example
+%type: AField field
+@end example
 
 @node Common Options
 @chapter Common Options

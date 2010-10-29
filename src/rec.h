@@ -197,17 +197,54 @@ enum rec_type_kind_e
 
 typedef struct rec_type_s *rec_type_t;
 
-bool rec_type_descr_p (char *str);
-rec_field_name_t rec_type_descr_field_name (char *str);
-
+/* Create a new type based on the textual description in STR.  */
 rec_type_t rec_type_new (char *str);
+
+/* Destroy a type.  */
 void rec_type_destroy (rec_type_t type);
 
+/* Determine whether a string contains a valid type description.  */
+bool rec_type_descr_p (char *str);
+
+/* Extract the field name of a string containing a type
+   description.  */
+rec_field_name_t rec_type_descr_field_name (char *str);
+
+/* Get the kind of the type.  The _str version returns a string with
+   the name of the type.  */
 enum rec_type_kind_e rec_type_kind (rec_type_t type);
 char *rec_type_kind_str (rec_type_t type);
 
-bool rec_type_check (rec_type_t type, char *str, char **error_str);
+/* Determine whether two types are the same type.
+ * 
+ * Two types are equal if,
+ *
+ * - They are of the same kind, and
+ *
+ * - Depending on the kind of types:
+ *
+ *   + For sizes
+ *    
+ *     The maximum size specified in both types is the same.
+ *
+ *   + For ranges
+ *
+ *     The ranges specified in both types are the same.
+ *
+ *   + For enums
+ *
+ *     Both enums have the same number of entries, they are identical
+ *     and in the same order.
+ *
+ *   + For regexps
+ *
+ *     They are never equal.
+ */
 bool rec_type_equal_p (rec_type_t type1, rec_type_t type2);
+
+/* Check the contents of a string against a type.  In case some error
+   arises, return it in ERROR_STR if it is not NULL.  */
+bool rec_type_check (rec_type_t type, char *str, char **error_str);
 
 /*
  * TYPE REGISTRIES.

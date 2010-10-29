@@ -117,7 +117,7 @@
 #define REC_TYPE_BOOL_DESCR_RE                  \
   REC_TYPE_BOOL_NAME
 
-/* range MIN..MAX  */
+/* range MIN MAX  */
 #define REC_TYPE_RANGE_DESCR_RE                    \
   REC_TYPE_RANGE_NAME                              \
   REC_TYPE_BLANKS_RE                               \
@@ -248,10 +248,10 @@ static void rec_type_skip_blanks (char **str);
 static bool rec_type_parse_int (char **str, int *num);
 static bool rec_type_parse_regexp (char **str, char *re, char **result);
 
-static bool rec_type_parse_size (char *str, rec_type_t type);
-static bool rec_type_parse_enum (char *str, rec_type_t type);
-static bool rec_type_parse_regexp_type (char *str, rec_type_t type);
-static bool rec_type_parse_range (char *str, rec_type_t type);
+static char *rec_type_parse_size (char *str, rec_type_t type);
+static char *rec_type_parse_enum (char *str, rec_type_t type);
+static char *rec_type_parse_regexp_type (char *str, rec_type_t type);
+static char *rec_type_parse_range (char *str, rec_type_t type);
 
 /*
  * Public functions.
@@ -260,7 +260,19 @@ static bool rec_type_parse_range (char *str, rec_type_t type);
 bool
 rec_type_descr_p (char *str)
 {
-  return rec_type_check_re (REC_TYPE_DESCR_RE, str);
+  bool ret;
+  rec_type_t aux_type;
+
+  ret = false;
+  
+  aux_type = rec_type_new (str);
+  if (aux_type)
+    {
+      ret = true;
+      rec_type_destroy (aux_type);
+    }
+
+  return ret;
 }
 
 rec_field_name_t
@@ -269,6 +281,11 @@ rec_type_descr_field_name (char *str)
   rec_field_name_t field_name = NULL;
   char *p, *b;
   char *name;
+
+  if (!rec_type_descr_p (str))
+    {
+      return NULL;
+    }
 
   p = str;
 
@@ -324,7 +341,8 @@ rec_type_new (char *str)
     {
     case REC_TYPE_SIZE:
       {
-        if (!rec_type_parse_size (p, new))
+        p = rec_type_parse_size (p, new);
+        if (!p)
           {
             free (new);
             new = NULL;
@@ -333,7 +351,8 @@ rec_type_new (char *str)
       }
     case REC_TYPE_ENUM:
       {
-        if (!rec_type_parse_enum (p, new))
+        p = rec_type_parse_enum (p, new);
+        if (!p)
           {
             free (new);
             new = NULL;
@@ -342,7 +361,8 @@ rec_type_new (char *str)
       }
     case REC_TYPE_REGEXP:
       {
-        if (!rec_type_parse_regexp_type (p, new))
+        p = rec_type_parse_regexp_type (p, new);
+        if (!p)
           {
             free (new);
             new = NULL;
@@ -351,7 +371,8 @@ rec_type_new (char *str)
       }
     case REC_TYPE_RANGE:
       {
-        if (!rec_type_parse_range (p, new))
+        p = rec_type_parse_range (p, new);
+        if (!p)
           {
             free (new);
             new = NULL;
@@ -375,6 +396,23 @@ rec_type_new (char *str)
         exit (1);
         break;
       }
+    }
+
+  if (new)
+    {
+      /* Check that all characters until the end of the string are
+         blank characters.  */
+      while (*p != '\0')
+        {
+          if (!rec_type_blank_p (*p))
+            {
+              free (new);
+              new = NULL;
+              break;
+            }
+          
+          p++;
+        }
     }
 
  exit:
@@ -648,11 +686,13 @@ rec_type_equal_p (rec_type_t type1,
               ret = (type2->data.names[i]
                      && (strcmp (type1->data.names[i],
                                  type2->data.names[i]) == 0));
+
+              i++;
             }
         }
       else if (type1->kind == REC_TYPE_REGEXP)
         {
-          /* Since there is noway to determine whether two
+          /* Since there is no way to determine whether two
              regex_t variables refer to equivalent regexps.  */
           ret = false;
         }
@@ -1082,13 +1122,12 @@ rec_type_parse_regexp (char **str, char *re, char **result)
   return ret;
 }
 
-static bool
+static char *
 rec_type_parse_size (char *str, rec_type_t type)
 {
   bool ret;
   char *p;
 
-  ret = true;
   p = str;
 
   /* Skip blanks.  */
@@ -1097,21 +1136,24 @@ rec_type_parse_size (char *str, rec_type_t type)
   /* Get the size.  */
   if (!rec_type_parse_int (&p, &(type->data.max_size)))
     {
-      ret = false;
+      p = NULL;
     }
-  
-  return ret;
+
+  return p;
 }
 
-static bool
+static char *
 rec_type_parse_enum (char *str, rec_type_t type)
 {
-  bool ret;
   char *p;
   size_t i, j;
   
-  ret = true;
   p = str;
+
+  for (i = 0; i < REC_ENUM_MAX_NAMES; i++)
+    {
+      type->data.names[i] = NULL;
+    }
 
   i = 0;
   while (*p && (i < REC_ENUM_MAX_NAMES))
@@ -1120,17 +1162,29 @@ rec_type_parse_enum (char *str, rec_type_t type)
       /* XXX and comments as well!.  */
       rec_type_skip_blanks (&p);
 
-      /* Parse an enum entry.  */
-      if (!rec_type_parse_regexp (&p,
-                                  "^" REC_TYPE_ENUM_NAME_RE,
-                                  &(type->data.names[i++])))
+      if (*p)
         {
-          ret = false;
-          break;
+          /* Parse an enum entry.  */
+          if (!rec_type_parse_regexp (&p,
+                                      "^" REC_TYPE_ENUM_NAME_RE,
+                                      &(type->data.names[i])))
+            {
+              p = NULL;
+              break;
+            }
+
+          i++;
         }
     }
 
-  if (!ret)
+  if (i == 0)
+    {
+      /* We require at least one entry in the enum.  In this case it
+         is not needed to save memory.  */
+      return NULL;
+    }
+
+  if (!p)
     {
       /* Free memory.  */
       for (j = 0; j < i; j++)
@@ -1139,13 +1193,12 @@ rec_type_parse_enum (char *str, rec_type_t type)
         }
     }
 
-  return ret;
+  return p;
 }
 
-static bool
+static char *
 rec_type_parse_regexp_type (char *str, rec_type_t type)
 {
-  bool ret;
   char *p;
   char re[200];
   bool escaping;
@@ -1153,7 +1206,6 @@ rec_type_parse_regexp_type (char *str, rec_type_t type)
   size_t i;
   char delim_char;
 
-  ret = true;
   p = str;
 
   /* The regexp type descriptor is like:
@@ -1185,6 +1237,7 @@ rec_type_parse_regexp_type (char *str, rec_type_t type)
           else
             {
               /* End of the regexp.  */
+              p++;
               end_regexp = true;
               break;
             }
@@ -1201,7 +1254,7 @@ rec_type_parse_regexp_type (char *str, rec_type_t type)
   if (!end_regexp)
     {
       /* Error.  */
-      ret = false;
+      p = NULL;
     }
   else
     {
@@ -1209,14 +1262,14 @@ rec_type_parse_regexp_type (char *str, rec_type_t type)
       if (regcomp (&type->data.regexp, re,
                    REG_EXTENDED) != 0)
         {
-          ret = false;
+          p = NULL;
         }
     }
 
-  return ret;
+  return p;
 }
 
-static bool
+static char *
 rec_type_parse_range (char *str, rec_type_t type)
 {
   char *p;
@@ -1227,17 +1280,17 @@ rec_type_parse_range (char *str, rec_type_t type)
 
   if (!rec_type_parse_int (&p, &(type->data.range[0])))
     {
-      return false;
+      return NULL;
     }
 
   rec_type_skip_blanks (&p);
 
   if (!rec_type_parse_int (&p, &(type->data.range[1])))
     {
-      return false;
+      return NULL;
     }
 
-  return true;
+  return p;
 }
 
 /* End of rec-types.c */

@@ -29,6 +29,7 @@
 extern Suite *tsuite_rec_mset (void);
 extern Suite *tsuite_rec_comment (void);
 extern Suite *tsuite_rec_field_name (void);
+extern Suite *tsuite_rec_type (void);
 extern Suite *tsuite_rec_field (void);
 extern Suite *tsuite_rec_record (void);
 
@@ -43,6 +44,7 @@ main (int argc, char **argv)
   srunner_add_suite (sr, tsuite_rec_mset ());
   srunner_add_suite (sr, tsuite_rec_comment ());
   srunner_add_suite (sr, tsuite_rec_field_name ());
+  srunner_add_suite (sr, tsuite_rec_type ());
   srunner_add_suite (sr, tsuite_rec_field ());
   srunner_add_suite (sr, tsuite_rec_record ());
 
