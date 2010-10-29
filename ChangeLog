@@ -1,5 +1,24 @@
 2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Warnings removed in the codebase.
+	* src/rec-sex.c: Include rec-utils.h.
+
+	* src/rec-sex.l: Include rec-utils.h.
+
+	* src/rec-types.c (rec_type_new): Missing cases REC_TYPE_DATE and
+	REC_TYPE_EMAIL added.
+	Include rec-utils.h for rec-atoi.
+	(rec_type_parse_regexp): Unused variable 'b' removed.
+	(rec_type_descr_field_name): Likewise.
+	(rec_type_new): Likewise.
+	(rec_type_parse_size): Unused variable 'ret' removed.
+	(rec_type_parse_regexp_type): Unused variable 'escaping' removed.
+
+	* src/rec-fex.c: Include rec-utils.h for rec-atoi.
+	Unused static function rec_fex_parse_int removed.
+
+2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Coverage report generation.
 	* build-aux/generate-coverage-report: New file, from libgnupdf.
 

@@ -143,7 +143,6 @@ rec_write_field (rec_writer_t writer,
                  rec_field_t field,
                  rec_writer_mode_t mode)
 {
-  int i;
   size_t pos;
   rec_field_name_t fname;
   const char *fvalue;
@@ -469,7 +468,6 @@ rec_write_rset (rec_writer_t writer,
   rec_record_t descriptor;
   bool wrote_descriptor;
   rec_rset_elem_t elem;
-  rec_record_t record;
   size_t position;
   size_t descriptor_pos;
 
@@ -549,7 +547,6 @@ rec_write_db (rec_writer_t writer,
 {
   bool ret;
   int i;
-  rec_rset_t rset;
 
   ret = true;
   for (i = 0; i < rec_db_size (db); i++)

@@ -25,6 +25,7 @@
 
 #include <config.h>
 
+#include <string.h>
 #include <stdlib.h>
 #include <gl_array_list.h>
 #include <gl_list.h>

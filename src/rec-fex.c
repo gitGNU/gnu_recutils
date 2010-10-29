@@ -31,6 +31,7 @@
 #include <libintl.h>
 #define _(str) dgettext (PACKAGE, str)
 
+#include <rec-utils.h>
 #include <rec.h>
 
 /*
@@ -62,7 +63,6 @@ struct rec_fex_s
 static bool rec_fex_parse_str_simple (rec_fex_t new, char *str);
 static bool rec_fex_parse_str_subscripts (rec_fex_t new, char *str);
 static bool rec_fex_parse_elem (rec_fex_elem_t elem, char *str);
-static bool rec_fex_parse_int (char *p, int *num);
 
 /*
  * Public functions.
@@ -463,33 +463,6 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
     }
 
   return ret;
-}
-
-bool
-rec_fex_parse_int (char *p,
-                   int *num)
-{
-  bool res;
-  char number[100];
-  size_t number_size;
-  
-  res = true;
-
-  number_size = 0;
-  while ((*p != 0) && (*p <= '9') && (*p >= '0'))
-    {
-      /* Add a digit.  */
-      number[number_size++] = *p;
-      p++;
-    }
-  number[number_size] = 0;
-
-  if ((number_size == 0) || (!rec_atoi (number, num)))
-    {
-      res = false;
-    }
-
-  return res;
 }
 
 /* End of rec-fex.c */

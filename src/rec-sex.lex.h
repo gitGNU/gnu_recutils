@@ -345,7 +345,7 @@ extern int sexlex \
 #undef YY_DECL
 #endif
 
-#line 171 "rec-sex.l"
+#line 173 "rec-sex.l"
 
 
 #line 352 "rec-sex.lex.h"

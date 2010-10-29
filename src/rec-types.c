@@ -34,6 +34,7 @@
 #include <libintl.h>
 #define _(str) dgettext (PACKAGE, str)
 
+#include <rec-utils.h>
 #include <rec.h>
 
 /*
@@ -279,7 +280,7 @@ rec_field_name_t
 rec_type_descr_field_name (char *str)
 {
   rec_field_name_t field_name = NULL;
-  char *p, *b;
+  char *p;
   char *name;
 
   if (!rec_type_descr_p (str))
@@ -306,7 +307,7 @@ rec_type_t
 rec_type_new (char *str)
 {
   rec_type_t new;
-  char *p, *b;
+  char *p;
   char *field_name_str = NULL;
   char *type_name_str = NULL;
 
@@ -384,6 +385,8 @@ rec_type_new (char *str)
     case REC_TYPE_REAL:
     case REC_TYPE_LINE:
     case REC_TYPE_FIELD:
+    case REC_TYPE_DATE:
+    case REC_TYPE_EMAIL:
       {
         /* We are done.  */
         break;
@@ -502,6 +505,11 @@ rec_type_kind_str (rec_type_t type)
         res = REC_TYPE_FIELD_NAME;
         break;
       }
+    default:
+      {
+        res = REC_TYPE_NONE;
+        break;
+      }
     }
 
   return res;
@@ -519,6 +527,7 @@ rec_type_check (rec_type_t type,
 
   errors = open_memstream (&err_str, &errors_size);
 
+  res = false;
   switch (type->kind)
     {
     case REC_TYPE_NONE:
@@ -1114,7 +1123,7 @@ static bool
 rec_type_parse_regexp (char **str, char *re, char **result)
 {
   bool ret;
-  char *p, *b;
+  char *p;
   regex_t regexp;
   regmatch_t pm;
 
@@ -1157,8 +1166,8 @@ rec_type_parse_regexp (char **str, char *re, char **result)
 static char *
 rec_type_parse_size (char *str, rec_type_t type)
 {
-  bool ret;
   char *p;
+  int size;
 
   p = str;
 
@@ -1166,7 +1175,11 @@ rec_type_parse_size (char *str, rec_type_t type)
   rec_type_skip_blanks (&p);
 
   /* Get the size.  */
-  if (!rec_type_parse_int (&p, &(type->data.max_size)))
+  if (rec_type_parse_int (&p, &size))
+    {
+      type->data.max_size = size;
+    }
+  else
     {
       p = NULL;
     }
@@ -1233,7 +1246,6 @@ rec_type_parse_regexp_type (char *str, rec_type_t type)
 {
   char *p;
   char re[200];
-  bool escaping;
   bool end_regexp;
   size_t i;
   char delim_char;

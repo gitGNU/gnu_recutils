@@ -64,16 +64,6 @@ struct rec_rset_s
 #define REC_NAME_MANDATORY "%mandatory"
 #define REC_NAME_UNIQUE "%unique:"
 
-static char *special_fields[] =
-  {
-    REC_NAME_REC,
-    REC_NAME_KEY,
-    REC_NAME_MANDATORY,
-    REC_NAME_UNIQUE,
-    /* Sentinel */
-    ""
-  };
-
 /* Static functions implemented below.  */
 
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
@@ -546,7 +536,6 @@ char *
 rec_rset_type (rec_rset_t rset)
 {
   char *res;
-  rec_record_t descriptor;
   rec_field_t field;
   rec_field_name_t field_name;
 

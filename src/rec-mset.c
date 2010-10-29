@@ -149,7 +149,7 @@ rec_mset_dup (rec_mset_t mset)
       /* Duplicate the elements.  */
 
       elem = NULL;
-      while (elem = rec_mset_next (mset, elem, MSET_ANY))
+      while ((elem = rec_mset_next (mset, elem, MSET_ANY)))
         {
           /* Dup the element.  */
           new_elem = rec_mset_elem_new (new, elem->type);
@@ -390,7 +390,7 @@ rec_mset_search (rec_mset_t mset,
   result = NULL;
   elem = NULL;
 
-  while (elem = rec_mset_next (mset, elem, MSET_ANY))
+  while ((elem = rec_mset_next (mset, elem, MSET_ANY)))
     {
       if (elem->data == data)
         {
@@ -428,7 +428,7 @@ rec_mset_next (rec_mset_t mset,
       /* Return the next element of the given type in the mset.  */
       result = NULL;
       node = gl_list_search (elem->mset->elem_list, (void *) elem);
-      while (node = gl_list_next_node (elem->mset->elem_list, node))
+      while ((node = gl_list_next_node (elem->mset->elem_list, node)))
         {
           next_elem = (rec_mset_elem_t) gl_list_node_value (elem->mset->elem_list,
                                                             node);
@@ -523,7 +523,7 @@ rec_mset_dump (rec_mset_t mset)
   iter = gl_list_iterator (mset->elem_list);
   while (gl_list_iterator_next (&iter, (const void **) &elem, &node))
     {
-      printf("    node=%d elem=%p elem->type=%d elem->data=%p contained=%p\n", node, elem,
+      printf("    node=%p elem=%p elem->type=%d elem->data=%p contained=%p\n", node, elem,
              elem->type, elem->data, elem->mset);
       i++;
     }

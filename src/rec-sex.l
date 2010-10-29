@@ -35,6 +35,8 @@
 %{
 #include <config.h>
 
+#include <rec-utils.h>
+
 #include <rec-sex-ast.h>
 #include <rec-sex-parser.h>
 #include <rec-sex.tab.h>
@@ -196,7 +198,7 @@ rec_sex_lex_extract_index (char *str,
                            int *num)
 {
   bool res;
-  char *p, *b;
+  char *p;
   char aux[100];
   int aux_size;
 

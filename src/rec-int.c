@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-24 19:59:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-29 22:46:37 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -25,6 +25,7 @@
 
 #include <config.h>
 
+#include <string.h>
 #include <stdlib.h>
 #include <libintl.h>
 #define _(str) dgettext (PACKAGE, str)
@@ -59,7 +60,6 @@ rec_int_check_db (rec_db_t db,
                   bool check_descriptors_p,
                   FILE *errors)
 {
-  int res;
   bool ret;
   size_t db_size;
   size_t n_rset;
@@ -92,7 +92,6 @@ rec_int_check_rset (rec_db_t db,
   int res;
   rec_rset_elem_t rset_elem;
   rec_record_t record;
-  rec_record_t descriptor;
 
   res = 0;
 

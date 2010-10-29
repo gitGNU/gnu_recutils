@@ -180,12 +180,12 @@ rec_record_subset_p (rec_record_t record1,
   result = true;
 
   elem1 = NULL;
-  while (elem1 = rec_mset_next (record1->mset, elem1, MSET_ANY))
+  while ((elem1 = rec_mset_next (record1->mset, elem1, MSET_ANY)))
     {
       elem_found = false;
 
       elem2 = NULL;
-      while (elem2 = rec_mset_next (record2->mset, elem2, MSET_ANY))
+      while ((elem2 = rec_mset_next (record2->mset, elem2, MSET_ANY)))
         {
           if (rec_mset_elem_equal_p (elem1, elem2))
             {
@@ -412,8 +412,8 @@ rec_record_search_field_name (rec_record_t record,
 
   found = 0;
   elem.mset_elem = NULL;
-  while (elem.mset_elem =
-         rec_mset_next (record->mset, elem.mset_elem, record->field_type))
+  while ((elem.mset_elem =
+          rec_mset_next (record->mset, elem.mset_elem, record->field_type)))
     {
       field = (rec_field_t) rec_mset_elem_data (elem.mset_elem);
       if (rec_field_name_equal_p (field_name,
@@ -513,7 +513,7 @@ rec_record_get_num_fields_by_name (rec_record_t record,
   num_fields = 0;
 
   elem = NULL;
-  while (elem = rec_mset_next (record->mset, elem, record->field_type))
+  while ((elem = rec_mset_next (record->mset, elem, record->field_type)))
     {
       field = (rec_field_t) rec_mset_elem_data (elem);
       if (rec_field_name_equal_p (rec_field_name (field),
@@ -539,7 +539,7 @@ rec_record_get_field_by_name (rec_record_t record,
   field = NULL;
   elem = NULL;
 
-  while (elem = rec_mset_next (record->mset, elem, record->field_type))
+  while ((elem = rec_mset_next (record->mset, elem, record->field_type)))
     {
       field = (rec_field_t) rec_mset_elem_data (elem);
       if (rec_field_name_equal_p (rec_field_name (field), field_name))

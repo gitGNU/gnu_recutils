@@ -304,7 +304,6 @@ rec_parse_field (rec_parser_t parser,
   char *field_value;
   size_t location;
   size_t char_location;
-  size_t record_char_location;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -350,8 +349,7 @@ rec_parse_record (rec_parser_t parser,
 {
   rec_record_t new;
   rec_field_t field;
-  rec_field_name_t field_name;
-  bool ret, field_p;
+  bool ret;
   int ci;
   char c;
   rec_comment_t comment;

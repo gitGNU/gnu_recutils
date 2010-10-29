@@ -28,6 +28,7 @@
 #include <regex.h>
 
 #include <rec.h>
+#include <rec-utils.h>
 #include <rec-sex-ast.h>
 #include <rec-sex-parser.h>
 #include <rec-sex.tab.h>
@@ -302,12 +303,9 @@ rec_sex_eval_node (rec_sex_t sex,
                    rec_sex_ast_node_t node,
                    bool *status)
 {
-  int i;
-  struct rec_sex_val_s res;
-  rec_sex_ast_node_t child1;
-  struct rec_sex_val_s child_val1;
-  rec_sex_ast_node_t child2;
-  struct rec_sex_val_s child_val2;
+  struct rec_sex_val_s res = {0, 0, 0, NULL};
+  struct rec_sex_val_s child_val1 = {0, 0, 0, NULL};
+  struct rec_sex_val_s child_val2 = {0, 0, 0, NULL};
 
   *status = true;
 
@@ -549,9 +547,6 @@ rec_sex_eval_node (rec_sex_t sex,
       }
     case REC_SEX_OP_MAT:
       {
-        int op1;
-        int op2;
-
         GET_CHILD_VAL (child_val1, 0);
         GET_CHILD_VAL (child_val2, 1);
 
@@ -702,8 +697,7 @@ rec_sex_eval_node (rec_sex_t sex,
       }
     case REC_SEX_OP_SHA:
       {
-        int i, n;
-        rec_field_t field;
+        int n;
         rec_field_name_t field_name;
         char *field_name_str;
         rec_sex_ast_node_t child;
@@ -801,7 +795,6 @@ rec_sex_op_real_p (struct rec_sex_val_s op1,
                    struct rec_sex_val_s op2)
 {
   bool ret;
-  int integer;
   double real;
 
   ret = true;
