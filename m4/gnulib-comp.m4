@@ -63,6 +63,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module mbsinit:
   # Code from module mktime:
   # Code from module multiarch:
+  # Code from module parse-datetime:
   # Code from module quotearg:
   # Code from module quotearg-simple:
   # Code from module setenv:
@@ -75,7 +76,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module strerror:
   # Code from module string:
   # Code from module sys_time:
-  # Code from module sys_wait:
   # Code from module time:
   # Code from module time_r:
   # Code from module timespec:
@@ -135,7 +135,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_FPENDING
   # Code from module gendocs:
   # Code from module getdate:
-  gl_GETDATE
   # Code from module getopt-gnu:
   gl_FUNC_GETOPT_GNU
   gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
@@ -176,6 +175,8 @@ AC_DEFUN([gl_INIT],
   gl_TIME_MODULE_INDICATOR([mktime])
   # Code from module multiarch:
   gl_MULTIARCH
+  # Code from module parse-datetime:
+  gl_PARSE_DATETIME
   # Code from module quotearg:
   gl_QUOTEARG
   # Code from module quotearg-simple:
@@ -200,9 +201,6 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_STRING_H
   # Code from module sys_time:
   gl_HEADER_SYS_TIME_H
-  AC_PROG_MKDIR_P
-  # Code from module sys_wait:
-  gl_SYS_WAIT_H
   AC_PROG_MKDIR_P
   # Code from module time:
   gl_HEADER_TIME_H
@@ -370,6 +368,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/warn-on-use.h
   doc/gendocs_template
   doc/getdate.texi
+  doc/parse-datetime.texi
   lib/alloca.in.h
   lib/c-ctype.c
   lib/c-ctype.h
@@ -386,7 +385,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fpending.c
   lib/fpending.h
   lib/getdate.h
-  lib/getdate.y
   lib/getopt.c
   lib/getopt.in.h
   lib/getopt1.c
@@ -408,6 +406,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbsinit.c
   lib/mktime-internal.h
   lib/mktime.c
+  lib/parse-datetime.h
+  lib/parse-datetime.y
   lib/quotearg.c
   lib/quotearg.h
   lib/ref-add.sin
@@ -422,7 +422,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strerror.c
   lib/string.in.h
   lib/sys_time.in.h
-  lib/sys_wait.in.h
   lib/time.in.h
   lib/time_r.c
   lib/timespec.h
@@ -450,7 +449,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/extensions.m4
   m4/fcntl-o.m4
   m4/fpending.m4
-  m4/getdate.m4
   m4/getopt.m4
   m4/gettext.m4
   m4/gettime.m4
@@ -487,6 +485,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/multiarch.m4
   m4/nls.m4
   m4/onceonly.m4
+  m4/parse-datetime.m4
   m4/po.m4
   m4/printf-posix.m4
   m4/progtest.m4
@@ -501,7 +500,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strerror.m4
   m4/string_h.m4
   m4/sys_time_h.m4
-  m4/sys_wait_h.m4
   m4/threadlib.m4
   m4/time_h.m4
   m4/time_r.m4
