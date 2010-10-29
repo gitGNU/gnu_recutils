@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 15:48:41 jco"
+/* -*- mode: C -*- Time-stamp: "2010-10-29 21:26:23 jemarch"
  *
  *       File:         rec-field-name-part-normalise.c
  *       Date:         Fri Oct 29 15:38:54 2010
@@ -25,6 +25,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>

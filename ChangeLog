@@ -1,5 +1,28 @@
 2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-type-reg unit tests and bug fixes.
+	* torture/rec-type-reg/rec-type-reg-get.c: New file.
+	(test_rec_type_reg_get): New function.
+	(rec_type_reg_get_nominal): New test.
+	(rec_type_reg_get_nonexisting): New test.
+
+	* torture/rec-type-reg/rec-type-reg-register.c: New file.
+	(test_rec_type_reg_register): New function.
+	(rec_type_reg_register_nominal): New test.
+
+	* torture/rec-type-reg/rec-type-reg-destroy.c: New file.
+	(test_rec_type_reg_destroy): New function.
+	(rec_type_reg_destroy_nominal): New test.
+
+	* torture/rec-type-reg/rec-type-reg-new.c: New file.
+	(test_rec_type_reg_new): New function.
+	(rec_type_reg_new_nominal): New test.
+
+	* torture/rec-type-reg/tsuite-rec-type-reg.c: New file.
+	(tsuite_rec_type_reg): New function.
+
+2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-type unit tests and bug fixes.
 	* torture/rec-type/rec-type-check.c: New file.
 	(test_rec_type_check): New function.

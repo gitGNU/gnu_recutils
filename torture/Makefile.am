@@ -61,6 +61,12 @@ REC_TYPE_TSUITE = rec-type/rec-type-new.c \
                   rec-type/rec-type-check.c \
                   rec-type/tsuite-rec-type.c
 
+REC_TYPE_REG_TSUITE = rec-type-reg/rec-type-reg-new.c \
+                      rec-type-reg/rec-type-reg-destroy.c \
+                      rec-type-reg/rec-type-reg-register.c \
+                      rec-type-reg/rec-type-reg-get.c \
+                      rec-type-reg/tsuite-rec-type-reg.c
+
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
                    rec-field/rec-field-set-name.c \
                    rec-field/rec-field-value.c \
@@ -75,6 +81,7 @@ runtests_SOURCES = runtests.c \
                    $(REC_COMMENT_TSUITE) \
                    $(REC_FIELD_NAME_TSUITE) \
                    $(REC_TYPE_TSUITE) \
+                   $(REC_TYPE_REG_TSUITE) \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE)
 

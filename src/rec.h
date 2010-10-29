@@ -249,14 +249,32 @@ bool rec_type_check (rec_type_t type, char *str, char **error_str);
 /*
  * TYPE REGISTRIES.
  *
+ * Type registries are collections of associations:
+ *
+ *     TYPE <-> FIELD NAME
+ *
+ * Those registries are used in record sets to store the types of some
+ * fields, but can be used for other purposes.  The following API
+ * provides facilities to maintain type registries.
  */
 
 typedef struct rec_type_reg_s *rec_type_reg_t;
 
+/* Create an empty type registry.  */
 rec_type_reg_t rec_type_reg_new (void);
+
+/* Destroy a type registry, freeing resources.  */
 void rec_type_reg_destroy (rec_type_reg_t reg);
 
-void rec_type_reg_register (rec_type_reg_t reg, rec_field_name_t name, rec_type_t value);
+/* Add TYPE as the type for the field name NAME in the type registry
+   REG.  If the field NAME is already associated in REG, the previous
+   association gets overwritten.  */
+void rec_type_reg_register (rec_type_reg_t reg, rec_field_name_t name, rec_type_t type);
+
+/* Get the type associated with the field NAME.  If no association for
+   that field name exists in the registry then NULL is returned.  Note
+   that the used equality function is: EQUAL || REF.  See above for
+   details on field name equality.  */
 rec_type_t rec_type_reg_get (rec_type_reg_t reg, rec_field_name_t name);
 
 /*

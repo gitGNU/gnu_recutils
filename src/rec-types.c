@@ -638,9 +638,25 @@ rec_type_reg_register (rec_type_reg_t reg,
                        rec_field_name_t name,
                        rec_type_t type)
 {
-  reg->entries[reg->num_entries].name = rec_field_name_dup (name);
-  reg->entries[reg->num_entries].type = type;
-  reg->num_entries++;
+  size_t i;
+
+  for (i = 0; i < reg->num_entries; i++)
+    {
+      if (rec_field_name_equal_p (reg->entries[i].name, name)
+          || rec_field_name_ref_p (reg->entries[i].name, name))
+        {
+          /* Replace this entry.  */
+          break;
+        }
+    }
+
+  reg->entries[i].name = rec_field_name_dup (name);
+  reg->entries[i].type = type;
+  if (i == reg->num_entries)
+    {
+      /* We added a new entry.  */
+      reg->num_entries++;
+    }
 }
 
 rec_type_t

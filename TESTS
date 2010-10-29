@@ -4,39 +4,80 @@
 %key: Test
 %mandatory: Unit
 
-Test: rec_mset_register_type_nominal
-Unit: rec_mset_register_type
+Test: rec_comment_destroy_nominal
+Unit: rec_comment_destroy
 Description:
-+ Register a type in a mset.
++ Destroy a properly created comment.
 +
-+ 1. The registration should succeed.
-+ 2. The number returned by rec_mset_register_type shall
-+    be bigger than 0.
++ 1. The call shall not crash.
 
-Test: rec_mset_count_empty
-Unit: rec_mset_count
+Test: rec_comment_text_nominal
+Unit: rec_comment_text
 Description:
-+ Count the number of total elements of an
-+ empty mset.
++ Get the contents of a comment.
 +
-+ 1. The function shall return 0.
++ 1. The function shall return the right contents.
 
-Test: rec_mset_count_existing
-Unit: rec_mset_count
+Test: rec_comment_text_empty
+Unit: rec_comment_text
 Description:
-+ Count the number of elements of a non empty
-+ mset.
++ Get the contents of an empty comment.
 +
-+ 1. The function shall return the number of
-+    elements.
++ 1. The function shall return the empty string.
 
-Test: rec_mset_count_nonexisting
-Unit: rec_mset_count
+Test: rec_comment_dup_nominal
+Unit: rec_comment_dup
 Description:
-+ Count the number of total elements pertaining to
-+ an unexisting type in a mset.
++ Dup a properly initialized comment.
 +
-+ 1. The function shall return 0.
++ 1. The call to rec_comment_dup shall return a
++    non-null pointer different that the original.
++ 2. The contents of the copy shall be the same
++    than the contents of the original.
+
+Test: rec_comment_equal_p_nominal
+Unit: rec_comment_equal_p
+Description:
++ Compare comments.
++
++ 1. The comparisons shall be correct.
+
+Test: rec_comment_new_nominal
+Unit: rec_comment_new
+Description:
++ Create a new comment from a string.
++
++ 1. rec_comment_new shall return a non-NULL pointer.
+
+Test: rec_comment_new_null
+Unit: rec_comment_new
+Description:
++ Create a new comment from a NULL.
++
++ 1. rec_comment_new shall return NULL.
+
+Test: rec_comment_set_text_nominal
+Unit: rec_comment_set_text
+Description:
++ Set the text of a comment.
++
++ 1. The function shall change the value of the comment.
+
+Test: rec_mset_dup_empty
+Unit: rec_mset_dup
+Description:
++ Dup an empty mset.
++
++ 1. The copy shall be successfully returned.
++ 2. The copy shall be empty.
+
+Test: rec_mset_dup_nonempty
+Unit: rec_mset_dup
+Description:
++ Dup an mset containing two elements of a nonempty type.
++
++ 1. The copy shall be successfully returned.
++ 2. The copy shall contain the same elements.
 
 Test: rec_mset_new_and_destroy
 Unit: rec_mset_new
@@ -71,21 +112,39 @@ Description:
 + 1. The function shall report that the type
 +    does not exist.
 
-Test: rec_mset_dup_empty
-Unit: rec_mset_dup
+Test: rec_mset_count_empty
+Unit: rec_mset_count
 Description:
-+ Dup an empty mset.
++ Count the number of total elements of an
++ empty mset.
 +
-+ 1. The copy shall be successfully returned.
-+ 2. The copy shall be empty.
++ 1. The function shall return 0.
 
-Test: rec_mset_dup_nonempty
-Unit: rec_mset_dup
+Test: rec_mset_count_existing
+Unit: rec_mset_count
 Description:
-+ Dup an mset containing two elements of a nonempty type.
++ Count the number of elements of a non empty
++ mset.
 +
-+ 1. The copy shall be successfully returned.
-+ 2. The copy shall contain the same elements.
++ 1. The function shall return the number of
++    elements.
+
+Test: rec_mset_count_nonexisting
+Unit: rec_mset_count
+Description:
++ Count the number of total elements pertaining to
++ an unexisting type in a mset.
++
++ 1. The function shall return 0.
+
+Test: rec_mset_register_type_nominal
+Unit: rec_mset_register_type
+Description:
++ Register a type in a mset.
++
++ 1. The registration should succeed.
++ 2. The number returned by rec_mset_register_type shall
++    be bigger than 0.
 
 Test: rec_mset_get_empty
 Unit: rec_mset_get
@@ -119,170 +178,232 @@ Description:
 +
 + 1. The function shall return NULL.
 
-Test: rec_comment_new_nominal
-Unit: rec_comment_new
+Test: rec_field_set_name_empty
+Unit: rec_field_set_name
 Description:
-+ Create a new comment from a string.
++ Set the name of a field to the empty string
 +
-+ 1. rec_comment_new shall return a non-NULL pointer.
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
 
-Test: rec_comment_new_null
-Unit: rec_comment_new
+Test: rec_field_set_name_nonempty
+Unit: rec_field_set_name
 Description:
-+ Create a new comment from a NULL.
++ Set the name of a field to a non-empty name
 +
-+ 1. rec_comment_new shall return NULL.
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
 
-Test: rec_comment_dup_nominal
-Unit: rec_comment_dup
+Test: rec_field_value_empty
+Unit: rec_field_value
 Description:
-+ Dup a properly initialized comment.
++ Get the value of a field with an empy value
 +
-+ 1. The call to rec_comment_dup shall return a
-+    non-null pointer different that the original.
-+ 2. The contents of the copy shall be the same
-+    than the contents of the original.
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
 
-Test: rec_comment_equal_p_nominal
-Unit: rec_comment_equal_p
+Test: rec_field_value_nonempty
+Unit: rec_field_value
 Description:
-+ Compare comments.
++ Get the value of a field with a non-empty value
 +
-+ 1. The comparisons shall be correct.
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
 
-Test: rec_comment_destroy_nominal
-Unit: rec_comment_destroy
+Test: rec_field_set_value_empty
+Unit: rec_field_set_value
 Description:
-+ Destroy a properly created comment.
++ Set the value of a field to the empty string
 +
-+ 1. The call shall not crash.
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
 
-Test: rec_comment_set_text_nominal
-Unit: rec_comment_set_text
+Test: rec_field_set_value_nonempty
+Unit: rec_field_set_value
 Description:
-+ Set the text of a comment.
++ Set the value of a field to a non-empty value
 +
-+ 1. The function shall change the value of the comment.
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
 
-Test: rec_comment_text_nominal
-Unit: rec_comment_text
+Test: rec_field_dup_empty
+Unit: rec_field_dup
 Description:
-+ Get the contents of a comment.
++ Dup a field with empty name and empty value.
 +
-+ 1. The function shall return the right contents.
++ 1. The name of the copied field should be the
++    empty string.
++ 2. The value of the copied field should be the
++    empty string.
 
-Test: rec_comment_text_empty
-Unit: rec_comment_text
+Test: rec_field_dup_non_empty
+Unit: rec_field_dup
 Description:
-+ Get the contents of an empty comment.
++ Dup a field with non-empty name and non-empty value.
 +
-+ 1. The function shall return the empty string.
++ 1. The name of the copied field should be the
++    appropriate.
++ 2. The value of the copied field should be the
++    appropriate.
 
-Test: rec_field_name_set_nominal
-Unit: rec_field_name_set
+Test: rec_field_name_empty
+Unit: rec_field_name
 Description:
-+ Check the setting of name parts.
-
-Test: rec_field_name_part_normalise_nominal
-Unit: rec_field_name_part_normalise
-Description:
-+ Check normalisation of name parts.
-
-Test: rec_field_name_dup_empty
-Unit: rec_field_name_dup
-Description:
-+ Make a copy of an empty field name.
++ Get the name of a field with an empy name
 +
-+ 1. A non-null copy shall be returned.
-+ 2. The copy shall be equal to the original.
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
 
-Test: rec_field_name_dup_nominal
-Unit: rec_field_name_dup
+Test: rec_field_name_nonempty
+Unit: rec_field_name
 Description:
-+ Make a copy of a field name.
++ Get the name of a field with a non-empty name
 +
-+ 1. A non-null copy shall be returned.
-+ 2. The copy shall be equal to the original.
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
 
-Test: rec_field_name_destroy_nominal
-Unit: rec_field_name_destroy
+Test: rec_type_kind_nominal
+Unit: rec_type_kind
 Description:
-+ Destroy a field name.
-+
-+ 1. The function call shall succeed.
++ Get the kind of types.
 
-Test: rec_field_name_part_str_p_nominal
-Unit: rec_field_name_part_str_p
+Test: rec_type_equal_p_nominal
+Unit: rec_type_equal_p
 Description:
-+ Check field name parts.
++ Check equality for equal types.
 
-Test: rec_field_name_ref_p_empty
-Unit: rec_field_name_ref_p
+Test: rec_type_descr_p_nominal
+Unit: rec_type_descr_p
 Description:
-+ Check if an empty field name if a reference
-+ of an empty field name.
-+
-+ 1. The function shall return false.
++ Check valid type descriptions.
 
-Test: rec_field_name_ref_p_nonempty
-Unit: rec_field_name_ref_p
+Test: rec_type_descr_p_invalid
+Unit: rec_type_descr_p
 Description:
-+ Check if a field name is a reference of another field name.
++ Check for invalid type descriptions.
 
-Test: rec_field_name_get_nominal
-Unit: rec_field_name_get
+Test: rec_type_destroy_nominal
+Unit: rec_type_destroy
 Description:
-+ Get the name parts of a field name.
++ Destroy a type.
 
-Test: rec_field_name_str_p_nominal
-Unit: rec_field_name_str_p
+Test: rec_type_new_nominal
+Unit: rec_type_new
 Description:
-+ Check field name strings.
++ Create types from correct type descriptions.
 
-Test: rec_field_name_size_empty
-Unit: rec_field_name_size
+Test: rec_type_new_invalid
+Unit: rec_type_new
 Description:
-+ Get the size of an empty field name.
-+
-+ 1. The returned size shall be 0.
++ Try to create types from invalid type descriptions.
 
-Test: rec_field_name_size_nonempty
-Unit: rec_field_name_size
+Test: rec_type_check_int
+Unit: rec_type_check
 Description:
-+ Check the size of a non empty field name.
++ Check strings of type int.
 
-Test: rec_field_name_equal_p_empty
-Unit: rec_field_name_equal_p
+Test: rec_type_check_bool
+Unit: rec_type_check
 Description:
-+ Compare two empty field names with
-+ rec_field_name_equal_p.
-+
-+ 1. The function call shall return true.
++ Check strings of type bool.
 
-Test: rec_field_name_equal_p_nonempty
-Unit: rec_field_name_equal_p
+Test: rec_type_check_range
+Unit: rec_type_check
 Description:
-+ Compare two field names with
-+ rec_field_name_equal_p.
++ Check strings of type range.
 
-Test: rec_field_name_eql_p_empty
-Unit: rec_field_name_eql_p
+Test: rec_type_check_real
+Unit: rec_type_check
 Description:
-+ Check for the equality of empty field names.
-+
-+ 1. Two empty field names are EQuaL.
++ Check strings of type real.
 
-Test: rec_field_name_eql_p_nonempty
-Unit: rec_field_name_eql_p
+Test: rec_type_check_size
+Unit: rec_type_check
 Description:
-+ Check for the equality of non empty field names.
++ Check strings of type size.
 
-Test: rec_field_name_new_nominal
-Unit: rec_field_name_new
+Test: rec_type_check_line
+Unit: rec_type_check
 Description:
-+ Create a field name.
-+
-+ 1. rec_field_name_new should return a non-NULL pointer.
++ Check strings of type line.
+
+Test: rec_type_check_regexp
+Unit: rec_type_check
+Description:
++ Check strings of type regexp.
+
+Test: rec_type_check_date
+Unit: rec_type_check
+Description:
++ Check strings of type date.
+
+Test: rec_type_check_enum
+Unit: rec_type_check
+Description:
++ Check strings of type enum.
+
+Test: rec_type_check_field
+Unit: rec_type_check
+Description:
++ Check strings of type field.
+
+Test: rec_type_check_email
+Unit: rec_type_check
+Description:
++ Check strings of type email.
+
+Test: rec_type_descr_field_name_nominal
+Unit: rec_type_descr_field_name
+Description:
++ Extract a field name from a valid type descriptor.
+
+Test: rec_type_descr_field_name_invalid
+Unit: rec_type_descr_field_name
+Description:
++ Try to extract a field name from an
++ invalid type descriptor.
+
+Test: rec_type_kind_str_nominal
+Unit: rec_type_kind_str
+Description:
++ Get the string representation of all
++ the supported types and check they are
++ ok.
+
+Test: rec_type_reg_register_nominal
+Unit: rec_type_reg_register
+Description:
++ Registration of a field->type association in
++ a type registry.
+
+Test: rec_type_reg_new_nominal
+Unit: rec_type_reg_new
+Description:
++ Creation of a type registry.
+
+Test: rec_type_reg_destroy_nominal
+Unit: rec_type_reg_destroy
+Description:
++ Destroy a type registry.
+
+Test: rec_type_reg_get_nominal
+Unit: rec_type_reg_get
+Description:
++ Get an existing association from a type registry.
+
+Test: rec_type_reg_get_nonexisting
+Unit: rec_type_reg_get
+Description:
++ Try to get a nonexisting association
++ from a type registry.
 
 Test: rec_record_remove_field_existing
 Unit: rec_record_remove_field
@@ -292,6 +413,14 @@ Description:
 + 1. The call to rec_record_remove_field should
 +    return true.
 + 2. The field should be removed from the record.
+
+Test: rec_record_new_and_destroy
+Unit: rec_record_new
+Description:
++ Create a new record and destroy it.
++
++  1. The call to rec_record_new should not fail.
++  2. The call to rec_record_destroy should not fail.
 
 Test: rec_record_insert_field_empty
 Unit: rec_record_insert_field
@@ -316,14 +445,6 @@ Description:
 +
 + 1. The attempt to insert a duplicated field
 +    should success.
-
-Test: rec_record_new_and_destroy
-Unit: rec_record_new
-Description:
-+ Create a new record and destroy it.
-+
-+  1. The call to rec_record_new should not fail.
-+  2. The call to rec_record_destroy should not fail.
 
 Test: rec_record_size_empty
 Unit: rec_record_size
@@ -357,96 +478,110 @@ Description:
 + 1. The call to rec_record_field_p should 
 +    return false.
 
-Test: rec_field_name_empty
-Unit: rec_field_name
+Test: rec_field_name_part_normalise_nominal
+Unit: rec_field_name_part_normalise
 Description:
-+ Get the name of a field with an empy name
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    returned.
++ Check normalisation of name parts.
 
-Test: rec_field_name_nonempty
-Unit: rec_field_name
+Test: rec_field_name_new_nominal
+Unit: rec_field_name_new
 Description:
-+ Get the name of a field with a non-empty name
++ Create a field name.
 +
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    returned.
++ 1. rec_field_name_new should return a non-NULL pointer.
 
-Test: rec_field_set_name_empty
-Unit: rec_field_set_name
+Test: rec_field_name_part_str_p_nominal
+Unit: rec_field_name_part_str_p
 Description:
-+ Set the name of a field to the empty string
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    set.
++ Check field name parts.
 
-Test: rec_field_set_name_nonempty
-Unit: rec_field_set_name
+Test: rec_field_name_ref_p_empty
+Unit: rec_field_name_ref_p
 Description:
-+ Set the name of a field to a non-empty name
++ Check if an empty field name if a reference
++ of an empty field name.
 +
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    set.
++ 1. The function shall return false.
 
-Test: rec_field_set_value_empty
-Unit: rec_field_set_value
+Test: rec_field_name_ref_p_nonempty
+Unit: rec_field_name_ref_p
 Description:
-+ Set the value of a field to the empty string
-+
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    set.
++ Check if a field name is a reference of another field name.
 
-Test: rec_field_set_value_nonempty
-Unit: rec_field_set_value
+Test: rec_field_name_size_empty
+Unit: rec_field_name_size
 Description:
-+ Set the value of a field to a non-empty value
++ Get the size of an empty field name.
 +
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    set.
++ 1. The returned size shall be 0.
 
-Test: rec_field_value_empty
-Unit: rec_field_value
+Test: rec_field_name_size_nonempty
+Unit: rec_field_name_size
 Description:
-+ Get the value of a field with an empy value
-+
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    returned.
++ Check the size of a non empty field name.
 
-Test: rec_field_value_nonempty
-Unit: rec_field_value
+Test: rec_field_name_destroy_nominal
+Unit: rec_field_name_destroy
 Description:
-+ Get the value of a field with a non-empty value
++ Destroy a field name.
 +
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    returned.
++ 1. The function call shall succeed.
 
-Test: rec_field_dup_empty
-Unit: rec_field_dup
+Test: rec_field_name_dup_empty
+Unit: rec_field_name_dup
 Description:
-+ Dup a field with empty name and empty value.
++ Make a copy of an empty field name.
 +
-+ 1. The name of the copied field should be the
-+    empty string.
-+ 2. The value of the copied field should be the
-+    empty string.
++ 1. A non-null copy shall be returned.
++ 2. The copy shall be equal to the original.
 
-Test: rec_field_dup_non_empty
-Unit: rec_field_dup
+Test: rec_field_name_dup_nominal
+Unit: rec_field_name_dup
 Description:
-+ Dup a field with non-empty name and non-empty value.
++ Make a copy of a field name.
 +
-+ 1. The name of the copied field should be the
-+    appropriate.
-+ 2. The value of the copied field should be the
-+    appropriate.
++ 1. A non-null copy shall be returned.
++ 2. The copy shall be equal to the original.
+
+Test: rec_field_name_equal_p_empty
+Unit: rec_field_name_equal_p
+Description:
++ Compare two empty field names with
++ rec_field_name_equal_p.
++
++ 1. The function call shall return true.
+
+Test: rec_field_name_equal_p_nonempty
+Unit: rec_field_name_equal_p
+Description:
++ Compare two field names with
++ rec_field_name_equal_p.
+
+Test: rec_field_name_set_nominal
+Unit: rec_field_name_set
+Description:
++ Check the setting of name parts.
+
+Test: rec_field_name_str_p_nominal
+Unit: rec_field_name_str_p
+Description:
++ Check field name strings.
+
+Test: rec_field_name_eql_p_empty
+Unit: rec_field_name_eql_p
+Description:
++ Check for the equality of empty field names.
++
++ 1. Two empty field names are EQuaL.
+
+Test: rec_field_name_eql_p_nonempty
+Unit: rec_field_name_eql_p
+Description:
++ Check for the equality of non empty field names.
+
+Test: rec_field_name_get_nominal
+Unit: rec_field_name_get
+Description:
++ Get the name parts of a field name.
 
 # End of Tests
