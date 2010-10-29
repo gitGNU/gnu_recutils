@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 22:46:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-10-29 23:15:47 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -157,6 +157,8 @@ rec_int_check_field_type (rec_db_t db,
   char *errors_str;
 
   res = true;
+  rset_name = NULL;
+  referred_rset = NULL;
   referred_type = NULL;
   referring_type = NULL;
 
@@ -199,13 +201,10 @@ rec_int_check_field_type (rec_db_t db,
     }
 
   /* Get the referring type, if any.  */
-  if (!type)
+  type_reg = rec_rset_get_type_reg (rset);
+  if (type_reg)
     {
-      type_reg = rec_rset_get_type_reg (rset);
-      if (type_reg)
-        {
-          referring_type = rec_type_reg_get (type_reg, rec_field_name (field));
-        }
+      referring_type = rec_type_reg_get (type_reg, rec_field_name (field));
     }
 
   /* The referring type takes precedence.  */
