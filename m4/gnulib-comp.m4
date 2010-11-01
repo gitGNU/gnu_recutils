@@ -52,12 +52,14 @@ AC_DEFUN([gl_EARLY],
   # Code from module gettext-h:
   # Code from module gettime:
   # Code from module gettimeofday:
+  # Code from module gnumakefile:
   # Code from module havelib:
   # Code from module include_next:
   # Code from module inline:
   # Code from module intprops:
   # Code from module list:
   # Code from module localcharset:
+  # Code from module maintainer-makefile:
   # Code from module malloca:
   # Code from module mbrtowc:
   # Code from module mbsinit:
@@ -81,6 +83,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module timespec:
   # Code from module unistd:
   # Code from module unsetenv:
+  # Code from module useless-if-before-free:
+  # Code from module vc-list-files:
   # Code from module verify:
   # Code from module warn-on-use:
   # Code from module wchar:
@@ -151,6 +155,17 @@ AC_DEFUN([gl_INIT],
   # Code from module gettimeofday:
   gl_FUNC_GETTIMEOFDAY
   gl_SYS_TIME_MODULE_INDICATOR([gettimeofday])
+  # Code from module gnumakefile:
+  # Autoconf 2.61a.99 and earlier don't support linking a file only
+  # in VPATH builds.  But since GNUmakefile is for maintainer use
+  # only, it does not matter if we skip the link with older autoconf.
+  # Automake 1.10.1 and earlier try to remove GNUmakefile in non-VPATH
+  # builds, so use a shell variable to bypass this.
+  GNUmakefile=GNUmakefile
+  m4_if(m4_version_compare([2.61a.100],
+  	m4_defn([m4_PACKAGE_VERSION])), [1], [],
+        [AC_CONFIG_LINKS([$GNUmakefile:$GNUmakefile], [],
+  	[GNUmakefile=$GNUmakefile])])
   # Code from module havelib:
   # Code from module include_next:
   # Code from module inline:
@@ -162,6 +177,9 @@ AC_DEFUN([gl_INIT],
   gl_LOCALCHARSET
   LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(top_builddir)/$gl_source_base\""
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
+  # Code from module maintainer-makefile:
+  AC_CONFIG_COMMANDS_PRE([m4_ifdef([AH_HEADER],
+    [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
   # Code from module malloca:
   gl_MALLOCA
   # Code from module mbrtowc:
@@ -214,6 +232,8 @@ AC_DEFUN([gl_INIT],
   # Code from module unsetenv:
   gl_FUNC_UNSETENV
   gl_STDLIB_MODULE_INDICATOR([unsetenv])
+  # Code from module useless-if-before-free:
+  # Code from module vc-list-files:
   # Code from module verify:
   # Code from module warn-on-use:
   # Code from module wchar:
@@ -365,6 +385,8 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/c++defs.h
   build-aux/config.rpath
   build-aux/gendocs.sh
+  build-aux/useless-if-before-free
+  build-aux/vc-list-files
   build-aux/warn-on-use.h
   doc/gendocs_template
   doc/getdate.texi
@@ -515,4 +537,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/wint_t.m4
   m4/xalloc.m4
   m4/xsize.m4
+  top/GNUmakefile
+  top/maint.mk
 ])
