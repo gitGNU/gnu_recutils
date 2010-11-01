@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-24 22:07:26 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 18:55:15 jco"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -114,6 +114,10 @@
       case NUM_ARG:                                            \
       case 'n':                                                \
       {                                                        \
+         long int li;                                          \
+         char *end;                                            \
+         char *str;                                            \
+                                                               \
          if (recutl_sex)                                       \
           {                                                    \
              fprintf (stderr,                                  \
@@ -123,7 +127,20 @@
           }                                                    \
                                                                \
           /* XXX: check for conversion errors.  */             \
-          recutl_num = atoi (optarg);                          \
+          str = xstrdup (optarg);                              \
+          li = strtol (str, &end, 10);                         \
+          if ((*str != '\0') && (*end == '\0'))                \
+            {                                                  \
+              /* Valid number.  */                             \
+              recutl_num = (int) li;                           \
+            }                                                  \
+          else                                                 \
+            {                                                  \
+              fprintf (stderr,                                 \
+                       "%s: invalid number '%s' in -n.\n",     \
+                       program_name, str);                     \
+              exit (1);                                        \
+            }                                                  \
           break;                                               \
       }                                                        \
       case INSENSITIVE_ARG:                                    \

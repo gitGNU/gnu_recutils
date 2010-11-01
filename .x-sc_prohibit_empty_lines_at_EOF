@@ -1,0 +1,5 @@
+ABOUT-NLS
+INSTALL
+lib/*
+doc/fdl.texi
+po/ChangeLog

@@ -58,4 +58,3 @@ from the root of the distribution:
   $ ./build-aux/get-test-data torture > TESTS
 And then make sure everything is ok in the file with:
   $ recfix TESTS
-
