@@ -44,7 +44,7 @@ Documentation License''.
 @node Top
 @top GNU Recutils
 
-This manual documents version @value{VERSION} of the GNU rec utilities.
+This manual documents version @value{VERSION} of the GNU recutils.
 
 @insertcopying
 @end ifnottex
