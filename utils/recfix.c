@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 15:11:36 jco"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 20:51:47 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -108,7 +108,7 @@ recfix_parse_args (int argc,
           COMMON_ARGS_CASES
         default:
           {
-            exit (1);
+            exit (EXIT_FAILURE);
           }
         }
     }

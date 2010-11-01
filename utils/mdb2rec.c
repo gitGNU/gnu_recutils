@@ -173,7 +173,7 @@ parse_args (int argc,
           }
         default:
           {
-            exit (1);
+            exit (EXIT_FAILURE);
           }
         }
     }
@@ -182,7 +182,7 @@ parse_args (int argc,
   if ((argc - optind) > 2)
     {
       recutl_print_help ();
-      exit (1);
+      exit (EXIT_FAILURE);
     }
   else
     {

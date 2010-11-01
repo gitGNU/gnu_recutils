@@ -316,7 +316,7 @@ rec_sex_eval_node (rec_sex_t sex,
     case REC_SEX_NOVAL:
       {
         fprintf (stderr, "Application bug: REC_SEX_NOVAL node found.\nPlease report this!\n");
-        exit (1);
+        exit (EXIT_FAILURE);
         break;
       }
       /* Operations.  */

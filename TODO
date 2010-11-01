@@ -13,10 +13,10 @@
 %type: Assigned email
 %type: Component enum librec utils rec-mode
 %fsort: Id Summary Status Originator Description
-%doc: 
+%doc:
 + An issue.  It contains, at least, the following
 + fields:
-+ 
++
 + Type: the type of the issue.  An improvement or
 +       a bug.
 + Originator: an email identifying the person/entity

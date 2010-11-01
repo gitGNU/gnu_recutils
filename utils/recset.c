@@ -198,7 +198,7 @@ recset_parse_args (int argc,
             recutl_fex_str = xstrdup (optarg);
             if (!rec_fex_check (recutl_fex_str))
               {
-                exit (1);
+                exit (EXIT_FAILURE);
               }
 
             /* Create the field expression.  */
@@ -282,7 +282,7 @@ recset_parse_args (int argc,
           }
         default:
           {
-            exit (1);
+            exit (EXIT_FAILURE);
             break;
           }
         }
@@ -294,7 +294,7 @@ recset_parse_args (int argc,
       if ((argc - optind) != 1)
         {
           recutl_print_help ();
-          exit (1);
+          exit (EXIT_FAILURE);
         }
 
       recset_file = argv[optind++];
@@ -587,7 +587,7 @@ main (int argc, char *argv[])
   recset_process_actions (db);
   recutl_write_db_to_file (db, recset_file);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 /* End of recset.c */

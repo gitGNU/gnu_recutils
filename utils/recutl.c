@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 18:57:51 jco"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 20:54:04 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -147,7 +147,7 @@ recutl_fatal (char *fmt, ...)
   vfprintf (stderr, fmt, ap);
   va_end (ap);
 
-  exit (1);
+  exit (EXIT_FAILURE);
 }
 
 void
@@ -288,7 +288,7 @@ recutl_read_db_from_file (char *file_name)
       if (in == NULL)
         {
           recutl_fatal (_("cannot read file %s\n"), file_name);
-          exit (1);
+          exit (EXIT_FAILURE);
         }
     }
   else

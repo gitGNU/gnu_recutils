@@ -466,7 +466,7 @@ Description:
 + Check for the existence of a field included
 + in the record.
 +
-+ 1. The call to rec_record_field_p should 
++ 1. The call to rec_record_field_p should
 +    return true
 
 Test: rec_record_field_p_nonexisting
@@ -475,7 +475,7 @@ Description:
 + Check for the existence of a field not included
 + in the record.
 +
-+ 1. The call to rec_record_field_p should 
++ 1. The call to rec_record_field_p should
 +    return false.
 
 Test: rec_field_name_part_normalise_nominal

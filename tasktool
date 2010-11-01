@@ -447,7 +447,7 @@ Please replace this line with the annotation for the issue." > $tmpfile
         rm -f $tmpfile
 
         if test "$note" = ""; then
-            while test "$yesno" != "yes" -a "$yesno" != "no"
+            while test "$yesno" != "yes" && test "$yesno" != "no"
             do
                 echo -n "Got an empty annotation! Continue? (yes/no): "
                 read yesno
@@ -637,7 +637,7 @@ tt_process_cmd_create ()
         rm -f $tmpfile
 
         if test "$description" = ""; then
-            while test "$yesno" != "yes" -a "$yesno" != "no"
+            while test "$yesno" != "yes" && test "$yesno" != "no"
             do
                 echo -n "Got an empty description! Continue? (yes/no): "
                 read yesno

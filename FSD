@@ -17,7 +17,7 @@
 + CommandLine Console Daemon XWindow Web Email
 
 Title: GNU Recutils
-Description: 
+Description:
 + GNU Recutils is a set of tools and libraries to access human-editable
 + text-based databases called recfiles.  The GNU recutils suite
 + comprises a Texinfo manual describing the rec format, a C library

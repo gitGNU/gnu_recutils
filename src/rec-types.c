@@ -396,7 +396,7 @@ rec_type_new (char *str)
         /* This point should not be reached.  */
         fprintf (stderr,
                  _("rec-types: internal error: got REC_TYPE_NONE from rec_type_parse_type kind in rec_type_new.\n"));
-        exit (1);
+        exit (EXIT_FAILURE);
         break;
       }
     }

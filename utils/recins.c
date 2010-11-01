@@ -261,7 +261,7 @@ void recins_parse_args (int argc,
             if (field != NULL)
               {
                 recutl_fatal (_("a -f should be followed by a -v\n"));
-                exit (1);
+                exit (EXIT_FAILURE);
               }
 
             if (recins_record == NULL)
@@ -309,7 +309,7 @@ void recins_parse_args (int argc,
           }
         default:
           {
-            exit (1);
+            exit (EXIT_FAILURE);
           }
         }
     }
@@ -326,7 +326,7 @@ void recins_parse_args (int argc,
       if ((argc - optind) != 1)
         {
           recutl_print_help ();
-          exit (1);
+          exit (EXIT_FAILURE);
         }
 
       recins_file = argv[optind++];
@@ -347,7 +347,7 @@ main (int argc, char *argv[])
   recins_insert_record (db, recins_type, recins_record);
   recutl_write_db_to_file (db, recins_file);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 /* End of recins.c */

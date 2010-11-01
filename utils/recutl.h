@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 18:55:15 jco"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 20:54:56 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -42,13 +42,13 @@
   case HELP_ARG:                                   \
     {                                              \
       recutl_print_help ();                        \
-      exit (0);                                    \
+      exit (EXIT_SUCCESS);                         \
       break;                                       \
     }                                              \
   case VERSION_ARG:                                \
     {                                              \
       recutl_print_version ();                     \
-      exit (0);                                    \
+      exit (EXIT_SUCCESS);                         \
       break;                                       \
     }
 
@@ -91,7 +91,7 @@
              fprintf (stderr,                                  \
                       "%s: cannot specify -e and also -n.\n",  \
                       program_name);                           \
-             exit (1);                                         \
+             exit (EXIT_FAILURE);                              \
           }                                                    \
                                                                \
          recutl_sex_str = xstrdup (optarg);                    \
@@ -105,7 +105,7 @@
                 fprintf (stderr,                               \
                          "%s: error: invalid selection expression.\n",\
                          program_name);                        \
-                exit (1);                                      \
+                exit (EXIT_FAILURE);                           \
              }                                                 \
           }                                                    \
                                                                \
@@ -123,7 +123,7 @@
              fprintf (stderr,                                  \
                       "%s: cannot specify -n and also -e.\n",  \
                       program_name);                           \
-             exit (1);                                         \
+             exit (EXIT_FAILURE);                              \
           }                                                    \
                                                                \
           /* XXX: check for conversion errors.  */             \
@@ -139,7 +139,7 @@
               fprintf (stderr,                                 \
                        "%s: invalid number '%s' in -n.\n",     \
                        program_name, str);                     \
-              exit (1);                                        \
+              exit (EXIT_FAILURE);                             \
             }                                                  \
           break;                                               \
       }                                                        \

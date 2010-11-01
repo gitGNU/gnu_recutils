@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-24 23:05:38 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 20:50:34 jemarch"
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010
@@ -171,7 +171,7 @@ parse_args (int argc,
           }
         default:
           {
-            exit (1);
+            exit (EXIT_FAILURE);
           }
         }
     }
@@ -182,7 +182,7 @@ parse_args (int argc,
       if ((argc - optind) != 1)
         {
           recutl_print_help ();
-          exit (1);
+          exit (EXIT_FAILURE);
         }
 
       csv2rec_csv_file = argv[optind++];

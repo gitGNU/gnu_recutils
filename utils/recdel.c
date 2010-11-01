@@ -253,7 +253,7 @@ recdel_parse_args (int argc,
           }
         default:
           {
-            exit (1);
+            exit (EXIT_FAILURE);
           }
         }
     }
@@ -280,7 +280,7 @@ recdel_parse_args (int argc,
       if ((argc - optind) != 1)
         {
           recutl_print_help ();
-          exit (1);
+          exit (EXIT_FAILURE);
         }
 
       recdel_file = argv[optind++];

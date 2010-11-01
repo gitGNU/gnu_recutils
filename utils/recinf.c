@@ -254,7 +254,7 @@ main (int argc, char *argv[])
           }
         default:
           {
-            return 1;
+            exit (EXIT_FAILURE);
           }
         }
     }
@@ -269,14 +269,14 @@ main (int argc, char *argv[])
           if (!(in = fopen (file_name, "r")))
             {
               printf(_("error: cannot read file %s\n"), file_name);
-              return 1;
+              exit (EXIT_FAILURE);
             }
           else
             {
               if (!print_info_file (in, file_name))
                 {
                   /* Parse error */
-                  return 1;
+                  exit (EXIT_FAILURE);
                 }
 
               fclose (in);
@@ -288,7 +288,7 @@ main (int argc, char *argv[])
       print_info_file (stdin, "stdin");
     }
   
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 /* End of recinf.c */

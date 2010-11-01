@@ -212,7 +212,7 @@ recsel_parse_args (int argc,
 
             if (!rec_fex_check (recsel_fex_str))
               {
-                exit (1);
+                exit (EXIT_FAILURE);
               }
 
             /* Create the field expresion.  */
@@ -237,7 +237,7 @@ recsel_parse_args (int argc,
             if (recsel_fex_str)
               {
                 recutl_fatal (_("cannot specify -c and also -p.\n"));
-                exit (1);
+                exit (EXIT_FAILURE);
               }
 
             recsel_count = true;
@@ -245,7 +245,7 @@ recsel_parse_args (int argc,
           }
         default:
           {
-            exit (1);
+            exit (EXIT_FAILURE);
           }
 
         }
