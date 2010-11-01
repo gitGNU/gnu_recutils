@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:04:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 16:36:22 jco"
  *
  *       File:         rec-mset-type-p.c
  *       Date:         Thu Oct 28 19:55:46 2010
@@ -28,7 +28,7 @@
 #include <check.h>
 
 #include <rec-mset.h>
-#include "elem-types.h"
+#include <rec-mset/elem-types.h>
 
 /*-
  * Test: rec_mset_type_p_any

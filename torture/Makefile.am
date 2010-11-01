@@ -21,7 +21,8 @@ if CHECK
 TESTS = runtests
 noinst_PROGRAMS = runtests
 
-REC_MSET_TSUITE = rec-mset/rec-mset-new.c \
+REC_MSET_TSUITE = rec-mset/elem-types.h \
+                  rec-mset/rec-mset-new.c \
                   rec-mset/rec-mset-dup.c \
                   rec-mset/rec-mset-type-p.c \
                   rec-mset/rec-mset-register-type.c \
@@ -85,7 +86,8 @@ runtests_SOURCES = runtests.c \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE)
 
-AM_CPPFLAGS = -I$(top_srcdir)/src
+AM_CPPFLAGS = -I$(top_srcdir)/src \
+              -I$(top_srcdir)/torture
 runtests_LDADD = $(CHECK_LIBS) ../src/librec.la
 
 clean-local:

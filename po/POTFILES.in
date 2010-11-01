@@ -20,9 +20,7 @@ src/rec-sex.tab.c
 src/rec-types.c
 src/rec-utils.c
 src/rec-writer.c
-utils/csv2rec
 utils/csv2rec.c
-utils/mdb2rec
 utils/mdb2rec.c
 utils/recdel.c
 utils/recfix.c

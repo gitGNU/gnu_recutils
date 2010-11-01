@@ -8,11 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils git\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2010-10-24 23:09+0200\n"
+"POT-Creation-Date: 2010-11-01 16:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -27,145 +26,145 @@ msgstr ""
 msgid "error: invalid field expression in -p: %s.\n"
 msgstr ""
 
-#: src/rec-field-name.c:239
+#: src/rec-field-name.c:245
 #, c-format
 msgid "internal error: rec_field_name_str_p: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-field-name.c:261
+#: src/rec-field-name.c:267
 #, c-format
 msgid "internal error: rec_field_name_part_str_p: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-int.c:220
+#: src/rec-int.c:218
 #, c-format
 msgid ""
 "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
 msgstr ""
 
-#: src/rec-int.c:320
+#: src/rec-int.c:318
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:377
+#: src/rec-int.c:375
 #, c-format
 msgid "%s:%s: error: field '%s' shall be unique in this record\n"
 msgstr ""
 
-#: src/rec-int.c:434
+#: src/rec-int.c:432
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr ""
 
-#: src/rec-int.c:489
+#: src/rec-int.c:487
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:498
+#: src/rec-int.c:496
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:541
+#: src/rec-int.c:539
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:595
+#: src/rec-int.c:593
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:603
+#: src/rec-int.c:601
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr ""
 
-#: src/rec-int.c:614
+#: src/rec-int.c:612
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:635
+#: src/rec-int.c:633
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr ""
 
-#: src/rec-int.c:655
+#: src/rec-int.c:653
 #, c-format
 msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
 msgstr ""
 
-#: src/rec-types.c:374
+#: src/rec-types.c:398
 #, c-format
 msgid ""
 "rec-types: internal error: got REC_TYPE_NONE from rec_type_parse_type kind "
 "in rec_type_new.\n"
 msgstr ""
 
-#: src/rec-types.c:678
+#: src/rec-types.c:753
 #, c-format
 msgid "internal error: rec-types: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-types.c:775
+#: src/rec-types.c:850
 #, c-format
 msgid "invalid integer."
 msgstr ""
 
-#: src/rec-types.c:791
+#: src/rec-types.c:866
 #, c-format
 msgid "invalid 'field' value."
 msgstr ""
 
-#: src/rec-types.c:807
+#: src/rec-types.c:882
 #, c-format
 msgid "invalid 'bool' value."
 msgstr ""
 
-#: src/rec-types.c:829
+#: src/rec-types.c:904
 #, c-format
 msgid "invalid 'range' value."
 msgstr ""
 
-#: src/rec-types.c:838
+#: src/rec-types.c:913
 #, c-format
 msgid "expected an integer between %d and %d."
 msgstr ""
 
-#: src/rec-types.c:855
+#: src/rec-types.c:930
 #, c-format
 msgid "invalid 'real' value."
 msgstr ""
 
-#: src/rec-types.c:872
+#: src/rec-types.c:947
 #, c-format
 msgid "value too large.  Expected a size <= %d."
 msgstr ""
 
-#: src/rec-types.c:889
+#: src/rec-types.c:964
 #, c-format
 msgid "invalid 'line' value."
 msgstr ""
 
-#: src/rec-types.c:908
+#: src/rec-types.c:983
 #, c-format
 msgid "value does not match the regexp."
 msgstr ""
 
-#: src/rec-types.c:925
+#: src/rec-types.c:1006
 #, c-format
 msgid "invalid date."
 msgstr ""
 
-#: src/rec-types.c:941
+#: src/rec-types.c:1022
 #, c-format
 msgid "invalid email."
 msgstr ""
 
-#: src/rec-types.c:994
+#: src/rec-types.c:1075
 #, c-format
 msgid "invalid enum value."
 msgstr ""
@@ -224,7 +223,7 @@ msgstr ""
 msgid "not enough headers"
 msgstr ""
 
-#: utils/csv2rec.c:356 utils/recutl.c:220 utils/recutl.c:287
+#: utils/csv2rec.c:356 utils/recutl.c:223 utils/recutl.c:290
 #, c-format
 msgid "cannot read file %s\n"
 msgstr ""
@@ -365,7 +364,7 @@ msgstr ""
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr ""
 
-#: utils/recdel.c:273 utils/recset.c:396
+#: utils/recdel.c:273 utils/recset.c:395
 msgid "invalid selection expression.\n"
 msgstr ""
 
@@ -605,8 +604,6 @@ msgstr ""
 #. no-wrap
 #: utils/recset.c:124
 msgid ""
-"  -i, --case-insensitive              make strings case-insensitive in "
-"selection\n"
 "      --force                         alter the records even if violating "
 "record\n"
 "                                        restrictions.\n"
@@ -614,7 +611,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset field selection options.
 #. no-wrap
-#: utils/recset.c:137
+#: utils/recset.c:136
 msgid ""
 "Fields selection options:\n"
 "  -f, --fields=FIELDS                 comma-separated list of field names "
@@ -624,7 +621,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset actions.
 #. no-wrap
-#: utils/recset.c:145
+#: utils/recset.c:144
 msgid ""
 "Actions:\n"
 "  -s, --set=VALUE                     change the value of the selected "
@@ -637,7 +634,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset examples.
 #. no-wrap
-#: utils/recset.c:155
+#: utils/recset.c:154
 msgid ""
 "Examples:\n"
 "\n"
@@ -646,27 +643,27 @@ msgid ""
 "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
 msgstr ""
 
-#: utils/recset.c:210
+#: utils/recset.c:209
 msgid "creating the field expression.\n"
 msgstr ""
 
-#: utils/recset.c:223 utils/recset.c:240 utils/recset.c:257 utils/recset.c:273
+#: utils/recset.c:222 utils/recset.c:239 utils/recset.c:256 utils/recset.c:272
 msgid "please specify some field with -f.\n"
 msgstr ""
 
-#: utils/recset.c:228 utils/recset.c:245 utils/recset.c:262 utils/recset.c:278
+#: utils/recset.c:227 utils/recset.c:244 utils/recset.c:261 utils/recset.c:277
 msgid "please specify just one action.\n"
 msgstr ""
 
-#: utils/recset.c:411
+#: utils/recset.c:410
 msgid "operation aborted due to integrity failures\n"
 msgstr ""
 
-#: utils/recset.c:412
+#: utils/recset.c:411
 msgid "use --verbose to get a detailed report\n"
 msgstr ""
 
-#: utils/recset.c:419
+#: utils/recset.c:418
 msgid "use --force to skip the integrity check\n"
 msgstr ""
 
@@ -675,33 +672,33 @@ msgstr ""
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: utils/recutl.c:70
+#: utils/recutl.c:73
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr ""
 
-#: utils/recutl.c:73
+#: utils/recutl.c:76
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr ""
 
-#: utils/recutl.c:77
+#: utils/recutl.c:80
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr ""
 
-#: utils/recutl.c:79
+#: utils/recutl.c:82
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
 msgstr ""
 
-#: utils/recutl.c:82
+#: utils/recutl.c:85
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
-#: utils/recutl.c:91
+#: utils/recutl.c:94
 msgid ""
 "      --help                          print a help message and exit.\n"
 "      --version                       show version and exit.\n"
@@ -709,7 +706,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
-#: utils/recutl.c:102
+#: utils/recutl.c:105
 msgid ""
 "Record selection options:\n"
 "  -i, --case-insensitive              make strings case-insensitive in "
@@ -721,7 +718,7 @@ msgid ""
 "  -n, --number=NUM                    select an specific record.\n"
 msgstr ""
 
-#: utils/recutl.c:125
+#: utils/recutl.c:128
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
@@ -731,22 +728,22 @@ msgid ""
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
 
-#: utils/recutl.c:131
+#: utils/recutl.c:134
 msgid ""
 "\n"
 "Written by Jose E. Marchesi."
 msgstr ""
 
-#: utils/recutl.c:181
+#: utils/recutl.c:184
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr ""
 
-#: utils/recutl.c:330
+#: utils/recutl.c:333
 msgid "cannot create a unique name.\n"
 msgstr ""
 
-#: utils/recutl.c:346
+#: utils/recutl.c:349
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr ""

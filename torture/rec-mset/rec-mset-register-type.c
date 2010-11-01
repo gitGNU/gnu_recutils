@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:14:49 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 16:36:07 jco"
  *
  *       File:         rec-mset-register-type.c
  *       Date:         Thu Oct 28 20:10:18 2010
@@ -28,7 +28,7 @@
 #include <check.h>
 
 #include <rec-mset.h>
-#include "elem-types.h"
+#include <rec-mset/elem-types.h>
 
 /*-
  * Test: rec_mset_register_type_nominal

@@ -1,3 +1,19 @@
+2010-11-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Make distcheck to work.
+	* doc/recutils.texi: Include version.texi.
+
+	* doc/Makefile.am (TEXI_TEXINFOS): Added getdate.texi.
+
+	* torture/rec-mset/rec-mset-count.c: Include
+	rec-mset/elem-types.h.
+	* torture/rec-mset/rec-mset-type-p.c: Likewise.
+	* torture/rec-mset/rec-mset-register-type.c: Likewise.
+	* torture/rec-mset/rec-mset-dup.c: Likewise.
+
+	* torture/Makefile.am (AM_CPPFLAGS): -I$(top_srcdir)/torture
+	added.
+
 2010-10-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Warnings removed in the codebase.

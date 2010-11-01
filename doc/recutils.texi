@@ -1,14 +1,17 @@
 \input texinfo
 @comment %**start of header
 @setfilename recutils.info
+@include version.texi
 @settitle GNU Recutils
 @afourpaper
 @comment %**end of header
 
-@set VERSION 1.0
-
 @copying
+This manual is for GNU recutils (version @value{VERSION},
+@value{UPDATED}).
+
 Copyright @copyright{} 2009, 2010 Jose E. Marchesi
+
 Copyright @copyright{} 1994, 1995, 1996, 1997, 1998, 1999, 2000,
 2001, 2002, 2003, 2004, 2005, 2006, 2009, 2010 Free Software
 Foundation, Inc.
@@ -29,12 +32,9 @@ Documentation License''.
 @end direntry
 
 @titlepage
-@sp
-@center @titlefont{GNU Recutils}
-@sp 4
-@center Updated for version @value{VERSION}.
-@sp 5
-@center Jos@'e E. Marchesi
+@title GNU recutils
+@subtitle for version @value{VERSION}, @value{UPDATED}
+@author GNU recutils Developers (@email{bug-recutils@@gnu.org})
 @page
 @vskip 0pt plus 1filll
 @insertcopying

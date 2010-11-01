@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:28:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 16:35:46 jco"
  *
  *       File:         rec-mset-count.c
  *       Date:         Thu Oct 28 20:17:55 2010
@@ -28,7 +28,7 @@
 #include <check.h>
 
 #include <rec-mset.h>
-#include "elem-types.h"
+#include <rec-mset/elem-types.h>
 
 /*-
  * Test: rec_mset_count_empty

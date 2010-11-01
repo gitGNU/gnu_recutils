@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:44:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-01 16:35:54 jco"
  *
  *       File:         rec-mset-get.c
  *       Date:         Thu Oct 28 20:35:33 2010
@@ -28,7 +28,7 @@
 #include <check.h>
 
 #include <rec-mset.h>
-#include "elem-types.h"
+#include <rec-mset/elem-types.h>
 
 /*-
  * Test: rec_mset_get_empty
