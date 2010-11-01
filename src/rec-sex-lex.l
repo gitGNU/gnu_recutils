@@ -23,8 +23,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-%option outfile="rec-sex.lex.c"
-%option header-file="rec-sex.lex.h"
+/* Automake needs this.  */
+%option outfile="lex.yy.c"
 %option prefix="sex"
 %option pointer
 %option noyywrap
@@ -39,7 +39,7 @@
 
 #include <rec-sex-ast.h>
 #include <rec-sex-parser.h>
-#include <rec-sex.tab.h>
+#include <rec-sex-tab.h>
 
 #define YY_INPUT(buf,result,max_size)                                   \
    {                                                                    \

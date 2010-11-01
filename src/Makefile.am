@@ -38,14 +38,15 @@ librec_la_SOURCES = rec.c \
                     rec-sex-parser.c \
                     rec-sex-ast.h \
                     rec-sex-ast.c \
+                    rec-sex-tab.y \
+                    rec-sex-lex.l \
                     rec-sex.c \
-                    rec-sex.lex.c \
-                    rec-sex.lex.h \
-                    rec-sex.tab.h \
-                    rec-sex.tab.c \
                     rec-fex.c \
                     rec-types.c
 
+BUILT_SOURCES = rec-sex-tab.h
+AM_YFLAGS = -d
+AM_LFLAGS = -d
 AM_CFLAGS = -Wall -fno-strict-aliasing
 if USE_COVERAGE
   AM_CFLAGS += -fprofile-arcs -ftest-coverage

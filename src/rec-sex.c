@@ -25,14 +25,16 @@
 
 #include <config.h>
 
+#include <malloc.h>
+#include <stdlib.h>
+#include <string.h>
 #include <regex.h>
 
 #include <rec.h>
 #include <rec-utils.h>
 #include <rec-sex-ast.h>
 #include <rec-sex-parser.h>
-#include <rec-sex.tab.h>
-#include <rec-sex.lex.h>
+#include <rec-sex-tab.h>
 
 /*
  * Data structures
