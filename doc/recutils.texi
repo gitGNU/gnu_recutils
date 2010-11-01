@@ -77,9 +77,6 @@ Utilities
 * csv2rec::             Converting csv data into rec data.
 * mdb2rec::             Converting mdb files into rec files.
 
-Developing with Recutils
-* The Rec Library::     Writing C programs to manipulate rec files.
-
 * GNU Free Documentation License:: Distribution terms for this document.
 @end menu
 
@@ -1664,11 +1661,6 @@ $ mdb2rec sales.mdb
 %rec: Orders
 ...
 @end example
-
-@node The Rec Library
-@chapter The Rec Library
-
-XXX
 
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License
