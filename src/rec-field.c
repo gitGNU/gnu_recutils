@@ -187,19 +187,9 @@ rec_field_destroy (rec_field_t field)
       rec_field_name_destroy (field->name);
     }
 
-  if (field->source)
-    {
-      free (field->source);
-    }
-  if (field->location_str)
-    {
-      free (field->location_str);
-    }
-  if (field->char_location_str)
-    {
-      free (field->char_location_str);
-    }
-
+  free (field->source);
+  free (field->location_str);
+  free (field->char_location_str);
   free (field);
 }
 

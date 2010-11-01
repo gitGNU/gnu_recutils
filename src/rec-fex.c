@@ -119,16 +119,12 @@ rec_fex_destroy (rec_fex_t fex)
         {
           rec_field_name_destroy (fex->elems[i]->field_name);
         }
-      if (fex->elems[i]->str)
-        {
-          free (fex->elems[i]->str);
-        }
+
+      free (fex->elems[i]->str);
       free (fex->elems[i]);
     }
-  if (fex->str)
-    {
-      free (fex->str);
-    }
+
+  free (fex->str);
   free (fex);
 }
 

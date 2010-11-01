@@ -83,11 +83,7 @@ rec_sex_parser_destroy (rec_sex_parser_t parser)
       sexlex_destroy (parser->scanner);
     }
 
-  if (parser->in)
-    {
-      free (parser->in);
-    }
-
+  free (parser->in);
   free (parser);
 }
 

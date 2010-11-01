@@ -148,11 +148,7 @@ rec_parser_new (FILE *in,
 void
 rec_parser_destroy (rec_parser_t parser)
 {
-  if (parser->file_name)
-    {
-      free (parser->file_name);
-    }
-
+  free (parser->file_name);
   free (parser);
 }
 

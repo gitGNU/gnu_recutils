@@ -112,21 +112,9 @@ rec_record_new (void)
 void
 rec_record_destroy (rec_record_t record)
 {
-  if (record->source)
-    {
-      free (record->source);
-    }
-
-  if (record->location_str)
-    {
-      free (record->location_str);
-    }
-
-  if (record->char_location_str)
-    {
-      free (record->char_location_str);
-    }
-
+  free (record->source);
+  free (record->location_str);
+  free (record->char_location_str);
   rec_mset_destroy (record->mset);
   free (record);
 }

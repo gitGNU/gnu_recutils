@@ -213,7 +213,7 @@ get_relationships (MdbHandle *mdb)
   mdb_read_columns (table);
   for (i = 0; i < 4; i++)
     {
-      bound[i] = (char *) xmalloc (MDB_BIND_SIZE);
+      bound[i] = xmalloc (MDB_BIND_SIZE);
     }
 
   mdb_bind_column_by_name (table, "szColumn", bound[0], NULL);
@@ -431,11 +431,11 @@ process_table (MdbCatalogEntry *entry)
   /* Add the records for this table.  */
   mdb_rewind_table (table);
 
-  bound_values = (char **) xmalloc (table->num_cols * sizeof(char *));
-  bound_lens = (int *) xmalloc(table->num_cols * sizeof(int));
+  bound_values = xmalloc (table->num_cols * sizeof(char *));
+  bound_lens = xmalloc(table->num_cols * sizeof(int));
   for (i = 0; i < table->num_cols; i++)
     {
-      bound_values[i] = (char *) xmalloc (MDB_BIND_SIZE);
+      bound_values[i] = xmalloc (MDB_BIND_SIZE);
       mdb_bind_column (table, i+1, bound_values[i], &bound_lens[i]);
     }
 

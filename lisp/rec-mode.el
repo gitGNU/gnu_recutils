@@ -1507,7 +1507,7 @@ records of the current type"
         (if (equal type "")
             (setq type nil)
           (when (not (member type (rec-buffer-types)))
-            (error (concat "Cannot find type " type))))
+            (error (concat "cannot find type " type))))
         (while (not (equal
                      (setq name
                            (read-from-minibuffer "Field to print (empty when done): "))

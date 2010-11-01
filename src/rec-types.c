@@ -420,14 +420,8 @@ rec_type_new (char *str)
 
  exit:
 
-  if (field_name_str)
-    {
-      free (field_name_str);
-    }
-  if (type_name_str)
-    {
-      free (type_name_str);
-    }
+  free (field_name_str);
+  free (type_name_str);
 
   return new;
 }

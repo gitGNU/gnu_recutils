@@ -127,10 +127,7 @@ rec_sex_ast_node_destroy (rec_sex_ast_node_t node)
       free (node->val.name);
     }
 
-  if (node->fixed_val)
-    {
-      free (node->fixed_val);
-    }
+  free (node->fixed_val);
 }
 
 enum rec_sex_ast_node_type_e
@@ -301,11 +298,7 @@ void
 rec_sex_ast_node_fix (rec_sex_ast_node_t node,
                       char *val)
 {
-  if (node->fixed_val)
-    {
-      free (node->fixed_val);
-    }
-
+  free (node->fixed_val);
   node->fixed = true;
   node->fixed_val = strdup (val);
 }
