@@ -1,0 +1,3 @@
+build-aux/*
+lib/*
+m4/*

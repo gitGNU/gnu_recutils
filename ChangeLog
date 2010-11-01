@@ -1,5 +1,27 @@
 2010-11-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Syntax check problems fixed.
+	* src/rec-writer.c: Include config.h.
+	* torture/runtests.c: Likewise.
+
+	* tasktool: Use test ... && test ... instead of test ... -a
+	... (likewise for ||).
+
+	* utils/csv2rec.c (parse_args): Use EXIT_* values.
+	* utils/recutl.h: Likewise.
+	* utils/recutl.c: Likewise.
+	* utils/recset.c: Likewise.
+	* utils/recsel.c: Likewise.
+	* utils/recins.c: Likewise.
+	* utils/recinf.c: Likewise.
+	* utils/recfix.c: Likewise.
+	* utils/recdel.c: Likewise.
+	* utils/mdb2rec.c: Likewise.
+	* src/rec-types.c: Likewise.
+	* src/rec-sex.c: Likewise.
+
+2010-11-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Make distcheck to work.
 	* doc/recutils.texi: Include version.texi.
 
