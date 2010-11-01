@@ -14,9 +14,9 @@ src/rec-record.c
 src/rec-rset.c
 src/rec-sex-ast.c
 src/rec-sex.c
-src/rec-sex.lex.c
+src/rec-sex-lex.c
 src/rec-sex-parser.c
-src/rec-sex.tab.c
+src/rec-sex-tab.c
 src/rec-types.c
 src/rec-utils.c
 src/rec-writer.c
