@@ -1,3 +1,12 @@
+2010-11-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Generate manpages using help2man.
+	* configure.ac: Generate man/Makefile.
+	
+	* man/Makefile.am: New file.
+
+	* configure.ac: Search for help2man if not cross-compiling.
+
 2010-11-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Syntax check problems fixed.
