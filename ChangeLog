@@ -1,8 +1,14 @@
+2010-11-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recfix: little fixes.
+	* utils/recfix.c (main): Use EXIT_SUCCESS and EXIT_FAILURE.
+	(recfix_process_data): Fix wrong comparison.
+
 2010-11-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Generate manpages using help2man.
 	* configure.ac: Generate man/Makefile.
-	
+
 	* man/Makefile.am: New file.
 
 	* configure.ac: Search for help2man if not cross-compiling.

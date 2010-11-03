@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 20:51:47 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-03 20:53:48 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -119,7 +119,7 @@ recfix_process_data (rec_db_t db)
 {
   return (rec_int_check_db (db,
                             true, /* Check descriptors.  */
-                            stderr) == 0);
+                            stderr));
 }
 
 int
@@ -130,7 +130,7 @@ main (int argc, char *argv[])
 
   recutl_init ("recfix");
 
-  res = 0;
+  res = EXIT_SUCCESS;
 
   /* Parse arguments.  */
   recfix_parse_args (argc, argv);
@@ -139,13 +139,13 @@ main (int argc, char *argv[])
   db = recutl_build_db (argc, argv);
   if (!db)
     {
-      res = 1;
+      res = EXIT_FAILURE;
     }
 
   /* Process the data.  */
   if (!recfix_process_data (db))
     {
-      res = 1;
+      res = EXIT_FAILURE;
     }
 
   rec_db_destroy (db);
