@@ -226,7 +226,6 @@ recdel_parse_args (int argc,
 {
   int ret;
   char c;
-  char *sex_str = NULL;
 
   while ((ret = getopt_long (argc,
                              argv,
@@ -257,18 +256,18 @@ recdel_parse_args (int argc,
           }
         }
     }
-
-  if ((recutl_num == -1) && !sex_str & !recdel_force)
+  
+  if ((recutl_num == -1) && !recutl_sex_str & !recdel_force)
     {
       recutl_error (_("ignoring a request to delete all records of type %s.\n"),
                     recutl_type ? recutl_type : "unknown");
       recutl_fatal (_("use --force if you really want to proceed, or use either -n or -e.\n"));
     }
 
-  if (sex_str)
+  if (recutl_sex_str)
     {
       recutl_sex = rec_sex_new (recutl_insensitive);
-      if (!rec_sex_compile (recutl_sex, sex_str))
+      if (!rec_sex_compile (recutl_sex, recutl_sex_str))
         {
           recutl_fatal (_("invalid selection expression.\n"));
         }

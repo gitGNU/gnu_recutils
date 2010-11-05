@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 20:54:56 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-05 15:38:59 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -126,7 +126,6 @@
              exit (EXIT_FAILURE);                              \
           }                                                    \
                                                                \
-          /* XXX: check for conversion errors.  */             \
           str = xstrdup (optarg);                              \
           li = strtol (str, &end, 10);                         \
           if ((*str != '\0') && (*end == '\0'))                \

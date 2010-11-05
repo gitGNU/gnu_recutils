@@ -22,12 +22,52 @@
 # This section contains variables that can be tweaked by the user to
 # adapt the behavior of tasktool.
 
-# File containing the tasks database.
+# Name of the project and contact email address.
+
+tt_project_name="GNU recutils"
+tt_contact_email="bug-recutils@gnu.org"
+
+# Task types (words separated by blanks).
+#
+# Example: tt_task_types="Problem Task"
+
+tt_task_types="task"
+
+# Task statuses (words separated by blanks).
+#
+# Example: tt_task_statuses="Received Open InProgress"
+
+tt_task_statuses="TODO NEXT STARTED WAITING"
+tt_task_initial_status="TODO"
+
+# Task resolutions (words separated by blanks).
+#
+# Example: tt_task_resolutions="Done Discarded"
+
+tt_task_resolutions="DONE SOMEDAY DISCARDED"
+
+# Task categories (words separated by blanks).
+#
+# Examples: tt_task_categories="Library Application Translations"
+
+tt_task_categories="librec utils doc"
+
+# Operating Systems (words separated by blanks).
+#
+# Examples tt_task_os="GNU Windows"
+
+tt_task_os="GNU Windows"
+
+# Versions (words separated by blanks).
+#
+# Examples tt_task_versions="0.1 0.2 0.5 0.99pre2 1.0"
+
+# Default file containing the tasks database.  This can be overriden
+# by using the '-d' command line option.
 tt_db=TODO
 
-# Tasktool depends on the GNU record utilities to work.  If they are
-# not installed in your system please get them from
-# ftp://ftp.gnu.org/gnu/recutils
+# Tasktool depends on the GNU recutils.  If they are not installed in
+# your system please get them from ftp://ftp.gnu.org/gnu/recutils
 #
 # The following variables contain the names of the recutils that will
 # be used by the script.
@@ -52,65 +92,56 @@ tt_copyright_years="2010"
 tt_db_template_header="\
 # -*- mode: rec -*-
 #
-# TODO file for the GNU recutils.
-"
-
-# Issues
+# TODO file for ${tt_project_name}.
 #
-# Issues are known problems in the project that have to get handled
+# Please contact ${tt_contact_email} for any question or
+# request concerning this file."
+
+tt_db_template_footer="\
+# End of TODO"
+
+# Tasks
+#
+# Tasks are known problems in the project that have to get handled
 # eventually.
 
-tt_db_issue="Issue"
-tt_db_issue_field_id="Id"
-tt_db_issue_field_summary="Summary"
-tt_db_issue_field_type="Type"
-tt_db_issue_field_status="Status"
-tt_db_issue_field_description="Description"
-tt_db_issue_field_originator="Originator"
-tt_db_issue_field_assignee="Assignee"
-tt_db_issue_field_assigned="Assigned"
-tt_db_issue_field_component="Component"
-tt_db_issue_field_created="Created"
-tt_db_issue_field_note="Note"
+tt_db_task="Task"
+tt_db_task_field_id="Id"
+tt_db_task_field_summary="Summary"
+tt_db_task_field_type="Type"
+tt_db_task_field_status="Status"
+tt_db_task_field_category="Category"
+tt_db_task_field_description="Description"
+tt_db_task_field_originator="Originator"
+tt_db_task_field_assigned="AssignedTo"
+tt_db_task_field_created="CreatedAt"
+tt_db_task_field_closed="ClosedAt"
+tt_db_task_field_note="Note"
 
-tt_db_template_issue="\
-%rec: Issue
-%key: ${tt_db_issue_field_id}
-%mandatory: ${tt_db_issue_field_summary}
-%type: ${tt_db_issue_field_summary} line
-%type: ${tt_db_issue_field_type} enum improvement bug
-%type: ${tt_db_issue_field_status} enum TODO NEXT STARTED WAITING DISCARDED
-%type: ${tt_db_issue_field_originator} email
-%type: ${tt_db_issue_field_assignee} email
-%type: ${tt_db_issue_field_assigned} email
-%type: ${tt_db_issue_field_component} enum librec utils rec-mode
-%type: ${tt_db_issue_field_created} date
-"
-
-# Wishes
-#
-# Wishes are (usually cool) features that may be implemented in the
-# future, and promoted to issues.
-
-tt_db_wish="Wish"
-tt_db_wish_id="Id"
-tt_db_wish_summary="Summary"
-tt_db_wish_description="Description"
-
-tt_db_template_wish="\
-%rec: ${tt_db_wish}
-%key: ${tt_db_wish_id}
-%mandatory: ${tt_db_wish_summary}
-%type: ${tt_db_wish_summary} line
-"
+tt_db_template_task="\
+%rec: Task
+%key: ${tt_db_task_field_id}
+%mandatory: ${tt_db_task_field_summary} ${tt_db_task_field_status}
+%type: ${tt_db_task_field_id} int
+%type: ${tt_db_task_field_summary} line
+%type: ${tt_db_task_field_type} enum
++ ${tt_task_types}
+%type: ${tt_db_task_field_status} enum 
++ ${tt_task_statuses}
++ ${tt_task_resolutions}
+%type: ${tt_db_task_field_category} enum
++ ${tt_task_categories}
+%type: ${tt_db_task_field_originator} email
+%type: ${tt_db_task_field_assigned} email
+%type: ${tt_db_task_field_created} date
+%type: ${tt_db_task_field_closed} date"
 
 tt_db_template="\
-$tt_db_template_header
+${tt_db_template_header}
 
-$tt_db_template_issue
+${tt_db_template_task}
 
-$tt_db_template_wish
-"
+${tt_db_template_footer}"
 
 # Help messages
 tt_help_footer="\
@@ -130,12 +161,12 @@ Mandatory arguments to long options are mandatory for short options too.
 
 $tt_tasktool supports the following sub commands.
 
-       init                           initialize a new database in the default
-                                        location.
-       list                           get a list of issues.
-       show                           print information about a given issue.
-       create                         create a new issue.
-       note                           insert a note for an issue.
+       init                           initialize a new database.
+       list                           get a list of tasks.
+       show                           print information about a given task.
+       create                         create a new task.
+       delete                         delete a task.
+       note                           insert a note for a task.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
 --help'.  For example:
@@ -158,8 +189,8 @@ Examples:
 $tt_help_footer"
 
 tt_help_show="\
-Usage: $tt_tasktool show [OPTION]... ISSUE_ID
-Show information about a given issue.
+Usage: $tt_tasktool show [OPTION]... TASK_ID
+Show information about a given task.
 
 Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
@@ -171,32 +202,32 @@ Examples:
 $tt_help_footer"
 
 tt_help_list="\
-Usage: $tt_tasktool list [OPTION]...
-List issues.
+Usage: $tt_tasktool list [OPTION]... [EXPRESSION]
+List tasks.
 
 Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
-  -s, --status=STATUS                 list issues with the given status.
-  -o, --originator                    list issues with the given originator.
+  -s, --status=STATUS                 list tasks with the given status.
+  -o, --originator                    list tasks with the given originator.
+
+EXPRESSION is a recutils selection expression.  If it is specified
+then any used -s or -o argument is ignored.
 
 Examples:
 
         tasktool list
         tasktool list -s DISCARDED
         tasktool list -o jemarch@gnu.org
+        tasktool list \"Originator ~ '\\.org'\"
 
 $tt_help_footer"
 
 tt_help_create="\
-Usage: $tt_tasktool create -t SUMMARY
-Create a new issue in the database.
+Usage: $tt_tasktool create [-o ORIGINATOR] [SUMMARY]
+Create a new task in the database.
 
 Mandatory arguments to long options are mandatory for short options too.
-  -s, --summary=STR                   summary for the new issue.  This option is
-                                        mandatory.
-  -o, --originator=EMAIL              originator of the Issue.  An email.
-  -i, --id=NUMBER                     the ID of the new issue.  If this option is not
-                                        used then an ID is created for the new issue.
+  -o, --originator=EMAIL              originator of the Task.  An email.
       --help                          print this help message and exit.
 
 Examples:
@@ -205,16 +236,35 @@ Examples:
 
 $tt_help_footer"
 
-tt_help_note="\
-Usage: $tt_tasktool note [OPTION...] ISSUE_ID
-Add a note to the given issue.
+tt_help_delete="\
+Usage: $tt_tasktool delete [OPTION]... TASK_ID
+Delete a task from the database.
 
 Mandatory arguments to long options are mandatory for short options too.
+  -c, --comment                       comment the task instead of delete.
       --help                          print this help message and exit.
 
 Examples:
 
-        tasktool note 120
+        tasktool delete 102
+        tasktool -c delete 102
+
+$tt_help_footer"
+
+tt_help_note="\
+Usage: $tt_tasktool note [OPTION...] TASK_ID [TEXT]
+Add a note to the given task.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+
+If NOTE is not specified then the program asks for it using the EDITOR
+environment variable.
+
+Examples:
+
+        tasktool note 120 'Unit tests implemented.'
+        tasktool note 100
 
 $tt_help_footer"
 
@@ -267,7 +317,7 @@ tt_db_check ()
     $tt_recfix ${tt_db}
     if test "$?" != "0"
     then
-        tt_error "data integrity problem in ${tt_cb}.  See the errors above."
+        tt_error "data integrity problem in ${tt_db}.  See the errors above."
         exit 1
     fi
 }
@@ -290,7 +340,7 @@ tt_db_create ()
 # $1 => Id of a task.
 tt_db_task_p ()
 {
-    COUNT=`${tt_recsel} -t ${tt_db_issue} -e "${tt_db_issue_field_id} = $1" -c ${tt_db}`
+    COUNT=`${tt_recsel} -t ${tt_db_task} -e "${tt_db_task_field_id} = $1" -c ${tt_db}`
     if test "$COUNT" -gt "0"
     then
         return 0
@@ -299,19 +349,19 @@ tt_db_task_p ()
     return 1
 }
 
-# Show a given issue
+# Show a given task
 # Parameters:
 # $1 => Id of the task to show.
 tt_db_show_task ()
 {
-    ${tt_recsel} -t ${tt_db_issue} -e "${tt_db_issue_field_id} = $1" ${tt_db}
+    ${tt_recsel} -t ${tt_db_task} -e "${tt_db_task_field_id} = $1" ${tt_db}
 }
 
-# Get a free ID for an issue.
+# Get a free ID for a task.
 tt_db_free_id ()
 {
     max_id=0
-    for id in `${tt_recsel} -t ${tt_db_issue} -P ${tt_db_issue_field_id} ${tt_db}`
+    for id in `${tt_recsel} -t ${tt_db_task} -P ${tt_db_task_field_id} ${tt_db}`
     do
         if test $id -gt $max_id
         then
@@ -321,19 +371,7 @@ tt_db_free_id ()
 
     max_id=`expr $max_id + 1`
 
-    if test "$max_id -lt 10"; then
-        id_prefix="0000"
-    elif test "$max_id -lt 100"; then
-        id_prefix="000"
-    elif test "$max_id -lt 1000"; then
-        id_prefix="00"
-    elif test "$max_id -lt 10000"; then
-        id_prefix="0"
-    else
-        id_prefix=""
-    fi
-
-    echo "$id_prefix$max_id"
+    echo "$max_id"
 }
 
 ## VC Interface ##
@@ -368,6 +406,15 @@ tt_error ()
     exit 1
 }
 
+# Print a message and continue.
+tt_warning ()
+{
+    if test "$#" -gt "0"
+    then
+        echo "warning: $1" 2>&1
+    fi
+}
+   
 # Process the 'init' subcommand
 tt_process_cmd_init ()
 {
@@ -421,7 +468,7 @@ tt_process_cmd_note ()
     done
 
     # Get the ID of the task to annotate.
-    if test "$#" != "1"
+    if test "$#" -lt "1"
     then
         echo "$tt_help_note"
         exit 1
@@ -429,48 +476,58 @@ tt_process_cmd_note ()
 
     # Check if a task with a given ID exists.
     tt_db_task_p "$1" || \
-        { echo "$tt_tasktool: issue '$1' not found."; exit 1; }
+        { echo "$tt_tasktool: task '$1' not found."; exit 1; }
+    task_id="$1"
+    shift;
 
-
-    # Get the contents of the note from EDITOR
-    if test "$note" = ""; then
-        tmpfile=$$.tmp
-        if test -w $tmpfile; then
-            rm -f $tmpfile
-        fi
+    # Maybe get the note from the command line.
+    if test "$#" = "1"
+    then
         date=`date`
-        echo "$date
+        note="$date
 
-Please replace this line with the annotation for the issue." > $tmpfile
-        $EDITOR $tmpfile
-        note=`cat $tmpfile`
-        rm -f $tmpfile
-
+$1"
+    else
+        # Get the contents of the note from EDITOR
         if test "$note" = ""; then
-            while test "$yesno" != "yes" && test "$yesno" != "no"
-            do
-                echo -n "Got an empty annotation! Continue? (yes/no): "
-                read yesno
-            done
+            tmpfile=$$.tmp
+            if test -w $tmpfile; then
+                rm -f $tmpfile
+            fi
+            date=`date`
+            echo "$date
 
-            if test "$yesno" = "no"; then
-                echo "Creation of issue aborted."
-                exit 0
+Please replace this line with the annotation for the task." > $tmpfile
+            $EDITOR $tmpfile
+            note=`cat $tmpfile`
+            rm -f $tmpfile
+            
+            if test "$note" = ""; then
+                while test "$yesno" != "yes" && test "$yesno" != "no"
+                do
+                    echo -n "Got an empty annotation! Continue? (yes/no): "
+                    read yesno
+                done
+                
+                if test "$yesno" = "no"; then
+                    echo "Creation of task aborted."
+                    exit 0
+                fi
             fi
         fi
     fi
-
+        
     # Add the annotation to the database.
     $tt_recset --verbose \
-        -t ${tt_db_issue} -e "${tt_db_issue_field_id} = $1" \
-        -f ${tt_db_issue_field_note} -a "$note" \
+        -t ${tt_db_task} -e "${tt_db_task_field_id} = $task_id" \
+        -f ${tt_db_task_field_note} -a "$note" \
         $tt_db
     if test "$?" != "0"
     then
         tt_error "error adding the annotation.  See the errors above."
         exit 1
     else
-        echo "tasktool: issue $1 annotated."
+        echo "tasktool: task $task_id annotated."
     fi
 }
 
@@ -505,9 +562,9 @@ tt_process_cmd_show ()
         exit 1
     fi
 
-    # Check if a task with a given ID exists.
+    # Check for the existance of the task.
     tt_db_task_p "$1" || \
-        { echo "$tt_tasktool: issue '$1' not found."; exit 1; }
+        { echo "$tt_tasktool: task '$1' not found."; exit 1; }
     tt_db_show_task "$1"
 }
 
@@ -521,7 +578,7 @@ tt_process_cmd_list ()
     fi
     eval set -- "$TEMP" || exit 1;
 
-    selection_expression="1"
+    selection_expression=""
     status=""
     originator=""
     while true
@@ -542,31 +599,50 @@ tt_process_cmd_list ()
                 shift
                 ;;
             *)
-                shift
                 break
                 ;;
         esac
     done
 
-    if test "$#" != "0"
+    if test "$#" != "1"
     then
-        echo "$tt_help_list"
-        exit 1
+        if test "$#" == "2"
+        then
+            selection_expression="$1"
+        else 
+            echo "$tt_help_list"
+            exit 1
+        fi
     fi
 
     # Prepare the selection expression
-    if test -n "$status"
+    if test -n "$selection_expression"
     then
-        selection_expression="$selection_expression && (Status = '$status')"
+        if test -n "$status"
+        then
+            tt_warning "ignoring -s $status"
+        fi
+
+        if test -n "$originator"
+        then
+            tt_warning "ignoring -o $originator"
+        fi
+    else
+        selection_expression="1"
+
+        if test -n "$status"
+        then
+            selection_expression="$selection_expression && (Status = '$status')"
+        fi
+        
+        if test -n "$originator"
+        then
+            selection_expression="$selection_expression && (Originator = '$originator')"
+        fi
     fi
 
-    if test -n "$originator"
-    then
-        selection_expression="$selection_expression && (Originator = '$originator')"
-    fi
-
-    ${tt_recsel} -t ${tt_db_issue} -e "$selection_expression" -C \
-                 -R ${tt_db_issue_field_id},${tt_db_issue_field_summary} ${tt_db}
+    ${tt_recsel} -t ${tt_db_task} -e "$selection_expression" -C \
+                 -R ${tt_db_task_field_id},${tt_db_task_field_summary} ${tt_db}
 }
 
 # Process the 'create' subcommand
@@ -586,42 +662,34 @@ tt_process_cmd_create ()
                 echo "$tt_help_create"
                 exit 1
                 ;;
-            -s|--summary)
-                summary=$2
-                shift
-                shift
-                ;;
             -o|--originator)
                 originator=$2
                 shift
                 shift
                 ;;
             *)
-                shift
                 break
                 ;;
         esac
     done
 
-    if test "$#" != "0"
+    if test "$#" != "1"
     then
-        echo "$tt_help_create"
-        exit 1
+        if test "$#" == "2"
+        then
+            # Set the summary.
+            summary="$1"
+        else 
+            echo "$tt_help_create"
+            exit 1
+        fi
     fi
 
     if test "$summary" = ""; then
         while test "$summary" = ""
         do
-            echo -n "Summary (line): "
+            echo -n "Summary (one line): "
             read summary
-        done
-    fi
-
-    if test "$originator" = ""; then
-        while test "$originator" = ""
-        do
-            echo -n "Originator (email): "
-            read originator
         done
     fi
 
@@ -631,7 +699,7 @@ tt_process_cmd_create ()
         if test -w $tmpfile; then
             rm -f $tmpfile
         fi
-        echo "Please replace this line with a description of the issue." > $tmpfile
+        echo "Please replace this line with a description of the task." > $tmpfile
         $EDITOR $tmpfile
         description=`cat $tmpfile`
         rm -f $tmpfile
@@ -644,7 +712,7 @@ tt_process_cmd_create ()
             done
 
             if test "$yesno" = "no"; then
-                echo "Annotation aborted."
+                echo "Operation aborted."
                 exit 0
             fi
         fi
@@ -653,22 +721,92 @@ tt_process_cmd_create ()
     new_id=`tt_db_free_id`
     date=`date`
 
-    # Add the new issue to the database.
-    eval $tt_recins --verbose \
-                    -t ${tt_db_issue} \
-                    -f ${tt_db_issue_field_id} -v $new_id \
-                    -f ${tt_db_issue_field_summary} -v \'$summary\' \
-                    -f ${tt_db_issue_field_created} -v \'$date\' \
-                    -f ${tt_db_issue_field_originator} -v \'$originator\' \
-                    -f ${tt_db_issue_field_status} -v TODO \
-                    -f ${tt_db_issue_field_description} -v \'"$description"\' \
-                    $tt_db
+    # Add the new task to the database.
+    if test -n "$originator"
+    then
+        originator_cmd="-f ${tt_db_task_field_originator} -v '$originator'"
+    else
+        originator_cmd=""
+    fi
+
+    cmd="$tt_recins --verbose \
+                    -t ${tt_db_task} \
+                    -f ${tt_db_task_field_id} -v $new_id \
+                    -f ${tt_db_task_field_summary} -v '$summary' \
+                    -f ${tt_db_task_field_created} -v '$date' \
+                    ${originator_cmd} \
+                    -f ${tt_db_task_field_status} -v $tt_task_initial_status \
+                    -f ${tt_db_task_field_description} -v '$description' \
+                    $tt_db"
+    eval "$cmd"
     if test "$?" != "0"
     then
         tt_error "data integrity problem.  See the errors above and review your parameters."
         exit 1
     else
-        echo "tasktool: issue $new_id added to $tt_db."
+        echo "tasktool: task $new_id added to $tt_db."
+    fi
+}
+
+# Process the 'delete' subcommand
+tt_process_cmd_delete ()
+{
+    TEMP=`getopt -o c --long help,comment -n 'tasktool: delete' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+    
+    task_id=""
+    do_comment=""
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_delete"
+                exit 1
+                ;;
+            -c|--comment)
+                do_comment="-c"
+                shift
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    # Get the ID of the task to delete.
+    if test "$#" = "1"
+    then
+        task_id="$1"
+    else
+        echo "$tt_help_delete"
+        exit 1
+    fi
+
+    # Check for the existance of the task.
+    tt_db_task_p "$1" || \
+        { echo "$tt_tasktool: task '$1' not found."; exit 1; }
+    
+    # Remove (or comment out) the task from the databse.
+    cmd="$tt_recdel ${do_comment} \
+         -t ${tt_db_task} -e \"${tt_db_task_field_id} = $task_id\" $tt_db"
+    eval "$cmd"
+    if test "$?" != "0"
+    then
+        tt_error "data integrity problem.  See the errors above and review your parameters."
+        exit 1
+    else
+        if test -n "$do_comment"
+        then
+            echo "tasktool: task $task_id commented out in $tt_db."
+        else
+            echo "tasktool: task $task_id removed from $tt_db."
+        fi
     fi
 }
 
@@ -692,31 +830,37 @@ tt_parse_arguments ()
                 ;;
             init)
                 shift
-                tt_process_cmd_init $*
+                tt_process_cmd_init "$@"
                 break
                 ;;
             show)
                 shift
                 tt_db_check
-                tt_process_cmd_show $*
+                tt_process_cmd_show "$@"
                 break
                 ;;
             note)
                 shift
                 tt_db_check
-                tt_process_cmd_note $*
+                tt_process_cmd_note "$@"
                 break
                 ;;
             list)
                 shift
                 tt_db_check
-                tt_process_cmd_list $*
+                tt_process_cmd_list "$@"
                 break
                 ;;
             create)
                 shift
                 tt_db_check
-                tt_process_cmd_create $*
+                tt_process_cmd_create "$@"
+                break
+                ;;
+            delete)
+                shift
+                tt_db_check
+                tt_process_cmd_delete "$@"
                 break
                 ;;
             -d|--database)
@@ -740,7 +884,6 @@ tt_parse_arguments ()
 
 ## Start! ##
 
-tt_rec_check_utilities
-tt_parse_arguments $*
+tt_parse_arguments "$@"
 
 # End of tasktool

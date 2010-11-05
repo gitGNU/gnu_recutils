@@ -1,53 +1,83 @@
 # -*- mode: rec -*-
 #
-# TODO file for the GNU recutils.
+# TODO file for GNU recutils.
+#
+# Please contact bug-recutils@gnu.org for any question or
+# request concerning this file.
 
-%rec: Issue
+%rec: Task
 %key: Id
-%mandatory: Summary
+%mandatory: Summary Status
+%type: Id int
 %type: Summary line
-%type: Type enum improvement bug
-%type: Status enum TODO NEXT STARTED WAITING DISCARDED
+%type: Type enum
++ task
+%type: Status enum 
++ TODO NEXT STARTED WAITING
++ DONE SOMEDAY DISCARDED
+%type: Category enum
++ librec utils doc
 %type: Originator email
-%type: Assignee email
-%type: Assigned email
-%type: Component enum librec utils rec-mode
-%fsort: Id Summary Status Originator Description
-%doc:
-+ An issue.  It contains, at least, the following
-+ fields:
-+
-+ Type: the type of the issue.  An improvement or
-+       a bug.
-+ Originator: an email identifying the person/entity
-+             that originated the issue.
+%type: AssignedTo email
+%type: CreatedAt date
+%type: ClosedAt date
 
-Id: 00001
-Summary: first task
-Date: Wed Jul 14 16:24:39 CEST 2010
-Originator: jemarch@gnu.org
+Id: 1
+Summary: foo bar
+CreatedAt: Thu Nov 4 21:06:38 CET 2010
+Originator: foo@bar.org
 Status: TODO
-Description: Please replace this line with the description of the issue.
+Description: Please replace this line with a description of the task.
+Note: Fri Nov  5 15:07:39 CET 2010
++ 
++ Please replace this line with the annotation for the task.
+Note: bar
+Note: Fri Nov  5 15:11:50 CET 2010
++ 
++ baz
+Note: Fri Nov  5 15:12:06 CET 2010
++ 
++ uno
+Note: Fri Nov  5 15:12:08 CET 2010
++ 
++ dos
+Note: Fri Nov  5 15:12:16 CET 2010
++ 
++ tres
+Note: Fri Nov  5 15:12:19 CET 2010
++ 
++ cuatro
 
-Id: 00002
-Summary: second task
-Date: Wed Jul 14 16:26:03 CEST 2010
-Originator: jemarch@gnu.org
+Id: 3
+Summary: fdji
+CreatedAt: Fri Nov 5 11:24:56 CET 2010
+Originator: foo@bar.baz
 Status: TODO
-Description: Please replace this line with the description of the issue.
+Description: Please replace this line with a description of the task.
 
-Id: 00003
-Summary: third task
-Date: Wed Jul 14 16:28:58 CEST 2010
-Originator: jemarch@gnu.org
-Status: TODO
-Description: Please replace this line with the description of the issue.
+#Id: 4
+#Summary: fdji
+#CreatedAt: Fri Nov  5 11:27:46 CET 2010
+#Originator: foo@bar.com
+#Status: TODO
+#Description: Please replace this line with a description of the task.
 
-Id: 00004
-Summary: fourth task
-Date: Wed Jul 14 16:29:10 CEST 2010
-Originator: jemarch@gnu.org
+Id: 5
+Summary: jfid
+CreatedAt: Fri Nov  5 11:27:59 CET 2010
+Originator: foo@bar.com
 Status: TODO
-Description: Please replace this line with the description of the issue.
+Description: Please replace this line with a description of the task.
++ 
++ fd
++ fd
++ f
++ df
+
+Id: 6
+Summary: jo ja
+CreatedAt: Fri Nov  5 11:28:38 CET 2010
+Status: TODO
+Description: Please replace this line with a description of the task.
 
 # End of TODO
