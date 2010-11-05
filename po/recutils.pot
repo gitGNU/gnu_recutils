@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils git\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2010-11-02 20:08+0100\n"
+"POT-Creation-Date: 2010-11-05 18:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -450,16 +450,16 @@ msgstr ""
 msgid "evaluating selection expression.\n"
 msgstr ""
 
-#: utils/recdel.c:263
+#: utils/recdel.c:262
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr ""
 
-#: utils/recdel.c:265
+#: utils/recdel.c:264
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr ""
 
-#: utils/recdel.c:273 utils/recset.c:395
+#: utils/recdel.c:272 utils/recset.c:395
 msgid "invalid selection expression.\n"
 msgstr ""
 

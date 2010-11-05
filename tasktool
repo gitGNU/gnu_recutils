@@ -228,6 +228,8 @@ Create a new task in the database.
 
 Mandatory arguments to long options are mandatory for short options too.
   -o, --originator=EMAIL              originator of the Task.  An email.
+  -s, --status=STATUS                 status to use in task creation.  Defaults
+                                        to ${tt_task_initial_status}.
       --help                          print this help message and exit.
 
 Examples:
@@ -285,7 +287,7 @@ tt_rec_check_utility ()
     # Parameters:
     # $1 => The name of the utility to check.
     test "$#" -gt "0" && {
-        ${1} --version 2>&1 > /dev/null < /dev/null || tt_error "$1 not found"
+        ${1} --version 2>&1 > /dev/null < /dev/null || tt_error "'$1' not found"
     }
 }
 
@@ -311,13 +313,13 @@ tt_db_check ()
 {
     test -f ${tt_db} || \
         {
-           tt_error "cannot open database in $tt_db.  Use 'init' to create one."
+           tt_error "cannot open database in '$tt_db'.  Use 'init' to create one."
         }
 
     $tt_recfix ${tt_db}
     if test "$?" != "0"
     then
-        tt_error "data integrity problem in ${tt_db}.  See the errors above."
+        tt_error "data integrity problem in '${tt_db}'.  See the errors above."
         exit 1
     fi
 }
@@ -326,7 +328,7 @@ tt_db_check ()
 tt_db_create ()
 {
     test -f ${tt_db} && {
-        tt_error "database already exists in $tt_db."
+        tt_error "database already exists in '$tt_db'."
         return
     }
 
@@ -342,6 +344,23 @@ tt_db_task_p ()
 {
     COUNT=`${tt_recsel} -t ${tt_db_task} -e "${tt_db_task_field_id} = $1" -c ${tt_db}`
     if test "$COUNT" -gt "0"
+    then
+        return 0
+    fi
+
+    return 1
+}
+
+# Test whether a given string correspond to a status.
+#
+# Parameters:
+# $1 => The status to check.
+tt_db_status_p ()
+{
+    # We need to check in both tt_task_statuses and
+    # tt_task_resolutions.
+    if tt_word_in_list $1 $tt_task_statuses || \
+       tt_word_in_list $1 $tt_task_resolutions
     then
         return 0
     fi
@@ -414,6 +433,44 @@ tt_warning ()
         echo "warning: $1" 2>&1
     fi
 }
+
+# Determine whether a word is part of a list of words separated by
+# blanks.
+tt_word_in_list ()
+{
+    word=$1
+    list=$2
+    for elem in $list
+    do
+        if test "x$elem" = "x$word"
+        then
+            # Found it.
+            return 0
+        fi
+    done
+
+    # Not found.
+    return 1
+}
+
+# Test whether a given string is a valid email.
+#
+# Parameters:
+# $1 => The string to check.
+tt_email_p ()
+{
+    if echo -n $1 \
+       | grep -E '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$' > /dev/null
+    then
+        return 0
+    fi
+
+    return 1
+}
+
+## Implementation of subcommands ##
+#
+# Each subcommand is implemented by a tt_process_cmd_COMMAND function.
    
 # Process the 'init' subcommand
 tt_process_cmd_init ()
@@ -604,6 +661,14 @@ tt_process_cmd_list ()
         esac
     done
 
+    # Check parameters.
+
+    if test -n "$originator"
+    then
+        tt_email_p $originator || \
+          { tt_error "'$originator' is not a proper email address."; exit 1; }
+    fi
+
     if test "$#" != "1"
     then
         if test "$#" == "2"
@@ -648,7 +713,7 @@ tt_process_cmd_list ()
 # Process the 'create' subcommand
 tt_process_cmd_create ()
 {
-    TEMP=`getopt -o -s:o: --long help,originator,summary: -n 'tasktool: create' -- "$@"`
+    TEMP=`getopt -o -s:o: --long help,originator,status:,summary: -n 'tasktool: create' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -667,11 +732,32 @@ tt_process_cmd_create ()
                 shift
                 shift
                 ;;
+            -s|--status)
+                status=$2
+                shift
+                shift
+                ;;
             *)
                 break
                 ;;
         esac
     done
+
+    # Check the parameters.
+
+    if test -n "$status"
+    then
+        tt_db_status_p $status || \
+          { tt_error "'$status' is not a proper status."; exit 1; }
+    else
+        status=$tt_task_initial_status
+    fi
+
+    if test -n "$originator"
+    then
+        tt_email_p $originator || \
+          { tt_error "'$originator' is not a proper email address."; exit 1; }
+    fi
 
     if test "$#" != "1"
     then
@@ -735,7 +821,7 @@ tt_process_cmd_create ()
                     -f ${tt_db_task_field_summary} -v '$summary' \
                     -f ${tt_db_task_field_created} -v '$date' \
                     ${originator_cmd} \
-                    -f ${tt_db_task_field_status} -v $tt_task_initial_status \
+                    -f ${tt_db_task_field_status} -v $status \
                     -f ${tt_db_task_field_description} -v '$description' \
                     $tt_db"
     eval "$cmd"
