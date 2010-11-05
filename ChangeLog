@@ -1,5 +1,7 @@
 2010-11-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* TODO: First serious version.
+
 	* tasktool: Fixed many problems and 'delete' command implemented.
 
 2010-11-03  Jose E. Marchesi  <jemarch@gnu.org>
