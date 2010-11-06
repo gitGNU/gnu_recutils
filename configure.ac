@@ -132,7 +132,8 @@ AC_OUTPUT(Makefile
           doc/Makefile
           po/Makefile.in
           torture/Makefile
-          man/Makefile)
+          man/Makefile
+          etc/Makefile)
 
 dnl Report warnings
 
