@@ -723,7 +723,44 @@ synopsis is:
 @node External Descriptors
 @chapter External Descriptors
 
-XXX
+Sometimes it is convenient to store records of the same type in
+different files.  The duplication of record descriptors in this case
+would surely lead to consistency problems.  A possible solution would
+be to keep the record descriptor in a separated file and then include
+it in any operation by using pipes.  For example:
+
+@example
+$ cat descriptor.rec data.rec | recsel ...
+@end example
+
+That approach suffers from several disadvantages, including the fact
+that the data files have to reside in the same machine.  As a better
+alternative, the Rec format allows the usage of @dfn{external
+descriptors}.
+
+@example
+%rec: Department http://www.myorg.com/Org.rec
+@end example
+
+The previous example shows how an external descriptor can be
+referenced with an URL.  The URL shall point to a text file containing
+rec data.  If there is a record descriptor in the remote file
+documenting the @code{Department} type, it will be used.
+
+Note that the local record descriptor can provide additional fields to
+``expand'' the record type.  For example:
+
+@example
+%rec: FSD_Entry http://www.jemarch.net/downloads/FSD.rec
+%mandatory: Rating
+@end example
+
+The record descriptor above is including the contents of the
+@code{FSD_Entry} record descriptor from the URL, and adding them to
+the local record descriptor, that in this case contains just the
+@code{%mandatory} field.
+
+Any URL schema supported by @code{libcurl} will work.
 
 @node Common Options
 @chapter Common Options
