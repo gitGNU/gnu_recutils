@@ -3,7 +3,7 @@
 # Information for the Free Software Directory maintained
 # by the Free Software Foundation at http://www.fsf.org/directory
 
-%rec: FSD_Entry http://www.jemarch.net/downloads/FSD.org
+%rec: FSD_Entry http://www.jemarch.net/downloads/FSD.rec
 
 Title: GNU Recutils
 Description:
