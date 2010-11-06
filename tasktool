@@ -230,6 +230,7 @@ Mandatory arguments to long options are mandatory for short options too.
   -o, --originator=EMAIL              originator of the Task.  An email.
   -s, --status=STATUS                 status to use in task creation.  Defaults
                                         to ${tt_task_initial_status}.
+  -a, --assigned=EMAIL                assignee of the task.
       --help                          print this help message and exit.
 
 Examples:
@@ -713,7 +714,7 @@ tt_process_cmd_list ()
 # Process the 'create' subcommand
 tt_process_cmd_create ()
 {
-    TEMP=`getopt -o -s:o: --long help,originator,status:,summary: -n 'tasktool: create' -- "$@"`
+    TEMP=`getopt -o -s:o:a: --long help,originator,status:,assigned:,summary: -n 'tasktool: create' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -737,6 +738,11 @@ tt_process_cmd_create ()
                 shift
                 shift
                 ;;
+            -a|--assigned)
+                assigned=$2
+                shift
+                shift
+                ;;
             *)
                 break
                 ;;
@@ -753,10 +759,17 @@ tt_process_cmd_create ()
         status=$tt_task_initial_status
     fi
 
+
     if test -n "$originator"
     then
         tt_email_p $originator || \
           { tt_error "'$originator' is not a proper email address."; exit 1; }
+    fi
+
+    if test -n "$assigned"
+    then
+        tt_email_p $assigned || \
+          { tt_error "'$assigned' is not a proper email address."; exit 1; }
     fi
 
     if test "$#" != "1"
@@ -807,6 +820,14 @@ tt_process_cmd_create ()
     new_id=`tt_db_free_id`
     date=`date`
 
+    # A closing date may be in order.
+    if tt_word_in_list $status $tt_task_resolutions
+    then
+        closed_at_cmd="-f ${tt_db_task_field_closed} -v '`date`'"
+    else
+        closed_at_cmd=""
+    fi
+
     # Add the new task to the database.
     if test -n "$originator"
     then
@@ -815,12 +836,21 @@ tt_process_cmd_create ()
         originator_cmd=""
     fi
 
+    if test -n "$assigned"
+    then
+        assigned_cmd="-f ${tt_db_task_field_assigned} -v '$assigned'"
+    else
+        assigned_cmd=""
+    fi
+
     cmd="$tt_recins --verbose \
                     -t ${tt_db_task} \
                     -f ${tt_db_task_field_id} -v $new_id \
                     -f ${tt_db_task_field_summary} -v '$summary' \
                     -f ${tt_db_task_field_created} -v '$date' \
                     ${originator_cmd} \
+                    ${assigned_cmd} \
+                    ${closed_at_cmd} \
                     -f ${tt_db_task_field_status} -v $status \
                     -f ${tt_db_task_field_description} -v '$description' \
                     $tt_db"

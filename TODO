@@ -22,47 +22,4 @@
 %type: CreatedAt date
 %type: ClosedAt date
 
-Id: 1
-Summary: jo ja
-CreatedAt: Fri Nov  5 18:42:09 CET 2010
-Status: TODO
-Description: Please replace this line with a description of the task.
-
-Id: 2
-Summary: jo ja
-CreatedAt: Fri Nov  5 18:42:25 CET 2010
-Status: TODO
-Description: Please replace this line with a description of the task.
-
-Id: 3
-Summary: jo ja
-CreatedAt: Fri Nov  5 18:42:31 CET 2010
-Status: TODO
-Description: Please replace this line with a description of the task.
-
-Id: 4
-Summary: jo ja
-CreatedAt: Fri Nov  5 18:42:47 CET 2010
-Status: TODO
-Description: Please replace this line with a description of the task.
-
-Id: 5
-Summary: jo ja
-CreatedAt: Fri Nov  5 18:43:49 CET 2010
-Status: TODO
-Description: Please replace this line with a description of the task.
-
-Id: 6
-Summary: jo ja
-CreatedAt: Fri Nov  5 18:43:59 CET 2010
-Status: DONE
-Description: Please replace this line with a description of the task.
-
-Id: 7
-Summary: jo ja
-CreatedAt: Fri Nov  5 19:00:34 CET 2010
-Originator: foo@bar.com
-Status: DONE
-Description: Please replace this line with a description of the task.
-
 # End of TODO
