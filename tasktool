@@ -207,8 +207,8 @@ List tasks.
 
 Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
-  -s, --status=STATUS                 list tasks with the given status.
-  -o, --originator                    list tasks with the given originator.
+  -s, --status=STATUS                 list tasks having this status.
+  -o, --originator                    list tasks having this originator.
 
 EXPRESSION is a recutils selection expression.  If it is specified
 then any used -s or -o argument is ignored.
