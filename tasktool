@@ -27,6 +27,9 @@
 tt_project_name="GNU recutils"
 tt_contact_email="bug-recutils@gnu.org"
 
+# Which ChangeLog file to use
+tt_changelog="ChangeLog"
+
 # Task types (words separated by blanks).
 #
 # Example: tt_task_types="Problem Task"
@@ -180,6 +183,7 @@ Usage: $tt_tasktool init
 Initialize a tasktool database.
 
 Mandatory arguments to long options are mandatory for short options too.
+      --no-changelog                  do not generate a ChangeLog entry.
       --help                          print this help message and exit.
 
 Examples:
@@ -232,6 +236,7 @@ Mandatory arguments to long options are mandatory for short options too.
                                         to ${tt_task_initial_status}.
   -a, --assigned=EMAIL                assignee of the task.
   -b, --batch                         don't ask for field values interactively.
+      --no-changelog                  do not generate a ChangeLog entry.
       --help                          print this help message and exit.
 
 Examples:
@@ -246,6 +251,7 @@ Delete a task from the database.
 
 Mandatory arguments to long options are mandatory for short options too.
   -c, --comment                       comment the task instead of delete.
+      --no-changelog                  do not generate a ChangeLog entry.
       --help                          print this help message and exit.
 
 Examples:
@@ -260,6 +266,7 @@ Usage: $tt_tasktool note [OPTION...] TASK_ID [TEXT]
 Add a note to the given task.
 
 Mandatory arguments to long options are mandatory for short options too.
+      --no-changelog                  do not generate a ChangeLog entry.
       --help                          print this help message and exit.
 
 If NOTE is not specified then the program asks for it using the EDITOR
@@ -412,6 +419,34 @@ tt_db_free_id ()
 # Supported VCs
 tt_supported_vcs="cvs git bzr"
 
+## ChangeLog Functions ##
+#
+# Functions to manipulate ChangeLog files.
+
+# Add an entry to the ChangeLog file
+#
+# Parameters:
+# $1 => Entity.
+# $2 => Entry.
+tt_add_changelog_entry ()
+{
+    if grep -E '^	' ChangeLog | head -1 | \
+       grep "Tasktool operations." > /dev/null 2>&1
+    then
+        cat ${tt_changelog} | sed -e "s/\(\t\* $1: .*\)/\1\n\t$2/" > ${tt_changelog}.tmp
+        mv ${tt_changelog}.tmp ${tt_changelog}
+    else
+        entry="`date +%Y-%m-%d` `tt_user_full_name` <`tt_user_email`>
+
+	Tasktool operations.
+	* $1: $2
+"
+        echo "$entry" > ${tt_changelog}.tmp
+        cat ${tt_changelog} >> ${tt_changelog}.tmp 
+        mv ${tt_changelog}.tmp ${tt_changelog}
+    fi
+}
+
 ## Utility Functions ##
 #
 # Misc functions used by the script.
@@ -470,6 +505,21 @@ tt_email_p ()
     return 1
 }
 
+# Get the full name of the current user.  The current user is
+# determined using 'id -u'.
+tt_user_full_name ()
+{
+    uid=`id -u`
+    full_name=`grep "[^:]*:[^:]*:$uid:" /etc/passwd | cut -d: -f5 | cut -d, -f1`
+    echo "$full_name"
+}
+
+# Get the email of the current user.
+tt_user_email ()
+{
+    echo "$LOGNAME@`hostname`"
+}
+
 ## Implementation of subcommands ##
 #
 # Each subcommand is implemented by a tt_process_cmd_COMMAND function.
@@ -477,7 +527,7 @@ tt_email_p ()
 # Process the 'init' subcommand
 tt_process_cmd_init ()
 {
-    TEMP=`getopt -o f:: --long help -n 'tasktool: init' -- "$@"`
+    TEMP=`getopt -o f:: --long help,no-changelog -n 'tasktool: init' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -491,6 +541,10 @@ tt_process_cmd_init ()
                 echo "$tt_help_init"
                 exit 1
                 ;;
+            --no-changelog)
+                no_changelog=yes
+                shift
+                ;;
             *)
                 shift
                 break
@@ -500,12 +554,18 @@ tt_process_cmd_init ()
 
     # Initialize the database
     tt_db_create
+
+    if test -z "$no_changelog"
+    then
+        tt_add_changelog_entry $tt_db "Created."
+        echo "tasktool: entry added to $tt_changelog."
+    fi
 }
 
 # Process the 'note' subcommand
 tt_process_cmd_note ()
 {
-    TEMP=`getopt -o f: --long help -n 'tasktool: note' -- "$@"`
+    TEMP=`getopt -o f: --long help,no-changelog -n 'tasktool: note' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -518,6 +578,10 @@ tt_process_cmd_note ()
             --help)
                 echo "$tt_help_note"
                 exit 1
+                ;;
+            --no-changelog)
+                no_changelog=yes
+                shift
                 ;;
             *)
                 shift
@@ -587,6 +651,12 @@ Please replace this line with the annotation for the task." > $tmpfile
         exit 1
     else
         echo "tasktool: task $task_id annotated."
+
+        if test -z "$no_changelog"
+        then
+            tt_add_changelog_entry $tt_db "Note added for task $task_id."
+            echo "tasktool: entry added to $tt_changelog."
+        fi
     fi
 }
 
@@ -715,7 +785,7 @@ tt_process_cmd_list ()
 # Process the 'create' subcommand
 tt_process_cmd_create ()
 {
-    TEMP=`getopt -o -bs:o:a: --long help,batch,originator,status:,assigned:,summary: -n 'tasktool: create' -- "$@"`
+    TEMP=`getopt -o -bs:o:a: --long help,batch,originator,no-changelog,status:,assigned:,summary: -n 'tasktool: create' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -746,6 +816,10 @@ tt_process_cmd_create ()
                 ;;
             -b|--batch)
                 batch_mode=yes
+                shift
+                ;;
+            --no-changelog)
+                no_changelog=yes
                 shift
                 ;;
             *)
@@ -883,13 +957,19 @@ tt_process_cmd_create ()
         exit 1
     else
         echo "tasktool: task $new_id added to $tt_db."
+
+        if test -z "$no_changelog"
+        then
+            tt_add_changelog_entry $tt_db "Task $new_id created."
+            echo "tasktool: entry added to $tt_changelog."
+        fi
     fi
 }
 
 # Process the 'delete' subcommand
 tt_process_cmd_delete ()
 {
-    TEMP=`getopt -o c --long help,comment -n 'tasktool: delete' -- "$@"`
+    TEMP=`getopt -o c --long help,no-changelog,comment -n 'tasktool: delete' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -908,6 +988,10 @@ tt_process_cmd_delete ()
                 ;;
             -c|--comment)
                 do_comment="-c"
+                shift
+                ;;
+            --no-changelog)
+                no_changelog=yes
                 shift
                 ;;
             *)
@@ -942,8 +1026,20 @@ tt_process_cmd_delete ()
         if test -n "$do_comment"
         then
             echo "tasktool: task $task_id commented out in $tt_db."
+
+            if test -z "$no_changelog"
+            then
+                tt_add_changelog_entry $tt_db "Task $task_id commented out."
+                echo "tasktool: entry added to $tt_changelog."
+            fi
         else
             echo "tasktool: task $task_id removed from $tt_db."
+
+            if test -z "$no_changelog"
+            then
+                tt_add_changelog_entry $tt_db "Task $task_id removed."
+                echo "tasktool: entry added to $tt_changelog."
+            fi
         fi
     fi
 }
