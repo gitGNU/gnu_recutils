@@ -1,5 +1,7 @@
 2010-11-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/FSD.rec: New file.
+
 	* doc/recutils.texi: Document the --no-remote command line
 	argument for recins, recfix and recset.
 
