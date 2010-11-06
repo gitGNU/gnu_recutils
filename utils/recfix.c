@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-03 20:53:48 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-06 15:31:18 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -42,6 +42,7 @@ bool recfix_process_data (rec_db_t db);
  */
 
 char *program_name = NULL;
+bool recfix_remote = true;
 
 /*
  * Command line options management.
@@ -49,12 +50,14 @@ char *program_name = NULL;
 
 enum
 {
-  COMMON_ARGS
+  COMMON_ARGS,
+  NO_REMOTE_ARG
 };
 
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
+    {"no-remote", no_argument, NULL, NO_REMOTE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -70,6 +73,13 @@ Usage: recfix [OPTION]... [FILE]...\n"));
      no-wrap */
   fputs (_("\
 Check and fix rec files.\n"),
+         stdout);
+
+  puts ("");
+  /* TRANSLATORS: --help output, recfix arguments.
+     no-wrap */
+  fputs (_("\
+      --no-remote                 don't use remote descriptors.\n"),
          stdout);
 
   recutl_print_help_common ();
@@ -106,6 +116,11 @@ recfix_parse_args (int argc,
       switch (c)
         {
           COMMON_ARGS_CASES
+        case NO_REMOTE_ARG:
+          {
+            recfix_remote = false;
+            break;
+          }
         default:
           {
             exit (EXIT_FAILURE);
@@ -118,7 +133,8 @@ bool
 recfix_process_data (rec_db_t db)
 {
   return (rec_int_check_db (db,
-                            true, /* Check descriptors.  */
+                            true,          /* Check descriptors.  */
+                            recfix_remote, /* Use remote descriptors.  */
                             stderr));
 }
 

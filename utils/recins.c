@@ -49,6 +49,7 @@ rec_record_t  recins_record  = NULL;
 char         *recins_file    = NULL;
 bool          recins_force   = false;
 bool          recins_verbose = false;
+bool          recins_remote  = true;
 
 /*
  * Command line options management
@@ -61,7 +62,8 @@ enum
   NAME_ARG,
   VALUE_ARG,
   FORCE_ARG,
-  VERBOSE_ARG
+  VERBOSE_ARG,
+  NO_REMOTE_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -72,6 +74,7 @@ static const struct option GNU_longOptions[] =
     {"value", required_argument, NULL, VALUE_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
     {"verbose", no_argument, NULL, VERBOSE_ARG},
+    {"no-remote", no_argument, NULL, NO_REMOTE_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -101,6 +104,7 @@ Insert new records in a rec database.\n"), stdout);
   -v, --value=STR                     field value.  Should be preceded by a -f.\n\
       --force                         insert the record even if it is violating\n\
                                         record restrictions.\n\
+      --no-remote                     don't use remote descriptors.\n\
       --verbose                       get a detailed report if the integrity check\n\
                                         fails.\n"), stdout);
 
@@ -198,7 +202,7 @@ recins_insert_record (rec_db_t db,
   if (!recins_force && rset)
     {
       errors_stm = open_memstream (&errors_str, &errors_str_size);
-      if (rec_int_check_rset (db, rset, false, errors_stm) > 0)
+      if (rec_int_check_rset (db, rset, false, recins_remote, errors_stm) > 0)
         {
           fclose (errors_stm);
           if (!recins_verbose)
@@ -305,6 +309,11 @@ void recins_parse_args (int argc,
             rec_record_append_field (recins_record, field);
 
             field = NULL;
+            break;
+          }
+        case NO_REMOTE_ARG:
+          {
+            recins_remote = false;
             break;
           }
         default:

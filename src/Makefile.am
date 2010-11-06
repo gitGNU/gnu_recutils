@@ -54,6 +54,9 @@ endif
 
 AM_LDFLAGS =
 AM_CPPFLAGS = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
+if REMOTE_DESCRIPTORS
+  AM_CPPFLAGS += -DREMOTE_DESCRIPTORS
+endif
 librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \
                    $(LIB_CLOCK_GETTIME)
 

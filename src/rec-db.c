@@ -212,7 +212,7 @@ rec_db_get_rset_by_type (rec_db_t db,
             }
         }
       else
-        {        
+        { 
           if ((type != NULL)
               && (strcmp (rtype, type) == 0))
             {

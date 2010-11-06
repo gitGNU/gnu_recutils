@@ -367,6 +367,9 @@ will be considered mandatory.
 Its effect is that at least one field with this name should be present
 in any record of this kind.  Any record violating this restriction
 will be considered invalid.
+@item %prohibit
+The value of this field is interpreted as the name of a field.  Fields
+having that name will be prohibited in the record set.
 @item %unique
 The value of this field is interpreted as the name of a field, that
 will be considered unique.
@@ -1233,6 +1236,8 @@ Declares the name of a field.  This option shall be followed by a
 @item -v
 @itemx @w{@kbd{--value}=@var{value}}
 The value of the field being defined.
+@itemx @w{@kbd{--no-remote}}
+Don't use remote record descriptors.
 @end table
 
 @node recins Examples
@@ -1382,6 +1387,8 @@ Delete the selected fields in the selected records.
 @item -c
 @itemx @w{@kbd{--comment}}
 Comment out the selected fields in the selected records.
+@itemx @w{@kbd{--no-remote}}
+Don't use remote record descriptors.
 @end table
 
 @node recset Examples
@@ -1428,8 +1435,13 @@ If no FILE is specified then the command acts like a filter, getting
 the data from the standard input and writing the result in the
 standard output.
 
-This program accepts the common options described earlier
-(@pxref{Common Options}).
+In addition to the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@itemx @w{@kbd{--no-remote}}
+Don't use remote record descriptors.
+@end table
 
 @node recfix Examples
 @section recfix Examples

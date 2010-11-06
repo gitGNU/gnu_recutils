@@ -34,18 +34,25 @@ AC_DEFUN([gl_EARLY],
   # Code from module c++defs:
   # Code from module c-ctype:
   # Code from module clock-time:
+  # Code from module cloexec:
   # Code from module close-stream:
   # Code from module closeout:
   # Code from module configmake:
+  # Code from module dup2:
   # Code from module environ:
   # Code from module errno:
   # Code from module error:
+  # Code from module execute:
   # Code from module exitfail:
   # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  # Code from module fatal-signal:
+  # Code from module fcntl:
+  # Code from module fcntl-h:
   # Code from module fpending:
   # Code from module gendocs:
   # Code from module getdate:
+  # Code from module getdtablesize:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
   # Code from module gettext:
@@ -59,25 +66,47 @@ AC_DEFUN([gl_EARLY],
   # Code from module intprops:
   # Code from module list:
   # Code from module localcharset:
+  # Code from module lstat:
   # Code from module maintainer-makefile:
   # Code from module malloca:
   # Code from module mbrtowc:
   # Code from module mbsinit:
   # Code from module mktime:
   # Code from module multiarch:
+  # Code from module open:
   # Code from module parse-datetime:
+  # Code from module posix_spawn-internal:
+  # Code from module posix_spawn_file_actions_addopen:
+  # Code from module posix_spawn_file_actions_destroy:
+  # Code from module posix_spawn_file_actions_init:
+  # Code from module posix_spawnattr_destroy:
+  # Code from module posix_spawnattr_init:
+  # Code from module posix_spawnattr_setflags:
+  # Code from module posix_spawnattr_setsigmask:
+  # Code from module posix_spawnp:
   # Code from module quotearg:
   # Code from module quotearg-simple:
+  # Code from module rawmemchr:
+  # Code from module sched:
   # Code from module setenv:
+  # Code from module sigaction:
+  # Code from module signal:
+  # Code from module sigprocmask:
   # Code from module size_max:
+  # Code from module spawn:
+  # Code from module stat:
   # Code from module stdbool:
   # Code from module stddef:
   # Code from module stdint:
   # Code from module stdlib:
+  # Code from module strchrnul:
   # Code from module streq:
   # Code from module strerror:
   # Code from module string:
+  # Code from module sys_stat:
   # Code from module sys_time:
+  # Code from module sys_wait:
+  # Code from module tempname:
   # Code from module time:
   # Code from module time_r:
   # Code from module timespec:
@@ -86,6 +115,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module useless-if-before-free:
   # Code from module vc-list-files:
   # Code from module verify:
+  # Code from module wait-process:
+  # Code from module waitpid:
   # Code from module warn-on-use:
   # Code from module wchar:
   # Code from module wctype:
@@ -117,12 +148,18 @@ AC_DEFUN([gl_INIT],
   # Code from module c-ctype:
   # Code from module clock-time:
   gl_CLOCK_TIME
+  # Code from module cloexec:
+  gl_CLOEXEC
+  gl_MODULE_INDICATOR_FOR_TESTS([cloexec])
   # Code from module close-stream:
   gl_CLOSE_STREAM
   gl_MODULE_INDICATOR([close-stream])
   # Code from module closeout:
   gl_CLOSEOUT
   # Code from module configmake:
+  # Code from module dup2:
+  gl_FUNC_DUP2
+  gl_UNISTD_MODULE_INDICATOR([dup2])
   # Code from module environ:
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
@@ -133,12 +170,24 @@ AC_DEFUN([gl_INIT],
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_][XGETTEXT_OPTION([--flag=error:3:c-format])
      AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
+  # Code from module execute:
+  gl_EXECUTE
   # Code from module exitfail:
   # Code from module extensions:
+  # Code from module fatal-signal:
+  gl_FATAL_SIGNAL
+  # Code from module fcntl:
+  gl_FUNC_FCNTL
+  gl_FCNTL_MODULE_INDICATOR([fcntl])
+  # Code from module fcntl-h:
+  gl_FCNTL_H
   # Code from module fpending:
   gl_FUNC_FPENDING
   # Code from module gendocs:
   # Code from module getdate:
+  # Code from module getdtablesize:
+  gl_FUNC_GETDTABLESIZE
+  gl_UNISTD_MODULE_INDICATOR([getdtablesize])
   # Code from module getopt-gnu:
   gl_FUNC_GETOPT_GNU
   gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
@@ -177,6 +226,9 @@ AC_DEFUN([gl_INIT],
   gl_LOCALCHARSET
   LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(top_builddir)/$gl_source_base\""
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
+  # Code from module lstat:
+  gl_FUNC_LSTAT
+  gl_SYS_STAT_MODULE_INDICATOR([lstat])
   # Code from module maintainer-makefile:
   AC_CONFIG_COMMANDS_PRE([m4_ifdef([AH_HEADER],
     [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
@@ -193,16 +245,95 @@ AC_DEFUN([gl_INIT],
   gl_TIME_MODULE_INDICATOR([mktime])
   # Code from module multiarch:
   gl_MULTIARCH
+  # Code from module open:
+  gl_FUNC_OPEN
+  gl_FCNTL_MODULE_INDICATOR([open])
   # Code from module parse-datetime:
   gl_PARSE_DATETIME
+  # Code from module posix_spawn-internal:
+  # Code from module posix_spawn_file_actions_addopen:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawn_faction_addopen])
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawn_file_actions_addopen])
+  # Code from module posix_spawn_file_actions_destroy:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawn_faction_destroy])
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawn_file_actions_destroy])
+  # Code from module posix_spawn_file_actions_init:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawn_faction_init])
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawn_file_actions_init])
+  # Code from module posix_spawnattr_destroy:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawnattr_destroy])
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawnattr_destroy])
+  # Code from module posix_spawnattr_init:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawnattr_init])
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawnattr_init])
+  # Code from module posix_spawnattr_setflags:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawnattr_setflags])
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawnattr_setflags])
+  # Code from module posix_spawnattr_setsigmask:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawnattr_setsigmask])
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawnattr_setsigmask])
+  # Code from module posix_spawnp:
+  gl_POSIX_SPAWN
+  if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+    gl_REPLACE_SPAWN_H
+    AC_LIBOBJ([spawnp])
+    gl_POSIX_SPAWN_INTERNAL
+  fi
+  gl_SPAWN_MODULE_INDICATOR([posix_spawnp])
   # Code from module quotearg:
   gl_QUOTEARG
   # Code from module quotearg-simple:
+  # Code from module rawmemchr:
+  gl_FUNC_RAWMEMCHR
+  gl_STRING_MODULE_INDICATOR([rawmemchr])
+  # Code from module sched:
+  gl_SCHED_H
   # Code from module setenv:
   gl_FUNC_SETENV
   gl_STDLIB_MODULE_INDICATOR([setenv])
+  # Code from module sigaction:
+  gl_SIGACTION
+  gl_SIGNAL_MODULE_INDICATOR([sigaction])
+  # Code from module signal:
+  gl_SIGNAL_H
+  # Code from module sigprocmask:
+  gl_SIGNALBLOCKING
+  gl_SIGNAL_MODULE_INDICATOR([sigprocmask])
   # Code from module size_max:
   gl_SIZE_MAX
+  # Code from module spawn:
+  gl_SPAWN_H
+  # Code from module stat:
+  gl_FUNC_STAT
+  gl_SYS_STAT_MODULE_INDICATOR([stat])
   # Code from module stdbool:
   AM_STDBOOL_H
   # Code from module stddef:
@@ -211,15 +342,26 @@ AC_DEFUN([gl_INIT],
   gl_STDINT_H
   # Code from module stdlib:
   gl_STDLIB_H
+  # Code from module strchrnul:
+  gl_FUNC_STRCHRNUL
+  gl_STRING_MODULE_INDICATOR([strchrnul])
   # Code from module streq:
   # Code from module strerror:
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
   # Code from module string:
   gl_HEADER_STRING_H
+  # Code from module sys_stat:
+  gl_HEADER_SYS_STAT_H
+  AC_PROG_MKDIR_P
   # Code from module sys_time:
   gl_HEADER_SYS_TIME_H
   AC_PROG_MKDIR_P
+  # Code from module sys_wait:
+  gl_SYS_WAIT_H
+  AC_PROG_MKDIR_P
+  # Code from module tempname:
+  gl_FUNC_GEN_TEMPNAME
   # Code from module time:
   gl_HEADER_TIME_H
   # Code from module time_r:
@@ -235,6 +377,11 @@ AC_DEFUN([gl_INIT],
   # Code from module useless-if-before-free:
   # Code from module vc-list-files:
   # Code from module verify:
+  # Code from module wait-process:
+  gl_WAIT_PROCESS
+  # Code from module waitpid:
+  gl_FUNC_WAITPID
+  gl_SYS_WAIT_MODULE_INDICATOR([waitpid])
   # Code from module warn-on-use:
   # Code from module wchar:
   gl_WCHAR_H
@@ -394,19 +541,29 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.in.h
   lib/c-ctype.c
   lib/c-ctype.h
+  lib/cloexec.c
+  lib/cloexec.h
   lib/close-stream.c
   lib/close-stream.h
   lib/closeout.c
   lib/closeout.h
   lib/config.charset
+  lib/dup2.c
   lib/errno.in.h
   lib/error.c
   lib/error.h
+  lib/execute.c
+  lib/execute.h
   lib/exitfail.c
   lib/exitfail.h
+  lib/fatal-signal.c
+  lib/fatal-signal.h
+  lib/fcntl.c
+  lib/fcntl.in.h
   lib/fpending.c
   lib/fpending.h
   lib/getdate.h
+  lib/getdtablesize.c
   lib/getopt.c
   lib/getopt.in.h
   lib/getopt1.c
@@ -421,6 +578,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/intprops.h
   lib/localcharset.c
   lib/localcharset.h
+  lib/lstat.c
   lib/malloca.c
   lib/malloca.h
   lib/malloca.valgrind
@@ -428,28 +586,58 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbsinit.c
   lib/mktime-internal.h
   lib/mktime.c
+  lib/open.c
   lib/parse-datetime.h
   lib/parse-datetime.y
   lib/quotearg.c
   lib/quotearg.h
+  lib/rawmemchr.c
+  lib/rawmemchr.valgrind
   lib/ref-add.sin
   lib/ref-del.sin
+  lib/sched.in.h
   lib/setenv.c
+  lib/sig-handler.h
+  lib/sigaction.c
+  lib/signal.in.h
+  lib/sigprocmask.c
   lib/size_max.h
+  lib/spawn.in.h
+  lib/spawn_faction_addopen.c
+  lib/spawn_faction_destroy.c
+  lib/spawn_faction_init.c
+  lib/spawn_int.h
+  lib/spawnattr_destroy.c
+  lib/spawnattr_init.c
+  lib/spawnattr_setflags.c
+  lib/spawnattr_setsigmask.c
+  lib/spawni.c
+  lib/spawnp.c
+  lib/stat.c
   lib/stdbool.in.h
   lib/stddef.in.h
   lib/stdint.in.h
   lib/stdlib.in.h
+  lib/strchrnul.c
+  lib/strchrnul.valgrind
   lib/streq.h
   lib/strerror.c
   lib/string.in.h
+  lib/sys_stat.in.h
   lib/sys_time.in.h
+  lib/sys_wait.in.h
+  lib/tempname.c
+  lib/tempname.h
   lib/time.in.h
   lib/time_r.c
   lib/timespec.h
   lib/unistd.in.h
   lib/unsetenv.c
   lib/verify.h
+  lib/w32spawn.h
+  lib/wait-process.c
+  lib/wait-process.h
+  lib/waitpid.c
   lib/wchar.in.h
   lib/wctype.in.h
   lib/xalloc-die.c
@@ -461,16 +649,24 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/autobuild.m4
   m4/bison.m4
   m4/clock_time.m4
+  m4/cloexec.m4
   m4/close-stream.m4
   m4/closeout.m4
   m4/codeset.m4
+  m4/dos.m4
+  m4/dup2.m4
   m4/eealloc.m4
   m4/environ.m4
   m4/errno_h.m4
   m4/error.m4
+  m4/execute.m4
   m4/extensions.m4
+  m4/fatal-signal.m4
   m4/fcntl-o.m4
+  m4/fcntl.m4
+  m4/fcntl_h.m4
   m4/fpending.m4
+  m4/getdtablesize.m4
   m4/getopt.m4
   m4/gettext.m4
   m4/gettime.m4
@@ -499,29 +695,45 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/locale-zh.m4
   m4/lock.m4
   m4/longlong.m4
+  m4/lstat.m4
   m4/malloca.m4
   m4/mbrtowc.m4
   m4/mbsinit.m4
   m4/mbstate_t.m4
   m4/mktime.m4
+  m4/mode_t.m4
   m4/multiarch.m4
   m4/nls.m4
   m4/onceonly.m4
+  m4/open.m4
   m4/parse-datetime.m4
   m4/po.m4
+  m4/posix_spawn.m4
   m4/printf-posix.m4
   m4/progtest.m4
   m4/quotearg.m4
+  m4/rawmemchr.m4
+  m4/sched_h.m4
   m4/setenv.m4
+  m4/sig_atomic_t.m4
+  m4/sigaction.m4
+  m4/signal_h.m4
+  m4/signalblocking.m4
   m4/size_max.m4
+  m4/spawn_h.m4
+  m4/stat.m4
   m4/stdbool.m4
   m4/stddef_h.m4
   m4/stdint.m4
   m4/stdint_h.m4
   m4/stdlib_h.m4
+  m4/strchrnul.m4
   m4/strerror.m4
   m4/string_h.m4
+  m4/sys_stat_h.m4
   m4/sys_time_h.m4
+  m4/sys_wait_h.m4
+  m4/tempname.m4
   m4/threadlib.m4
   m4/time_h.m4
   m4/time_r.m4
@@ -530,6 +742,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/uintmax_t.m4
   m4/unistd_h.m4
   m4/visibility.m4
+  m4/wait-process.m4
+  m4/waitpid.m4
   m4/warn-on-use.m4
   m4/wchar_h.m4
   m4/wchar_t.m4

@@ -1,5 +1,20 @@
 2010-11-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/recutils.texi: Document the --no-remote command line
+	argument for recins, recfix and recset.
+
+	* utils/recins.c: Support the --no-remote command line argument.
+	* utils/recfix.c: Likewise.
+	* utils/recset.c: Likewise.
+
+	* src/rec-int.c (rec_int_check_rset): New function argument
+	'remote_descriptor_p'.
+	(rec_int_check_rset): Call 'rec_int_merge_remote'.
+	(rec_int_merge_remote): New function.
+	Include regex.h.
+
+2010-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	tasktool: support for ChangeLog annotations.
 	* tasktool (tt_supported_vcs): New function.
 
@@ -8,10 +23,12 @@
 	* configure.ac: Version changed from git to 1.0.
 
 	* TODO: Some tasks added.
+	Note added for task 1.
 
 2010-11-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* TODO: First serious version.
+	Note added for task 1.
 
 	* tasktool: Fixed many problems and 'delete' command implemented.
 

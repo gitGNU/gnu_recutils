@@ -3,18 +3,7 @@
 # Information for the Free Software Directory maintained
 # by the Free Software Foundation at http://www.fsf.org/directory
 
-%rec: FSD_Entry
-%mandatory: Title
-%type: Title line
-%type: GNU bool
-%type: MaturityLevel enum
-+ Undefined Planning PreAlpha Alpha Beta
-+ Production Mature Orphaned
-%type: License enum
-+ GPLv2 GPLv2+ GPLv3 GPLv3+
-+ GFDLv2.1+
-%type: InterfaceStyle enum
-+ CommandLine Console Daemon XWindow Web Email
+%rec: FSD_Entry file:///home/jemarch/tmp/FSD.rec
 
 Title: GNU Recutils
 Description:
@@ -27,8 +16,8 @@ Description:
 GNU: yes
 Homepage: http://www.gnu.org/software/recutils
 PublicVCSCheckout: git clone git://git.sv.gnu.org/recutils.git
-License: GPLv3+
-License: GFDLv2.1+
+License: GPLv3PLUS
+License: GFDLv21PLUS
 Maintainer: Jose E. Marchesi <jemarch@gnu.org>
 Version: not released
 MaturityLevel: Beta

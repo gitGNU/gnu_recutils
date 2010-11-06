@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-03 20:53:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-06 19:04:33 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -25,10 +25,17 @@
 
 #include <config.h>
 
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <libintl.h>
 #define _(str) dgettext (PACKAGE, str)
+#include <regex.h>
+#include <tempname.h>
+
+#if defined(REMOTE_DESCRIPTORS)
+#   include <curl/curl.h>
+#endif
 
 #include <rec.h>
 
@@ -50,6 +57,10 @@ static int rec_int_check_record_unique (rec_rset_t rset, rec_record_t record,
                                         FILE *errors);
 static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
                                           FILE *errors);
+static void rec_int_merge_remote (rec_rset_t rset);
+static bool rec_int_rec_type_p (char *str);
+static char *rec_int_rec_extract_url (char *str);
+static char *rec_int_rec_extract_type (char *str);
 
 /*
  * Public functions.
@@ -58,6 +69,7 @@ static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
 int
 rec_int_check_db (rec_db_t db,
                   bool check_descriptors_p,
+                  bool remote_descriptors_p,
                   FILE *errors)
 {
   bool ret;
@@ -74,6 +86,7 @@ rec_int_check_db (rec_db_t db,
       if (rec_int_check_rset (db,
                               rset,
                               check_descriptors_p,
+                              remote_descriptors_p,
                               errors) > 0)
         {
           ret = false;
@@ -87,6 +100,7 @@ int
 rec_int_check_rset (rec_db_t db,
                     rec_rset_t rset,
                     bool check_descriptor_p,
+                    bool remote_descriptor_p,
                     FILE *errors)
 {
   int res;
@@ -94,6 +108,13 @@ rec_int_check_rset (rec_db_t db,
   rec_record_t record;
 
   res = 0;
+
+  if (remote_descriptor_p)
+    {
+      /* Fetch the remote descriptor, if any, and merge it with the
+         local descriptor.  */
+      rec_int_merge_remote (rset);
+    }
 
   if (check_descriptor_p)
     {
@@ -595,7 +616,7 @@ rec_int_check_descriptor (rec_rset_t rset,
                    rec_record_location_str (descriptor));
           res++;
         }
-      if (!rec_field_name_part_str_p (rec_field_value (field)))
+      if (!rec_int_rec_type_p (rec_field_value (field)))
         {
           fprintf (errors,
                    _("%s:%s: error: invalid record type %s\n"),
@@ -670,6 +691,227 @@ rec_int_check_descriptor (rec_rset_t rset,
     }
 
   return res;
+}
+
+void
+rec_int_merge_remote (rec_rset_t rset)
+{
+#if defined(REMOTE_DESCRIPTORS)
+
+  rec_parser_t parser;
+  rec_field_name_t rec_fname;
+  rec_record_t descriptor;
+  rec_db_t remote_db;
+  rec_rset_t remote_rset;
+  rec_field_t remote_field;
+  rec_record_elem_t rec_elem;
+  rec_record_t remote_descriptor;
+  rec_field_t rec_field;
+  char *rec_type;
+  char *rec_url;
+  CURL *curl;
+  int tmpfile_des;
+  FILE *temporary_file;
+  char tmpfile_name[14];
+
+  rec_fname = rec_parse_field_name_str ("%rec:");
+
+  /* If a remote descriptor is defined in the record descriptor of
+     RSET, fetch it and merge it with the local descriptor.  */
+
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      /* Check if there is an URL in the %rec: field.  */
+      rec_field = rec_record_get_field_by_name (descriptor, rec_fname, 0);
+
+      if (!rec_int_rec_type_p (rec_field_value (rec_field)))
+        {
+          return;
+        }
+
+      rec_type = rec_int_rec_extract_type (rec_field_value (rec_field));
+      rec_url  = rec_int_rec_extract_url  (rec_field_value (rec_field));
+
+      if (rec_url)
+        {
+          /* Fetch the remote descriptor.  */
+          curl = curl_easy_init ();
+          if (curl)
+            {
+              /* Create a temporary file.  */
+              strncpy (tmpfile_name, "recint-XXXXXX", 13);
+              tmpfile_name[13] = '\0';
+              tmpfile_des = gen_tempname (tmpfile_name, 0, 0, GT_FILE);
+              temporary_file = fdopen (tmpfile_des, "r+");
+              
+              /* Fetch the remote file.  */
+              curl_easy_setopt (curl, CURLOPT_URL, rec_url);
+              curl_easy_setopt (curl, CURLOPT_WRITEDATA, temporary_file);
+              curl_easy_setopt (curl, CURLOPT_FAILONERROR, 1);
+              if (curl_easy_perform (curl) != 0)
+                {
+                  /* Print a warning and return.  */
+                  fprintf (stderr,
+                           _("warning: could not fetch remote descriptor from url %s.\n"),
+                           rec_url);
+                  return;
+                }
+
+              /* Parse the contents of the remote file.  */
+              fseek (temporary_file, 0, SEEK_SET);
+              parser = rec_parser_new (temporary_file, rec_url);
+              if (!rec_parse_db (parser, &remote_db))
+                {
+                  fprintf (stderr,
+                           _("warning: the url %s does not contain valid rec data.\n"),
+                           rec_url);
+                  return;
+                }
+              rec_parser_destroy (parser);
+
+              /* Get the proper remote descriptor and merge it with
+                 the local one.  */
+              remote_rset = rec_db_get_rset_by_type (remote_db, rec_type);
+              if (!remote_rset)
+                {
+                  /* Do nothing.  */
+                  return;
+                }
+              remote_descriptor = rec_rset_descriptor (remote_rset);
+              if (!remote_descriptor)
+                {
+                  /* Do nothing.  */
+                  return;
+                }
+
+              rec_elem = rec_record_first_field (remote_descriptor);
+              while (rec_record_elem_p (rec_elem))
+                {
+                  remote_field = rec_record_elem_field (rec_elem);
+
+                  /* Merging rules
+                   *
+                   * - %rec
+                   *
+                   *   Never merged.
+                   *
+                   * - Types
+                   *
+                   *   Local types take precedence. A warning is
+                   *   issued in case of conflict.
+                   *
+                   * - Keys
+                   *
+                   *   Local keys take precedence.  A warning is
+                   *   issued in case of conflict.
+                   *
+                   * - Mandatory, Unique, Prohibit.
+                   *
+                   *   ???.
+                   *
+                   */
+                  if (!rec_field_name_equal_p (rec_field_name (remote_field), rec_fname))
+                    {
+                      rec_record_append_field (descriptor, rec_field_dup (remote_field));
+                    }
+                  rec_elem = rec_record_next_field (remote_descriptor, rec_elem);
+
+                }
+
+              /* Update the record descriptor (triggering the creation
+                 of a new type registry).  */
+              rec_rset_set_descriptor (rset, rec_record_dup (descriptor));
+
+              rec_db_destroy (remote_db);
+              fclose (temporary_file);
+              remove (tmpfile_name);
+              curl_easy_cleanup (curl);
+            }
+        }
+    }
+#endif /* REMOTE_DESCRIPTORS */
+}
+
+
+
+static bool
+rec_int_rec_type_p (char *str)
+{
+  regex_t regexp;
+  bool ret;
+
+  if (regcomp (&regexp, "^[ \t]*"
+               REC_FNAME_PART_RE
+               "[ \t]*"
+               "(" REC_URL_REGEXP "[ \t]*)?"
+               "$",
+               REG_EXTENDED) != 0)
+    {
+      fprintf (stderr, _("internal error: rec_int_rec_type_p: error compiling regexp.\n"));
+      return false;
+    }
+
+  ret = (regexec (&regexp, str, 0, NULL, 0) == 0);
+  regfree (&regexp);
+
+  return ret;
+}
+
+static char *
+rec_int_rec_extract_url (char *str)
+{
+  regex_t regexp;
+  regmatch_t matches;
+  char *rec_url = NULL;
+  size_t rec_url_length = 0;
+
+  if (regcomp (&regexp, REC_URL_REGEXP, REG_EXTENDED) != 0)
+    {
+      fprintf (stderr, _("internal error: rec_int_rec_extract_url: error compiling regexp.\n"));
+      return NULL;
+    }
+
+  if ((regexec (&regexp, str, 1, &matches, 0) == 0)
+      && (matches.rm_so != -1))
+    {
+      /* Get the match.  */
+      rec_url_length = matches.rm_eo - matches.rm_so;
+      rec_url = malloc (rec_url_length + 1);
+      strncpy (rec_url, str + matches.rm_so, rec_url_length);
+      rec_url[rec_url_length] = '\0';
+    }
+
+  regfree (&regexp);
+  return rec_url;
+}
+
+static char *
+rec_int_rec_extract_type (char *str)
+{
+  regex_t regexp;
+  regmatch_t matches;
+  char *rec_type = NULL;
+  size_t rec_type_length = 0;
+
+  if (regcomp (&regexp, REC_FNAME_PART_RE, REG_EXTENDED) != 0)
+    {
+      fprintf (stderr, _("internal error: rec_int_rec_extract_url: error compiling regexp.\n"));
+      return NULL;
+    }
+
+  if ((regexec (&regexp, str, 1, &matches, 0) == 0)
+      && (matches.rm_so != -1))
+    {
+      /* Get the match.  */
+      rec_type_length = matches.rm_eo - matches.rm_so;
+      rec_type = malloc (rec_type_length + 1);
+      strncpy (rec_type, str + matches.rm_so, rec_type_length);
+      rec_type[rec_type_length] = '\0';
+    }
+
+  regfree (&regexp);
+  return rec_type;
 }
 
 /* End of rec-int.c */

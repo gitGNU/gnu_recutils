@@ -69,6 +69,13 @@ have_check=yes
 AC_CHECK_LIB([check],[suite_create],,[have_check=no])
 AM_CONDITIONAL([CHECK], [test "x$have_check" != "xno"])
 
+have_curl=yes
+AC_CHECK_LIB([curl],[curl_global_init],,[have_curl=no])
+if test "x$have_curl" = "xyes"; then
+   CURLLIBS=-lcurl
+fi
+AC_SUBST([CURLLIBS])  
+
 have_csv=no
 AC_CHECK_LIB([csv],[csv_init],[have_csv=yes],)
 if test "x$have_csv" = "xyes"; then
@@ -90,6 +97,7 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
 AM_CONDITIONAL([COMPILE_CSV2REC], [test "x$have_csv" = "xyes"])
 AM_CONDITIONAL([COMPILE_MDB2REC],
                [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])
+AM_CONDITIONAL([REMOTE_DESCRIPTORS], [test "x$have_curl" = "xyes"])
 
 dnl Search for required programs
 

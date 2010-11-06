@@ -87,6 +87,8 @@ typedef struct rec_field_name_s *rec_field_name_t;
 #define REC_FNAME_RE                                                  \
   REC_FNAME_PART_RE "(" ":" REC_FNAME_PART_RE ")*:?"
 
+#define REC_URL_REGEXP "(file|http|ftp|https)://[^ \t]+"
+
 /* Creating a field name.
  *
  * In the case of an error NULL is returned.
@@ -611,11 +613,13 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 
 int rec_int_check_db (rec_db_t db,
                       bool check_descriptors_p,
+                      bool remote_descriptors_p,
                       FILE *errors);
 
 int rec_int_check_rset (rec_db_t db,
                         rec_rset_t rset,
                         bool check_descriptor_p,
+                        bool remote_descriptor_p,
                         FILE *errors);
 int rec_int_check_record (rec_db_t db,
                           rec_rset_t rset,
