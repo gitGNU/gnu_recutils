@@ -68,7 +68,7 @@ long       recutl_num         = -1;
 char      *recset_file        = NULL;
 bool       recset_force       = false;
 bool       recset_verbose     = false;
-bool       recset_remote      = true;
+bool       recset_external      = true;
 
 /*
  * Command line options management
@@ -85,7 +85,7 @@ enum
     SET_ACTION_ARG,
     FORCE_ARG,
     VERBOSE_ARG,
-    NO_REMOTE_ARG
+    NO_EXTERNAL_ARG
   };
 
 static const struct option GNU_longOptions[] =
@@ -99,7 +99,7 @@ static const struct option GNU_longOptions[] =
     {"set", required_argument, NULL, SET_ACTION_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
     {"verbose", no_argument, NULL, VERBOSE_ARG},
-    {"no-remote", no_argument, NULL, NO_REMOTE_ARG},
+    {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -125,7 +125,7 @@ Alter or delete fields in records.\n"), stdout);
   /* TRANSLATORS: --help output, recset options.
      no-wrap */
   fputs (_("\
-      --no-remote                     don't use remote descriptors.\n\
+      --no-external                   don't use external descriptors.\n\
       --force                         alter the records even if violating record\n\
                                         restrictions.\n"), stdout);
 
@@ -284,9 +284,9 @@ recset_parse_args (int argc,
             recset_action = RECSET_ACT_COMMENT;
             break;
           }
-        case NO_REMOTE_ARG:
+        case NO_EXTERNAL_ARG:
           {
-            recset_remote = false;
+            recset_external = false;
             break;
           }
         default:
@@ -411,7 +411,7 @@ recset_process_actions (rec_db_t db)
       if (!recset_force)
         {
           errors_stm = open_memstream (&errors_str, &errors_str_size);
-          if (rec_int_check_rset (db, rset, false, recset_remote, errors_stm) > 0)
+          if (rec_int_check_rset (db, rset, false, recset_external, errors_stm) > 0)
             {
               fclose (errors_stm);
               if (!recset_verbose)

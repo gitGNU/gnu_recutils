@@ -1,0 +1,13 @@
+%rec: FSD_Entry
+%mandatory: Title
+%type: Title line
+%type: GNU bool
+%type: MaturityLevel enum
++ Undefined Planning PreAlpha Alpha Beta
++ Production Mature Orphaned
+%type: License enum
++ GPLv2 GPLv2PLUS GPLv3 GPLv3PLUS
++ GFDLv21PLUS
+%type: InterfaceStyle enum
++ CommandLine Console Daemon XWindow Web Email
+

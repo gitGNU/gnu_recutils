@@ -63,6 +63,7 @@ The Rec Format
                           descriptors.
 * Date input formats::  Textual date representations that can be used
                           in Rec files.
+* External Descriptors::  Fetching descriptors from URLs.
 
 Utilities
 * Common Options::      Common command line arguments for the record
@@ -350,11 +351,11 @@ described by @code{RECORD-DESCRIPTOR-2}.
 The record descriptor can contain the following fields:
 
 @table @code
-@item %rec
+@item %rec @var{type} [@var{url}]
 The value of this field is interpreted as the name of the kind of
-record described by the record descriptor.  The string used as the
-record type has the same restrictions that the field
-names. @xref{Fields and Records}.
+record described by the record descriptor followed and an optional
+URL.  The string used as the record type has the same restrictions
+that the field names. @xref{Fields and Records}.
 
 This field is unique.
 
@@ -718,6 +719,11 @@ synopsis is:
 @end example
 
 @include getdate.texi
+
+@node External Descriptors
+@chapter External Descriptors
+
+XXX
 
 @node Common Options
 @chapter Common Options
@@ -1236,8 +1242,8 @@ Declares the name of a field.  This option shall be followed by a
 @item -v
 @itemx @w{@kbd{--value}=@var{value}}
 The value of the field being defined.
-@itemx @w{@kbd{--no-remote}}
-Don't use remote record descriptors.
+@itemx @w{@kbd{--no-external}}
+Don't use external record descriptors.
 @end table
 
 @node recins Examples
@@ -1387,8 +1393,8 @@ Delete the selected fields in the selected records.
 @item -c
 @itemx @w{@kbd{--comment}}
 Comment out the selected fields in the selected records.
-@itemx @w{@kbd{--no-remote}}
-Don't use remote record descriptors.
+@itemx @w{@kbd{--no-external}}
+Don't use external record descriptors.
 @end table
 
 @node recset Examples
@@ -1439,8 +1445,8 @@ In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
 @table @samp
-@itemx @w{@kbd{--no-remote}}
-Don't use remote record descriptors.
+@itemx @w{@kbd{--no-external}}
+Don't use external record descriptors.
 @end table
 
 @node recfix Examples
