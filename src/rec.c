@@ -9,7 +9,7 @@
 
 #include <config.h>
 
-#if defined(REMOTE_DESCRIPTORS)
+#if defined REMOTE_DESCRIPTORS
 #   include <curl/curl.h>
 #endif
 
@@ -21,7 +21,7 @@ void
 rec_init (void)
 {
   bindtextdomain (PACKAGE, LOCALEDIR);
-#if defined(REMOTE_DESCRIPTORS)
+#if defined REMOTE_DESCRIPTORS
   curl_global_init (CURL_GLOBAL_ALL);
 #endif
 }
@@ -29,7 +29,7 @@ rec_init (void)
 void
 rec_fini (void)
 {
-#if defined(REMOTE_DESCRIPTORS)
+#if defined REMOTE_DESCRIPTORS
   curl_global_cleanup ();
 #endif
 }

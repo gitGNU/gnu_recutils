@@ -74,7 +74,7 @@ AC_CHECK_LIB([curl],[curl_global_init],,[have_curl=no])
 if test "x$have_curl" = "xyes"; then
    CURLLIBS=-lcurl
 fi
-AC_SUBST([CURLLIBS])  
+AC_SUBST([CURLLIBS])
 
 have_csv=no
 AC_CHECK_LIB([csv],[csv_init],[have_csv=yes],)

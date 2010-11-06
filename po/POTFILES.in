@@ -4,8 +4,11 @@
 
 lib/closeout.c
 lib/error.c
+lib/execute.c
 lib/getopt.c
 lib/quotearg.c
+lib/w32spawn.h
+lib/wait-process.c
 lib/xalloc-die.c
 
 # Package source files.

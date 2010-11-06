@@ -4,4 +4,8 @@ lib/*
 src/*
 torture/*
 lisp/*
-
+utils/*
+tasktool
+experimental/*
+doc/*
+TODO

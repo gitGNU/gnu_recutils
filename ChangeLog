@@ -1,5 +1,25 @@
 2010-11-06  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Syntax check fixes.
+	* src/rec-int.c: Useless cpp parens removed.
+	* src/rec.c: Likewise.
+
+	* .x-sc_prohibit_always_true_header_tests: New file.
+
+	* cfg.mk (gnulib_dir): Set gnulib_dir.
+
+	* ChangeLog: Empty lines removed.
+	* .x-sc_trailing_blank: Likewise.
+	More exceptions added.
+
+	* po/POTFILES.in: Updated.
+
+	* .x-sc_prohibit_S_IS_definition: New file.
+
+	* .x-sc_obsolete_symbols: New file.
+
+2010-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* configure.ac: Generate etc/Makefile.
 
 	* etc/Makefile.am: New file.
@@ -1262,4 +1282,3 @@ Copyright 2009, 2010 Jose E. Marchesi
 Copying and distribution of this file, with or without modification, are
 permitted in any medium without royalty provided the copyright notice
 and this notice are preserved.
-

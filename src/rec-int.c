@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-06 20:43:32 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-06 21:18:57 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -33,7 +33,7 @@
 #include <regex.h>
 #include <tempname.h>
 
-#if defined(REMOTE_DESCRIPTORS)
+#if defined REMOTE_DESCRIPTORS
 #   include <curl/curl.h>
 #endif
 
@@ -696,7 +696,7 @@ rec_int_check_descriptor (rec_rset_t rset,
 void
 rec_int_merge_remote (rec_rset_t rset)
 {
-#if defined(REMOTE_DESCRIPTORS)
+#if defined REMOTE_DESCRIPTORS
 
   rec_parser_t parser;
   rec_field_name_t rec_fname;
