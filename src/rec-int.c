@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-06 19:04:33 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-06 20:25:30 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -755,7 +755,7 @@ rec_int_merge_remote (rec_rset_t rset)
                   fprintf (stderr,
                            _("warning: could not fetch remote descriptor from url %s.\n"),
                            rec_url);
-                  return;
+                  goto exit;
                 }
 
               /* Parse the contents of the remote file.  */
@@ -766,7 +766,7 @@ rec_int_merge_remote (rec_rset_t rset)
                   fprintf (stderr,
                            _("warning: the url %s does not contain valid rec data.\n"),
                            rec_url);
-                  return;
+                  goto exit;
                 }
               rec_parser_destroy (parser);
 
@@ -776,13 +776,13 @@ rec_int_merge_remote (rec_rset_t rset)
               if (!remote_rset)
                 {
                   /* Do nothing.  */
-                  return;
+                  goto exit;
                 }
               remote_descriptor = rec_rset_descriptor (remote_rset);
               if (!remote_descriptor)
                 {
                   /* Do nothing.  */
-                  return;
+                  goto exit;
                 }
 
               rec_elem = rec_record_first_field (remote_descriptor);
@@ -822,6 +822,8 @@ rec_int_merge_remote (rec_rset_t rset)
               /* Update the record descriptor (triggering the creation
                  of a new type registry).  */
               rec_rset_set_descriptor (rset, rec_record_dup (descriptor));
+
+            exit:
 
               rec_db_destroy (remote_db);
               fclose (temporary_file);
