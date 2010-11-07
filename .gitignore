@@ -22,6 +22,8 @@ libtool
 /utils/recins
 /utils/recset
 /utils/recfix
+/utils/csv2rec
+/utils/mdb2rec
 /lib/arg-nonnull.h
 /lib/link-warning.h
 /lib/unistd.h
@@ -34,6 +36,14 @@ libtool
 /lib/warn-on-use.h
 /lib/wchar.h
 /lib/parse-datetime.c
+/lib/charset.alias
+/lib/configmake.h
+/lib/fcntl.h
+/lib/ref-add.sed
+/lib/ref-del.sed
+/lib/signal.h
+/lib/spawn.h
+/lib/wctype.h
 /m4/ltsugar.m4
 /m4/ltversion.m4
 /m4/libtool.m4
@@ -73,3 +83,4 @@ libtool
 /man/mdb2rec.1
 /man/recfix.1
 /po/stamp-po
+/po/POTFILES
