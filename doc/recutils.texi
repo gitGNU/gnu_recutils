@@ -1287,6 +1287,22 @@ intermixed with @kbd{-f ... -v} pairs.
 Don't use external record descriptors.
 @end table
 
+Record selection arguments are supported as well.  If they are used
+then @command{recins} enters in ``replacement mode''.  Instead of
+appending the new record, matched records are replaced by copies of
+the provided record.  The selection arguments are summarized in the
+next table.
+
+@table @samp
+@item -n @var{num}
+Match the record occupying the @var{num}th position in its record
+set.
+@item -e @var{expr}
+@itemx @w{@kbd{--expression}=@var{expr}}
+A record selection expression (@pxref{Selection Expressions}).
+Matching records will get replaced.
+@end table
+
 @node recins Examples
 @section recins Examples
 

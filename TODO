@@ -135,13 +135,4 @@ Note: Sat Nov  6 11:45:14 CET 2010
 + 
 + The code of the utilities are now using xmalloc and xstrdup.
 
-Id: 14
-Summary: foo
-CreatedAt: Sun Nov  7 12:10:20 CET 2010
-Status: TODO
-Description: Please replace this line with a description of the task.
-+ jfdi
-+ jifd
-+ fdji
-
 # End of TODO

@@ -768,9 +768,9 @@ tt_process_cmd_edit ()
     rm -f $tmpfile
 
     # Replace the old task with the new content.
-    $tt_recdel -t $tt_db_task -e "${tt_db_task_field_id} = ${task_id}" $tt_db
-    $tt_recins --verbose -t $tt_db_task -r "$new_task" $tt_db
-    echo "tasktool: task $tak_id edited."
+    $tt_recins --verbose -e "${tt_db_task_field_id} = ${task_id}" \
+                         -t $tt_db_task -r "$new_task" $tt_db
+    echo "tasktool: task $task_id edited."
 
     if test -z "$no_changelog"
     then

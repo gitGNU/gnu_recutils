@@ -43,12 +43,16 @@ void recins_parse_args (int argc, char **argv);
  * Global variables
  */
 
-char         *program_name   = NULL;
-char         *recins_type    = NULL;
-rec_record_t  recins_record  = NULL;
-char         *recins_file    = NULL;
-bool          recins_force   = false;
-bool          recins_verbose = false;
+char         *program_name     = NULL;
+char         *recutl_type      = NULL;
+rec_sex_t     recutl_sex       = NULL;
+char         *recutl_sex_str   = NULL;
+int           recutl_num       = -1;
+bool          recutl_insensitive = false;
+rec_record_t  recins_record    = NULL;
+char         *recins_file      = NULL;
+bool          recins_force     = false;
+bool          recins_verbose   = false;
 bool          recins_external  = true;
 
 /*
@@ -58,7 +62,7 @@ bool          recins_external  = true;
 enum
 {
   COMMON_ARGS,
-  TYPE_ARG,
+  RECORD_SELECTION_ARGS,
   NAME_ARG,
   VALUE_ARG,
   FORCE_ARG,
@@ -70,6 +74,7 @@ enum
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
+    RECORD_SELECTION_LONG_ARGS,
     {"type", required_argument, NULL, TYPE_ARG},
     {"name", required_argument, NULL, NAME_ARG},
     {"value", required_argument, NULL, VALUE_ARG},
@@ -90,7 +95,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recins synopsis.
      no-wrap */
   printf (_("\
-Usage: recins [OPTION]... [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"));
+Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recins short description.
      no-wrap */
@@ -101,7 +106,6 @@ Insert new records in a rec database.\n"), stdout);
   /* TRANSLATORS: --help output, recins arguments.
      no-wrap */
   fputs (_("\
-  -t, --type=TYPE                     specify the type of the new record.\n\
   -f, --field=STR                     field name.  Should be followed by a -v.\n\
   -v, --value=STR                     field value.  Should be preceded by a -f.\n\
   -r, --record=STR                    record that will be inserted in the file.\n\
@@ -112,6 +116,9 @@ Insert new records in a rec database.\n"), stdout);
                                         fails.\n"), stdout);
 
   recutl_print_help_common ();
+
+  puts ("");
+  recutl_print_help_record_selection ();
 
   puts ("");
   /* TRANSLATORS: --help output, notes on recins.
@@ -240,7 +247,8 @@ void recins_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "t:f:v:r:",
+                             RECORD_SELECTION_SHORT_ARGS
+                             "f:v:r:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -248,6 +256,7 @@ void recins_parse_args (int argc,
       switch (c)
         {
           COMMON_ARGS_CASES
+          RECORD_SELECTION_ARGS_CASES
         case FORCE_ARG:
           {
             recins_force = true;
@@ -256,12 +265,6 @@ void recins_parse_args (int argc,
         case VERBOSE_ARG:
           {
             recins_verbose = true;
-            break;
-          }
-        case TYPE_ARG:
-        case 't':
-          {
-            recins_type = xstrdup (optarg);
             break;
           }
         case NAME_ARG:
@@ -381,18 +384,70 @@ void recins_parse_args (int argc,
     }
 }
 
+void
+recins_add_new_record (rec_db_t db)
+{
+  rec_rset_t rset;
+  rec_record_t record;
+  rec_rset_elem_t rset_elem;
+  rec_rset_elem_t new_rset_elem;
+  size_t num_rec;
+  bool parse_status;
+
+  if ((recutl_num != -1)
+      || (recutl_sex_str != NULL))
+    {
+      /* Replace matching records.  */
+      rset = rec_db_get_rset_by_type (db, recutl_type);
+      if (rset)
+        {
+          num_rec = -1;
+          rset_elem = rec_rset_first_record (rset);
+          while (rec_rset_elem_p (rset_elem))
+            {
+              num_rec++;
+              record = rec_rset_elem_record (rset_elem);
+
+              /* Shall we skip this record?  */
+              if (((recutl_num != -1) && (recutl_num != num_rec))
+                  || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
+                                          && parse_status)))
+                {
+                  if (recutl_sex_str && (!parse_status))
+                    {
+                      recutl_error (_("evaluating the selection expression.\n"));
+                      exit (1);
+                    }
+                  rset_elem = rec_rset_next_record (rset, rset_elem);
+                }
+              else
+                {
+                  new_rset_elem = rec_rset_elem_record_new (rset, recins_record);
+                  rec_rset_insert_after (rset, rset_elem, new_rset_elem);
+                  rec_rset_remove (rset, rset_elem);
+                  rset_elem = rec_rset_next_record (rset, new_rset_elem);
+                }
+            }
+        }
+    }
+  else
+    {
+      /* Append the record in the proper rset.  */
+      recins_insert_record (db, recutl_type, recins_record);
+    }
+}
+
 int
 main (int argc, char *argv[])
 {
   rec_db_t db;
-
 
   recutl_init ("recins");
 
   recins_parse_args (argc, argv);
 
   db = recutl_read_db_from_file (recins_file);
-  recins_insert_record (db, recins_type, recins_record);
+  recins_add_new_record (db);
   recutl_write_db_to_file (db, recins_file);
 
   return EXIT_SUCCESS;
