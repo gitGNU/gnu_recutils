@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU recutils git\n"
+"Project-Id-Version: GNU recutils 1.0\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2010-11-05 18:06+0100\n"
+"POT-Creation-Date: 2010-11-07 09:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,6 +23,12 @@ msgstr ""
 
 #: lib/error.c:181
 msgid "Unknown system error"
+msgstr ""
+
+#: lib/execute.c:189 lib/execute.c:262 lib/wait-process.c:282
+#: lib/wait-process.c:356
+#, c-format
+msgid "%s subprocess failed"
 msgstr ""
 
 #: lib/getopt.c:527 lib/getopt.c:543
@@ -107,6 +113,26 @@ msgstr ""
 msgid "'"
 msgstr ""
 
+#: lib/w32spawn.h:40
+#, c-format
+msgid "_open_osfhandle failed"
+msgstr ""
+
+#: lib/w32spawn.h:81
+#, c-format
+msgid "cannot restore fd %d: dup2 failed"
+msgstr ""
+
+#: lib/wait-process.c:223 lib/wait-process.c:255 lib/wait-process.c:317
+#, c-format
+msgid "%s subprocess"
+msgstr ""
+
+#: lib/wait-process.c:274 lib/wait-process.c:346
+#, c-format
+msgid "%s subprocess got fatal signal %d"
+msgstr ""
+
 #: lib/xalloc-die.c:34
 msgid "memory exhausted"
 msgstr ""
@@ -131,65 +157,85 @@ msgstr ""
 msgid "internal error: rec_field_name_part_str_p: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-int.c:218
+#: src/rec-int.c:239
 #, c-format
 msgid ""
 "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
 msgstr ""
 
-#: src/rec-int.c:318
+#: src/rec-int.c:339
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:375
+#: src/rec-int.c:396
 #, c-format
 msgid "%s:%s: error: field '%s' shall be unique in this record\n"
 msgstr ""
 
-#: src/rec-int.c:432
+#: src/rec-int.c:453
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr ""
 
-#: src/rec-int.c:487
+#: src/rec-int.c:508
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:496
+#: src/rec-int.c:517
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:539
+#: src/rec-int.c:560
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:593
+#: src/rec-int.c:614
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:601
+#: src/rec-int.c:622
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr ""
 
-#: src/rec-int.c:612
+#: src/rec-int.c:633
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:633
+#: src/rec-int.c:654
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr ""
 
-#: src/rec-int.c:653
+#: src/rec-int.c:674
 #, c-format
 msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
+msgstr ""
+
+#: src/rec-int.c:756
+#, c-format
+msgid "warning: could not fetch remote descriptor from url %s.\n"
+msgstr ""
+
+#: src/rec-int.c:768
+#, c-format
+msgid "warning: the url %s does not contain valid rec data.\n"
+msgstr ""
+
+#: src/rec-int.c:855
+#, c-format
+msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
+msgstr ""
+
+#: src/rec-int.c:875 src/rec-int.c:903
+#, c-format
+msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
 msgstr ""
 
 #: src/rec-types.c:398
@@ -377,7 +423,7 @@ msgstr ""
 msgid "failed to normalise field name %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:473 utils/recins.c:289
+#: utils/mdb2rec.c:473 utils/recins.c:293
 #, c-format
 msgid "invalid field name %s\n"
 msgstr ""
@@ -423,7 +469,7 @@ msgstr ""
 #. no-wrap
 #. TRANSLATORS: --help output, notes on recins.
 #. no-wrap
-#: utils/recdel.c:109 utils/recins.c:112
+#: utils/recdel.c:109 utils/recins.c:116
 msgid ""
 "If no FILE is specified then the command acts like a filter, getting\n"
 "the data from the standard input and writing the result in the\n"
@@ -459,26 +505,32 @@ msgstr ""
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr ""
 
-#: utils/recdel.c:272 utils/recset.c:395
+#: utils/recdel.c:272 utils/recset.c:404
 msgid "invalid selection expression.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recfix synopsis.
 #. no-wrap
-#: utils/recfix.c:66
+#: utils/recfix.c:69
 #, c-format
 msgid "Usage: recfix [OPTION]... [FILE]...\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recfix short description.
 #. no-wrap
-#: utils/recfix.c:71
+#: utils/recfix.c:74
 msgid "Check and fix rec files.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfix arguments.
+#. no-wrap
+#: utils/recfix.c:81
+msgid "      --no-external               don't use external descriptors.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recfix examples.
 #. no-wrap
-#: utils/recfix.c:80
+#: utils/recfix.c:90
 msgid ""
 "Examples:\n"
 "\n"
@@ -541,20 +593,20 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recins synopsis.
 #. no-wrap
-#: utils/recins.c:87
+#: utils/recins.c:90
 #, c-format
 msgid "Usage: recins [OPTION]... [-f STR -v STR]... [FILE]\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recins short description.
 #. no-wrap
-#: utils/recins.c:92
+#: utils/recins.c:95
 msgid "Insert new records in a rec database.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recins arguments.
 #. no-wrap
-#: utils/recins.c:98
+#: utils/recins.c:101
 msgid ""
 "  -t, --type=TYPE                     specify the type of the new record.\n"
 "  -f, --field=STR                     field name.  Should be followed by a -"
@@ -564,6 +616,7 @@ msgid ""
 "      --force                         insert the record even if it is "
 "violating\n"
 "                                        record restrictions.\n"
+"      --no-external                   don't use external descriptors.\n"
 "      --verbose                       get a detailed report if the integrity "
 "check\n"
 "                                        fails.\n"
@@ -571,7 +624,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recins examples.
 #. no-wrap
-#: utils/recins.c:120
+#: utils/recins.c:124
 msgid ""
 "Examples:\n"
 "\n"
@@ -580,27 +633,27 @@ msgid ""
 "rec\n"
 msgstr ""
 
-#: utils/recins.c:206
+#: utils/recins.c:210
 msgid "operation aborted due to integrity failures.\n"
 msgstr ""
 
-#: utils/recins.c:207
+#: utils/recins.c:211
 msgid "use --verbose to get a detailed report.\n"
 msgstr ""
 
-#: utils/recins.c:214
+#: utils/recins.c:218
 msgid "use --force to skip the integrity chech\n"
 msgstr ""
 
-#: utils/recins.c:263
+#: utils/recins.c:267
 msgid "a -f should be followed by a -v\n"
 msgstr ""
 
-#: utils/recins.c:301
+#: utils/recins.c:305
 msgid "a -v should be preceded by a -f\n"
 msgstr ""
 
-#: utils/recins.c:319
+#: utils/recins.c:328
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr ""
@@ -684,21 +737,22 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset synopsis.
 #. no-wrap
-#: utils/recset.c:113
+#: utils/recset.c:116
 #, c-format
 msgid "Usage: recset [OPTION]... [FILE]...\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recset short description.
 #. no-wrap
-#: utils/recset.c:118
+#: utils/recset.c:121
 msgid "Alter or delete fields in records.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recset options.
 #. no-wrap
-#: utils/recset.c:124
+#: utils/recset.c:127
 msgid ""
+"      --no-external                   don't use external descriptors.\n"
 "      --force                         alter the records even if violating "
 "record\n"
 "                                        restrictions.\n"
@@ -706,7 +760,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset field selection options.
 #. no-wrap
-#: utils/recset.c:136
+#: utils/recset.c:140
 msgid ""
 "Fields selection options:\n"
 "  -f, --fields=FIELDS                 comma-separated list of field names "
@@ -716,7 +770,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset actions.
 #. no-wrap
-#: utils/recset.c:144
+#: utils/recset.c:148
 msgid ""
 "Actions:\n"
 "  -s, --set=VALUE                     change the value of the selected "
@@ -729,7 +783,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset examples.
 #. no-wrap
-#: utils/recset.c:154
+#: utils/recset.c:158
 msgid ""
 "Examples:\n"
 "\n"
@@ -738,27 +792,27 @@ msgid ""
 "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
 msgstr ""
 
-#: utils/recset.c:209
+#: utils/recset.c:213
 msgid "creating the field expression.\n"
 msgstr ""
 
-#: utils/recset.c:222 utils/recset.c:239 utils/recset.c:256 utils/recset.c:272
+#: utils/recset.c:226 utils/recset.c:243 utils/recset.c:260 utils/recset.c:276
 msgid "please specify some field with -f.\n"
 msgstr ""
 
-#: utils/recset.c:227 utils/recset.c:244 utils/recset.c:261 utils/recset.c:277
+#: utils/recset.c:231 utils/recset.c:248 utils/recset.c:265 utils/recset.c:281
 msgid "please specify just one action.\n"
 msgstr ""
 
-#: utils/recset.c:410
+#: utils/recset.c:419
 msgid "operation aborted due to integrity failures\n"
 msgstr ""
 
-#: utils/recset.c:411
+#: utils/recset.c:420
 msgid "use --verbose to get a detailed report\n"
 msgstr ""
 
-#: utils/recset.c:418
+#: utils/recset.c:427
 msgid "use --force to skip the integrity check\n"
 msgstr ""
 
