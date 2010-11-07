@@ -33,6 +33,7 @@ libtool
 /lib/time.h
 /lib/warn-on-use.h
 /lib/wchar.h
+/lib/parse-datetime.c
 /m4/ltsugar.m4
 /m4/ltversion.m4
 /m4/libtool.m4
@@ -40,6 +41,9 @@ libtool
 /src/config.h
 /src/config.h.in
 /src/stamp-h1
+/src/rec-sex-lex.c
+/src/rec-sex-tab.c
+/src/rec-sex-tab.h
 /torture/runtests
 /torture/tests.log
 /doc/recutils.aux
@@ -54,3 +58,18 @@ libtool
 /doc/recutils.tp
 /doc/recutils.vr
 /doc/recutils.vrs/
+/doc/missfont.log
+/doc/stamp-vti
+/doc/texinfo.log
+/doc/texput.log
+/doc/version.texi
+/man/recdel.1
+/man/recdel.1
+/man/recinf.1
+/man/recins.1
+/man/recsel.1
+/man/recset.1
+/man/csv2rec.1
+/man/mdb2rec.1
+/man/recfix.1
+/po/stamp-po
