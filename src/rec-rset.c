@@ -548,7 +548,30 @@ rec_rset_type (rec_rset_t rset)
                                             0);
       if (field)
         {
-          res = rec_field_value (field);
+          res = rec_extract_type (rec_field_value (field));
+        }
+    }
+
+  return res;
+}
+
+char *
+rec_rset_url (rec_rset_t rset)
+{
+  char *res;
+  rec_field_t field;
+  rec_field_name_t field_name;
+
+  res = NULL;
+  if (rset->descriptor)
+    {
+      field_name = rec_parse_field_name_str ("%rec:");
+      field = rec_record_get_field_by_name (rset->descriptor,
+                                            field_name,
+                                            0);
+      if (field)
+        {
+          res = rec_extract_url (rec_field_value (field));
         }
     }
 

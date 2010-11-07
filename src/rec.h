@@ -532,6 +532,7 @@ size_t rec_rset_descriptor_pos (rec_rset_t rset);
 void rec_rset_set_descriptor_pos (rec_rset_t rset, size_t position);
 
 char *rec_rset_type (rec_rset_t rset);
+char *rec_rset_url  (rec_rset_t rset);
 void rec_rset_set_type (rec_rset_t rset, char *type);
 
 /* Type registry.  */
@@ -660,6 +661,7 @@ rec_field_name_t rec_parse_field_name_str (char *str);
 bool rec_parse_field_name (rec_parser_t parser, rec_field_name_t *fname);
 bool rec_parse_field (rec_parser_t parser, rec_field_t *field);
 bool rec_parse_record (rec_parser_t parser, rec_record_t *record);
+rec_record_t rec_parse_record_str (char *str);
 bool rec_parse_rset (rec_parser_t parser, rec_rset_t *rset);
 bool rec_parse_db (rec_parser_t parser, rec_db_t *db);
 

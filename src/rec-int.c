@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-07 08:18:09 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-07 11:59:21 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -28,9 +28,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <regex.h>
 #include <libintl.h>
 #define _(str) dgettext (PACKAGE, str)
-#include <regex.h>
 #include <tempname.h>
 
 #if defined REMOTE_DESCRIPTORS
@@ -38,6 +38,7 @@
 #endif
 
 #include <rec.h>
+#include <rec-utils.h>
 
 /*
  * Forward references.
@@ -59,8 +60,6 @@ static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
                                           FILE *errors);
 static void rec_int_merge_remote (rec_rset_t rset);
 static bool rec_int_rec_type_p (char *str);
-static char *rec_int_rec_extract_url (char *str);
-static char *rec_int_rec_extract_type (char *str);
 
 /*
  * Public functions.
@@ -730,8 +729,8 @@ rec_int_merge_remote (rec_rset_t rset)
           return;
         }
 
-      rec_type = rec_int_rec_extract_type (rec_field_value (rec_field));
-      rec_url  = rec_int_rec_extract_url  (rec_field_value (rec_field));
+      rec_type = rec_extract_type (rec_field_value (rec_field));
+      rec_url  = rec_extract_url  (rec_field_value (rec_field));
 
       if (rec_url)
         {
@@ -794,33 +793,13 @@ rec_int_merge_remote (rec_rset_t rset)
                 {
                   remote_field = rec_record_elem_field (rec_elem);
 
-                  /* Merging rules
-                   *
-                   * - %rec
-                   *
-                   *   Never merged.
-                   *
-                   * - Types
-                   *
-                   *   Local types take precedence. A warning is
-                   *   issued in case of conflict.
-                   *
-                   * - Keys
-                   *
-                   *   Local keys take precedence.  A warning is
-                   *   issued in case of conflict.
-                   *
-                   * - Mandatory, Unique, Prohibit.
-                   *
-                   *   ???.
-                   *
-                   */
+                  /* Merge the descriptors, but take care to not add a
+                     new %rec: field.  */
                   if (!rec_field_name_equal_p (rec_field_name (remote_field), rec_fname))
                     {
                       rec_record_append_field (descriptor, rec_field_dup (remote_field));
                     }
                   rec_elem = rec_record_next_field (remote_descriptor, rec_elem);
-
                 }
 
               /* Update the record descriptor (triggering the creation
@@ -836,8 +815,6 @@ rec_int_merge_remote (rec_rset_t rset)
     }
 #endif /* REMOTE_DESCRIPTORS */
 }
-
-
 
 static bool
 rec_int_rec_type_p (char *str)
@@ -860,62 +837,6 @@ rec_int_rec_type_p (char *str)
   regfree (&regexp);
 
   return ret;
-}
-
-static char *
-rec_int_rec_extract_url (char *str)
-{
-  regex_t regexp;
-  regmatch_t matches;
-  char *rec_url = NULL;
-  size_t rec_url_length = 0;
-
-  if (regcomp (&regexp, REC_URL_REGEXP, REG_EXTENDED) != 0)
-    {
-      fprintf (stderr, _("internal error: rec_int_rec_extract_url: error compiling regexp.\n"));
-      return NULL;
-    }
-
-  if ((regexec (&regexp, str, 1, &matches, 0) == 0)
-      && (matches.rm_so != -1))
-    {
-      /* Get the match.  */
-      rec_url_length = matches.rm_eo - matches.rm_so;
-      rec_url = malloc (rec_url_length + 1);
-      strncpy (rec_url, str + matches.rm_so, rec_url_length);
-      rec_url[rec_url_length] = '\0';
-    }
-
-  regfree (&regexp);
-  return rec_url;
-}
-
-static char *
-rec_int_rec_extract_type (char *str)
-{
-  regex_t regexp;
-  regmatch_t matches;
-  char *rec_type = NULL;
-  size_t rec_type_length = 0;
-
-  if (regcomp (&regexp, REC_FNAME_PART_RE, REG_EXTENDED) != 0)
-    {
-      fprintf (stderr, _("internal error: rec_int_rec_extract_url: error compiling regexp.\n"));
-      return NULL;
-    }
-
-  if ((regexec (&regexp, str, 1, &matches, 0) == 0)
-      && (matches.rm_so != -1))
-    {
-      /* Get the match.  */
-      rec_type_length = matches.rm_eo - matches.rm_so;
-      rec_type = malloc (rec_type_length + 1);
-      strncpy (rec_type, str + matches.rm_so, rec_type_length);
-      rec_type[rec_type_length] = '\0';
-    }
-
-  regfree (&regexp);
-  return rec_type;
 }
 
 /* End of rec-int.c */

@@ -1279,6 +1279,10 @@ Declares the name of a field.  This option shall be followed by a
 @item -v
 @itemx @w{@kbd{--value}=@var{value}}
 The value of the field being defined.
+@item -r
+@itemx @w{@kbd{--record}=@var{value}}
+Add the fields of the record in @var{value}.  This option can be
+intermixed with @kbd{-f ... -v} pairs.
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
 @end table

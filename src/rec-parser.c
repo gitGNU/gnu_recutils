@@ -656,6 +656,34 @@ rec_parse_field_name_str (char *str)
   return field_name;
 }
 
+rec_record_t
+rec_parse_record_str (char *str)
+{
+  rec_parser_t parser;
+  rec_record_t record;
+  FILE *stm;
+  size_t str_size;
+
+  record = NULL;
+  str_size = strlen (str);
+  stm = fmemopen (str, str_size, "r");
+  if (stm)
+    {
+      parser = rec_parser_new (stm, "dummy");
+      if (parser)
+        {
+          if (!rec_parse_record (parser, &record))
+            {
+              record = NULL;
+            }
+          rec_parser_destroy (parser);
+        }
+      fclose (stm);
+    }
+
+  return record;
+}
+
 /*
  * Private functions
  */

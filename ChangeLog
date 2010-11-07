@@ -1,9 +1,21 @@
 2010-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recins: support -r|--record.
+	* doc/recutils.texi (recins Invocation): Document -r|--record.
+
+	* src/rec-parser.c (rec_parse_record_str): New function.
+
+	* utils/recins.c (COMMON_ARGS): RECORD_ARG added.
+	(recins_parse_args): Manage the -r|--record option.
+
+2010-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	tasktool: support filtering by assigned-to in list command.
 	* tasktool: Support the --assigned-to option in 'list'.
 	(tt_supported_vcs): Use generic names for the fields in the
 	selection expression.
+	(tt_help_edit): New variable.
+	(tt_process_cmd_show): New function.
 
 2010-11-06  Jose E. Marchesi  <jemarch@gnu.org>
 

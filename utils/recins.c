@@ -63,7 +63,8 @@ enum
   VALUE_ARG,
   FORCE_ARG,
   VERBOSE_ARG,
-  NO_EXTERNAL_ARG
+  NO_EXTERNAL_ARG,
+  RECORD_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -75,6 +76,7 @@ static const struct option GNU_longOptions[] =
     {"force", no_argument, NULL, FORCE_ARG},
     {"verbose", no_argument, NULL, VERBOSE_ARG},
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
+    {"record", required_argument, NULL, RECORD_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -88,7 +90,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recins synopsis.
      no-wrap */
   printf (_("\
-Usage: recins [OPTION]... [-f STR -v STR]... [FILE]\n"));
+Usage: recins [OPTION]... [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recins short description.
      no-wrap */
@@ -102,6 +104,7 @@ Insert new records in a rec database.\n"), stdout);
   -t, --type=TYPE                     specify the type of the new record.\n\
   -f, --field=STR                     field name.  Should be followed by a -v.\n\
   -v, --value=STR                     field value.  Should be preceded by a -f.\n\
+  -r, --record=STR                    record that will be inserted in the file.\n\
       --force                         insert the record even if it is violating\n\
                                         record restrictions.\n\
       --no-external                   don't use external descriptors.\n\
@@ -230,12 +233,14 @@ void recins_parse_args (int argc,
   rec_field_t field;
   rec_field_name_t field_name;
   char *field_name_str;
+  rec_record_t provided_record;
+  rec_record_elem_t rec_elem;
 
   field = NULL;
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "t:f:v:",
+                             "t:f:v:r:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -314,6 +319,40 @@ void recins_parse_args (int argc,
         case NO_EXTERNAL_ARG:
           {
             recins_external = false;
+            break;
+          }
+        case RECORD_ARG:
+        case 'r':
+          {
+            /* Parse the provided record and put it in recins_record.  */
+            provided_record = rec_parse_record_str (optarg);
+            if (!provided_record)
+              {
+                recutl_fatal (_("error while parsing the record provided by -r\n"));
+                exit (EXIT_FAILURE);
+              }
+
+            if (recins_record)
+              {
+                /* Append the fields in provided_record into
+                   recins_record.  */
+                rec_elem = rec_record_first_field (provided_record);
+                while (rec_record_elem_p (rec_elem))
+                  {
+                    field = rec_record_elem_field (rec_elem);
+                    rec_record_append_field (recins_record, rec_field_dup (field));
+                    field = NULL;
+                    rec_elem = rec_record_next_field (provided_record, rec_elem);
+                  }
+
+                rec_record_destroy (provided_record);
+                provided_record = NULL;
+              }
+            else
+              {
+                recins_record = provided_record;
+              }
+
             break;
           }
         default:

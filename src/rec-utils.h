@@ -28,6 +28,7 @@
 
 #include <config.h>
 
+#include <rec.h>
 #include <stdbool.h>
 
 /* Parse an integer/real in the NULL-terminated string STR and store
@@ -35,6 +36,10 @@
    otherwise. */
 bool rec_atoi (char *str, int *number);
 bool rec_atod (char *str, double *number);
+
+/* Extract type and url from a %rec: field value.  */
+char *rec_extract_url (char *str);
+char *rec_extract_type (char *str);
 
 #endif /* rec-utils.h */
 
