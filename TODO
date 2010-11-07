@@ -168,4 +168,10 @@ Description: When opening a file foo.rec with the following contents:
 + 
 + Wrong type argument: number-or-marker-p, nil
 
+Id: 15
+Summary: Make rec-mode to honour the external descriptors.
+CreatedAt: Sun Nov  7 14:57:22 CET 2010
+AssignedTo: jemarch@gnu.org
+Status: TODO
+
 # End of TODO
