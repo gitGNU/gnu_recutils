@@ -135,4 +135,37 @@ Note: Sat Nov  6 11:45:14 CET 2010
 + 
 + The code of the utilities are now using xmalloc and xstrdup.
 
+Id: 14
+Summary: Fix rec-finish-editing in rec-mode.el.
+CreatedAt: Sun Nov  7 14:46:14 CET 2010
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: When opening a file foo.rec with the following contents:
++ 
++ -- begin of file
++ baz: val1
++ 
++ %rec: type1
++ 
++ foo: val1
++ 
++ foo: val2
++ 
++ foo: val3
++ 
++ %rec: type2
++ 
++ jo: ja
++ 
++ bar: val2
++ 
++ bar: val3
++ 
++ -- end of file
++ 
++ An error makes rec-mode to be in a "showing task" state.  There we can
++ press B and then C-cC-c.  We get an error:
++ 
++ Wrong type argument: number-or-marker-p, nil
+
 # End of TODO

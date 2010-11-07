@@ -1,3 +1,8 @@
+2010-11-07 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 14 created.
+
 2010-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recins: support replace mode.
@@ -81,6 +86,7 @@
 	* configure.ac: Version changed from git to 1.0.
 
 	* TODO: Some tasks added.
+	Task 14 edited.
 	Task 9 edited.
 	Task 14 edited.
 	Task  edited.
@@ -89,6 +95,7 @@
 2010-11-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* TODO: First serious version.
+	Task 14 edited.
 	Task 9 edited.
 	Task 14 edited.
 	Task  edited.
