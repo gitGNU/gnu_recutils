@@ -84,3 +84,4 @@ libtool
 /man/recfix.1
 /po/stamp-po
 /po/POTFILES
+/po/remove-potcdate.sed
