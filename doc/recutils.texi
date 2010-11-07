@@ -1480,10 +1480,10 @@ Actions:
 
 @table @samp
 @item -s
-@itemx @w{@kbd{--set=}=@var{VALUE}}
+@itemx @w{@kbd{--set}=@var{VALUE}}
 Set the value of the selected fields to @var{VALUE}.
 @item -a
-@itemx @w{@kbd{--add=}=@var{VALUE}}
+@itemx @w{@kbd{--add}=@var{VALUE}}
 Add a new field to the selected record with value @var{VALUE}.
 @item -d
 @itemx @w{@kbd{--delete}}

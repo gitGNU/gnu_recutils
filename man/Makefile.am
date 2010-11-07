@@ -15,14 +15,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-man_MANS = csv2rec.1 \
-           mdb2rec.1 \
-           recdel.1 \
+man_MANS = recdel.1 \
            recfix.1 \
            recinf.1 \
            recins.1 \
            recsel.1 \
            recset.1
+
+if COMPILE_CSV2REC
+man_MANS += csv2rec.1
+endif
+
+if COMPILE_MDB2REC
+man_MANS += mdb2rec.1
+endif
+
 EXTRA_DIST = $(man_MANS)
 MAINTAINERCLEANFILES = $(man_MANS)
 

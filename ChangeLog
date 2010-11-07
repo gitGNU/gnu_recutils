@@ -1,3 +1,12 @@
+2010-11-07  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* doc/recutils.texi (recset Invocation): Avoid double `='.
+
+	* man/Makefile.am (man_MANS): Do not build man pages when
+	associated programs are not present.
+
+	* tasktool (tt_rec_check_utility): Fix redirection.
+
 2010-11-07 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

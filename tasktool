@@ -312,7 +312,7 @@ tt_rec_check_utility ()
     # Parameters:
     # $1 => The name of the utility to check.
     test "$#" -gt "0" && {
-        ${1} --version 2>&1 > /dev/null < /dev/null || tt_error "'$1' not found"
+        ${1} --version > /dev/null 2>&1 < /dev/null || tt_error "'$1' not found"
     }
 }
 
