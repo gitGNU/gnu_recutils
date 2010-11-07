@@ -213,6 +213,7 @@ Mandatory arguments to long options are mandatory for short options too.
       --help                          print this help message and exit.
   -s, --status=STATUS                 list tasks having this status.
   -o, --originator                    list tasks having this originator.
+  -a, --assigned-to=EMAIL             list tasks assigned to EMAIL.
 
 EXPRESSION is a recutils selection expression.  If it is specified
 then any used -s or -o argument is ignored.
@@ -700,7 +701,7 @@ tt_process_cmd_show ()
 # Process the 'list' subcommand
 tt_process_cmd_list ()
 {
-    TEMP=`getopt -o -e:s:o: --long help,status,originator -n 'tasktool: list' -- "$@"`
+    TEMP=`getopt -o -e:s:o:a: --long help,status,originator,assigned-to -n 'tasktool: list' -- "$@"`
     if test "$?" != "0"
     then
         exit 1
@@ -710,6 +711,7 @@ tt_process_cmd_list ()
     selection_expression=""
     status=""
     originator=""
+    assigned_to=""
     while true
     do
         case "$1" in
@@ -727,6 +729,11 @@ tt_process_cmd_list ()
                 shift
                 shift
                 ;;
+            -a|--assigned-to)
+                assigned="$2"
+                shift
+                shift
+                ;;
             *)
                 break
                 ;;
@@ -739,6 +746,12 @@ tt_process_cmd_list ()
     then
         tt_email_p $originator || \
           { tt_error "'$originator' is not a proper email address."; exit 1; }
+    fi
+
+    if test -n "$assigned"
+    then
+        tt_email_p $assigned || \
+          { tt_error "'$assigned' is not a proper email address."; exit 1; }
     fi
 
     if test "$#" != "1"
@@ -764,17 +777,27 @@ tt_process_cmd_list ()
         then
             tt_warning "ignoring -o $originator"
         fi
+
+        if test -n "$assigned"
+        then
+            tt_warning "ignoring -a $assigned"
+        fi
     else
         selection_expression="1"
 
         if test -n "$status"
         then
-            selection_expression="$selection_expression && (Status = '$status')"
+            selection_expression="$selection_expression && ($tt_db_task_field_status = '$status')"
         fi
         
         if test -n "$originator"
         then
-            selection_expression="$selection_expression && (Originator = '$originator')"
+            selection_expression="$selection_expression && ($tt_db_task_field_originator = '$originator')"
+        fi
+
+        if test -n "$assigned"
+        then
+            selection_expression="$selection_expression && ($tt_db_task_field_assigned = '$assigned')"
         fi
     fi
 

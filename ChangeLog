@@ -1,3 +1,10 @@
+2010-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	tasktool: support filtering by assigned-to in list command.
+	* tasktool: Support the --assigned-to option in 'list'.
+	(tt_supported_vcs): Use generic names for the fields in the
+	selection expression.
+
 2010-11-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Syntax check fixes.

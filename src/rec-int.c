@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-06 21:18:57 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-07 08:18:09 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -755,6 +755,7 @@ rec_int_merge_remote (rec_rset_t rset)
                   fprintf (stderr,
                            _("warning: could not fetch remote descriptor from url %s.\n"),
                            rec_url);
+                  remove (tmpfile_name);
                   return;
                 }
 
