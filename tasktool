@@ -170,6 +170,7 @@ $tt_tasktool supports the following sub commands.
        create                         create a new task.
        delete                         delete a task.
        note                           insert a note for a task.
+       edit                           edit a task.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
 --help'.  For example:
@@ -202,6 +203,20 @@ Mandatory arguments to long options are mandatory for short options too.
 Examples:
 
         tasktool show 203
+
+$tt_help_footer"
+
+tt_help_edit="\
+Usage: $tt_tasktool edit TASK_ID
+Edit a task in a text editor.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --no-changelog                  do not generate a ChangeLog entry.
+      --help                          print this help message and exit.
+
+Examples:
+
+        tasktool edit 112
 
 $tt_help_footer"
 
@@ -698,6 +713,72 @@ tt_process_cmd_show ()
     tt_db_show_task "$1"
 }
 
+# Process the 'edit' subcommand
+tt_process_cmd_edit ()
+{
+    TEMP=`getopt -o '' --long help,no-changelog -n 'tasktool: edit' -- "$@"`
+    if test "$?" != "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_edit"
+                exit 1
+                ;;
+            --no-changelog)
+                no_changelog=yes
+                shift
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    # Get the ID of the task to edit.
+    if test "$#" != "1"
+    then
+        echo "$tt_help_edit"
+        exit 1
+    fi
+
+    # Check for the existance of the task.
+    tt_db_task_p "$1" || \
+        { echo "$tt_tasktool: task '$1' not found."; exit 1; }
+    task_id="$1"
+
+    # Load the task in a text editor.
+    tmpfile=$$.tmp
+    if test -w $tmpfile; then
+        rm -f $tmpfile
+    fi
+    echo "# -*- mode: rec -*-" > $tmpfile
+    echo "" >> $tmpfile
+    echo "%rec: $tt_db_task file://`pwd`/$tt_db" >> $tmpfile
+    echo "" >> $tmpfile
+    tt_db_show_task $task_id >> $tmpfile
+    $EDITOR $tmpfile
+    new_task=`$tt_recsel -t $tt_db_task -n 0 $tmpfile`
+    rm -f $tmpfile
+
+    # Replace the old task with the new content.
+    $tt_recdel -t $tt_db_task -e "${tt_db_task_field_id} = ${task_id}" $tt_db
+    $tt_recins --verbose -t $tt_db_task -r "$new_task" $tt_db
+    echo "tasktool: task $tak_id edited."
+
+    if test -z "$no_changelog"
+    then
+        tt_add_changelog_entry $tt_db "Task $task_id edited."
+        echo "tasktool: entry added to $tt_changelog."
+    fi
+}
+
 # Process the 'list' subcommand
 tt_process_cmd_list ()
 {
@@ -1094,6 +1175,12 @@ tt_parse_arguments ()
                 shift
                 tt_db_check
                 tt_process_cmd_show "$@"
+                break
+                ;;
+            edit)
+                shift
+                tt_db_check
+                tt_process_cmd_edit "$@"
                 break
                 ;;
             note)
