@@ -1,6 +1,12 @@
 # -*- mode: rec -*-
 
+# This file contains the names of the people that contributed with
+# code to GNU recutils.
+
 Name: Jose E. Marchesi
 Email: jemarch@gnu.org
+
+Name: Ralf Wildenhues
+Email: Ralf.Wildenhues@gmx.de
 
 # End of AUTHORS
