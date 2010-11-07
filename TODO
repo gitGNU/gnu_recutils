@@ -174,4 +174,39 @@ CreatedAt: Sun Nov  7 14:57:22 CET 2010
 AssignedTo: jemarch@gnu.org
 Status: TODO
 
+Id: 16
+Summary: Implement %fsort.
+CreatedAt: Sun Nov  7 20:26:41 CET 2010
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: The %fsort special field specifies the desired order of the fields
++ of records.  For example:
++ 
++ %rec: Employee
++ %fsort: Id,Name,Surname,Department
++ 
++ Determines the desired order for the fields of Employees.  Not any
++ field used in records of type Employee shall be specified in the
++ %fsort field.  The desired position for non explicitly mentioned
++ fields is at the end of the record.
+
+Id: 17
+Summary: Make tasktool to reuse ChangeLog entries with the same date.
+CreatedAt: Sun Nov  7 20:29:03 CET 2010
+AssignedTo: jemarch@gnu.org
+Status: TODO
+
+Id: 18
+Summary: Allow the usage of field lists in type declarations.
+CreatedAt: Sun Nov  7 20:53:59 CET 2010
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: It is possible to specify more than one field name in type
++ declarations.  All the fields having that name will share the same
++ type.  For example:
++ 
++ @example
++ %type: Width,Height real
++ @end example
+
 # End of TODO

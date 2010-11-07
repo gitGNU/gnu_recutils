@@ -84,27 +84,56 @@ Utilities
 @node Introduction
 @chapter Introduction
 
-GNU Recutils is a set of tools and libraries to access human-editable,
+GNU recutils is a set of tools and libraries to access human-editable,
 text-based databases called @emph{recfiles}.  The data is stored as a
 sequence of records, each record containing an arbitrary number of
-named fields.
+named fields.  Some advanced capabilities usually found in other data
+storage systems are supported: data types, data integrity (keys,
+mandatory fields, etc) as well as the ability of records to refer to
+other records (sort of foreign keys).  Despite its simplicity,
+recfiles can be used to store medium-sized databases.
 
-Some advanced capabilities usually found in other data storage systems
-are supported: data types, data integrity (keys, mandatory fields,
-etc) as well as the ability of records to refer to other records (sort
-of foreign keys).  Despite its simplicity, recfiles can be used to
-store medium-sized databases.
+So, yet another data storage system?  The mere existence of this
+package deserves an explanation.  There is a rich set of already
+available free data storage systems, covering a broad range of
+requirements.  Big systems having complex data storage requirements
+will probably make use of some full-fledged relational system such as
+MySQL or PostgreSQL.  Less demanding applications (or applications
+with special deployment requirements) may find it more convenient to
+use a simpler system such as SQLite, where the data is stored in
+single binary files.  XML files are often used to store configuration
+settings for programs, and to encode data to be transmitted through
+networks.
 
-This suite comprises:
+All the data storage systems mentioned in the previous paragraph share
+some non-desirable characteristics.  The following list summarizes
+them.
+
+@table @minus
+@item The stored data is not directly readable by humans.
+@item The stored data is definitely not directly writable by humans.
+@item They are program dependent.
+@item They are not easily managed by version control systems.
+@end table
+
+Regarding the first point (human readability), while it is clearly
+true for the binary files, some may argue XML files are indeed human
+readable... well... <bar><foo tag=''val''>try</foo> to r&iamp;ead
+<p>this</p></bar>.
+
+Recfiles are human-readable, human-writable and still they are easy to
+parse and to manipulate automatically.  Obviously they are not
+suitable for any task (for example, it can be difficult to manage
+hierarchies in recfiles) and performance is somewhat sacrificed in
+favor of readability.  But they are quite handy to store small to
+medium simple databases.
+
+The GNU recutils suite comprises:
 
 @itemize @minus
-@item This texinfo manual, describing the Rec format and the
-accompaying software.
-@item A C library (librec) that provides a rich set of functions to
-manipulate rec data.
-@item A set of C utilities (recinf, recsel, recins, recdel, recset and
-recfix) that can be used in shell scripts and in the command line to
-operate on rec files.
+@item This texinfo manual, describing the Rec format and the accompaying software.
+@item A C library (librec) that provides a rich set of functions to manipulate rec data.
+@item A set of C utilities (recinf, recsel, recins, recdel, recset and  recfix) that can be used in shell scripts and in the command line to operate on rec files.
 @item An emacs mode, @code{rec-mode}.
 @end itemize
 
@@ -115,14 +144,14 @@ Everyone loves to grow a nice book collection at home.  Unfortunately,
 in most cases the management of our private books gets uncontrolled:
 some books get lost, some of them may be loaned to some friend, there
 are some duplicated (or even triplicated!) titles because we forgot
-about the existence of the previous copy, and a large etc.
+about the existence of the previous copy, and many more details.
 
 In order to improve the management of our little book collection we
 could make use of a complex data storage system such as a relational
 database.  The problem with that approach, as explained in the
 previous section, is that the tool is too complicated for the simple
-task: we do not need the full power of a RDBS to maintain a simple
-collection of books.
+task: we do not need the full power of a relational database system to
+maintain a simple collection of books.
 
 With GNU recutils it is possible to maintain such a little database in
 a text file.  Let's call it @file{books.rec}.  The following table
@@ -141,12 +170,12 @@ Sometimes the author is not known.
 @item
 Sometimes we don't care about who the author of a book is.
 @item
-We usually store our books in home.
+We usually store our books at home.
 @item
 We use to loan books to friends.
 @item
-Sometimes we are not sure about the physical location of a book.  Did
-we loan it to someone?  Was it lost in the last move?  Is it in some
+On occasions we loose track to the physical location of a book.  Did
+we loan it to anyone?  Was it lost in the last move?  Is it in some
 hidden place at home?
 @end itemize
 
@@ -157,25 +186,22 @@ The contents of the rec file follows:
 
 %rec: Book
 %mandatory: Title
+%type: Location enum loaned home unknown
 %doc:
 + A book in my personal collection.
-+
-+ The possible locations for a book are 'in site', 'loaned'
-+ and 'unknown'.
 
 Title: GNU Emacs Manual
 Author: Richard M. Stallman
 Publisher: FSF
-Location: in site
+Location: home
 
 Title: The Colour of Magic
 Author: Terry Pratchett
 Location: loaned
-Contact:Name: Nicola Dinisio
 
 Title: Mio Cid
 Author: Anonymous
-Location: in site
+Location: home
 
 Title: chapters.gnu.org administration guide
 Author: Nacho Gonzalez
@@ -183,18 +209,17 @@ Author: Jose E. Marchesi
 Location: unknown
 
 Title: Yeelong User Manual
-Location: in site
+Location: home
 
 # End of books.rec
 @end example
 
-Pretty clean and simple, huh?.  The file contains a set of records
-separated by blank lines.  Each record is composed by a set of fields
-with a name and a value.
+Simple.  The file contains a set of records separated by blank lines.
+Each record is composed by a set of fields with a name and a value.
 
-The GNU record utilities can then be used to access the contents of
-the file.  For example, we could get a list of the names of loaned
-books invoking @command{recsel} in the following way:
+The GNU recutils can then be used to access the contents of the file.
+For example, we could get a list of the names of loaned books invoking
+@command{recsel} in the following way:
 
 @example
 $ recsel -e "Location = 'loaned'" -P Title books.rec
@@ -204,9 +229,9 @@ The Colour of Magic
 @node Fields and Records
 @chapter Fields and Records
 
-A field is the written form of an association between a label and a
-value.  For example, if we wanted to associate the label @code{Name}
-with the value @code{Ada Lovelace} we would write:
+A @dfn{field} is the written form of an association between a label
+and a value.  For example, if we wanted to associate the label
+@code{Name} with the value @code{Ada Lovelace} we would write:
 
 @example
 Name: Ada Lovelace
@@ -216,9 +241,10 @@ The separator between the field name and the field value is a colon
 followed by a blank character (space and tabs, but not newlines).  The
 name of the field shall begin in the first column of the line.
 
-A field name is a sequence of alphanumeric characters plus dashes
-(@code{-}) and underscores (@code{_}), starting with a letter or the
-character @code{%}.  The regular expression denoting a field name is:
+A @dfn{field name} is a sequence of alphanumeric characters plus
+dashes (@code{-}) and underscores (@code{_}), starting with a letter
+or the character @code{%}.  The regular expression denoting a field
+name is:
 
 @example
 [a-zA-Z%][a-zA-Z0-9_-]+
@@ -227,8 +253,8 @@ character @code{%}.  The regular expression denoting a field name is:
 Field names are case-sensitive.  @code{Foo} and @code{foo} are
 considered different field names.
 
-The following list contain valid field names (the final colon is
-not part of the names):
+The following list contains valid field names (the final colon is not
+part of the names):
 
 @example
 Foo:
@@ -238,14 +264,14 @@ ab1:
 A_Field:
 @end example
 
-The value of a field is a sequence of characters terminated by a
+The @dfn{value of a field} is a sequence of characters terminated by a
 single newline character (@code{\n}).
 
 Sometimes a value is too long to fit in the usual width of terminals
 and screens.  In that case, depending on the specific tool used to
-access the file, the readability of the data decreases.  It is
-therefore possible to physically split a logical line by escaping a
-newline with a backslash character, as in:
+access the file, the readability of the data would not be that good.
+It is therefore possible to physically split a logical line by
+escaping a newline with a backslash character, as in:
 
 @example
 LongLine: This is a quite long value \
@@ -264,7 +290,8 @@ Foo: bar1
 +  bar3
 @end example
 
-A record is a group of one or more fields written one after the other:
+A @dfn{record} is a group of one or more fields written one after the
+other:
 
 @example
 Name1: Value1
@@ -308,9 +335,9 @@ Age: 969
 
 It is possible to specify certain properties of a set of records by
 preceding them by a @dfn{record descriptor}.  A record descriptor is
-itself a record, and uses fields with specific names to store
-properties.  The most basic property that can be specified for a set
-of records is the @dfn{type} of the records.  The special field name
+itself a record, and uses fields with some predefined names to store
+the properties.  The most basic property that can be specified for a
+set of records is their @dfn{type}.  The special field name
 @code{%rec} is used for that purpose:
 
 @example
@@ -323,7 +350,7 @@ Id: 2
 Name: Entry 2
 @end example
 
-The presence of another record descriptor mark the end of the
+The presence of another record descriptor marks the end of the
 application of the previous one.  So, in a file with the following
 structure:
 
@@ -343,44 +370,58 @@ REC3
 REC4
 @end example
 
-@code{REC0} is not described by any record descriptor.  The
-@code{REC1} and @code{REC2} are described by
-@code{RECORD-DESCRIPTOR-1} while @code{REC3} and @code{REC4} are
-described by @code{RECORD-DESCRIPTOR-2}.
+@code{REC0} is not described by any record descriptor.  @code{REC1}
+and @code{REC2} are described by @code{RECORD-DESCRIPTOR-1} while
+@code{REC3} and @code{REC4} are described by
+@code{RECORD-DESCRIPTOR-2}.
 
-The record descriptor can contain the following fields:
+The record descriptor may contain the following predefined fields:
 
 @table @code
 @item %rec @var{type} [@var{url}]
 The value of this field is interpreted as the name of the kind of
-record described by the record descriptor followed and an optional
+record described by the record descriptor followed by an optional
 URL.  The string used as the record type has the same restrictions
 that the field names. @xref{Fields and Records}.
 
-This field is unique.
+This field shall be unique in its containing record descriptor.
 
 It is highly recommended (but not enforced) to place this field in the
 first position of the record descriptor.
-@item %mandatory
-The value of this field is interpreted as the name of a field, that
-will be considered mandatory.
+@item %mandatory @var{field1},@var{field2},...,@var{fieldN}
+The value of this field shall be a list of field names separated by
+commas:
 
-Its effect is that at least one field with this name should be present
-in any record of this kind.  Any record violating this restriction
-will be considered invalid.
-@item %prohibit
-The value of this field is interpreted as the name of a field.  Fields
-having that name will be prohibited in the record set.
-@item %unique
-The value of this field is interpreted as the name of a field, that
-will be considered unique.
+@example
+%mandatory: IdentifyNumber,InStock
+@end example
 
-Its effect is that at much one field with this name should be present
-in any record of this kind.  Any record violating this restriction
-will be considered invalid.
-@item %key
+Those fields will be considered mandatory. i.e. a field with this name
+shall be present in any record of this kind.  Records violating this
+restriction are considered invalid.
+@item %prohibit @var{field1},@var{field2},...,@var{fieldN}
+The value of this field shall be a list of field names separated by
+commas:
+
+@example
+%prohibit: Id
+@end example
+
+Those fields cannot appear in any record of this kind.  Records
+violating this restriction are considered invalid.
+@item %unique @var{field1},@var{field2},...,@var{fieldN}
+The value of this field shall be a list of field names separated by
+commas:
+
+@example
+%unique IdNumber
+@end example
+
+Any record containing more than one field with those names is
+considered invalid.
+@item %key ${field}
 The value of this field is interpreted as the name of a field, that
-will be considered as part of the key.
+will be considered as the key of the records.
 
 Its effect is that any field with that name is both unique and
 mandatory, and additionally the values of those fields shall be
@@ -390,23 +431,8 @@ This field contains documentation about the record.
 
 It is like a comment, but this field can be managed in a programmatic
 way easier.
-@item %type
+@item %type @var{field_name} @var{type} @var{type_description}
 This field can be used to define types for fields.  @ref{Field Types}.
-
-@item %order
-This field can be used to define the preferred order of the fields in
-the record.  Its usage is:
-
-@example
-%order: @var{field_name1} @var{field_name2} ... @var{field_nameN}
-@end example
-
-Where the field names are separated by one or more blank characters.
-Example:
-
-@example
-%order: Id Name Email
-@end example
 @end table
 
 @node Compound Field Names
@@ -440,27 +466,29 @@ Package:Name: recutils
 In the previous example it is pretty clear which role is played by the
 referenced package in the @code{Maintainer} record: it is the package
 maintained by the maintainer.  But sometimes the role is not that
-identifiable.  Consider the following record:
+identifiable.  Consider for example the following record:
 
 @example
 %rec: Bug
 
 Id: 203
 Title: recsel crashes with files bigger than 2gb
-Hacker:Name: John Smith
+Hacker:Name: Smitha Johnson
 @end example
 
-Seems to be a bug report.  But, what is the relationship between John
-Smith and the bug? Is he the reporter?  Or perhaps he is the hacker
-that is working to fix it?  Or is he the hacker that closed the bug?
-We can clarify the role of John Smith by using the third part of the
-compound field:
+Seems to be a bug report.  But, what is the relationship between
+Smitha Johnson and the bug? Is she the reporter?  Or perhaps she is
+the hacker that is working to fix it?  Is she the hacker that closed
+the bug?  We can clarify the role of Smitha by using the third part of
+the compound field: her role.
 
 @example
 Id: 203
 Title: recsel crashes with files bigger than 2gb
-Hacker:Name:Reporter: John Smith
+Hacker:Name:Reporter: Smitha Johnson
 @end example
+
+So now the situation is clear: Smitha is the reporter.
 
 It is possible to make references to different instances of the same
 record type by using roles.  Supposing that we want to record who is
@@ -470,7 +498,7 @@ the assignee of the bug report, we can introduce the new role
 @example
 Id: 203
 Title: recsel crashes with files bigger than 2gb
-Hacker:Name:Reporter: John Smith
+Hacker:Name:Reporter: Smitha Johnson
 Hacker:Name:Assignee: Juan Valdes 
 @end example
 
@@ -487,19 +515,29 @@ Package:Name: GNU Ferret
 Package:Name: GNU rec
 @end example
 
+Same applies to several compound fields with explicit roles:
+
+@example
+%rec: Package
+
+Name: GNU foo
+Hacker:Name:Maintainer: Elvis 'The King' Presley
+Hacker:Name:Maintainer: Michael 'The other King' Jackson
+@end example
+
 @node Comments
 @chapter Comments
 
-A line starting with a @code{#} (ASCII 0x23) character in the first
-column is a comment line.
+Any line having an @code{#} (ASCII 0x23) character in the first column
+is a comment line.
 
 Comment lines are quite useful to insert additional information that
 is not part of the database but useful otherwise.
 
-It is useful to comment-out information from the rec file without
-having to remove it in a definitive way: you may want to recover the
-data into the database later!  Comment lines can be used to
-comment-out either full registers and single fields:
+It is also quite convenient to comment-out information from the
+recfile without having to remove it in a definitive way: you may want
+to recover the data into the database later!  Comment lines can be
+used to comment-out both full registers and single fields:
 
 @example
 Name: Jose E. Marchesi
@@ -509,22 +547,21 @@ Name: Jose E. Marchesi
 Occupation: Unoccupied
 @end example
 
-Comments are also useful to make up headers, comment blocks and all
+Comments are also useful for headers, footers, comment blocks and all
 kind of markers:
 
 @example
 # -*- mode: rec -*-
 #
-# Bug.rec
+# TODO
 #
-# This file contains the Bugs database of the recutils
-# project.
+# This file contains the Bugs database of GNU recutils.
 #
 # Blah blah...
 
 ...
 
-# End of Bug.rec
+# End of TODO
 @end example
 
 @node Field Types
@@ -537,14 +574,15 @@ thus possible to declare in a record descriptor that fields with a
 given name shall contain values of a given type.  The syntax is:
 
 @example
-%type: @var{field_name} @var{type} @var{type_description}
+%type: @var{field_list} @var{type} @var{type_description}
 @end example
 
 @noindent
-where @var{field_name} is the name of the fields feturing this type in
-the current record set, @var{type} is the name of a supported field
-type and @var{type_description} is additional information that varies
-from type to type.
+where @var{field_list} is a list of field names separated by
+commas. Fields having those names will be of this type in the current
+record set, @var{type} is the name of a supported field type and
+@var{type_description} is additional information that varies from type
+to type.
 
 The following sections describe the supported types.
 
@@ -596,10 +634,13 @@ case it is implicitly zero:
 @dfn{Real} fields can be declared with the @code{real} type
 specifier.  A wide range of real numbers can be represented this way,
 only limited by the underlying floating point representation.  Example
-of the declaration of a real field:
+of the declaration of real fields and their usage:
 
 @example
-%type: Myreal real
+%type: Width,Height real
+
+Width: 25.01
+Height: 10
 @end example
 
 @node String types
