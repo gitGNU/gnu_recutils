@@ -209,4 +209,15 @@ Description: It is possible to specify more than one field name in type
 + %type: Width,Height real
 + @end example
 
+Id: 19
+Summary: Fix overlong synopsis lines in the PDF output of the manual.
+CreatedAt: Mon Nov  8 11:36:58 CET 2010
+Originator: Ralf.Wildenhues@gmx.de
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: @node recsel Invocation contains an overlong synopsis line in the PDF
++ output.
++ 
++ The problem may be present in the postscript and dvi output as well.
+
 # End of TODO
