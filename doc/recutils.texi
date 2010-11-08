@@ -1292,7 +1292,7 @@ from the standard input.
 from the standard input.  Synopsis:
 
 @example
-recins [OPTION]... [-f STR -v STR]... [FILE]
+recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]
 @end example
 
 The new record that will be inserted by the command is constructed by
