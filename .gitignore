@@ -73,6 +73,9 @@ libtool
 /doc/texinfo.log
 /doc/texput.log
 /doc/version.texi
+/doc/recutils.dvi
+/doc/recutils.pdf
+/doc/recutils.vrs
 /man/recdel.1
 /man/recdel.1
 /man/recinf.1
