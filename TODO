@@ -210,7 +210,7 @@ Description: It is possible to specify more than one field name in type
 + @end example
 
 Id: 19
-Summary: Fix overlong synopsis lines in the PDF output of the manual.
+Summary: Fix over sized synopsis lines in the PDF manual.
 CreatedAt: Mon Nov  8 11:36:58 CET 2010
 Originator: Ralf.Wildenhues@gmx.de
 AssignedTo: jemarch@gnu.org
