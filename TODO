@@ -220,4 +220,15 @@ Description: @node recsel Invocation contains an overlong synopsis line in the P
 + 
 + The problem may be present in the postscript and dvi output as well.
 
+Id: 20
+Summary: Implement %sort.
+CreatedAt: Mon Nov  8 12:57:20 CET 2010
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: Sorting of records in the described record set.  Usage:
++ 
++    %sort: FIELD_NAME
++ 
++ Just a single field name is supported.
+
 # End of TODO
