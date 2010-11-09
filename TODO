@@ -114,7 +114,7 @@ Summary: Improve error reporting with invalid %type fields.
 CreatedAt: Sat Nov  6 11:43:25 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: The error reporting on type definitions in %type fields is not very
 + good. An error reporting mechanism should be implemented in the
 + rec_type_new function. Maybe an I/O stream.

@@ -165,6 +165,53 @@ bool rec_field_name_str_p (const char *str);
 char *rec_field_name_part_normalise (const char *str);
 
 /*
+ * FIELD EXPRESSIONS
+ *
+ * A Field expression is composed by a sequence of "elements".  Each
+ * element makes a reference to one or more fields in a record with a
+ * given name:
+ *
+ *  - Name:  Field name.
+ *  - Range: [min..max]
+ *  - Prefix: One-character prefix.
+ *
+ * FEXs can be parsed from strings following this syntax:
+ *
+ *      ELEM_DESCRIPTOR1,...,ELEM_DESCRIPTORn
+ *
+ * Where each element descriptor is:
+ *
+ *      /?FIELD_NAME([N(..N)?])?
+ */
+
+typedef struct rec_fex_s *rec_fex_t;
+typedef struct rec_fex_elem_s *rec_fex_elem_t;
+
+enum rec_fex_kind_e
+{
+  REC_FEX_SIMPLE,
+  REC_FEX_CSV,
+  REC_FEX_SUBSCRIPTS
+};
+
+rec_fex_t rec_fex_new (char *str,
+                       enum rec_fex_kind_e kind);
+void rec_fex_destroy (rec_fex_t fex);
+
+bool prec_fex_check (char *str);
+
+void rec_fex_sort (rec_fex_t fex);
+
+int rec_fex_size (rec_fex_t fex);
+rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
+
+char rec_fex_elem_prefix (rec_fex_elem_t elem);
+rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
+char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
+int rec_fex_elem_min (rec_fex_elem_t elem);
+int rec_fex_elem_max (rec_fex_elem_t elem);
+
+/*
  * FIELD TYPES
  *
  */
@@ -208,9 +255,8 @@ void rec_type_destroy (rec_type_t type);
 /* Determine whether a string contains a valid type description.  */
 bool rec_type_descr_p (char *str);
 
-/* Extract the field name of a string containing a type
-   description.  */
-rec_field_name_t rec_type_descr_field_name (char *str);
+/* Extract the fex of a string containing a type description.  */
+rec_fex_t rec_type_descr_fex (char *str);
 
 /* Get the kind of the type.  The _str version returns a string with
    the name of the type.  */
@@ -681,52 +727,6 @@ void rec_parser_reset (rec_parser_t parser);
  * describing what went wrong.
  */
 void rec_parser_perror (rec_parser_t parser, char *fmt, ...);
-
-/*
- * FIELD EXPRESSIONS
- *
- * A Field expression is composed by a sequence of "elements".  Each
- * element makes a reference to one or more fields in a record with a
- * given name:
- *
- *  - Name:  Field name.
- *  - Range: [min..max]
- *  - Prefix: One-character prefix.
- *
- * FEXs can be parsed from strings following this syntax:
- *
- *      ELEM_DESCRIPTOR1,...,ELEM_DESCRIPTORn
- *
- * Where each element descriptor is:
- *
- *      /?FIELD_NAME([N(..N)?])?
- */
-
-typedef struct rec_fex_s *rec_fex_t;
-typedef struct rec_fex_elem_s *rec_fex_elem_t;
-
-enum rec_fex_kind_e
-{
-  REC_FEX_SIMPLE,
-  REC_FEX_SUBSCRIPTS
-};
-
-rec_fex_t rec_fex_new (char *str,
-                       enum rec_fex_kind_e kind);
-void rec_fex_destroy (rec_fex_t fex);
-
-bool prec_fex_check (char *str);
-
-void rec_fex_sort (rec_fex_t fex);
-
-int rec_fex_size (rec_fex_t fex);
-rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
-
-char rec_fex_elem_prefix (rec_fex_elem_t elem);
-rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
-char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
-int rec_fex_elem_min (rec_fex_elem_t elem);
-int rec_fex_elem_max (rec_fex_elem_t elem);
 
 /*
  * WRITER

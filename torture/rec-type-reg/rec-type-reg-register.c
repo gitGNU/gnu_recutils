@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 21:24:25 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-09 11:40:10 jemarch"
  *
  *       File:         rec-type-reg-register.c
  *       Date:         Fri Oct 29 21:15:17 2010
@@ -47,20 +47,20 @@ START_TEST (rec_type_reg_register_nominal)
   /* Register two types.  */
   type = rec_type_new ("foo int");
   fail_if (type == NULL);
-  fname = rec_type_descr_field_name ("foo int");
+  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo int"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
 
   type = rec_type_new ("bar range 1 10");
   fail_if (type == NULL);
-  fname = rec_type_descr_field_name ("bar range 1 10");
+  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("bar range 1 10"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
 
   /* Register 'foo' again with another type.  */
   type = rec_type_new ("foo bool");
   fail_if (type == NULL);
-  fname = rec_type_descr_field_name ("foo bool");
+  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo bool"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
 

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 21:36:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-09 11:42:02 jemarch"
  *
  *       File:         rec-type-reg-get.c
  *       Date:         Fri Oct 29 21:30:27 2010
@@ -47,7 +47,8 @@ START_TEST(rec_type_reg_get_nominal)
   /* Register a type.  */
   type = rec_type_new ("foo int");
   fail_if (type == NULL);
-  fname = rec_type_descr_field_name ("foo int");
+  fname = 
+    rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo int"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
 
@@ -75,7 +76,7 @@ START_TEST(rec_type_reg_get_nonexisting)
 
   reg = rec_type_reg_new ();
   fail_if (reg == NULL);
-  fname = rec_type_descr_field_name ("foo int");
+  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo int"), 0));
   fail_if (fname == NULL);
 
   fail_if (rec_type_reg_get (reg, fname) != NULL);

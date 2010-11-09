@@ -280,6 +280,17 @@ Unit: rec_type_equal_p
 Description:
 + Check equality for equal types.
 
+Test: rec_type_descr_fex_nominal
+Unit: rec_type_descr_fex
+Description:
++ Extract a fex from a valid type descriptor.
+
+Test: rec_type_descr_fex_invalid
+Unit: rec_type_descr_fex
+Description:
++ Try to extract a fex from an
++ invalid type descriptor.
+
 Test: rec_type_descr_p_nominal
 Unit: rec_type_descr_p
 Description:
@@ -359,17 +370,6 @@ Test: rec_type_check_email
 Unit: rec_type_check
 Description:
 + Check strings of type email.
-
-Test: rec_type_descr_field_name_nominal
-Unit: rec_type_descr_field_name
-Description:
-+ Extract a field name from a valid type descriptor.
-
-Test: rec_type_descr_field_name_invalid
-Unit: rec_type_descr_field_name
-Description:
-+ Try to extract a field name from an
-+ invalid type descriptor.
 
 Test: rec_type_kind_str_nominal
 Unit: rec_type_kind_str
@@ -466,7 +466,7 @@ Description:
 + Check for the existence of a field included
 + in the record.
 +
-+ 1. The call to rec_record_field_p should
++ 1. The call to rec_record_field_p should 
 +    return true
 
 Test: rec_record_field_p_nonexisting
@@ -475,7 +475,7 @@ Description:
 + Check for the existence of a field not included
 + in the record.
 +
-+ 1. The call to rec_record_field_p should
++ 1. The call to rec_record_field_p should 
 +    return false.
 
 Test: rec_field_name_part_normalise_nominal

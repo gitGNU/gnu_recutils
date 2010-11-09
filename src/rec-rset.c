@@ -30,6 +30,7 @@
 
 #include <rec-mset.h>
 #include <rec.h>
+#include <rec-utils.h>
 
 /* Record Set Data Structure.
  *
@@ -438,8 +439,9 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
   rec_field_t descr_field;
   rec_field_name_t type_field_name;
   char *descr_field_value;
-  size_t i, num_fields;
+  size_t i, num_fields, j;
   rec_type_t type;
+  rec_fex_t fex;
 
   if (rset->descriptor)
     {
@@ -471,9 +473,13 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
               type = rec_type_new (descr_field_value);
               if (type)
                 {
-                  rec_type_reg_register (rset->type_reg,
-                                         rec_type_descr_field_name (descr_field_value),
-                                         type);
+                  fex = rec_type_descr_fex (descr_field_value);
+                  for (j = 0; j < rec_fex_size (fex); j++)
+                    {
+                      rec_type_reg_register (rset->type_reg,
+                                             rec_fex_elem_field_name (rec_fex_get (fex, j)),
+                                             type);
+                    }
                 }
             }
         }

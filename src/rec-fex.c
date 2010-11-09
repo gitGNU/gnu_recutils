@@ -60,7 +60,7 @@ struct rec_fex_s
  * Static function declarations.
  */
 
-static bool rec_fex_parse_str_simple (rec_fex_t new, char *str);
+static bool rec_fex_parse_str_simple (rec_fex_t new, char *str, char *sep);
 static bool rec_fex_parse_str_subscripts (rec_fex_t new, char *str);
 static bool rec_fex_parse_elem (rec_fex_elem_t elem, char *str);
 
@@ -94,10 +94,19 @@ rec_fex_new (char *str,
               new = NULL;
             }
         }
-      else
+      else if (kind == REC_FEX_SIMPLE)
         {
           /* Simple FEX.  */
-          if (!rec_fex_parse_str_simple (new, str))
+          if (!rec_fex_parse_str_simple (new, str, " \t\n"))
+            {
+              free (new);
+              new = NULL;
+            }
+        }
+      else /* REC_FEX_CSV */
+        {
+          /* Simple FEX with fields separated by commas.  */
+          if (!rec_fex_parse_str_simple (new, str, ","))
             {
               free (new);
               new = NULL;
@@ -251,7 +260,8 @@ rec_fex_sort (rec_fex_t fex)
 
 static bool
 rec_fex_parse_str_simple (rec_fex_t new,
-                          char *str)
+                          char *str,
+                          char *sep)
 {
   bool res;
   rec_fex_elem_t elem;
@@ -273,7 +283,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
 
   res = true;
 
-  elem_str = strsep (&fex_str, " \t\n");
+  elem_str = strsep (&fex_str, sep);
   do
     {
       if (strlen (elem_str) > 0)
@@ -286,7 +296,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
               elem->str = strdup (elem_str);
               elem->min = -1;
               elem->max = -1;
-              new->elems[new->num_elems++] = elem;              
+              new->elems[new->num_elems++] = elem;
             }
           else
             {
@@ -295,7 +305,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
             }
         }
     }
-  while ((elem_str = strsep (&fex_str, " \t\n")));
+  while ((elem_str = strsep (&fex_str, sep)));
 
   if (new->num_elems == 0)
     {

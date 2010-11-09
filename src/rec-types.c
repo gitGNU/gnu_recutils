@@ -168,7 +168,7 @@
 #define REC_TYPE_DESCR_RE                       \
   "^"                                           \
   REC_TYPE_ZBLANKS_RE                           \
-  REC_FNAME_RE                                  \
+  REC_FNAME_RE "(," REC_FNAME_RE ")*"           \
   REC_TYPE_ZBLANKS_RE                           \
   "("                                           \
          "(" REC_TYPE_INT_DESCR_RE    ")"       \
@@ -276,10 +276,10 @@ rec_type_descr_p (char *str)
   return ret;
 }
 
-rec_field_name_t
-rec_type_descr_field_name (char *str)
+rec_fex_t
+rec_type_descr_fex (char *str)
 {
-  rec_field_name_t field_name = NULL;
+  rec_fex_t fex = NULL;
   char *p;
   char *name;
 
@@ -293,14 +293,16 @@ rec_type_descr_field_name (char *str)
   /* Skip blank characters.  */
   rec_type_skip_blanks (&p);
 
-  /* Get the field name.  */
-  if (rec_type_parse_regexp (&p, "^" REC_FNAME_RE, &name))
+  /* Get the FEX.  */
+  if (rec_type_parse_regexp (&p,
+                             "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                             &name))
     {
-      /* Parse the field name.  */
-      field_name = rec_parse_field_name_str (name);
+      fex = rec_fex_new (name, REC_FEX_CSV); 
+      free (name);
     }
 
-  return field_name;
+  return fex;
 }
 
 rec_type_t
@@ -320,7 +322,9 @@ rec_type_new (char *str)
 
   /* Skip the field name surrounded by blanks.  */
   rec_type_skip_blanks (&p);
-  if (!rec_type_parse_regexp (&p, "^" REC_FNAME_RE, &field_name_str))
+  if (!rec_type_parse_regexp (&p,
+                              "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                              &field_name_str))
     {
       free (new);
       new = NULL;

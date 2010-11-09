@@ -1,3 +1,24 @@
+2010-11-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Lists of field names supported in type definitions.  Closes task
+	12.
+	* TESTS: Regenerated.
+
+	* torture/rec-type/tsuite-rec-type.c: Reference rec-type-descr-fex
+	instead of rec-type-descr-field-name.
+	* torture/Makefile.am (REC_TYPE_TSUITE): Likewise.
+
+	* torture/rec-type/rec-type-descr-fex.c: File renamed from
+	'rec-type-descr-field-name.c'.
+
+	* src/rec-rset.c: Include rec-utils.h.
+
+	* src/rec-types.c (REC_TYPE_DESCR_RE): Regexp modified to allow a
+	comma-separated list of field names as part of the type
+	descriptor.
+	(rec_type_new): Skip the list of field names.
+	(rec_type_descr_fex): Renamed from 'rec_type_descr_field_name'.
+
 2010-11-08 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

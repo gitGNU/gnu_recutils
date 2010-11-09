@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 18:57:45 jco"
+/* -*- mode: C -*- Time-stamp: "2010-11-09 11:20:35 jemarch"
  *
  *       File:         tsuite-rec-type.c
  *       Date:         Fri Oct 29 16:13:26 2010
@@ -29,7 +29,7 @@
 extern TCase *test_rec_type_new (void);
 extern TCase *test_rec_type_destroy (void);
 extern TCase *test_rec_type_descr_p (void);
-extern TCase *test_rec_type_descr_field_name (void);
+extern TCase *test_rec_type_descr_fex (void);
 extern TCase *test_rec_type_kind (void);
 extern TCase *test_rec_type_kind_str (void);
 extern TCase *test_rec_type_equal_p (void);
@@ -44,7 +44,7 @@ tsuite_rec_type ()
   suite_add_tcase (s, test_rec_type_new ());
   suite_add_tcase (s, test_rec_type_destroy ());
   suite_add_tcase (s, test_rec_type_descr_p ());
-  suite_add_tcase (s, test_rec_type_descr_field_name ());
+  suite_add_tcase (s, test_rec_type_descr_fex ());
   suite_add_tcase (s, test_rec_type_kind ());
   suite_add_tcase (s, test_rec_type_kind_str ());
   suite_add_tcase (s, test_rec_type_equal_p ());
