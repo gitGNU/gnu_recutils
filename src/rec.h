@@ -212,9 +212,12 @@ void rec_fex_sort (rec_fex_t fex);
 
 /* Get the number of elements in a field expression.  */
 int rec_fex_size (rec_fex_t fex);
+
+/* Get the element of a field expression in the given position.  If
+   the position is invalid then NULL is returned.  */
 rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
 
-char rec_fex_elem_prefix (rec_fex_elem_t elem);
+/* Get the properties of a field expression element.  */
 rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
 char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
 int rec_fex_elem_min (rec_fex_elem_t elem);
