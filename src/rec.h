@@ -194,14 +194,23 @@ enum rec_fex_kind_e
   REC_FEX_SUBSCRIPTS
 };
 
+/* Create a field expression structure from a string.  A fex kind
+   shall be specified in KIND.  If STR does not contain a valid FEX of
+   the given kind then NULL is returned.  */
 rec_fex_t rec_fex_new (char *str,
                        enum rec_fex_kind_e kind);
+
+/* Destroy a field expression structure freeing any used resource. */
 void rec_fex_destroy (rec_fex_t fex);
 
-bool prec_fex_check (char *str);
+/* Check whether a given string STR contains a proper fex description
+   of type KIND.  */
+bool rec_fex_check (char *str, enum rec_fex_kind_e kind);
 
+/* Sort the elements of a fex regarding its 'min' attribute.  */
 void rec_fex_sort (rec_fex_t fex);
 
+/* Get the number of elements in a field expression.  */
 int rec_fex_size (rec_fex_t fex);
 rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
 

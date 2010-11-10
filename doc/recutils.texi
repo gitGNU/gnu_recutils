@@ -1054,7 +1054,7 @@ Each element makes a reference to one or more fields in a record
 identified by a given name and an optional subscript:
 
 @example
-@var{Field_Name}[@var{min}..@var{max}]
+@var{Field_Name}[@var{min}-@var{max}]
 @end example
 
 @noindent
@@ -1094,7 +1094,7 @@ Email[2]
 The second and the third email with:
 
 @example
-Email[1..2]
+Email[1-2]
 @end example
 
 And so on.  Note that a selection is an ordered set not allowing
@@ -1108,7 +1108,7 @@ Email[0],Name,Email
 is equivalent to
 
 @example
-Email[0],Name,Email[1..2]
+Email[0],Name,Email[1-2]
 @end example
 
 @node recinf

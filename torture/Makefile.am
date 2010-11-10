@@ -68,6 +68,13 @@ REC_TYPE_REG_TSUITE = rec-type-reg/rec-type-reg-new.c \
                       rec-type-reg/rec-type-reg-get.c \
                       rec-type-reg/tsuite-rec-type-reg.c
 
+REC_FEX_TSUITE = rec-fex/rec-fex-new.c \
+                 rec-fex/rec-fex-destroy.c \
+                 rec-fex/rec-fex-check.c \
+                 rec-fex/rec-fex-sort.c \
+                 rec-fex/rec-fex-size.c \
+                 rec-fex/tsuite-rec-fex.c
+
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
                    rec-field/rec-field-set-name.c \
                    rec-field/rec-field-value.c \
@@ -84,7 +91,8 @@ runtests_SOURCES = runtests.c \
                    $(REC_TYPE_TSUITE) \
                    $(REC_TYPE_REG_TSUITE) \
                    $(REC_FIELD_TSUITE) \
-                   $(REC_RECORD_TSUITE)
+                   $(REC_RECORD_TSUITE) \
+                   $(REC_FEX_TSUITE)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src \
               -I$(top_srcdir)/torture

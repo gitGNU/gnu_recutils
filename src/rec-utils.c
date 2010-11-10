@@ -129,4 +129,113 @@ rec_extract_type (char *str)
   return rec_type;
 }
 
+bool
+rec_parse_int (char **str, int *num)
+{
+  bool ret;
+  char *p, *b;
+  char number[30];
+  bool first = true;
+
+  ret = true;
+  p = *str;
+
+  b = p;
+  while (rec_digit_p (*p) || (first && (*p == '-')))
+    {
+      number[p - b] = *p;
+      p++;
+
+      first = false;
+    }
+  number[p - b] = '\0';
+
+  if (!rec_atoi (number, num))
+    {
+      ret = false;
+    }
+
+  *str = p;
+  return ret;
+}
+
+bool
+rec_parse_regexp (char **str, char *re, char **result)
+{
+  bool ret;
+  char *p;
+  regex_t regexp;
+  regmatch_t pm;
+
+  ret = true;
+  p = *str;
+
+  /* Compile the regexp.  */
+  if (regcomp (&regexp, re, REG_EXTENDED) != 0)
+    {
+      ret = false;
+    }
+
+  if (ret)
+    {
+      /* Try to match the regexp.  */
+      if (regexec (&regexp, p, 1, &pm, 0) == 0)
+        {
+          /* Get the match into 'result'.  Note that
+             since the pattern starts with a ^ rm_so shall be 0 and we
+             can use rm_eo relative to *p.  */
+          *result = malloc (pm.rm_eo + 1);
+          strncpy (*result, p, pm.rm_eo);
+          (*result)[pm.rm_eo] = '\0';
+
+          /* Advance 'p'.  */
+          p = p + pm.rm_eo;
+        }
+      else
+        {
+          ret = false;
+        }
+
+      regfree (&regexp);
+    }
+
+  *str = p;
+  return ret;
+}
+
+void
+rec_skip_blanks (char **str)
+{
+  char *p;
+
+  p = *str;
+  while (rec_blank_p (*p))
+    {
+      p++;
+    }
+
+  *str = p;
+}
+
+bool
+rec_blank_p (char c)
+{
+  return ((c == ' ')
+          || (c == '\n')
+          || (c == '\t'));
+}
+
+bool
+rec_digit_p (char c)
+{
+  return ((c >= '0') && (c <= '9'));
+}
+
+bool
+rec_letter_p (char c)
+{
+  return (((c >= 'a') && (c <= 'z'))
+          || ((c >= 'A') && (c <= 'Z')));
+}
+
 /* End of rec-utils.c */

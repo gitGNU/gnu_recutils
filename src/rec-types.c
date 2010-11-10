@@ -227,9 +227,6 @@ struct rec_type_reg_s
 
 static bool rec_type_check_re (char *regexp_str, char *str);
 static enum rec_type_kind_e rec_type_parse_type_kind (char *str);
-static bool rec_type_blank_p (char c);
-static bool rec_type_digit_p (char c);
-static bool rec_type_letter_p (char c);
 
 static bool rec_type_check_int (rec_type_t type, char *str, FILE *errors);
 static bool rec_type_check_bool (rec_type_t type, char *str, FILE *errors);
@@ -244,10 +241,6 @@ static bool rec_type_check_enum (rec_type_t type, char *str, FILE *errors);
 static bool rec_type_check_field (rec_type_t type, char *str, FILE *errors);
 
 /* Parsing routines.  */
-
-static void rec_type_skip_blanks (char **str);
-static bool rec_type_parse_int (char **str, int *num);
-static bool rec_type_parse_regexp (char **str, char *re, char **result);
 
 static char *rec_type_parse_size (char *str, rec_type_t type);
 static char *rec_type_parse_enum (char *str, rec_type_t type);
@@ -291,10 +284,10 @@ rec_type_descr_fex (char *str)
   p = str;
 
   /* Skip blank characters.  */
-  rec_type_skip_blanks (&p);
+  rec_skip_blanks (&p);
 
   /* Get the FEX.  */
-  if (rec_type_parse_regexp (&p,
+  if (rec_parse_regexp (&p,
                              "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
                              &name))
     {
@@ -321,8 +314,8 @@ rec_type_new (char *str)
     }
 
   /* Skip the field name surrounded by blanks.  */
-  rec_type_skip_blanks (&p);
-  if (!rec_type_parse_regexp (&p,
+  rec_skip_blanks (&p);
+  if (!rec_parse_regexp (&p,
                               "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
                               &field_name_str))
     {
@@ -330,10 +323,10 @@ rec_type_new (char *str)
       new = NULL;
       goto exit;
     }
-  rec_type_skip_blanks (&p);
+  rec_skip_blanks (&p);
 
   /* Get the type name.  */
-  if (!rec_type_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name_str))
+  if (!rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name_str))
     {
       free (new);
       new = NULL;
@@ -411,7 +404,7 @@ rec_type_new (char *str)
          blank characters.  */
       while (*p != '\0')
         {
-          if (!rec_type_blank_p (*p))
+          if (!rec_blank_p (*p))
             {
               free (new);
               new = NULL;
@@ -815,27 +808,6 @@ rec_type_parse_type_kind (char *str)
 }
 
 static bool
-rec_type_blank_p (char c)
-{
-  return ((c == ' ')
-          || (c == '\n')
-          || (c == '\t'));
-}
-
-static bool
-rec_type_digit_p (char c)
-{
-  return ((c >= '0') && (c <= '9'));
-}
-
-static bool
-rec_type_letter_p (char c)
-{
-  return (((c >= 'a') && (c <= 'z'))
-          || ((c >= 'A') && (c <= 'Z')));
-}
-
-static bool
 rec_type_check_int (rec_type_t type,
                     char *str,
                     FILE *errors)
@@ -894,8 +866,8 @@ rec_type_check_range (rec_type_t type,
 
   p = str;
 
-  rec_type_skip_blanks (&p);
-  if (!rec_type_parse_int (&p, &num))
+  rec_skip_blanks (&p);
+  if (!rec_parse_int (&p, &num))
     {
       if (errors)
         {
@@ -1040,14 +1012,14 @@ rec_type_check_enum (rec_type_t type,
   /* Get the name from STR.  */
   p = str;
 
-  while (p && rec_type_blank_p (*p))
+  while (p && rec_blank_p (*p))
     {
       p++;
     }
 
   b = p;
-  while (p && (rec_type_digit_p (*p)
-               || rec_type_letter_p (*p)
+  while (p && (rec_letter_p (*p)
+               || rec_letter_p (*p)
                || (*p == '_')
                || (*p == '-')))
     {
@@ -1076,91 +1048,6 @@ rec_type_check_enum (rec_type_t type,
   return false;
 }
 
-static void
-rec_type_skip_blanks (char **str)
-{
-  char *p;
-
-  p = *str;
-  while (rec_type_blank_p (*p))
-    {
-      p++;
-    }
-
-  *str = p;
-}
-
-static bool
-rec_type_parse_int (char **str, int *num)
-{
-  bool ret;
-  char *p, *b;
-  char number[30];
-
-  ret = true;
-  p = *str;
-
-  b = p;
-  while (rec_type_digit_p (*p) || (*p == '-'))
-    {
-      number[p - b] = *p;
-      p++;
-    }
-  number[p - b] = '\0';
-
-  if (!rec_atoi (number, num))
-    {
-      ret = false;
-    }
-
-  *str = p;
-  return ret;
-}
-
-static bool
-rec_type_parse_regexp (char **str, char *re, char **result)
-{
-  bool ret;
-  char *p;
-  regex_t regexp;
-  regmatch_t pm;
-
-  ret = true;
-  p = *str;
-
-  /* Compile the regexp.  */
-  if (regcomp (&regexp, re, REG_EXTENDED) != 0)
-    {
-      ret = false;
-    }
-
-  if (ret)
-    {
-      /* Try to match the regexp.  */
-      if (regexec (&regexp, p, 1, &pm, 0) == 0)
-        {
-          /* Get the match into 'result'.  Note that
-             since the pattern starts with a ^ rm_so shall be 0 and we
-             can use rm_eo relative to *p.  */
-          *result = malloc (pm.rm_eo + 1);
-          strncpy (*result, p, pm.rm_eo);
-          (*result)[pm.rm_eo] = '\0';
-
-          /* Advance 'p'.  */
-          p = p + pm.rm_eo;
-        }
-      else
-        {
-          ret = false;
-        }
-
-      regfree (&regexp);
-    }
-
-  *str = p;
-  return ret;
-}
-
 static char *
 rec_type_parse_size (char *str, rec_type_t type)
 {
@@ -1170,10 +1057,10 @@ rec_type_parse_size (char *str, rec_type_t type)
   p = str;
 
   /* Skip blanks.  */
-  rec_type_skip_blanks (&p);
+  rec_skip_blanks (&p);
 
   /* Get the size.  */
-  if (rec_type_parse_int (&p, &size))
+  if (rec_parse_int (&p, &size))
     {
       type->data.max_size = size;
     }
@@ -1203,12 +1090,12 @@ rec_type_parse_enum (char *str, rec_type_t type)
     {
       /* Skip blanks.  */
       /* XXX and comments as well!.  */
-      rec_type_skip_blanks (&p);
+      rec_skip_blanks (&p);
 
       if (*p)
         {
           /* Parse an enum entry.  */
-          if (!rec_type_parse_regexp (&p,
+          if (!rec_parse_regexp (&p,
                                       "^" REC_TYPE_ENUM_NAME_RE,
                                       &(type->data.names[i])))
             {
@@ -1260,7 +1147,7 @@ rec_type_parse_regexp_type (char *str, rec_type_t type)
   */
 
   /* Skip blanks.  */
-  rec_type_skip_blanks (&p);
+  rec_skip_blanks (&p);
         
   end_regexp = false;
   delim_char = *p;
@@ -1318,16 +1205,16 @@ rec_type_parse_range (char *str, rec_type_t type)
 
   p = str;
 
-  rec_type_skip_blanks (&p);
+  rec_skip_blanks (&p);
 
-  if (!rec_type_parse_int (&p, &(type->data.range[0])))
+  if (!rec_parse_int (&p, &(type->data.range[0])))
     {
       return NULL;
     }
 
-  rec_type_skip_blanks (&p);
+  rec_skip_blanks (&p);
 
-  if (!rec_type_parse_int (&p, &(type->data.range[1])))
+  if (!rec_parse_int (&p, &(type->data.range[1])))
     {
       return NULL;
     }

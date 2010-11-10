@@ -138,16 +138,51 @@ rec_fex_destroy (rec_fex_t fex)
 }
 
 bool
-rec_fex_check (char *str)
+rec_fex_check (char *str, enum rec_fex_kind_e kind)
 {
   int ret;
-  static char *regexp_str =
+  regex_t regexp;
+  char *regexp_str;
+  static char *regexp_simple_str =
     "^" /* Beginning of the string.  */
-    "[a-zA-Z%][a-zA-Z0-9_-]*(\\[[0-9]\\])?"     /* First element name.  */
-    "(,[a-zA-Z%][a-zA-Z0-9_-]*(\\[[0-9]\\])?)*" /* Subsequent element names. */
+    REC_FNAME_RE "([ \n\t]+" REC_FNAME_RE ")*"
     "$" /* End of the string.  */
     ;
-  regex_t regexp;
+  static char *regexp_csv_str =
+    "^" /* Beginning of the string.  */
+    REC_FNAME_RE "(," REC_FNAME_RE ")*"
+    "$" /* End of the string.  */
+    ;
+#define REC_FNAME_SUB REC_FNAME_RE "(\\[[0-9]+(-[0-9]+)?\\])?"
+  static char *regexp_sub_str =
+    "^" /* Beginning of the string.  */
+    REC_FNAME_SUB "(," REC_FNAME_SUB ")*"
+    "$" /* End of the string.  */
+    ;
+
+  switch (kind)
+    {
+    case REC_FEX_SIMPLE:
+      {
+        regexp_str = regexp_simple_str;
+        break;
+      }
+    case REC_FEX_CSV:
+      {
+        regexp_str = regexp_csv_str;
+        break;
+      }
+    case REC_FEX_SUBSCRIPTS:
+      {
+        regexp_str = regexp_sub_str;
+        break;
+      }
+    default:
+      {
+        regexp_str = NULL;
+        break;
+      }
+    }
 
   /* Compile the regexp.  */
   if ((ret = regcomp (&regexp, regexp_str, REG_EXTENDED)) != 0)
@@ -158,19 +193,6 @@ rec_fex_check (char *str)
 
   /* Check.  */
   ret = regexec (&regexp, str, 0, NULL, 0);
-  if (ret != 0)
-    {
-      char *str_error;
-      size_t str_error_size;
-
-      str_error_size = regerror (ret, &regexp, 0, 0);
-      str_error = malloc (str_error_size + 1);
-      if (str_error)
-        {
-          regerror (ret, &regexp, str_error, str_error_size);
-          fprintf (stderr, _("error: invalid field expression in -p: %s.\n"), str_error);
-        }
-    }
   
   return (ret == 0);
 }
@@ -381,9 +403,6 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
       new->str = strdup (str);
     }
 
-  free (fex_str);
-  free (elem_str);
-
   return res;
 }
 
@@ -392,80 +411,69 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
                     char *str)
 {
   bool ret;
-  char *b, *p;
-  char *field_name_str;
+  char *p;
 
   ret = true;
   p = str;
 
   /* 'Empty' part.  */
   elem->field_name = NULL;
+  elem->str = NULL;
   elem->min = -1;
   elem->max = -1;
 
-  /* Syntax:
-   *
-   *    [/]FNAME[min-max]
-   */
 
   /* Get the field name.  */
-  b = p;
-  while ((*p != 0) && (*p != '['))
+  if (!rec_parse_regexp (&p,
+                         "^" REC_FNAME_RE,
+                         &(elem->str)))
+    {
+      /* Parse error.  */
+      return false;
+    }
+  elem->field_name = rec_parse_field_name_str (elem->str);
+
+  /* Get the subscripts if they are present.  */
+  if (*p == '[')
     {
       p++;
-    }
-
-  if ((p - b) > 0)
-    {
-      size_t size = (p - b) + 1;
-
-      field_name_str = malloc (size + 1);
-      if (!field_name_str)
+      /* First subscript in range.  */
+      if (!rec_parse_int (&p, &(elem->min)))
         {
-          /* End of memory.  */
+          /* Parse error.  */
+          free (elem->str);
+          rec_field_name_destroy (elem->field_name);
           return false;
         }
 
-      strncpy (field_name_str, b, size - 1);
-      field_name_str[size - 1] = ':';
-      field_name_str[size] = '\0';
-
-      elem->field_name = rec_parse_field_name_str (field_name_str);
-      elem->str = strdup (field_name_str);
-    }
-
-  /* Get the subscript, if any.  */
-  if ((elem->field_name)
-      && (*p == '['))
-    {
-      char number[100];
-      size_t number_size = 0;
-
-      p++;
-      while ((*p != 0) && (*p <= '9') && (*p >= '0'))
+      if (*p == '-')
         {
-          number[number_size++] = *p;
           p++;
+          /* Second subscript in range.  */
+          if (!rec_parse_int (&p, &(elem->max)))
+            {
+              /* Parse error.  */
+              free (elem->str);
+              rec_field_name_destroy (elem->field_name);
+              return false;
+            }
         }
-      number[number_size] = 0;
 
-      if (*p == ']')
+      if (*p != ']')
         {
-          /* The following call cannot fail.  */
-          rec_atoi (number, &(elem->min));
+          /* Parse error.  */
+          free (elem->str);
+          rec_field_name_destroy (elem->field_name);
+          return false;
         }
-      else 
-        {
-          /* Expected ]: parse error. */
-          ret = false;
-        }
+      p++; /* Skip the ]  */
     }
-  
 
-  if (!(elem->field_name))
+  if (*p != '\0')
     {
-      /* No field name: parse error.  */
-      ret = false;
+      free (elem->str);
+      rec_field_name_destroy (elem->field_name);
+      return false;
     }
 
   return ret;

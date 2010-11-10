@@ -1,5 +1,41 @@
 2010-11-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-fex unit tests and some fixes.
+	* torture/rec-fex/rec-fex-size.c: New file.
+	(test_rec_fex_size): New function.
+	(rec_fex_size_nominal): New test.
+
+	* torture/rec-fex/rec-fex-sort.c: New file.
+	(test_rec_fex_sort): New function.
+	(rec_fex_sort_nominal): New test.
+
+	* torture/rec-fex/rec-fex-check.c: New file.
+	(test_rec_fex_check): New funtion.
+	(rec_fex_check_simple_nominal): New test.
+	(rec_fex_check_simple_invalid): New test.
+	(rec_fex_check_csv_nominal): New test.
+	(rec_fex_check_csv_invalid): New test.
+	(rec_fex_check_sub_nominal): New test.
+	(rec_fex_check_sub_invalid): New test.
+
+	* torture/rec-fex/rec-fex-destroy.c: New file.
+	(test_rec_fex_destroy): New function.
+	(rec_fex_destroy_nominal): New test.
+
+	* src/rec-fex.c (rec_fex_parse_elem): Support for maximum part in
+	subscripts.
+
+	* torture/rec-fex/rec-fex-new.c: New file.
+	(test_rec_fex_new): New function.
+	(rec_fex_new_single): New test.
+	(rec_fex_new_simple): New test.
+	(rec_fex_new_subscripts): New test.
+
+	* torture/rec-fex/tsuite-rec-fex.c: New file.
+	(tsuite_rec_fex): New function.
+
+2010-11-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Lists of field names supported in type definitions.  Closes task
 	12.
 	* TESTS: Regenerated.

@@ -210,7 +210,7 @@ recsel_parse_args (int argc,
 
             recsel_fex_str = xstrdup (optarg);
 
-            if (!rec_fex_check (recsel_fex_str))
+            if (!rec_fex_check (recsel_fex_str, REC_FEX_SUBSCRIPTS))
               {
                 exit (EXIT_FAILURE);
               }

@@ -41,6 +41,14 @@ bool rec_atod (char *str, double *number);
 char *rec_extract_url (char *str);
 char *rec_extract_type (char *str);
 
+/* Generic parsing routines.  */
+bool rec_blank_p (char c);
+bool rec_digit_p (char c);
+bool rec_letter_p (char c);
+bool rec_parse_int (char **str, int *num);
+void rec_skip_blanks (char **str);
+bool rec_parse_regexp (char **str, char *re, char **result);
+
 #endif /* rec-utils.h */
 
 /* End of rec-utils.h.  */

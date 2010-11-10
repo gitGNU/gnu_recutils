@@ -200,7 +200,7 @@ recset_parse_args (int argc,
         case 'f':
           {
             recutl_fex_str = xstrdup (optarg);
-            if (!rec_fex_check (recutl_fex_str))
+            if (!rec_fex_check (recutl_fex_str, REC_FEX_SUBSCRIPTS))
               {
                 exit (EXIT_FAILURE);
               }
