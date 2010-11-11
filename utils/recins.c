@@ -416,7 +416,7 @@ recins_add_new_record (rec_db_t db)
                   if (recutl_sex_str && (!parse_status))
                     {
                       recutl_error (_("evaluating the selection expression.\n"));
-                      exit (1);
+                      exit (EXIT_FAILURE);
                     }
                   rset_elem = rec_rset_next_record (rset, rset_elem);
                 }
