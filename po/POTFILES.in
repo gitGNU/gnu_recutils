@@ -17,6 +17,7 @@ src/rec-fex.c
 src/rec-field-name.c
 src/rec-int.c
 src/rec-types.c
+src/rec-utils.c
 utils/csv2rec.c
 utils/mdb2rec.c
 utils/recdel.c
