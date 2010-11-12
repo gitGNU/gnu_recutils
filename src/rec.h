@@ -350,6 +350,8 @@ typedef struct rec_field_s *rec_field_t;
 rec_field_t rec_field_new (const rec_field_name_t name,
                            const char *value);
 
+/* Parse a field name from a string and return it.  If the string does
+   not contain a valid field name then return NULL.  */
 rec_field_t rec_field_new_str (const char *name,
                                const char *value);
 

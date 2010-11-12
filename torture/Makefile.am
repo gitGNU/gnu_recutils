@@ -81,10 +81,24 @@ REC_FEX_TSUITE = rec-fex/rec-fex-new.c \
                  rec-fex/tsuite-rec-fex.c
 
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
+                   rec-field/rec-field-name-str.c \
                    rec-field/rec-field-set-name.c \
                    rec-field/rec-field-value.c \
                    rec-field/rec-field-set-value.c \
                    rec-field/rec-field-dup.c \
+                   rec-field/rec-field-new.c \
+                   rec-field/rec-field-new-str.c \
+                   rec-field/rec-field-destroy.c \
+                   rec-field/rec-field-equal-p.c \
+                   rec-field/rec-field-source.c \
+                   rec-field/rec-field-set-source.c \
+                   rec-field/rec-field-location.c \
+                   rec-field/rec-field-location-str.c \
+                   rec-field/rec-field-set-location.c \
+                   rec-field/rec-field-char-location.c \
+                   rec-field/rec-field-char-location-str.c \
+                   rec-field/rec-field-set-char-location.c \
+                   rec-field/rec-field-to-comment.c \
                    rec-field/tsuite-rec-field.c
 
 REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c

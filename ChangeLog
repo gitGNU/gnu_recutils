@@ -1,5 +1,66 @@
 2010-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-field unit tests.
+	* torture/rec-field/rec-field-to-comment.c: New file.
+	(test_rec_field_to_comment): New function.
+	(rec_field_to_comment_nominal): New test.
+
+	* torture/rec-field/rec-field-set-char-location.c: New file.
+	(test_rec_field_set_char_location): New function.
+	(rec_field_set_char_location_nominal): New test.
+
+	* torture/rec-field/rec-field-char-location-str.c: New file.
+	(test_rec_field_char_location_str): New function.
+	(rec_field_char_location_str_nominal): New test.
+
+	* torture/rec-field/rec-field-char-location.c: New file.
+	(test_rec_field_char_location): New function.
+	(rec_field_char_location_nominal): New test.
+
+	* torture/rec-field/rec-field-set-location.c: New file.
+	(test_rec_field_set_location): New function.
+	(rec_field_set_location_nominal): New test.
+
+	* torture/rec-field/rec-field-location-str.c: New file.
+	(test_rec_field_location_str): New function.
+	(rec_field_location_str_nominal): New test.
+
+	* torture/rec-field/rec-field-location.c: New file.
+	(test_rec_field_location): New function.
+	(rec_field_location_nominal): New test.
+
+	* torture/rec-field/rec-field-set-source.c: New file.
+	(test_rec_field_set_source): New function.
+	(rec_field_set_source_nominal): New test.
+
+	* torture/rec-field/rec-field-source.c: New file.
+	(test_rec_field_source): New function.
+	(rec_field_source_nominal): New test.
+
+	* torture/rec-field/rec-field-equal-p.c: New file.
+	(test_rec_field_equal_p): New function.
+	(rec_field_equal_p_equal): New test.
+	(rec_field_equal_p_nonequal): New test.
+
+	* torture/rec-field/rec-field-name-str.c: New file.
+	(test_rec_field_name_str): New function.
+	(rec_field_name_str_nominal): New test.
+
+	* torture/rec-field/rec-field-destroy.c: New file.
+	(test_rec_field_destroy): New function.
+	(rec_field_destroy_nominal): New test.
+
+	* torture/rec-field/rec-field-new-str.c: New file.
+	(test_rec_field_new_str): New function.
+	(rec_field_new_str_nominal): New test.
+	(rec_field_new_str_invalid): New test.
+
+	* torture/rec-field/rec-field-new.c: New file.
+	(test_rec_field_new): New function.
+	(rec_field_new_nominal): New test.
+
+2010-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	More rec-fex unit tests.
 	* torture/rec-fex/rec-fex-elem-max.c: New file.
 	(test_rec_fex_elem_max): New function.
