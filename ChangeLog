@@ -1,3 +1,22 @@
+2010-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	More rec-fex unit tests.
+	* torture/rec-fex/rec-fex-elem-max.c: New file.
+	(test_rec_fex_elem_max): New function.
+	(rec_fex_elem_max_nosubs): New test.
+	(rec_fex_elem_max_min): New test.
+	(rec_fex_elem_max_minmax): New test.
+
+	* torture/rec-fex/rec-fex-elem-min.c: New file.
+	(test_rec_fex_elem_min): New function.
+	(rec_fex_elem_min_nosubs): New test.
+	(rec_fex_elem_min_min): New test.
+	(rec_fex_elem_min_minmax): New test.
+
+	* torture/rec-fex/rec-fex-elem-field-name-str.c: New file.
+	(test_rec_fex_elem_field_name_str): New function.
+	(rec_fex_elem_field_name_str_nominal): New test.
+
 2010-11-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	More rec-fex unit tests.
