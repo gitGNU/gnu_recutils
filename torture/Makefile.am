@@ -75,6 +75,9 @@ REC_FEX_TSUITE = rec-fex/rec-fex-new.c \
                  rec-fex/rec-fex-size.c \
                  rec-fex/rec-fex-get.c \
                  rec-fex/rec-fex-elem-field-name.c \
+                 rec-fex/rec-fex-elem-field-name-str.c \
+                 rec-fex/rec-fex-elem-min.c \
+                 rec-fex/rec-fex-elem-max.c \
                  rec-fex/tsuite-rec-fex.c
 
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
