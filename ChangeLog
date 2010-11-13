@@ -1,3 +1,63 @@
+2010-11-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-parser unit tests.
+	* torture/rec-parser/rec-parser-perror.c: New file.
+	(test_rec_parser_perror): New function.
+	(rec_parser_perror_nominal): New test.
+
+	* torture/rec-parser/rec-parser-reset.c: New file.
+	(test_rec_parser_reset): New function.
+	(rec_parser_reset_nominal): New test.
+
+	* torture/rec-parser/rec-parser-error.c: New file.
+	(test_rec_parser_error): New function.
+	(rec_parser_error_nominal): New test.
+
+	* torture/rec-parser/rec-parser-eof.c: New file.
+	(test_rec_parser_eof): New function.
+	(rec_parser_eof_nominal): New test.
+
+	* torture/rec-parser/rec-parse-db.c: New file.
+	(test_rec_parse_db): New function.
+	(rec_parse_db_nominal): New test.
+	(rec_parse_db_invalid): New test.
+
+	* torture/rec-parser/rec-parse-rset.c: New file.
+	(test_rec_parse_rset): New function.
+	(rec_parse_rset_nominal): New test.
+	(rec_parse_rset_invalid): New test.
+
+	* torture/rec-parser/rec-parse-record.c: New file.
+	(test_rec_parse_record): New function.
+	(rec_parse_record_nominal): New test.
+	(rec_parse_record_invalid): New test.
+
+	* torture/rec-parser/rec-parse-field.c: New file.
+	(test_rec_parse_field): New function.
+	(rec_parse_field_nominal): New test.
+	(rec_parse_field_invalid): New test.
+
+	* torture/rec-parser/rec-parse-field-name.c: New file.
+	(test_rec_parse_field_name): New function.
+	(rec_parse_field_name_nominal): New test.
+	(rec_parse_field_name_invalid): New test.
+
+	* torture/rec-parser/rec-parse-field-name-str.c: New file.
+	(test_rec_parse_field_name_str): New function.
+	(rec_parse_field_name_str_nominal): New test.
+	(rec_parse_field_name_str_invalid): New test.
+
+	* torture/rec-parser/rec-parser-destroy.c: New file.
+	(test_rec_parser_destroy): New function.
+	(rec_parser_destroy_nominal): New test.
+
+	* torture/rec-parser/rec-parser-new.c: New file.
+	(test_rec_parser_new): New function.
+	(rec_parser_new_nominal): New test.
+
+	* torture/rec-parser/tsuite-rec-parser.c: New file.
+	(tsuite_rec_parser): New function.
+
 2010-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-field unit tests.

@@ -103,6 +103,21 @@ REC_FIELD_TSUITE = rec-field/rec-field-name.c \
 
 REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c
 
+REC_PARSER_TSUITE = rec-parser/rec-parser-new.c \
+                    rec-parser/rec-parser-destroy.c \
+                    rec-parser/rec-parse-field-name-str.c \
+                    rec-parser/rec-parse-field-name.c \
+                    rec-parser/rec-parse-field.c \
+                    rec-parser/rec-parse-record.c \
+                    rec-parser/rec-parse-record-str.c \
+                    rec-parser/rec-parse-rset.c \
+                    rec-parser/rec-parse-db.c \
+                    rec-parser/rec-parser-eof.c \
+                    rec-parser/rec-parser-error.c \
+                    rec-parser/rec-parser-reset.c \
+                    rec-parser/rec-parser-perror.c \
+                    rec-parser/tsuite-rec-parser.c
+
 runtests_SOURCES = runtests.c \
                    $(REC_MSET_TSUITE) \
                    $(REC_COMMENT_TSUITE) \
@@ -111,7 +126,8 @@ runtests_SOURCES = runtests.c \
                    $(REC_TYPE_REG_TSUITE) \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE) \
-                   $(REC_FEX_TSUITE)
+                   $(REC_FEX_TSUITE) \
+                   $(REC_PARSER_TSUITE)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src \
               -I$(top_srcdir)/torture

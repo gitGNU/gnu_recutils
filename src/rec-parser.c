@@ -648,6 +648,16 @@ rec_parse_field_name_str (char *str)
           rec_parser_destroy (parser);
         }
 
+      if (!feof (stm))
+        {
+          /* There is additional stuff after the field name.  */
+          if (field_name)
+            {
+              rec_field_name_destroy (field_name);
+            }
+          field_name = NULL;
+        }
+
       fclose (stm);
     }
 
@@ -913,6 +923,7 @@ rec_parse_field_value (rec_parser_t parser,
       return false;
     }
 
+  c = '\0';
   prev_newline = false;
   ret = true;
   index = 0;
