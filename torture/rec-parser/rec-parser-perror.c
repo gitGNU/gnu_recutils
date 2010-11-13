@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 22:40:01 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-13 22:42:34 jemarch"
  *
  *       File:         rec-parser-perror.c
  *       Date:         Sat Nov 13 22:37:26 2010
@@ -7,8 +7,9 @@
  *
  */
 
-#include <check.h>
+#include <config.h>
 
+#include <check.h>
 #include <rec.h>
 
 /*-
@@ -33,7 +34,7 @@ START_TEST(rec_parser_perror_nominal)
   fail_if (rec_parser_error (parser));
   fail_if (rec_parse_field (parser, &field));
   fail_if (!rec_parser_error (parser));
-  rec_parser_perror (parser, "Expected error while parsing: ");
+  rec_parser_perror (parser, "expected error while parsing: ");
   rec_parser_destroy (parser);
   fclose (stm);
 }

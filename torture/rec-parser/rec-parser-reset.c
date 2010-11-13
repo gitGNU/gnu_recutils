@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 22:35:51 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-13 22:42:45 jemarch"
  *
  *       File:         rec-parser-reset.c
  *       Date:         Sat Nov 13 22:34:36 2010
@@ -7,8 +7,8 @@
  *
  */
 
+#include <config.h>
 #include <check.h>
-
 #include <rec.h>
 
 /*-
