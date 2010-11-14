@@ -1,3 +1,36 @@
+2010-11-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* torture/rec-writer/rec-write-record.c: New file.
+	(test_rec_write_record): New function.
+	(rec_write_record_nominal): New test.
+	(rec_write_record_sexp): New test.
+
+	* torture/rec-writer/rec-write-field-name.c: New file.
+	(test_rec_write_field_name): New function.
+	(rec_write_field_name_nominal): New test.
+	(rec_write_field_name_sexp): New test.
+
+	* torture/rec-writer/rec-write-field.c: New file.
+	(test_rec_write_field): New function.
+	(rec_write_field_nominal): New test.
+	(rec_write_field_sexp): New test.
+
+	* torture/rec-writer/rec-write-comment.c: New file.
+	(test_rec_write_comment): New function.
+	(rec_write_comment_nominal): New test.
+	(rec_write_comment_sexp): New test.
+
+	* torture/rec-writer/rec-writer-destroy.c: New file.
+	(test_rec_writer_destroy): New function.
+	(rec_writer_destroy_nominal): New test.
+
+	* torture/rec-writer/rec-writer-new.c: New file.
+	(test_rec_writer_new): New function.
+	(rec_writer_new_nominal): New test.
+
+	* torture/rec-writer/tsuite-rec-writer.c: New file.
+	(tsuite_rec_writer): New function.
+
 2010-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-parser unit tests.

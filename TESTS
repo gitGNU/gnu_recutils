@@ -4,6 +4,151 @@
 %key: Test
 %mandatory: Unit
 
+Test: rec_fex_elem_field_name_str_nominal
+Unit: rec_fex_elem_field_name_str
+Description:
++ Get the string containing the field name of
++ a field expression element.
+
+Test: rec_fex_elem_field_name_nominal
+Unit: rec_fex_elem_field_name
+Description:
++ Get the field name of a field expression
++ element.
+
+Test: rec_fex_new_single
+Unit: rec_fex_new
+Description:
++ Create field expressions composed by a single
++ field.  It shall work for any kind of field name.
+
+Test: rec_fex_new_simple
+Unit: rec_fex_new
+Description:
++ Create field expressions of the SIMPLE variety.
+
+Test: rec_fex_new_csv
+Unit: rec_fex_new
+Description:
++ Create field expressions of the CSV variety.
+
+Test: rec_fex_new_subscripts
+Unit: rec_fex_new
+Description:
++ Create field expressions featuring subscripts.
+
+Test: rec_fex_new_invalid
+Unit: rec_fex_new
+Description:
++ Try to create field expressions from an invalid string.
++ The creation of the fex shall fail.
+
+Test: rec_fex_elem_max_nosub
+Unit: rec_fex_elem_max
+Description:
++ Get the max index of an entry in
++ a field expression created without
++ subscripts.
++
++ The max subscript shall be -1 in this case.
+
+Test: rec_fex_elem_max_min
+Unit: rec_fex_elem_max
+Description:
++ Get the max index of an entry in
++ a field expression created with
++ a min subscript.
+
+Test: rec_fex_elem_max_minmax
+Unit: rec_fex_elem_max
+Description:
++ Get the max index of an entry in
++ a field expression created with
++ full subscripts (both min and max).
+
+Test: rec_fex_get_nominal
+Unit: rec_fex_get
+Description:
++ Get elements from a field expression.
+
+Test: rec_fex_get_invalid
+Unit: rec_fex_get
+Description:
++ Get elements from a field expression
++ providing invalid positions.
++
++ The calls to 'rec_fex_get' shall return
++ NULL in those cases.
+
+Test: rec_fex_size_nominal
+Unit: rec_fex_size
+Description:
++ Get the size of several field
++ expressions.
+
+Test: rec_fex_sort_nominal
+Unit: rec_fex_sort
+Description:
++ Sort a field expression.
+
+Test: rec_fex_elem_min_nosub
+Unit: rec_fex_elem_min
+Description:
++ Get the min index of an entry in
++ a field expression created without
++ subscripts.
++
++ The min subscript shall be -1 in this case.
+
+Test: rec_fex_elem_min_min
+Unit: rec_fex_elem_min
+Description:
++ Get the min index of an entry in
++ a field expression created with
++ a min subscript.
+
+Test: rec_fex_elem_min_minmax
+Unit: rec_fex_elem_min
+Description:
++ Get the min index of an entry in
++ a field expression created with
++ full subscripts (both min and max).
+
+Test: rec_fex_check_simple_nominal
+Unit: rec_fex_check
+Description:
++ Check for simple field expressions.
+
+Test: rec_fex_check_simple_invalid
+Unit: rec_fex_check
+Description:
++ Check for simple field expressions.
+
+Test: rec_fex_check_csv_nominal
+Unit: rec_fex_check
+Description:
++ Check for comma-separated simple field expressions.
+
+Test: rec_fex_check_csv_invalid
+Unit: rec_fex_check
+Description:
++ Check for csv simple field expressions.
+
+Test: rec_fex_check_sub_nominal
+Unit: rec_fex_check
+Description:
++ Check for comma-separated field expressions.
+
+Test: rec_fex_check_sub_invalid
+Unit: rec_fex_check
+Description:
++ Check for comma-separated field expressions.
+
+Test: rec_fex_destroy_nominal
+Unit: rec_fex_destroy
+Description:
++ Destroy a properly initialized field expression.
+
 Test: rec_comment_destroy_nominal
 Unit: rec_comment_destroy
 Description:
@@ -178,6 +323,24 @@ Description:
 +
 + 1. The function shall return NULL.
 
+Test: rec_field_new_str
+Unit: rec_field_new
+Description:
++ Create a field from a valid string.
+
+Test: rec_field_new_str_invalid
+Unit: rec_field_new_str
+Description:
++ Try to create a field from a string
++ not containing a valid field name.
++
++ The creation function shall return NULL.
+
+Test: rec_field_new_nominal
+Unit: rec_field_new
+Description:
++ Create a field.
+
 Test: rec_field_set_name_empty
 Unit: rec_field_set_name
 Description:
@@ -195,6 +358,36 @@ Description:
 + 1. The call should not produce an error.
 + 2. The name of the field should be properly
 +    set.
+
+Test: rec_field_source_nominal
+Unit: rec_field_source
+Description:
++ Get the source property of a field.
+
+Test: rec_field_location_nominal
+Unit: rec_field_location
+Description:
++ Get the location of a field.
+
+Test: rec_field_set_char_location_nominal
+Unit: rec_field_set_char_location
+Description:
++ Set the char location of a field.
+
+Test: rec_field_destroy_nominal
+Unit: rec_field_destroy
+Description:
++ Destroy a field.
+
+Test: rec_field_to_comment_nominal
+Unit: rec_field_to_comment
+Description:
++ Convert fields into comments.
+
+Test: rec_field_char_location_str_nominal
+Unit: rec_field_char_location_str
+Description:
++ Get the char location of a field as a string.
 
 Test: rec_field_value_empty
 Unit: rec_field_value
@@ -232,6 +425,17 @@ Description:
 + 2. The value of the field should be properly
 +    set.
 
+Test: rec_field_name_str_nominal
+Unit: rec_field_name_str
+Description:
++ Get a string containing the name
++ of a given field.
+
+Test: rec_field_set_source_nominal
+Unit: rec_field_set_source
+Description:
++ Set the source of a field.
+
 Test: rec_field_dup_empty
 Unit: rec_field_dup
 Description:
@@ -252,6 +456,25 @@ Description:
 + 2. The value of the copied field should be the
 +    appropriate.
 
+Test: rec_field_location_str_nominal
+Unit: rec_field_location_str
+Description:
++ Get the location of a field as a string.
+
+Test: rec_field_equal_p_equal
+Unit: rec_field_equal_p
+Description:
++ Test if two given fields are equal. i.e.
++ they have eql field names and the same value.
+
+Test: rec_field_equal_p_nonequal
+Unit: rec_field_equal_p
+Description:
++ Check whether two different fields are
++ equal.
++
++ The comparison function shall return false.
+
 Test: rec_field_name_empty
 Unit: rec_field_name
 Description:
@@ -269,6 +492,16 @@ Description:
 + 1. The call should not produce an error.
 + 2. The name of the field should be properly
 +    returned.
+
+Test: rec_field_set_location_nominal
+Unit: rec_field_set_location
+Description:
++ Set the location of a field.
+
+Test: rec_field_char_location_nominal
+Unit: rec_field_char_location
+Description:
++ Get the char location of a field.
 
 Test: rec_type_kind_nominal
 Unit: rec_type_kind
@@ -466,7 +699,7 @@ Description:
 + Check for the existence of a field included
 + in the record.
 +
-+ 1. The call to rec_record_field_p should
++ 1. The call to rec_record_field_p should 
 +    return true
 
 Test: rec_record_field_p_nonexisting
@@ -475,8 +708,109 @@ Description:
 + Check for the existence of a field not included
 + in the record.
 +
-+ 1. The call to rec_record_field_p should
++ 1. The call to rec_record_field_p should 
 +    return false.
+
+Test: rec_parse_field_name_str_nominal
+Unit: rec_parse_field_name_str
+Description:
++ Parse valid field names.
+
+Test: rec_parse_field_name_str_invalid
+Unit: rec_parse_field_name_str
+Description:
++ Try to parse invalid field names.
+
+Test: rec_parse_record_str_nominal
+Unit: rec_parse_record_str
+Description:
++ Parse valid records from strings.
+
+Test: rec_parse_record_str_invalid
+Unit: rec_parse_record_str
+Description:
++ Try to parse invalid records from strings.
+
+Test: rec_parser_error_nominal
+Unit: rec_parser_error
+Description:
++ Check for the error status of a rec parser.
+
+Test: rec_parse_rset_nominal
+Unit: rec_parse_rset
+Description:
++ Parse valid record sets.
+
+Test: rec_parse_rset_invalid
+Unit: rec_parse_rset
+Description:
++ Try to parse invalid record sets.
+
+Test: rec_parse_record_nominal
+Unit: rec_parse_record
+Description:
++ Parse valid records.
+
+Test: rec_parse_record_invalid
+Unit: rec_parse_record
+Description:
++ Try to parse invalid records.
+
+Test: rec_parse_field_nominal
+Unit: rec_parse_field
+Description:
++ Parse valid fields.
+
+Test: rec_parse_field_invalid
+Unit: rec_parse_field
+Description:
++ Try to parse invalid fields.
+
+Test: rec_parser_reset_nominal
+Unit: rec_parser_reset
+Description:
++ Reset a rec parser.
+
+Test: rec_parser_destroy_nominal
+Unit: rec_parser_destroy
+Description:
++ Destroy a rec parser.
+
+Test: rec_parser_perror_nominal
+Unit: rec_parser_perror
+Description:
++ Print the error message associated with a failed
++ parsing.
+
+Test: rec_parser_new_nominal
+Unit: rec_parser_new
+Description:
++ Create a rec parser.
+
+Test: rec_parse_db_nominal
+Unit: rec_parse_db
+Description:
++ Parse valid databases.
+
+Test: rec_parse_db_invalid
+Unit: rec_parse_db
+Description:
++ Try to parse invalid databases.
+
+Test: rec_parse_field_name_nominal
+Unit: rec_parse_field_name
+Description:
++ Parse valid field names.
+
+Test: rec_parse_field_name_invalid
+Unit: rec_parse_field_name
+Description:
++ Try to parse invalid field names.
+
+Test: rec_parser_eof_nominal
+Unit: rec_parser_eof
+Description:
++ Check for EOF in a parser operating a stream.
 
 Test: rec_field_name_part_normalise_nominal
 Unit: rec_field_name_part_normalise
@@ -583,5 +917,55 @@ Test: rec_field_name_get_nominal
 Unit: rec_field_name_get
 Description:
 + Get the name parts of a field name.
+
+Test: rec_write_record_nominal
+Unit: rec_write_record
+Description:
++ Write records.
+
+Test: rec_write_record_sexp
+Unit: rec_write_record
+Description:
++ Write records in sexps.
+
+Test: rec_write_field_name_nominal
+Unit: rec_write_field_name
+Description:
++ Write field names.
+
+Test: rec_write_field_name_sexp
+Unit: rec_write_field_name
+Description:
++ Write field names.
+
+Test: rec_write_field_nominal
+Unit: rec_write_field
+Description:
++ Write fields.
+
+Test: rec_write_field_sexp
+Unit: rec_write_field
+Description:
++ Write fields.
+
+Test: rec_writer_destroy_nominal
+Unit: rec_writer_destroy
+Description:
++ Destroy a rec writer.
+
+Test: rec_write_comment_nominal
+Unit: rec_write_comment
+Description:
++ Write comments.
+
+Test: rec_write_comment_sexp
+Unit: rec_write_comment
+Description:
++ Write comments.
+
+Test: rec_writer_new_nominal
+Unit: rec_writer_new
+Description:
++ Create a rec writer.
 
 # End of Tests

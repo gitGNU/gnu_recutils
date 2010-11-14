@@ -118,6 +118,14 @@ REC_PARSER_TSUITE = rec-parser/rec-parser-new.c \
                     rec-parser/rec-parser-perror.c \
                     rec-parser/tsuite-rec-parser.c
 
+REC_WRITER_TSUITE= rec-writer/rec-write-comment.c \
+                   rec-writer/rec-write-field.c \
+                   rec-writer/rec-write-field-name.c \
+                   rec-writer/rec-writer-destroy.c \
+                   rec-writer/rec-write-record.c \
+                   rec-writer/rec-writer-new.c \
+                   rec-writer/tsuite-rec-writer.c
+
 runtests_SOURCES = runtests.c \
                    $(REC_MSET_TSUITE) \
                    $(REC_COMMENT_TSUITE) \
@@ -127,7 +135,8 @@ runtests_SOURCES = runtests.c \
                    $(REC_FIELD_TSUITE) \
                    $(REC_RECORD_TSUITE) \
                    $(REC_FEX_TSUITE) \
-                   $(REC_PARSER_TSUITE)
+                   $(REC_PARSER_TSUITE) \
+                   $(REC_WRITER_TSUITE)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src \
               -I$(top_srcdir)/torture

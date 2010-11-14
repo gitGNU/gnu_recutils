@@ -26,7 +26,9 @@ output_dir=$1
 
 # Invoke lcov to generate the info file
 lcov -b ../src -d ../src -c -o ../src/librec.cov
-genhtml -o $output_dir ../src/librec.cov
+lcov -b ../utils -d ../utils -c -o ../src/utils.cov
+cat ../src/librec.cov ../src/utils.cov > ../src/recutils.cov
+genhtml -o $output_dir ../src/recutils.cov
 
 # Cleanup
 rm ../src/librec.cov

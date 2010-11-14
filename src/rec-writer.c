@@ -273,6 +273,10 @@ rec_write_field_name (rec_writer_t writer,
     {
       if (mode == REC_WRITER_SEXP)
         {
+          if ((i != 0) && (!rec_writer_putc (writer, ' ')))
+            {
+              return false;
+            }
           if (!rec_writer_putc (writer, '"'))
             {
               return false;

@@ -34,6 +34,11 @@ bin_PROGRAMS = recinf recsel recins recdel recset recfix \
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
 
+AM_CFLAGS = -Wall -fno-strict-aliasing
+if USE_COVERAGE
+  AM_CFLAGS += -fprofile-arcs -ftest-coverage
+endif
+
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/src -DLOCALEDIR=\"$(localedir)\"
 
 recinf_SOURCES = $(COMMONSRC) \
