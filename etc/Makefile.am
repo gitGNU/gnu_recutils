@@ -17,5 +17,6 @@
 
 etcdir=$(pkgdatadir)/etc
 etc_DATA = FSD.rec
+EXTRA_DIST = FSD.rec
 
 # End of Makefile.am
