@@ -1,5 +1,29 @@
 2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-writer: unit tests.
+	* torture/rec-writer/rec-write-comment-str.c: New file.
+	(test_rec_write_comment_str): New function.
+	(rec_write_comment_str_nominal): New test.
+	(rec_write_comment_str_sexp): New test.
+
+	* torture/rec-writer/rec-write-field-str.c: New file.
+	(test_rec_write_field_str): New function.
+	(rec_write_field_str_nominal): New test.
+	(rec_write_field_str_sexp): New test.
+
+	* torture/rec-writer/rec-write-field-name-str.c: New file.
+	(test_rec_write_field_name_str): New function.
+	(rec_write_field_name_str_nominal): New test.
+	(rec_write_field_name_str_sexp): New test.
+
+	* torture/rec-writer/rec-write-db.c: New file.
+	(test_rec_write_db): New function.
+	(rec_write_db_nominal): New test.
+
+	* torture/rec-writer/rec-write-rset.c: New file.
+	(test_rec_write_rset): New function.
+	(rec_write_rset_nominal): New test.
+
 	* torture/rec-writer/rec-write-record-with-fex.c: New file.
 	(test_rec_write_record_with_fex): New function.
 	(rec_write_record_with_fex_nominal): New test.

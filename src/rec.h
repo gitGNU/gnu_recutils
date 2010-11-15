@@ -789,7 +789,6 @@ char *rec_write_comment_str (rec_comment_t comment, rec_writer_mode_t mode);
 
 /* Getting information about the writer */
 bool rec_writer_eof (rec_writer_t writer);
-int rec_writer_line (rec_writer_t writer);
 
 /*
  * SELECTION EXPRESSIONS

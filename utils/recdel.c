@@ -129,17 +129,13 @@ Examples:\n\
 void
 recdel_delete_records (rec_db_t db)
 {
-  int n_rset, n_rec, i, j;
+  int n_rset;
   int numrec;
-  int deleted;
   int rset_size;
   rec_rset_t rset;
   rec_record_t record;
   rec_comment_t comment;
   bool parse_status = true;
-  rec_record_t drec;
-  char *comment_field_str;
-  char *comment_str;
   rec_rset_elem_t rec_elem;
   rec_rset_elem_t new_elem;
 
@@ -257,7 +253,7 @@ recdel_parse_args (int argc,
         }
     }
   
-  if ((recutl_num == -1) && !recutl_sex_str & !recdel_force)
+  if ((recutl_num == -1) && !recutl_sex_str && !recdel_force)
     {
       recutl_error (_("ignoring a request to delete all records of type %s.\n"),
                     recutl_type ? recutl_type : "unknown");
