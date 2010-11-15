@@ -132,6 +132,12 @@ REC_WRITER_TSUITE= rec-writer/rec-write-comment.c \
                    rec-writer/rec-write-comment-str.c \
                    rec-writer/tsuite-rec-writer.c
 
+REC_SEX_TSUITE = rec-sex/rec-sex-new.c \
+                 rec-sex/rec-sex-destroy.c \
+                 rec-sex/rec-sex-compile.c \
+                 rec-sex/rec-sex-eval.c \
+                 rec-sex/tsuite-rec-sex.c
+
 runtests_SOURCES = runtests.c \
                    $(REC_MSET_TSUITE) \
                    $(REC_COMMENT_TSUITE) \
@@ -142,7 +148,8 @@ runtests_SOURCES = runtests.c \
                    $(REC_RECORD_TSUITE) \
                    $(REC_FEX_TSUITE) \
                    $(REC_PARSER_TSUITE) \
-                   $(REC_WRITER_TSUITE)
+                   $(REC_WRITER_TSUITE) \
+                   $(REC_SEX_TSUITE)
 
 AM_CPPFLAGS = -I$(top_srcdir)/src \
               -I$(top_srcdir)/torture

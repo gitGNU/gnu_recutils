@@ -1,5 +1,29 @@
 2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-sex: unit tests.
+	* torture/rec-sex/rec-sex-eval.c: New file.
+	(test_rec_sex_eval): New function.
+	(rec_sex_eval_match): New test.
+	(rec_sex_eval_nomatch): New test.
+
+	* torture/rec-sex/rec-sex-compile.c: New file.
+	(test_rec_sex_compile): New function.
+	(rec_sex_compile_nominal): New test.
+	(rec_sex_compile_invalid): New test.
+
+	* torture/rec-sex/rec-sex-destroy.c: New file.
+	(test_rec_sex_destroy): New function.
+	(rec_sex_destroy_nominal): New test.
+
+	* torture/rec-sex/rec-sex-new.c: New file.
+	(test_rec_sex_new): New function.
+	(rec_sex_new_nominal): New test.
+
+	* torture/rec-sex/tsuite-rec-sex.c: New file.
+	(tsuite_rec_sex): New function.
+
+2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: compilation warnings removed.
 	* utils/recinf.c: Unused variables removed.
 	* utils/recsel.c: Likewise.
