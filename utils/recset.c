@@ -314,14 +314,12 @@ recset_parse_args (int argc,
 static void
 recset_process_actions (rec_db_t db)
 {
-  int n_rset, n_rec, rset_size;
+  int n_rset, rset_size;
   int numrec;
   rec_rset_t rset;
   rec_record_t record;
-  rec_field_t field;
   bool parse_status = true;
   rec_rset_elem_t rec_elem;
-  rec_rset_elem_t new_rec_elem;
   FILE *errors_stm;
   char *errors_str;
   size_t errors_str_size;

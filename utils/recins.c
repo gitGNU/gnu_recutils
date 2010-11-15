@@ -149,11 +149,7 @@ recins_insert_record (rec_db_t db,
 {
   bool res;
   rec_rset_t rset;
-  rec_record_t rec;
-  rec_field_t field;
   rec_rset_elem_t last_elem, new_elem;
-  rec_record_elem_t rec_elem;
-  char *errors;
   FILE *errors_stm;
   char *errors_str;
   size_t errors_str_size;
@@ -244,6 +240,7 @@ void recins_parse_args (int argc,
   rec_record_elem_t rec_elem;
 
   field = NULL;
+  field_name_str = NULL;
 
   while ((ret = getopt_long (argc,
                              argv,

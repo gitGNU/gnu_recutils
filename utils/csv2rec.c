@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 20:50:34 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-15 15:01:59 jemarch"
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010
@@ -404,6 +404,7 @@ main (int argc, char *argv[])
 
   parse_args (argc, argv);
   db = process_csv ();
+  ret = EXIT_SUCCESS;
 
   if (db)
     {
@@ -412,6 +413,10 @@ main (int argc, char *argv[])
 
       rec_writer_destroy (writer);
       rec_db_destroy (db);
+    }
+  else
+    {
+      ret = EXIT_FAILURE;
     }
 
   return ret;

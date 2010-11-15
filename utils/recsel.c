@@ -259,14 +259,11 @@ recsel_process_data (rec_db_t db)
   int rset_size;
   rec_rset_t rset;
   rec_record_t record;
-  rec_record_t descriptor;
-  rec_field_t type;
   int n_rset, written, num_rec;
   rec_writer_t writer;
   bool parse_status;
   bool wrote_descriptor;
   rec_rset_elem_t elem_rset;
-  rec_fex_t fex;
 
   ret = true;
 

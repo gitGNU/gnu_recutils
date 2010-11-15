@@ -1,5 +1,13 @@
 2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: compilation warnings removed.
+	* utils/recinf.c: Unused variables removed.
+	* utils/recsel.c: Likewise.
+	* utils/recset.c: Likewise.
+	* utils/recins.c: Likewise.
+
+2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-writer: unit tests.
 	* torture/rec-writer/rec-write-comment-str.c: New file.
 	(test_rec_write_comment_str): New function.

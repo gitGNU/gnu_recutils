@@ -135,10 +135,7 @@ print_info_file (FILE *in,
   rec_db_t db;
   rec_rset_t rset;
   rec_record_t descriptor;
-  rec_field_t field;
   rec_parser_t parser;
-  rec_field_name_t fname;
-  char *fvalue;
   int position;
 
   ret = true;
