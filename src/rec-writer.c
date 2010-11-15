@@ -437,14 +437,14 @@ rec_write_record_with_fex (rec_writer_t writer,
               rec_writer_puts (writer, rec_field_value (field));
               if (print_in_a_row_p)
                 {
-                  if (i < (fex_size - 1))
+                  if ((j < (max - 1)) || (i < (fex_size - 1)))
                     {
                       rec_writer_putc (writer, ' ');
                     }
                 }
               else
                 {
-                  if (i < (fex_size - 1))
+                  if ((j < (max - 1)) || (i < (fex_size - 1)))
                     {
                       rec_writer_putc (writer, '\n');
                     }

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-14 15:05:41 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-15 12:01:40 jemarch"
  *
  *       File:         rec-write-record-with-fex.c
  *       Date:         Sun Nov 14 14:30:31 2010
@@ -26,9 +26,376 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
+
+/*-
+ * Test: rec_write_record_with_fex_nominal
+ * Unit: rec_write_record_with_fex
+ * Description:
+ * + Process a record through a field expression
+ * + and write out the result.
+ */
+START_TEST(rec_write_record_with_fex_nominal)
+{
+  rec_writer_t writer;
+  rec_record_t record;
+  rec_field_t field;
+  rec_fex_t fex;
+  FILE *stm;
+  char *str;
+  size_t str_size;
+
+  /* Create a record:
+   * 
+   * a: value a
+   * b: value b
+   * a: value a 2
+   * b: value b 2
+   *
+   */
+  record = rec_record_new ();
+  fail_if (record == NULL);
+  field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+
+  /*
+   * Test several field expressions.
+   */
+  
+  fex = rec_fex_new ("a,b", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       false,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "a: value a\na: value a 2\nb: value b\nb: value b 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b,a", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       false,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "b: value b\nb: value b 2\na: value a\na: value a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b,a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       false,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "b: value b\nb: value b 2\na: value a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b[0],a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       false,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "b: value b\na: value a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b[0-1],a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       false,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "b: value b\nb: value b 2\na: value a 2\n") != 0);
+  free (str);
+  
+}
+END_TEST
+
+/*-
+ * Test: rec_write_record_with_fex_values
+ * Unit: rec_write_record_with_fex
+ * Description:
+ * + Process a record through a field expression
+ * + and write out the result.
+ */
+START_TEST(rec_write_record_with_fex_values)
+{
+  rec_writer_t writer;
+  rec_record_t record;
+  rec_field_t field;
+  rec_fex_t fex;
+  FILE *stm;
+  char *str;
+  size_t str_size;
+
+  /* Create a record:
+   * 
+   * a: value a
+   * b: value b
+   * a: value a 2
+   * b: value b 2
+   *
+   */
+  record = rec_record_new ();
+  fail_if (record == NULL);
+  field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+
+  /*
+   * Test several field expressions.
+   */
+  
+  fex = rec_fex_new ("a,b", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value a\nvalue a 2\nvalue b\nvalue b 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b,a", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b\nvalue b 2\nvalue a\nvalue a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b,a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b\nvalue b 2\nvalue a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b[0],a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b\nvalue a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b[0-1],a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       false)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b\nvalue b 2\nvalue a 2\n") != 0);
+  free (str);
+  
+}
+END_TEST
+
+/*-
+ * Test: rec_write_record_with_fex_row
+ * Unit: rec_write_record_with_fex
+ * Description:
+ * + Process a record through a field expression
+ * + and write out the result.
+ */
+START_TEST(rec_write_record_with_fex_row)
+{
+  rec_writer_t writer;
+  rec_record_t record;
+  rec_field_t field;
+  rec_fex_t fex;
+  FILE *stm;
+  char *str;
+  size_t str_size;
+
+  /* Create a record:
+   * 
+   * a: value a
+   * b: value b
+   * a: value a 2
+   * b: value b 2
+   *
+   */
+  record = rec_record_new ();
+  fail_if (record == NULL);
+  field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+  field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
+  fail_if (field == NULL);
+  rec_record_append_field (record, field);
+
+  /*
+   * Test several field expressions.
+   */
+  
+  fex = rec_fex_new ("a,b", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       true)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value a value a 2 value b value b 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b,a", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       true)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b value b 2 value a value a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b,a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       true)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b value b 2 value a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b[0],a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       true)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b value a 2\n") != 0);
+  free (str);
+
+  fex = rec_fex_new ("b[0-1],a[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  stm = open_memstream (&str, &str_size);
+  fail_if (stm == NULL);
+  writer = rec_writer_new (stm);
+  fail_if (!rec_write_record_with_fex (writer, record, fex,
+                                       REC_WRITER_NORMAL,
+                                       true,   /* print values */
+                                       true)); /* print in a row */
+  rec_writer_destroy (writer);
+  rec_fex_destroy (fex);
+  fclose (stm);
+  fail_if (strcmp (str, "value b value b 2 value a 2\n") != 0);
+  free (str);
+  
+}
+END_TEST
 
 /*
  * Test creation function
@@ -38,7 +405,6 @@ test_rec_write_record_with_fex (void)
 {
   TCase *tc = tcase_create ("rec_write_record_with_fex");
   tcase_add_test (tc, rec_write_record_with_fex_nominal);
-  tcase_add_test (tc, rec_write_record_with_fex_sexp);
   tcase_add_test (tc, rec_write_record_with_fex_values);
   tcase_add_test (tc, rec_write_record_with_fex_row);
 

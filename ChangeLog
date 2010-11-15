@@ -1,5 +1,14 @@
+2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* torture/rec-writer/rec-write-record-with-fex.c: New file.
+	(test_rec_write_record_with_fex): New function.
+	(rec_write_record_with_fex_nominal): New test.
+	(rec_write_record_with_fex_values): New test.
+	(rec_write_record_with_fex_rows): New test.
+
 2010-11-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-write unit tests.
 	* torture/rec-writer/rec-write-record.c: New file.
 	(test_rec_write_record): New function.
 	(rec_write_record_nominal): New test.

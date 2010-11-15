@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-14 15:06:14 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-15 11:34:40 jemarch"
  *
  *       File:         tsuite-rec-writer.c
  *       Date:         Sun Nov 14 10:54:46 2010
@@ -32,6 +32,7 @@ extern TCase *test_rec_write_comment (void);
 extern TCase *test_rec_write_field_name (void);
 extern TCase *test_rec_write_field (void);
 extern TCase *test_rec_write_record (void);
+extern TCase *test_rec_write_record_with_fex (void);
 
 Suite *
 tsuite_rec_writer ()
@@ -45,6 +46,7 @@ tsuite_rec_writer ()
   suite_add_tcase (s, test_rec_write_field_name ());
   suite_add_tcase (s, test_rec_write_field ());
   suite_add_tcase (s, test_rec_write_record ());
+  suite_add_tcase (s, test_rec_write_record_with_fex ());
 
   return s;
 }

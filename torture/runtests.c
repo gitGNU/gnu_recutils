@@ -37,6 +37,7 @@ extern Suite *tsuite_rec_field (void);
 extern Suite *tsuite_rec_record (void);
 extern Suite *tsuite_rec_fex (void);
 extern Suite *tsuite_rec_parser (void);
+extern Suite *tsuite_rec_writer (void);
 
 int
 main (int argc, char **argv)
@@ -55,6 +56,7 @@ main (int argc, char **argv)
   srunner_add_suite (sr, tsuite_rec_field ());
   srunner_add_suite (sr, tsuite_rec_record ());
   srunner_add_suite (sr, tsuite_rec_parser ());
+  srunner_add_suite (sr, tsuite_rec_writer ());
 
   srunner_set_log (sr, "tests.log");
 
