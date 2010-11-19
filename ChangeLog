@@ -1,3 +1,10 @@
+2010-11-19 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 3 edited.
+	Task 9 edited.
+	Task 8 edited.
+
 2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* torture/utils/Makefile.am: New file.
@@ -313,6 +320,8 @@
 
 	Tasktool operations.
 	* TODO: Task 19 created.
+	Task 9 edited.
+	Task 8 edited.
 	Task 19 edited.
 	Task 20 created.
 
@@ -334,6 +343,8 @@
 
 	Tasktool operations.
 	* TODO: Task 16 created.
+	Task 9 edited.
+	Task 8 edited.
 	Task 19 edited.
 	Task 20 created.
 	Task 19 created.
@@ -350,6 +361,8 @@
 
 	Tasktool operations.
 	* TODO: Task 15 created.
+	Task 9 edited.
+	Task 8 edited.
 	Task 19 edited.
 	Task 20 created.
 	Task 19 created.
@@ -364,6 +377,8 @@
 
 	Tasktool operations.
 	* TODO: Task 14 created.
+	Task 9 edited.
+	Task 8 edited.
 	Task 19 edited.
 	Task 20 created.
 	Task 19 created.
@@ -453,6 +468,8 @@
 	* configure.ac: Version changed from git to 1.0.
 
 	* TODO: Some tasks added.
+	Task 9 edited.
+	Task 8 edited.
 	Task 19 edited.
 	Task 20 created.
 	Task 19 created.
@@ -467,6 +484,8 @@
 2010-11-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* TODO: First serious version.
+	Task 9 edited.
+	Task 8 edited.
 	Task 19 edited.
 	Task 20 created.
 	Task 19 created.
