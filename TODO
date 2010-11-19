@@ -231,4 +231,20 @@ Description: Sorting of records in the described record set.  Usage:
 + 
 + Just a single field name is supported.
 
+Id: 21
+Summary: Support maximum width in output in recsel.
+CreatedAt: Fri Nov 19 19:13:29 CET 2010
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: The w option shall be implemented in recsel:
++ 
++  -w,--width           maximum length (in characters) of values in
++                         the output.
++ 
++ Example:
++ 
++   $ echo "foo: 0123456789" | recsel -w 5
++   foo: 01234+   56789
+
 # End of TODO
