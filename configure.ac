@@ -132,6 +132,7 @@ AC_OUTPUT(Makefile
           doc/Makefile
           po/Makefile.in
           torture/Makefile
+          torture/utils/Makefile
           man/Makefile
           etc/Makefile)
 
