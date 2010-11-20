@@ -17,10 +17,8 @@
 + DONE SOMEDAY DISCARDED
 %type: Category enum
 + librec utils doc
-%type: Originator email
-%type: AssignedTo email
-%type: CreatedAt date
-%type: ClosedAt date
+%type: Originator,AssignedTo email
+%type: CreatedAt,ClosedAt date
 
 Id: 1
 Summary: Make rec_db_t smarter.
