@@ -96,6 +96,26 @@ field2: value32
 field3: value33
 '
 
+test_declare_input_file integer-fields \
+'field1: 314
+
+field1: 10
+
+field1: -10
+
+field1: 0
+'
+
+test_declare_input_file real-fields \
+'field1: 3.14
+
+field1: 10.0
+
+field1: -10.0
+
+field1: 0
+'
+
 test_declare_input_file compound-names \
 '%rec: Hacker
 
@@ -386,6 +406,70 @@ test_tool recsel-sex-field-names-2 \
 'Id: 2
 Summary: This is task 2
 Hacker:OpenedBy: Jose E. Marchesi
+'
+
+test_tool recsel-sex-integers-equal \
+          recsel \
+          '-e "field1 = 0"' \
+          integer-fields \
+'field1: 0
+'
+
+test_tool recsel-sex-integers-nonequal \
+          recsel \
+          '-e "field1 != 314"' \
+          integer-fields \
+'field1: 10
+
+field1: -10
+
+field1: 0
+'
+
+test_tool recsel-sex-integers-lessthan \
+          recsel \
+          '-e "field1 < -5"' \
+          integer-fields \
+'field1: -10
+'
+
+test_tool recsel-sex-integers-biggerthan \
+          recsel \
+          '-e "field1 > 10"' \
+          integer-fields \
+'field1: 314
+'
+
+test_tool recsel-sex-real-equal \
+          recsel \
+          '-e "field1 = 3.14"' \
+          real-fields \
+'field1: 3.14
+'
+
+test_tool recsel-sex-real-nonequal \
+          recsel \
+          '-e "field1 != 3.14"' \
+          real-fields \
+'field1: 10.0
+
+field1: -10.0
+
+field1: 0
+'
+
+test_tool recsel-sex-real-lessthan \
+          recsel \
+          '-e "field1 < -5.2"' \
+          real-fields \
+'field1: -10.0
+'
+
+test_tool recsel-sex-real-biggerthan \
+          recsel \
+          '-e "field1 > 3.14"' \
+          real-fields \
+'field1: 10.0
 '
 
 #

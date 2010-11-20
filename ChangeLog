@@ -1,3 +1,12 @@
+2010-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Support negative integer and real literals in selection
+	expressions.
+	* src/rec-sex-lex.l: Support negative integers and reals in the
+	lexer level.
+
+	* torture/utils/recsel.sh: Integer and real operators tests.
+
 2010-11-20 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

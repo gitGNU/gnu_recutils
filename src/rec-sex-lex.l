@@ -75,6 +75,32 @@ STRING             '([^'\n]|\\(.|\n))*'
 
 {BLANK}  { /* Ignore whitespace */ }
 
+"-"?{DIGIT}*\.{DIGIT}+ {
+  /*
+   * Create a real node.
+   */
+  double real_value;
+  
+  yylval->node = rec_sex_ast_node_new ();
+  rec_atod (yytext, &real_value);
+  rec_sex_ast_node_set_real (yylval->node, real_value);
+
+  return REC_SEX_TOK_REAL;
+}
+
+"-"?{DIGIT}+ {
+  /*
+   * Create an integer node.
+   */
+  int integer_value;
+
+  yylval->node = rec_sex_ast_node_new ();
+  rec_atoi (yytext, &integer_value);
+  rec_sex_ast_node_set_int (yylval->node, integer_value);
+
+  return REC_SEX_TOK_INT;    
+}
+
 "+"      { return REC_SEX_TOK_ADD; }
 "-"      { return REC_SEX_TOK_SUB; }
 "/"      { return REC_SEX_TOK_DIV; }
@@ -91,32 +117,6 @@ STRING             '([^'\n]|\\(.|\n))*'
 "&&"     { return REC_SEX_TOK_AND; }
 "||"     { return REC_SEX_TOK_OR; }
 "#"      { return REC_SEX_TOK_SHARP; }
-
-{DIGIT}*\.{DIGIT}+ {
-  /*
-   * Create a real node.
-   */
-  double real_value;
-  
-  yylval->node = rec_sex_ast_node_new ();
-  rec_atod (yytext, &real_value);
-  rec_sex_ast_node_set_real (yylval->node, real_value);
-
-  return REC_SEX_TOK_REAL;
-}
-
-{DIGIT}+ {
-  /*
-   * Create an integer node.
-   */
-  int integer_value;
-
-  yylval->node = rec_sex_ast_node_new ();
-  rec_atoi (yytext, &integer_value);
-  rec_sex_ast_node_set_int (yylval->node, integer_value);
-
-  return REC_SEX_TOK_INT;    
-}
 
 {FIELD_NAME}(\[[0-9]+\])? {
   int res;

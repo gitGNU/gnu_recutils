@@ -17,6 +17,6 @@
 
 TESTS = recsel.sh
 EXTRA_DIST = $(TESTS)
-TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) PATH=.:../utils:$$PATH
+TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) PATH=$(srcdir):$(top_builddir)/utils:$$PATH
 
 # End of Makefile.am
