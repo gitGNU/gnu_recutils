@@ -95,12 +95,12 @@ test_tool ()
     test_tmpfiles="$test_tmpfiles $output_file $ok_file"
 
     # Run the tool.
-    eval "$utility $parameters $input_file > $output_file"
+    eval "cat $input_file | $utility $parameters > $output_file"
     res=$?
     if test "$res" -ne "0"
     then
         echo "error: testutils: test_tool: running $utility."
-        exit 1
+        return 1
     fi
 
     # Check for the result in output_file.

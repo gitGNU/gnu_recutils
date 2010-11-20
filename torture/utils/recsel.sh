@@ -64,6 +64,58 @@ field2:
 + bar
 '
 
+test_declare_input_file repeated-fields \
+'field1: value11
+field2: value121
+field2: value122
+field3: value13
+
+field1: value21
+field2: value221
+field2: value222
+field3: value23
+'
+
+test_declare_input_file multiple-types \
+'%rec: type1
+
+field1: value11
+field2: value12
+field3: value13
+
+%rec: type2
+
+field1: value21
+field2: value22
+field3: value23
+
+%rec: type3
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_declare_input_file compound-names \
+'%rec: Hacker
+
+Name: John Smith
+Email: john@smith.org
+
+Name: Jose E. Marchesi
+Email: jemarch@gnu.org
+
+%rec: Task
+
+Id: 1
+Summary: This is task 1
+Hacker:OpenedBy: John Smith
+
+Id: 2
+Summary: This is task 2
+Hacker:OpenedBy: Jose E. Marchesi
+'
+
 #
 # Declare tests
 #
@@ -229,6 +281,111 @@ jo ja ju
 
 foo
 bar
+'
+
+# Print a count of all the records.
+test_tool recsel-count \
+          recsel \
+          '-c' \
+          multiple-records \
+'3
+'
+
+# Subscripts.
+test_tool recsel-subs \
+          recsel \
+          '-p field2[0]' \
+          repeated-fields \
+'field2: value121
+
+field2: value221
+'
+
+test_tool recsel-subs-2 \
+          recsel \
+          '-p field2[1]' \
+          repeated-fields \
+'field2: value122
+
+field2: value222
+'
+
+# Print records identified by its position into the record set.
+
+test_tool recsel-index \
+          recsel \
+          '-n 0' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+'
+
+test_tool recsel-index \
+          recsel \
+          '-n 1' \
+          multiple-records \
+'field1: value21
+field2: value22
+field3: value23
+'
+
+# Print records of several types.
+
+test_tool recsel-type \
+          recsel \
+          '-t type1' \
+          multiple-types \
+'field1: value11
+field2: value12
+field3: value13
+'
+
+test_tool recsel-type-2 \
+          recsel \
+          '-t type2' \
+          multiple-types \
+'field1: value21
+field2: value22
+field3: value23
+'
+
+test_tool recsel-type-3 \
+          recsel \
+          '-t type2' \
+          multiple-types \
+'field1: value21
+field2: value22
+field3: value23
+'
+
+test_tool recsel-type-4 \
+          recsel \
+          '-t type3' \
+          multiple-types \
+'field1: value31
+field2: value32
+field3: value33
+'
+
+# Selection expressions.
+
+test_tool recsel-sex-field-names \
+          recsel \
+          '-t Task -e "OpenedBy = '\''John Smith'\''"' \
+          compound-names \
+'Id: 1
+Summary: This is task 1
+Hacker:OpenedBy: John Smith
+'
+
+test_tool recsel-sex-field-names-2 \
+          recsel \
+          '-t Task -e "Hacker:OpenedBy: = '\''Jose E. Marchesi'\''"' \
+          compound-names \
+'Id: 2
+Summary: This is task 2
+Hacker:OpenedBy: Jose E. Marchesi
 '
 
 #
