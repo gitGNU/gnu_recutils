@@ -245,4 +245,17 @@ Description: The w option shall be implemented in recsel:
 +   $ echo "foo: 0123456789" | recsel -w 5
 +   foo: 01234+   56789
 
+Id: 22
+Summary: Support external non-remote descriptors.
+CreatedAt: Sat Nov 20 22:54:09 CET 2010
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: It shall be possible to use external desciptors not requiring a
++ URL.  External descriptions can then be non-remote.  Example:
++ 
++    %rec: foo /path/to/file
++ 
++ Compilation options shall be provided to disable the usage of libcurl.
+
 # End of TODO
