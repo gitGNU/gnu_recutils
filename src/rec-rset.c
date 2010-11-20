@@ -470,11 +470,11 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
              descriptors are ignored.  */
           if (rec_type_descr_p (descr_field_value))
             {
-              type = rec_type_new (descr_field_value);
-              if (type)
+              fex = rec_type_descr_fex (descr_field_value);
+              for (j = 0; j < rec_fex_size (fex); j++)
                 {
-                  fex = rec_type_descr_fex (descr_field_value);
-                  for (j = 0; j < rec_fex_size (fex); j++)
+                  type = rec_type_new (descr_field_value);
+                  if (type)
                     {
                       rec_type_reg_register (rset->type_reg,
                                              rec_fex_elem_field_name (rec_fex_get (fex, j)),
