@@ -107,7 +107,7 @@ Summary: Write unit tests for rec_sex.
 CreatedAt: Sat Nov  6 11:23:29 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 
 Id: 12
 Summary: Improve error reporting with invalid %type fields.

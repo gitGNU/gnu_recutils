@@ -1,3 +1,13 @@
+2010-11-20 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 11 edited.
+
+2010-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* tasktool (tt_process_cmd_list): Do not include tasks in
+	"resolution" status by default.
+
 2010-11-19 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

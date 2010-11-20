@@ -869,6 +869,13 @@ tt_process_cmd_list ()
         if test -n "$status"
         then
             selection_expression="$selection_expression && ($tt_db_task_field_status = '$status')"
+        else
+            # By default, do not include tasks in "resolution" states
+            # in the output.
+            for res_state in $tt_task_resolutions
+            do
+                selection_expression="$selection_expression && ($tt_db_task_field_status != '$res_state')"
+            done
         fi
         
         if test -n "$originator"
