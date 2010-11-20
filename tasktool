@@ -890,7 +890,7 @@ tt_process_cmd_list ()
     fi
 
     ${tt_recsel} -t ${tt_db_task} -e "$selection_expression" -C \
-                 -R ${tt_db_task_field_id},${tt_db_task_field_summary} ${tt_db}
+                 -R ${tt_db_task_field_id},${tt_db_task_field_status},${tt_db_task_field_summary} ${tt_db}
 }
 
 # Process the 'create' subcommand
