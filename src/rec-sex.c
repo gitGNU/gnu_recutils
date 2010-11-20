@@ -531,7 +531,7 @@ rec_sex_eval_node (rec_sex_t sex,
                 ATOD_VAL (op1_real, child_val1);
                 ATOD_VAL (op2_real, child_val2);
 
-                res.type = REC_SEX_VAL_REAL;
+                res.type = REC_SEX_VAL_INT;
                 res.int_val = op1_real != op2_real;
               }
             else

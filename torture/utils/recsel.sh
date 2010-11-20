@@ -408,14 +408,14 @@ Summary: This is task 2
 Hacker:OpenedBy: Jose E. Marchesi
 '
 
-test_tool recsel-sex-integers-equal \
+test_tool recsel-sex-integer-equal \
           recsel \
           '-e "field1 = 0"' \
           integer-fields \
 'field1: 0
 '
 
-test_tool recsel-sex-integers-nonequal \
+test_tool recsel-sex-integer-nonequal \
           recsel \
           '-e "field1 != 314"' \
           integer-fields \
@@ -426,14 +426,14 @@ field1: -10
 field1: 0
 '
 
-test_tool recsel-sex-integers-lessthan \
+test_tool recsel-sex-integer-lessthan \
           recsel \
           '-e "field1 < -5"' \
           integer-fields \
 'field1: -10
 '
 
-test_tool recsel-sex-integers-biggerthan \
+test_tool recsel-sex-integer-biggerthan \
           recsel \
           '-e "field1 > 10"' \
           integer-fields \
