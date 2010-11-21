@@ -53,7 +53,7 @@ test_init ()
 
     test_suite=$1
     test_result="0"
-    trap 'rm -fr $test_tmpfiles' 1 2 3 15
+    trap 'rm -fr $test_tmpfiles' EXIT 1 2 3 15
 
     echo "Running $test_suite test(s): "
 }
