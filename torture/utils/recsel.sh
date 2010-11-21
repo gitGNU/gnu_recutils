@@ -440,6 +440,72 @@ test_tool recsel-sex-integer-biggerthan \
 'field1: 314
 '
 
+test_tool recsel-sex-integer-plus \
+          recsel \
+          '-e "field1 + 2 = 316"' \
+          integer-fields \
+'field1: 314
+'
+
+test_tool recsel-sex-integer-minus \
+          recsel \
+          '-e "field1 - 2 = -12"' \
+          integer-fields \
+'field1: -10
+'
+
+test_tool recsel-sex-integer-mul \
+          recsel \
+          '-e "field1 * 20 = 200"' \
+          integer-fields \
+'field1: 10
+'
+
+test_tool recsel-sex-integer-div \
+          recsel \
+          '-e "field1 / 2 = 5"' \
+          integer-fields \
+'field1: 10
+'
+
+test_tool recsel-sex-integer-mod \
+          recsel \
+          '-e "field1 % 313 = 1"' \
+          integer-fields \
+'field1: 314
+'
+
+test_tool recsel-sex-integer-not \
+          recsel \
+          '-e "!field1"' \
+          integer-fields \
+'field1: 0
+'
+
+test_tool recsel-sex-integer-and \
+          recsel \
+          '-e "field1 && field1"' \
+          integer-fields \
+'field1: 314
+
+field1: 10
+
+field1: -10
+'
+
+test_tool recsel-sex-integer-or \
+          recsel \
+          '-e "field1 || 1"' \
+          integer-fields \
+'field1: 314
+
+field1: 10
+
+field1: -10
+
+field1: 0
+'
+
 test_tool recsel-sex-real-equal \
           recsel \
           '-e "field1 = 3.14"' \
@@ -468,6 +534,27 @@ test_tool recsel-sex-real-lessthan \
 test_tool recsel-sex-real-biggerthan \
           recsel \
           '-e "field1 > 3.14"' \
+          real-fields \
+'field1: 10.0
+'
+
+test_tool recsel-sex-real-plus \
+          recsel \
+          '-e "((field1 + 2) > 5.14) && ((field + 2) < 5.15)"' \
+          real-fields \
+'field1: 3.14
+'
+
+test_tool recsel-sex-real-minus \
+          recsel \
+          '-e "((field1 - 2.0) > -12.0)"' \
+          real-fields \
+'field1: -10.0
+'
+
+test_tool recsel-sex-real-mul \
+          recsel \
+          '-e "field1 * 20.0 = 200.0"' \
           real-fields \
 'field1: 10.0
 '
