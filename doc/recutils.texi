@@ -1193,7 +1193,8 @@ part of records) based in some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P|-R) FIELD_EXPR] [FILE]...
+recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P|-R) FIELD_EXPR] \
+       [FILE]...
 @end example
 
 In addition of the common options described earlier (@pxref{Common
@@ -1292,7 +1293,8 @@ from the standard input.
 from the standard input.  Synopsis:
 
 @example
-recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]
+recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] \
+       [(-f STR -v STR]|[-r RECDATA)]... [FILE]
 @end example
 
 The new record that will be inserted by the command is constructed by
@@ -1359,7 +1361,9 @@ $ recins -t Issue -f Id     -v 10           \
 Register a new event in a log file, using recins as a filter:
 
 @example
-cat $LOGFILE | recins -f Date -v `date` -f Entry -v "$HW_ADDR device connected" >> $LOGFILE
+recins -f Date -v `date` -f Entry -v "$HW_ADDR device connected" \
+       < $LOGFILE > $LOGFILE.t \
+  && cat $LOGFILE.t >> $LOGFILE
 @end example
 
 @node recdel

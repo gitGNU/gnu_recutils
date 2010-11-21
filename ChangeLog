@@ -1,5 +1,12 @@
 2010-11-21  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
 
+	manual: fix overlong lines and a couple of examples.
+	* doc/recutils.texi (recsel Invocation, recins Invocation)
+	(recins Examples): Do not recommend appending to a file while
+	reading it.  Avoid overlong lines in the synopses and examples.
+
+2010-11-21  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
 	Fix make check in VPATH case.
 	* torture/utils/recsel.sh: Ensure $srcdir is set; read
 	testsutils.sh from $srcdir.
