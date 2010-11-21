@@ -120,4 +120,7 @@ test_tool ()
     test_result=`echo "$test_result + $res" | bc`
 }
 
+PATH=$srcdir:$PATH
+export PATH
+
 # End of testutils.sh

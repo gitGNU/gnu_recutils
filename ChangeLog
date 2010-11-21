@@ -1,5 +1,12 @@
 2010-11-21  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
 
+	Fix make check in VPATH case.
+	* torture/utils/recsel.sh: Ensure $srcdir is set; read
+	testsutils.sh from $srcdir.
+	* torture/utils/testutils.sh: Add $srcdir to PATH.
+
+2010-11-21  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
 	Tasktool operations.
 	* tasktool (tt_add_changelog_entry): Use portable sed features
 	only.  Avoid changing more than the first matching entry.

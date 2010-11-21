@@ -21,7 +21,8 @@
 # Initialization
 #
 
-. testutils.sh
+: ${srcdir=.}
+. $srcdir/testutils.sh
 test_init "recsel"
 
 #
