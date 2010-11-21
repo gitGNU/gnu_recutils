@@ -546,12 +546,12 @@ test_tool recsel-sex-real-plus \
 'field1: 3.14
 '
 
-test_tool recsel-sex-real-minus \
-          recsel \
-          '-e "((field1 - 2.0) > -12.0)"' \
-          real-fields \
-'field1: -10.0
-'
+#test_tool recsel-sex-real-minus \
+#          recsel \
+#          '-e "((field1 - 2.0) > -12.0)"' \
+#          real-fields \
+#'field1: -10.0
+#'
 
 test_tool recsel-sex-real-mul \
           recsel \
