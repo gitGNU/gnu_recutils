@@ -3,7 +3,7 @@
  *       File:         rec-sex.c
  *       Date:         Sat Jan  9 20:28:43 2010
  *
- *       GNU recutils - Sexy expressions
+ *       GNU recutils - Record Selection Expressions.
  *
  */
 
@@ -277,6 +277,11 @@ rec_sex_print_ast (rec_sex_t sex)
         case REC_SEX_VAL_REAL:                          \
           {                                             \
             (DEST) = (VAL).real_val;                    \
+            break;                                      \
+          }                                             \
+        case REC_SEX_VAL_INT:                           \
+          {                                             \
+            (DEST) = (VAL).int_val;                     \
             break;                                      \
           }                                             \
         case REC_SEX_VAL_STR:                           \
@@ -797,22 +802,71 @@ rec_sex_op_real_p (struct rec_sex_val_s op1,
                    struct rec_sex_val_s op2)
 {
   bool ret;
+  int integer;
   double real;
 
   ret = true;
 
-  /* Check first parameter.  */
   if ((op1.type == REC_SEX_VAL_INT)
-      || ((op1.type == REC_SEX_VAL_STR) && (!rec_atod (op1.str_val, &real))))
+      || ((op1.type == REC_SEX_VAL_STR)
+          && rec_atoi (op1.str_val, &integer)))
     {
-      ret = false;
+      /* Operand 1 is an integer.  */
+      switch (op2.type)
+        {
+        case REC_SEX_VAL_INT:
+          {
+            ret = false;
+            break;
+          }
+        case REC_SEX_VAL_REAL:
+          {
+            ret = true;
+            break;
+          }
+        case REC_SEX_VAL_STR:
+          {
+            ret = (rec_atod (op2.str_val, &real)
+                   && (!rec_atoi (op2.str_val, &integer)));
+            break;
+          }
+        default:
+          {
+            ret = false;
+            break;
+          }
+        }
     }
 
-  /* Check second parameter.  */
-  if ((op2.type == REC_SEX_VAL_INT)
-      || ((op2.type == REC_SEX_VAL_STR) && (!rec_atod (op2.str_val, &real))))
+  if ((op1.type == REC_SEX_VAL_REAL)
+      || ((op1.type == REC_SEX_VAL_STR)
+          && rec_atod (op1.str_val, &real)
+          && (!rec_atoi (op1.str_val, &integer))))
     {
-      ret = false;
+      /* Operand 1 is a real.  */
+      switch (op2.type)
+        {
+        case REC_SEX_VAL_INT:
+          {
+            ret = true;
+            break;
+          }
+        case REC_SEX_VAL_REAL:
+          {
+            ret = true;
+            break;
+          }
+        case REC_SEX_VAL_STR:
+          {
+            ret = rec_atod (op2.str_val, &real);
+            break;
+          }
+        default:
+          {
+            ret = false;
+            break;
+          }
+        }
     }
 
   return ret;
