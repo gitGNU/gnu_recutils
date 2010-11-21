@@ -449,7 +449,14 @@ tt_add_changelog_entry ()
     if grep -E '^	' ChangeLog | head -1 | \
        grep "Tasktool operations." > /dev/null 2>&1
     then
-        cat ${tt_changelog} | sed -e "s/\(\t\* $1: .*\)/\1\n\t$2/" > ${tt_changelog}.tmp
+        sed -e "/^	\* $1: /{
+		    a\\
+\	$2
+		    :loop
+		    n
+		    b loop
+		}
+" < ${tt_changelog} > ${tt_changelog}.tmp
         mv ${tt_changelog}.tmp ${tt_changelog}
     else
         entry="`date +%Y-%m-%d` `tt_user_full_name` <`tt_user_email`>

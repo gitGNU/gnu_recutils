@@ -1,3 +1,9 @@
+2010-11-21  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	Tasktool operations.
+	* tasktool (tt_add_changelog_entry): Use portable sed features
+	only.  Avoid changing more than the first matching entry.
+
 2010-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Support negative integer and real literals in selection
