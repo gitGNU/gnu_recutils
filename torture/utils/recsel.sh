@@ -117,11 +117,20 @@ field1: -10.0
 field1: 0
 '
 
+test_declare_input_file recurrent-fields \
+'field1: value11
+field2: value121
+field2: value122
+
+field2: value22
+field3: value23
+'
+
 test_declare_input_file compound-names \
 '%rec: Hacker
 
 Name: John Smith
-Email: john@smith.org
+Email: john@smith.net
 
 Name: Jose E. Marchesi
 Email: jemarch@gnu.org
@@ -142,7 +151,7 @@ Hacker:OpenedBy: Jose E. Marchesi
 #
 
 # Select the whole record set.
-test_tool recsel-all-fields \
+test_tool recsel-all-fields ok \
           recsel \
           '' \
           multiple-records \
@@ -160,7 +169,7 @@ field3: value33
 '
 
 # Print just one field. 
-test_tool recsel-one-field \
+test_tool recsel-one-field ok \
           recsel \
           '-p field2' \
           multiple-records \
@@ -172,7 +181,7 @@ field2: value32
 '
 
 # Print two fields.
-test_tool recsel-two-fields \
+test_tool recsel-two-fields ok \
           recsel \
           '-p field2,field3' \
           multiple-records \
@@ -187,7 +196,7 @@ field3: value33
 '
 
 # Print values
-test_tool recsel-values \
+test_tool recsel-values ok \
           recsel \
           '-P field2' \
           multiple-records \
@@ -199,7 +208,7 @@ value32
 '
 
 # Print multiple values
-test_tool recsel-multiple-values \
+test_tool recsel-multiple-values ok \
           recsel \
           '-P field1,field3' \
           multiple-records \
@@ -214,7 +223,7 @@ value33
 '
 
 # Print collapsed
-test_tool recsel-collapsed \
+test_tool recsel-collapsed ok \
           recsel \
           '-C -p field1' \
           multiple-records \
@@ -224,7 +233,7 @@ field1: value31
 '
 
 # Print values collapsed
-test_tool recsel-values-collapsed \
+test_tool recsel-values-collapsed ok \
           recsel \
           '-C -P field2,field3' \
           multiple-records \
@@ -237,7 +246,7 @@ value33
 '
 
 # Print in a row
-test_tool recsel-row \
+test_tool recsel-row ok \
           recsel \
           '-R field1,field2' \
           multiple-records \
@@ -249,7 +258,7 @@ value31 value32
 '
 
 # Print collapsed in a row
-test_tool recsel-collapsed-row \
+test_tool recsel-collapsed-row ok \
           recsel \
           '-C -R field1,field2,field3' \
           multiple-records \
@@ -259,7 +268,7 @@ value31 value32 value33
 '
 
 # Print all fields (multiline)
-test_tool recsel-multi-all-fields \
+test_tool recsel-multi-all-fields ok \
           recsel \
           '' \
           multiline \
@@ -275,7 +284,7 @@ field2:
 '
 
 # Print values (multiline)
-test_tool recsel-multi-values \
+test_tool recsel-multi-values ok \
           recsel \
           '-P field1,field2' \
           multiline \
@@ -290,7 +299,7 @@ foo
 bar
 '
 # Print collapsed values (multiline)
-test_tool recsel-multi-collapsed-values \
+test_tool recsel-multi-collapsed-values ok \
           recsel \
           '-C -P field1,field2' \
           multiline \
@@ -305,7 +314,7 @@ bar
 '
 
 # Print a count of all the records.
-test_tool recsel-count \
+test_tool recsel-count ok \
           recsel \
           '-c' \
           multiple-records \
@@ -313,7 +322,7 @@ test_tool recsel-count \
 '
 
 # Subscripts.
-test_tool recsel-subs \
+test_tool recsel-subs ok \
           recsel \
           '-p field2[0]' \
           repeated-fields \
@@ -322,7 +331,7 @@ test_tool recsel-subs \
 field2: value221
 '
 
-test_tool recsel-subs-2 \
+test_tool recsel-subs-2 ok \
           recsel \
           '-p field2[1]' \
           repeated-fields \
@@ -333,7 +342,7 @@ field2: value222
 
 # Print records identified by its position into the record set.
 
-test_tool recsel-index \
+test_tool recsel-index ok \
           recsel \
           '-n 0' \
           multiple-records \
@@ -342,7 +351,7 @@ field2: value12
 field3: value13
 '
 
-test_tool recsel-index \
+test_tool recsel-index ok \
           recsel \
           '-n 1' \
           multiple-records \
@@ -353,7 +362,7 @@ field3: value23
 
 # Print records of several types.
 
-test_tool recsel-type \
+test_tool recsel-type ok \
           recsel \
           '-t type1' \
           multiple-types \
@@ -362,7 +371,7 @@ field2: value12
 field3: value13
 '
 
-test_tool recsel-type-2 \
+test_tool recsel-type-2 ok \
           recsel \
           '-t type2' \
           multiple-types \
@@ -371,7 +380,7 @@ field2: value22
 field3: value23
 '
 
-test_tool recsel-type-3 \
+test_tool recsel-type-3 ok \
           recsel \
           '-t type2' \
           multiple-types \
@@ -380,7 +389,7 @@ field2: value22
 field3: value23
 '
 
-test_tool recsel-type-4 \
+test_tool recsel-type-4 ok \
           recsel \
           '-t type3' \
           multiple-types \
@@ -391,7 +400,7 @@ field3: value33
 
 # Selection expressions.
 
-test_tool recsel-sex-field-names \
+test_tool recsel-sex-field-names ok \
           recsel \
           '-t Task -e "OpenedBy = '\''John Smith'\''"' \
           compound-names \
@@ -400,7 +409,7 @@ Summary: This is task 1
 Hacker:OpenedBy: John Smith
 '
 
-test_tool recsel-sex-field-names-2 \
+test_tool recsel-sex-field-names-2 ok \
           recsel \
           '-t Task -e "Hacker:OpenedBy: = '\''Jose E. Marchesi'\''"' \
           compound-names \
@@ -409,14 +418,14 @@ Summary: This is task 2
 Hacker:OpenedBy: Jose E. Marchesi
 '
 
-test_tool recsel-sex-integer-equal \
+test_tool recsel-sex-integer-equal ok \
           recsel \
           '-e "field1 = 0"' \
           integer-fields \
 'field1: 0
 '
 
-test_tool recsel-sex-integer-nonequal \
+test_tool recsel-sex-integer-nonequal ok \
           recsel \
           '-e "field1 != 314"' \
           integer-fields \
@@ -427,63 +436,63 @@ field1: -10
 field1: 0
 '
 
-test_tool recsel-sex-integer-lessthan \
+test_tool recsel-sex-integer-lessthan ok \
           recsel \
           '-e "field1 < -5"' \
           integer-fields \
 'field1: -10
 '
 
-test_tool recsel-sex-integer-biggerthan \
+test_tool recsel-sex-integer-biggerthan ok \
           recsel \
           '-e "field1 > 10"' \
           integer-fields \
 'field1: 314
 '
 
-test_tool recsel-sex-integer-plus \
+test_tool recsel-sex-integer-plus ok \
           recsel \
           '-e "field1 + 2 = 316"' \
           integer-fields \
 'field1: 314
 '
 
-test_tool recsel-sex-integer-minus \
+test_tool recsel-sex-integer-minus ok \
           recsel \
           '-e "field1 - 2 = -12"' \
           integer-fields \
 'field1: -10
 '
 
-test_tool recsel-sex-integer-mul \
+test_tool recsel-sex-integer-mul ok \
           recsel \
           '-e "field1 * 20 = 200"' \
           integer-fields \
 'field1: 10
 '
 
-test_tool recsel-sex-integer-div \
+test_tool recsel-sex-integer-div ok \
           recsel \
           '-e "field1 / 2 = 5"' \
           integer-fields \
 'field1: 10
 '
 
-test_tool recsel-sex-integer-mod \
+test_tool recsel-sex-integer-mod ok \
           recsel \
           '-e "field1 % 313 = 1"' \
           integer-fields \
 'field1: 314
 '
 
-test_tool recsel-sex-integer-not \
+test_tool recsel-sex-integer-not ok \
           recsel \
           '-e "!field1"' \
           integer-fields \
 'field1: 0
 '
 
-test_tool recsel-sex-integer-and \
+test_tool recsel-sex-integer-and ok \
           recsel \
           '-e "field1 && field1"' \
           integer-fields \
@@ -494,7 +503,7 @@ field1: 10
 field1: -10
 '
 
-test_tool recsel-sex-integer-or \
+test_tool recsel-sex-integer-or ok \
           recsel \
           '-e "field1 || 1"' \
           integer-fields \
@@ -507,14 +516,14 @@ field1: -10
 field1: 0
 '
 
-test_tool recsel-sex-real-equal \
+test_tool recsel-sex-real-equal ok \
           recsel \
           '-e "field1 = 3.14"' \
           real-fields \
 'field1: 3.14
 '
 
-test_tool recsel-sex-real-nonequal \
+test_tool recsel-sex-real-nonequal ok \
           recsel \
           '-e "field1 != 3.14"' \
           real-fields \
@@ -525,21 +534,21 @@ field1: -10.0
 field1: 0
 '
 
-test_tool recsel-sex-real-lessthan \
+test_tool recsel-sex-real-lessthan ok \
           recsel \
           '-e "field1 < -5.2"' \
           real-fields \
 'field1: -10.0
 '
 
-test_tool recsel-sex-real-biggerthan \
+test_tool recsel-sex-real-biggerthan ok \
           recsel \
           '-e "field1 > 3.14"' \
           real-fields \
 'field1: 10.0
 '
 
-test_tool recsel-sex-real-plus \
+test_tool recsel-sex-real-plus ok \
           recsel \
           '-e "((field1 + 2) > 5.14) && ((field + 2) < 5.15)"' \
           real-fields \
@@ -553,11 +562,43 @@ test_tool recsel-sex-real-plus \
 #'field1: -10.0
 #'
 
-test_tool recsel-sex-real-mul \
+test_tool recsel-sex-real-mul ok \
           recsel \
           '-e "field1 * 20.0 = 200.0"' \
           real-fields \
 'field1: 10.0
+'
+
+test_tool recsel-sex-sharp-zero ok \
+          recsel \
+          '-e "#field1 = 0"' \
+          recurrent-fields \
+'field2: value22
+field3: value23
+'
+
+test_tool recsel-sex-sharp-one ok \
+          recsel \
+          '-e "#field3 = 1"' \
+          recurrent-fields \
+'field2: value22
+field3: value23
+'
+
+test_tool recsel-sex-sharp-multiple ok \
+          recsel \
+          '-e "#field2 = 2"' \
+          recurrent-fields \
+'field1: value11
+field2: value121
+field2: value122
+'
+
+test_tool recsel-sex-match ok \
+          recsel \
+          '-t Hacker -p Name -e "Email ~ '\''\\.org'\''"' \
+          compound-names \
+'Name: Jose E. Marchesi
 '
 
 #

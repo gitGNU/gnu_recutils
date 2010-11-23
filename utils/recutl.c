@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 20:54:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-23 21:40:19 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -106,7 +106,7 @@ recutl_print_help_record_selection (void)
 Record selection options:\n\
   -i, --case-insensitive              make strings case-insensitive in selection\n\
                                         expressions.\n\
-  -t, --type=TYPE                     print records of the specified type only.\n\
+  -t, --type=TYPE                     operate on records of the specified type only.\n\
   -e, --expression=EXPR               selection expression.\n\
   -n, --number=NUM                    select an specific record.\n"),
          stdout);
@@ -337,7 +337,12 @@ recutl_write_db_to_file (rec_db_t db,
 
   writer = rec_writer_new (out);
   rec_write_db (writer, db);
-  fclose (out);
+
+  if (file_name)
+    {
+      fclose (out);
+    }
+
   rec_db_destroy (db);
 
   if (file_name)

@@ -1,0 +1,181 @@
+#!/bin/sh
+#
+# recdel.sh - System tests for recdel.
+#
+# Copyright (C) 2010 Jose E. Marchesi.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Initialization
+#
+
+: ${srcdir=.}
+. $srcdir/testutils.sh
+test_init "recdel"
+
+#
+# Create input files.
+#
+
+test_declare_input_file multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_declare_input_file multiple-named \
+'%rec: Type1
+
+field1: value11
+field2: value12
+field3: value13
+
+%rec: Type2
+
+field1: value21
+field2: value22
+field3: value23
+
+%rec: Type3
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+#
+# Declare tests.
+#
+
+test_tool recdel-first ok \
+          recdel \
+          '-n 0' \
+          multiple-records \
+'field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recdel-second ok \
+          recdel \
+          '-n 1' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recdel-last ok \
+          recdel \
+          '-n 2' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+'
+
+test_tool recdel-comment ok \
+          recdel \
+          '-n 1 -c' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+#field1: value21
+#field2: value22
+#field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recdel-sex ok \
+          recdel \
+          '-e "field2 = '\''value22'\''"' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recdel-try-type xfail \
+          recdel \
+          '-t Type2' \
+          multiple-named
+
+test_tool recdel-type ok \
+          recdel \
+          '--force -t Type2' \
+          multiple-named \
+'%rec: Type1
+
+field1: value11
+field2: value12
+field3: value13
+
+%rec: Type2
+
+%rec: Type3
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recdel-request-all xfail \
+          recdel \
+          '' \
+          multiple-records
+
+test_tool recdel-force-all ok \
+          recdel \
+          '--force' \
+          multiple-records \
+''
+
+#
+# Cleanup
+#
+
+test_cleanup
+exit $?
+
+# End of recdel.sh

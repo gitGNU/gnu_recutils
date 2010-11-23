@@ -1,3 +1,69 @@
+2010-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	System tests for the utilities.
+	* torture/utils/recfix.sh: New file.
+	(recfix-type-int-valid): New test.
+	(recfix-type-int-invalid): New test.
+	(recfix-type-real-valid): New test.
+	(recfix-type-real-invalid): New test.
+	(recfix-duplicated-keys): New test.
+	(recfix-missing-mandatory): New test.
+	(recfix-several-unique): New test.
+	(recfix-referred-type): New test.
+	(recfix-hidden-type): New test.
+
+	* torture/utils/testutils.sh: Support expected statuses 'ok' and
+	'xfail' in 'test_tool'.
+
+	* torture/utils/recset.sh: New file.
+	(recset-append-field): New test.
+	(recset-set-field): New test.
+	(recset-delete-field): New test.
+	(recset-comment-out-field): New test.
+	(recset-delete-non-existant): New test.
+	(recset-comment-out-fex-first): New test.
+	(recset-comment-out-fex-last): New test.
+	(recset-force-integrity): New test.
+
+	* torture/utils/recins.sh: New file.
+	(recins-empty): New test.
+	(recins-empty-with-type): New test.
+	(recins-several-fields): New test.
+	(recins-append): New test.
+	(recins-append-in-type): New test.
+	(recins-append-new-type): New test.
+	(recins-replace): New test.
+	(recins-replace-sex): New test.
+	(recins-force-restrictions): New test.
+
+	* torture/utils/recdel.sh: New file.
+	(recdel-first): New test.
+	(recdel-second): New test.
+	(recdel-last): New test.
+	(recdel-comment): New test.
+	(recdel-sex): New test.
+	(recdel-type): New test.
+	(recdel-force-all): New test.
+
+	* utils/recutl.c (recutl_write_db_to_file): Close the stream to
+	'out' if it is not 'stdout' only.
+
+	* torture/utils/recinf.sh: New file.
+	(recinf-empty): New test.
+	(recinf-one-record): New test.
+	(recinf-multiple-records): New test.
+	(recinf-multiple-named): New test.
+	(recinf-multiple-named-descriptors): New test.
+	(recinf-multiple-types): New test.
+	(recinf-names-only): New test.
+
+	* torture/Makefile.am (SUBDIRS): Process the current directory
+	before 'utils/'.
+	(recsel-sex-sharp-zero): New test.
+	(recsel-sex-sharp-one): New test.
+	(recsel-sex-sharp-multiple): New test.
+	(recsel-sex-match): New test.
+
 2010-11-21  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
 
 	manual: fix overlong lines and a couple of examples.

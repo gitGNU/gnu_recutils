@@ -15,7 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TESTS = recsel.sh
+TESTS = recinf.sh \
+        recsel.sh \
+        recdel.sh \
+        recins.sh \
+        recset.sh \
+        recfix.sh
 EXTRA_DIST = $(TESTS)
 TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) PATH=$(srcdir):$(top_builddir)/utils:$$PATH
 

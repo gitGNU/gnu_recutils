@@ -16,7 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = utils
+# Note that we want to run the unit tests first.  They are stored in
+# the rec-* subdirectories, but commanded by the Makefile in the
+# current directory.  That explains the dot in the SUBDIRS variable
+# definition.
+
+SUBDIRS = . utils
 
 if CHECK
 

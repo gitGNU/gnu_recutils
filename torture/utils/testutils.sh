@@ -70,14 +70,18 @@ test_cleanup ()
 # Test a recutil.
 #
 # $1 => Test name.
-# $2 => Utility to test.
-# $3 => Parameters.
-# $4 => Input file to use.
-# $5 => Expected result.
+# $2 => Expected result: ok, xfail
+# $3 => Utility to test.
+# $4 => Parameters.
+# $5 => Input file to use.
+# $6 => Expected result.  Only for 'ok' tests.
 test_tool ()
 {
     # Check parameters.
-    if test "$#" -ne "5"
+    if test "$#" -lt "2" || \
+       { test "$2" != "ok" && test "$2" != "xfail"; } || \
+       { test "$2" = "ok" && test "$#" -ne "6"; } || \
+       { test "$2" = "xfail" && test "$#" -ne "5"; }
     then
         echo "error: testutils: invalid parameters to test_tool"
         exit 1
@@ -85,35 +89,55 @@ test_tool ()
 
     echo -n "  $1 "
 
-    utility=$2
-    parameters=$3
-    input_file="$4.in"
+    status=$2
+    utility=$3
+    parameters=$4
+    input_file="$5.in"
     ok_file="$1.ok"
     output_file="$1.out"
-    expected=$5
+    error_file="$1.err"
+    expected=$6
 
-    test_tmpfiles="$test_tmpfiles $output_file $ok_file"
+    test_tmpfiles="$test_tmpfiles $output_file $error_file $ok_file"
 
     # Run the tool.
-    eval "cat $input_file | $utility $parameters > $output_file"
+    eval "cat $input_file | $utility $parameters > $output_file 2> $error_file"
     res=$?
-    if test "$res" -ne "0"
+
+    if test "$status" = "ok"
     then
-        echo "error: testutils: test_tool: running $utility."
-        return 1
+        if test "$res" -ne "0"
+        then
+            echo "error: testutils: test_tool: running $utility."
+            return 1
+        fi
+        
+        # Check for the result in output_file.
+        echo -n "$expected" > $ok_file
+        cmp $ok_file $output_file > /dev/null 2>&1
+        res=$?
+        if test "$res" -eq "0"
+        then
+            echo $status
+        else
+            echo -n "fail"
+            echo " (see $1.diff)"
+            diff $ok_file $output_file > $1.diff
+        fi
     fi
 
-    # Check for the result in output_file.
-    echo -n "$expected" > $ok_file
-    cmp $ok_file $output_file > /dev/null 2>&1
-    res=$?
-    if test "$res" -eq "0"
+    if test "$status" = "xfail"
     then
-        echo "ok"
-    else
-        echo -n "fail"
-        echo " (see $1.diff)"
-        diff $ok_file $output_file > $1.diff
+        if test "$res" -eq "0"
+        then
+            echo "error: testutils: test_tool: expected xfail running $utility."
+            return 1
+        fi
+
+        echo $status
+
+        # Don't accumulate any error.
+        res=0
     fi
 
     # Accumulate the error.
