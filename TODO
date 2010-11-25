@@ -197,8 +197,9 @@ Status: TODO
 Id: 18
 Summary: Allow the usage of field lists in type declarations.
 CreatedAt: Sun Nov  7 20:53:59 CET 2010
+ClosedAt: Thu Nov 25 17:25:26 CET 2010
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: It is possible to specify more than one field name in type
 + declarations.  All the fields having that name will share the same
 + type.  For example:
