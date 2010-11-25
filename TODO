@@ -261,9 +261,10 @@ Description: It shall be possible to use external desciptors not requiring a
 Id: 23
 Summary: Support renaming of fields in recset.
 CreatedAt: Tue Nov 23 22:45:08 CET 2010
+ClosedAt: Thu Nov 25 17:23:28 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: The recset utility shall support the -r option:
 + 
 +   $ recset -n 0 -f field -r newname

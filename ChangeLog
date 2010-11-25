@@ -1,3 +1,8 @@
+2010-11-25 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 23 edited.
+
 2010-11-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recset: support for -r|--rename.
