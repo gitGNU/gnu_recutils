@@ -288,14 +288,45 @@ rec_type_descr_fex (char *str)
 
   /* Get the FEX.  */
   if (rec_parse_regexp (&p,
-                             "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
-                             &name))
+                        "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                        &name))
     {
       fex = rec_fex_new (name, REC_FEX_CSV); 
       free (name);
     }
 
   return fex;
+}
+
+char *
+rec_type_descr_type (char *str)
+{
+  char *result = NULL;
+  char *name;
+  char *p;
+
+  if (rec_type_descr_p (str))
+    {
+      p = str;
+
+      /* Skip blank characters.  */
+      rec_skip_blanks (&p);
+
+      /* Skip the FEX  */
+      if (rec_parse_regexp (&p, "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                            &name))
+        {
+          free (name);
+        }
+
+      /* Skip blanks.  */
+      rec_skip_blanks (&p);
+
+      /* Return the rest of the string.  */
+      result = strdup (p);
+    }
+
+  return result;
 }
 
 rec_type_t

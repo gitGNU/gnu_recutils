@@ -1,3 +1,45 @@
+2010-11-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recset: support for -r|--rename.
+	* torture/rec-type/rec-type-descr-type.c: New file.
+	(test_rec_type_descr_type): New function.
+	(rec_type_descr_type_nominal): New test.
+	(rec_type_descr_type_invalid): New test.
+
+	* src/rec-types.c (rec_type_descr_type): New function.
+
+	* TODO: Regenerated.
+
+	* torture/rec-fex/rec-fex-str.c: New file.
+	(test_rec_fex_str): New function.
+	(rec_fex_str_nominal): New test.
+
+	* src/rec-fex.c (rec_fex_elem_set_field_name): New function.
+	(rec_fex_str): New function.
+
+	* src/rec-rset.c (rec_rset_rename_field): New function.
+
+	* torture/utils/recset.sh:
+	(recset-rename): New test.
+	(recset-rename-first): New test.
+	(recset-rename-middle): New test.
+	(recset-rename-last): New test.
+	(recset-rename-range-first): New test.
+	(recset-rename-range-last): New test.
+	(recset-rename-range-all): New test.
+	(recset-rename-all): New test.
+	(recset-rename-all-descriptor): New test.
+	(recset-rename-all-key): New test.
+	(recset-rename-invalid-fex): New test.
+
+	* doc/recutils.texi (recset Invocation): Document -r|--rename.
+	(recset Examples): Added example for recset rename.
+
+	* utils/recset.c (recutl_print_help): New option -r|--rename
+	documented.
+	(RECSET_ACT_RENAME): New constant.
+	(recset_process_ren): New function.
+
 2010-11-23 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-10 11:52:59 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-25 17:22:35 jemarch"
  *
  *       File:         rec-fex-sort.c
  *       Date:         Tue Nov  9 17:51:59 2010
@@ -33,8 +33,8 @@
  * Test: rec_fex_sort_nominal
  * Unit: rec_fex_sort
  * Description:
-* + Sort a field expression.
-*/
+ * + Sort a field expression.
+ */
 START_TEST(rec_fex_sort_nominal)
 {
   rec_fex_t fex;

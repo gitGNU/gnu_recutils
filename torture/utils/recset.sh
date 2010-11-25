@@ -50,6 +50,38 @@ Id: 10
 other: field
 '
 
+test_declare_input_file renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+field2: field121
+field2: field122
+field2: field123
+field3: field13
+'
+
+test_declare_input_file renames-multiple \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+field2: field121
+field2: field122
+field2: field123
+field3: field13
+
+field1: field21
+field2: field221
+field2: field222
+field2: field223
+field3: field23
+'
+
 #
 # Declare tests.
 #
@@ -133,6 +165,189 @@ test_tool recset-force-integrity ok \
 
 other: field
 '
+
+test_tool recset-rename ok \
+          recset \
+          '--force -t Type1 -n 0 -f field2 -r foo' \
+          renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+foo: field121
+foo: field122
+foo: field123
+field3: field13
+'
+
+test_tool recset-rename-first ok \
+          recset \
+          '--force -t Type1 -n 0 -f field2[0] -r foo' \
+          renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+foo: field121
+field2: field122
+field2: field123
+field3: field13
+'
+
+test_tool recset-rename-middle ok \
+          recset \
+          '--force -t Type1 -n 0 -f field2[1] -r foo' \
+          renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+field2: field121
+foo: field122
+field2: field123
+field3: field13
+'
+
+test_tool recset-rename-last ok \
+          recset \
+          '--force -t Type1 -n 0 -f field2[2] -r foo' \
+          renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+field2: field121
+field2: field122
+foo: field123
+field3: field13
+'
+
+test_tool recset-rename-range-first ok \
+          recset \
+          '--force -t Type1 -n 0 -f field2[0-1] -r foo' \
+          renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+foo: field121
+foo: field122
+field2: field123
+field3: field13
+'
+
+test_tool recset-rename-range-last ok \
+          recset \
+          '--force -t Type1 -n 0 -f field2[1-2] -r foo' \
+          renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+field2: field121
+foo: field122
+foo: field123
+field3: field13
+'
+
+test_tool recset-rename-range-all ok \
+          recset \
+          '--force -t Type1 -n 0 -f field2[0-2] -r foo' \
+          renames \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+foo: field121
+foo: field122
+foo: field123
+field3: field13
+'
+
+test_tool recset-rename-all ok \
+          recset \
+          '--force -t Type1 -e "1" -f field2[0-2] -r foo' \
+          renames-multiple \
+'%rec: Type1
+%key: field1
+%type: field2 line
+%mandatory: field2
+
+field1: field11
+foo: field121
+foo: field122
+foo: field123
+field3: field13
+
+field1: field21
+foo: field221
+foo: field222
+foo: field223
+field3: field23
+'
+
+test_tool recset-rename-all-descriptor ok \
+          recset \
+          '--force -t Type1 -f field2[0-2] -r foo' \
+          renames-multiple \
+'%rec: Type1
+%key: field1
+%type: foo line
+%mandatory: foo
+
+field1: field11
+foo: field121
+foo: field122
+foo: field123
+field3: field13
+
+field1: field21
+foo: field221
+foo: field222
+foo: field223
+field3: field23
+'
+
+test_tool recset-rename-all-key ok \
+          recset \
+          '--force -t Type1 -f field1 -r foo:bar:baz' \
+          renames-multiple \
+'%rec: Type1
+%key: foo:bar:baz
+%type: field2 line
+%mandatory: field2
+
+foo:bar:baz: field11
+field2: field121
+field2: field122
+field2: field123
+field3: field13
+
+foo:bar:baz: field21
+field2: field221
+field2: field222
+field2: field223
+field3: field23
+'
+
+test_tool recset-rename-invalid-fex xfail \
+          recset \
+          '--force -t Type1 -f field1,field2 -r foo' \
+          renames-multiple
 
 #
 # Cleanup.

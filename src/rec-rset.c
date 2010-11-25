@@ -67,6 +67,8 @@ struct rec_rset_s
 
 /* Static functions implemented below.  */
 
+static void rec_rset_update_types (rec_rset_t rset);
+
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
 static void rec_rset_record_disp_fn (void *data);
 static void *rec_rset_record_dup_fn (void *data);
@@ -436,13 +438,6 @@ rec_rset_descriptor (rec_rset_t rset)
 void
 rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
 {
-  rec_field_t descr_field;
-  rec_field_name_t type_field_name;
-  char *descr_field_value;
-  size_t i, num_fields, j;
-  rec_type_t type;
-  rec_fex_t fex;
-
   if (rset->descriptor)
     {
       rec_record_destroy (rset->descriptor);
@@ -450,42 +445,8 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
     }
   rset->descriptor = record;
 
-  if (rset->descriptor)
-    {
-      /* Update the types registry.  */
-      if (rset->type_reg)
-        {
-          rec_type_reg_destroy (rset->type_reg);
-        }
-      rset->type_reg = rec_type_reg_new ();
-      
-      type_field_name = rec_parse_field_name_str ("%type:");
-      num_fields = rec_record_get_num_fields_by_name (record, type_field_name);
-      for (i = 0; i < num_fields; i++)
-        {
-          descr_field = rec_record_get_field_by_name (record, type_field_name, i);
-          descr_field_value = rec_field_value (descr_field);
-          
-          /* Only valid type descriptors are considered.  Invalid
-             descriptors are ignored.  */
-          if (rec_type_descr_p (descr_field_value))
-            {
-              fex = rec_type_descr_fex (descr_field_value);
-              for (j = 0; j < rec_fex_size (fex); j++)
-                {
-                  type = rec_type_new (descr_field_value);
-                  if (type)
-                    {
-                      rec_type_reg_register (rset->type_reg,
-                                             rec_fex_elem_field_name (rec_fex_get (fex, j)),
-                                             type);
-                    }
-                }
-            }
-        }
-
-      rec_field_name_destroy (type_field_name);
-    }
+  /* Update the types registry.  */
+  rec_rset_update_types (rset);
 }
 
 size_t
@@ -590,6 +551,121 @@ rec_rset_get_type_reg (rec_rset_t rset)
   return rset->type_reg;
 }
 
+void
+rec_rset_rename_field (rec_rset_t rset,
+                       rec_field_name_t field_name,
+                       rec_field_name_t new_field_name)
+{
+  size_t i, j;
+  rec_field_t field;
+  rec_record_t descriptor;
+  rec_fex_t fex;
+  char *fex_str;
+  char *type_str;
+  FILE *stm;
+  char *result;
+  size_t result_size;
+  rec_fex_elem_t fex_elem;
+  rec_field_name_t fex_fname;
+  rec_field_name_t type_field_name;
+  rec_field_name_t key_field_name;
+  rec_field_name_t mandatory_field_name;
+  rec_field_name_t unique_field_name;
+  rec_field_name_t prohibit_field_name;
+
+  type_field_name = rec_parse_field_name_str ("%type:");
+  key_field_name = rec_parse_field_name_str ("%key:");
+  mandatory_field_name = rec_parse_field_name_str ("%mandatory:");
+  unique_field_name = rec_parse_field_name_str ("%unique:");
+  prohibit_field_name = rec_parse_field_name_str ("%prohibit:");
+  
+  descriptor = rec_rset_descriptor (rset);
+  if (descriptor)
+    {
+      for (i = 0; i < rec_record_num_fields (descriptor); i++)
+        {
+          field = rec_record_elem_field (rec_record_get_field (descriptor, i));
+          
+          if (rec_field_name_eql_p (rec_field_name (field), type_field_name))
+            {
+              /* Process a %type entry.  Invalid entries are
+                 skipped.  */
+              if (!rec_type_descr_p (rec_field_value (field)))
+                {
+                  continue;
+                }
+
+              fex = rec_type_descr_fex (rec_field_value (field));
+              if (fex)
+                {
+                  for (j = 0; j < rec_fex_size (fex); j++)
+                    {
+                      fex_elem = rec_fex_get (fex, j);
+                      fex_fname = rec_fex_elem_field_name (fex_elem);
+                      if (rec_field_name_eql_p (field_name, fex_fname))
+                        {
+                          /* Replace it with new_field_name.  */
+                          rec_fex_elem_set_field_name (fex_elem, new_field_name);
+                        }
+                    }
+
+                  fex_str = rec_fex_str (fex, REC_FEX_CSV);
+                  type_str = rec_type_descr_type (rec_field_value (field));
+                  
+                  stm = open_memstream (&result, &result_size);
+                  fputs (fex_str, stm);
+                  fputc (' ', stm);
+                  fputs (type_str, stm);
+                  fclose (stm);
+
+                  rec_field_set_value (field, result);
+
+                  free (fex_str);
+                  free (type_str);
+                  rec_fex_destroy (fex);
+                }
+            }
+          else if (rec_field_name_eql_p (rec_field_name (field), key_field_name)
+                   || rec_field_name_eql_p (rec_field_name (field), mandatory_field_name)
+                   || rec_field_name_eql_p (rec_field_name (field), unique_field_name)
+                   || rec_field_name_eql_p (rec_field_name (field), prohibit_field_name))
+            {
+              /* Rename the field in the fex expression that is the
+                 value of the field.  Skip invalid entries.  */
+              fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+              if (fex)
+                {
+                  for (j = 0; j < rec_fex_size (fex); j++)
+                    {
+                      fex_elem = rec_fex_get (fex, j);
+
+                      fex_fname = rec_fex_elem_field_name (fex_elem);
+                      if (rec_field_name_eql_p (field_name, fex_fname))
+                        {
+                          /* Replace it with new_field_name.  */
+                          rec_fex_elem_set_field_name (fex_elem, new_field_name);
+                        }
+                    }
+                  
+                  fex_str = rec_fex_str (fex, REC_FEX_SIMPLE);
+                  rec_field_set_value (field, fex_str);
+                  free (fex_str);
+                }
+            }
+        }
+    }
+
+  /* Update the types registry.  */
+  rec_rset_update_types (rset);
+
+  /* Cleanup.  */
+  rec_field_name_destroy (type_field_name);
+  rec_field_name_destroy (key_field_name);
+  rec_field_name_destroy (mandatory_field_name);
+  rec_field_name_destroy (unique_field_name);
+  rec_field_name_destroy (prohibit_field_name);
+}
+
 /*
  * Private functions
  */
@@ -634,6 +710,54 @@ static void *
 rec_rset_comment_dup_fn (void *data)
 {
   return (void *) rec_comment_dup ((rec_comment_t) data);
+}
+
+static void
+rec_rset_update_types (rec_rset_t rset)
+{
+  rec_field_t descr_field;
+  rec_field_name_t type_field_name;
+  char *descr_field_value;
+  size_t i, num_fields, j;
+  rec_type_t type;
+  rec_fex_t fex;
+
+  if (rset->descriptor)
+    {
+      /* Update the types registry.  */
+      if (rset->type_reg)
+        {
+          rec_type_reg_destroy (rset->type_reg);
+        }
+      rset->type_reg = rec_type_reg_new ();
+      
+      type_field_name = rec_parse_field_name_str ("%type:");
+      num_fields = rec_record_get_num_fields_by_name (rset->descriptor, type_field_name);
+      for (i = 0; i < num_fields; i++)
+        {
+          descr_field = rec_record_get_field_by_name (rset->descriptor, type_field_name, i);
+          descr_field_value = rec_field_value (descr_field);
+          
+          /* Only valid type descriptors are considered.  Invalid
+             descriptors are ignored.  */
+          if (rec_type_descr_p (descr_field_value))
+            {
+              fex = rec_type_descr_fex (descr_field_value);
+              for (j = 0; j < rec_fex_size (fex); j++)
+                {
+                  type = rec_type_new (descr_field_value);
+                  if (type)
+                    {
+                      rec_type_reg_register (rset->type_reg,
+                                             rec_fex_elem_field_name (rec_fex_get (fex, j)),
+                                             type);
+                    }
+                }
+            }
+        }
+
+      rec_field_name_destroy (type_field_name);
+    }
 }
 
 /* End of rec-rset.c */

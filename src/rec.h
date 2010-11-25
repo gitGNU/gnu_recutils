@@ -219,9 +219,13 @@ rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
 
 /* Get the properties of a field expression element.  */
 rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
+void rec_fex_elem_set_field_name (rec_fex_elem_t elem, rec_field_name_t fname);
 char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
 int rec_fex_elem_min (rec_fex_elem_t elem);
 int rec_fex_elem_max (rec_fex_elem_t elem);
+
+/* Get the written form of a field expression.  */
+char *rec_fex_str (rec_fex_t fex, enum rec_fex_kind_e kind);
 
 /*
  * FIELD TYPES
@@ -267,8 +271,14 @@ void rec_type_destroy (rec_type_t type);
 /* Determine whether a string contains a valid type description.  */
 bool rec_type_descr_p (char *str);
 
-/* Extract the fex of a string containing a type description.  */
+/* Extract the fex of a string containing a type description.  Return
+   NULL if STR is not a valid type description.  */
 rec_fex_t rec_type_descr_fex (char *str);
+
+/* Extract the type part (everything but the fex) of a string
+   containing a type description.  Return NULL if STR is not a valid
+   type description.  */
+char *rec_type_descr_type (char *str);
 
 /* Get the kind of the type.  The _str version returns a string with
    the name of the type.  */
@@ -598,6 +608,15 @@ void rec_rset_set_type (rec_rset_t rset, char *type);
 /* Type registry.  */
 
 rec_type_reg_t rec_rset_get_type_reg (rec_rset_t rset);
+
+/* Others.  */
+
+/* Rename a field in the record descriptor.  Field names are not
+   modified in the records themselves.  Note that the comparisons of
+   the field names are EQL.  */
+void rec_rset_rename_field (rec_rset_t rset,
+                            rec_field_name_t field_name,
+                            rec_field_name_t new_field_name);
 
 /*
  * DATABASES

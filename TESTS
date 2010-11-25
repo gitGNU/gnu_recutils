@@ -91,6 +91,43 @@ Unit: rec_fex_sort
 Description:
 + Sort a field expression.
 
+START_TEST(rec_fex_sort_nominal)
+{
+  rec_fex_t fex;
+  rec_field_name_t fname_aaa;
+  rec_field_name_t fname_bbb;
+  rec_field_name_t fname_ccc;
+
+  fname_aaa = rec_parse_field_name_str ("aaa");
+  fail_if (fname_aaa == NULL);
+  fname_bbb = rec_parse_field_name_str ("bbb");
+  fail_if (fname_bbb == NULL);
+  fname_ccc = rec_parse_field_name_str ("ccc");
+  fail_if (fname_ccc == NULL);
+
+  fex = rec_fex_new ("ccc[2],aaa[0],bbb[1]", REC_FEX_SUBSCRIPTS);
+  fail_if (fex == NULL);
+  fail_if (rec_fex_size (fex) != 3);
+
+  rec_fex_sort (fex);
+
+  fail_if (!rec_field_name_eql_p (rec_fex_elem_field_name (rec_fex_get (fex, 0)),
+                                  fname_aaa));
+  fail_if (!rec_field_name_eql_p (rec_fex_elem_field_name (rec_fex_get (fex, 1)),
+                                  fname_bbb));
+  fail_if (!rec_field_name_eql_p (rec_fex_elem_field_name (rec_fex_get (fex, 2)),
+                                  fname_ccc));
+
+  rec_fex_destroy (fex);
+  rec_field_name_destroy (fname_aaa);
+  rec_field_name_destroy (fname_bbb);
+  rec_field_name_destroy (fname_ccc);
+}
+END_TEST
+
+/
+Test case creation function
+
 Test: rec_fex_elem_min_nosub
 Unit: rec_fex_elem_min
 Description:
@@ -143,6 +180,11 @@ Test: rec_fex_check_sub_invalid
 Unit: rec_fex_check
 Description:
 + Check for comma-separated field expressions.
+
+Test: rec_fex_str_nominal
+Unit: rec_fex_str
+Description:
++ Write fexes in strings.
 
 Test: rec_fex_destroy_nominal
 Unit: rec_fex_destroy
@@ -604,6 +646,18 @@ Unit: rec_type_check
 Description:
 + Check strings of type email.
 
+Test: rec_type_descr_type_nominal
+Unit: rec_type_descr_type
+Description:
++ Extract the type part from a type
++ description.
+
+Test: rec_type_descr_type_invalid
+Unit: rec_type_descr_type
+Description:
++ Try to extract the type part from an
++ invalid type description.
+
 Test: rec_type_kind_str_nominal
 Unit: rec_type_kind_str
 Description:
@@ -918,6 +972,55 @@ Unit: rec_field_name_get
 Description:
 + Get the name parts of a field name.
 
+Test: rec_sex_compile_nominal
+Unit: rec_sex_compile
+Description:
++ Compile valid selection expressions.
+
+Test: rec_sex_compile_invalid
+Unit: rec_sex_compile
+Description:
++ Try to compile invalid selection expressions.
+
+Test: rec_sex_new_nominal
+Unit: rec_sex_new
+Description:
++ Create selection expressions.
+
+Test: rec_sex_destroy_nominal
+Unit: rec_sex_destroy
+Description:
++ Destroy selection expressions.
+
+Test: rec_sex_eval_match
+Unit: rec_sex_eval
+Description:
++ Eval SEX expressions against matching records.
+
+Test: rec_sex_eval_nomatch
+Unit: rec_sex_eval
+Description:
++ Eval SEX expressions against non matching
++ records.
+
+Test: rec_write_record_with_fex_nominal
+Unit: rec_write_record_with_fex
+Description:
++ Process a record through a field expression
++ and write out the result.
+
+Test: rec_write_record_with_fex_values
+Unit: rec_write_record_with_fex
+Description:
++ Process a record through a field expression
++ and write out the result.
+
+Test: rec_write_record_with_fex_row
+Unit: rec_write_record_with_fex
+Description:
++ Process a record through a field expression
++ and write out the result.
+
 Test: rec_write_record_nominal
 Unit: rec_write_record
 Description:
@@ -938,6 +1041,26 @@ Unit: rec_write_field_name
 Description:
 + Write field names.
 
+Test: rec_write_field_name_str_nominal
+Unit: rec_write_field_name_str
+Description:
++ Write field names.
+
+Test: rec_write_field_name_str_sexp
+Unit: rec_write_field_name_str
+Description:
++ Write field names.
+
+Test: rec_write_field_str_nominal
+Unit: rec_write_field_str
+Description:
++ Write fields.
+
+Test: rec_write_field_str_sexp
+Unit: rec_write_field_str
+Description:
++ Write fields.
+
 Test: rec_write_field_nominal
 Unit: rec_write_field
 Description:
@@ -947,6 +1070,26 @@ Test: rec_write_field_sexp
 Unit: rec_write_field
 Description:
 + Write fields.
+
+Test: rec_write_db_nominal
+Unit: rec_write_db
+Description:
++ Write a database.
+
+Test: rec_write_comment_str_nominal
+Unit: rec_write_comment_str
+Description:
++ Write comments.
+
+Test: rec_write_comment_str_sexp
+Unit: rec_write_comment_str
+Description:
++ Write comments.
+
+Test: rec_write_rset_nominal
+Unit: rec_write_rset
+Description:
++ Write record sets.
 
 Test: rec_writer_destroy_nominal
 Unit: rec_writer_destroy

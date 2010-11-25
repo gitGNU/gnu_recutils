@@ -63,6 +63,7 @@ REC_TYPE_TSUITE = rec-type/rec-type-new.c \
                   rec-type/rec-type-destroy.c \
                   rec-type/rec-type-descr-p.c \
                   rec-type/rec-type-descr-fex.c \
+                  rec-type/rec-type-descr-type.c \
                   rec-type/rec-type-kind.c \
                   rec-type/rec-type-kind-str.c \
                   rec-type/rec-type-equal-p.c \
@@ -85,6 +86,7 @@ REC_FEX_TSUITE = rec-fex/rec-fex-new.c \
                  rec-fex/rec-fex-elem-field-name-str.c \
                  rec-fex/rec-fex-elem-min.c \
                  rec-fex/rec-fex-elem-max.c \
+                 rec-fex/rec-fex-str.c \
                  rec-fex/tsuite-rec-fex.c
 
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \

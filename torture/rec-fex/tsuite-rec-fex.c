@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 12:49:59 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-25 16:20:22 jemarch"
  *
  *       File:         tsuite-rec-fex.c
  *       Date:         Tue Nov  9 14:02:54 2010
@@ -36,6 +36,7 @@ extern TCase *test_rec_fex_elem_field_name (void);
 extern TCase *test_rec_fex_elem_field_name_str (void);
 extern TCase *test_rec_fex_elem_min (void);
 extern TCase *test_rec_fex_elem_max (void);
+extern TCase *test_rec_fex_str (void);
 
 Suite *
 tsuite_rec_fex ()
@@ -53,6 +54,7 @@ tsuite_rec_fex ()
   suite_add_tcase (s, test_rec_fex_elem_field_name_str ());
   suite_add_tcase (s, test_rec_fex_elem_min ());
   suite_add_tcase (s, test_rec_fex_elem_max ());
+  suite_add_tcase (s, test_rec_fex_str ());
 
   return s;
 }

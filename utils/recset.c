@@ -43,6 +43,7 @@ static void recset_parse_args (int argc, char **argv);
 static void recset_process_actions (rec_db_t db);
 static void recset_process_add (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
 static void recset_process_set (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
+static void recset_process_ren (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
 static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
 
 /*
@@ -54,6 +55,7 @@ static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t 
 #define RECSET_ACT_ADD     2
 #define RECSET_ACT_DELETE  3
 #define RECSET_ACT_COMMENT 4
+#define RECSET_ACT_RENAME  5
 
 char      *program_name       = NULL;
 char      *recutl_sex_str     = NULL;
@@ -63,12 +65,14 @@ rec_fex_t  recutl_fex         = NULL;
 char      *recutl_type        = NULL;
 int        recset_action      = RECSET_ACT_NONE;
 char      *recset_value       = NULL;
+rec_field_name_t recset_new_field_name = NULL;
 bool       recutl_insensitive = false;
 long       recutl_num         = -1;
 char      *recset_file        = NULL;
 bool       recset_force       = false;
 bool       recset_verbose     = false;
 bool       recset_external      = true;
+bool       recset_descriptor_renamed = false;
 
 /*
  * Command line options management
@@ -80,6 +84,7 @@ enum
     RECORD_SELECTION_ARGS,
     FIELD_EXPR_ARG,
     ADD_ACTION_ARG,
+    RENAME_ACTION_ARG,
     DELETE_ACTION_ARG,
     COMMENT_ACTION_ARG,
     SET_ACTION_ARG,
@@ -94,6 +99,7 @@ static const struct option GNU_longOptions[] =
     RECORD_SELECTION_LONG_ARGS,
     {"fields", required_argument, NULL, FIELD_EXPR_ARG},
     {"add", required_argument, NULL, ADD_ACTION_ARG},
+    {"rename", required_argument, NULL, RENAME_ACTION_ARG},
     {"delete", no_argument, NULL, DELETE_ACTION_ARG},
     {"comment", no_argument, NULL, COMMENT_ACTION_ARG},
     {"set", required_argument, NULL, SET_ACTION_ARG},
@@ -148,7 +154,10 @@ Fields selection options:\n\
   fputs (_("\
 Actions:\n\
   -s, --set=VALUE                     change the value of the selected fields.\n\
-  -a, --add=VALUE                  add the selected fields with the given value.\n\
+  -a, --add=VALUE                     add the selected fields with the given value.\n\
+  -r, --rename=NAME                   rename the selected fields to a given name.  If an entire\n\
+                                        record set is selected then the field is renamed in the\n\
+                                        record descriptor as well.\n\
   -d, --delete                        delete the selected fields.\n\
   -c, --comment                       comment out the selected fields.\n"), stdout);
 
@@ -160,7 +169,8 @@ Examples:\n\
 \n\
         recset -f TmpName -d data.rec\n\
         recset -f Email[1] -s invalid@email.com friends.rec\n\
-        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"),
+        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n\
+        recset -f Email[1] -r AltEmail friends.rec\n"),
          stdout);
   
   puts ("");
@@ -177,7 +187,7 @@ recset_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "dct:s:a:f:",
+                             "dct:s:a:f:r:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -202,7 +212,7 @@ recset_parse_args (int argc,
             recutl_fex_str = xstrdup (optarg);
             if (!rec_fex_check (recutl_fex_str, REC_FEX_SUBSCRIPTS))
               {
-                exit (EXIT_FAILURE);
+                recutl_fatal (_("invalid field expression in -f.\n"));
               }
 
             /* Create the field expression.  */
@@ -233,6 +243,36 @@ recset_parse_args (int argc,
             
             recset_action = RECSET_ACT_SET;
             recset_value = xstrdup (optarg);
+            break;
+          }
+        case RENAME_ACTION_ARG:
+        case 'r':
+          {
+            if (!recutl_fex)
+              {
+                recutl_fatal (_("please specify some field with -f.\n"));
+              }
+            
+            if (recset_action != RECSET_ACT_NONE)
+              {
+                recutl_fatal (_("please specify just one action.\n"));
+              }
+
+            if (rec_fex_size (recutl_fex) != 1)
+              {
+                recutl_fatal (_("the rename operation requires just one field with an optional subscript.\n"));
+              }
+
+            recset_action = RECSET_ACT_RENAME;
+            recset_value = xstrdup (optarg);
+
+            /* Validate the new name.  */
+            recset_new_field_name = rec_parse_field_name_str (recset_value);
+            if (!recset_new_field_name)
+              {
+                recutl_fatal (_("invalid field name %s.\n"), recset_value);
+              }
+            
             break;
           }
         case ADD_ACTION_ARG:
@@ -375,6 +415,11 @@ recset_process_actions (rec_db_t db)
               /* Process a copy of this record.  */
               switch (recset_action)
                 {
+                case RECSET_ACT_RENAME:
+                  {
+                    recset_process_ren (rset, record, recutl_fex);
+                    break;
+                  }
                 case RECSET_ACT_SET:
                   {
                     recset_process_set (rset, record, recutl_fex);
@@ -496,6 +541,71 @@ recset_process_set (rec_rset_t rset,
                 }
             }
         }
+    }
+}
+
+static void
+recset_process_ren (rec_rset_t rset,
+                    rec_record_t record,
+                    rec_fex_t fex)
+{
+  size_t j, min, max, renamed;
+  size_t num_fields;
+  rec_fex_elem_t fex_elem;
+  rec_field_t field;
+  rec_field_name_t field_name;
+
+  /* Rename the selected fields.  The size of the FEX is guaranteed to
+     be 1 at this point.  */ 
+  fex_elem = rec_fex_get (recutl_fex, 0);
+  field_name = rec_fex_elem_field_name (fex_elem);
+  min = rec_fex_elem_min (fex_elem);
+  max = rec_fex_elem_max (fex_elem);
+
+  num_fields =
+    rec_record_get_num_fields_by_name (record, field_name);
+  if (min == -1)
+    {
+      /* Process all the fields with the given name.  */
+      min = 0;
+      max = num_fields - 1;
+    }
+  if (max == -1)
+    {
+      max = min;
+    }
+
+  renamed = 0;
+  for (j = 0; j < num_fields; j++)
+    {
+      if ((j >= min) && (j <= max))
+        {
+          /* Set the name of the Jth field
+             named FIELD_NAME, if it exists.*/
+          field = rec_record_get_field_by_name (record,
+                                                field_name,
+                                                j - renamed);
+          if (field)
+            {
+              rec_field_set_name (field, rec_field_name_dup (recset_new_field_name));
+              renamed++;
+            }
+        }
+    }
+
+  /* If the operation is applied to all records of a given type (or
+     default) then change the record descriptor as well.
+
+     But make sure to do it just once.
+  */
+  if ((!recset_descriptor_renamed)
+      && (recutl_sex == NULL) && (recutl_num == -1))
+    {
+      rec_rset_rename_field (rset,
+                             field_name,
+                             recset_new_field_name);
+      
+      recset_descriptor_renamed = true;
     }
 }
 

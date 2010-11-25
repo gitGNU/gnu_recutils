@@ -221,6 +221,19 @@ rec_fex_elem_field_name (rec_fex_elem_t elem)
   return elem->field_name;
 }
 
+void
+rec_fex_elem_set_field_name (rec_fex_elem_t elem,
+                             rec_field_name_t fname)
+{
+  if (elem->field_name)
+    {
+      rec_field_name_destroy (elem->field_name);
+      elem->field_name = NULL;
+    }
+
+  elem->field_name = rec_field_name_dup (fname);
+}
+
 char *
 rec_fex_elem_field_name_str (rec_fex_elem_t elem)
 {
@@ -274,6 +287,73 @@ rec_fex_sort (rec_fex_t fex)
 
       fex->elems[j + 1] = aux;
     }
+}
+
+char *
+rec_fex_str (rec_fex_t fex,
+             enum rec_fex_kind_e kind)
+{
+  char *result;
+  size_t result_size;
+  FILE *stm;
+  size_t i;
+  char *field_str;
+
+  result = NULL;
+  stm = open_memstream (&result, &result_size);
+  if (stm)
+    {
+      for (i = 0; i < fex->num_elems; i++)
+        {
+          if (i != 0)
+            {
+              if (kind == REC_FEX_SIMPLE)
+                {
+                  fputc (' ', stm);
+                }
+              else
+                {
+                  fputc (',', stm);
+                }
+            }
+          
+          field_str = rec_write_field_name_str (fex->elems[i]->field_name,
+                                                REC_WRITER_NORMAL);
+
+          /* People usually don't write the final ':' in fexes, so
+             remove it.  */
+          if (field_str[strlen(field_str) - 1] == ':')
+            {
+              field_str[strlen(field_str) - 1] = '\0';
+            }
+          
+          fputs (field_str, stm);
+          free (field_str);
+
+          if (kind == REC_FEX_SUBSCRIPTS)
+            {
+              if ((fex->elems[i]->min != -1)
+                  || (fex->elems[i]->max != -1))
+                {
+                  fputc ('[', stm);
+                  if (fex->elems[i]->min != -1)
+                    {
+                      fprintf (stm, "%d", fex->elems[i]->min);
+                    }
+                  if (fex->elems[i]->max != -1)
+                    {
+                      fprintf (stm, "-%d", fex->elems[i]->max);
+                    }
+
+                  fputc (']', stm);
+                }
+            }
+        }
+    }
+
+  fclose (stm);
+
+  return result;
 }
 
 /*

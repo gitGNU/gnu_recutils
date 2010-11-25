@@ -1489,6 +1489,12 @@ Set the value of the selected fields to @var{VALUE}.
 @item -a
 @itemx @w{@kbd{--add}=@var{VALUE}}
 Add a new field to the selected record with value @var{VALUE}.
+@item -r
+@itemx @w{@kbd{--rename}=@var{VALUE}}
+Rename a field.  @var{VALUE} shall be a valid field name.  The field
+expression associated with this action shall contain a single field
+name and an optional subscript.  If an entire record set is selected
+then the field is renamed in the record descriptor as well.
 @item -d
 @itemx @w{@kbd{--delete}}
 Delete the selected fields in the selected records.
@@ -1518,6 +1524,13 @@ Add the email @code{new@@email.com} to John Smith:
 
 @example
 $ recset -e "Name = 'John Smith'" -f Email -a new@@email.com friends.rec
+@end example
+
+Rename the secondary email fields from @code{Email} to
+@code{AltEmail}.  Modify the record descriptor as well:
+
+@example
+$ recset -f Email[1] -r AltEmail friends.rec
 @end example
 
 @node recfix
