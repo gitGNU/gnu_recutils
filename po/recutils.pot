@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.0\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2010-11-14 17:25+0100\n"
+"POT-Creation-Date: 2010-11-27 10:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -213,94 +213,109 @@ msgstr ""
 msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
 msgstr ""
 
-#: src/rec-int.c:755
+#: src/rec-int.c:760
 #, c-format
 msgid "warning: could not fetch remote descriptor from url %s.\n"
 msgstr ""
 
-#: src/rec-int.c:767
+#: src/rec-int.c:777
 #, c-format
-msgid "warning: the url %s does not contain valid rec data.\n"
+msgid "warning: could not read external descriptor from file %s.\n"
 msgstr ""
 
-#: src/rec-int.c:832
+#: src/rec-int.c:790
+#, c-format
+msgid "warning: %s does not contain valid rec data.\n"
+msgstr ""
+
+#: src/rec-int.c:802
+#, c-format
+msgid "warning: %s does not contain information for %s.\n"
+msgstr ""
+
+#: src/rec-int.c:864
 #, c-format
 msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-types.c:395
+#: src/rec-types.c:426
 #, c-format
 msgid ""
 "rec-types: internal error: got REC_TYPE_NONE from rec_type_parse_type kind "
 "in rec_type_new.\n"
 msgstr ""
 
-#: src/rec-types.c:744
+#: src/rec-types.c:775
 #, c-format
 msgid "internal error: rec-types: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-types.c:820
+#: src/rec-types.c:851
 #, c-format
 msgid "invalid integer."
 msgstr ""
 
-#: src/rec-types.c:836
+#: src/rec-types.c:867
 #, c-format
 msgid "invalid 'field' value."
 msgstr ""
 
-#: src/rec-types.c:852
+#: src/rec-types.c:883
 #, c-format
 msgid "invalid 'bool' value."
 msgstr ""
 
-#: src/rec-types.c:874
+#: src/rec-types.c:905
 #, c-format
 msgid "invalid 'range' value."
 msgstr ""
 
-#: src/rec-types.c:883
+#: src/rec-types.c:914
 #, c-format
 msgid "expected an integer between %d and %d."
 msgstr ""
 
-#: src/rec-types.c:900
+#: src/rec-types.c:931
 #, c-format
 msgid "invalid 'real' value."
 msgstr ""
 
-#: src/rec-types.c:917
+#: src/rec-types.c:948
 #, c-format
 msgid "value too large.  Expected a size <= %d."
 msgstr ""
 
-#: src/rec-types.c:934
+#: src/rec-types.c:965
 #, c-format
 msgid "invalid 'line' value."
 msgstr ""
 
-#: src/rec-types.c:953
+#: src/rec-types.c:984
 #, c-format
 msgid "value does not match the regexp."
 msgstr ""
 
-#: src/rec-types.c:976
+#: src/rec-types.c:1007
 #, c-format
 msgid "invalid date."
 msgstr ""
 
-#: src/rec-types.c:992
+#: src/rec-types.c:1023
 #, c-format
 msgid "invalid email."
 msgstr ""
 
-#: src/rec-types.c:1045
+#: src/rec-types.c:1077
 #, c-format
 msgid "invalid enum value."
 msgstr ""
 
-#: src/rec-utils.c:86 src/rec-utils.c:114
+#: src/rec-utils.c:86
+#, c-format
+msgid "internal error: rec_int_rec_extract_file: error compiling regexp.\n"
+msgstr ""
+
+#: src/rec-utils.c:114 src/rec-utils.c:142
 #, c-format
 msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
 msgstr ""
@@ -418,7 +433,7 @@ msgstr ""
 msgid "failed to normalise field name %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:473 utils/recins.c:301
+#: utils/mdb2rec.c:473 utils/recins.c:298
 #, c-format
 msgid "invalid field name %s\n"
 msgstr ""
@@ -482,25 +497,25 @@ msgid ""
 "rec\n"
 msgstr ""
 
-#: utils/recdel.c:148
+#: utils/recdel.c:144
 #, c-format
 msgid "no records of type %s found.\n"
 msgstr ""
 
-#: utils/recdel.c:215
+#: utils/recdel.c:211
 msgid "evaluating selection expression.\n"
 msgstr ""
 
-#: utils/recdel.c:262
+#: utils/recdel.c:258
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr ""
 
-#: utils/recdel.c:264
+#: utils/recdel.c:260
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr ""
 
-#: utils/recdel.c:272 utils/recset.c:404
+#: utils/recdel.c:268 utils/recset.c:447
 msgid "invalid selection expression.\n"
 msgstr ""
 
@@ -581,7 +596,7 @@ msgid ""
 "        recinf -t Issue TODO\n"
 msgstr ""
 
-#: utils/recinf.c:271
+#: utils/recinf.c:268
 #, c-format
 msgid "error: cannot read file %s\n"
 msgstr ""
@@ -631,36 +646,36 @@ msgid ""
 "rec\n"
 msgstr ""
 
-#: utils/recins.c:220
+#: utils/recins.c:216
 msgid "operation aborted due to integrity failures.\n"
 msgstr ""
 
-#: utils/recins.c:221
+#: utils/recins.c:217
 msgid "use --verbose to get a detailed report.\n"
 msgstr ""
 
-#: utils/recins.c:228
+#: utils/recins.c:224
 msgid "use --force to skip the integrity chech\n"
 msgstr ""
 
-#: utils/recins.c:275
+#: utils/recins.c:272
 msgid "a -f should be followed by a -v\n"
 msgstr ""
 
-#: utils/recins.c:313
+#: utils/recins.c:310
 msgid "a -v should be preceded by a -f\n"
 msgstr ""
 
-#: utils/recins.c:334
+#: utils/recins.c:331
 msgid "error while parsing the record provided by -r\n"
 msgstr ""
 
-#: utils/recins.c:370
+#: utils/recins.c:367
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr ""
 
-#: utils/recins.c:418 utils/recsel.c:335
+#: utils/recins.c:415 utils/recsel.c:332
 msgid "evaluating the selection expression.\n"
 msgstr ""
 
@@ -733,26 +748,26 @@ msgstr ""
 msgid "cannot specify -c and also -p.\n"
 msgstr ""
 
-#: utils/recsel.c:280
+#: utils/recsel.c:277
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recset synopsis.
 #. no-wrap
-#: utils/recset.c:116
+#: utils/recset.c:122
 #, c-format
 msgid "Usage: recset [OPTION]... [FILE]...\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recset short description.
 #. no-wrap
-#: utils/recset.c:121
+#: utils/recset.c:127
 msgid "Alter or delete fields in records.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recset options.
 #. no-wrap
-#: utils/recset.c:127
+#: utils/recset.c:133
 msgid ""
 "      --no-external                   don't use external descriptors.\n"
 "      --force                         alter the records even if violating "
@@ -762,7 +777,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset field selection options.
 #. no-wrap
-#: utils/recset.c:140
+#: utils/recset.c:146
 msgid ""
 "Fields selection options:\n"
 "  -f, --fields=FIELDS                 comma-separated list of field names "
@@ -772,49 +787,71 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset actions.
 #. no-wrap
-#: utils/recset.c:148
+#: utils/recset.c:154
 msgid ""
 "Actions:\n"
 "  -s, --set=VALUE                     change the value of the selected "
 "fields.\n"
-"  -a, --add=VALUE                  add the selected fields with the given "
+"  -a, --add=VALUE                     add the selected fields with the given "
 "value.\n"
+"  -r, --rename=NAME                   rename the selected fields to a given "
+"name.  If an entire\n"
+"                                        record set is selected then the "
+"field is renamed in the\n"
+"                                        record descriptor as well.\n"
 "  -d, --delete                        delete the selected fields.\n"
 "  -c, --comment                       comment out the selected fields.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recset examples.
 #. no-wrap
-#: utils/recset.c:158
+#: utils/recset.c:167
 msgid ""
 "Examples:\n"
 "\n"
 "        recset -f TmpName -d data.rec\n"
 "        recset -f Email[1] -s invalid@email.com friends.rec\n"
 "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
+"        recset -f Email[1] -r AltEmail friends.rec\n"
 msgstr ""
 
-#: utils/recset.c:213
+#: utils/recset.c:215
+msgid "invalid field expression in -f.\n"
+msgstr ""
+
+#: utils/recset.c:223
 msgid "creating the field expression.\n"
 msgstr ""
 
-#: utils/recset.c:226 utils/recset.c:243 utils/recset.c:260 utils/recset.c:276
+#: utils/recset.c:236 utils/recset.c:253 utils/recset.c:283 utils/recset.c:300
+#: utils/recset.c:316
 msgid "please specify some field with -f.\n"
 msgstr ""
 
-#: utils/recset.c:231 utils/recset.c:248 utils/recset.c:265 utils/recset.c:281
+#: utils/recset.c:241 utils/recset.c:258 utils/recset.c:288 utils/recset.c:305
+#: utils/recset.c:321
 msgid "please specify just one action.\n"
 msgstr ""
 
-#: utils/recset.c:419
+#: utils/recset.c:263
+msgid ""
+"the rename operation requires just one field with an optional subscript.\n"
+msgstr ""
+
+#: utils/recset.c:273
+#, c-format
+msgid "invalid field name %s.\n"
+msgstr ""
+
+#: utils/recset.c:462
 msgid "operation aborted due to integrity failures\n"
 msgstr ""
 
-#: utils/recset.c:420
+#: utils/recset.c:463
 msgid "use --verbose to get a detailed report\n"
 msgstr ""
 
-#: utils/recset.c:427
+#: utils/recset.c:470
 msgid "use --force to skip the integrity check\n"
 msgstr ""
 
@@ -863,8 +900,8 @@ msgid ""
 "  -i, --case-insensitive              make strings case-insensitive in "
 "selection\n"
 "                                        expressions.\n"
-"  -t, --type=TYPE                     print records of the specified type "
-"only.\n"
+"  -t, --type=TYPE                     operate on records of the specified "
+"type only.\n"
 "  -e, --expression=EXPR               selection expression.\n"
 "  -n, --number=NUM                    select an specific record.\n"
 msgstr ""
@@ -894,7 +931,7 @@ msgstr ""
 msgid "cannot create a unique name.\n"
 msgstr ""
 
-#: utils/recutl.c:349
+#: utils/recutl.c:354
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr ""
