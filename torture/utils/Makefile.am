@@ -22,6 +22,7 @@ TESTS = recinf.sh \
         recset.sh \
         recfix.sh
 EXTRA_DIST = $(TESTS)
-TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) PATH=$(srcdir):$(top_builddir)/utils:$$PATH
+TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) \
+                    PATH=$(srcdir)$(PATH_SEPARATOR)$(top_builddir)/utils$(PATH_SEPARATOR)$$PATH
 
 # End of Makefile.am

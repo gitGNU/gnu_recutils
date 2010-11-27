@@ -1,3 +1,14 @@
+2010-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Syntax check fixes.
+	* TESTS: Regenerated.
+
+	* torture/rec-record/rec-record-field-p.c: Trailing blanks
+	removed.
+
+	* torture/utils/Makefile.am (TESTS_ENVIRONMENT): Use
+	$(PATH_SEPARATOR) instead of ':'.
+
 2010-11-27 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

@@ -35,7 +35,7 @@
  * + Check for the existence of a field included
  * + in the record.
  * +
- * + 1. The call to rec_record_field_p should 
+ * + 1. The call to rec_record_field_p should
  * +    return true
  */
 START_TEST(rec_record_field_p_existing)
@@ -69,7 +69,7 @@ END_TEST
  * + Check for the existence of a field not included
  * + in the record.
  * +
- * + 1. The call to rec_record_field_p should 
+ * + 1. The call to rec_record_field_p should
  * +    return false.
  */
 START_TEST(rec_record_field_p_nonexisting)
