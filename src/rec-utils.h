@@ -39,6 +39,7 @@ bool rec_atod (char *str, double *number);
 
 /* Extract type and url from a %rec: field value.  */
 char *rec_extract_url (char *str);
+char *rec_extract_file (char *str);
 char *rec_extract_type (char *str);
 
 /* Generic parsing routines.  */

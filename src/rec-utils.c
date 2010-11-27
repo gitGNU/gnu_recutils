@@ -74,6 +74,34 @@ rec_atod (char *str,
 }
 
 char *
+rec_extract_file (char *str)
+{
+  regex_t regexp;
+  regmatch_t matches;
+  char *rec_file = NULL;
+  size_t rec_file_length = 0;
+
+  if (regcomp (&regexp, "[ \n\t]" REC_FILE_REGEXP, REG_EXTENDED) != 0)
+    {
+      fprintf (stderr, _("internal error: rec_int_rec_extract_file: error compiling regexp.\n"));
+      return NULL;
+    }
+
+  if ((regexec (&regexp, str, 1, &matches, 0) == 0)
+      && (matches.rm_so != -1))
+    {
+      /* Get the match.  */
+      rec_file_length = matches.rm_eo - matches.rm_so;
+      rec_file = malloc (rec_file_length + 1);
+      strncpy (rec_file, str + matches.rm_so + 1, rec_file_length - 1);
+      rec_file[rec_file_length - 1] = '\0';
+    }
+
+  regfree (&regexp);
+  return rec_file;
+}
+
+char *
 rec_extract_url (char *str)
 {
   regex_t regexp;

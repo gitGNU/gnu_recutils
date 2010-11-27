@@ -1,3 +1,16 @@
+2010-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Support for file paths as external descriptors.
+	* src/rec-types.c (rec_type_check_enum): Add digits in enum
+	constants.
+
+	* doc/recutils.texi (External Descriptors): File paths in external
+	descriptors sources documented.
+
+	* src/rec-int.c (rec_int_rec_type_p): Use REC_FILE_REGEXP.
+
+	* src/rec-utils.c (rec_extract_file): New file.
+
 2010-11-25 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

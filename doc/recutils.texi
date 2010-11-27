@@ -63,7 +63,7 @@ The Rec Format
                           descriptors.
 * Date input formats::  Textual date representations that can be used
                           in Rec files.
-* External Descriptors::  Fetching descriptors from URLs.
+* External Descriptors::  Fetching descriptors from external sources.
 
 Utilities
 * Common Options::      Common command line arguments for the record
@@ -774,19 +774,29 @@ it in any operation by using pipes.  For example:
 $ cat descriptor.rec data.rec | recsel ...
 @end example
 
-That approach suffers from several disadvantages, including the fact
-that the data files have to reside in the same machine.  As a better
-alternative, the Rec format allows the usage of @dfn{external
-descriptors}.
+For those cases it is more convenient to use a @dfn{external
+descriptor}.  External descriptors can be built appending a file path
+to the @code{%rec} field value, like:
+
+@example
+%rec: FSD_Entry /path/to/file.rec
+@end example
+
+The previous example indicates that a record descriptor describing the
+@code{FSD_Entry} records shall be read from the file
+@file{/path/to/file.rec}.  A record descriptor for @code{FSD_Entry}
+may not exist in the external file.  Both relative and absolute paths
+can be specified there.
+
+URLs can be used as sources for external descriptors as well:
 
 @example
 %rec: Department http://www.myorg.com/Org.rec
 @end example
 
-The previous example shows how an external descriptor can be
-referenced with an URL.  The URL shall point to a text file containing
-rec data.  If there is a record descriptor in the remote file
-documenting the @code{Department} type, it will be used.
+The URL shall point to a text file containing rec data.  If there is a
+record descriptor in the remote file documenting the @code{Department}
+type, it will be used.
 
 Note that the local record descriptor can provide additional fields to
 ``expand'' the record type.  For example:
@@ -801,7 +811,8 @@ The record descriptor above is including the contents of the
 the local record descriptor, that in this case contains just the
 @code{%mandatory} field.
 
-Any URL schema supported by @code{libcurl} will work.
+If you are using the GNU recutils to process your recfiles, any URL
+schema supported by @code{libcurl} will work.
 
 @node Common Options
 @chapter Common Options

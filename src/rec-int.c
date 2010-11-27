@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-07 11:59:21 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-11-27 10:24:19 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -695,8 +695,6 @@ rec_int_check_descriptor (rec_rset_t rset,
 void
 rec_int_merge_remote (rec_rset_t rset)
 {
-#if defined REMOTE_DESCRIPTORS
-
   rec_parser_t parser;
   rec_field_name_t rec_fname;
   rec_record_t descriptor;
@@ -707,13 +705,15 @@ rec_int_merge_remote (rec_rset_t rset)
   rec_record_t remote_descriptor;
   rec_field_t rec_field;
   char *rec_type;
-  char *rec_url;
-  CURL *curl;
+  char *rec_url = NULL;
+  char *rec_file = NULL;
+  char *rec_source = NULL;
   int tmpfile_des;
-  FILE *temporary_file;
+  FILE *external_file;
   char tmpfile_name[14];
 
   rec_fname = rec_parse_field_name_str ("%rec:");
+  tmpfile_name[0] = '\0';
 
   /* If a remote descriptor is defined in the record descriptor of
      RSET, fetch it and merge it with the local descriptor.  */
@@ -730,23 +730,28 @@ rec_int_merge_remote (rec_rset_t rset)
         }
 
       rec_type = rec_extract_type (rec_field_value (rec_field));
+      rec_file = rec_extract_file (rec_field_value (rec_field));
       rec_url  = rec_extract_url  (rec_field_value (rec_field));
 
-      if (rec_url)
+      if (rec_file || rec_url)
         {
-          /* Fetch the remote descriptor.  */
-          curl = curl_easy_init ();
-          if (curl)
+          if (rec_url)
             {
+#if defined REMOTE_DESCRIPTORS
+              CURL *curl;
+
+              /* Fetch the remote descriptor.  */
+              curl = curl_easy_init ();
+
               /* Create a temporary file.  */
               strncpy (tmpfile_name, "recint-XXXXXX", 13);
               tmpfile_name[13] = '\0';
               tmpfile_des = gen_tempname (tmpfile_name, 0, 0, GT_FILE);
-              temporary_file = fdopen (tmpfile_des, "r+");
+              external_file = fdopen (tmpfile_des, "r+");
               
               /* Fetch the remote file.  */
               curl_easy_setopt (curl, CURLOPT_URL, rec_url);
-              curl_easy_setopt (curl, CURLOPT_WRITEDATA, temporary_file);
+              curl_easy_setopt (curl, CURLOPT_WRITEDATA, external_file);
               curl_easy_setopt (curl, CURLOPT_FAILONERROR, 1);
               if (curl_easy_perform (curl) != 0)
                 {
@@ -754,66 +759,89 @@ rec_int_merge_remote (rec_rset_t rset)
                   fprintf (stderr,
                            _("warning: could not fetch remote descriptor from url %s.\n"),
                            rec_url);
-                  remove (tmpfile_name);
-                  return;
+                  goto exit;
                 }
-
-              /* Parse the contents of the remote file.  */
-              fseek (temporary_file, 0, SEEK_SET);
-              parser = rec_parser_new (temporary_file, rec_url);
-              if (!rec_parse_db (parser, &remote_db))
+              curl_easy_cleanup (curl);
+              rec_source = rec_url;
+#else
+              goto exit;
+#endif /* REMOTE_DESCRIPTORS */
+            }
+          else
+            {
+              /* Try to open the file.  */
+              external_file = fopen (rec_file, "r");
+              if (!external_file)
                 {
                   fprintf (stderr,
-                           _("warning: the url %s does not contain valid rec data.\n"),
-                           rec_url);
-                  remove (tmpfile_name);
-                  return;
+                           _("warning: could not read external descriptor from file %s.\n"),
+                           rec_file);
+                  goto exit;
                 }
-              rec_parser_destroy (parser);
+              rec_source = rec_file;
+            }              
 
-              /* Get the proper remote descriptor and merge it with
-                 the local one.  */
-              remote_rset = rec_db_get_rset_by_type (remote_db, rec_type);
-              if (!remote_rset)
-                {
-                  /* Do nothing.  */
-                  remove (tmpfile_name);
-                  return;
-                }
-              remote_descriptor = rec_rset_descriptor (remote_rset);
-              if (!remote_descriptor)
-                {
-                  /* Do nothing.  */
-                  remove (tmpfile_name);
-                  return;
-                }
-
-              rec_elem = rec_record_first_field (remote_descriptor);
-              while (rec_record_elem_p (rec_elem))
-                {
-                  remote_field = rec_record_elem_field (rec_elem);
-
-                  /* Merge the descriptors, but take care to not add a
-                     new %rec: field.  */
-                  if (!rec_field_name_equal_p (rec_field_name (remote_field), rec_fname))
-                    {
-                      rec_record_append_field (descriptor, rec_field_dup (remote_field));
-                    }
-                  rec_elem = rec_record_next_field (remote_descriptor, rec_elem);
-                }
-
-              /* Update the record descriptor (triggering the creation
-                 of a new type registry).  */
-              rec_rset_set_descriptor (rset, rec_record_dup (descriptor));
-
-              rec_db_destroy (remote_db);
-              fclose (temporary_file);
-              remove (tmpfile_name);
-              curl_easy_cleanup (curl);
+          /* Parse the contents of the external file.  */
+          fseek (external_file, 0, SEEK_SET);
+          parser = rec_parser_new (external_file, rec_source);
+          if (!rec_parse_db (parser, &remote_db))
+            {
+              fprintf (stderr,
+                       _("warning: %s does not contain valid rec data.\n"),
+                       rec_url);
+              goto exit;
             }
+          rec_parser_destroy (parser);
+          
+          /* Get the proper external descriptor and merge it with
+             the local one.  */
+          remote_rset = rec_db_get_rset_by_type (remote_db, rec_type);
+          if (!remote_rset)
+            {
+              fprintf (stderr,
+                       _("warning: %s does not contain information for %s.\n"),
+                       rec_source, rec_type);
+              goto exit;
+            }
+          remote_descriptor = rec_rset_descriptor (remote_rset);
+          if (!remote_descriptor)
+            {
+              /* Do nothing.  */
+              goto exit;
+            }
+          
+          rec_elem = rec_record_first_field (remote_descriptor);
+          while (rec_record_elem_p (rec_elem))
+            {
+              remote_field = rec_record_elem_field (rec_elem);
+              
+              /* Merge the descriptors, but take care to not add a
+                 new %rec: field.  */
+              if (!rec_field_name_equal_p (rec_field_name (remote_field), rec_fname))
+                {
+                  rec_record_append_field (descriptor, rec_field_dup (remote_field));
+                }
+              rec_elem = rec_record_next_field (remote_descriptor, rec_elem);
+            }
+          
+          /* Update the record descriptor (triggering the creation
+             of a new type registry).  */
+          rec_rset_set_descriptor (rset, rec_record_dup (descriptor));
+          
+          rec_db_destroy (remote_db);
+          fclose (external_file);
         }
     }
-#endif /* REMOTE_DESCRIPTORS */
+
+ exit:
+
+  if (rec_url && (tmpfile_name[0] != '\0'))
+    {
+      remove (tmpfile_name);
+    }
+
+  free (rec_url);
+  free (rec_file);
 }
 
 static bool
@@ -824,8 +852,12 @@ rec_int_rec_type_p (char *str)
 
   if (regcomp (&regexp, "^[ \t]*"
                REC_FNAME_PART_RE
-               "[ \t]*"
-               "(" REC_URL_REGEXP "[ \t]*)?"
+               "[ \n\t]*"
+               "("
+               "(" REC_URL_REGEXP ")"
+               "|"
+               "(" REC_FILE_REGEXP ")"
+               "[ \t]*)?"
                "$",
                REG_EXTENDED) != 0)
     {

@@ -1051,6 +1051,7 @@ rec_type_check_enum (rec_type_t type,
   b = p;
   while (p && (rec_letter_p (*p)
                || rec_letter_p (*p)
+               || rec_digit_p (*p)
                || (*p == '_')
                || (*p == '-')))
     {
