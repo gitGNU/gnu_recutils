@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 etcdir=$(pkgdatadir)/etc
-etc_DATA = FSD.rec
-EXTRA_DIST = FSD.rec
+etc_DATA = FSD.rec rec-mode.el
+EXTRA_DIST = FSD.rec rec-mode.el
 
 # End of Makefile.am
