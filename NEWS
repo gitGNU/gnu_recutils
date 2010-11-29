@@ -7,4 +7,10 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 1.0 (? ?? ????)
+ Version 1.0 (29 November 2010)
+* Initial release.
+  . User manual.
+  . Library (librec).
+  . Utilities: recinf, recsel, recins, recdel, recset, recfix, csv2rec,
+    mdb2rec.
+  . Experimental Emacs mode (rec-mode.el).
