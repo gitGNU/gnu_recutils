@@ -274,7 +274,7 @@ nil"
 
 (defun rec-insert-comment (comment)
   "Insert the written form of COMMENT in the current buffer"
-  (when (and (listp comment) 
+  (when (and (listp comment)
              (equal (car comment) 'comment))
     (insert (cadr comment))))
 
@@ -423,7 +423,7 @@ If no such field exists in RECORD then nil is returned."
         (setq value (buffer-substring-no-properties (point-min)
                                                     (point-max))))
       (setcar (cddr field) value))))
-      
+
 ;;;; Get entities under pointer
 ;;
 ;; Those functions retrieve structures of the entities under pointer
@@ -633,7 +633,7 @@ If the type do not exist in the current buffer then
 this function returns nil."
   (if (or (not type)
           (equal type ""))
-      ;; If there is a regular record in the 
+      ;; If there is a regular record in the
       ;; beginning of the file, go there.
       (if (save-excursion
             (goto-char (point-min))
@@ -699,7 +699,7 @@ file."
                (rec-end-of-record)
                (when (re-search-forward rec-comment-field-re nil t)
                  (match-beginning 0)))))
-    (when pos 
+    (when pos
         (goto-char pos)
         t)))
 
@@ -796,14 +796,14 @@ the list of records."
   "XXX"
   (let (res)
     (rec-do (lambda ()
-              (setq res 
+              (setq res
                     (cons (funcall rec-map-func)
                           res))
               t)
             type
             descriptors)
     (reverse res)))
-    
+
 (defun rec-regular-p ()
   "Return t if the record under point is a regular record.
 Return nil otherwise."
@@ -847,7 +847,7 @@ Return nil if the point is not on a record."
       (if found
           descriptor
         ""))))
-                
+
 ;;;; Searching functions
 
 (defun rec-search-first (type name value)
@@ -912,7 +912,7 @@ the result buffer."
                      ;; Insert the type descriptor
                      (rec-insert-record (cadr descriptor)))
                    (insert "\n")
-                   (setq inserted-types 
+                   (setq inserted-types
                          (cons type inserted-types)))
                  (rec-insert-record rec what)
                  (insert "\n")))))
@@ -1025,7 +1025,7 @@ Each character should identify only one name."
                  (list "Generic search" ?E))
     ;; Add custom searches
     (append search-list
-            (mapcar 
+            (mapcar
              (lambda (elem)
                (if (and (listp elem)
                         (>= (length elem) 4))
@@ -1053,7 +1053,7 @@ Each character should identify only one name."
            (add-to-list 'res
                         (list (aref (car letter) 0)
                               (car name)
-                              (mapcar (lambda (elem) 
+                              (mapcar (lambda (elem)
                                         (rec-parse-field-name-from-string elem)) fields)
                               (read (car expr))
                               type)))
@@ -1249,7 +1249,7 @@ buffer"
                               value))
       (goto-char prev-pointer)))
   (rec-init-selections))
-    
+
 (defun rec-beginning-of-field ()
   "Goto to the beginning of the current field"
   (interactive)
@@ -1353,7 +1353,7 @@ the file.  Interactive version."
     (rec-goto-previous-rec))
   (unless rec-editing
     (rec-show-record)))
-    
+
 (defun rec-cmd-jump ()
   "Jump to the first record containing the reference under
 point."
@@ -1400,7 +1400,7 @@ point."
           (rec-show-record))
         (setq rec-jump-back nil))
     (message "No previous position to jump")))
-  
+
 (defun rec-edit-record ()
   "Go to the record edition mode"
   (interactive)
@@ -1542,16 +1542,16 @@ the first character of the line being part of the value."
   (interactive)
   (beginning-of-line)
   ;; Skip a field name or a continuation line.
-  (cond 
+  (cond
    ((looking-at rec-field-name-re)
     (rec-parse-field-name)
     (when (looking-at " ") (forward-char 1)))
    ((looking-at "\+ ?")
     (forward-char 1)
     (when (looking-at " ") (forward-char 1)))))
-                   
+
 ;;;; Definition of modes
-  
+
 (defun rec-mode ()
   "A major mode for editing rec files.
 
