@@ -1000,6 +1000,14 @@ The match operator (@code{~}) can be used to match a string with a
 given regular expression.  The supported regexp syntax is described in
 the GNU C library manual.
 
+@subsubsection Date Comparison Operators
+
+The compare operators @strong{before} (@code{<<}), @strong{after}
+(@code{>>}) and @strong{same time} (@code{==}) can be used with fields
+and strings containing parseable dates.
+
+@xref{Date input formats}.
+
 @subsubsection Field Operators
 
 Field counters are replaced by the number of occurrences of a field

@@ -1,5 +1,10 @@
 2010-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Documentation of the before, after and sametime operators.
+	* doc/recutils.texi (SEX Operators): Date operators documented.
+
+2010-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Date operators before, after and sametime implementation.
 	* src/rec-sex.c (timespec_subtract): New function.
 	(rec_sex_eval_node): Manage REC_SEX_OP_BEFORE.
