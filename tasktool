@@ -45,6 +45,9 @@ tt_task_initial_status="TODO"
 
 # Task resolutions (words separated by blanks).
 #
+# The first entry will be considered as the default by the 'resolve'
+# command.
+#
 # Example: tt_task_resolutions="Done Discarded"
 
 tt_task_resolutions="DONE SOMEDAY DISCARDED"
@@ -171,6 +174,7 @@ $tt_tasktool supports the following sub commands.
        delete                         delete a task.
        note                           insert a note for a task.
        edit                           edit a task.
+       resolve                        resolve a task.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
 --help'.  For example:
@@ -217,6 +221,25 @@ Mandatory arguments to long options are mandatory for short options too.
 Examples:
 
         tasktool edit 112
+
+$tt_help_footer"
+
+tt_help_resolve="\
+Usage: $tt_tasktool resolve [OPTION]... TASK_ID [REASON]
+Resolve a task.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+  -s, --status=STATUS                 final status for the task.
+  
+REASON is a text that will be part of a note of the task.  It shall
+explain why the task is being resolved to the given status.
+
+Note that the provided STATUS shall be a resolution.
+
+Examples:
+
+        tasktool resolve -s DONE 21 'World destruction device made.'
 
 $tt_help_footer"
 
@@ -720,6 +743,133 @@ tt_process_cmd_show ()
     tt_db_show_task "$1"
 }
 
+# Process the 'resolve' subcommand
+tt_process_cmd_resolve ()
+{
+    TEMP=`getopt -o s: --long help,status -n 'tasktool: resolve' -- "$@"`
+    if test "$?" -ne "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_resolve"
+                exit 1
+                ;;
+            --status|-s)
+                status="$2"
+                shift
+                shift
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    # At least the task id shall be specified.
+    if test "$#" -ne "1" && test "$#" -ne "2"
+    then
+        echo "$tt_help_resolve"
+        exit 1
+    fi
+
+    # Validate the task id
+    task_id="$1"
+    tt_db_task_p "$task_id" || \
+        { echo "$tt_tasktool: task '$task_id' not found."; exit 1; }
+
+    # Validate that the task is not already in a resolution status.
+    current_status=`$tt_recsel -t ${tt_db_task} -e "${tt_db_task_field_id} = $task_id" \
+                               -P ${tt_db_task_field_status} $tt_db`
+    if tt_word_in_list $current_status "$tt_task_resolutions"
+    then
+        tt_error "task '$task_id' is already resolved as '$current_status'"
+        exit 1
+    fi
+                                                      
+
+    # Validate the status.
+    if test -z $status
+    then
+        # Status defaults to the first entry of $tt_task_resolutions
+        status=`echo $tt_task_resolutions | cut -d ' ' -f1`
+        if test -z $status
+        then
+            tt_error "probable invalid value in 'tt_task_resolutions'.  Check tasktool configuration."
+            exit 1
+        fi
+    else
+        # Check the user-provided status to be a valid one.
+        tt_word_in_list $status "$tt_task_resolutions" || \
+          { tt_error "invalid resolution '$status'."; exit 1; }
+    fi
+
+    # Get reason.
+    if test "$#" -eq "2"
+    then
+        reason="$2"
+    fi
+
+    date=`date`
+
+    # Add the note to the record.
+    if test -n "$reason"
+    then
+        $tt_recset --verbose \
+                   -t ${tt_db_task} \
+                   -e "${tt_db_task_field_id} = $task_id" \
+                   -f ${tt_db_task_field_note} -a "$date
+Task resolved to '$status'.
+
+$reason" \
+                   $tt_db
+        if test "$?" -ne "0"
+        then
+            tt_error "data integrity problem.  See the errors above and review your parameters."
+            exit 1
+        fi
+    fi
+
+    # Set the new status.
+    $tt_recset --verbose \
+               -t ${tt_db_task} \
+               -e "${tt_db_task_field_id} = $task_id" \
+               -f ${tt_db_task_field_status} -s $status \
+               $tt_db
+    if test "$?" -ne "0"
+    then
+        tt_error "data integrity problem.  See the errors above and review your parameters."
+        exit 1
+    fi
+
+    # Add a closing time.
+    $tt_recset --verbose \
+               -t ${tt_db_task} \
+               -e "${tt_db_task_field_id} = $task_id" \
+               -f ${tt_db_task_field_closed} -a "$date" \
+               $tt_db
+    if test "$?" -ne "0"
+    then
+        tt_error "data integrity problem.  See the errors above and review your parameters."
+        exit 1
+    fi
+
+    # Add a ChangeLog entry and report the operation.
+    if test -z "$no_changelog"
+    then
+        tt_add_changelog_entry $tt_db "Task $task_id resolved to '$status'."
+        echo "tasktool: entry added to $tt_changelog."
+    fi
+
+    echo "tasktool: task $task_id resolved to $status."
+}
+
 # Process the 'edit' subcommand
 tt_process_cmd_edit ()
 {
@@ -1024,7 +1174,7 @@ tt_process_cmd_create ()
     date=`date`
 
     # A closing date may be in order.
-    if tt_word_in_list $status $tt_task_resolutions
+    if tt_word_in_list $status "$tt_task_resolutions"
     then
         closed_at_cmd="-f ${tt_db_task_field_closed} -v '`date`'"
     else
@@ -1195,6 +1345,12 @@ tt_parse_arguments ()
                 shift
                 tt_db_check
                 tt_process_cmd_edit "$@"
+                break
+                ;;
+            resolve)
+                shift
+                tt_db_check
+                tt_process_cmd_resolve "$@"
                 break
                 ;;
             note)
