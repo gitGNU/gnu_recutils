@@ -105,6 +105,9 @@ STRING             '([^'\n]|\\(.|\n))*'
 "-"      { return REC_SEX_TOK_SUB; }
 "/"      { return REC_SEX_TOK_DIV; }
 "%"      { return REC_SEX_TOK_MOD; }
+">>"     { return REC_SEX_TOK_AFTER; }
+"<<"     { return REC_SEX_TOK_BEFORE; }
+"=="     { return REC_SEX_TOK_SAMETIME; }
 "*"      { return REC_SEX_TOK_MUL; }
 "="      { return REC_SEX_TOK_EQL; }
 "!="     { return REC_SEX_TOK_NEQ; }

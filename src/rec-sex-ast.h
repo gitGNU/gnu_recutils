@@ -50,6 +50,9 @@ enum rec_sex_ast_node_type_e
   REC_SEX_OP_OR,
   REC_SEX_OP_NOT,
   REC_SEX_OP_SHA,
+  REC_SEX_OP_SAMETIME,
+  REC_SEX_OP_BEFORE,
+  REC_SEX_OP_AFTER,
 
   /* Values.  */
   REC_SEX_INT,

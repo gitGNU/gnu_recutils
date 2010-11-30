@@ -86,6 +86,7 @@
 %token <node> REC_SEX_TOK_NAM
 %left <node> REC_SEX_TOK_AND REC_SEX_TOK_OR
 %left <node> REC_SEX_TOK_EQL REC_SEX_TOK_NEQ REC_SEX_TOK_LT REC_SEX_TOK_GT
+%left <node> REC_SEX_TOK_SAMETIME REC_SEX_TOK_AFTER REC_SEX_TOK_BEFORE
 %left <node> REC_SEX_TOK_SUB REC_SEX_TOK_ADD
 %left <node> REC_SEX_TOK_MUL REC_SEX_TOK_DIV REC_SEX_TOK_MOD REC_SEX_TOK_MAT
 %left <node> REC_SEX_TOK_NEG  REC_SEX_TOK_MIN /* negation--unary minus */
@@ -141,6 +142,9 @@ exp : REC_SEX_TOK_INT          { $$ = $1; }
     | exp REC_SEX_TOK_MOD exp  { CREATE_NODE_OP2 (REC_SEX_OP_MOD, $$, $1, $3); }
     | exp REC_SEX_TOK_GT exp   { CREATE_NODE_OP2 (REC_SEX_OP_GT, $$, $1, $3); }
     | exp REC_SEX_TOK_LT exp   { CREATE_NODE_OP2 (REC_SEX_OP_LT, $$, $1, $3); }
+    | exp REC_SEX_TOK_AFTER exp { CREATE_NODE_OP2 (REC_SEX_OP_AFTER, $$, $1, $3); }
+    | exp REC_SEX_TOK_BEFORE exp { CREATE_NODE_OP2 (REC_SEX_OP_BEFORE, $$, $1, $3); }
+    | exp REC_SEX_TOK_SAMETIME exp { CREATE_NODE_OP2 (REC_SEX_OP_SAMETIME, $$, $1, $3); }
     | REC_SEX_TOK_NOT exp      { CREATE_NODE_OP1 (REC_SEX_OP_NOT, $$, $2); }
     | exp REC_SEX_TOK_AND exp  { CREATE_NODE_OP2 (REC_SEX_OP_AND, $$, $1, $3); }
     | exp REC_SEX_TOK_OR exp   { CREATE_NODE_OP2 (REC_SEX_OP_OR, $$, $1, $3); }

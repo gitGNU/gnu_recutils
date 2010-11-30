@@ -1,3 +1,18 @@
+2010-11-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Date operators before, after and sametime implementation.
+	* src/rec-sex.c (timespec_subtract): New function.
+	(rec_sex_eval_node): Manage REC_SEX_OP_BEFORE.
+	(rec_sex_eval_node): Manage REC_SEX_OP_AFTER.
+	(rec_sex_eval_node): Manage REC_SEX_OP_SAMETIME.
+
+	* src/rec-sex-ast.h: Constants for the date operators.
+
+	* src/rec-sex-tab.y: Support for the date operators.
+
+	* src/rec-sex-lex.l: New tokens for date operators '<<', '>>' and
+	'=='.
+
 2010-11-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* NEWS: Updated for 1.0 release.
