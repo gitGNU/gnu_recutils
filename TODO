@@ -213,11 +213,16 @@ Summary: Fix over sized synopsis lines in the PDF manual.
 CreatedAt: Mon Nov  8 11:36:58 CET 2010
 Originator: Ralf.Wildenhues@gmx.de
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: @node recsel Invocation contains an overlong synopsis line in the PDF
 + output.
 + 
 + The problem may be present in the postscript and dvi output as well.
+Note: Tue Nov 30 16:30:10 CET 2010
++ Task resolved to 'DONE'.
++ 
++ Fixed in a previous patch by Ralf Wildenhues.
+ClosedAt: Tue Nov 30 16:30:10 CET 2010
 
 Id: 20
 Summary: Implement %sort.

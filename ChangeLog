@@ -1,3 +1,8 @@
+2010-11-30 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 19 resolved to 'DONE'.
+
 2010-11-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Tests for the before, after and sametime operators.
