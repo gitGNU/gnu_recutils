@@ -146,6 +146,14 @@ Summary: This is task 2
 Hacker:OpenedBy: Jose E. Marchesi
 '
 
+test_declare_input_file dates \
+'Date: Tue Nov 30 12:00:00 CET 2002
+
+Date: Tue Nov 30 12:00:00 CET 2010
+
+Date: Tue Nov 30 12:00:00 CET 2030
+'
+
 #
 # Declare tests
 #
@@ -599,6 +607,31 @@ test_tool recsel-sex-match ok \
           '-t Hacker -p Name -e "Email ~ '\''\\.org'\''"' \
           compound-names \
 'Name: Jose E. Marchesi
+'
+
+test_tool recsel-sex-date-sametime ok \
+          recsel \
+          '-e "Date == '\''Tue Nov 30 12:00:00 CET 2010'\''"' \
+          dates \
+'Date: Tue Nov 30 12:00:00 CET 2010
+'
+
+test_tool recsel-sex-date-before ok \
+          recsel \
+          '-e "Date << '\''Tue Nov 30 12:00:00 CET 2030'\''"' \
+          dates \
+'Date: Tue Nov 30 12:00:00 CET 2002
+
+Date: Tue Nov 30 12:00:00 CET 2010
+'
+
+test_tool recsel-sex-date-after ok \
+          recsel \
+          '-e "Date >> '\''Tue Nov 30 12:00:00 CET 2002'\''"' \
+          dates \
+'Date: Tue Nov 30 12:00:00 CET 2010
+
+Date: Tue Nov 30 12:00:00 CET 2030
 '
 
 #

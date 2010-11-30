@@ -660,7 +660,8 @@ rec_sex_eval_node (rec_sex_t sex,
         ATOTS_VAL (op2, child_val2);
 
         res.type = REC_SEX_VAL_INT;
-        res.int_val = !timespec_subtract (&diff, &op1, &op2);
+        res.int_val = (!timespec_subtract (&diff, &op1, &op2)
+                       && ((diff.tv_sec != 0) || (diff.tv_nsec != 0)));
         break;
       }
     case REC_SEX_OP_SAMETIME:
