@@ -886,16 +886,33 @@ $reason" \
         exit 1
     fi
 
-    # Add a closing time.
-    $tt_recset --verbose \
-               -t ${tt_db_task} \
-               -e "${tt_db_task_field_id} = $task_id" \
-               -f ${tt_db_task_field_closed} -a "$date" \
-               $tt_db
-    if test "$?" -ne "0"
+    # Add a closing time, or change the value of the existing one.
+    existing_closed=`$tt_recsel -t ${tt_db_task} \
+                                -e "${tt_db_task_field_id} = $task_id" \
+                                -P ${tt_db_task_field_closed} $tt_db`
+    if test -z "$existing_closed"
     then
-        tt_error "data integrity problem.  See the errors above and review your parameters."
-        exit 1
+        $tt_recset --verbose \
+            -t ${tt_db_task} \
+            -e "${tt_db_task_field_id} = $task_id" \
+            -f ${tt_db_task_field_closed} -a "$date" \
+            $tt_db
+        if test "$?" -ne "0"
+        then
+            tt_error "data integrity problem.  See the errors above and review your parameters."
+            exit 1
+        fi
+    else
+        $tt_recset --verbose \
+            -t ${tt_db_task} \
+            -e "${tt_db_task_field_id} = $task_id" \
+            -f ${tt_db_task_field_closed} -s "$date" \
+            $tt_db
+        if test "$?" -ne "0"
+        then
+            tt_error "data integrity problem.  See the errors above and review your parameters."
+            exit 1
+        fi
     fi
 
     # Add a ChangeLog entry and report the operation.

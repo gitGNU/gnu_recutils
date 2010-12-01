@@ -1,3 +1,9 @@
+2010-12-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	tasktool: fix the setting of the close time when resolving.
+	* tasktool (tt_process_cmd_resolve): Add or set the closing time
+	for a task, depending if there is an existing 'ClosedAt' field.
+
 2010-12-01 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.
