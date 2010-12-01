@@ -1,3 +1,10 @@
+2010-12-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	tasktool: escape parameters passed to eval.
+	* tasktool (tt_escape_single_quoted): New function.
+	(tt_process_cmd_create): Escape all the parameters used in single
+	quoted strings passed to eval.
+
 2010-11-30 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

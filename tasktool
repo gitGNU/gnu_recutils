@@ -566,6 +566,14 @@ tt_user_email ()
     echo "$LOGNAME@`hostname`"
 }
 
+# Escape a string to be used into a single quoted string in sh.
+#
+# $1 => The string to escape.
+tt_escape_single_quoted ()
+{
+    echo "$1" | sed "s/'/'\\\\\\\\''/g"
+}
+
 ## Implementation of subcommands ##
 #
 # Each subcommand is implemented by a tt_process_cmd_COMMAND function.
@@ -1096,7 +1104,7 @@ tt_process_cmd_create ()
         esac
     done
 
-    # Check the parameters.
+    # Check the parameters and escape them.
 
     if test -n "$status"
     then
@@ -1105,19 +1113,21 @@ tt_process_cmd_create ()
     else
         status=$tt_task_initial_status
     fi
-
+    status=`tt_escape_single_quoted "$status"`
 
     if test -n "$originator"
     then
         tt_email_p $originator || \
           { tt_error "'$originator' is not a proper email address."; exit 1; }
     fi
+    originator=`tt_escape_single_quoted "$originator"`
 
     if test -n "$assigned"
     then
         tt_email_p $assigned || \
           { tt_error "'$assigned' is not a proper email address."; exit 1; }
     fi
+    assigned=`tt_escape_single_quoted "$assigned"`
 
     # Assigned defaults to originator.
     if test -n "$originator" && test -z "$assigned"
@@ -1144,6 +1154,7 @@ tt_process_cmd_create ()
             read summary
         done
     fi
+    summary=`tt_escape_single_quoted "$summary"`
 
     if test "$description" = "" && test -z "$batch_mode"; then
 
@@ -1169,13 +1180,10 @@ tt_process_cmd_create ()
             fi
         fi
     fi
+    description=`echo "$description" | sed "s/'/'\\\\\\\\''/g"`
 
     new_id=`tt_db_free_id`
     date=`date`
-
-    # Escape single quotes.
-    summary=`echo "$summary" | sed "s/'/'\\\\\\\\''/g"`
-    description=`echo "$description" | sed "s/'/'\\\\\\\\''/g"`
 
     # A closing date may be in order.
     if tt_word_in_list $status "$tt_task_resolutions"
@@ -1209,13 +1217,13 @@ tt_process_cmd_create ()
 
     cmd="$tt_recins --verbose \
                     -t ${tt_db_task} \
-                    -f ${tt_db_task_field_id} -v $new_id \
+                    -f ${tt_db_task_field_id} -v '$new_id' \
                     -f ${tt_db_task_field_summary} -v '$summary' \
                     -f ${tt_db_task_field_created} -v '$date' \
                     ${originator_cmd} \
                     ${assigned_cmd} \
                     ${closed_at_cmd} \
-                    -f ${tt_db_task_field_status} -v $status \
+                    -f ${tt_db_task_field_status} -v '$status' \
                     ${description_cmd} \
                     $tt_db"
     eval "$cmd"
