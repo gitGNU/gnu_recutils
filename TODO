@@ -312,4 +312,29 @@ Description:
 + 
 + Whatever.
 
+Id: 25
+Summary: Support for %max and %min special fields.
+CreatedAt: Wed Dec  1 18:51:23 CET 2010
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: %max and %min special fields can be used to define the minimum and the
++ maximum number of records that should exist in a record set.
++ 
++ Example:
++ 
++    %rec: TasktoolControl
++    %min: 1
++    %max: 1
++ 
++ The previous example requires the existence of one (and only one)
++ TasktoolControl record.
+
+%rec: TasktoolControl
+%type: NextFreeId int
+%mandatory: NextFreeId
+%unique: NextFreeId
+
+NextFreeId: 26
+
 # End of TODO

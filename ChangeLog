@@ -1,9 +1,20 @@
 2010-12-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	tasktool: control record support.
+	* TODO: Control record added.
+
+	* tasktool: Support for the TasktoolControl record and NextFreeId
+	field added.
+
+2010-12-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-writer: cover an additional special case in rec_write_rset.
 	* src/rec-writer.c (rec_write_rset): Cover the special case where
 	a record set contains a set of comments followed by the record
 	descriptor.
+
+	* torture/utils/recins.sh: New tests 'recins-only-descriptor' and
+	'recins-comments-and-descriptor'.
 
 2010-12-01  Jose E. Marchesi  <jemarch@gnu.org>
 
