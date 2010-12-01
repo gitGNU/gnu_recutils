@@ -483,6 +483,8 @@ rec_write_rset (rec_writer_t writer,
   descriptor_pos = rec_rset_descriptor_pos (rset);
   descriptor = rec_rset_descriptor (rset);
 
+  /* Special case: record set containing just the record
+     descriptor.  */
   if ((rec_rset_num_elems (rset) == 0) && descriptor)
     {
       rec_write_record (writer,
@@ -542,6 +544,30 @@ rec_write_rset (rec_writer_t writer,
         }
       
       position++;
+    }
+
+
+  /* Special case:
+   *
+   * # comment 1
+   * 
+   * # comment 2
+   * ...
+   * %rec: foo
+   */
+  if (!wrote_descriptor
+      && (descriptor_pos >= rec_rset_num_elems (rset)))
+    {
+      if (!rec_writer_putc (writer, '\n'))
+        {
+          ret = false;
+        }
+      if (!rec_write_record (writer,
+                             rec_rset_descriptor (rset),
+                             REC_WRITER_NORMAL))
+        {
+          ret = false;
+        }
     }
 
   return ret;

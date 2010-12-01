@@ -1,5 +1,12 @@
 2010-12-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-writer: cover an additional special case in rec_write_rset.
+	* src/rec-writer.c (rec_write_rset): Cover the special case where
+	a record set contains a set of comments followed by the record
+	descriptor.
+
+2010-12-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	tasktool: escape parameters passed to eval.
 	* tasktool (tt_escape_single_quoted): New function.
 	(tt_process_cmd_create): Escape all the parameters used in single
