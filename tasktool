@@ -1173,6 +1173,10 @@ tt_process_cmd_create ()
     new_id=`tt_db_free_id`
     date=`date`
 
+    # Escape single quotes.
+    summary=`echo "$summary" | sed "s/'/'\\\\\\\\''/g"`
+    description=`echo "$description" | sed "s/'/'\\\\\\\\''/g"`
+
     # A closing date may be in order.
     if tt_word_in_list $status "$tt_task_resolutions"
     then
@@ -1202,10 +1206,6 @@ tt_process_cmd_create ()
     else
         description_cmd=""
     fi
-
-    # Escape single quotes.
-    summary=`echo "$summary" | sed "s/'/'\\\\\\\\''/g"`
-    description=`echo "$description" | sed "s/'/'\\\\\\\\''/g"`
 
     cmd="$tt_recins --verbose \
                     -t ${tt_db_task} \

@@ -278,4 +278,38 @@ Description: The recset utility shall support the -r option:
 + 
 + that will rename the field field into newname in matching records.
 
+Id: 24
+Summary: Configuration file for tasktool.
+CreatedAt: Wed Dec  1 18:03:14 CET 2010
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: 
++ The tasktool script can use a configuration file to store some default
++ values and other information, such as teh name of the user and her
++ email.  The originator of newly created tasks, for example, would
++ default to that email address.
++ 
++ The format used to store the configuration file can be a recfile
++ (surprise! :D):
++ 
++    User: Jose E. Marchesi
++    Email: jemarch@gnu.org
++    # ... more configuration.
++ 
++ A new subcommand 'hello' can then be used to get introduced to
++ tasktool:
++ 
++    $ ./tasktool hello
++    Hello! my name is tasktool.
++    What is your name?: 
++    What is your email?:
++    ... and so on.
++ 
++ or non-interactively:
++ 
++    $ ./tasktool hello 'Jose E. Marchesi' jemarch@gnu.org
++ 
++ Whatever.
+
 # End of TODO
