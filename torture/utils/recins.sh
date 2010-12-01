@@ -73,6 +73,18 @@ test_declare_input_file integrity \
 Id: 0
 '
 
+test_declare_input_file only-descriptor \
+'%rec: foo
+'
+
+test_declare_input_file comments-and-descriptor \
+'# comment 1
+
+# comment 2
+
+%rec: foo
+'
+
 #
 # Declare tests.
 #
@@ -211,6 +223,24 @@ test_tool recins-force-restrictions ok \
 Id: 0
 
 Id: not a number
+'
+
+test_tool recins-only-descriptor ok \
+          recins \
+          '' \
+          only-descriptor \
+'%rec: foo
+'
+
+test_tool recins-comments-and-descriptor ok \
+          recins \
+          '' \
+          comments-and-descriptor \
+'# comment 1
+
+# comment 2
+
+%rec: foo
 '
 
 #
