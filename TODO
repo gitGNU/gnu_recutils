@@ -313,28 +313,88 @@ Description:
 + Whatever.
 
 Id: 25
-Summary: Support for %max and %min special fields.
+Summary: Support for %size, %max-size and %min-size special fields.
 CreatedAt: Wed Dec  1 18:51:23 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
 Status: TODO
-Description: %max and %min special fields can be used to define the minimum and the
-+ maximum number of records that should exist in a record set.
+Description: 
++ %size, %max-size and %min-size special fields can be used to define
++ the minimum and the maximum number of records that should exist in a
++ record set.
 + 
 + Example:
 + 
 +    %rec: TasktoolControl
-+    %min: 1
-+    %max: 1
++    %min-size: 1
++    %max-size: 1
++ 
++ that is equivalent to
++ 
++    %rec: TasktoolControl
++    %size: 1
 + 
 + The previous example requires the existence of one (and only one)
 + TasktoolControl record.
++ 
++ Note that %size is not compatible with %max-size or %min-size.
+
+Id: 26
+Summary: rec_init shall build a list of predefined field names.
+CreatedAt: Wed Dec  1 22:32:43 CET 2010
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: 
++ The librec codebase is full of places where some predefined field
++ name, such as '%rec' or '%type', is used.  In that case the following
++ sequence is used:
++ 
++        rec_fname = rec_parse_field_name_str ("%rec");
++ 
++        /* ... use it.  */
++ 
++        rec_field_name_destroy (rec_fname);
++ 
++ The idiom above is dangeous and undesirable because:
++ 
++ 1. It is prone to generate memory leaks.
++ 2. It is slow.
++ 3. If we wanted to change a predefined field we would need to change
++    all its appareances.
++ 
++ A solution could be to make 'rec_init' to create a list of predefined
++ field names and 'rec_fini' to destroy them.
+
+Id: 27
+Summary: tasktool list shall list assigned tasks by default.
+CreatedAt: Wed Dec  1 22:36:50 CET 2010
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: 
++ This would require the availability of the configuration file to
++ determine the user's email address.
++ 
++ See task 24.
+
+Id: 28
+Summary: support categories in tasktool.
+CreatedAt: Wed Dec  1 22:38:35 CET 2010
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: 
++ Subcommands that need to be aware of categories:
++ 
++ - create: option to specify the category, otherwise ask.
++ - list: option to filter by category.
 
 %rec: TasktoolControl
 %type: NextFreeId int
 %mandatory: NextFreeId
 %unique: NextFreeId
 
-NextFreeId: 26
+NextFreeId: 29
 
 # End of TODO
