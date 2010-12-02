@@ -322,6 +322,7 @@ process_table (MdbCatalogEntry *entry)
   char *field_name_str;
   char *field_value;
   char **bound_values;
+  char *normalised;
   int *bound_lens;
 #define TYPE_VALUE_SIZE 256
   char type_value[TYPE_VALUE_SIZE];
@@ -362,6 +363,12 @@ process_table (MdbCatalogEntry *entry)
       col = g_ptr_array_index (table->columns, i);
       column_name = col->name;
       type_value[0] = 0;
+      normalised = rec_field_name_part_normalise (col->name);
+      if (!normalised)
+        {
+          recutl_fatal (_("failed to normalise the field name %s\n"),
+                        col->name);
+        }
 
       /* Emit a field type specification.  */
       switch (col->col_type)
@@ -369,13 +376,13 @@ process_table (MdbCatalogEntry *entry)
         case MDB_BOOL:
           {
             snprintf (type_value, TYPE_VALUE_SIZE,
-                      "%s bool", col->name);
+                      "%s bool", normalised);
             break;
           }
         case MDB_BYTE:
           {
             snprintf (type_value, TYPE_VALUE_SIZE,
-                      "%s range 256", col->name);
+                      "%s range 256", normalised);
             break;
           }
         case MDB_INT:
@@ -383,7 +390,7 @@ process_table (MdbCatalogEntry *entry)
         case MDB_NUMERIC:
           {
             snprintf (type_value, TYPE_VALUE_SIZE,
-                      "%s int", col->name);
+                      "%s int", normalised);
             break;
           }
         case MDB_MONEY:
@@ -391,13 +398,13 @@ process_table (MdbCatalogEntry *entry)
         case MDB_DOUBLE:
           {
             snprintf (type_value, TYPE_VALUE_SIZE,
-                      "%s real", col->name);
+                      "%s real", normalised);
             break;
           }
         case MDB_SDATETIME:
           {
             snprintf (type_value, TYPE_VALUE_SIZE,
-                      "%s date", col->name);
+                      "%s date", normalised);
             break;
           }
         case MDB_TEXT:
@@ -405,7 +412,7 @@ process_table (MdbCatalogEntry *entry)
             if (col->col_size > 0)
               {
                 snprintf (type_value, TYPE_VALUE_SIZE,
-                          "%s size %d", col->name, col->col_size);
+                          "%s size %d", normalised, col->col_size);
               }
             break;
           }

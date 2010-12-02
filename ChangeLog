@@ -1,3 +1,9 @@
+2010-12-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	mdb2rec: normalise field names appearing in %type fields.
+	* utils/mdb2rec.c (process_table): Use normalised field name parts
+	in the %type: entries for columns.
+
 2010-12-01 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.
