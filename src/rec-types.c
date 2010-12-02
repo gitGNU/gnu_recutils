@@ -123,8 +123,10 @@
   REC_TYPE_RANGE_NAME                              \
   REC_TYPE_BLANKS_RE                               \
   "-?[0-9]+"                                       \
+  "("                                              \
   REC_TYPE_ZBLANKS_RE                              \
-  "-?[0-9]+"
+  "-?[0-9]+"                                       \
+  ")?"
 
 /* real  */
 #define REC_TYPE_REAL_DESCR_RE                     \
@@ -1246,9 +1248,19 @@ rec_type_parse_range (char *str, rec_type_t type)
 
   rec_skip_blanks (&p);
 
-  if (!rec_parse_int (&p, &(type->data.range[1])))
+  if (*p == '\0')
     {
-      return NULL;
+      /* One of the indexes is ommitted.  The range is of the
+         form 0..N.  */
+      type->data.range[1] = type->data.range[0];
+      type->data.range[0] = 0;
+    }
+  else
+    {
+      if (!rec_parse_int (&p, &(type->data.range[1])))
+        {
+          return NULL;
+        }
     }
 
   return p;

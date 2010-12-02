@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 17:46:21 jco"
+/* -*- mode: C -*- Time-stamp: "2010-12-02 15:19:51 jemarch"
  *
  *       File:         rec-type-new.c
  *       Date:         Fri Oct 29 16:16:05 2010
@@ -47,6 +47,10 @@ START_TEST(rec_type_new_nominal)
   rec_type_destroy (type);
 
   type = rec_type_new ("foo bool");
+  fail_if (type == NULL);
+  rec_type_destroy (type);
+  
+  type = rec_type_new ("foo range 10");
   fail_if (type == NULL);
   rec_type_destroy (type);
 
@@ -112,6 +116,12 @@ START_TEST(rec_type_new_invalid)
   fail_if (type != NULL);
   
   type = rec_type_new ("foo invalidkeyword");
+  fail_if (type != NULL);
+
+  type = rec_type_new ("foo range");
+  fail_if (type != NULL);
+
+  type = rec_type_new ("foo range a");
   fail_if (type != NULL);
 
   type = rec_type_new ("foo range a b");

@@ -121,6 +121,39 @@ foo: 20
 One:foo: foobar
 '
 
+test_declare_input_file ranges-ok \
+'%rec: Foo
+%type: bar range -10 10
+%type: baz range 10
+
+bar: -10
+baz: 0
+
+bar: 10
+baz: 10
+
+bar: 2
+baz: 5
+'
+
+test_declare_input_file ranges-xfail-1 \
+'%rec: Foo
+%type: bar range -10 10
+%type: baz range 10
+
+bar: -25
+baz: 0
+'
+
+test_declare_input_file ranges-xfail-2 \
+'%rec: Foo
+%type: bar range -10 10
+%type: baz range 10
+
+bar: 2
+baz: 11
+'
+
 #
 # Declare tests.
 #
@@ -173,6 +206,22 @@ test_tool recfix-hidden-type ok \
           '' \
           hidden-type \
 ''
+
+test_tool recfix-ranges-ok ok \
+          recfix \
+          '' \
+          ranges-ok \
+''
+
+test_tool recfix-ranges-xfail-1 xfail \
+          recfix \
+          '' \
+          ranges-xfail-1
+
+test_tool recfix-ranges-xfail-2 xfail \
+          recfix \
+          '' \
+          ranges-xfail-2
 
 #
 # Cleanup.

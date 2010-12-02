@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 17:30:02 jco"
+/* -*- mode: C -*- Time-stamp: "2010-12-02 15:20:17 jemarch"
  *
  *       File:         rec-type-descr-p.c
  *       Date:         Fri Oct 29 17:15:50 2010
@@ -39,6 +39,7 @@ START_TEST(rec_type_descr_p_nominal)
   fail_if (!rec_type_descr_p ("foo int"));
   fail_if (!rec_type_descr_p ("foo int  \n\n  "));
   fail_if (!rec_type_descr_p ("foo bool"));
+  fail_if (!rec_type_descr_p ("foo range 10"));
   fail_if (!rec_type_descr_p ("foo range 1 10"));
   fail_if (!rec_type_descr_p ("foo real"));
   fail_if (!rec_type_descr_p ("foo size 10"));
