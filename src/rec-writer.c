@@ -556,7 +556,8 @@ rec_write_rset (rec_writer_t writer,
    * %rec: foo
    */
   if (!wrote_descriptor
-      && (descriptor_pos >= rec_rset_num_elems (rset)))
+      && (descriptor_pos >= rec_rset_num_elems (rset))
+      && rec_rset_descriptor (rset))
     {
       if (!rec_writer_putc (writer, '\n'))
         {

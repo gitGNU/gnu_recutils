@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.0\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2010-11-27 10:44+0100\n"
+"POT-Creation-Date: 2010-12-03 16:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -238,74 +238,74 @@ msgstr ""
 msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-types.c:426
+#: src/rec-types.c:428
 #, c-format
 msgid ""
 "rec-types: internal error: got REC_TYPE_NONE from rec_type_parse_type kind "
 "in rec_type_new.\n"
 msgstr ""
 
-#: src/rec-types.c:775
+#: src/rec-types.c:777
 #, c-format
 msgid "internal error: rec-types: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-types.c:851
+#: src/rec-types.c:853
 #, c-format
 msgid "invalid integer."
 msgstr ""
 
-#: src/rec-types.c:867
+#: src/rec-types.c:869
 #, c-format
 msgid "invalid 'field' value."
 msgstr ""
 
-#: src/rec-types.c:883
+#: src/rec-types.c:885
 #, c-format
 msgid "invalid 'bool' value."
 msgstr ""
 
-#: src/rec-types.c:905
+#: src/rec-types.c:907
 #, c-format
 msgid "invalid 'range' value."
 msgstr ""
 
-#: src/rec-types.c:914
+#: src/rec-types.c:916
 #, c-format
 msgid "expected an integer between %d and %d."
 msgstr ""
 
-#: src/rec-types.c:931
+#: src/rec-types.c:933
 #, c-format
 msgid "invalid 'real' value."
 msgstr ""
 
-#: src/rec-types.c:948
+#: src/rec-types.c:950
 #, c-format
 msgid "value too large.  Expected a size <= %d."
 msgstr ""
 
-#: src/rec-types.c:965
+#: src/rec-types.c:967
 #, c-format
 msgid "invalid 'line' value."
 msgstr ""
 
-#: src/rec-types.c:984
+#: src/rec-types.c:986
 #, c-format
 msgid "value does not match the regexp."
 msgstr ""
 
-#: src/rec-types.c:1007
+#: src/rec-types.c:1009
 #, c-format
 msgid "invalid date."
 msgstr ""
 
-#: src/rec-types.c:1023
+#: src/rec-types.c:1025
 #, c-format
 msgid "invalid email."
 msgstr ""
 
-#: src/rec-types.c:1077
+#: src/rec-types.c:1079
 #, c-format
 msgid "invalid enum value."
 msgstr ""
@@ -366,7 +366,7 @@ msgid "invalid field name '%s' in header\n"
 msgstr ""
 
 #: utils/csv2rec.c:259 utils/csv2rec.c:298 utils/csv2rec.c:313
-#: utils/mdb2rec.c:340 utils/mdb2rec.c:447
+#: utils/mdb2rec.c:341 utils/mdb2rec.c:454
 msgid "out of memory\n"
 msgstr ""
 
@@ -423,7 +423,7 @@ msgid ""
 "        mdb2rec database.mdb Customers > customers.rec\n"
 msgstr ""
 
-#: utils/mdb2rec.c:267 utils/mdb2rec.c:347
+#: utils/mdb2rec.c:267 utils/mdb2rec.c:348
 #, c-format
 msgid "failed to normalise record type name %s\n"
 msgstr ""
@@ -433,21 +433,26 @@ msgstr ""
 msgid "failed to normalise field name %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:473 utils/recins.c:298
+#: utils/mdb2rec.c:369
+#, c-format
+msgid "failed to normalise the field name %s\n"
+msgstr ""
+
+#: utils/mdb2rec.c:480 utils/recins.c:298
 #, c-format
 msgid "invalid field name %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:505
+#: utils/mdb2rec.c:512
 msgid "out of memory"
 msgstr ""
 
-#: utils/mdb2rec.c:515
+#: utils/mdb2rec.c:522
 #, c-format
 msgid "could not open file %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:522
+#: utils/mdb2rec.c:529
 msgid "file does not appear to be an Access database\n"
 msgstr ""
 

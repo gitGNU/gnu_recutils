@@ -1,3 +1,10 @@
+2010-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Avoid a segmentation fault in rec_write_rset.
+	* src/rec-writer.c (rec_write_rset): Make sure that the descriptor
+	of a record set exists before to try to write it.  Problem
+	reported by Elias Pipping.
+
 2010-12-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-types: support ranges with implicit minimum limit.
