@@ -25,7 +25,6 @@
 
 #include <config.h>
 
-#include <malloc.h>
 #include <stdlib.h>
 
 #include <rec-mset.h>

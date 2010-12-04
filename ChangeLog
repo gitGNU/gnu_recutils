@@ -1,5 +1,18 @@
 2010-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: do not include malloc.h.  Include the more portable
+	stdlib.h instead.
+	* src/rec-fex.c: Include stdlib.h instead of malloc.h.
+	* src/rec-field-name.c: Likewise.
+	* src/rec-field.c: Likewise.
+	* src/rec-parser.c: Likewise.
+	* src/rec-record.c: Likewise.
+	* src/rec-rset.c: Likewise.
+	* src/rec-sex.c: Likewise.
+	* src/rec-writer.c: Likewise.
+
+2010-12-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Avoid a segmentation fault in rec_write_rset.
 	* src/rec-writer.c (rec_write_rset): Make sure that the descriptor
 	of a record set exists before to try to write it.  Problem

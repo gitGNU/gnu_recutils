@@ -25,7 +25,7 @@
 
 #include <config.h>
 
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 #include <regex.h>
 #include <ctype.h>
