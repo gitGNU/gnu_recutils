@@ -405,11 +405,61 @@ Description:
 + no field named 'foo' is found in a record, one is created with the
 + given value.
 
+Id: 30
+Summary: Do not use open_memstream and fmemopen.
+CreatedAt: Sat Dec  4 20:50:55 CET 2010
+Originator: bruno@clisp.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: 
++ open_memstream and fmemopen are not portable.  Information sent by
++ Bruno Haible to the development mailing list:
++ 
++ libtool: link: gcc -Wall -fno-strict-aliasing -g -O2 -o .libs/recinf recutl.o recinf.o  ../lib/.libs/libgnu.a -L/Users/bruno/data/local-macos/lib ../src/.libs/librec.dylib /Users/bruno/data/local-macos/lib/libintl.dylib /Users/bruno/data/local-macos/lib/libiconv.dylib -lc -lcurl
++ Undefined symbols:
++   "_open_memstream", referenced from:
++       _recutl_eval_field_expression in recutl.o
++ ld: symbol(s) not found
++ collect2: ld returned 1 exit status
++ make[1]: *** [recinf] Error 1
++ make: *** [all-recursive] Error 1
++ 
++ This is because the function open_memstream(), and also fmemopen()
++ which is used in rec-parser.c, exist only on glibc, Cygwin 1.7, and
++ AIX 7.1:
++ 
++ $ ./show-portability open_memstream
++ libc                aix-7.1.0
++ libc                cygwin-1.7
++ libc                glibc-2.3.6
++ MISSING in          aix-4.3.2 aix-5.1.0 aix-5.2.0 aix-5.3.0a aix-6.1.0 beos cygwin-1.5 freebsd-5.2.1 freebsd-6.0 freebsd-6.4 hpux-10.20 hpux-11.00 hpux-11.11 hpux-11.23 hpux-11.31 interix-3.5 irix-5.3 irix-6.5 macosx-10.3 macosx-10.4 macosx-10.5 mingw netbsd-3.0 netbsd-5.0.1 netbsd-5.0 nsk-G06 openbsd-3.8 osf1-4.0d osf1-5.1a pips solaris-2.10 solaris-2.11_2010_11 solaris-2.4 solaris-2.5.1 solaris-2.6 solaris-2.7 solaris-2.8 solaris-2.9
++ 
++ $ ./show-portability fmemopen
++ libc                aix-7.1.0
++ libc                cygwin-1.7
++ libc                glibc-2.3.6
++ MISSING in          aix-4.3.2 aix-5.1.0 aix-5.2.0 aix-5.3.0a aix-6.1.0 beos cygwin-1.5 freebsd-5.2.1 freebsd-6.0 freebsd-6.4 hpux-10.20 hpux-11.00 hpux-11.11 hpux-11.23 hpux-11.31 interix-3.5 irix-5.3 irix-6.5 macosx-10.3 macosx-10.4 macosx-10.5 mingw netbsd-3.0 netbsd-5.0.1 netbsd-5.0 nsk-G06 openbsd-3.8 osf1-4.0d osf1-5.1a pips solaris-2.10 solaris-2.11_2010_11 solaris-2.4 solaris-2.5.1 solaris-2.6 solaris-2.7 solaris-2.8 solaris-2.9
++ 
++ See also the gnulib documentation:
++ http://www.gnu.org/software/gnulib/manual/html_node/open_005fmemstream.html
++ http://www.gnu.org/software/gnulib/manual/html_node/fmemopen.html
++ 
++ And no, gnulib cannot create a replacement for these functions,
++ because the 'FILE' type is simply not extensible and the stream
++ functions are hardcoded in many systems.
++ 
++ For open_memstream(), how about using an explicit in-memory buffer,
++ that is grown through x2nrealloc when needed?
++ 
++ For fmemopen(), I would suggest to change the rec_parser_s type so
++ that it contains a FILE * for reading from a file and a 'const char
++ *buf; const char *bufend;' for reading from a buffer in memory.
+
 %rec: TasktoolControl
 %type: NextFreeId int
 %mandatory: NextFreeId
 %unique: NextFreeId
 
-NextFreeId: 30
+NextFreeId: 31
 
 # End of TODO

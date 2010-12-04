@@ -1,3 +1,9 @@
+2010-12-04 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 30 created.
+	Task 30 edited.
+
 2010-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: do not include malloc.h.  Include the more portable
