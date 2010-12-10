@@ -56,7 +56,7 @@ tt_task_resolutions="DONE SOMEDAY DISCARDED"
 #
 # Examples: tt_task_categories="Library Application Translations"
 
-tt_task_categories="librec utils doc"
+tt_task_categories="librec utils doc rec-mode torture tasktool"
 
 # Operating Systems (words separated by blanks).
 #
@@ -127,7 +127,7 @@ tt_db_task_field_note="Note"
 tt_db_template_task="\
 %rec: ${tt_db_task}
 %key: ${tt_db_task_field_id}
-%mandatory: ${tt_db_task_field_summary} ${tt_db_task_field_status}
+%mandatory: ${tt_db_task_field_summary} ${tt_db_task_field_status} ${tt_db_task_field_category}
 %type: ${tt_db_task_field_id} int
 %type: ${tt_db_task_field_summary} line
 %type: ${tt_db_task_field_type} enum
@@ -994,7 +994,7 @@ tt_process_cmd_edit ()
 # Process the 'list' subcommand
 tt_process_cmd_list ()
 {
-    TEMP=`getopt -o -e:s:o:a: --long help,status,originator,assigned-to -n 'tasktool: list' -- "$@"`
+    TEMP=`getopt -o -e:s:o:a:c: --long help,status,originator,category,assigned-to -n 'tasktool: list' -- "$@"`
     if test "$?" -ne "0"
     then
         exit 1
@@ -1027,6 +1027,11 @@ tt_process_cmd_list ()
                 shift
                 shift
                 ;;
+            -c|--category)
+                category="$2"
+                shift
+                shift
+                ;;
             *)
                 break
                 ;;
@@ -1056,6 +1061,13 @@ tt_process_cmd_list ()
             echo "$tt_help_list"
             exit 1
         fi
+    fi
+
+    if test -n "$category"
+    then
+        # Check for a valid category.
+        tt_word_in_list $category "$tt_task_categories" || {
+            tt_error "invalid category.  Should be one of $tt_task_categories."; exit 1; }
     fi
 
     # Prepare the selection expression
@@ -1098,6 +1110,11 @@ tt_process_cmd_list ()
         if test -n "$assigned"
         then
             selection_expression="$selection_expression && ($tt_db_task_field_assigned = '$assigned')"
+        fi
+
+        if test -n "$category"
+        then
+            selection_expression="$selection_expression && ($tt_db_task_field_category = '$category')"
         fi
     fi
 

@@ -1,3 +1,17 @@
+2010-12-10 Jose Marchesi <jemarch@gnu.org>
+
+	Tasktool operations.
+	* TODO: Task 28 resolved to 'DONE'.
+
+2010-12-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	tasktool: support for categories.
+	* tasktool (tt_task_categories): New category 'rec-mode'.
+	(tt_process_cmd_list): Support the -c|--category parameter.
+	(tt_db_template_task): Set 'Category' as a mandatory field.
+
+	* TODO: Updated to reflect the new categories.
+
 2010-12-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: do not include malloc.h.  Include the more portable
