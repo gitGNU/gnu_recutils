@@ -7,7 +7,7 @@
 
 %rec: Task
 %key: Id
-%mandatory: Summary Status
+%mandatory: Summary Status Category
 %type: Id int
 %type: Summary line
 %type: Type enum
@@ -16,12 +16,13 @@
 + TODO NEXT STARTED WAITING
 + DONE SOMEDAY DISCARDED
 %type: Category enum
-+ librec utils doc
++ librec utils doc rec-mode torture tasktool
 %type: Originator,AssignedTo email
 %type: CreatedAt,ClosedAt date
 
 Id: 1
 Summary: Make rec_db_t smarter.
+Category: librec
 CreatedAt: Sat Nov  6 11:13:36 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -34,6 +35,7 @@ Description: The rec_db_t abstract data type could benefit of some obvious
 
 Id: 2
 Summary: Optimize rec_sex_eval.
+Category: librec
 CreatedAt: Sat Nov  6 11:15:06 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -46,6 +48,7 @@ Description: There is an obvious optimization in the SEX evaluator that is not y
 
 Id: 3
 Summary: Write unit tests for rec_field.
+Category: torture
 CreatedAt: Sat Nov  6 11:19:55 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -53,6 +56,7 @@ Status: DONE
 
 Id: 4
 Summary: Write unit tests for rec_record.
+Category: torture
 CreatedAt: Sat Nov  6 11:22:07 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -60,6 +64,7 @@ Status: TODO
 
 Id: 5
 Summary: Write unit tests for rec_rset.
+Category: torture
 CreatedAt: Sat Nov  6 11:22:40 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -67,6 +72,7 @@ Status: TODO
 
 Id: 6
 Summary: Write unit tests for rec_db.
+Category: torture
 CreatedAt: Sat Nov  6 11:22:48 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -74,6 +80,7 @@ Status: TODO
 
 Id: 7
 Summary: Write unit tests for rec_int.
+Category: torture
 CreatedAt: Sat Nov  6 11:22:57 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -81,6 +88,7 @@ Status: TODO
 
 Id: 8
 Summary: Write unit tests for rec_parser.
+Category: torture
 CreatedAt: Sat Nov  6 11:23:03 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -88,6 +96,7 @@ Status: DONE
 
 Id: 9
 Summary: Write unit tests for rec_fex.
+Category: torture
 CreatedAt: Sat Nov  6 11:23:12 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -95,6 +104,7 @@ Status: DONE
 
 Id: 10
 Summary: Write unit tests for rec_writer.
+Category: torture
 CreatedAt: Sat Nov  6 11:23:21 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -102,6 +112,7 @@ Status: DONE
 
 Id: 11
 Summary: Write unit tests for rec_sex.
+Category: torture
 CreatedAt: Sat Nov  6 11:23:29 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -109,6 +120,7 @@ Status: DONE
 
 Id: 12
 Summary: Improve error reporting with invalid %type fields.
+Category: librec
 CreatedAt: Sat Nov  6 11:43:25 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -119,6 +131,8 @@ Description: The error reporting on type definitions in %type fields is not very
 
 Id: 13
 Summary: Check the return value of all system calls.
+Category: librec
+Category: utils
 CreatedAt: Sat Nov  6 11:44:38 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -135,6 +149,7 @@ Note: Sat Nov  6 11:45:14 CET 2010
 
 Id: 14
 Summary: Fix rec-finish-editing in rec-mode.el.
+Category: rec-mode
 CreatedAt: Sun Nov  7 14:46:14 CET 2010
 AssignedTo: jemarch@gnu.org
 Status: TODO
@@ -168,12 +183,14 @@ Description: When opening a file foo.rec with the following contents:
 
 Id: 15
 Summary: Make rec-mode to honour the external descriptors.
+Category: rec-mode
 CreatedAt: Sun Nov  7 14:57:22 CET 2010
 AssignedTo: jemarch@gnu.org
 Status: TODO
 
 Id: 16
 Summary: Implement %fsort.
+Category: librec
 CreatedAt: Sun Nov  7 20:26:41 CET 2010
 AssignedTo: jemarch@gnu.org
 Status: TODO
@@ -190,12 +207,14 @@ Description: The %fsort special field specifies the desired order of the fields
 
 Id: 17
 Summary: Make tasktool to reuse ChangeLog entries with the same date.
+Category: tasktool
 CreatedAt: Sun Nov  7 20:29:03 CET 2010
 AssignedTo: jemarch@gnu.org
 Status: TODO
 
 Id: 18
 Summary: Allow the usage of field lists in type declarations.
+Category: librec
 CreatedAt: Sun Nov  7 20:53:59 CET 2010
 ClosedAt: Thu Nov 25 17:25:26 CET 2010
 AssignedTo: jemarch@gnu.org
@@ -210,6 +229,7 @@ Description: It is possible to specify more than one field name in type
 
 Id: 19
 Summary: Fix over sized synopsis lines in the PDF manual.
+Category: doc
 CreatedAt: Mon Nov  8 11:36:58 CET 2010
 Originator: Ralf.Wildenhues@gmx.de
 AssignedTo: jemarch@gnu.org
@@ -226,6 +246,7 @@ ClosedAt: Tue Nov 30 16:30:10 CET 2010
 
 Id: 20
 Summary: Implement %sort.
+Category: librec
 CreatedAt: Mon Nov  8 12:57:20 CET 2010
 AssignedTo: jemarch@gnu.org
 Status: TODO
@@ -237,6 +258,8 @@ Description: Sorting of records in the described record set.  Usage:
 
 Id: 21
 Summary: Support maximum width in output in recsel.
+Category: librec
+Category: utils
 CreatedAt: Fri Nov 19 19:13:29 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -253,6 +276,7 @@ Description: The w option shall be implemented in recsel:
 
 Id: 22
 Summary: Support external non-remote descriptors.
+Category: librec
 CreatedAt: Sat Nov 20 22:54:09 CET 2010
 ClosedAt: Sat Nov 27 10:38:50 CET 2010
 Originator: jemarch@gnu.org
@@ -267,6 +291,7 @@ Description: It shall be possible to use external desciptors not requiring a
 
 Id: 23
 Summary: Support renaming of fields in recset.
+Category: librec
 CreatedAt: Tue Nov 23 22:45:08 CET 2010
 ClosedAt: Thu Nov 25 17:23:28 CET 2010
 Originator: jemarch@gnu.org
@@ -280,6 +305,7 @@ Description: The recset utility shall support the -r option:
 
 Id: 24
 Summary: Configuration file for tasktool.
+Category: tasktool
 CreatedAt: Wed Dec  1 18:03:14 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -314,6 +340,7 @@ Description:
 
 Id: 25
 Summary: Support for %size, %max-size and %min-size special fields.
+Category: librec
 CreatedAt: Wed Dec  1 18:51:23 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -341,6 +368,7 @@ Description:
 
 Id: 26
 Summary: rec_init shall build a list of predefined field names.
+Category: librec
 CreatedAt: Wed Dec  1 22:32:43 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -368,6 +396,7 @@ Description:
 
 Id: 27
 Summary: tasktool list shall list assigned tasks by default.
+Category: tasktool
 CreatedAt: Wed Dec  1 22:36:50 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
@@ -380,18 +409,25 @@ Description:
 
 Id: 28
 Summary: support categories in tasktool.
+Category: tasktool
 CreatedAt: Wed Dec  1 22:38:35 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: 
 + Subcommands that need to be aware of categories:
 + 
 + - create: option to specify the category, otherwise ask.
 + - list: option to filter by category.
+Note: Fri Dec 10 16:27:21 CET 2010
++ Task resolved to 'DONE'.
++ 
++ Command line option -c|--category added to the "list" subcommand.
+ClosedAt: Fri Dec 10 16:27:21 CET 2010
 
 Id: 29
 Summary: Support set-or-add -S option in recset.
+Category: utils
 CreatedAt: Wed Dec  1 22:55:06 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
