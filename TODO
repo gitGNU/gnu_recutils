@@ -443,6 +443,9 @@ Description:
 
 Id: 30
 Summary: Do not use open_memstream and fmemopen.
+Category: librec
+Category: torture
+Category: utils
 CreatedAt: Sat Dec  4 20:50:55 CET 2010
 Originator: bruno@clisp.org
 AssignedTo: jemarch@gnu.org
