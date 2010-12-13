@@ -39,9 +39,9 @@
   :group 'applications
   :link '(url-link "http://www.gnu.org/software/rec"))
 
-(defcustom rec-open-mode 'edit
+(defcustom rec-open-mode 'navigation
   "Default mode to use when switching a buffer to rec-mode.
-Valid values are `edit' and `navigation'.  The default is `edit'"
+Valid values are `edit' and `navigation'.  The default is `navigation'"
   :type 'symbol
   :group 'rec-mode)
 
@@ -101,7 +101,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
   "Syntax table used in rec-mode")
 
 (defvar rec-font-lock-keywords
-  `(("^%\\(rec\\|key\\|unique\\|type\\|prohibit\\|mandatory\\|doc\\|fsort\\):" . font-lock-keyword-face)
+  `(("^%\\(rec\\|key\\|unique\\|type\\|prohibit\\|mandatory\\|type\\|doc\\|fsort\\):" . font-lock-keyword-face)
     (,rec-field-name-re . font-lock-variable-name-face)
     ("^\\+" . font-lock-constant-face))
   "Font lock keywords used in rec-mode")
@@ -144,6 +144,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
+    (define-key map (kbd "SPC") 'rec-cmd-toggle-field-visibility)
     (define-key map "b" 'rec-cmd-jump-back)
     map)
   "Keymap for rec-mode")
@@ -642,6 +643,9 @@ file."
 (defun rec-goto-type (type)
   "Goto the beginning of the descriptor with type TYPE.
 
+If there are records of type TYPE in the record set then goto the
+first record.  Otherwise goto to the record descriptor.
+
 If the type do not exist in the current buffer then
 this function returns nil."
   (if (or (not type)
@@ -959,7 +963,7 @@ the result buffer."
   "Show the records of the given type"
   (widen)
   (unless (rec-goto-type type)
-    (message "No records with that type found in the file"))
+    (message "No records of the requested type were found."))
   (rec-show-record))
 
 (defun rec-show-record ()
@@ -969,15 +973,20 @@ the result buffer."
   (use-local-map rec-mode-map)
   ;; TODO: Update field names for autocompletion
   ;;  (let ((names (rec-record-field-names (rec-current-record)))))
+  (rec-set-head-line nil)
   (rec-set-mode-line (rec-record-type)))
 
-;;;; Mode line
+;;;; Mode line and Head line
 
 (defun rec-set-mode-line (str)
-  "Set the modeline in rec buffers"
+  "Set the modeline in rec buffers."
   (setq mode-line-buffer-identification
         (list 20
               "%b " str)))
+
+(defun rec-set-head-line (str)
+  "Set the headline in rec buffers."
+  (setq header-line-format str))
 
 ;;;; Fast selection
 
@@ -1240,7 +1249,7 @@ buffer"
           (insert field-value)
           (switch-to-buffer-other-window edit-buf)
           (goto-char (point-min))
-          (message "Edit the value of the field and press C-c C-c to exit"))
+          (message "Edit the value of the field and use C-c C-c to exit"))
       (message "Not in a field"))))
 
 (defun rec-finish-editing-field ()
@@ -1420,10 +1429,10 @@ point."
   (setq rec-editing t)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
+  (rec-set-head-line "Editing record - use C-cC-c to return to navigation mode")
   (rec-set-mode-line "Edit record")
   (setq rec-update-p t)
-  (setq rec-preserve-last-newline t)
-  (message "Editing: Press C-c C-c when you are done"))
+  (setq rec-preserve-last-newline t))
 
 (defun rec-edit-type ()
   "Go to the type edition mode"
@@ -1435,8 +1444,10 @@ point."
   (rec-narrow-to-type (rec-record-type))
   (setq rec-update-p t)
   (goto-char (point-min))
-  (rec-set-mode-line "Edit type")
-  (message "Editing:  Press C-c C-c when you are done"))
+  (rec-set-head-line (concat "Editing type "
+                             "'" (rec-record-type) "'"
+                             " - use C-cC-c to return to navigation mode"))
+  (rec-set-mode-line "Edit type"))
 
 (defun rec-edit-buffer ()
   "Go to the buffer edition mode"
@@ -1447,8 +1458,8 @@ point."
   (widen)
   (setq rec-update-p t)
   (goto-char (point-min))
-  (rec-set-mode-line "Edit buffer")
-  (message "Editing: Press C-c C-c when you are done"))
+  (rec-set-head-line "Editing buffer - use C-cC-c to return to navigation mode")
+  (rec-set-mode-line "Edit buffer"))
 
 (defun rec-finish-editing ()
   "Go back from the record edition mode"
@@ -1467,7 +1478,7 @@ point."
       (rec-update-buffer-descriptors))
     (setq rec-update-p nil))
   (rec-show-record)
-  ;; TODO: Restore modeline
+  (rec-set-head-line nil)
   (rec-set-mode-line (rec-record-type))
   (setq rec-editing nil)
   (rec-init-selections)
