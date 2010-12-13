@@ -270,6 +270,7 @@ Mandatory arguments to long options are mandatory for short options too.
   -s, --status=STATUS                 list tasks having this status.
   -o, --originator                    list tasks having this originator.
   -a, --assigned-to=EMAIL             list tasks assigned to EMAIL.
+  -c, --category=CATEGORY             list tasks pertaining to CATEGORY.
 
 EXPRESSION is a recutils selection expression.  If it is specified
 then any used -s or -o argument is ignored.
@@ -292,6 +293,8 @@ Mandatory arguments to long options are mandatory for short options too.
   -s, --status=STATUS                 status to use in task creation.  Defaults
                                         to ${tt_task_initial_status}.
   -a, --assigned=EMAIL                assignee of the task.
+  -c, --category=CATEGORY             set the category of the new task.  Defaults
+                                        the first category in 'tt_task_categories'.
   -b, --batch                         don't ask for field values interactively.
       --no-changelog                  do not generate a ChangeLog entry.
       --help                          print this help message and exit.
@@ -1125,7 +1128,7 @@ tt_process_cmd_list ()
 # Process the 'create' subcommand
 tt_process_cmd_create ()
 {
-    TEMP=`getopt -o -bs:o:a: --long help,batch,originator,no-changelog,status:,assigned:,summary: -n 'tasktool: create' -- "$@"`
+    TEMP=`getopt -o -bs:o:a:c: --long help,batch,originator,no-changelog,status:,assigned:,summary:,category: -n 'tasktool: create' -- "$@"`
     if test "$?" -ne "0"
     then
         exit 1
@@ -1151,6 +1154,11 @@ tt_process_cmd_create ()
                 ;;
             -a|--assigned)
                 assigned=$2
+                shift
+                shift
+                ;;
+            -c|--category)
+                category=$2
                 shift
                 shift
                 ;;
@@ -1209,6 +1217,24 @@ tt_process_cmd_create ()
             echo "$tt_help_create"
             exit 1
         fi
+    fi
+
+    if test -n "$category"
+    then
+        # Check for a valid category.
+        tt_word_in_list $category "$tt_task_categories" || {
+            tt_error "invalid category.  Should be one of $tt_task_categories."; exit 1; }
+    else
+        # Ask for a category.
+        while true
+        do
+            echo -n "Category ($tt_task_categories): "
+            read category
+            if tt_word_in_list $category "$tt_task_categories"
+            then
+                break
+            fi
+        done
     fi
 
     if test "$summary" = ""; then
@@ -1283,6 +1309,7 @@ tt_process_cmd_create ()
                     -t ${tt_db_task} \
                     -f ${tt_db_task_field_id} -v '$new_id' \
                     -f ${tt_db_task_field_summary} -v '$summary' \
+                    -f ${tt_db_task_field_category} -v '$category' \
                     -f ${tt_db_task_field_created} -v '$date' \
                     ${originator_cmd} \
                     ${assigned_cmd} \
