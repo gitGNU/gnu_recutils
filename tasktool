@@ -985,6 +985,12 @@ tt_process_cmd_edit ()
     # Replace the old task with the new content.
     $tt_recins --verbose -e "${tt_db_task_field_id} = ${task_id}" \
                          -t $tt_db_task -r "$new_task" $tt_db
+    if test "$?" -ne "0"
+    then
+        tt_error "data integrity problem.  See the errors above and review your parameters."
+        exit 1
+    fi
+
     echo "tasktool: task $task_id edited."
 
     if test -z "$no_changelog"

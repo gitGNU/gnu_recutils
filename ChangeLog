@@ -1,5 +1,25 @@
 2010-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recins: check for integrity problems regardless of operational
+	mode.
+	* utils/recfix.c (recfix_process_data): Use new semantics of
+	rec_int_check_db.
+
+	* src/rec-int.c (rec_int_check_db): Return the number of errors
+	found while checking the integrity of the database.
+	(rec_int_merge_remote): Unused variable removed.
+
+	* utils/recins.c (recins_add_new_record): Check for the integrity
+	of the new database in both operation modes: normal and replace.
+
+2010-12-13 Jose Marchesi <jco@wilhelm>
+
+	Tasktool operations.
+	* TODO: Task 30 edited.
+	Task 30 edited.
+
+2010-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: don't allow several %rec: fields in record descriptors.
 	* src/rec-int.c (rec_int_check_descriptor): Don't allow more than
 	one %rec: fields in record descriptors.

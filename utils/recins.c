@@ -150,9 +150,6 @@ recins_insert_record (rec_db_t db,
   bool res;
   rec_rset_t rset;
   rec_rset_elem_t last_elem, new_elem;
-  FILE *errors_stm;
-  char *errors_str;
-  size_t errors_str_size;
 
   if (!record || (rec_record_num_fields (record) == 0))
     {
@@ -202,26 +199,6 @@ recins_insert_record (rec_db_t db,
           /* The default rset should always be in the beginning of
              the db.  */
           rec_db_insert_rset (db, rset, -1);
-        }
-    }
-
-  if (!recins_force && rset)
-    {
-      errors_stm = open_memstream (&errors_str, &errors_str_size);
-      if (rec_int_check_rset (db, rset, false, recins_external, errors_stm) > 0)
-        {
-          fclose (errors_stm);
-          if (!recins_verbose)
-            {
-              recutl_error (_("operation aborted due to integrity failures.\n"));
-              recutl_error (_("use --verbose to get a detailed report.\n"));
-            }
-          else
-            {
-              recutl_error ("%s", errors_str);
-            }
-
-          recutl_fatal (_("use --force to skip the integrity chech\n"));
         }
     }
 
@@ -390,6 +367,9 @@ recins_add_new_record (rec_db_t db)
   rec_rset_elem_t new_rset_elem;
   size_t num_rec;
   bool parse_status;
+  FILE *errors_stm;
+  char *errors_str;
+  size_t errors_str_size;
 
   if ((recutl_num != -1)
       || (recutl_sex_str != NULL))
@@ -431,6 +411,27 @@ recins_add_new_record (rec_db_t db)
     {
       /* Append the record in the proper rset.  */
       recins_insert_record (db, recutl_type, recins_record);
+    }
+
+  /* Integrity check.  */
+  if (!recins_force && db)
+    {
+      errors_stm = open_memstream (&errors_str, &errors_str_size);
+      if (rec_int_check_db (db, false, recins_external, errors_stm) > 0)
+        {
+          fclose (errors_stm);
+          if (!recins_verbose)
+            {
+              recutl_error (_("operation aborted due to integrity failures.\n"));
+              recutl_error (_("use --verbose to get a detailed report.\n"));
+            }
+          else
+            {
+              recutl_error ("%s", errors_str);
+            }
+
+          recutl_fatal (_("use --force to skip the integrity chech\n"));
+        }
     }
 }
 

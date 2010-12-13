@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-13 17:24:45 jco"
+/* -*- mode: C -*- Time-stamp: "2010-12-13 18:07:26 jco"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -71,25 +71,22 @@ rec_int_check_db (rec_db_t db,
                   bool remote_descriptors_p,
                   FILE *errors)
 {
-  bool ret;
+  int ret;
   size_t db_size;
   size_t n_rset;
   rec_rset_t rset;
   
-  ret = true;
+  ret = 0;
 
   db_size = rec_db_size (db);
   for (n_rset = 0; n_rset < db_size; n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-      if (rec_int_check_rset (db,
-                              rset,
-                              check_descriptors_p,
-                              remote_descriptors_p,
-                              errors) > 0)
-        {
-          ret = false;
-        }
+      ret = ret + rec_int_check_rset (db,
+                                      rset,
+                                      check_descriptors_p,
+                                      remote_descriptors_p,
+                                      errors);
     }
 
   return ret;
@@ -722,7 +719,6 @@ rec_int_merge_remote (rec_rset_t rset)
   char *rec_url = NULL;
   char *rec_file = NULL;
   char *rec_source = NULL;
-  int tmpfile_des;
   FILE *external_file;
   char tmpfile_name[14];
 

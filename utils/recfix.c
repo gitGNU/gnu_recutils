@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-06 19:52:49 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-13 18:08:46 jco"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -135,7 +135,7 @@ recfix_process_data (rec_db_t db)
   return (rec_int_check_db (db,
                             true,            /* Check descriptors.  */
                             recfix_external, /* Use external descriptors.  */
-                            stderr));
+                            stderr) == 0);
 }
 
 int
