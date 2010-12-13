@@ -161,14 +161,21 @@ Return a list whose first element is the symbol 'comment and the
 second element is the string with the contents of the comment,
 including the leading #:
 
-   (comment \"# foo\")
+   (comment POSITION \"# foo\")
 
-If the point is not at the beginning of a comment return nil"
-  (when (and (equal (current-column) 0)
-             (looking-at rec-comment-re))
-    (goto-char (match-end 0))
-    (list 'comment (buffer-substring-no-properties (match-beginning 0)
-                                                   (match-end 0)))))
+If the point is not at the beginning of a comment then return nil"
+  (let ((there (point))
+        comment)
+    (when (and (equal (current-column) 0)
+               (looking-at rec-comment-re))
+      (setq comment (list 'comment
+                          there 
+                          (buffer-substring-no-properties (match-beginning 0)
+                                                          (match-end 0))))
+      (goto-char (match-end 0))
+      ;; Skip a newline if needed
+      (when (looking-at "\n") (goto-char (match-end 0))))
+    comment))
 
 (defun rec-parse-field-name ()
   "Parse and return a field name starting at point.
@@ -176,7 +183,7 @@ If the point is not at the beginning of a comment return nil"
 Return a list with whose elements are the parts of the field
 name.  For the name a:b:c:d: the following list is returned:
 
-   ('a' 'b' 'c' 'd')
+   (\"a\" \"b\" \"c\" \"d\")
 
 If the point is not at the beginning of a field name return nil"
   (when (and (equal (current-column) 0)
@@ -225,14 +232,6 @@ nil"
               (delete-char 1)))
         (setq val (buffer-substring-no-properties (point-min)
                                                   (point-max))))
-;;      (with-temp-buffer
-;;        (insert val)
-;;        (goto-char (point-min))
-;;        (when (looking-at "[ \t\n]+")
-;;          (delete-region (match-beginning 0)
-;;                         (match-end 0)))
-;;        (setq val (buffer-substring-no-properties (point-min)
-;;                                                  (point-max))))
       val)))
 
 (defun rec-parse-field ()
@@ -243,7 +242,7 @@ The returned structure is a list whose first element is the
 symbol 'field', the second element is the name of the field and
 the second element is the value of the field:
 
-   (field FIELD-NAME FIELD-VALUE)
+   (field POSITION FIELD-NAME FIELD-VALUE)
 
 If the pointer is not at the beginning of a field
 descriptor then return nil"
@@ -252,6 +251,8 @@ descriptor then return nil"
     (and (setq field-name (rec-parse-field-name))
          (setq field-value (rec-parse-field-value)))
     (when (and field-name field-value)
+        ;; Skip a newline if needed
+        (when (looking-at "\n") (goto-char (match-end 0)))
         (list 'field there field-name field-value))))
 
 (defun rec-parse-record ()
@@ -268,9 +269,7 @@ nil"
         record field-or-comment)
     (while (setq field-or-comment (or (rec-parse-field)
                                       (rec-parse-comment)))
-      (setq record (cons field-or-comment record))
-      ;; Skip the newline finishing the field or the comment
-      (when (looking-at "\n") (goto-char (match-end 0))))
+      (setq record (cons field-or-comment record)))
     (setq record (list 'record there (reverse record)))))
 
 ;;;; Writer functions (rec-insert-*)
@@ -281,9 +280,8 @@ nil"
 
 (defun rec-insert-comment (comment)
   "Insert the written form of COMMENT in the current buffer"
-  (when (and (listp comment)
-             (equal (car comment) 'comment))
-    (insert (cadr comment))))
+  (when (rec-comment-p comment)
+    (insert (rec-comment-string comment))))
 
 (defun rec-insert-field-name (field-name)
   "Insert the written form of FIELD-NAME in the current buffer"
@@ -356,31 +354,49 @@ Recursive part"
 (defun rec-record-assoc (name record)
   "Get a list with the values of the fields in RECORD named NAME.
 
-XXX: describe NAME.
+NAME shall be a field name i.e. a list of field name parts.
 
 If no such field exists in RECORD then nil is returned."
   (if (stringp name)
       (setq name (rec-parse-field-name-from-string name)))
-  (when (and (listp record)
-             (equal (car record) 'record))
+  (when (rec-record-p record)
     (let (result)
       (mapcar (lambda (field)
-                (when (and (equal (car field) 'field)
+                (when (and (rec-field-p field)
                            (equal name (rec-field-name field)))
-                  (setq result (cons (nth 3 field) result))))
+                  (setq result (cons (rec-field-value field) result))))
               (rec-record-fields record))
       (reverse result))))
 
 (defun rec-record-names (record)
   "Get a list of the field names in the record"
-  (when (and (listp record)
-             (equal (car record) 'record))
+  (when (rec-record-p record)
     (let (result)
       (mapcar (lambda (field)
-                (when (and (equal (car field) 'field))
-                  (setq result (cons (nth 1 field) result))))
-              (cdr record))
+                (when (rec-field-p field)
+                  (setq result (cons (rec-field-name field) result))))
+              (rec-record-fields record))
       (reverse result))))
+
+;;;; Operations on comment structures
+;;
+;; Those functions retrieve or set properties of comment structures.
+
+(defun rec-comment-p (comment)
+  "Determine if the provided structure is a comment"
+  (and (listp comment)
+       (= (length comment) 3)
+       (equal (car comment) 'comment)))
+
+(defun rec-comment-position (comment)
+  "Return the start position of the given comment."
+  (when (rec-comment-p comment)
+    (nth 1 comment)))
+
+(defun rec-comment-string (comment)
+  "Return the string composig the comment, including the initial '#' character."
+  (when (rec-comment-p comment)
+    (nth 2 comment)))
 
 ;;;; Operations on field structures
 ;;
@@ -1549,7 +1565,7 @@ records of the current type"
         (tmpfile (make-temp-file "rec-mode-")))
     (if buffer-file-name
         (setq cmd (concat cmd buffer-file-name))
-      (with-temp-file (make-temp-file "rec-mode-")
+      (with-temp-file tmpfile
         (insert-buffer cur-buf))
       (setq cmd (concat cmd tmpfile)))
     (compilation-start cmd)))
@@ -1604,7 +1620,7 @@ Commands:
   ;; Goto the first record of the first type (including the Unknown)
   (rec-update-buffer-descriptors)
   ;; Initialize the value of rec-custom-searches
-  (rec-init-selections)
+;;  (rec-init-selections)
   (if (equal rec-open-mode 'navigation)
     (progn
       (setq buffer-read-only t)
