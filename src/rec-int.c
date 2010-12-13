@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-27 10:24:19 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-13 17:24:45 jco"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -605,9 +605,13 @@ rec_int_check_descriptor (rec_rset_t rset,
       unique_fname = rec_parse_field_name_str ("%unique:");
       prohibit_fname = rec_parse_field_name_str ("%prohibit:");
 
-      /* Check the type of the record set.  */
-      field = rec_record_get_field_by_name (descriptor, rec_fname, 0);
-      if (!field)
+      /* Check the type of the record set:
+
+         1. There should be one (and only one) %rec: field in the
+            record.
+         2. The value of the %rec: field shall be well-formed.
+      */
+      if (rec_record_get_num_fields_by_name (descriptor, rec_fname) == 0)
         {
           fprintf (errors,
                    _("%s:%s: error: missing %%rec field in record descriptor\n"),
@@ -615,6 +619,16 @@ rec_int_check_descriptor (rec_rset_t rset,
                    rec_record_location_str (descriptor));
           res++;
         }
+      else if (rec_record_get_num_fields_by_name (descriptor, rec_fname) > 1)
+        {
+          fprintf (errors,
+                   _("%s:%s: error: too many %%rec fields in record descriptor\n"),
+                   rec_record_source (descriptor),
+                   rec_record_location_str (descriptor));
+          res++;
+        }
+
+      field = rec_record_get_field_by_name (descriptor, rec_fname, 0);
       if (!rec_int_rec_type_p (rec_field_value (field)))
         {
           fprintf (errors,

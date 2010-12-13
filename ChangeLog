@@ -1,5 +1,14 @@
 2010-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: don't allow several %rec: fields in record descriptors.
+	* src/rec-int.c (rec_int_check_descriptor): Don't allow more than
+	one %rec: fields in record descriptors.
+
+	* torture/utils/recfix.sh: New tests 'recfix-one-rec' and
+	'recfix-multiple-rec-in-descriptor'.
+
+2010-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: initial version of rec-cmd-compile.
 	* etc/rec-mode.el (rec-mode-edit-map): Map the rec-cmd-compile
 	command.

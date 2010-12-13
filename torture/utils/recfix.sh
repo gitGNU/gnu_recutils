@@ -154,6 +154,14 @@ bar: 2
 baz: 11
 '
 
+test_declare_input_file multiple-rec \
+'%rec: foo
+%type: bar int
+%rec: bar
+
+bar: 10
+'
+
 #
 # Declare tests.
 #
@@ -222,6 +230,17 @@ test_tool recfix-ranges-xfail-2 xfail \
           recfix \
           '' \
           ranges-xfail-2
+
+test_tool recfix-one-rec ok \
+          recfix \
+          '' \
+          type-int-valid \
+          ''
+
+test_tool recfix-multiple-rec-in-descriptor xfail \
+          recfix \
+          '' \
+          multiple-rec
 
 #
 # Cleanup.
