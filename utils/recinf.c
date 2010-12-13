@@ -166,7 +166,10 @@ print_info_file (FILE *in,
                 }
               else
                 {
-                  printf ("unknown\n");
+                  if (recinf_write_mode == REC_WRITER_NORMAL)
+                    {
+                      printf ("unknown\n");
+                    }
                 }
 
               if (position < (rec_db_size (db) - 1))

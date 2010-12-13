@@ -117,6 +117,7 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "\C-cs" 'rec-cmd-search)
     (define-key map "\C-cm" 'rec-cmd-trim-field-value)
     (define-key map "\C-cc" 'rec-cmd-compile)
+    (define-key map "\C-cI" 'rec-cmd-show-info)
     (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map (concat "\C-c" (kbd "RET")) 'rec-cmd-jump)
@@ -134,6 +135,7 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "T" 'rec-edit-type)
     (define-key map "B" 'rec-edit-buffer)
     (define-key map "A" 'rec-cmd-append-field)
+    (define-key map "I" 'rec-cmd-show-info)
     (define-key map "t" 'rec-cmd-show-descriptor)
     (define-key map "l" 'rec-cmd-sel)
     (define-key map "s" 'rec-cmd-search)
@@ -334,6 +336,10 @@ nil"
   "Return a list with the fields of the given record."
   (when (rec-record-p record)
     (nth 2 record)))
+
+(defun rec-record-descriptor-p (record)
+  "Determine if the given record is a descriptor."
+  (not (null (rec-record-assoc '("%rec") record))))
 
 (defun rec-record-assoc (name record)
   "Get a list with the values of the fields in RECORD named NAME.
@@ -964,6 +970,13 @@ the result buffer."
   (widen)
   (unless (rec-goto-type type)
     (message "No records of the requested type were found."))
+  ;; Show the first data record of this type, if it exists.
+  (if (and (not type)
+           (save-excursion
+             (let ((record-type (rec-record-type)))
+               (and (rec-goto-next-rec)
+                    (equal (rec-record-type) record-type)))))
+      (rec-goto-next-rec))
   (rec-show-record))
 
 (defun rec-show-record ()
@@ -980,9 +993,10 @@ the result buffer."
 
 (defun rec-set-mode-line (str)
   "Set the modeline in rec buffers."
-  (setq mode-line-buffer-identification
-        (list 20
-              "%b " str)))
+  (when str
+    (setq mode-line-buffer-identification
+          (list 20
+                "%b " str))))
 
 (defun rec-set-head-line (str)
   "Set the headline in rec buffers."
@@ -1357,10 +1371,16 @@ record.  Interactive version."
 file.  Interactive version."
   (interactive)
   (widen)
-  (if (save-excursion
-        (not (rec-goto-next-rec)))
-      (message "No more records")
-    (rec-goto-next-rec))
+  (let ((record-type (rec-record-type)))
+    (if (save-excursion
+          (and (rec-goto-next-rec)
+               (equal (rec-record-type) record-type)
+               (not (rec-record-descriptor-p (rec-current-record)))))
+        (rec-goto-next-rec)
+      (if (not (rec-record-type))
+          (message "No more records")
+        (message (concat "No more records of type "
+                         (rec-record-type))))))
   (unless rec-editing
     (rec-show-record)))
 
@@ -1369,10 +1389,16 @@ file.  Interactive version."
 the file.  Interactive version."
   (interactive)
   (widen)
-  (if (save-excursion
-        (not (rec-goto-previous-rec)))
-      (message "No more records")
-    (rec-goto-previous-rec))
+  (let ((record-type (rec-record-type)))
+    (if (save-excursion
+          (and (rec-goto-previous-rec)
+               (equal (rec-record-type) record-type)
+               (not (rec-record-descriptor-p (rec-current-record)))))
+        (rec-goto-previous-rec)
+      (if (not (rec-record-type))
+          (message "No more records")
+        (message (concat "No more records of type "
+                         (rec-record-type))))))
   (unless rec-editing
     (rec-show-record)))
 
@@ -1571,6 +1597,33 @@ records of the current type"
       (setq cmd (concat cmd tmpfile)))
     (compilation-start cmd)))
 
+(defun rec-cmd-show-info ()
+  "Show information about the recfile in the modeline."
+  (interactive)
+  (let ((cur-buf (current-buffer))
+        (filename (if buffer-file-name
+                      buffer-file-name
+                    (make-temp-file "rec-mode-")))
+        (msg ""))
+    (if (not buffer-file-name)
+        (with-temp-file tmpfile
+          (insert-buffer cur-buf)))
+    (with-temp-buffer
+      (call-process rec-recinf
+                    nil ; infile
+                    t   ; output to current buffer
+                    nil ; display
+                    filename)
+      (setq msg (buffer-substring-no-properties (point-min)
+                                                (point-max))))
+    ;; Delete temporary file.
+    (if (not buffer-file-name)
+        (delete-file filename))
+    ;; Show the message.
+    (setq msg (replace-regexp-in-string "\n$" "" msg))
+    (setq msg (replace-regexp-in-string "\n" ", " msg))
+    (message msg)))
+    
 (defun rec-cmd-beginning-of-line ()
   "Move the point to the beginning of the current line.
 

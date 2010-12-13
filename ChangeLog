@@ -1,5 +1,12 @@
 2010-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: several fixes.
+	* etc/rec-mode.el: Several fixes.
+	* utils/recinf.c (print_info_file): Print "unknown" only if
+	generated normal output.  It was breaking the sexps.
+
+2010-12-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recins: check for integrity problems regardless of operational
 	mode.
 	* utils/recfix.c (recfix_process_data): Use new semantics of
