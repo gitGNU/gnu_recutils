@@ -27,6 +27,7 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
   # Code from module alloca-opt:
+  # Code from module announce-gen:
   # Code from module arg-nonnull:
   # Code from module array-list:
   # Code from module autobuild:
@@ -60,6 +61,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module gettime:
   # Code from module gettimeofday:
   # Code from module gnumakefile:
+  # Code from module gnupload:
   # Code from module havelib:
   # Code from module include_next:
   # Code from module inline:
@@ -141,6 +143,7 @@ AC_DEFUN([gl_INIT],
   gl_source_base='lib'
   # Code from module alloca-opt:
   gl_FUNC_ALLOCA
+  # Code from module announce-gen:
   # Code from module arg-nonnull:
   # Code from module array-list:
   # Code from module autobuild:
@@ -215,6 +218,7 @@ AC_DEFUN([gl_INIT],
   	m4_defn([m4_PACKAGE_VERSION])), [1], [],
         [AC_CONFIG_LINKS([$GNUmakefile:$GNUmakefile], [],
   	[GNUmakefile=$GNUmakefile])])
+  # Code from module gnupload:
   # Code from module havelib:
   # Code from module include_next:
   # Code from module inline:
@@ -528,10 +532,12 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/announce-gen
   build-aux/arg-nonnull.h
   build-aux/c++defs.h
   build-aux/config.rpath
   build-aux/gendocs.sh
+  build-aux/gnupload
   build-aux/useless-if-before-free
   build-aux/vc-list-files
   build-aux/warn-on-use.h
