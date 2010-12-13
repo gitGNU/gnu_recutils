@@ -300,36 +300,19 @@ nil"
 
 (defun rec-insert-field (field)
   "Insert the written form of FIELD in the current buffer"
-  (when (and (listp field)
-             (equal (car field) 'field))
-    (when (rec-insert-field-name (cadr field))
+  (when (rec-field-p field)
+    (when (rec-insert-field-name (rec-field-name field))
       (insert " ")
-      (rec-insert-field-value (nth 2 field)))))
+      (rec-insert-field-value (rec-field-value field)))))
 
-(defun rec-insert-record (record &optional fields)
-  "Insert the written form of RECORD in the current buffer.
-
-If FIELDS is specified, it is a list of fields to include in the
-insertion.  If a field in the list does not exist in the record
-it is ignored."
-  (when (and (listp record)
-             (equal (car record) 'record))
-    (rec-insert-record-2 (cdr record) fields)))
-
-(defun rec-insert-record-2 (record fields)
-  "Insert the written form of RECORD in the current buffer.
-Recursive part"
-  (when (and record (listp record))
-    (let ((elem (car record)))
-      (cond
-       ((and (not fields)
-             (equal (car elem) 'comment))
-        (rec-insert-comment elem))
-       ((and (equal (car elem) 'field)
-             (or (not fields)
-                 (member (nth 1 elem) fields)))
-        (rec-insert-field elem))))
-    (rec-insert-record-2 (cdr record) fields)))
+(defun rec-insert-record (record)
+  "Insert the written form of RECORD in the current buffer."
+  (when (rec-record-p record)
+    (mapcar (lambda (elem)
+              (cond
+               ((rec-comment-p elem) (rec-insert-comment elem))
+               ((rec-field-p elem) (rec-insert-field elem))))
+            (rec-record-fields record))))
 
 ;;;; Operations on record structures
 ;;
@@ -423,10 +406,17 @@ If no such field exists in RECORD then nil is returned."
   (when (rec-field-p field)
     (nth 3 field)))
 
+(defun rec-field-set-value (field value)
+  "Return FIELD with its value replaced by VALUE."
+  (list 'field
+        (rec-field-position field)
+        (rec-field-name field)
+        value))
+
 (defun rec-field-trim-value (field)
-  "Trim the value of the given field."
+  "Return FIELD with its value trimmed."
   (when (rec-field-p field)
-    (let ((value (nth 2 field))
+    (let ((value (rec-field-value field))
           c)
       (with-temp-buffer
         (insert value)
@@ -445,7 +435,7 @@ If no such field exists in RECORD then nil is returned."
         (delete-region (point) (point-max))
         (setq value (buffer-substring-no-properties (point-min)
                                                     (point-max))))
-      (setcar (cddr field) value))))
+      (rec-field-set-value field value))))
 
 ;;;; Get entities under pointer
 ;;
@@ -1553,7 +1543,7 @@ records of the current type"
   (save-excursion
     (let ((buffer-read-only nil)
           (field (rec-current-field)))
-      (rec-field-trim-value field)
+      (setq field (rec-field-trim-value field))
       (rec-delete-field)
       (rec-insert-field field))))
 
