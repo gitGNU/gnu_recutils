@@ -30,6 +30,8 @@
 
 ;;; Code:
 
+(require 'compile)
+
 ;;;; Customization
 
 (defgroup rec-mode nil
@@ -48,6 +50,9 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
 
 (defvar rec-recinf "recinf"
   "Name of the 'recinf' utility from the GNU recutils.")
+
+(defvar rec-recfix "recfix"
+  "Name of the 'recfix' utility from the GNU recutils.")
 
 ;;;; Variables and constants that the user does not want to touch (really!)
 
@@ -111,6 +116,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "\C-cl" 'rec-cmd-sel)
     (define-key map "\C-cs" 'rec-cmd-search)
     (define-key map "\C-cm" 'rec-cmd-trim-field-value)
+    (define-key map "\C-cc" 'rec-cmd-compile)
     (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map (concat "\C-c" (kbd "RET")) 'rec-cmd-jump)
@@ -132,6 +138,7 @@ Valid values are `edit' and `navigation'.  The default is `edit'"
     (define-key map "l" 'rec-cmd-sel)
     (define-key map "s" 'rec-cmd-search)
     (define-key map "m" 'rec-cmd-trim-field-value)
+    (define-key map "c" 'rec-cmd-compile)
     (define-key map "\C-ct" 'rec-find-type)
     (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map "#" 'rec-cmd-count)
@@ -1533,6 +1540,20 @@ records of the current type"
       (rec-field-trim-value field)
       (rec-delete-field)
       (rec-insert-field field))))
+
+(defun rec-cmd-compile ()
+  "Compile the current file with recfix."
+  (interactive)
+  (let ((cur-buf (current-buffer))
+        (cmd (concat rec-recfix " "))
+        (tmpfile (make-temp-file "rec-mode-")))
+    (if buffer-file-name
+        (setq cmd (concat cmd buffer-file-name))
+      (with-temp-file (make-temp-file "rec-mode-")
+        (insert-buffer cur-buf))
+      (setq cmd (concat cmd tmpfile)))
+    (compilation-start cmd)))
+      
 
 (defun rec-cmd-beginning-of-line ()
   "Move the point to the beginning of the current line.
