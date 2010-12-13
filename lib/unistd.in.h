@@ -88,6 +88,13 @@
 # include <io.h>
 #endif
 
+/* AIX and OSF/1 5.1 declare getdomainname in <netdb.h>, not in <unistd.h>.  */
+/* But avoid namespace pollution on glibc systems.  */
+#if @GNULIB_GETDOMAINNAME@ && (defined _AIX || defined __osf__) \
+    && !defined __GLIBC__
+# include <netdb.h>
+#endif
+
 #if (@GNULIB_WRITE@ || @GNULIB_READLINK@ || @GNULIB_READLINKAT@ \
      || @GNULIB_PREAD@ || @GNULIB_PWRITE@ || defined GNULIB_POSIXCHECK)
 /* Get ssize_t.  */
@@ -551,13 +558,21 @@ _GL_WARN_ON_USE (getcwd, "getcwd is unportable - "
    Null terminate it if the name is shorter than LEN.
    If the NIS domain name is longer than LEN, set errno = EINVAL and return -1.
    Return 0 if successful, otherwise set errno and return -1.  */
-# if !@HAVE_GETDOMAINNAME@
+# if @REPLACE_GETDOMAINNAME@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef getdomainname
+#   define getdomainname rpl_getdomainname
+#  endif
+_GL_FUNCDECL_RPL (getdomainname, int, (char *name, size_t len)
+                                      _GL_ARG_NONNULL ((1)));
+_GL_CXXALIAS_RPL (getdomainname, int, (char *name, size_t len));
+# else
+#  if !@HAVE_DECL_GETDOMAINNAME@
 _GL_FUNCDECL_SYS (getdomainname, int, (char *name, size_t len)
                                       _GL_ARG_NONNULL ((1)));
+#  endif
+_GL_CXXALIAS_SYS (getdomainname, int, (char *name, size_t len));
 # endif
-/* Need to cast, because on MacOS X 10.5 systems, the second parameter is
-                                                        int len.  */
-_GL_CXXALIAS_SYS_CAST (getdomainname, int, (char *name, size_t len));
 _GL_CXXALIASWARN (getdomainname);
 #elif defined GNULIB_POSIXCHECK
 # undef getdomainname
@@ -953,6 +968,24 @@ _GL_CXXALIASWARN (lseek);
 # if HAVE_RAW_DECL_LSEEK
 _GL_WARN_ON_USE (lseek, "lseek does not fail with ESPIPE on pipes on some "
                  "systems - use gnulib module lseek for portability");
+# endif
+#endif
+
+
+#if @GNULIB_PIPE@
+/* Create a pipe, defaulting to O_BINARY mode.
+   Store the read-end as fd[0] and the write-end as fd[1].
+   Return 0 upon success, or -1 with errno set upon failure.  */
+# if !@HAVE_PIPE@
+_GL_FUNCDECL_SYS (pipe, int, (int fd[2]) _GL_ARG_NONNULL ((1)));
+# endif
+_GL_CXXALIAS_SYS (pipe, int, (int fd[2]));
+_GL_CXXALIASWARN (pipe);
+#elif defined GNULIB_POSIXCHECK
+# undef pipe
+# if HAVE_RAW_DECL_PIPE
+_GL_WARN_ON_USE (pipe, "pipe is unportable - "
+                 "use gnulib module pipe-posix for portability");
 # endif
 #endif
 
