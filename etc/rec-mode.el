@@ -170,7 +170,7 @@ If the point is not at the beginning of a comment then return nil"
     (when (and (equal (current-column) 0)
                (looking-at rec-comment-re))
       (setq comment (list 'comment
-                          there 
+                          there
                           (buffer-substring-no-properties (match-beginning 0)
                                                           (match-end 0))))
       (goto-char (match-end 0))
@@ -1570,7 +1570,6 @@ records of the current type"
         (insert-buffer cur-buf))
       (setq cmd (concat cmd tmpfile)))
     (compilation-start cmd)))
-      
 
 (defun rec-cmd-beginning-of-line ()
   "Move the point to the beginning of the current line.
