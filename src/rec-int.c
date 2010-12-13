@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-13 18:07:26 jco"
+/* -*- mode: C -*- Time-stamp: "2010-12-13 21:08:20 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -720,6 +720,7 @@ rec_int_merge_remote (rec_rset_t rset)
   char *rec_file = NULL;
   char *rec_source = NULL;
   FILE *external_file;
+  int tmpfile_des;
   char tmpfile_name[14];
 
   rec_fname = rec_parse_field_name_str ("%rec:");
