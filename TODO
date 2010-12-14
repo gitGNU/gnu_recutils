@@ -493,6 +493,13 @@ Description:
 + For fmemopen(), I would suggest to change the rec_parser_s type so
 + that it contains a FILE * for reading from a file and a 'const char
 + *buf; const char *bufend;' for reading from a buffer in memory.
+Note: Tue Dec 14 22:13:25 CET 2010
++ 
++ The library (and associated tests) has been modified to not use
++ fmemopen.  The parser now supports a buffer-backed operation mode.
++ The implementations of the rec_parse_xxx_str functions have been
++ modified to use the new kind of parsers instead of the non-portable
++ construction.
 
 %rec: TasktoolControl
 %type: NextFreeId int
