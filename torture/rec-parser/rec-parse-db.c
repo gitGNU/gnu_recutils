@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 22:18:21 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-14 22:00:57 jemarch"
  *
  *       File:         rec-parse-db.c
  *       Date:         Sat Nov 13 21:59:40 2010
@@ -44,14 +44,11 @@ START_TEST(rec_parse_db_nominal)
   char *str;
 
   str = "%rec: foo\n\nfoo: bar\n\n%rec: bar\n\nfoo: bar\n\nfoo: bar";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (!rec_parse_db (parser, &db));
   fail_if (rec_db_size (db) != 2);
   rec_db_destroy (db);
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 

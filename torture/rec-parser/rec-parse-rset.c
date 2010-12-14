@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 21:49:48 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-14 22:10:34 jemarch"
  *
  *       File:         rec-parse-rset.c
  *       Date:         Sat Nov 13 21:30:44 2010
@@ -40,37 +40,27 @@ START_TEST(rec_parse_rset_nominal)
 {
   rec_parser_t parser;
   rec_rset_t rset;
-  FILE *stm;
   char *str;
 
   str = "foo1: bar1\n\nfoo2: bar2\n\nfoo3: bar3";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (!rec_parse_rset (parser, &rset));
   fail_if (rec_rset_num_records (rset) != 3);
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "%rec: foo\n\nfoo1: bar1\n\nfoo2: bar2\n\nfoo3: bar3";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (!rec_parse_rset (parser, &rset));
   fail_if (rec_rset_num_records (rset) != 3);
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "foo1: bar1\n\n#foo2: bar2\n\nfoo3: bar3";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (!rec_parse_rset (parser, &rset));
   fail_if (rec_rset_num_elems (rset) != 3);
   fail_if (rec_rset_num_comments (rset) != 1);
   fail_if (rec_rset_num_records (rset) != 2);
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 
@@ -84,26 +74,19 @@ START_TEST(rec_parse_rset_invalid)
 {
   rec_parser_t parser;
   rec_rset_t rset;
-  FILE *stm;
   char *str;
 
   str = " ";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parse_rset (parser, &rset));
   rec_parser_destroy (parser);
-  fclose (stm);
 
   /* A record set shall have at least one record.  */
   str = "#foo1: bar1\n\n#foo2: bar2\n\n#foo3: bar3";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (rec_parse_rset (parser, &rset));
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 

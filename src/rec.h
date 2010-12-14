@@ -721,9 +721,13 @@ bool rec_int_check_field_type (rec_db_t db,
 
 typedef struct rec_parser_s *rec_parser_t;
 
-/* Create a parser associated with a given file stream.  If not enough
-   memory, return NULL. */
-rec_parser_t rec_parser_new (FILE *in, char *file_name);
+/* Create a parser associated with a given file stream.
+   If not enough memory, return NULL. */
+rec_parser_t rec_parser_new (FILE *in, char *source);
+
+/* Create a parser associated with a given buffer.
+   If not enough memory, return NULL.  */
+rec_parser_t rec_parser_new_str (char *buffer, char *source);
 
 /* Destroy a parser.
  *

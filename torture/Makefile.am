@@ -113,6 +113,7 @@ REC_FIELD_TSUITE = rec-field/rec-field-name.c \
 REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c
 
 REC_PARSER_TSUITE = rec-parser/rec-parser-new.c \
+                    rec-parser/rec-parser-new-str.c \
                     rec-parser/rec-parser-destroy.c \
                     rec-parser/rec-parse-field-name-str.c \
                     rec-parser/rec-parse-field-name.c \

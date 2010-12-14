@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 20:09:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-14 22:07:15 jemarch"
  *
  *       File:         rec-parse-record.c
  *       Date:         Sat Nov 13 19:17:40 2010
@@ -42,14 +42,11 @@ START_TEST(rec_parse_record_nominal)
   rec_record_t record;
   rec_field_t field;
   rec_field_name_t fname;
-  FILE *stm;
   char *str;
 
   str = "foo: bar";
   fname = rec_parse_field_name_str ("foo");
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_record (parser, &record));
   field = rec_record_elem_field (rec_record_get_field (record, 0));
@@ -59,13 +56,10 @@ START_TEST(rec_parse_record_nominal)
   rec_field_name_destroy (fname);
   rec_record_destroy (record);
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "foo: bar\nfoo2: bar2";
   fname = rec_parse_field_name_str ("foo");
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_record (parser, &record));
   field = rec_record_elem_field (rec_record_get_field (record, 0));
@@ -80,13 +74,10 @@ START_TEST(rec_parse_record_nominal)
                                   rec_field_name (field)));
   rec_record_destroy (record);
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "foo: bar\nfoo2:\nfoo3: bar3";
   fname = rec_parse_field_name_str ("foo");
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_record (parser, &record));
   field = rec_record_elem_field (rec_record_get_field (record, 0));
@@ -108,7 +99,6 @@ START_TEST(rec_parse_record_nominal)
   rec_field_name_destroy (fname);
   rec_record_destroy (record);
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 
@@ -122,17 +112,13 @@ START_TEST(rec_parse_record_invalid)
 {
   rec_parser_t parser;
   rec_record_t record;
-  FILE *stm;
   char *str;
 
   str = " ";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parse_record (parser, &record));
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 

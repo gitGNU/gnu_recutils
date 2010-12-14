@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 22:39:20 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-14 21:48:56 jemarch"
  *
  *       File:         tsuite-rec-parser.c
  *       Date:         Sat Nov 13 15:20:44 2010
@@ -27,6 +27,7 @@
 #include <check.h>
 
 extern TCase *test_rec_parser_new (void);
+extern TCase *test_rec_parser_new_str (void);
 extern TCase *test_rec_parser_destroy (void);
 extern TCase *test_rec_parse_field_name_str (void);
 extern TCase *test_rec_parse_field_name (void);
@@ -47,6 +48,7 @@ tsuite_rec_parser ()
 
   s = suite_create ("rec-parser");
   suite_add_tcase (s, test_rec_parser_new ());
+  suite_add_tcase (s, test_rec_parser_new_str ());
   suite_add_tcase (s, test_rec_parser_destroy ());
   suite_add_tcase (s, test_rec_parse_field_name_str ());
   suite_add_tcase (s, test_rec_parse_field_name ());

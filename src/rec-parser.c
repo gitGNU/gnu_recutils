@@ -49,6 +49,7 @@ static bool rec_parse_comment (rec_parser_t parser, rec_comment_t *comment);
 
 static bool rec_parser_digit_p (char c);
 static bool rec_parser_letter_p (char c);
+static bool rec_parser_init_common (rec_parser_t parser, char *source);
 
 /* Buffer management */
 
@@ -90,8 +91,11 @@ enum rec_parser_error_e
 
 struct rec_parser_s
 {
-  FILE *in; /* File stream used by the parser. */
-  char *file_name;
+  FILE *in_file;     /* File stream used by the parser.  */
+  char *in_buffer;   /* Buffer used by the parser.  */
+  char *p;           /* Pointer to the next unreaded character in
+                        in_buffer */
+  char *source;
   
   rec_record_t prev_descriptor;
 
@@ -119,27 +123,43 @@ const char *rec_parser_error_strings[] =
 
 rec_parser_t
 rec_parser_new (FILE *in,
-                char *file_name)
+                char *source)
 {
   rec_parser_t parser;
 
   parser = malloc (sizeof (struct rec_parser_s));
   if (parser != NULL)
     {
-      parser->in = in;
-      if (file_name)
+      parser->in_file = in;
+      parser->in_buffer = NULL;
+
+      if (!rec_parser_init_common (parser, source))
         {
-          parser->file_name = strdup (file_name);
+          free (parser);
+          parser = NULL;
         }
-      else
+    }
+
+  return parser;
+}
+
+rec_parser_t
+rec_parser_new_str (char *buffer,
+                    char *source)
+{
+  rec_parser_t parser;
+
+  parser = malloc (sizeof (struct rec_parser_s));
+  if (parser != NULL)
+    {
+      parser->in_buffer = buffer;
+      parser->in_file = NULL;
+
+      if (!rec_parser_init_common (parser, source))
         {
-          parser->file_name = NULL;
+          free (parser);
+          parser = NULL;
         }
-      parser->eof = false;
-      parser->error = false;
-      parser->line = 1;
-      parser->character = 0;
-      parser->prev_descriptor = NULL;
     }
 
   return parser;
@@ -148,7 +168,7 @@ rec_parser_new (FILE *in,
 void
 rec_parser_destroy (rec_parser_t parser)
 {
-  free (parser->file_name);
+  free (parser->source);
   free (parser);
 }
 
@@ -288,6 +308,7 @@ rec_parser_reset (rec_parser_t parser)
 {
   parser->eof = false;
   parser->error = REC_PARSER_NOERROR;
+  parser->p = parser->in_buffer;
 }
 
 bool
@@ -325,7 +346,7 @@ rec_parse_field (rec_parser_t parser,
           new = rec_field_new (field_name,
                                field_value);
 
-          rec_field_set_source (new, parser->file_name);
+          rec_field_set_source (new, parser->source);
           rec_field_set_location (new, location);
           rec_field_set_char_location (new, char_location);
           *field = new;
@@ -366,7 +387,7 @@ rec_parse_record (rec_parser_t parser,
     }
 
   /* Localize the potential record.  */
-  rec_record_set_source (new, parser->file_name);
+  rec_record_set_source (new, parser->source);
   rec_record_set_location (new, parser->line);
   char_location = parser->character;
   if (char_location != 0)
@@ -610,7 +631,6 @@ rec_parse_field_name_str (char *str)
 {
   rec_parser_t parser;
   rec_field_name_t field_name;
-  FILE *stm;
   char *str2;
   size_t str_size;
 
@@ -635,32 +655,24 @@ rec_parse_field_name_str (char *str)
     }
   
   field_name = NULL;
-  stm = fmemopen (str2, strlen (str2), "r");
-  if (stm)
+
+  parser = rec_parser_new_str (str2, "dummy");
+  if (!rec_parse_field_name (parser, &field_name))
     {
-      parser = rec_parser_new (stm, "dummy");
-      if (parser)
-        {
-          if (!rec_parse_field_name (parser, &field_name))
-            {
-              field_name = NULL;
-            }
-          rec_parser_destroy (parser);
-        }
-
-      if (!feof (stm))
-        {
-          /* There is additional stuff after the field name.  */
-          if (field_name)
-            {
-              rec_field_name_destroy (field_name);
-            }
-          field_name = NULL;
-        }
-
-      fclose (stm);
+      field_name = NULL;
     }
 
+  if (!rec_parser_eof (parser))
+    {
+      /* There is additional stuff after the field name.  */
+      if (field_name)
+        {
+          rec_field_name_destroy (field_name);
+        }
+      field_name = NULL;
+    }
+
+  rec_parser_destroy (parser);
   free (str2);
   
   return field_name;
@@ -671,24 +683,16 @@ rec_parse_record_str (char *str)
 {
   rec_parser_t parser;
   rec_record_t record;
-  FILE *stm;
-  size_t str_size;
 
   record = NULL;
-  str_size = strlen (str);
-  stm = fmemopen (str, str_size, "r");
-  if (stm)
+  parser = rec_parser_new_str (str, "dummy");
+  if (parser)
     {
-      parser = rec_parser_new (stm, "dummy");
-      if (parser)
+      if (!rec_parse_record (parser, &record))
         {
-          if (!rec_parse_record (parser, &record))
-            {
-              record = NULL;
-            }
-          rec_parser_destroy (parser);
+          record = NULL;
         }
-      fclose (stm);
+      rec_parser_destroy (parser);
     }
 
   return record;
@@ -703,7 +707,34 @@ rec_parser_getc (rec_parser_t parser)
 {
   int ci;
 
-  ci = getc (parser->in);
+  /* Get the input character depending on the backend used (memory or
+     file).  */
+  if (parser->in_file)
+    {
+      ci = getc (parser->in_file);
+    }
+  else if (parser->in_buffer)
+    {
+      if (*(parser->p) == '\0')
+        {
+          ci = EOF;
+        }
+      else
+        {
+          ci = *(parser->p);
+          parser->p++;
+        }
+    }
+  else
+    {
+      /* This point should not be reached!  */
+      fprintf (stderr, "rec_parser_getc: no backend in parser. This is a bug.\
+  Please report it.");
+      return EOF;
+    }
+
+  /* Manage EOF and update statistics.  */
+
   if (ci == EOF)
     {
       parser->eof = true;
@@ -726,16 +757,45 @@ rec_parser_ungetc (rec_parser_t parser,
 {
   int res;
 
+  /* Update statistics.  */
+
   parser->character--;
   if (((char) ci) == '\n')
     {
       parser->line--;
     }
 
-  res = ungetc (ci, parser->in);
-  if (res != ci)
+  /* Unread the character, depending on the backend used (memory or
+     file).  */
+
+  if (parser->in_file)
     {
-      parser->error = REC_PARSER_EUNGETC;
+      res = ungetc (ci, parser->in_file);
+      if (res != ci)
+        {
+          parser->error = REC_PARSER_EUNGETC;
+        }
+    }
+  else if (parser->in_buffer)
+    {
+      if (parser->p > parser->in_buffer)
+        {
+          res = ci; /* Emulate ungetc. */
+          parser->p--;
+        }
+      else
+        {
+          res = EOF;
+          parser->error = REC_PARSER_EUNGETC;
+        }
+    }
+  else
+    {
+
+      /* This point should not be reached!  */
+      fprintf (stderr, "rec_parser_ungetc: no backend in parser. This is a bug.\
+  Please report it.");
+      return EOF;
     }
 
   return res;
@@ -1243,6 +1303,33 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
 
   rec_parser_buf_destroy (buf);
   return ret;
+}
+
+static bool
+rec_parser_init_common (rec_parser_t parser,
+                        char *source)
+{
+  if (source)
+    {
+      parser->source = strdup (source);
+      if (!parser->source)
+        {
+          return false;
+        }
+    }
+  else
+    {
+      parser->source = NULL;
+    }
+
+  parser->eof = false;
+  parser->error = false;
+  parser->line = 1;
+  parser->character = 0;
+  parser->prev_descriptor = NULL;
+  parser->p = parser->in_buffer;
+
+  return true;
 }
 
 /* End of rec-parser.c */

@@ -1,9 +1,9 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-14 22:07:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-14 21:50:08 jemarch"
  *
- *       File:         rec-parser-eof.c
- *       Date:         Sat Nov 13 22:21:31 2010
+ *       File:         rec-parser-new-str.c
+ *       Date:         Sat Nov 13 15:23:03 2010
  *
- *       GNU recutils - rec_parser_eof unit tests.
+ *       GNU recutils - rec_parser_new_str unit tests.
  *
  */
 
@@ -31,24 +31,19 @@
 #include <rec.h>
 
 /*-
- * Test: rec_parser_eof_nominal
- * Unit: rec_parser_eof
+ * Test: rec_parser_new_str_nominal
+ * Unit: rec_parser_new_str
  * Description:
- * + Check for EOF in a parser operating a stream.
+ * + Create a rec parser.
  */
-START_TEST(rec_parser_eof_nominal)
+START_TEST(rec_parser_new_str_nominal)
 {
   rec_parser_t parser;
-  rec_field_t field;
-  char *str;
-  int ci;
+  char *buffer = "foo: bar";
 
-  str = "foo: bar";
-  parser = rec_parser_new_str (str, "dummy");
-  fail_if (rec_parser_eof (parser));
-  fail_if (!rec_parse_field (parser, &field));
-  fail_if (!rec_parser_eof (parser));
-  rec_field_destroy (field);
+  parser = rec_parser_new_str (buffer, "buffer");
+  fail_if (parser == NULL);
+
   rec_parser_destroy (parser);
 }
 END_TEST
@@ -57,12 +52,12 @@ END_TEST
  * Test creation function
  */
 TCase *
-test_rec_parser_eof (void)
+test_rec_parser_new_str (void)
 {
-  TCase *tc = tcase_create ("rec_parser_eof");
-  tcase_add_test (tc, rec_parser_eof_nominal);
+  TCase *tc = tcase_create ("rec_parser_new_str");
+  tcase_add_test (tc, rec_parser_new_str_nominal);
 
   return tc;
 }
 
-/* End of rec-parser-eof.c */
+/* End of rec-parser-new-str.c */

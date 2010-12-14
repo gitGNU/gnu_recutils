@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 22:34:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-14 22:08:00 jemarch"
  *
  *       File:         rec-parser-error.c
  *       Date:         Sat Nov 13 22:28:22 2010
@@ -40,19 +40,15 @@ START_TEST(rec_parser_error_nominal)
 {
   rec_parser_t parser;
   rec_field_t field;
-  FILE *stm;
   char *str;
 
   str = "invalid field";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parser_error (parser));
   fail_if (rec_parse_field (parser, &field));
   fail_if (!rec_parser_error (parser));
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 

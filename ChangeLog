@@ -1,3 +1,32 @@
+2010-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: remove the usage of the non-portable fmemopen.
+	* torture/rec-parser/rec-parse-db.c: Replace uses of fmemopen by
+	buffer backed parsers.
+	* torture/rec-parser/rec-parse-field.c: Likewise.
+	* torture/rec-parser/rec-parse-field-name.c: Likewise.
+	* torture/rec-parser/rec-parse-record.c: Likewise.
+	* torture/rec-parser/rec-parser-eof.c: Likewise.
+	* torture/rec-parser/rec-parser-error.c: Likewise.
+	* torture/rec-parser/rec-parser-perror.c: Likewise.
+	* torture/rec-parser/rec-parser-reset.c: Likewise.
+	* torture/rec-parser/rec-parse-rset.c: Likewise.
+
+	* src/rec-parser.c (rec_parse_field_name_str): Rewritten to use
+	rec_parser_new_str and rec_parser_eof instead of fmemopen.
+	(rec_parse_record_str): Likewise.
+
+	* torture/rec-parser/rec-parser-new-str.c: New file.
+	(test_rec_parser_new_str): New function.
+	(rec_parser_new_str_nominal): New test.
+
+	* src/rec-parser.c: New member 'buffer' in the struct
+	rec_parser_s.
+	(rec_parser_init_common): New function.
+	(rec_parser_getc): Use the buffer backend if the parser was
+	created with rec_parser_new_str.
+	(rec_parser_ungetc): Likewise.
+
 2010-12-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: several fixes.

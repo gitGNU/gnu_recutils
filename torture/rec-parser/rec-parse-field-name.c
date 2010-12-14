@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 17:36:39 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-14 22:06:02 jemarch"
  *
  *       File:         rec-parse-field-name.c
  *       Date:         Sat Nov 13 16:31:54 2010
@@ -40,37 +40,28 @@ START_TEST(rec_parse_field_name_nominal)
 {
   rec_parser_t parser;
   rec_field_name_t fname;
-  FILE *stm;
   char *str;
 
   str = "foo:";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_field_name (parser, &fname));
   fail_if (rec_field_name_size (fname) != 1);
   fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
   rec_field_name_destroy (fname);
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "%foo:";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_field_name (parser, &fname));
   fail_if (rec_field_name_size (fname) != 1);
   fail_if (strcmp (rec_field_name_get (fname, 0), "%foo") != 0);
   rec_field_name_destroy (fname);
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "foo:bar:";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_field_name (parser, &fname));
   fail_if (rec_field_name_size (fname) != 2);
@@ -78,12 +69,9 @@ START_TEST(rec_parse_field_name_nominal)
   fail_if (strcmp (rec_field_name_get (fname, 1), "bar") != 0);
   rec_field_name_destroy (fname);
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "foo:bar:baz:";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_field_name (parser, &fname));
   fail_if (rec_field_name_size (fname) != 3);
@@ -92,7 +80,6 @@ START_TEST(rec_parse_field_name_nominal)
   fail_if (strcmp (rec_field_name_get (fname, 2), "baz") != 0);
   rec_field_name_destroy (fname);
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 
@@ -106,53 +93,37 @@ START_TEST(rec_parse_field_name_invalid)
 {
   rec_parser_t parser;
   rec_field_name_t fname;
-  FILE *stm;
   char *str;  
 
   str = " ";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parse_field_name (parser, &fname));
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "foo";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parse_field_name (parser, &fname));
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = ":foo";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parse_field_name (parser, &fname));
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "fo!o";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parse_field_name (parser, &fname));
   rec_parser_destroy (parser);
-  fclose (stm);
 
   str = "%%foo";
-  stm = fmemopen (str, strlen (str), "r");
-  fail_if (stm == NULL);
-  parser = rec_parser_new (stm, "dummy");
+  parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (rec_parse_field_name (parser, &fname));
   rec_parser_destroy (parser);
-  fclose (stm);
 }
 END_TEST
 
