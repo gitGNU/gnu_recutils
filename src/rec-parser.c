@@ -33,6 +33,7 @@
 #define N_(str) gettext_noop (str)
 
 #include <rec.h>
+#include <rec-utils.h>
 
 /*
  * Static functions defined in this file
@@ -51,29 +52,8 @@ static bool rec_parser_digit_p (char c);
 static bool rec_parser_letter_p (char c);
 static bool rec_parser_init_common (rec_parser_t parser, char *source);
 
-/* Buffer management */
-
-#define REC_PARSER_BUF_STEP 512
-
-struct rec_parser_buf_s
-{
-  char *data;
-  size_t used;
-  size_t size;
-};
-
-typedef struct rec_parser_buf_s *rec_parser_buf_t;
-
-static rec_parser_buf_t rec_parser_buf_new ();
-static bool rec_parser_buf_add (rec_parser_buf_t buf,
-                                char c);
-static void rec_parser_buf_rewind (rec_parser_buf_t buf, int n);
-static char *rec_parser_buf_data (rec_parser_buf_t buf);
-static void rec_parser_buf_adjust (rec_parser_buf_t buf);
-static void rec_parser_buf_destroy (rec_parser_buf_t buf);
-
-/* Parser Data Structure
- *
+/*
+ * Parser Data Structure
  */
 
 enum rec_parser_error_e
@@ -863,11 +843,11 @@ rec_parse_field_name_part (rec_parser_t parser,
   int ci;
   size_t index;
   char c;
-  rec_parser_buf_t buf;
+  rec_buf_t buf;
 
   ret = true;
   index = 0;
-  buf = rec_parser_buf_new ();
+  buf = rec_buf_new ();
   if (!buf)
     {
       /* Out of memory */
@@ -893,7 +873,7 @@ rec_parse_field_name_part (rec_parser_t parser,
       if ((rec_parser_letter_p (c))
           || (c == '%'))
         {
-          if (!rec_parser_buf_add (buf, c))
+          if (!rec_buf_add (buf, c))
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -920,7 +900,7 @@ rec_parse_field_name_part (rec_parser_t parser,
               || (c == '-')
               || (c == '_'))
             {
-              if (!rec_parser_buf_add (buf, c))
+              if (!rec_buf_add (buf, c))
                 {
                   /* Out of memory */
                   parser->error = REC_PARSER_ENOMEM;
@@ -956,11 +936,11 @@ rec_parse_field_name_part (rec_parser_t parser,
   if (ret)
     {
       /* Resize the token */
-      rec_parser_buf_adjust (buf);
-      *str = rec_parser_buf_data (buf);
+      rec_buf_adjust (buf);
+      *str = rec_buf_data (buf);
     }
 
-  rec_parser_buf_destroy (buf);
+  rec_buf_destroy (buf);
 
   return ret;
 }
@@ -974,7 +954,7 @@ rec_parse_field_value (rec_parser_t parser,
   char c, c2;
   size_t index;
   bool prev_newline;
-  rec_parser_buf_t buf;
+  rec_buf_t buf;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -987,7 +967,7 @@ rec_parse_field_value (rec_parser_t parser,
   prev_newline = false;
   ret = true;
   index = 0;
-  buf = rec_parser_buf_new ();
+  buf = rec_buf_new ();
   if (!buf)
     {
       /* Out of memory */
@@ -1009,7 +989,7 @@ rec_parse_field_value (rec_parser_t parser,
         {
           /* End of value */
           rec_parser_ungetc (parser, ci);
-          rec_parser_buf_rewind (buf, 1);
+          rec_buf_rewind (buf, 1);
           break;
         }
 
@@ -1033,7 +1013,7 @@ rec_parse_field_value (rec_parser_t parser,
               else
                 {
                   /* Add \ and put back c2 */
-                  if (!rec_parser_buf_add (buf, c))
+                  if (!rec_buf_add (buf, c))
                     {
                       /* Out of memory */
                       parser->error = REC_PARSER_ENOMEM;
@@ -1087,7 +1067,7 @@ rec_parse_field_value (rec_parser_t parser,
             }
           else
             {
-              if (!rec_parser_buf_add (buf, c))
+              if (!rec_buf_add (buf, c))
                 {
                   /* Out of memory */
                   parser->error = REC_PARSER_ENOMEM;
@@ -1104,7 +1084,7 @@ rec_parse_field_value (rec_parser_t parser,
         }
       else if (c == '\n')
         {
-          if (!rec_parser_buf_add (buf, c))
+          if (!rec_buf_add (buf, c))
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -1119,7 +1099,7 @@ rec_parse_field_value (rec_parser_t parser,
         }
       else
         {
-          if (!rec_parser_buf_add (buf, c))
+          if (!rec_buf_add (buf, c))
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -1140,116 +1120,29 @@ rec_parse_field_value (rec_parser_t parser,
           && (c == '\n'))
         {
           /* Special case: field just before EOF */
-          rec_parser_buf_rewind (buf, 1);
+          rec_buf_rewind (buf, 1);
         }
 
       /* Resize the token */
-     rec_parser_buf_adjust (buf);
-      *str = rec_parser_buf_data (buf);
+     rec_buf_adjust (buf);
+      *str = rec_buf_data (buf);
     }
 
-  rec_parser_buf_destroy (buf);
+  rec_buf_destroy (buf);
 
   return ret;
-}
-
-static rec_parser_buf_t
-rec_parser_buf_new ()
-{
-  rec_parser_buf_t new;
-
-  new = malloc (sizeof (struct rec_parser_buf_s));
-  if (new)
-    {
-      new->data = malloc (REC_PARSER_BUF_STEP);
-      new->size = REC_PARSER_BUF_STEP;
-      new->used = 0;
-
-      if (!new->data)
-        {
-          free (new);
-          new = NULL;
-        }
-    }
-
-  return new;
-}
-
-static void
-rec_parser_buf_destroy (rec_parser_buf_t buf)
-{
-  /* Don't deallocate buf->data */
-  free (buf);
-}
-
-static void
-rec_parser_buf_rewind (rec_parser_buf_t buf,
-                       int n)
-{
-  if ((buf->used - n) >= 0)
-    {
-      buf->used = buf->used - n;
-    }
-}
-
-static bool
-rec_parser_buf_add (rec_parser_buf_t buf,
-                    char c)
-{
-  bool ret;
-
-  ret = true;
-
-  if ((buf->used + 1) > buf->size)
-    {
-      /* Allocate a new block */
-      buf->size = buf->size + REC_PARSER_BUF_STEP;
-      buf->data = realloc (buf->data, buf->size);
-
-      if (!buf->data)
-        {
-          /* Not enough memory.
-           * REC_PARSER_BUF_STEP should not be 0. */
-          ret = false;
-        }
-    }
-
-  if (ret)
-    {
-      /* Add the character */
-      buf->data[buf->used++] = c;
-    }
-
-  return ret;
-}
-
-static char *
-rec_parser_buf_data (rec_parser_buf_t buf)
-{
-  return buf->data;
-}
-
-static void
-rec_parser_buf_adjust (rec_parser_buf_t buf)
-{
-  if (buf->used > 0)
-    {
-      buf->data = realloc (buf->data, buf->used + 1);
-    }
-
-  buf->data[buf->used] = '\0';
 }
 
 static bool
 rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
 {
   bool ret;
-  rec_parser_buf_t buf;
+  rec_buf_t buf;
   int ci;
   char c;
 
   ret = false;
-  buf = rec_parser_buf_new ();
+  buf = rec_buf_new ();
 
   /* Comments start at the beginning of line and span until the first
    * \n character not followed by a #, or EOF.
@@ -1279,7 +1172,7 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
                 }
             }
 
-          if (!rec_parser_buf_add (buf, c))
+          if (!rec_buf_add (buf, c))
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -1293,15 +1186,15 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
   if (ret)
     {
       /* Resize the token */
-      rec_parser_buf_adjust (buf);
-      *comment = rec_comment_new (rec_parser_buf_data (buf));
+      rec_buf_adjust (buf);
+      *comment = rec_comment_new (rec_buf_data (buf));
     }
   else
     {
       *comment = NULL;
     }
 
-  rec_parser_buf_destroy (buf);
+  rec_buf_destroy (buf);
   return ret;
 }
 

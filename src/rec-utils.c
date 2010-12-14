@@ -33,6 +33,15 @@
 
 #include <rec-utils.h>
 
+#define REC_BUF_STEP 512
+
+struct rec_buf_s
+{
+  char *data;
+  size_t used;
+  size_t size;
+};
+
 bool
 rec_atoi (char *str,
           int *number)
@@ -264,6 +273,93 @@ rec_letter_p (char c)
 {
   return (((c >= 'a') && (c <= 'z'))
           || ((c >= 'A') && (c <= 'Z')));
+}
+
+rec_buf_t
+rec_buf_new ()
+{
+  rec_buf_t new;
+
+  new = malloc (sizeof (struct rec_buf_s));
+  if (new)
+    {
+      new->data = malloc (REC_BUF_STEP);
+      new->size = REC_BUF_STEP;
+      new->used = 0;
+
+      if (!new->data)
+        {
+          free (new);
+          new = NULL;
+        }
+    }
+
+  return new;
+}
+
+void
+rec_buf_destroy (rec_buf_t buf)
+{
+  /* Don't deallocate buf->data */
+  free (buf);
+}
+
+void
+rec_buf_rewind (rec_buf_t buf,
+                       int n)
+{
+  if ((buf->used - n) >= 0)
+    {
+      buf->used = buf->used - n;
+    }
+}
+
+bool
+rec_buf_add (rec_buf_t buf,
+                    char c)
+{
+  bool ret;
+
+  ret = true;
+
+  if ((buf->used + 1) > buf->size)
+    {
+      /* Allocate a new block */
+      buf->size = buf->size + REC_BUF_STEP;
+      buf->data = realloc (buf->data, buf->size);
+
+      if (!buf->data)
+        {
+          /* Not enough memory.
+           * REC_BUF_STEP should not be 0. */
+          ret = false;
+        }
+    }
+
+  if (ret)
+    {
+      /* Add the character */
+      buf->data[buf->used++] = c;
+    }
+
+  return ret;
+}
+
+char *
+rec_buf_data (rec_buf_t buf)
+{
+  return buf->data;
+}
+
+void
+rec_buf_adjust (rec_buf_t buf)
+{
+  if (buf->used > 0)
+    {
+      buf->data = realloc (buf->data, buf->used + 1);
+    }
+
+  buf->data[buf->used] = '\0';
 }
 
 /* End of rec-utils.c */

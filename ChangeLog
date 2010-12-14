@@ -1,4 +1,17 @@
-2010-12-14 Jose E. Marchesi <jemarch@termi>
+2010-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: rec_parser_buf abstraction moved to rec-utils as rec_buf.
+	* src/rec-parser.c: Use the rec_buf_* functions instead of the
+	rec_parser_buf_* functions.
+	Include rec-utils.h.
+
+	* src/rec-utils.c: Implementation of the rec_buf_t type and the
+	rec_buf_* functions, moved and adapted from rec-parser.c.
+
+	* src/rec-utils.h: New rec_buf_t abstract data type, renamed from
+	the rec_parser_buf_t type and functions in rec-parser.h.
+
+2010-12-14 Jose E. Marchesi <jemarch@gnu.org>
 
 	Tasktool operations.
 	* TODO: Note added for task 30.
