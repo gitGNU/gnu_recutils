@@ -316,7 +316,7 @@ rec_buf_rewind (rec_buf_t buf,
 
 bool
 rec_buf_add (rec_buf_t buf,
-                    char c)
+             char c)
 {
   bool ret;
 
@@ -343,6 +343,21 @@ rec_buf_add (rec_buf_t buf,
     }
 
   return ret;
+}
+
+bool
+rec_buf_add_str (rec_buf_t buf,
+                 char *str)
+{
+  char *p;
+
+  p = str;
+  while ((*p != '\0') && (rec_buf_add (buf, *p)))
+    {
+      p++;
+    }
+
+  return (*p != '\0');
 }
 
 char *

@@ -55,6 +55,7 @@ typedef struct rec_buf_s *rec_buf_t;
 
 rec_buf_t rec_buf_new ();
 bool rec_buf_add (rec_buf_t buf, char c);
+bool rec_buf_add_str (rec_buf_t buf, char *str);
 void rec_buf_rewind (rec_buf_t buf, int n);
 char *rec_buf_data (rec_buf_t buf);
 void rec_buf_adjust (rec_buf_t buf);

@@ -1,5 +1,12 @@
 2010-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: new function rec_buf_add_str in rec-utils.
+	* src/rec-utils.h: New function 'rec_buf_add_str'.
+
+	* src/rec-utils.c (rec_buf_add_str): New function.
+
+2010-12-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: rec_parser_buf abstraction moved to rec-utils as rec_buf.
 	* src/rec-parser.c: Use the rec_buf_* functions instead of the
 	rec_parser_buf_* functions.
