@@ -1,3 +1,10 @@
+2010-12-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	tasktool: first version of log subcommand.
+	* tasktool (tt_process_cmd_log): New function.
+	(tt_help_log): New variable.
+	(tt_parse_arguments): Handle the 'log' subcommand.
+
 2010-12-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: new function rec_buf_add_str in rec-utils.
@@ -422,8 +429,6 @@
 
 	Tasktool operations.
 	* TODO: Task 11 edited.
-	Task 22 created.
-	Task 10 edited.
 
 2010-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
@@ -435,12 +440,6 @@
 
 	Tasktool operations.
 	* TODO: Task 3 edited.
-	Task 22 created.
-	Task 10 edited.
-	Task 21 edited.
-	Task 21 created.
-	Task 9 edited.
-	Task 8 edited.
 
 2010-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
@@ -757,14 +756,6 @@
 
 	Tasktool operations.
 	* TODO: Task 19 created.
-	Task 22 created.
-	Task 10 edited.
-	Task 21 edited.
-	Task 21 created.
-	Task 9 edited.
-	Task 8 edited.
-	Task 19 edited.
-	Task 20 created.
 
 2010-11-08  Jose E. Marchesi  <jemarch@gnu.org>
 
@@ -784,17 +775,6 @@
 
 	Tasktool operations.
 	* TODO: Task 16 created.
-	Task 22 created.
-	Task 10 edited.
-	Task 21 edited.
-	Task 21 created.
-	Task 9 edited.
-	Task 8 edited.
-	Task 19 edited.
-	Task 20 created.
-	Task 19 created.
-	Task 18 created.
-	Task 17 created.
 
 2010-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
@@ -806,17 +786,6 @@
 
 	Tasktool operations.
 	* TODO: Task 15 created.
-	Task 22 created.
-	Task 10 edited.
-	Task 21 edited.
-	Task 21 created.
-	Task 9 edited.
-	Task 8 edited.
-	Task 19 edited.
-	Task 20 created.
-	Task 19 created.
-	Task 18 created.
-	Task 17 created.
 
 2010-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
@@ -832,9 +801,7 @@
 	Task 21 created.
 	Task 9 edited.
 	Task 8 edited.
-	Task 19 edited.
 	Task 20 created.
-	Task 19 created.
 	Task 18 created.
 	Task 17 created.
 
@@ -921,42 +888,10 @@
 	* configure.ac: Version changed from git to 1.0.
 
 	* TODO: Some tasks added.
-	Task 22 created.
-	Task 10 edited.
-	Task 21 edited.
-	Task 21 created.
-	Task 9 edited.
-	Task 8 edited.
-	Task 19 edited.
-	Task 20 created.
-	Task 19 created.
-	Task 18 created.
-	Task 17 created.
-	Task 14 edited.
-	Task 9 edited.
-	Task 14 edited.
-	Task  edited.
-	Note added for task 1.
 
 2010-11-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* TODO: First serious version.
-	Task 22 created.
-	Task 10 edited.
-	Task 21 edited.
-	Task 21 created.
-	Task 9 edited.
-	Task 8 edited.
-	Task 19 edited.
-	Task 20 created.
-	Task 19 created.
-	Task 18 created.
-	Task 17 created.
-	Task 14 edited.
-	Task 9 edited.
-	Task 14 edited.
-	Task  edited.
-	Note added for task 1.
 
 	* tasktool: Fixed many problems and 'delete' command implemented.
 

@@ -193,6 +193,7 @@ $tt_tasktool supports the following sub commands.
        note                           insert a note for a task.
        edit                           edit a task.
        resolve                        resolve a task.
+       log                            show the history of a given task.
 
 To get detailed help on a specific sub command use '$tt_tasktool CMD
 --help'.  For example:
@@ -212,6 +213,19 @@ Mandatory arguments to long options are mandatory for short options too.
 Examples:
 
         tasktool -d my-database.rec init
+
+$tt_help_footer"
+
+tt_help_log="\
+Usage: $tt_tasktool log [OPTION]... TASK_ID
+Show the history of a given task.
+
+Mandatory arguments to long options are mandatory for short options too.
+      --help                          print this help message and exit.
+
+Examples:
+
+        tasktool log 10
 
 $tt_help_footer"
 
@@ -349,8 +363,8 @@ There is NO WARRANTY, to the extent permitted by law."
 
 ## Recutils Interface ##
 
-# Check the availability of the GNU recutils.  If they are not found,
-# notify the user and exit.
+# Check for the availability of the GNU recutils.  If they are not
+# found, notify the user and exit.
 tt_rec_check_utility ()
 {
     # Parameters:
@@ -375,7 +389,7 @@ tt_rec_check_utilities ()
 
 ## DB Interface ##
 #
-# Accessing the tasks database.
+# Database access functions.
 
 # Test whether the database can be read and is correct.
 tt_db_check ()
@@ -747,6 +761,45 @@ Please replace this line with the annotation for the task." > $tmpfile
     fi
 }
 
+# Process the 'log' subcommand
+tt_process_cmd_log ()
+{
+    TEMP=`getopt -o f: --long help -n 'tasktool: log' -- "$@"`
+    if test "$?" -ne "0"
+    then
+        exit 1
+    fi
+    eval set -- "$TEMP" || exit 1;
+
+    while true
+    do
+        case "$1" in
+            --help)
+                echo "$tt_help_log"
+                exit 1
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
+    # Get the ID of the task to process.
+    if test "$#" -ne "1"
+    then
+        echo "$tt_help_log"
+        exit 1
+    fi
+
+    # Check for the existance of the task.
+    tt_db_task_p "$1" || \
+        { echo "$tt_tasktool: task '$1' not found."; exit 1; }
+
+    # Dump the history of this task.
+    grep "Task $1 " $tt_changelog
+}
+
 # Process the 'show' subcommand
 tt_process_cmd_show ()
 {
@@ -833,7 +886,6 @@ tt_process_cmd_resolve ()
         tt_error "task '$task_id' is already resolved as '$current_status'"
         exit 1
     fi
-                                                      
 
     # Validate the status.
     if test -z $status
@@ -1438,6 +1490,12 @@ tt_parse_arguments ()
             init)
                 shift
                 tt_process_cmd_init "$@"
+                break
+                ;;
+            log)
+                shift
+                tt_db_check
+                tt_process_cmd_log "$@"
                 break
                 ;;
             show)
