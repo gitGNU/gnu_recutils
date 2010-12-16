@@ -1,3 +1,8 @@
+2010-12-16 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 34 resolved to 'DONE'.
+
 2010-12-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	libcsv embedded in the source tree.

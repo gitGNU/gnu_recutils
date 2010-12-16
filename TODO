@@ -507,11 +507,12 @@ Category: librec
 CreatedAt: Thu Dec 16 19:39:19 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: 
 + The libcsv library (available in http://libcsv.sf.net) is composed by
 + a single header file and a source file.  It is licensed under the
 + LGPLv2.1+.
+ClosedAt: Thu Dec 16 23:12:20 CET 2010
 
 %rec: TasktoolControl
 %type: NextFreeId int
