@@ -26,9 +26,11 @@
 #  define SIZE_MAX ((size_t)-1) /* C89 doesn't have stdint.h or SIZE_MAX */
 #endif
 
+#include <config.h>
+
 #include "csv.h"
 
-#define VERSION "3.0.0"
+#define LIBCSV_VERSION "3.0.0-recutils"
 
 #define ROW_NOT_BEGUN           0
 #define FIELD_NOT_BEGUN         1

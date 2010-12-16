@@ -1623,7 +1623,7 @@ records of the current type"
     (setq msg (replace-regexp-in-string "\n$" "" msg))
     (setq msg (replace-regexp-in-string "\n" ", " msg))
     (message msg)))
-    
+
 (defun rec-cmd-beginning-of-line ()
   "Move the point to the beginning of the current line.
 

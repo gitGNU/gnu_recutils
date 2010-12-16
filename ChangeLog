@@ -1,3 +1,9 @@
+2010-12-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	syntax-check fixes.
+	* libcsv/libcsv.c (VERSION): Changed to 3.0.0-recutils.
+	Include config.h.
+
 2010-12-16 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.
