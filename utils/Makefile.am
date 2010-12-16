@@ -16,12 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if COMPILE_CSV2REC
-   CSV2REC = csv2rec
-else
-   CSV2REC =
-endif
-
 if COMPILE_MDB2REC
    MDB2REC = mdb2rec
 else
@@ -29,7 +23,7 @@ else
 endif
 
 bin_PROGRAMS = recinf recsel recins recdel recset recfix \
-               $(CSV2REC) $(MDB2REC)
+               csv2rec $(MDB2REC)
 
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
@@ -39,7 +33,8 @@ if USE_COVERAGE
   AM_CFLAGS += -fprofile-arcs -ftest-coverage
 endif
 
-AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/src -DLOCALEDIR=\"$(localedir)\"
+AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/src \
+              -I$(top_srcdir)/libcsv -DLOCALEDIR=\"$(localedir)\"
 
 recinf_SOURCES = $(COMMONSRC) \
                  recinf.c
@@ -67,7 +62,8 @@ recfix_LDADD = $(COMMONLIBS)
 
 csv2rec_SOURCES = $(COMMONSRC) \
                   csv2rec.c
-csv2rec_LDADD = $(COMMONLIBS) $(CSVLIBS)
+csv2rec_LDADD = $(COMMONLIBS) \
+                $(top_builddir)/libcsv/libcsv.la
 
 mdb2rec_SOURCES = $(COMMONSRC) \
                   mdb2rec.c

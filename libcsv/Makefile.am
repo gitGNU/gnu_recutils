@@ -1,6 +1,6 @@
-# Top-level Makefile.am
+# libcsv/ Makefile.am
 
-# Copyright (C) 2009, 2010 Jose E. Marchesi
+# Copyright (C) 2010 Jose E. Marchesi
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = lib libcsv src utils doc po man torture etc
+noinst_LTLIBRARIES = libcsv.la
+
+libcsv_la_SOURCES = csv.h \
+                    libcsv.c
 
 # End of Makefile.am

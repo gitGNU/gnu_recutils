@@ -1,3 +1,22 @@
+2010-12-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	libcsv embedded in the source tree.
+	* utils/csv2rec.c: Include csv.h instead of libcsv/csv.h.
+
+	* utils/Makefile.am (csv2rec_LDADD): Link with libcsv.la.
+	(AM_CPPFLAGS): Add the libcsv/ directory to the include path.
+
+	* configure.ac: Checks for libcsv removed.
+	Conditional COMPILE_CSV2REC removed.
+
+	* Makefile.am (SUBDIRS): libcsv/ added.
+
+	* libcsv/csv.h: Imported from libcsv-3.0.0.tar.gz and relicensed
+	from LGPL2.1+ to GPLv3.
+	* libcsv/libcsv.c: Likewise.
+
+	* libcsv/Makefile.am: New file.
+
 2010-12-16 Jose Marchesi <jco@wilhelm>
 
 	Tasktool operations.

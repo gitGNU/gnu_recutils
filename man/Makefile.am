@@ -20,11 +20,8 @@ man_MANS = recdel.1 \
            recinf.1 \
            recins.1 \
            recsel.1 \
-           recset.1
-
-if COMPILE_CSV2REC
-man_MANS += csv2rec.1
-endif
+           recset.1 \
+           csv2rec.1
 
 if COMPILE_MDB2REC
 man_MANS += mdb2rec.1
