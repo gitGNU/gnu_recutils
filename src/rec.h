@@ -695,22 +695,22 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 int rec_int_check_db (rec_db_t db,
                       bool check_descriptors_p,
                       bool remote_descriptors_p,
-                      FILE *errors);
+                      char **errors);
 
 int rec_int_check_rset (rec_db_t db,
                         rec_rset_t rset,
                         bool check_descriptor_p,
                         bool remote_descriptor_p,
-                        FILE *errors);
+                        char **errors);
 int rec_int_check_record (rec_db_t db,
                           rec_rset_t rset,
                           rec_record_t orig_rec,
                           rec_record_t rec,
-                          FILE *errors);
+                          char **errors);
 bool rec_int_check_field_type (rec_db_t db,
                                rec_rset_t rset,
                                rec_field_t field,
-                               FILE *errors);
+                               char **errors);
 
 /*
  * PARSER
@@ -777,6 +777,10 @@ typedef struct rec_writer_s *rec_writer_t;
 /* Create a writer associated with a given file stream.  If not enough
    memory, return NULL. */
 rec_writer_t rec_writer_new (FILE *out);
+
+/* Create a writer associated with a given string.  If not enough
+   memory, return NULL.  */
+rec_writer_t rec_writer_new_str (char **str, size_t *str_size);
 
 /* Destroy a writer.
  *

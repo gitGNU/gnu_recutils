@@ -31,6 +31,7 @@
 #include <string.h>
 
 #include <rec.h>
+#include <rec-utils.h>
 
 /*
  * Static functions defined in this file
@@ -43,21 +44,40 @@ static bool rec_writer_puts (rec_writer_t writer, const char *s);
  */
 struct rec_writer_s
 {
-  FILE *out; /* File stream used by the writer. */
+  FILE *file_out;    /* File stream used by the writer. */
+  rec_buf_t buf_out; /* Growable buffer used by the writer. */
 
   bool eof;
   int line;  /* Current line number. */
 };
 
 rec_writer_t
-rec_writer_new (FILE *out)
+rec_writer_new (FILE *file_out)
 {
   rec_writer_t new;
 
   new = malloc (sizeof(struct rec_writer_s));
   if (new)
     {
-      new->out = out;
+      new->file_out = file_out;
+      new->buf_out = NULL;
+      new->line = 1;
+      new->eof = false;
+    }
+
+  return new;
+}
+
+rec_writer_t
+rec_writer_new_str (char **str, size_t *str_size)
+{
+  rec_writer_t new;
+
+  new = malloc (sizeof(struct rec_writer_s));
+  if (new)
+    {
+      new->file_out = NULL;
+      new->buf_out = rec_buf_new (str, str_size);
       new->line = 1;
       new->eof = false;
     }
@@ -68,7 +88,16 @@ rec_writer_new (FILE *out)
 void
 rec_writer_destroy (rec_writer_t writer)
 {
-  fflush (writer->out);
+  if (writer->file_out)
+    {
+      fflush (writer->file_out);
+    }
+  if (writer->buf_out)
+    {
+      rec_buf_putc ('\0', writer->buf_out);
+      rec_buf_close (writer->buf_out);
+    }
+
   free (writer);
 }
 
@@ -610,21 +639,13 @@ rec_write_field_str (rec_field_t field,
   rec_writer_t writer;
   char *result;
   size_t result_size;
-  FILE *stm;
   
   result = NULL;
-  stm = open_memstream (&result, &result_size);
-  if (stm)
+  writer = rec_writer_new_str (&result, &result_size);
+  if (writer)
     {
-      writer = rec_writer_new (stm);
-
-      if (writer)
-        {
-          rec_write_field (writer, field, mode);
-          rec_writer_destroy (writer);
-        }
-
-      fclose (stm);
+      rec_write_field (writer, field, mode);
+      rec_writer_destroy (writer);
     }
   
   return result;
@@ -637,21 +658,13 @@ rec_write_field_name_str (rec_field_name_t field,
   rec_writer_t writer;
   char *result;
   size_t result_size;
-  FILE *stm;
   
   result = NULL;
-  stm = open_memstream (&result, &result_size);
-  if (stm)
+  writer = rec_writer_new_str (&result, &result_size);
+  if (writer)
     {
-      writer = rec_writer_new (stm);
-
-      if (writer)
-        {
-          rec_write_field_name (writer, field, mode);
-          rec_writer_destroy (writer);
-        }
-
-      fclose (stm);
+      rec_write_field_name (writer, field, mode);
+      rec_writer_destroy (writer);
     }
   
   return result;
@@ -664,21 +677,13 @@ rec_write_comment_str (rec_comment_t comment,
   rec_writer_t writer;
   char *result;
   size_t result_size;
-  FILE *stm;
   
   result = NULL;
-  stm = open_memstream (&result, &result_size);
-  if (stm)
+  writer = rec_writer_new_str (&result, &result_size);
+  if (writer)
     {
-      writer = rec_writer_new (stm);
-
-      if (writer)
-        {
-          rec_write_comment (writer, comment, mode);
-          rec_writer_destroy (writer);
-        }
-
-      fclose (stm);
+      rec_write_comment (writer, comment, mode);
+      rec_writer_destroy (writer);
     }
   
   return result;
@@ -691,13 +696,37 @@ rec_write_comment_str (rec_comment_t comment,
 static bool
 rec_writer_putc (rec_writer_t writer, char c)
 {
-  return (fputc (c, writer->out) != EOF);
+  bool ret;
+
+  ret = false;
+  if (writer->file_out)
+    {
+      ret = (fputc (c, writer->file_out) != EOF);
+    }
+  if (writer->buf_out)
+    {
+      ret = (rec_buf_putc (c, writer->buf_out) != EOF);
+    }
+
+  return ret;
 }
 
 static bool
 rec_writer_puts (rec_writer_t writer, const char *s)
 {
-  return (fputs (s, writer->out) != EOF);
+  bool ret;
+
+  ret = false;
+  if (writer->file_out)
+    {
+      ret = (fputs (s, writer->file_out) != EOF);
+    }
+  if (writer->buf_out)
+    {
+      ret = (rec_buf_puts (s, writer->buf_out) != EOF);
+    }
+
+  return ret;
 }
 
 /* End of rec-writer.c */

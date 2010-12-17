@@ -1,3 +1,36 @@
+2010-12-17  Jose E. Marchesi  <jco@terma.com>
+
+	* src/rec.h: Get a char** argument instead of a stream for the
+	'errors' argument of the function rec_int_check_db,
+	rec_int_check_rset, rec_int_check_record and
+	rec_int_check_field_type.
+
+	* src/rec-writer.c: Support a rec_buf_t backend in the writer.
+	(rec_writer_new_str): New function.
+	(rec_writer_puts): Use the rec_buf backend if selected.
+	(rec_writer_putc): Likewise.
+	(rec_write_field_str): Use a rec_buf_t backed writer.
+	(rec_write_field_name_str): Likewise.
+	(rec_write_comment_str): Likewise.
+
+	* src/rec-record.c (rec_record_to_comment): Use rec_buf_new
+	instead of the non portable open_memstream.
+	* src/rec-rset.c (rec_rset_rename_field): Likewise.
+
+	* src/rec-types.c (rec_type_check): Use rec_buf_new instead of the
+	non portable open_memstream.
+	(rec_type_check_int): Likewise.
+	(rec_type_check_field): Likewise.
+	(rec_type_check_bool): Likewise.
+	(rec_type_check_range): Likewise.
+	(rec_type_check_real): Likewise.
+	(rec_type_check_size): Likewise.
+	(rec_type_check_line): Likewise.
+	(rec_type_check_regexp): Likewise.
+	(rec_type_check_date): Likewise.
+	(rec_type_check_email): Likewise.
+	(rec_type_check_enum): Likewise.
+
 2010-12-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-utils: new open_memstream like API for rec_buf_t.

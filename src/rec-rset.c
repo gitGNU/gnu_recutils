@@ -561,7 +561,7 @@ rec_rset_rename_field (rec_rset_t rset,
   rec_fex_t fex;
   char *fex_str;
   char *type_str;
-  FILE *stm;
+  rec_buf_t buf;
   char *result;
   size_t result_size;
   rec_fex_elem_t fex_elem;
@@ -611,11 +611,12 @@ rec_rset_rename_field (rec_rset_t rset,
                   fex_str = rec_fex_str (fex, REC_FEX_CSV);
                   type_str = rec_type_descr_type (rec_field_value (field));
                   
-                  stm = open_memstream (&result, &result_size);
-                  fputs (fex_str, stm);
-                  fputc (' ', stm);
-                  fputs (type_str, stm);
-                  fclose (stm);
+                  buf = rec_buf_new (&result, &result_size);
+                  rec_buf_puts (fex_str, buf);
+                  rec_buf_putc (' ', buf);
+                  rec_buf_puts (type_str, buf);
+                  rec_buf_putc ('\0', buf);
+                  rec_buf_close (buf);
 
                   rec_field_set_value (field, result);
 

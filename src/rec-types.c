@@ -230,17 +230,17 @@ struct rec_type_reg_s
 static bool rec_type_check_re (char *regexp_str, char *str);
 static enum rec_type_kind_e rec_type_parse_type_kind (char *str);
 
-static bool rec_type_check_int (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_bool (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_range (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_real (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_size (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_line (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_regexp (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_date (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_email (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_enum (rec_type_t type, char *str, FILE *errors);
-static bool rec_type_check_field (rec_type_t type, char *str, FILE *errors);
+static bool rec_type_check_int (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_bool (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_range (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_real (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_size (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_line (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_regexp (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_date (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_email (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_enum (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_field (rec_type_t type, char *str, rec_buf_t errors);
 
 /* Parsing routines.  */
 
@@ -545,11 +545,11 @@ rec_type_check (rec_type_t type,
                 char **error_str)
 {
   bool res;
-  FILE *errors;
+  rec_buf_t errors;
   char *err_str;
   size_t errors_size;
 
-  errors = open_memstream (&err_str, &errors_size);
+  errors = rec_buf_new (&err_str, &errors_size);
 
   res = false;
   switch (type->kind)
@@ -617,7 +617,7 @@ rec_type_check (rec_type_t type,
     }
 
   /* Terminate the 'errors' string.  */
-  fclose (errors);
+  rec_buf_close (errors);
   err_str[errors_size] = '\0';
 
   if (error_str)
@@ -843,14 +843,14 @@ rec_type_parse_type_kind (char *str)
 static bool
 rec_type_check_int (rec_type_t type,
                     char *str,
-                    FILE *errors)
+                    rec_buf_t errors)
 {
   bool ret;
 
   ret = rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, _("invalid integer."));
+      rec_buf_puts (_("invalid integer."), errors);
     }
 
   return ret;
@@ -859,14 +859,14 @@ rec_type_check_int (rec_type_t type,
 static bool
 rec_type_check_field (rec_type_t type,
                       char *str,
-                      FILE *errors)
+                      rec_buf_t errors)
 {
   bool ret;
 
   ret = rec_type_check_re (REC_TYPE_FIELD_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, _("invalid 'field' value."));
+      rec_buf_puts (_("invalid 'field' value."), errors);
     }
 
   return ret;
@@ -875,14 +875,14 @@ rec_type_check_field (rec_type_t type,
 static bool
 rec_type_check_bool (rec_type_t type,
                      char *str,
-                     FILE *errors)
+                     rec_buf_t errors)
 {
   bool ret;
 
   ret = rec_type_check_re (REC_TYPE_BOOL_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, _("invalid 'bool' value."));
+      rec_buf_puts (_("invalid 'bool' value."), errors);
     }
 
   return ret;
@@ -891,11 +891,12 @@ rec_type_check_bool (rec_type_t type,
 static bool
 rec_type_check_range (rec_type_t type,
                       char *str,
-                      FILE *errors)
+                      rec_buf_t errors)
 {
   bool ret;
   char *p;
   int num;
+  char tmp[512];
 
   p = str;
 
@@ -904,7 +905,7 @@ rec_type_check_range (rec_type_t type,
     {
       if (errors)
         {
-          fprintf (errors, _("invalid 'range' value."));
+          rec_buf_puts (_("invalid 'range' value."), errors);
         }
       return false;
     }
@@ -913,8 +914,9 @@ rec_type_check_range (rec_type_t type,
          && (num <= type->data.range[1]));
   if (!ret && errors)
     {
-      fprintf (errors, _("expected an integer between %d and %d."),
+      sprintf (tmp, _("expected an integer between %d and %d."),
                type->data.range[0], type->data.range[1]);
+      rec_buf_puts (tmp, errors);
     }
   
   return ret;
@@ -923,14 +925,14 @@ rec_type_check_range (rec_type_t type,
 static bool
 rec_type_check_real (rec_type_t type,
                      char *str,
-                     FILE *errors)
+                     rec_buf_t errors)
 {
   bool ret;
 
   ret = rec_type_check_re (REC_TYPE_REAL_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, _("invalid 'real' value."));
+      rec_buf_puts (_("invalid 'real' value."), errors);
     }
 
   return ret;
@@ -939,16 +941,18 @@ rec_type_check_real (rec_type_t type,
 static bool
 rec_type_check_size (rec_type_t type,
                      char *str,
-                     FILE *errors)
+                     rec_buf_t errors)
 {
   bool ret;
+  char tmp[512];
 
   ret = (strlen (str) <= type->data.max_size);
   if (!ret && errors)
     {
-      fprintf (errors,
+      sprintf (tmp,
                _("value too large.  Expected a size <= %d."),
                type->data.max_size);
+      rec_buf_puts (tmp, errors);
     }
   
   return (strlen (str) <= type->data.max_size);
@@ -957,14 +961,14 @@ rec_type_check_size (rec_type_t type,
 static bool
 rec_type_check_line (rec_type_t type,
                      char *str, 
-                     FILE *errors)
+                     rec_buf_t errors)
 {
   bool ret;
 
   ret = rec_type_check_re (REC_TYPE_LINE_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, _("invalid 'line' value."));
+      rec_buf_puts (_("invalid 'line' value."), errors);
     }
 
   return ret;
@@ -973,7 +977,7 @@ rec_type_check_line (rec_type_t type,
 static bool
 rec_type_check_regexp (rec_type_t type,
                        char *str,
-                       FILE *errors)
+                       rec_buf_t errors)
 {
   bool ret;
   ret = (regexec (&type->data.regexp,
@@ -983,7 +987,7 @@ rec_type_check_regexp (rec_type_t type,
                   0) == 0);
   if (!ret && errors)
     {
-      fprintf (errors, _("value does not match the regexp."));
+      rec_buf_puts (_("value does not match the regexp."), errors);
     }
 
   return ret;
@@ -992,7 +996,7 @@ rec_type_check_regexp (rec_type_t type,
 static bool
 rec_type_check_date (rec_type_t type,
                      char *str,
-                     FILE *errors)
+                     rec_buf_t errors)
 {
   bool ret;
   struct timespec tm;
@@ -1006,7 +1010,7 @@ rec_type_check_date (rec_type_t type,
   ret = get_date (&tm, str, NULL);
   if (!ret && errors)
     {
-      fprintf (errors, _("invalid date."));
+      rec_buf_puts (_("invalid date."), errors);
     }
 
   return ret;
@@ -1015,14 +1019,14 @@ rec_type_check_date (rec_type_t type,
 static bool
 rec_type_check_email (rec_type_t type,
                       char *str,
-                      FILE *errors)
+                      rec_buf_t errors)
 {
   bool ret;
 
   ret = rec_type_check_re (REC_TYPE_EMAIL_VALUE_RE, str);
   if (!ret && errors)
     {
-      fprintf (errors, _("invalid email."));
+      rec_buf_puts (_("invalid email."), errors);
     }
 
   return ret;
@@ -1031,7 +1035,7 @@ rec_type_check_email (rec_type_t type,
 static bool
 rec_type_check_enum (rec_type_t type,
                      char *str,
-                     FILE *errors)
+                     rec_buf_t errors)
 {
   size_t i;
   char *p, *b;
@@ -1076,7 +1080,7 @@ rec_type_check_enum (rec_type_t type,
 
   if (errors)
     {
-      fprintf (errors, _("invalid enum value."));
+      rec_buf_puts (_("invalid enum value."), errors);
     }
 
   return false;

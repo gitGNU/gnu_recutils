@@ -29,6 +29,7 @@
 
 #include <rec-mset.h>
 #include <rec.h>
+#include <rec-utils.h>
 
 /*
  * Record data structures.
@@ -672,13 +673,13 @@ rec_record_elem_comment (rec_record_elem_t elem)
 rec_comment_t
 rec_record_to_comment (rec_record_t record)
 {
-  FILE *stm;
+  rec_buf_t buf;
   rec_comment_t res;
   char *comment_str;
   size_t comment_str_size;
   rec_record_elem_t elem;
 
-  stm = open_memstream (&comment_str, &comment_str_size);
+  buf = rec_buf_new (&comment_str, &comment_str_size);
 
   elem = rec_record_null_elem ();
   while (rec_record_elem_p (elem = rec_record_next (record, elem)))
@@ -686,20 +687,20 @@ rec_record_to_comment (rec_record_t record)
       if (rec_record_elem_field_p (record, elem))
         {
           /* Field.  */
-          fputs (rec_write_field_str (rec_record_elem_field (elem),
-                                      REC_WRITER_NORMAL),
-                 stm);
+          rec_buf_puts (rec_write_field_str (rec_record_elem_field (elem),
+                                             REC_WRITER_NORMAL),
+                        buf);
         }
       else
         {
           /* Comment.  */
-          fputs (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem)),
-                                        REC_WRITER_NORMAL),
-                 stm);
+          rec_buf_puts (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem)),
+                                               REC_WRITER_NORMAL),
+                        buf);
         }
     }
 
-  fclose (stm);
+  rec_buf_close (buf);
 
   /* Remove a trailing newline.  */
   if (comment_str[comment_str_size - 1] == '\n')

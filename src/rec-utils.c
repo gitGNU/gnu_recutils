@@ -317,7 +317,7 @@ rec_buf_close (rec_buf_t buf)
 
   /* Update the user-provided buffer and size.  */
   *(buf->data_pointer) = buf->data;
-  *(buf->size_pointer) = buf->size;
+  *(buf->size_pointer) = buf->used;
 
   /* Don't deallocate buf->data */
   free (buf);
