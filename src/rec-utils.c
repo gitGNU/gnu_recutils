@@ -38,8 +38,13 @@
 struct rec_buf_s
 {
   char *data;
-  size_t used;
   size_t size;
+  size_t used;
+
+  /* Pointers to user-provided variables that will be updated at
+     rec_buf_destroy time.  */
+  char **data_pointer;
+  size_t *size_pointer;
 };
 
 bool
@@ -276,13 +281,16 @@ rec_letter_p (char c)
 }
 
 rec_buf_t
-rec_buf_new ()
+rec_buf_new (char **data, size_t *size)
 {
   rec_buf_t new;
 
   new = malloc (sizeof (struct rec_buf_s));
   if (new)
     {
+      new->data_pointer = data;
+      new->size_pointer = size;
+
       new->data = malloc (REC_BUF_STEP);
       new->size = REC_BUF_STEP;
       new->used = 0;
@@ -298,15 +306,25 @@ rec_buf_new ()
 }
 
 void
-rec_buf_destroy (rec_buf_t buf)
+rec_buf_close (rec_buf_t buf)
 {
+  /* Adjust the buffer.  */
+  if (buf->used > 0)
+    {
+      buf->data = realloc (buf->data, buf->used);
+    }
+  /*  buf->data[buf->used] = '\0'; */
+
+  /* Update the user-provided buffer and size.  */
+  *(buf->data_pointer) = buf->data;
+  *(buf->size_pointer) = buf->size;
+
   /* Don't deallocate buf->data */
   free (buf);
 }
 
 void
-rec_buf_rewind (rec_buf_t buf,
-                       int n)
+rec_buf_rewind (rec_buf_t buf, int n)
 {
   if ((buf->used - n) >= 0)
     {
@@ -314,14 +332,17 @@ rec_buf_rewind (rec_buf_t buf,
     }
 }
 
-bool
-rec_buf_add (rec_buf_t buf,
-             char c)
+int
+rec_buf_putc (int c, rec_buf_t buf)
 {
-  bool ret;
+  unsigned int ret;
 
-  ret = true;
+  if (c == EOF)
+    {
+      return EOF;
+    }
 
+  ret = (unsigned int) c;
   if ((buf->used + 1) > buf->size)
     {
       /* Allocate a new block */
@@ -332,49 +353,41 @@ rec_buf_add (rec_buf_t buf,
         {
           /* Not enough memory.
            * REC_BUF_STEP should not be 0. */
-          ret = false;
+          ret = EOF;
         }
     }
 
-  if (ret)
+  if (ret != EOF)
     {
       /* Add the character */
-      buf->data[buf->used++] = c;
+      buf->data[buf->used++] = (char) c;
     }
 
   return ret;
 }
 
-bool
-rec_buf_add_str (rec_buf_t buf,
-                 char *str)
+int
+rec_buf_puts (const char *str, rec_buf_t buf)
 {
-  char *p;
+  int ret;
+  const char *p;
 
+  ret = 0;
   p = str;
-  while ((*p != '\0') && (rec_buf_add (buf, *p)))
+  while (*p != '\0')
     {
+      if (rec_buf_putc (*p, buf) == EOF)
+        {
+          /* Error.  */
+          ret = -1;
+          break;
+        }
+
+      ret++;
       p++;
     }
 
-  return (*p != '\0');
-}
-
-char *
-rec_buf_data (rec_buf_t buf)
-{
-  return buf->data;
-}
-
-void
-rec_buf_adjust (rec_buf_t buf)
-{
-  if (buf->used > 0)
-    {
-      buf->data = realloc (buf->data, buf->used + 1);
-    }
-
-  buf->data[buf->used] = '\0';
+  return ret;
 }
 
 /* End of rec-utils.c */

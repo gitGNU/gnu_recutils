@@ -841,13 +841,12 @@ rec_parse_field_name_part (rec_parser_t parser,
 {
   bool ret;
   int ci;
-  size_t index;
+  size_t str_size;
   char c;
   rec_buf_t buf;
 
   ret = true;
-  index = 0;
-  buf = rec_buf_new ();
+  buf = rec_buf_new (str, &str_size);
   if (!buf)
     {
       /* Out of memory */
@@ -873,7 +872,7 @@ rec_parse_field_name_part (rec_parser_t parser,
       if ((rec_parser_letter_p (c))
           || (c == '%'))
         {
-          if (!rec_buf_add (buf, c))
+          if (rec_buf_putc (c, buf) == EOF)
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -900,7 +899,7 @@ rec_parse_field_name_part (rec_parser_t parser,
               || (c == '-')
               || (c == '_'))
             {
-              if (!rec_buf_add (buf, c))
+              if (rec_buf_putc (c, buf) == EOF)
                 {
                   /* Out of memory */
                   parser->error = REC_PARSER_ENOMEM;
@@ -933,14 +932,17 @@ rec_parse_field_name_part (rec_parser_t parser,
         }
     }
 
-  if (ret)
+  if (rec_buf_putc ('\0', buf) == EOF)
     {
-      /* Resize the token */
-      rec_buf_adjust (buf);
-      *str = rec_buf_data (buf);
+      ret = false;
     }
 
-  rec_buf_destroy (buf);
+  rec_buf_close (buf);
+
+  if (!ret)
+    {
+      free (*str);
+    }
 
   return ret;
 }
@@ -952,7 +954,7 @@ rec_parse_field_value (rec_parser_t parser,
   bool ret;
   int ci, ci2;
   char c, c2;
-  size_t index;
+  size_t str_size;
   bool prev_newline;
   rec_buf_t buf;
 
@@ -966,8 +968,7 @@ rec_parse_field_value (rec_parser_t parser,
   c = '\0';
   prev_newline = false;
   ret = true;
-  index = 0;
-  buf = rec_buf_new ();
+  buf = rec_buf_new (str, &str_size);
   if (!buf)
     {
       /* Out of memory */
@@ -1013,7 +1014,7 @@ rec_parse_field_value (rec_parser_t parser,
               else
                 {
                   /* Add \ and put back c2 */
-                  if (!rec_buf_add (buf, c))
+                  if (rec_buf_putc (c, buf) == EOF)
                     {
                       /* Out of memory */
                       parser->error = REC_PARSER_ENOMEM;
@@ -1067,7 +1068,7 @@ rec_parse_field_value (rec_parser_t parser,
             }
           else
             {
-              if (!rec_buf_add (buf, c))
+              if (rec_buf_putc (c, buf) == EOF)
                 {
                   /* Out of memory */
                   parser->error = REC_PARSER_ENOMEM;
@@ -1084,7 +1085,7 @@ rec_parse_field_value (rec_parser_t parser,
         }
       else if (c == '\n')
         {
-          if (!rec_buf_add (buf, c))
+          if (rec_buf_putc (c, buf) == EOF)
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -1099,7 +1100,7 @@ rec_parse_field_value (rec_parser_t parser,
         }
       else
         {
-          if (!rec_buf_add (buf, c))
+          if (rec_buf_putc (c, buf) == EOF)
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -1122,13 +1123,19 @@ rec_parse_field_value (rec_parser_t parser,
           /* Special case: field just before EOF */
           rec_buf_rewind (buf, 1);
         }
-
-      /* Resize the token */
-     rec_buf_adjust (buf);
-      *str = rec_buf_data (buf);
     }
 
-  rec_buf_destroy (buf);
+  if (rec_buf_putc ('\0', buf) == EOF)
+    {
+      ret = false;
+    }
+
+  rec_buf_close (buf);
+
+  if (!ret)
+    {
+      free (*str);
+    }
 
   return ret;
 }
@@ -1138,11 +1145,13 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
 {
   bool ret;
   rec_buf_t buf;
+  char *str;
+  size_t str_size;
   int ci;
   char c;
 
   ret = false;
-  buf = rec_buf_new ();
+  buf = rec_buf_new (&str, &str_size);
 
   /* Comments start at the beginning of line and span until the first
    * \n character not followed by a #, or EOF.
@@ -1172,7 +1181,7 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
                 }
             }
 
-          if (!rec_buf_add (buf, c))
+          if (rec_buf_putc (c, buf) == EOF)
             {
               /* Out of memory */
               parser->error = REC_PARSER_ENOMEM;
@@ -1183,18 +1192,23 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
       ret = true;
     }
 
+  if (rec_buf_putc ('\0', buf) == EOF)
+    {
+      ret = false;
+    }
+
+  rec_buf_close (buf);
+
   if (ret)
     {
-      /* Resize the token */
-      rec_buf_adjust (buf);
-      *comment = rec_comment_new (rec_buf_data (buf));
+      *comment = rec_comment_new (str);
     }
   else
     {
+      free (str);
       *comment = NULL;
     }
 
-  rec_buf_destroy (buf);
   return ret;
 }
 

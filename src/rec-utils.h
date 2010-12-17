@@ -53,13 +53,18 @@ bool rec_parse_regexp (char **str, char *re, char **result);
 /* Auto-growing buffer implementation.  */
 typedef struct rec_buf_s *rec_buf_t;
 
-rec_buf_t rec_buf_new ();
-bool rec_buf_add (rec_buf_t buf, char c);
-bool rec_buf_add_str (rec_buf_t buf, char *str);
+
+rec_buf_t rec_buf_new (char **data, size_t *size);
+void rec_buf_close (rec_buf_t buffer);
+
+/* rec_buf_putc returns the character written as an unsigned char cast
+   to an int, or EOF on error.  */
+int rec_buf_putc (int c, rec_buf_t buffer);
+/* rec_buf_puts returns a non-negative number on success (number of
+   characters written), or EOF on error.  */
+int rec_buf_puts (const char *s, rec_buf_t buffer);
+
 void rec_buf_rewind (rec_buf_t buf, int n);
-char *rec_buf_data (rec_buf_t buf);
-void rec_buf_adjust (rec_buf_t buf);
-void rec_buf_destroy (rec_buf_t buf);
 
 #endif /* rec-utils.h */
 

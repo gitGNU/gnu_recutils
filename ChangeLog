@@ -1,3 +1,17 @@
+2010-12-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-utils: new open_memstream like API for rec_buf_t.
+	* src/rec-parser.c (rec_parse_field_name_part): Use the new
+	rec_buf_t API.
+	(rec_parse_comment): Likewise.
+	(rec_parse_field_value): Likewise.
+
+	* src/rec-utils.h: New interface for the rec_buf_t abstract data
+	type, including: rec_buf_new, rec_buf_putc, rec_buf_puts and
+	rec_buf_close.
+	* src/rec-utils.c: rec_buf_new, rec_buf_putc, rec_buf_puts and
+	rec_buf_close implemented based in the old implementation.
+
 2010-12-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	syntax-check fixes.
