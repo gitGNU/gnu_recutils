@@ -295,13 +295,14 @@ rec_fex_str (rec_fex_t fex,
 {
   char *result;
   size_t result_size;
-  FILE *stm;
+  rec_buf_t buf;
   size_t i;
   char *field_str;
+  char tmp[512];
 
   result = NULL;
-  stm = open_memstream (&result, &result_size);
-  if (stm)
+  buf = rec_buf_new (&result, &result_size);
+  if (buf)
     {
       for (i = 0; i < fex->num_elems; i++)
         {
@@ -309,11 +310,11 @@ rec_fex_str (rec_fex_t fex,
             {
               if (kind == REC_FEX_SIMPLE)
                 {
-                  fputc (' ', stm);
+                  rec_buf_putc (' ', buf);
                 }
               else
                 {
-                  fputc (',', stm);
+                  rec_buf_putc (',', buf);
                 }
             }
           
@@ -327,7 +328,7 @@ rec_fex_str (rec_fex_t fex,
               field_str[strlen(field_str) - 1] = '\0';
             }
           
-          fputs (field_str, stm);
+          rec_buf_puts (field_str, buf);
           free (field_str);
 
           if (kind == REC_FEX_SUBSCRIPTS)
@@ -335,23 +336,25 @@ rec_fex_str (rec_fex_t fex,
               if ((fex->elems[i]->min != -1)
                   || (fex->elems[i]->max != -1))
                 {
-                  fputc ('[', stm);
+                  rec_buf_putc ('[', buf);
                   if (fex->elems[i]->min != -1)
                     {
-                      fprintf (stm, "%d", fex->elems[i]->min);
+                      sprintf (tmp, "%d", fex->elems[i]->min);
+                      rec_buf_puts (tmp, buf);
                     }
                   if (fex->elems[i]->max != -1)
                     {
-                      fprintf (stm, "-%d", fex->elems[i]->max);
+                      sprintf (tmp, "-%d", fex->elems[i]->max);
+                      rec_buf_puts (tmp, buf);
                     }
 
-                  fputc (']', stm);
+                  rec_buf_putc (']', buf);
                 }
             }
         }
     }
 
-  fclose (stm);
+  rec_buf_close (buf);
 
   return result;
 }
