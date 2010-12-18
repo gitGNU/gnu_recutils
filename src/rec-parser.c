@@ -932,11 +932,6 @@ rec_parse_field_name_part (rec_parser_t parser,
         }
     }
 
-  if (rec_buf_putc ('\0', buf) == EOF)
-    {
-      ret = false;
-    }
-
   rec_buf_close (buf);
 
   if (!ret)
@@ -1125,11 +1120,6 @@ rec_parse_field_value (rec_parser_t parser,
         }
     }
 
-  if (rec_buf_putc ('\0', buf) == EOF)
-    {
-      ret = false;
-    }
-
   rec_buf_close (buf);
 
   if (!ret)
@@ -1190,11 +1180,6 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
         }
       
       ret = true;
-    }
-
-  if (rec_buf_putc ('\0', buf) == EOF)
-    {
-      ret = false;
     }
 
   rec_buf_close (buf);

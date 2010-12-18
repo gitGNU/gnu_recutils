@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-17 16:39:32 jco"
+/* -*- mode: C -*- Time-stamp: "2010-12-17 18:48:48 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -69,7 +69,7 @@ int
 rec_int_check_db (rec_db_t db,
                   bool check_descriptors_p,
                   bool remote_descriptors_p,
-                  char **errors)
+                  rec_buf_t errors)
 {
   int ret;
   size_t db_size;
@@ -97,13 +97,11 @@ rec_int_check_rset (rec_db_t db,
                     rec_rset_t rset,
                     bool check_descriptor_p,
                     bool remote_descriptor_p,
-                    char **errors)
+                    rec_buf_t errors)
 {
   int res;
   rec_rset_elem_t rset_elem;
   rec_record_t record;
-  rec_buf_t buf_errors;
-  size_t buf_errors_size;
 
   res = 0;
 
@@ -116,15 +114,7 @@ rec_int_check_rset (rec_db_t db,
 
   if (check_descriptor_p)
     {
-      if (errors)
-        {
-          buf_errors = rec_buf_new (errors, &buf_errors_size);
-        }
-      res += rec_int_check_descriptor (rset, buf_errors);
-      if (errors)
-        {
-          rec_buf_close (buf_errors);
-        }
+      res += rec_int_check_descriptor (rset, errors);
     }
 
   if (res > 0)
@@ -153,19 +143,16 @@ rec_int_check_record (rec_db_t db,
                       rec_rset_t rset,
                       rec_record_t orig_record,
                       rec_record_t record,
-                      char **errors)
+                      rec_buf_t errors)
 {
   int res;
-  rec_buf_t errors_buf;
-  size_t errors_size;
 
-  errors_buf = rec_buf_new (errors, &errors_size);
   res =
-    rec_int_check_record_key (rset, orig_record, record, errors_buf)
-    + rec_int_check_record_types     (db, rset, record, errors_buf)
-    + rec_int_check_record_mandatory (rset, record, errors_buf)
-    + rec_int_check_record_unique    (rset, record, errors_buf)
-    + rec_int_check_record_prohibit  (rset, record, errors_buf);
+    rec_int_check_record_key (rset, orig_record, record, errors)
+    + rec_int_check_record_types     (db, rset, record, errors)
+    + rec_int_check_record_mandatory (rset, record, errors)
+    + rec_int_check_record_unique    (rset, record, errors)
+    + rec_int_check_record_prohibit  (rset, record, errors);
 
   return res;
 }
@@ -174,7 +161,7 @@ bool
 rec_int_check_field_type (rec_db_t db,
                           rec_rset_t rset,
                           rec_field_t field,
-                          char **errors)
+                          rec_buf_t errors)
 {
   bool res;
   rec_type_reg_t type_reg;
@@ -185,8 +172,6 @@ rec_int_check_field_type (rec_db_t db,
   rec_type_t referring_type;
   rec_type_t referred_type;
   char *errors_str;
-  rec_buf_t buf_errors;
-  size_t buf_errors_size;
   char tmp[1024];
 
   res = true;
@@ -240,11 +225,6 @@ rec_int_check_field_type (rec_db_t db,
       referring_type = rec_type_reg_get (type_reg, rec_field_name (field));
     }
 
-  if (errors)
-    {
-      buf_errors = rec_buf_new (errors, &buf_errors_size);
-    }    
-
   /* The referring type takes precedence.  */
   if (referring_type)
     {
@@ -258,7 +238,7 @@ rec_int_check_field_type (rec_db_t db,
                    rec_type_kind_str (referred_type),
                    rec_type_kind_str (referring_type),
                    rset_name);
-          rec_buf_puts (tmp, buf_errors);
+          rec_buf_puts (tmp, errors);
         }
 
       type = referring_type;
@@ -279,16 +259,11 @@ rec_int_check_field_type (rec_db_t db,
               sprintf (tmp, "%s:%s: error: %s\n",
                        rec_field_source (field), rec_field_location_str (field),
                        errors_str);
-              rec_buf_puts (tmp, buf_errors);
+              rec_buf_puts (tmp, errors);
             }
           free (errors_str);
           res = false;
         }
-    }
-
-  if (errors)
-    {
-      rec_buf_close (buf_errors);
     }
 
   return res;
@@ -706,7 +681,7 @@ rec_int_check_descriptor (rec_rset_t rset,
               if (!rec_type_descr_p (field_value))
                 {
                   /* XXX: make rec_type_descr_p to report more details.  */
-                  fprintf (tmp,
+                  sprintf (tmp,
                            _("%s:%s: error: invalid type specification\n"),
                            rec_field_source (field),
                            rec_field_location_str (field));

@@ -615,7 +615,6 @@ rec_rset_rename_field (rec_rset_t rset,
                   rec_buf_puts (fex_str, buf);
                   rec_buf_putc (' ', buf);
                   rec_buf_puts (type_str, buf);
-                  rec_buf_putc ('\0', buf);
                   rec_buf_close (buf);
 
                   rec_field_set_value (field, result);

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-14 15:06:21 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-18 12:19:51 jemarch"
  *
  *       File:         rec-write-field.c
  *       Date:         Sun Nov 14 13:11:01 2010
@@ -27,6 +27,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <check.h>
+#include <stdlib.h>
 
 #include <rec.h>
 
@@ -40,20 +41,17 @@ START_TEST(rec_write_field_nominal)
 {
   rec_writer_t writer;
   rec_field_t field;
-  FILE *stm;
   char *str;
   size_t str_size;
 
   field = rec_field_new (rec_parse_field_name_str ("foo"), "value");
   fail_if (field == NULL);
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field (writer, field, REC_WRITER_NORMAL));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "foo: value\n") != 0);
+  free (str);
 }
 END_TEST
 
@@ -67,20 +65,17 @@ START_TEST(rec_write_field_sexp)
 {
   rec_writer_t writer;
   rec_field_t field;
-  FILE *stm;
   char *str;
   size_t str_size;
 
   field = rec_field_new (rec_parse_field_name_str ("foo"), "value");
   fail_if (field == NULL);
-  stm = open_memstream (&str, &str_size);
-  writer = rec_writer_new (stm);
-  fail_if (stm == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field (writer, field, REC_WRITER_SEXP));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "(field  (\"foo\") \"value\")\n") != 0);
+  free (str);
 }
 END_TEST
 

@@ -42,7 +42,8 @@ librec_la_SOURCES = rec.c \
                     rec-sex-lex.l \
                     rec-sex.c \
                     rec-fex.c \
-                    rec-types.c
+                    rec-types.c \
+                    rec-buf.c
 
 BUILT_SOURCES = rec-sex-tab.h
 AM_YFLAGS = -d

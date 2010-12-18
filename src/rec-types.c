@@ -618,7 +618,7 @@ rec_type_check (rec_type_t type,
 
   /* Terminate the 'errors' string.  */
   rec_buf_close (errors);
-  err_str[errors_size] = '\0';
+  /*  err_str[errors_size] = '\0';*/
 
   if (error_str)
     {

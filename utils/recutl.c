@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-23 21:40:19 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-17 18:55:24 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -255,16 +255,13 @@ recutl_eval_field_expression (rec_fex_t fex,
 {
   char *res;
   size_t res_size;
-  FILE *stm;
   rec_writer_t writer;
   bool wrote_p;
 
-  stm = open_memstream (&res, &res_size);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&res, &res_size);
   wrote_p = rec_write_record_with_fex (writer, record, fex, mode,
                                        print_values_p, print_in_a_row_p);
   rec_writer_destroy (writer);
-  fclose (stm);
 
   if (!wrote_p)
     {

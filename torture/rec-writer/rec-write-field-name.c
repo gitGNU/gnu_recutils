@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-14 15:06:53 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-18 12:20:03 jemarch"
  *
  *       File:         rec-write-field-name.c
  *       Date:         Sun Nov 14 11:32:17 2010
@@ -26,6 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
@@ -40,7 +41,6 @@ START_TEST(rec_write_field_name_nominal)
 {
   rec_writer_t writer;
   rec_field_name_t fname;
-  FILE *stm;
   char *str;
   size_t str_size;
 
@@ -49,14 +49,12 @@ START_TEST(rec_write_field_name_nominal)
   rec_field_name_set (fname, 0, "foo");
   rec_field_name_set (fname, 1, "bar");
   rec_field_name_set (fname, 2, "baz");
-  stm = open_memstream (&str, &str_size);
-  writer = rec_writer_new (stm);
-  fail_if (stm == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field_name (writer, fname, REC_WRITER_NORMAL));
   rec_field_name_destroy (fname);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "foo:bar:baz:") != 0);
+  free (str);
 }
 END_TEST
 
@@ -70,7 +68,6 @@ START_TEST(rec_write_field_name_sexp)
 {
   rec_writer_t writer;
   rec_field_name_t fname;
-  FILE *stm;
   char *str;
   size_t str_size;
 
@@ -79,14 +76,12 @@ START_TEST(rec_write_field_name_sexp)
   rec_field_name_set (fname, 0, "foo");
   rec_field_name_set (fname, 1, "bar");
   rec_field_name_set (fname, 2, "baz");
-  stm = open_memstream (&str, &str_size);
-  writer = rec_writer_new (stm);
-  fail_if (stm == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field_name (writer, fname, REC_WRITER_SEXP));
   rec_field_name_destroy (fname);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "(\"foo\" \"bar\" \"baz\")") != 0);
+  free (str);
 }
 END_TEST
 

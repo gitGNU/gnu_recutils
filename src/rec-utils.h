@@ -50,22 +50,6 @@ bool rec_parse_int (char **str, int *num);
 void rec_skip_blanks (char **str);
 bool rec_parse_regexp (char **str, char *re, char **result);
 
-/* Auto-growing buffer implementation.  */
-typedef struct rec_buf_s *rec_buf_t;
-
-
-rec_buf_t rec_buf_new (char **data, size_t *size);
-void rec_buf_close (rec_buf_t buffer);
-
-/* rec_buf_putc returns the character written as an unsigned char cast
-   to an int, or EOF on error.  */
-int rec_buf_putc (int c, rec_buf_t buffer);
-/* rec_buf_puts returns a non-negative number on success (number of
-   characters written), or EOF on error.  */
-int rec_buf_puts (const char *s, rec_buf_t buffer);
-
-void rec_buf_rewind (rec_buf_t buf, int n);
-
 #endif /* rec-utils.h */
 
 /* End of rec-utils.h.  */

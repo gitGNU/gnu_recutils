@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-13 18:08:46 jco"
+/* -*- mode: C -*- Time-stamp: "2010-12-17 19:05:43 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -132,10 +132,20 @@ recfix_parse_args (int argc,
 bool
 recfix_process_data (rec_db_t db)
 {
-  return (rec_int_check_db (db,
-                            true,            /* Check descriptors.  */
-                            recfix_external, /* Use external descriptors.  */
-                            stderr) == 0);
+  bool ret;
+  char *errors;
+  size_t errors_size;
+  rec_buf_t buf;
+
+  buf = rec_buf_new (&errors, &errors_size);
+  ret = (rec_int_check_db (db,
+                           true,            /* Check descriptors.  */
+                           recfix_external, /* Use external descriptors.  */
+                           buf) == 0);
+  rec_buf_close (buf);
+  fprintf (stderr, "%s", errors);
+
+  return ret;
 }
 
 int

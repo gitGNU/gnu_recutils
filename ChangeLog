@@ -1,9 +1,27 @@
-2010-12-17  Jose E. Marchesi  <jco@terma.com>
+2010-12-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Stop using the non portable open_memstream.
+	* torture/rec-writer/rec-write-comment.c: Use the
+	rec_writer_new_str function instead of open_memstream and file
+	streams.
+	* torture/rec-writer/rec-write-rset.c: Likewise.
+	* torture/rec-writer/rec-write-record-with-fex.c: Likewise.
+	* torture/rec-writer/rec-write-record.c: Likewise.
+	* torture/rec-writer/rec-write-field-name.c: Likewise.
+	* torture/rec-writer/rec-write-field.c: Likewise.
+	* torture/rec-writer/rec-write-db.c: Likewise.
+
+	* utils/recins.c: Don't use open_memstream.
+	* utils/recset.c: Likewise.
+	* utils/recutl.c: Likewise.
+
+	* src/rec-buf.c: New file.
 
 	* src/rec.h: Get a char** argument instead of a stream for the
 	'errors' argument of the function rec_int_check_db,
 	rec_int_check_rset, rec_int_check_record and
 	rec_int_check_field_type.
+	rec_buf_* moved there from pdf-utils.h.
 
 	* src/rec-writer.c: Support a rec_buf_t backend in the writer.
 	(rec_writer_new_str): New function.

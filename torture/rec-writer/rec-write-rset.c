@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 14:11:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-18 12:20:31 jemarch"
  *
  *       File:         rec-write-rset.c
  *       Date:         Mon Nov 15 13:56:25 2010
@@ -26,6 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
@@ -42,7 +43,6 @@ START_TEST(rec_write_rset_nominal)
   rec_rset_t rset;
   rec_record_t record;
   rec_field_t field;
-  FILE *stm;
   char *str;
   size_t str_size;
 
@@ -69,15 +69,13 @@ START_TEST(rec_write_rset_nominal)
   rec_record_append_field (record, field);
   rec_rset_append_record (rset, record);
   
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_rset (writer, rset));
   rec_rset_destroy (rset);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str,
                    "foo1: value1\nfoo2: value2\n\nbar1: value1\nbar2: value2\n") != 0);
+  free (str);
 }
 END_TEST
 

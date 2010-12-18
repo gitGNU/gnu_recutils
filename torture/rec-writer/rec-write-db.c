@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 14:11:51 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-18 12:20:40 jemarch"
  *
  *       File:         rec-write-db.c
  *       Date:         Mon Nov 15 14:06:38 2010
@@ -26,6 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
@@ -43,7 +44,6 @@ START_TEST(rec_write_db_nominal)
   rec_rset_t rset;
   rec_record_t record;
   rec_field_t field;
-  FILE *stm;
   char *str;
   size_t str_size;
 
@@ -74,15 +74,13 @@ START_TEST(rec_write_db_nominal)
   rec_rset_append_record (rset, record);
   rec_db_insert_rset (db, rset, rec_db_size (db));
 
-    stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_db (writer, db));
   rec_db_destroy (db);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str,
                    "foo1: value1\nfoo2: value2\n\nbar1: value1\nbar2: value2\n") != 0);
+  free (str);
 }
 END_TEST
 

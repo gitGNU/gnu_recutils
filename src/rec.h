@@ -48,6 +48,28 @@ void rec_init (void);
 void rec_fini (void);
 
 /*
+ * FLEXIBLE BUFFERS
+ *
+ * A flexible buffer (rec_buf_t) is a buffer to which stream-like
+ * operations can be applied.  Its size will grow as required.
+ */
+
+
+typedef struct rec_buf_s *rec_buf_t;
+
+rec_buf_t rec_buf_new (char **data, size_t *size);
+void rec_buf_close (rec_buf_t buffer);
+
+/* rec_buf_putc returns the character written as an unsigned char cast
+   to an int, or EOF on error.  */
+int rec_buf_putc (int c, rec_buf_t buffer);
+/* rec_buf_puts returns a non-negative number on success (number of
+   characters written), or EOF on error.  */
+int rec_buf_puts (const char *s, rec_buf_t buffer);
+
+void rec_buf_rewind (rec_buf_t buf, int n);
+
+/*
  * COMMENTS
  *
  * A comment is a block of text.  The printed representation of a
@@ -695,22 +717,22 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 int rec_int_check_db (rec_db_t db,
                       bool check_descriptors_p,
                       bool remote_descriptors_p,
-                      char **errors);
+                      rec_buf_t errors);
 
 int rec_int_check_rset (rec_db_t db,
                         rec_rset_t rset,
                         bool check_descriptor_p,
                         bool remote_descriptor_p,
-                        char **errors);
+                        rec_buf_t errors);
 int rec_int_check_record (rec_db_t db,
                           rec_rset_t rset,
                           rec_record_t orig_rec,
                           rec_record_t rec,
-                          char **errors);
+                          rec_buf_t errors);
 bool rec_int_check_field_type (rec_db_t db,
                                rec_rset_t rset,
                                rec_field_t field,
-                               char **errors);
+                               rec_buf_t errors);
 
 /*
  * PARSER

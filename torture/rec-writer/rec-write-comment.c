@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-14 15:06:47 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-18 10:33:10 jemarch"
  *
  *       File:         rec-write-comment.c
  *       Date:         Sun Nov 14 11:11:56 2010
@@ -40,31 +40,26 @@ START_TEST(rec_write_comment_nominal)
 {
   rec_writer_t writer;
   rec_comment_t comment;
-  FILE *stm;
   char *str;
   size_t str_size;
 
   comment = rec_comment_new ("foo bar");
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
   fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "#foo bar\n") != 0);
+  free (str);
 
   comment = rec_comment_new ("");
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
   fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "#\n") != 0);
+  free (str);
 }
 END_TEST
 
@@ -78,31 +73,26 @@ START_TEST(rec_write_comment_sexp)
 {
   rec_writer_t writer;
   rec_comment_t comment;
-  FILE *stm;
   char *str;
   size_t str_size;
 
   comment = rec_comment_new ("foo bar");
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
   fail_if (!rec_write_comment (writer, comment, REC_WRITER_SEXP));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "(comment \"foo bar\")") != 0);
+  free (str);
 
   comment = rec_comment_new ("");
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
   fail_if (!rec_write_comment (writer, comment, REC_WRITER_SEXP));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str, "(comment \"\")") != 0);
+  free (str);
 }
 END_TEST
 

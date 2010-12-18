@@ -360,7 +360,7 @@ recset_process_actions (rec_db_t db)
   rec_record_t record;
   bool parse_status = true;
   rec_rset_elem_t rec_elem;
-  FILE *errors_stm;
+  rec_buf_t errors_buf;
   char *errors_str;
   size_t errors_str_size;
 
@@ -453,10 +453,10 @@ recset_process_actions (rec_db_t db)
       /* Check for integrity in the modified rset.  */
       if (!recset_force)
         {
-          errors_stm = open_memstream (&errors_str, &errors_str_size);
-          if (rec_int_check_rset (db, rset, false, recset_external, errors_stm) > 0)
+          errors_buf = rec_buf_new (&errors_str, &errors_str_size);
+          if (rec_int_check_rset (db, rset, false, recset_external, errors_buf) > 0)
             {
-              fclose (errors_stm);
+              rec_buf_close (errors_buf);
               if (!recset_verbose)
                 {
                   recutl_error (_("operation aborted due to integrity failures\n"));

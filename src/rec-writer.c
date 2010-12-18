@@ -94,7 +94,6 @@ rec_writer_destroy (rec_writer_t writer)
     }
   if (writer->buf_out)
     {
-      rec_buf_putc ('\0', writer->buf_out);
       rec_buf_close (writer->buf_out);
     }
 

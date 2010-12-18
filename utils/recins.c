@@ -367,7 +367,7 @@ recins_add_new_record (rec_db_t db)
   rec_rset_elem_t new_rset_elem;
   size_t num_rec;
   bool parse_status;
-  FILE *errors_stm;
+  rec_buf_t errors_buf;
   char *errors_str;
   size_t errors_str_size;
 
@@ -416,10 +416,10 @@ recins_add_new_record (rec_db_t db)
   /* Integrity check.  */
   if (!recins_force && db)
     {
-      errors_stm = open_memstream (&errors_str, &errors_str_size);
-      if (rec_int_check_db (db, false, recins_external, errors_stm) > 0)
+      errors_buf = rec_buf_new (&errors_str, &errors_str_size);
+      if (rec_int_check_db (db, false, recins_external, errors_buf) > 0)
         {
-          fclose (errors_stm);
+          rec_buf_close (errors_buf);
           if (!recins_verbose)
             {
               recutl_error (_("operation aborted due to integrity failures.\n"));

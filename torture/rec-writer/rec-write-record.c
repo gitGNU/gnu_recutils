@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-14 15:05:55 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-18 12:20:17 jemarch"
  *
  *       File:         rec-write-record.c
  *       Date:         Sun Nov 14 13:27:25 2010
@@ -26,6 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
@@ -42,7 +43,6 @@ START_TEST(rec_write_record_nominal)
   rec_record_t record;
   rec_field_t field;
   rec_comment_t comment;
-  FILE *stm;
   char *str;
   size_t str_size;
 
@@ -57,15 +57,13 @@ START_TEST(rec_write_record_nominal)
   field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
   fail_if (field == NULL);
   rec_record_append_field (record, field);
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_record (writer, record, REC_WRITER_NORMAL));
   rec_record_destroy (record);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str,
                    "foo1: value1\n#comment\nfoo2: value2\n") != 0);
+  free (str);
 }
 END_TEST
 
@@ -81,7 +79,6 @@ START_TEST(rec_write_record_sexp)
   rec_record_t record;
   rec_field_t field;
   rec_comment_t comment;
-  FILE *stm;
   char *str;
   size_t str_size;
 
@@ -96,15 +93,13 @@ START_TEST(rec_write_record_sexp)
   field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
   fail_if (field == NULL);
   rec_record_append_field (record, field);
-  stm = open_memstream (&str, &str_size);
-  fail_if (stm == NULL);
-  writer = rec_writer_new (stm);
+  writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_record (writer, record, REC_WRITER_SEXP));
   rec_record_destroy (record);
   rec_writer_destroy (writer);
-  fclose (stm);
   fail_if (strcmp (str,
                    "(record  (\n(field  (\"foo1\") \"value1\")\n(comment \"comment\")(field  (\"foo2\") \"value2\")\n))\n") != 0);
+  free (str);
 }
 END_TEST
 
