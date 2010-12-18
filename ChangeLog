@@ -1,3 +1,8 @@
+2010-12-18 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 30 resolved to 'DONE'.
+
 2010-12-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Stop using the non portable open_memstream.

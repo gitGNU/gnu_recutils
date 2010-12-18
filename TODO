@@ -449,7 +449,7 @@ Category: utils
 CreatedAt: Sat Dec  4 20:50:55 CET 2010
 Originator: bruno@clisp.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: 
 + open_memstream and fmemopen are not portable.  Information sent by
 + Bruno Haible to the development mailing list:
@@ -500,6 +500,7 @@ Note: Tue Dec 14 22:13:25 CET 2010
 + The implementations of the rec_parse_xxx_str functions have been
 + modified to use the new kind of parsers instead of the non-portable
 + construction.
+ClosedAt: Sat Dec 18 12:22:55 CET 2010
 
 Id: 34
 Summary: Embed a copy of libcsv in the sources tree.
