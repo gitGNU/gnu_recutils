@@ -50,6 +50,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module fatal-signal:
   # Code from module fcntl:
   # Code from module fcntl-h:
+  # Code from module float:
   # Code from module fpending:
   # Code from module gendocs:
   # Code from module getdate:
@@ -73,6 +74,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module malloca:
   # Code from module mbrtowc:
   # Code from module mbsinit:
+  # Code from module memchr:
   # Code from module mktime:
   # Code from module multiarch:
   # Code from module open:
@@ -100,6 +102,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module stdbool:
   # Code from module stddef:
   # Code from module stdint:
+  # Code from module stdio:
   # Code from module stdlib:
   # Code from module strchrnul:
   # Code from module streq:
@@ -115,6 +118,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module unistd:
   # Code from module unsetenv:
   # Code from module useless-if-before-free:
+  # Code from module vasnprintf:
+  # Code from module vasprintf:
   # Code from module vc-list-files:
   # Code from module verify:
   # Code from module wait-process:
@@ -184,6 +189,8 @@ AC_DEFUN([gl_INIT],
   gl_FCNTL_MODULE_INDICATOR([fcntl])
   # Code from module fcntl-h:
   gl_FCNTL_H
+  # Code from module float:
+  gl_FLOAT_H
   # Code from module fpending:
   gl_FUNC_FPENDING
   # Code from module gendocs:
@@ -244,6 +251,9 @@ AC_DEFUN([gl_INIT],
   # Code from module mbsinit:
   gl_FUNC_MBSINIT
   gl_WCHAR_MODULE_INDICATOR([mbsinit])
+  # Code from module memchr:
+  gl_FUNC_MEMCHR
+  gl_STRING_MODULE_INDICATOR([memchr])
   # Code from module mktime:
   gl_FUNC_MKTIME
   gl_TIME_MODULE_INDICATOR([mktime])
@@ -344,6 +354,8 @@ AC_DEFUN([gl_INIT],
   gl_STDDEF_H
   # Code from module stdint:
   gl_STDINT_H
+  # Code from module stdio:
+  gl_STDIO_H
   # Code from module stdlib:
   gl_STDLIB_H
   # Code from module strchrnul:
@@ -379,6 +391,14 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_UNSETENV
   gl_STDLIB_MODULE_INDICATOR([unsetenv])
   # Code from module useless-if-before-free:
+  # Code from module vasnprintf:
+  gl_FUNC_VASNPRINTF
+  # Code from module vasprintf:
+  gl_FUNC_VASPRINTF
+  gl_STDIO_MODULE_INDICATOR([vasprintf])
+  m4_ifdef([AM_XGETTEXT_OPTION],
+    [AM_][XGETTEXT_OPTION([--flag=asprintf:2:c-format])
+     AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
   # Code from module vc-list-files:
   # Code from module verify:
   # Code from module wait-process:
@@ -545,6 +565,8 @@ AC_DEFUN([gl_FILE_LIST], [
   doc/getdate.texi
   doc/parse-datetime.texi
   lib/alloca.in.h
+  lib/asnprintf.c
+  lib/asprintf.c
   lib/c-ctype.c
   lib/c-ctype.h
   lib/cloexec.c
@@ -566,6 +588,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fatal-signal.h
   lib/fcntl.c
   lib/fcntl.in.h
+  lib/float+.h
+  lib/float.in.h
   lib/fpending.c
   lib/fpending.h
   lib/getdate.h
@@ -590,11 +614,17 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/malloca.valgrind
   lib/mbrtowc.c
   lib/mbsinit.c
+  lib/memchr.c
+  lib/memchr.valgrind
   lib/mktime-internal.h
   lib/mktime.c
   lib/open.c
   lib/parse-datetime.h
   lib/parse-datetime.y
+  lib/printf-args.c
+  lib/printf-args.h
+  lib/printf-parse.c
+  lib/printf-parse.h
   lib/quotearg.c
   lib/quotearg.h
   lib/rawmemchr.c
@@ -623,6 +653,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdbool.in.h
   lib/stddef.in.h
   lib/stdint.in.h
+  lib/stdio-write.c
+  lib/stdio.in.h
   lib/stdlib.in.h
   lib/strchrnul.c
   lib/strchrnul.valgrind
@@ -639,6 +671,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/timespec.h
   lib/unistd.in.h
   lib/unsetenv.c
+  lib/vasnprintf.c
+  lib/vasnprintf.h
+  lib/vasprintf.c
   lib/verify.h
   lib/w32spawn.h
   lib/wait-process.c
@@ -652,6 +687,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xsize.h
   m4/00gnulib.m4
   m4/alloca.m4
+  m4/asm-underscore.m4
   m4/autobuild.m4
   m4/bison.m4
   m4/clock_time.m4
@@ -671,6 +707,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fcntl-o.m4
   m4/fcntl.m4
   m4/fcntl_h.m4
+  m4/float_h.m4
   m4/fpending.m4
   m4/getdtablesize.m4
   m4/getopt.m4
@@ -689,6 +726,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/intldir.m4
   m4/intlmacosx.m4
   m4/intmax.m4
+  m4/intmax_t.m4
   m4/inttypes-pri.m4
   m4/inttypes_h.m4
   m4/lcmessage.m4
@@ -706,7 +744,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbrtowc.m4
   m4/mbsinit.m4
   m4/mbstate_t.m4
+  m4/memchr.m4
   m4/mktime.m4
+  m4/mmap-anon.m4
   m4/mode_t.m4
   m4/multiarch.m4
   m4/nls.m4
@@ -716,6 +756,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/po.m4
   m4/posix_spawn.m4
   m4/printf-posix.m4
+  m4/printf.m4
   m4/progtest.m4
   m4/quotearg.m4
   m4/rawmemchr.m4
@@ -732,6 +773,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stddef_h.m4
   m4/stdint.m4
   m4/stdint_h.m4
+  m4/stdio_h.m4
   m4/stdlib_h.m4
   m4/strchrnul.m4
   m4/strerror.m4
@@ -747,6 +789,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/tm_gmtoff.m4
   m4/uintmax_t.m4
   m4/unistd_h.m4
+  m4/vasnprintf.m4
+  m4/vasprintf.m4
   m4/visibility.m4
   m4/wait-process.m4
   m4/waitpid.m4
