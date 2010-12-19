@@ -165,6 +165,7 @@ AC_DEFUN([gl_INIT],
   # Code from module closeout:
   gl_CLOSEOUT
   # Code from module configmake:
+  gl_CONFIGMAKE_PREP
   # Code from module dup2:
   gl_FUNC_DUP2
   gl_UNISTD_MODULE_INDICATOR([dup2])
@@ -695,6 +696,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/close-stream.m4
   m4/closeout.m4
   m4/codeset.m4
+  m4/configmake.m4
   m4/dos.m4
   m4/dup2.m4
   m4/eealloc.m4

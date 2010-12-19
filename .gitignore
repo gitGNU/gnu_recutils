@@ -26,6 +26,7 @@ libtool
 /utils/mdb2rec
 /lib/arg-nonnull.h
 /lib/link-warning.h
+/lib/stdio.h
 /lib/unistd.h
 /lib/alloca.h
 /lib/c++defs.h

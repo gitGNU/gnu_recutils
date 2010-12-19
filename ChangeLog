@@ -1,5 +1,10 @@
 2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	gettext-h module imported from gnulib.
+	* m4/configmake.m4: New file.
+
+2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: use %zu instead of %d to print size_t values in *printf
 	calls.
 	* src/rec-field.c (rec_field_set_location): Use %zu instead of %d

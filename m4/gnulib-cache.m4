@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl announce-gen array-list autobuild closeout execute gendocs getdate getopt-gnu gettext gnupload list maintainer-makefile tempname vasprintf
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl announce-gen array-list autobuild closeout execute gendocs getdate getopt-gnu gettext gettext-h gnupload list maintainer-makefile tempname vasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -29,6 +29,7 @@ gl_MODULES([
   getdate
   getopt-gnu
   gettext
+  gettext-h
   gnupload
   list
   maintainer-makefile
