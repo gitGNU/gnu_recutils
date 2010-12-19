@@ -298,7 +298,7 @@ rec_fex_str (rec_fex_t fex,
   rec_buf_t buf;
   size_t i;
   char *field_str;
-  char tmp[512];
+  char *tmp;
 
   result = NULL;
   buf = rec_buf_new (&result, &result_size);
@@ -339,13 +339,15 @@ rec_fex_str (rec_fex_t fex,
                   rec_buf_putc ('[', buf);
                   if (fex->elems[i]->min != -1)
                     {
-                      sprintf (tmp, "%d", fex->elems[i]->min);
+                      asprintf (&tmp, "%d", fex->elems[i]->min);
                       rec_buf_puts (tmp, buf);
+                      free (tmp);
                     }
                   if (fex->elems[i]->max != -1)
                     {
-                      sprintf (tmp, "-%d", fex->elems[i]->max);
+                      asprintf (&tmp, "-%d", fex->elems[i]->max);
                       rec_buf_puts (tmp, buf);
+                      free (tmp);
                     }
 
                   rec_buf_putc (']', buf);

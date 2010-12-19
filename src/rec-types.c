@@ -896,7 +896,7 @@ rec_type_check_range (rec_type_t type,
   bool ret;
   char *p;
   int num;
-  char tmp[512];
+  char *tmp;
 
   p = str;
 
@@ -914,9 +914,10 @@ rec_type_check_range (rec_type_t type,
          && (num <= type->data.range[1]));
   if (!ret && errors)
     {
-      sprintf (tmp, _("expected an integer between %d and %d."),
-               type->data.range[0], type->data.range[1]);
+      asprintf (&tmp, _("expected an integer between %d and %d."),
+                 type->data.range[0], type->data.range[1]);
       rec_buf_puts (tmp, errors);
+      free (tmp);
     }
   
   return ret;
@@ -944,15 +945,16 @@ rec_type_check_size (rec_type_t type,
                      rec_buf_t errors)
 {
   bool ret;
-  char tmp[512];
+  char *tmp;
 
   ret = (strlen (str) <= type->data.max_size);
   if (!ret && errors)
     {
-      sprintf (tmp,
-               _("value too large.  Expected a size <= %d."),
-               type->data.max_size);
+      asprintf (&tmp,
+                 _("value too large.  Expected a size <= %d."),
+                 type->data.max_size);
       rec_buf_puts (tmp, errors);
+      free (tmp);
     }
   
   return (strlen (str) <= type->data.max_size);

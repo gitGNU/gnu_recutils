@@ -175,14 +175,9 @@ rec_parser_perror (rec_parser_t parser,
   va_start (ap, fmt);
   vfprintf (stderr, fmt, ap);
   fputs (":", stderr);
-  /* XXX: replace the following line with a calculation of the number
-     of digits of a given number.  Sorry, I am a bit drunk while
-     writing this and cannot think clearly :D -jemarch */
-  number_str = malloc (10); /* 10 is a big arbitrary number */
-
   if (number_str)
     {
-      sprintf(number_str, "%d", parser->line);
+      asprintf (&number_str, "%d", parser->line);
       fputs (number_str, stderr);
       fputs (": error: ", stderr);
       fputs (gettext (rec_parser_error_strings[parser->error]), stderr);

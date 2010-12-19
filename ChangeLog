@@ -1,3 +1,20 @@
+2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: use the safer construction asprintf instead of sprintf.
+	* src/rec-fex.c (rec_fex_str): Use asprintf instead of sprintf.
+	* src/rec-types.c (rec_type_check_size): Likewise.
+	(rec_type_check_range): Likewise.
+	* src/rec-record.c (rec_record_set_location): Likewise.
+	(rec_record_set_char_location): Likewise.
+	* src/rec-parser.c (rec_parser_perror): Likewise.
+	* src/rec-int.c (rec_int_check_field_type): Likewise.
+	(rec_int_check_record_mandatory): Likewise.
+	(rec_int_check_record_unique): Likewise.
+	(rec_int_check_record_prohibit): Likewise.
+	(rec_int_check_record_key): Likewise.
+	(rec_int_check_descriptor): Likewise.
+	* src/rec-field.c (rec_field_set_location): Likewise.
+
 2010-12-18 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

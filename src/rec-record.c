@@ -779,11 +779,7 @@ rec_record_set_location (rec_record_t record,
       record->location_str = NULL;
     }
 
-  record->location_str = malloc (30);
-  if (record->location_str)
-    {    
-      sprintf (record->location_str, "%d", record->location);
-    }
+  asprintf (&(record->location_str), "%d", record->location);
 }
 
 size_t
@@ -821,11 +817,8 @@ rec_record_set_char_location (rec_record_t record,
       record->char_location_str = NULL;
     }
   
-  record->char_location_str = malloc (90);
-  if (record->char_location_str)
-    {
-      sprintf (record->char_location_str, "%d", record->char_location);
-    }
+  
+  asprintf (&(record->char_location_str), "%d", record->char_location);
 }
 
 /*

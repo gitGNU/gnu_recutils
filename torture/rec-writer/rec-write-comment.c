@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-18 10:33:10 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-19 14:55:50 jemarch"
  *
  *       File:         rec-write-comment.c
  *       Date:         Sun Nov 14 11:11:56 2010
@@ -26,6 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-17 18:48:48 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-19 14:53:09 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -172,7 +172,7 @@ rec_int_check_field_type (rec_db_t db,
   rec_type_t referring_type;
   rec_type_t referred_type;
   char *errors_str;
-  char tmp[1024];
+  char *tmp;
 
   res = true;
   rset_name = NULL;
@@ -233,12 +233,13 @@ rec_int_check_field_type (rec_db_t db,
           && errors)
         {
           /* Emit a warning.  */
-          sprintf (tmp, _("%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"),
-                   rec_field_source (field), rec_field_location_str (field),
-                   rec_type_kind_str (referred_type),
-                   rec_type_kind_str (referring_type),
-                   rset_name);
+          asprintf (&tmp, _("%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"),
+                     rec_field_source (field), rec_field_location_str (field),
+                     rec_type_kind_str (referred_type),
+                     rec_type_kind_str (referring_type),
+                     rset_name);
           rec_buf_puts (tmp, errors);
+          free (tmp);
         }
 
       type = referring_type;
@@ -256,10 +257,11 @@ rec_int_check_field_type (rec_db_t db,
         {
           if (errors)
             {
-              sprintf (tmp, "%s:%s: error: %s\n",
-                       rec_field_source (field), rec_field_location_str (field),
-                       errors_str);
+              asprintf (&tmp, "%s:%s: error: %s\n",
+                         rec_field_source (field), rec_field_location_str (field),
+                         errors_str);
               rec_buf_puts (tmp, errors);
+              free (tmp);
             }
           free (errors_str);
           res = false;
@@ -309,7 +311,7 @@ rec_int_check_record_mandatory (rec_rset_t rset,
   char *mandatory_field_str;
   rec_field_t field;
   size_t i, j, num_fields;
-  char tmp[1024];
+  char *tmp;
   
   res = 0;
 
@@ -338,12 +340,13 @@ rec_int_check_record_mandatory (rec_rset_t rset,
               if (rec_record_get_num_fields_by_name (record, mandatory_field_name)
                   == 0)
                 {
-                  sprintf (tmp,
-                           _("%s:%s: error: mandatory field '%s' not found in record\n"),
-                           rec_record_source (record),
-                           rec_record_location_str (record),
-                           mandatory_field_str);
+                  asprintf (&tmp,
+                             _("%s:%s: error: mandatory field '%s' not found in record\n"),
+                             rec_record_source (record),
+                             rec_record_location_str (record),
+                             mandatory_field_str);
                   rec_buf_puts (tmp, errors);
+                  free (tmp);
                   res++;
                 }
             }
@@ -368,7 +371,7 @@ rec_int_check_record_unique (rec_rset_t rset,
   char *unique_field_str;
   rec_field_t field;
   size_t i, j, num_fields;
-  char tmp[1024];
+  char *tmp;
   
   res = 0;
 
@@ -397,12 +400,13 @@ rec_int_check_record_unique (rec_rset_t rset,
               if (rec_record_get_num_fields_by_name (record, unique_field_name)
                   > 1)
                 {
-                  sprintf (tmp,
-                           _("%s:%s: error: field '%s' shall be unique in this record\n"),
-                           rec_record_source (record),
-                           rec_record_location_str (record),
-                           unique_field_str);
+                  asprintf (&tmp,
+                             _("%s:%s: error: field '%s' shall be unique in this record\n"),
+                             rec_record_source (record),
+                             rec_record_location_str (record),
+                             unique_field_str);
                   rec_buf_puts (tmp, errors);
+                  free (tmp);
                   res++;
                 }
             }
@@ -427,7 +431,7 @@ rec_int_check_record_prohibit (rec_rset_t rset,
   char *prohibit_field_str;
   rec_field_t field;
   size_t i, j, num_fields;
-  char tmp[1024];
+  char *tmp;
   
   res = 0;
 
@@ -456,12 +460,13 @@ rec_int_check_record_prohibit (rec_rset_t rset,
               if (rec_record_get_num_fields_by_name (record, prohibit_field_name)
                   > 0)
                 {
-                  sprintf (tmp,
-                           _("%s:%s: error: prohibited field '%s' found in record\n"),
-                           rec_record_source (record),
-                           rec_record_location_str (record),
-                           prohibit_field_str);
+                  asprintf (&tmp,
+                             _("%s:%s: error: prohibited field '%s' found in record\n"),
+                             rec_record_source (record),
+                             rec_record_location_str (record),
+                             prohibit_field_str);
                   rec_buf_puts (tmp, errors);
+                  free (tmp);
                   res++;
                 }
             }
@@ -491,7 +496,7 @@ rec_int_check_record_key (rec_rset_t rset,
   bool duplicated_key;
   size_t i;
   size_t num_fields;
-  char tmp[1024];
+  char *tmp;
   
   res = 0;
 
@@ -513,22 +518,24 @@ rec_int_check_record_key (rec_rset_t rset,
 
               if (num_fields == 0)
                 {
-                  sprintf (tmp,
-                           _("%s:%s: error: key field '%s' not found in record\n"),
-                           rec_record_source (record),
-                           rec_record_location_str (record),
-                           rec_field_value (field));
+                  asprintf (&tmp,
+                             _("%s:%s: error: key field '%s' not found in record\n"),
+                             rec_record_source (record),
+                             rec_record_location_str (record),
+                             rec_field_value (field));
                   rec_buf_puts (tmp, errors);
+                  free (tmp);
                   res++;
                 }
               else if (num_fields > 1)
                 {
-                  sprintf (tmp,
-                           _("%s:%s: error: multiple key fields '%s' in record\n"),
-                           rec_record_source (record),
-                           rec_record_location_str (record),
-                           rec_field_value (field));
+                  asprintf (&tmp,
+                             _("%s:%s: error: multiple key fields '%s' in record\n"),
+                             rec_record_source (record),
+                             rec_record_location_str (record),
+                             rec_field_value (field));
                   rec_buf_puts (tmp, errors);
+                  free (tmp);
                   res++;
                 }
               else  /* num_fields == 1 */
@@ -567,12 +574,13 @@ rec_int_check_record_key (rec_rset_t rset,
 
                   if (duplicated_key)
                     {
-                      sprintf (tmp,
-                               _("%s:%s: error: duplicated key value in field '%s' in record\n"),
-                               rec_record_source (orig_record),
-                               rec_record_location_str (orig_record),
-                               rec_field_name_str (key));
+                      asprintf (&tmp,
+                                 _("%s:%s: error: duplicated key value in field '%s' in record\n"),
+                                 rec_record_source (orig_record),
+                                 rec_record_location_str (orig_record),
+                                 rec_field_name_str (key));
                       rec_buf_puts (tmp, errors);
+                      free (tmp);
                       res++;
                       break;
                     }
@@ -605,7 +613,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t prohibit_fname;
   char *field_value;
   rec_fex_t fex;
-  char tmp[1024];
+  char *tmp;
 
   res = 0;
   descriptor = rec_rset_descriptor (rset);
@@ -627,43 +635,47 @@ rec_int_check_descriptor (rec_rset_t rset,
       */
       if (rec_record_get_num_fields_by_name (descriptor, rec_fname) == 0)
         {
-          sprintf (tmp,
-                   _("%s:%s: error: missing %%rec field in record descriptor\n"),
-                   rec_record_source (descriptor),
-                   rec_record_location_str (descriptor));
+          asprintf (&tmp,
+                     _("%s:%s: error: missing %%rec field in record descriptor\n"),
+                     rec_record_source (descriptor),
+                     rec_record_location_str (descriptor));
           rec_buf_puts (tmp, errors);
+          free (tmp);
           res++;
         }
       else if (rec_record_get_num_fields_by_name (descriptor, rec_fname) > 1)
         {
-          sprintf (tmp,
-                   _("%s:%s: error: too many %%rec fields in record descriptor\n"),
-                   rec_record_source (descriptor),
-                   rec_record_location_str (descriptor));
+          asprintf (&tmp,
+                     _("%s:%s: error: too many %%rec fields in record descriptor\n"),
+                     rec_record_source (descriptor),
+                     rec_record_location_str (descriptor));
           rec_buf_puts (tmp, errors);
+          free (tmp);
           res++;
         }
 
       field = rec_record_get_field_by_name (descriptor, rec_fname, 0);
       if (!rec_int_rec_type_p (rec_field_value (field)))
         {
-          sprintf (tmp,
-                   _("%s:%s: error: invalid record type %s\n"),
-                   rec_field_source (field),
-                   rec_field_location_str (field),
-                   rec_field_value (field));
+          asprintf (&tmp,
+                     _("%s:%s: error: invalid record type %s\n"),
+                     rec_field_source (field),
+                     rec_field_location_str (field),
+                     rec_field_value (field));
           rec_buf_puts (tmp, errors);
+          free (tmp);
           res++;
         }
 
       /* Only one 'key:' entry is allowed, if any.  */
       if (rec_record_get_num_fields_by_name (descriptor, key_fname) > 1)
         {
-          sprintf (tmp,
-                   _("%s:%s: error: only one %%key field is allowed in a record descriptor\n"),
-                   rec_record_source (descriptor),
-                   rec_record_location_str (descriptor));
+          asprintf (&tmp,
+                     _("%s:%s: error: only one %%key field is allowed in a record descriptor\n"),
+                     rec_record_source (descriptor),
+                     rec_record_location_str (descriptor));
           rec_buf_puts (tmp, errors);
+          free (tmp);
           res++;
         }
 
@@ -681,11 +693,12 @@ rec_int_check_descriptor (rec_rset_t rset,
               if (!rec_type_descr_p (field_value))
                 {
                   /* XXX: make rec_type_descr_p to report more details.  */
-                  sprintf (tmp,
-                           _("%s:%s: error: invalid type specification\n"),
-                           rec_field_source (field),
-                           rec_field_location_str (field));
+                  asprintf (&tmp,
+                             _("%s:%s: error: invalid type specification\n"),
+                             rec_field_source (field),
+                             rec_field_location_str (field));
                   rec_buf_puts (tmp, errors);
+                  free (tmp);
                   res++;
                 }
             }
@@ -702,13 +715,14 @@ rec_int_check_descriptor (rec_rset_t rset,
                 }
               else
                 {
-                  sprintf (tmp,
-                           _("%s:%s: error: value for %s[%d] is not a list of field names\n"),
-                           rec_record_source (descriptor),
-                           rec_record_location_str (descriptor),
-                           rec_field_name_str (field),
-                           rec_record_get_field_index_by_name (descriptor, field));
+                  asprintf (&tmp,
+                             _("%s:%s: error: value for %s[%d] is not a list of field names\n"),
+                             rec_record_source (descriptor),
+                             rec_record_location_str (descriptor),
+                             rec_field_name_str (field),
+                             rec_record_get_field_index_by_name (descriptor, field));
                   rec_buf_puts (tmp, errors);
+                  free (tmp);
                   res++;
                 }
             }
