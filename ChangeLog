@@ -1,5 +1,18 @@
 2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Misc portability problems fixed.
+	* utils/recutl.h: Make recutl_fatal and recutl_error to get a
+	const char pointer as its first argument.
+
+	* utils/recutl.c: Include locale.h.
+
+	* src/rec-writer.c (rec_write_comment): Use strdup instead of
+	strdupa.
+	(rec_write_comment): Avoid freeing a tail of a string returned by
+	strdup.
+
+2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Include gettext.h instead of libintl.h.
 	* src/rec.c: Include gettext.h instead of libintl.h.
 	* utils/recutl.c: Likewise.

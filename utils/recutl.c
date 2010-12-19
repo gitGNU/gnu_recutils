@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 17:48:58 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-19 18:03:12 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -32,6 +32,7 @@
 #include <stdarg.h>
 #include <closeout.h>
 #include <xalloc.h>
+#include <locale.h>
 #include <gettext.h>
 #define _(str) gettext (str)
 
@@ -137,7 +138,7 @@ Written by Jose E. Marchesi."));
 }
 
 void
-recutl_fatal (char *fmt, ...)
+recutl_fatal (const char *fmt, ...)
 {
   va_list ap;
 
@@ -151,7 +152,7 @@ recutl_fatal (char *fmt, ...)
 }
 
 void
-recutl_error (char *fmt, ...)
+recutl_error (const char *fmt, ...)
 {
   va_list ap;
 

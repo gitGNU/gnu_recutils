@@ -107,6 +107,7 @@ rec_write_comment (rec_writer_t writer,
 {
   char *line;
   char *str;
+  char *orig_str;
   size_t i;
   
   if (mode == REC_WRITER_SEXP)
@@ -149,7 +150,10 @@ rec_write_comment (rec_writer_t writer,
       /* Every line in the comment is written preceded by a '#' character
          and postceded by a newline character.  */
       
-      str = strdupa (rec_comment_text (comment));
+      str = strdup (rec_comment_text (comment));
+      orig_str = str; /* Save a pointer to str to deallocate it later,
+                         since strsep will modify the str
+                         variable.  */
       line = strsep (&str, "\n");
       do
         {
@@ -162,7 +166,7 @@ rec_write_comment (rec_writer_t writer,
         }
       while ((line = strsep (&str, "\n")));
 
-      free (str);
+      free (orig_str);
     }
 
   return true;
