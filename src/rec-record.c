@@ -779,7 +779,7 @@ rec_record_set_location (rec_record_t record,
       record->location_str = NULL;
     }
 
-  asprintf (&(record->location_str), "%d", record->location);
+  asprintf (&(record->location_str), "%zu", record->location);
 }
 
 size_t
@@ -818,7 +818,7 @@ rec_record_set_char_location (rec_record_t record,
     }
   
   
-  asprintf (&(record->char_location_str), "%d", record->char_location);
+  asprintf (&(record->char_location_str), "%zu", record->char_location);
 }
 
 /*

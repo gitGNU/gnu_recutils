@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.0\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2010-12-19 13:43+0100\n"
+"POT-Creation-Date: 2010-12-19 14:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,87 +158,87 @@ msgid ""
 "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
 msgstr ""
 
-#: src/rec-int.c:342
+#: src/rec-int.c:344
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:401
+#: src/rec-int.c:404
 #, c-format
 msgid "%s:%s: error: field '%s' shall be unique in this record\n"
 msgstr ""
 
-#: src/rec-int.c:460
+#: src/rec-int.c:464
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr ""
 
-#: src/rec-int.c:517
+#: src/rec-int.c:522
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:527
+#: src/rec-int.c:533
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:571
+#: src/rec-int.c:578
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:631
+#: src/rec-int.c:639
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:640
+#: src/rec-int.c:649
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:651
+#: src/rec-int.c:661
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr ""
 
-#: src/rec-int.c:663
+#: src/rec-int.c:674
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:685
+#: src/rec-int.c:697
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr ""
 
-#: src/rec-int.c:706
+#: src/rec-int.c:719
 #, c-format
 msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
 msgstr ""
 
-#: src/rec-int.c:794
+#: src/rec-int.c:808
 #, c-format
 msgid "warning: could not fetch remote descriptor from url %s.\n"
 msgstr ""
 
-#: src/rec-int.c:811
+#: src/rec-int.c:825
 #, c-format
 msgid "warning: could not read external descriptor from file %s.\n"
 msgstr ""
 
-#: src/rec-int.c:824
+#: src/rec-int.c:838
 #, c-format
 msgid "warning: %s does not contain valid rec data.\n"
 msgstr ""
 
-#: src/rec-int.c:836
+#: src/rec-int.c:850
 #, c-format
 msgid "warning: %s does not contain information for %s.\n"
 msgstr ""
 
-#: src/rec-int.c:898
+#: src/rec-int.c:912
 #, c-format
 msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
 msgstr ""
@@ -276,32 +276,32 @@ msgstr ""
 msgid "expected an integer between %d and %d."
 msgstr ""
 
-#: src/rec-types.c:935
+#: src/rec-types.c:936
 msgid "invalid 'real' value."
 msgstr ""
 
-#: src/rec-types.c:953
+#: src/rec-types.c:954
 #, c-format
 msgid "value too large.  Expected a size <= %d."
 msgstr ""
 
-#: src/rec-types.c:971
+#: src/rec-types.c:973
 msgid "invalid 'line' value."
 msgstr ""
 
-#: src/rec-types.c:990
+#: src/rec-types.c:992
 msgid "value does not match the regexp."
 msgstr ""
 
-#: src/rec-types.c:1013
+#: src/rec-types.c:1015
 msgid "invalid date."
 msgstr ""
 
-#: src/rec-types.c:1029
+#: src/rec-types.c:1031
 msgid "invalid email."
 msgstr ""
 
-#: src/rec-types.c:1083
+#: src/rec-types.c:1085
 msgid "invalid enum value."
 msgstr ""
 

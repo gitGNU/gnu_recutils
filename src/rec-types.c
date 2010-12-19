@@ -951,7 +951,7 @@ rec_type_check_size (rec_type_t type,
   if (!ret && errors)
     {
       asprintf (&tmp,
-                 _("value too large.  Expected a size <= %d."),
+                 _("value too large.  Expected a size <= %zu."),
                  type->data.max_size);
       rec_buf_puts (tmp, errors);
       free (tmp);

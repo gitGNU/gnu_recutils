@@ -177,7 +177,7 @@ rec_parser_perror (rec_parser_t parser,
   fputs (":", stderr);
   if (number_str)
     {
-      asprintf (&number_str, "%d", parser->line);
+      asprintf (&number_str, "%zu", parser->line);
       fputs (number_str, stderr);
       fputs (": error: ", stderr);
       fputs (gettext (rec_parser_error_strings[parser->error]), stderr);
