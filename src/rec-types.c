@@ -31,7 +31,7 @@
 #include <string.h>
 #include <regex.h>
 #include <getdate.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
 #include <rec-utils.h>

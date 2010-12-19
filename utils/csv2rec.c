@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-16 23:08:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-19 17:47:37 jemarch"
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010
@@ -29,7 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) gettext (str)
 
 #include <csv.h>

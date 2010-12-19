@@ -29,7 +29,7 @@
 #   include <curl/curl.h>
 #endif
 
-#include <libintl.h>
+#include <gettext.h>
 
 #include <rec.h>
 

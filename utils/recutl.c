@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-17 18:55:24 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-19 17:48:58 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -32,7 +32,7 @@
 #include <stdarg.h>
 #include <closeout.h>
 #include <xalloc.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) gettext (str)
 
 #include <rec.h>

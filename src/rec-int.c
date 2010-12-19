@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 14:53:09 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-19 17:46:14 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -29,7 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <regex.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 #include <tempname.h>
 

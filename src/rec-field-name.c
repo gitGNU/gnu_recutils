@@ -29,7 +29,7 @@
 #include <string.h>
 #include <regex.h>
 #include <ctype.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
 #include <rec.h>

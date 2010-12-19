@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-17 19:05:43 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-19 17:48:07 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -27,7 +27,7 @@
 
 #include <getopt.h>
 #include <stdlib.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) gettext (str)
 
 #include <rec.h>

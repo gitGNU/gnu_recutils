@@ -29,7 +29,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <xalloc.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) gettext (str)
 
 #include <rec.h>

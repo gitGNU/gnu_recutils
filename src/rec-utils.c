@@ -27,7 +27,7 @@
 
 #include <regex.h>
 #include <stdlib.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 #include <string.h>
 

@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <libintl.h>
+#include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 #define N_(str) gettext_noop (str)
 

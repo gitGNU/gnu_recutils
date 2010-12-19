@@ -1,5 +1,25 @@
 2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Include gettext.h instead of libintl.h.
+	* src/rec.c: Include gettext.h instead of libintl.h.
+	* utils/recutl.c: Likewise.
+	* utils/recset.c: Likewise.
+	* utils/recsel.c: Likewise.
+	* utils/recins.c: Likewise.
+	* utils/recinf.c: Likewise.
+	* utils/recfix.c: Likewise.
+	* utils/recdel.c: Likewise.
+	* utils/mdb2rec.c: Likewise.
+	* utils/csv2rec.c: Likewise.
+	* src/rec-utils.c: Likewise.
+	* src/rec-types.c: Likewise.
+	* src/rec-parser.c: Likewise.
+	* src/rec-int.c: Likewise.
+	* src/rec-field-name.c: Likewise.
+	* src/rec-fex.c: Likewise.
+
+2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	gettext-h module imported from gnulib.
 	* m4/configmake.m4: New file.
 
