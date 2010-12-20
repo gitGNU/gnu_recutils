@@ -53,7 +53,7 @@ if USE_COVERAGE
   AM_CFLAGS += -fprofile-arcs -ftest-coverage
 endif
 
-AM_LDFLAGS =
+AM_LDFLAGS = -no-undefined
 AM_CPPFLAGS = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 if REMOTE_DESCRIPTORS
   AM_CPPFLAGS += -DREMOTE_DESCRIPTORS

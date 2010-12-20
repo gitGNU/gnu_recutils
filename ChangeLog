@@ -1,5 +1,13 @@
 2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Build a librec.dll in mingw.
+	* src/Makefile.am (AM_LDFLAGS): Use -no-undefined.
+
+	* src/rec.c: Avoid an undefined symbol in the generated
+	librec.dll.
+
+2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Fix compilation in mingw32.
 	* src/rec-sex-lex.l: Use %top to get config.h included at the top
 	of the generated file.

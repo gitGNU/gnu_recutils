@@ -25,6 +25,11 @@
 
 #include <config.h>
 
+#if defined __WIN32__
+  /* Avoid an undefined symbol in the generated librec.dll.  */
+  char *program_name = "dummy";
+#endif
+
 #if defined REMOTE_DESCRIPTORS
 #   include <curl/curl.h>
 #endif
