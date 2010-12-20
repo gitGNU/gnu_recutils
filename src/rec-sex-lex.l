@@ -32,9 +32,12 @@
 %option bison-bridge
 %option extra-type="void *"
 
-%{
-#include <config.h>
+%top {
+   /* This code goes at the "top" of the generated file.  */
+   #include <config.h>
+}
 
+%{
 #include <rec-utils.h>
 
 #include <rec-sex-ast.h>

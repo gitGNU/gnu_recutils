@@ -1,5 +1,14 @@
 2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Fix compilation in mingw32.
+	* src/rec-sex-lex.l: Use %top to get config.h included at the top
+	of the generated file.
+
+	* strsep module imported from gnulib.
+	* mkdstemp module imported from gnulib.
+
+2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	echo -n is not recognized in macosx.  Use printf instead.
 	* torture/utils/testutils.sh (test_declare_input_file): Use printf
 	instead of echo -n.
