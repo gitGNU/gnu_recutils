@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-20 18:41:10 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-20 18:52:02 jemarch"
  *
  *       File:         recnav.c
  *       Date:         Mon Dec 20 16:43:01 2010
@@ -170,7 +170,7 @@ recnav_init_app ()
 
   sub_menu_size[0] = 5; menu_locations[0] = LEFT;
   sub_menu_size[1] = 2; menu_locations[0] = LEFT;
-  sub_menu_size[2] = 2; menu_locations[0] = RIGHT;
+  sub_menu_size[2] = 2; menu_locations[0] = LEFT;
 
   /* Create the menu.  */
   recnav_menu = newCDKMenu (recnav_screen,
@@ -232,7 +232,7 @@ recnav_navigate (rec_db_t db)
           endCDK();
           return;
         }
-      else if (selection == 300)
+      else if (selection == 200)
         {
           /* About recnav.  */
           recnav_cmd_about ();
