@@ -32,6 +32,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module array-list:
   # Code from module autobuild:
   AB_INIT
+  # Code from module btowc:
   # Code from module c++defs:
   # Code from module c-ctype:
   # Code from module clock-time:
@@ -75,10 +76,13 @@ AC_DEFUN([gl_EARLY],
   # Code from module isnand-nolibm:
   # Code from module isnanf-nolibm:
   # Code from module isnanl-nolibm:
+  # Code from module langinfo:
   # Code from module list:
   # Code from module localcharset:
   # Code from module lstat:
   # Code from module maintainer-makefile:
+  # Code from module malloc-gnu:
+  # Code from module malloc-posix:
   # Code from module malloca:
   # Code from module math:
   # Code from module mbrtowc:
@@ -86,6 +90,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module memchr:
   # Code from module mktime:
   # Code from module multiarch:
+  # Code from module nl_langinfo:
   # Code from module nocrash:
   # Code from module open:
   # Code from module parse-datetime:
@@ -104,6 +109,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module quotearg:
   # Code from module quotearg-simple:
   # Code from module rawmemchr:
+  # Code from module regex:
   # Code from module sched:
   # Code from module setenv:
   # Code from module sigaction:
@@ -112,6 +118,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module sigprocmask:
   # Code from module size_max:
   # Code from module spawn:
+  # Code from module ssize_t:
   # Code from module stat:
   # Code from module stdbool:
   # Code from module stddef:
@@ -141,6 +148,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module waitpid:
   # Code from module warn-on-use:
   # Code from module wchar:
+  # Code from module wcrtomb:
   # Code from module wctype:
   # Code from module xalloc:
   # Code from module xalloc-die:
@@ -167,6 +175,9 @@ AC_DEFUN([gl_INIT],
   # Code from module arg-nonnull:
   # Code from module array-list:
   # Code from module autobuild:
+  # Code from module btowc:
+  gl_FUNC_BTOWC
+  gl_WCHAR_MODULE_INDICATOR([btowc])
   # Code from module c++defs:
   # Code from module c-ctype:
   # Code from module clock-time:
@@ -261,6 +272,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ISNANF_NO_LIBM
   # Code from module isnanl-nolibm:
   gl_FUNC_ISNANL_NO_LIBM
+  # Code from module langinfo:
+  gl_LANGINFO_H
   # Code from module list:
   gl_LIST
   # Code from module localcharset:
@@ -273,6 +286,12 @@ AC_DEFUN([gl_INIT],
   # Code from module maintainer-makefile:
   AC_CONFIG_COMMANDS_PRE([m4_ifdef([AH_HEADER],
     [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
+  # Code from module malloc-gnu:
+  gl_FUNC_MALLOC_GNU
+  gl_MODULE_INDICATOR([malloc-gnu])
+  # Code from module malloc-posix:
+  gl_FUNC_MALLOC_POSIX
+  gl_STDLIB_MODULE_INDICATOR([malloc-posix])
   # Code from module malloca:
   gl_MALLOCA
   # Code from module math:
@@ -291,6 +310,9 @@ AC_DEFUN([gl_INIT],
   gl_TIME_MODULE_INDICATOR([mktime])
   # Code from module multiarch:
   gl_MULTIARCH
+  # Code from module nl_langinfo:
+  gl_FUNC_NL_LANGINFO
+  gl_LANGINFO_MODULE_INDICATOR([nl_langinfo])
   # Code from module nocrash:
   # Code from module open:
   gl_FUNC_OPEN
@@ -367,6 +389,8 @@ AC_DEFUN([gl_INIT],
   # Code from module rawmemchr:
   gl_FUNC_RAWMEMCHR
   gl_STRING_MODULE_INDICATOR([rawmemchr])
+  # Code from module regex:
+  gl_REGEX
   # Code from module sched:
   gl_SCHED_H
   # Code from module setenv:
@@ -387,6 +411,8 @@ AC_DEFUN([gl_INIT],
   gl_SIZE_MAX
   # Code from module spawn:
   gl_SPAWN_H
+  # Code from module ssize_t:
+  gt_TYPE_SSIZE_T
   # Code from module stat:
   gl_FUNC_STAT
   gl_SYS_STAT_MODULE_INDICATOR([stat])
@@ -453,6 +479,9 @@ AC_DEFUN([gl_INIT],
   # Code from module warn-on-use:
   # Code from module wchar:
   gl_WCHAR_H
+  # Code from module wcrtomb:
+  gl_FUNC_WCRTOMB
+  gl_WCHAR_MODULE_INDICATOR([wcrtomb])
   # Code from module wctype:
   gl_WCTYPE_H
   # Code from module xalloc:
@@ -611,6 +640,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.in.h
   lib/asnprintf.c
   lib/asprintf.c
+  lib/btowc.c
   lib/c-ctype.c
   lib/c-ctype.h
   lib/cloexec.c
@@ -660,9 +690,12 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isnanf.c
   lib/isnanl-nolibm.h
   lib/isnanl.c
+  lib/iswblank.c
+  lib/langinfo.in.h
   lib/localcharset.c
   lib/localcharset.h
   lib/lstat.c
+  lib/malloc.c
   lib/malloca.c
   lib/malloca.h
   lib/malloca.valgrind
@@ -673,6 +706,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memchr.valgrind
   lib/mktime-internal.h
   lib/mktime.c
+  lib/nl_langinfo.c
   lib/open.c
   lib/parse-datetime.h
   lib/parse-datetime.y
@@ -690,6 +724,12 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/rawmemchr.valgrind
   lib/ref-add.sin
   lib/ref-del.sin
+  lib/regcomp.c
+  lib/regex.c
+  lib/regex.h
+  lib/regex_internal.c
+  lib/regex_internal.h
+  lib/regexec.c
   lib/sched.in.h
   lib/setenv.c
   lib/sig-handler.h
@@ -742,6 +782,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/wait-process.h
   lib/waitpid.c
   lib/wchar.in.h
+  lib/wcrtomb.c
   lib/wctype.in.h
   lib/xalloc-die.c
   lib/xalloc.h
@@ -752,6 +793,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/asm-underscore.m4
   m4/autobuild.m4
   m4/bison.m4
+  m4/btowc.m4
   m4/clock_time.m4
   m4/cloexec.m4
   m4/close-stream.m4
@@ -801,6 +843,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/isnand.m4
   m4/isnanf.m4
   m4/isnanl.m4
+  m4/langinfo_h.m4
   m4/lcmessage.m4
   m4/ldexpl.m4
   m4/lib-ld.m4
@@ -813,6 +856,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lock.m4
   m4/longlong.m4
   m4/lstat.m4
+  m4/malloc.m4
   m4/malloca.m4
   m4/math_h.m4
   m4/mbrtowc.m4
@@ -823,6 +867,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mmap-anon.m4
   m4/mode_t.m4
   m4/multiarch.m4
+  m4/nl_langinfo.m4
   m4/nls.m4
   m4/nocrash.m4
   m4/onceonly.m4
@@ -837,6 +882,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/progtest.m4
   m4/quotearg.m4
   m4/rawmemchr.m4
+  m4/regex.m4
   m4/sched_h.m4
   m4/setenv.m4
   m4/sig_atomic_t.m4
@@ -846,6 +892,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/signbit.m4
   m4/size_max.m4
   m4/spawn_h.m4
+  m4/ssize_t.m4
   m4/stat.m4
   m4/stdbool.m4
   m4/stddef_h.m4
@@ -876,6 +923,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/warn-on-use.m4
   m4/wchar_h.m4
   m4/wchar_t.m4
+  m4/wcrtomb.m4
   m4/wctype_h.m4
   m4/wint_t.m4
   m4/xalloc.m4
