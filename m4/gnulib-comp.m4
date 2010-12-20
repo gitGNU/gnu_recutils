@@ -130,6 +130,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module streq:
   # Code from module strerror:
   # Code from module string:
+  # Code from module strsep:
   # Code from module sys_stat:
   # Code from module sys_time:
   # Code from module sys_wait:
@@ -439,6 +440,9 @@ AC_DEFUN([gl_INIT],
   gl_STRING_MODULE_INDICATOR([strerror])
   # Code from module string:
   gl_HEADER_STRING_H
+  # Code from module strsep:
+  gl_FUNC_STRSEP
+  gl_STRING_MODULE_INDICATOR([strsep])
   # Code from module sys_stat:
   gl_HEADER_SYS_STAT_H
   AC_PROG_MKDIR_P
@@ -768,6 +772,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/streq.h
   lib/strerror.c
   lib/string.in.h
+  lib/strsep.c
   lib/sys_stat.in.h
   lib/sys_time.in.h
   lib/sys_wait.in.h
@@ -909,6 +914,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strchrnul.m4
   m4/strerror.m4
   m4/string_h.m4
+  m4/strsep.m4
   m4/sys_stat_h.m4
   m4/sys_time_h.m4
   m4/sys_wait_h.m4
