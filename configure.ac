@@ -88,6 +88,7 @@ AC_CHECK_LIB([cdk],[CDKparseParams],[have_cdk=yes],,[-lncurses])
 if test "x$have_cdk" = "xyes"; then
    CDKLIBS=-lcdk
 fi
+AC_SUBST([CDKLIBS])
 
 have_mdb=no
 AC_CHECK_LIB([mdb],[mdb_init],[have_mdb=yes],)

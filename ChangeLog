@@ -1,5 +1,14 @@
 2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recnav: setup ncurses and cdk and implement the main loop of the
+	application.
+	* utils/recnav.c (recnav_init_app): New function.
+	(recnav_cmd_about): New function.
+
+	* configure.ac: Subst CDK_LIBS.
+
+2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Beginning of the development of recnav.
 	* configure.ac (CURLLIBS): Check for ncurses and subst CURSESLIBS
 	in accordance.

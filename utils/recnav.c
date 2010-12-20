@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-20 17:04:39 jco"
+/* -*- mode: C -*- Time-stamp: "2010-12-20 18:41:10 jemarch"
  *
  *       File:         recnav.c
  *       Date:         Mon Dec 20 16:43:01 2010
@@ -32,18 +32,26 @@
 #include <gettext.h>
 #define _(str) gettext (str)
 
+#include <cdk/cdk.h>
+
 #include <rec.h>
 #include <recutl.h>
 
 /* Forward prototypes.  */
 void recnav_parse_args (int argc, char **argv);
 void recnav_navigate (rec_db_t db);
+void recnav_init_app (void);
+void recnav_cmd_about (void);
 
 /*
  * Global variables.
  */
 
 char      *program_name        = NULL;
+CDKSCREEN *recnav_screen       = NULL;
+CDKLABEL  *recnav_app_title    = NULL;
+CDKMENU   *recnav_menu         = NULL;
+WINDOW    *recnav_app_window   = NULL;
 
 /*
  * Command line options management.
@@ -118,9 +126,118 @@ recnav_parse_args (int argc,
 }
 
 void
+recnav_cmd_about ()
+{
+  char *mesg[15];
+
+  mesg[0] = "<C></U>About recnav";
+  mesg[1] = " ";
+  mesg[2] = "</B/24>This program is part of the GNU recutils suite.";
+  mesg[3] = " ";
+  mesg[4] = "<C></B/24>Jose E. Marchesi";
+  mesg[5] = "<C><#HL(35)>";
+  mesg[6] = "<R></B/24>December 2010";
+  
+  popupLabel (recnav_screen, mesg, 7);
+}
+
+void
+recnav_init_app ()
+{
+  char *menulist[MAX_MENU_ITEMS][MAX_SUB_ITEMS];
+  int sub_menu_size[10], menu_locations[10];
+  char *title[5];
+
+  /* Set up CDK.  */
+  recnav_app_window = initscr ();
+  recnav_screen = initCDKScreen (recnav_app_window);
+
+  /* Start CDK color.  */
+  initCDKColor ();
+
+  /* Create the menu lists. */
+
+  menulist[0][0] = "</U>File";      menulist[1][0] = "</U>Tools";
+  menulist[0][1] = "</B/5>Open   "; menulist[1][1] = "</B/5>Check db";
+  menulist[0][2] = "</B/5>Save   ";
+  menulist[0][3] = "</B/5>Save As";
+  menulist[0][4] = "</B/5>Quit   ";
+
+  menulist[2][0] = "</U>Help";
+  menulist[2][1] = "</B/5>About recnav";
+
+  /* Set up the sub-menu sizes and their locations. */
+
+  sub_menu_size[0] = 5; menu_locations[0] = LEFT;
+  sub_menu_size[1] = 2; menu_locations[0] = LEFT;
+  sub_menu_size[2] = 2; menu_locations[0] = RIGHT;
+
+  /* Create the menu.  */
+  recnav_menu = newCDKMenu (recnav_screen,
+                            menulist,
+                            3,
+                            sub_menu_size,
+                            menu_locations,
+                            TOP,
+                            A_BOLD | A_UNDERLINE,
+                            A_REVERSE);
+
+  /* Create the application title.  */
+  title[0] = "<C></U>recnav";
+  title[1] = "<C></B/24>GNU recutils";
+  recnav_app_title = newCDKLabel (recnav_screen,
+                                  CENTER, CENTER,
+                                  title,
+                                  2,
+                                  FALSE,
+                                  FALSE);
+
+  /* Draw the CDK screen.  */
+  refreshCDKScreen (recnav_screen);
+}
+
+void
 recnav_navigate (rec_db_t db)
 {
-  
+  int selection;
+
+  /* Initialize the application.  */
+  recnav_init_app ();
+
+  /* Fill in the data.  */
+
+  /* Loop until done.  */
+  for (;;)
+    {
+      /* Activate the menu */
+      selection = activateCDKMenu (recnav_menu, 0);
+
+      /* Check the return value of the selection.  */
+      if (selection == 0)
+        {
+          /* Open file. */
+        }
+      else if (selection == 1)
+        {
+          /* Save file.  */
+        }
+      else if (selection == 2)
+        {
+          /* Save as.  */
+          
+        }
+      else if (selection == 3)
+        {
+          /* Quit.  */
+          endCDK();
+          return;
+        }
+      else if (selection == 300)
+        {
+          /* About recnav.  */
+          recnav_cmd_about ();
+        }
+    }
 }
 
 int
