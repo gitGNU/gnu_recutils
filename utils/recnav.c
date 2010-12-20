@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-20 18:52:02 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-20 20:30:52 jemarch"
  *
  *       File:         recnav.c
  *       Date:         Mon Dec 20 16:43:01 2010
@@ -42,6 +42,7 @@ void recnav_parse_args (int argc, char **argv);
 void recnav_navigate (rec_db_t db);
 void recnav_init_app (void);
 void recnav_cmd_about (void);
+/* void recnav_load_db (rec_db_t db); */
 
 /*
  * Global variables.
@@ -169,8 +170,8 @@ recnav_init_app ()
   /* Set up the sub-menu sizes and their locations. */
 
   sub_menu_size[0] = 5; menu_locations[0] = LEFT;
-  sub_menu_size[1] = 2; menu_locations[0] = LEFT;
-  sub_menu_size[2] = 2; menu_locations[0] = LEFT;
+  sub_menu_size[1] = 2; menu_locations[1] = LEFT;
+  sub_menu_size[2] = 2; menu_locations[2] = RIGHT;
 
   /* Create the menu.  */
   recnav_menu = newCDKMenu (recnav_screen,
@@ -204,7 +205,8 @@ recnav_navigate (rec_db_t db)
   /* Initialize the application.  */
   recnav_init_app ();
 
-  /* Fill in the data.  */
+  /* Load the db.  */
+  /*  recnav_load_db (db); */
 
   /* Loop until done.  */
   for (;;)
