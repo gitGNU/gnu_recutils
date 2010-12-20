@@ -73,7 +73,7 @@ csv2rec_LDADD = $(COMMONLIBS) \
 
 recnav_SOURCES = $(COMMONSRC) \
                  recnav.c
-recnav_LDADD = $(COMMONLIBS) $(CURSESLIBS)
+recnav_LDADD = $(COMMONLIBS) $(CURSESLIBS) $(CDKLIBS)
 
 mdb2rec_SOURCES = $(COMMONSRC) \
                   mdb2rec.c

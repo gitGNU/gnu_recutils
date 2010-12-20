@@ -83,6 +83,12 @@ if test "x$have_ncurses" = "xyes"; then
 fi
 AC_SUBST([CURSESLIBS])
 
+have_cdk=no
+AC_CHECK_LIB([cdk],[CDKparseParams],[have_cdk=yes],,[-lncurses])
+if test "x$have_cdk" = "xyes"; then
+   CDKLIBS=-lcdk
+fi
+
 have_mdb=no
 AC_CHECK_LIB([mdb],[mdb_init],[have_mdb=yes],)
 if test "x$have_mdb" = "xyes"; then
@@ -97,7 +103,7 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
 AM_CONDITIONAL([COMPILE_MDB2REC],
                [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])
 AM_CONDITIONAL([COMPILE_RECNAV],
-               [test "x$have_ncurses" = "xyes"])
+               [test "x$have_ncurses" = "xyes" && test "x$have_cdk" = "xyes"])
 AM_CONDITIONAL([REMOTE_DESCRIPTORS], [test "x$have_curl" = "xyes"])
 
 dnl Search for required programs
@@ -150,8 +156,12 @@ if test "x$have_glib" = "xno"; then
    echo "warning: the mdb2rec utility won't get built."
 fi
 
-if test "x$have_ncurses" = "xno"; then
-   echo "warning: libncurses ws not found in the system."
+if test "x$have_ncurses" = "xno" || test "x$have_cdk" = "xno"; then
+   test "x$have_ncurses" = "xyes" || \
+      echo "warning: libncurses was not found in the system."
+   test "x$have_cdk" = "xyes" || \
+      echo "warning: libcdk was not found in the system."
+
    echo "warning: the recnav utility won't get built."
 fi
 
