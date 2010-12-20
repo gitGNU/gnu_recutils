@@ -26,6 +26,10 @@ libtool
 /utils/mdb2rec
 /lib/arg-nonnull.h
 /lib/link-warning.h
+/lib/errno.h
+/lib/getopt.h
+/lib/langinfo.h
+/lib/sched.h
 /lib/math.h
 /lib/stdio.h
 /lib/unistd.h

@@ -88,6 +88,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module mbrtowc:
   # Code from module mbsinit:
   # Code from module memchr:
+  # Code from module mkstemp:
   # Code from module mktime:
   # Code from module multiarch:
   # Code from module nl_langinfo:
@@ -305,6 +306,9 @@ AC_DEFUN([gl_INIT],
   # Code from module memchr:
   gl_FUNC_MEMCHR
   gl_STRING_MODULE_INDICATOR([memchr])
+  # Code from module mkstemp:
+  gl_FUNC_MKSTEMP
+  gl_STDLIB_MODULE_INDICATOR([mkstemp])
   # Code from module mktime:
   gl_FUNC_MKTIME
   gl_TIME_MODULE_INDICATOR([mktime])
@@ -704,6 +708,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbsinit.c
   lib/memchr.c
   lib/memchr.valgrind
+  lib/mkstemp.c
   lib/mktime-internal.h
   lib/mktime.c
   lib/nl_langinfo.c
@@ -863,6 +868,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbsinit.m4
   m4/mbstate_t.m4
   m4/memchr.m4
+  m4/mkstemp.m4
   m4/mktime.m4
   m4/mmap-anon.m4
   m4/mode_t.m4
