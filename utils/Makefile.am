@@ -22,8 +22,14 @@ else
    MDB2REC =
 endif
 
+if COMPILE_RECNAV
+   RECNAV = recnav
+else
+   RECNAV =
+endif
+
 bin_PROGRAMS = recinf recsel recins recdel recset recfix \
-               csv2rec $(MDB2REC)
+               csv2rec $(MDB2REC) $(RECNAV)
 
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
@@ -64,6 +70,10 @@ csv2rec_SOURCES = $(COMMONSRC) \
                   csv2rec.c
 csv2rec_LDADD = $(COMMONLIBS) \
                 $(top_builddir)/libcsv/libcsv.la
+
+recnav_SOURCES = $(COMMONSRC) \
+                 recnav.c
+recnav_LDADD = $(COMMONLIBS) $(CURSESLIBS)
 
 mdb2rec_SOURCES = $(COMMONSRC) \
                   mdb2rec.c

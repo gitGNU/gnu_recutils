@@ -1,5 +1,22 @@
 2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Beginning of the development of recnav.
+	* configure.ac (CURLLIBS): Check for ncurses and subst CURSESLIBS
+	in accordance.
+	Define the COMPILE_RECNAV conditional.
+
+	* utils/Makefile.am (bin_PROGRAMS): recnav added.
+	(recnav_SOURCES): New variable.
+	(recnav_LDADD): New variable.
+
+	* utils/recnav.c: New file.
+	(recnav_print_help): New function.
+	(recnav_parse_args): New function.
+	(recnav_navigate): New function.
+	(main): New function.
+
+2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Build a librec.dll in mingw.
 	* src/Makefile.am (AM_LDFLAGS): Use -no-undefined.
 

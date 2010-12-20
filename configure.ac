@@ -76,6 +76,13 @@ if test "x$have_curl" = "xyes"; then
 fi
 AC_SUBST([CURLLIBS])
 
+have_ncurses=no
+AC_CHECK_LIB([ncurses],[initscr],[have_ncurses=yes],)
+if test "x$have_ncurses" = "xyes"; then
+   CURSESLIBS=-lncurses
+fi
+AC_SUBST([CURSESLIBS])
+
 have_mdb=no
 AC_CHECK_LIB([mdb],[mdb_init],[have_mdb=yes],)
 if test "x$have_mdb" = "xyes"; then
@@ -89,6 +96,8 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
 
 AM_CONDITIONAL([COMPILE_MDB2REC],
                [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])
+AM_CONDITIONAL([COMPILE_RECNAV],
+               [test "x$have_ncurses" = "xyes"])
 AM_CONDITIONAL([REMOTE_DESCRIPTORS], [test "x$have_curl" = "xyes"])
 
 dnl Search for required programs
@@ -139,6 +148,11 @@ fi
 if test "x$have_glib" = "xno"; then
    echo "warning: glib was not found in the system."
    echo "warning: the mdb2rec utility won't get built."
+fi
+
+if test "x$have_ncurses" = "xno"; then
+   echo "warning: libncurses ws not found in the system."
+   echo "warning: the recnav utility won't get built."
 fi
 
 dnl End of configure.ac
