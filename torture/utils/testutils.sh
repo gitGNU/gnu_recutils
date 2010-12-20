@@ -34,7 +34,7 @@ test_declare_input_file ()
     contents="$2"
 
     # Create the input file.
-    echo -n "$contents" > $filename
+    printf "%s" "$contents" > $filename
 
     # Add the file to the global list of temp files.
     test_tmpfiles="$test_tmpfiles $filename"
@@ -87,7 +87,7 @@ test_tool ()
         exit 1
     fi
 
-    echo -n "  $1 "
+    printf "  %s " $1
 
     status=$2
     utility=$3
@@ -113,15 +113,14 @@ test_tool ()
         fi
         
         # Check for the result in output_file.
-        echo -n "$expected" > $ok_file
+        printf "%s" "$expected" > $ok_file
         cmp $ok_file $output_file > /dev/null 2>&1
         res=$?
         if test "$res" -eq "0"
         then
             echo $status
         else
-            echo -n "fail"
-            echo " (see $1.diff)"
+            printf "%s (see %s)\n" "fail" "$1.diff"
             diff $ok_file $output_file > $1.diff
         fi
     fi

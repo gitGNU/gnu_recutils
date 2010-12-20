@@ -1,3 +1,13 @@
+2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	echo -n is not recognized in macosx.  Use printf instead.
+	* torture/utils/testutils.sh (test_declare_input_file): Use printf
+	instead of echo -n.
+	(test_tool): Likewise.
+	* tasktool (tt_email_p): Likewise.
+	(tt_process_cmd_note): Likewise.
+	(tt_process_cmd_create): Likewise.
+
 2010-12-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Misc portability problems fixed.

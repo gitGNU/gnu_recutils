@@ -589,7 +589,7 @@ tt_word_in_list ()
 # $1 => The string to check.
 tt_email_p ()
 {
-    if echo -n $1 \
+    if printf "%s" $1 \
        | grep -E '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$' > /dev/null
     then
         return 0
@@ -729,7 +729,7 @@ Please replace this line with the annotation for the task." > $tmpfile
             if test "$note" = ""; then
                 while test "$yesno" != "yes" && test "$yesno" != "no"
                 do
-                    echo -n "Got an empty annotation! Continue? (yes/no): "
+                    printf "%s" "Got an empty annotation! Continue? (yes/no): "
                     read yesno
                 done
                 
@@ -1286,7 +1286,7 @@ tt_process_cmd_create ()
         # Ask for a category.
         while true
         do
-            echo -n "Category ($tt_task_categories): "
+            printf "%s" "Category ($tt_task_categories): "
             read category
             if tt_word_in_list $category "$tt_task_categories"
             then
@@ -1298,7 +1298,7 @@ tt_process_cmd_create ()
     if test "$summary" = ""; then
         while test "$summary" = ""
         do
-            echo -n "Summary (one line): "
+            printf "%s" "Summary (one line): "
             read summary
         done
     fi
@@ -1318,7 +1318,7 @@ tt_process_cmd_create ()
         if test "$description" = ""; then
             while test "$yesno" != "yes" && test "$yesno" != "no"
             do
-                echo -n "Got an empty description! Continue? (yes/no): "
+                printf "%s" "Got an empty description! Continue? (yes/no): "
                 read yesno
             done
 
