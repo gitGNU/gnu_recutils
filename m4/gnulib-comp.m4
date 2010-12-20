@@ -52,6 +52,11 @@ AC_DEFUN([gl_EARLY],
   # Code from module fcntl-h:
   # Code from module float:
   # Code from module fpending:
+  # Code from module fpieee:
+  AC_REQUIRE([gl_FP_IEEE])
+  # Code from module fpucw:
+  # Code from module frexp-nolibm:
+  # Code from module frexpl-nolibm:
   # Code from module gendocs:
   # Code from module getdate:
   # Code from module getdtablesize:
@@ -67,16 +72,21 @@ AC_DEFUN([gl_EARLY],
   # Code from module include_next:
   # Code from module inline:
   # Code from module intprops:
+  # Code from module isnand-nolibm:
+  # Code from module isnanf-nolibm:
+  # Code from module isnanl-nolibm:
   # Code from module list:
   # Code from module localcharset:
   # Code from module lstat:
   # Code from module maintainer-makefile:
   # Code from module malloca:
+  # Code from module math:
   # Code from module mbrtowc:
   # Code from module mbsinit:
   # Code from module memchr:
   # Code from module mktime:
   # Code from module multiarch:
+  # Code from module nocrash:
   # Code from module open:
   # Code from module parse-datetime:
   # Code from module posix_spawn-internal:
@@ -88,6 +98,9 @@ AC_DEFUN([gl_EARLY],
   # Code from module posix_spawnattr_setflags:
   # Code from module posix_spawnattr_setsigmask:
   # Code from module posix_spawnp:
+  # Code from module printf-frexp:
+  # Code from module printf-frexpl:
+  # Code from module printf-safe:
   # Code from module quotearg:
   # Code from module quotearg-simple:
   # Code from module rawmemchr:
@@ -95,6 +108,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module setenv:
   # Code from module sigaction:
   # Code from module signal:
+  # Code from module signbit:
   # Code from module sigprocmask:
   # Code from module size_max:
   # Code from module spawn:
@@ -119,6 +133,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module unsetenv:
   # Code from module useless-if-before-free:
   # Code from module vasnprintf:
+  # Code from module vasnprintf-posix:
   # Code from module vasprintf:
   # Code from module vc-list-files:
   # Code from module verify:
@@ -194,6 +209,14 @@ AC_DEFUN([gl_INIT],
   gl_FLOAT_H
   # Code from module fpending:
   gl_FUNC_FPENDING
+  # Code from module fpieee:
+  # Code from module fpucw:
+  # Code from module frexp-nolibm:
+  gl_FUNC_FREXP_NO_LIBM
+  gl_MATH_MODULE_INDICATOR([frexp])
+  # Code from module frexpl-nolibm:
+  gl_FUNC_FREXPL_NO_LIBM
+  gl_MATH_MODULE_INDICATOR([frexpl])
   # Code from module gendocs:
   # Code from module getdate:
   # Code from module getdtablesize:
@@ -232,6 +255,12 @@ AC_DEFUN([gl_INIT],
   # Code from module inline:
   gl_INLINE
   # Code from module intprops:
+  # Code from module isnand-nolibm:
+  gl_FUNC_ISNAND_NO_LIBM
+  # Code from module isnanf-nolibm:
+  gl_FUNC_ISNANF_NO_LIBM
+  # Code from module isnanl-nolibm:
+  gl_FUNC_ISNANL_NO_LIBM
   # Code from module list:
   gl_LIST
   # Code from module localcharset:
@@ -246,6 +275,8 @@ AC_DEFUN([gl_INIT],
     [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
   # Code from module malloca:
   gl_MALLOCA
+  # Code from module math:
+  gl_MATH_H
   # Code from module mbrtowc:
   gl_FUNC_MBRTOWC
   gl_WCHAR_MODULE_INDICATOR([mbrtowc])
@@ -260,6 +291,7 @@ AC_DEFUN([gl_INIT],
   gl_TIME_MODULE_INDICATOR([mktime])
   # Code from module multiarch:
   gl_MULTIARCH
+  # Code from module nocrash:
   # Code from module open:
   gl_FUNC_OPEN
   gl_FCNTL_MODULE_INDICATOR([open])
@@ -323,6 +355,12 @@ AC_DEFUN([gl_INIT],
     gl_POSIX_SPAWN_INTERNAL
   fi
   gl_SPAWN_MODULE_INDICATOR([posix_spawnp])
+  # Code from module printf-frexp:
+  gl_FUNC_PRINTF_FREXP
+  # Code from module printf-frexpl:
+  gl_FUNC_PRINTF_FREXPL
+  # Code from module printf-safe:
+  m4_divert_text([INIT_PREPARE], [gl_printf_safe=yes])
   # Code from module quotearg:
   gl_QUOTEARG
   # Code from module quotearg-simple:
@@ -339,6 +377,9 @@ AC_DEFUN([gl_INIT],
   gl_SIGNAL_MODULE_INDICATOR([sigaction])
   # Code from module signal:
   gl_SIGNAL_H
+  # Code from module signbit:
+  gl_SIGNBIT
+  gl_MATH_MODULE_INDICATOR([signbit])
   # Code from module sigprocmask:
   gl_SIGNALBLOCKING
   gl_SIGNAL_MODULE_INDICATOR([sigprocmask])
@@ -394,6 +435,8 @@ AC_DEFUN([gl_INIT],
   # Code from module useless-if-before-free:
   # Code from module vasnprintf:
   gl_FUNC_VASNPRINTF
+  # Code from module vasnprintf-posix:
+  gl_FUNC_VASNPRINTF_POSIX
   # Code from module vasprintf:
   gl_FUNC_VASPRINTF
   gl_STDIO_MODULE_INDICATOR([vasprintf])
@@ -593,6 +636,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/float.in.h
   lib/fpending.c
   lib/fpending.h
+  lib/fpucw.h
+  lib/frexp.c
+  lib/frexpl.c
   lib/getdate.h
   lib/getdtablesize.c
   lib/getopt.c
@@ -607,12 +653,20 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gl_list.c
   lib/gl_list.h
   lib/intprops.h
+  lib/isnan.c
+  lib/isnand-nolibm.h
+  lib/isnand.c
+  lib/isnanf-nolibm.h
+  lib/isnanf.c
+  lib/isnanl-nolibm.h
+  lib/isnanl.c
   lib/localcharset.c
   lib/localcharset.h
   lib/lstat.c
   lib/malloca.c
   lib/malloca.h
   lib/malloca.valgrind
+  lib/math.in.h
   lib/mbrtowc.c
   lib/mbsinit.c
   lib/memchr.c
@@ -624,6 +678,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/parse-datetime.y
   lib/printf-args.c
   lib/printf-args.h
+  lib/printf-frexp.c
+  lib/printf-frexp.h
+  lib/printf-frexpl.c
+  lib/printf-frexpl.h
   lib/printf-parse.c
   lib/printf-parse.h
   lib/quotearg.c
@@ -637,6 +695,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sig-handler.h
   lib/sigaction.c
   lib/signal.in.h
+  lib/signbitd.c
+  lib/signbitf.c
+  lib/signbitl.c
   lib/sigprocmask.c
   lib/size_max.h
   lib/spawn.in.h
@@ -704,6 +765,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/errno_h.m4
   m4/error.m4
   m4/execute.m4
+  m4/exponentd.m4
+  m4/exponentf.m4
+  m4/exponentl.m4
   m4/extensions.m4
   m4/fatal-signal.m4
   m4/fcntl-o.m4
@@ -711,6 +775,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fcntl_h.m4
   m4/float_h.m4
   m4/fpending.m4
+  m4/fpieee.m4
+  m4/frexp.m4
+  m4/frexpl.m4
   m4/getdtablesize.m4
   m4/getopt.m4
   m4/gettext.m4
@@ -731,7 +798,11 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/intmax_t.m4
   m4/inttypes-pri.m4
   m4/inttypes_h.m4
+  m4/isnand.m4
+  m4/isnanf.m4
+  m4/isnanl.m4
   m4/lcmessage.m4
+  m4/ldexpl.m4
   m4/lib-ld.m4
   m4/lib-link.m4
   m4/lib-prefix.m4
@@ -743,6 +814,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/longlong.m4
   m4/lstat.m4
   m4/malloca.m4
+  m4/math_h.m4
   m4/mbrtowc.m4
   m4/mbsinit.m4
   m4/mbstate_t.m4
@@ -752,11 +824,14 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mode_t.m4
   m4/multiarch.m4
   m4/nls.m4
+  m4/nocrash.m4
   m4/onceonly.m4
   m4/open.m4
   m4/parse-datetime.m4
   m4/po.m4
   m4/posix_spawn.m4
+  m4/printf-frexp.m4
+  m4/printf-frexpl.m4
   m4/printf-posix.m4
   m4/printf.m4
   m4/progtest.m4
@@ -768,6 +843,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sigaction.m4
   m4/signal_h.m4
   m4/signalblocking.m4
+  m4/signbit.m4
   m4/size_max.m4
   m4/spawn_h.m4
   m4/stat.m4
@@ -791,6 +867,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/tm_gmtoff.m4
   m4/uintmax_t.m4
   m4/unistd_h.m4
+  m4/vasnprintf-posix.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
   m4/visibility.m4
