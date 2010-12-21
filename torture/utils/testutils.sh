@@ -140,7 +140,7 @@ test_tool ()
     fi
 
     # Accumulate the error.
-    test_result=`echo "$test_result + $res" | bc`
+    test_result=`expr $test_result + $res`
 }
 
 PATH=$srcdir:$PATH

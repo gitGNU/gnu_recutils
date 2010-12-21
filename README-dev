@@ -20,14 +20,18 @@ are getting the sources from git (or change configure.ac), you'll need
 to have these tools installed to (re)build.  You'll also need help2man.
 All of these programs are available from ftp://ftp.gnu.org/gnu.
 
+Flex
+----
+You will need a recent version of flex, since we are using some recent
+options like "reentrant" or "bison-bridge".  flex version 2.5.35 works
+fine.
+
 Dependencies
 ------------
-
 There are some third party dependencies needed to build some of the
 utilities shipped in this distribution.  The configure script checks
 for the needed packages and drives the conditional compilation of the
 impacted utitilities.  The dependencies are:
-- csv2rec depends on libcsv, available at http://libcsv.sf.net
 - mdb2rec depends on glib 2.0 and libmdb, available at
   http://mdbtools.sf.net.
 
@@ -40,7 +44,6 @@ to do a fresh build.  After that first time, running make should suffice.
 When modifying the sources, or making a distribution, more is needed, as
 follows:
 
-
 Gettext
 -------
 When updating gettext, besides the normal installation on the system, it
@@ -48,7 +51,6 @@ is necessary to run gettextize -f in this hierarchy to update the po/
 infrastructure.  After doing so, rerun gnulib-tool --import since
 otherwise older files will have been imported.  See the Gnulib manual
 for more information.
-
 
 Adding new Tests
 ----------------

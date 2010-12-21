@@ -39,7 +39,6 @@
  * Global variables
  */
 
-char *program_name; /* Initialized in main() */
 rec_writer_mode_t recinf_write_mode = REC_WRITER_NORMAL;
 
 /*

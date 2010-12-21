@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 17:47:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-21 22:03:36 jemarch"
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010
@@ -66,7 +66,6 @@ struct csv2rec_ctx
  * Global variables
  */
 
-char *program_name; /* Initialized in main() */
 char *csv2rec_record_type = NULL;
 char *csv2rec_csv_file = NULL;
 bool csv2rec_strict = false;

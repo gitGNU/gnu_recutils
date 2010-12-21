@@ -43,7 +43,6 @@ bool recsel_process_data (rec_db_t db);
  * Global variables
  */
 
-char      *program_name        = NULL;
 bool       recsel_print_values = false;
 bool       recsel_print_row    = false;
 char      *recutl_sex_str      = NULL;

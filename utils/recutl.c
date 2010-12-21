@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 18:03:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-21 22:10:01 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -35,18 +35,17 @@
 #include <locale.h>
 #include <gettext.h>
 #define _(str) gettext (str)
+#include <progname.h>
 
 #include <rec.h>
 #include <recutl.h>
-
-extern char *program_name;
 
 void recutl_print_help (void); /* Forward prototype.  */
 
 void
 recutl_init (char *util_name)
 {
-  program_name = xstrdup (util_name);
+  set_program_name (xstrdup (util_name));
 
   /* Initialize librec */
   rec_init ();

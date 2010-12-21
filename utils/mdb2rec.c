@@ -62,7 +62,6 @@ struct relationship_s
  * Global variables
  */
 
-char *program_name; /* Initialized in main() */
 char *mdb2rec_mdb_file = NULL;
 char *mdb2rec_mdb_table = NULL;
 bool mdb2rec_include_system = false;

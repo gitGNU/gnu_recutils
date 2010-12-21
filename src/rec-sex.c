@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
-#include <getdate.h>
+#include <parse-datetime.h>
 
 #include <rec.h>
 #include <rec-utils.h>
@@ -326,7 +326,7 @@ rec_sex_print_ast (rec_sex_t sex)
           }                                             \
         case REC_SEX_VAL_STR:                           \
           {                                             \
-            if (!get_date (&(DEST), (VAL).str_val, NULL))\
+            if (!parse_datetime (&(DEST), (VAL).str_val, NULL))\
             {                                           \
               *status = false;                          \
               return res;                               \

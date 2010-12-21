@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 17:48:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-21 22:04:23 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -41,7 +41,6 @@ bool recfix_process_data (rec_db_t db);
  * Global variables.
  */
 
-char *program_name = NULL;
 bool recfix_external = true;
 
 /*

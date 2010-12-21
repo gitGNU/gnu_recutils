@@ -1,3 +1,43 @@
+2010-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Portability fixes.
+	* torture/utils/testutils.sh: Use the portable 'expr' instead of
+	'bc'.
+
+	* src/Makefile.am (AM_CFLAGS): gcc specific options -Wall and
+	-fno-strict-aliasing removed.
+
+	* utils/recutl.h: Include progname.h so the declaration of
+	program_name is accessible in all the utilities.
+
+	* utils/csv2rec.c: program_name global variable removed.
+	* utils/recset.c: Likewise.
+	* utils/recsel.c: Likewise.
+	* utils/recins.c: Likewise.
+	* utils/recinf.c: Likewise.
+	* utils/recfix.c: Likewise.
+	* utils/recdel.c: Likewise.
+	* utils/mdb2rec.c: Likewise.
+
+	* utils/recutl.c: Include progname.h and use set_progname.
+
+	* module 'progname' imported from gnulib.
+
+	* src/rec.c: Remove the setting of a program_name variable when
+	compiling with mingw.
+
+	* src/rec-sex.c (ATOTS_VAL): Use parse_datetime instead of
+	get_date.
+	Include parse-datetime.h instead of getdate.h.
+	* src/rec-types.c: Likewise.
+
+	* po/Makevars.template: Removed.
+
+	* README-dev: libcsv dependency removed.
+	Added a note asking for a recent version of flex.
+
+	* m4/pkg.m4: Copied from /usr/share/aclocal/pkg.m4.
+
 2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Build a librec.dll in mingw.

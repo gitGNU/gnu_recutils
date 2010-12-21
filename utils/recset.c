@@ -57,7 +57,6 @@ static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t 
 #define RECSET_ACT_COMMENT 4
 #define RECSET_ACT_RENAME  5
 
-char      *program_name       = NULL;
 char      *recutl_sex_str     = NULL;
 rec_sex_t  recutl_sex         = NULL;
 char      *recutl_fex_str     = NULL;

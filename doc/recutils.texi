@@ -759,7 +759,7 @@ synopsis is:
 %type: AField field
 @end example
 
-@include getdate.texi
+@include parse-datetime.texi
 
 @node External Descriptors
 @chapter External Descriptors

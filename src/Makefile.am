@@ -48,7 +48,7 @@ librec_la_SOURCES = rec.c \
 BUILT_SOURCES = rec-sex-tab.h
 AM_YFLAGS = -d
 AM_LFLAGS = -d
-AM_CFLAGS = -Wall -fno-strict-aliasing
+AM_CFLAGS = 
 if USE_COVERAGE
   AM_CFLAGS += -fprofile-arcs -ftest-coverage
 endif

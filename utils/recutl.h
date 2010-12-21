@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 18:02:54 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-21 22:12:17 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -25,6 +25,8 @@
 
 #ifndef RECUTL_H
 #define RECUTL_H
+
+#include <progname.h>
 
 /*
  * Common arguments.
