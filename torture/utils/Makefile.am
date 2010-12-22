@@ -20,7 +20,8 @@ TESTS = recinf.sh \
         recdel.sh \
         recins.sh \
         recset.sh \
-        recfix.sh
+        recfix.sh \
+        recfmt.sh
 EXTRA_DIST = $(TESTS) testutils.sh
 TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) \
                     PATH=$(srcdir)$(PATH_SEPARATOR)$(top_builddir)/utils$(PATH_SEPARATOR)$$PATH

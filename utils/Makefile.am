@@ -22,7 +22,7 @@ else
    MDB2REC =
 endif
 
-bin_PROGRAMS = recinf recsel recins recdel recset recfix \
+bin_PROGRAMS = recinf recsel recins recdel recset recfix recfmt \
                csv2rec $(MDB2REC)
 
 COMMONSRC = recutl.h recutl.c
@@ -59,6 +59,10 @@ recset_LDADD = $(COMMONLIBS)
 recfix_SOURCES = $(COMMONSRC) \
                  recfix.c
 recfix_LDADD = $(COMMONLIBS)
+
+recfmt_SOURCES = $(COMMONSRC) \
+                 recfmt.c
+recfmt_LDADD = $(COMMONLIBS)
 
 csv2rec_SOURCES = $(COMMONSRC) \
                   csv2rec.c

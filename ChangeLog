@@ -1,5 +1,40 @@
 2010-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recfmt: initial version.
+	* torture/utils/Makefile.am (TESTS): recfmt.sh added.
+
+	* torture/utils/recfmt.sh: New file.
+	(recfmt-empty-template): New test.
+	(recfmt-empty-file): New test.
+	(recfmt-all-records): New test.
+	(recfmt-slot-beginning): New test.
+	(recfmt-no-prolog): New test.
+	(recfmt-subscripts): New test.
+	(recfmt-non-matching-records): New test.
+	(recfmt-empty-slot): New test.
+	(recfmt-invalid-slot): New test.
+
+	* src/rec-record.c (rec_record_get_field_by_name): Return NULL if
+	the specified field is not found, instead of the last field of the
+	record.
+
+	* utils/recutl.h: New function recutl_warning.
+	New function recutl_read_file.
+	* utils/recutl.c (recutl_warning): Implemented.
+	(recutl_read_file): Implemented.
+
+	* utils/recfmt.c (recfmt_process_db): New function.
+	(rec_fmt_apply_template): New function.
+
+	* utils/Makefile.am (bin_PROGRAMS): recfmt added.
+
+	* utils/recfmt.c: New file.
+	(recutl_print_help): New function.
+	(recfmt_parse_args): New function.
+	(main): New function.
+
+2010-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: manage errors when running the utilities in the system
 	tests.
 	* torture/utils/testutils.sh: Make the tests to fail if there is
