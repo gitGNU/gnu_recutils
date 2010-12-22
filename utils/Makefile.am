@@ -28,7 +28,7 @@ bin_PROGRAMS = recinf recsel recins recdel recset recfix \
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
 
-AM_CFLAGS = -Wall -fno-strict-aliasing
+AM_CFLAGS =
 if USE_COVERAGE
   AM_CFLAGS += -fprofile-arcs -ftest-coverage
 endif
