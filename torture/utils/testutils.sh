@@ -98,7 +98,7 @@ test_tool ()
     error_file="$1.err"
     expected=$6
 
-    test_tmpfiles="$test_tmpfiles $output_file $error_file $ok_file"
+    test_tmpfiles="$test_tmpfiles $output_file $ok_file"
 
     # Run the tool.
     eval "cat $input_file | $utility $parameters > $output_file 2> $error_file"
@@ -108,20 +108,20 @@ test_tool ()
     then
         if test "$res" -ne "0"
         then
-            echo "error: testutils: test_tool: running $utility."
-            return 1
-        fi
-        
-        # Check for the result in output_file.
-        printf "%s" "$expected" > $ok_file
-        cmp $ok_file $output_file > /dev/null 2>&1
-        res=$?
-        if test "$res" -eq "0"
-        then
-            echo $status
+            printf "%s (see %s)\n" "error" "$error_file"
         else
-            printf "%s (see %s)\n" "fail" "$1.diff"
-            diff $ok_file $output_file > $1.diff
+            # Check for the result in output_file.
+            printf "%s" "$expected" > $ok_file
+            cmp $ok_file $output_file > /dev/null 2>&1
+            res=$?
+            if test "$res" -eq "0"
+            then
+                echo $status
+            else
+                printf "%s (see %s)\n" "fail" "$1.diff"
+                diff $ok_file $output_file > $1.diff
+            fi
+            rm $error_file
         fi
     fi
 
@@ -129,14 +129,15 @@ test_tool ()
     then
         if test "$res" -eq "0"
         then
-            echo "error: testutils: test_tool: expected xfail running $utility."
-            return 1
+            echo "error (expected failure)"
+        else
+            echo $status
+            
+            # Don't accumulate any error.
+            res=0
         fi
 
-        echo $status
-
-        # Don't accumulate any error.
-        res=0
+        rm $error_file
     fi
 
     # Accumulate the error.

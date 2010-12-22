@@ -1,3 +1,10 @@
+2010-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: manage errors when running the utilities in the system
+	tests.
+	* torture/utils/testutils.sh: Make the tests to fail if there is
+	an error running a system test.
+
 2010-12-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Portability fixes.
