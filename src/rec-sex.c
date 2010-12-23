@@ -117,7 +117,10 @@ rec_sex_compile (rec_sex_t sex,
   bool res;
 
   res = rec_sex_parser_run (sex->parser, expr);
-  sex->ast = rec_sex_parser_ast (sex->parser);
+  if (res)
+    {
+      sex->ast = rec_sex_parser_ast (sex->parser);
+    }
   return res;
 }
 
@@ -146,7 +149,48 @@ rec_sex_compile (rec_sex_t sex,
     }                                                                   \
   while (0)
 
+char *
+rec_sex_eval_str (rec_sex_t sex,
+                  rec_record_t record)
+{
+  char *res;
+  struct rec_sex_val_s val;
+  bool status;
 
+  rec_sex_ast_node_unfix (rec_sex_ast_top (sex->ast));
+  val = rec_sex_eval_node (sex,
+                           record,
+                           rec_sex_ast_top (sex->ast),
+                           &status);
+
+  if (!status)
+    {
+      /* Error evaluating the expression.  */
+      return NULL;
+    }
+
+  res = NULL;
+  switch (val.type)
+    {
+    case REC_SEX_VAL_INT:
+      {
+        asprintf (&res, "%d", val.int_val);
+        break;
+      }
+    case REC_SEX_VAL_REAL:
+      {
+        asprintf (&res, "%f", val.real_val);
+        break;
+      }
+    case REC_SEX_VAL_STR:
+      {
+        res = strdup (val.str_val);
+        break;
+      }
+    }
+
+  return res;
+}
 
 bool
 rec_sex_eval (rec_sex_t sex,

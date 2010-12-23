@@ -60,14 +60,14 @@ test_tool recfmt-empty-template ok \
 # Apply a template to an empty file.
 test_tool recfmt-empty-file ok \
           recfmt \
-          '"a template <#foo>"' \
+          '"a template {{foo}}"' \
           empty-file \
 ''
 
 # Apply a template affecting all the records.
 test_tool recfmt-all-records ok \
           recfmt \
-          '"foo <#field3> bar"' \
+          '"foo {{field3}} bar"' \
           multiple-records \
 'foo value13 bar
 foo value23 bar
@@ -77,7 +77,7 @@ foo value33 bar
 # Apply a template with a slot starting at 0.
 test_tool recfmt-slot-beginning ok \
           recfmt \
-          '"<#field1> bar"' \
+          '"{{field1}} bar"' \
           multiple-records \
 'value11 bar
 value21 bar
@@ -87,7 +87,7 @@ value31 bar
 # Apply a template without prolog.
 test_tool recfmt-no-prolog ok \
           recfmt \
-          '"foo <#field1>"' \
+          '"foo {{field1}}"' \
           multiple-records \
 'foo value11
 foo value21
@@ -97,7 +97,7 @@ foo value31
 # Apply a template with subscripts.
 test_tool recfmt-subscripts ok \
           recfmt \
-          '"foo <#field2[1]> bar"' \
+          '"foo {{field2[1]}} bar"' \
           multiple-records \
 'foo  bar
 foo value22bis bar
@@ -107,7 +107,7 @@ foo  bar
 # Apply a template with non-matching records.
 test_tool recfmt-non-matching-records ok \
           recfmt \
-          '"<#field2[1]>"' \
+          '"{{field2[1]}}"' \
           multiple-records \
 'value22bis
 '
@@ -115,13 +115,13 @@ test_tool recfmt-non-matching-records ok \
 # Try to apply an empty slot.
 test_tool recfmt-empty-slot xfail \
           recfmt \
-          '"<#field2[1]><#>"' \
+          '"{{field2[1]}}{{}}"' \
           multiple-records
 
 # Try to apply an invalid slot.
 test_tool recfmt-invalid-slot xfail \
           recfmt \
-          '"invalid slot: <#in#alid[>"' \
+          '"invalid slot: {{in#alid[}}"' \
           multiple-records
 
 #

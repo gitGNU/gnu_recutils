@@ -1,3 +1,19 @@
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recfmt: use SEX expressions in template slots and change the slot
+	format.
+	* src/rec-sex.c (rec_sex_compile): Set the parser ast only if the
+	parsing was successful.
+
+	* src/rec-sex-tab.y (exp): Grammar changed to require an
+	expression.
+
+	* src/rec-sex.c (rec_sex_eval_str): New function.
+
+	* utils/recfmt.c (recfmt_apply_template): Use {{...}} marks
+	instead of <#...>.
+	(recfmt_get_subst): New function.
+
 2010-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recfmt: initial version.

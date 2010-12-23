@@ -100,14 +100,8 @@
 
 %% /* The grammar follows.  */
 
-input: /* Empty */
-     {
-       rec_sex_ast_t ast;
-
-       ast = rec_sex_ast_new ();
-       rec_sex_parser_set_ast (sex_parser, ast);
-     }
-     | exp
+input: 
+     exp
      {
        rec_sex_ast_t ast;
 
