@@ -7,6 +7,29 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 1.1 (24 December 2010)
+* New utility recfmt, to format records based on templates.
+* Improvements in selection expressions:
+  . Support ranges in field subscripts.
+  . New date operators: before (<<), after (>>) and sametime (==).
+  . New ternary conditional operator (?:).
+  . New string concatenation operator (&).
+* libcsv is now embedded in the source distribution, so it is no
+  longer required to have it installed to build csv2rec.
+* Portability problems fixed.  The programs have been tested in the
+  following systems:
+  . GNU/Linux
+  . FreeBSD 6.4
+  . MacOS X
+  . mingw32
+  . Solaris 8
+  . AIX 5.1
+  . HP-UX 11.00
+  . IRIX 6.5
+  . Tru64 (OSF/1 5.1)
+  . Cygwin 1.7
+* Lots of bug fixes.
+
  Version 1.0 (3 December 2010)
 * Initial release.
   . User manual.

@@ -1,5 +1,21 @@
 2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.1.
+	* .x-sc_prohibit_have_config_h: New file.
+
+	* po/POTFILES.in: Updated.
+
+	* m4/pkg.m4: Relicense from GPLv2+ to GPLv3+.
+
+	* NEWS: Updated to version 1.1.
+
+	* man/Makefile.am (man_MANS): recfmt.1 added.
+	(recfmt.1): New rule.
+
+	* configure.ac: Package version changed to 1.1.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-sex: support for the string concatenation operator.
 	* doc/recutils.texi (SEX Operators): Documentation for the string
 	concatenation operator.

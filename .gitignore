@@ -24,6 +24,7 @@ libtool
 /utils/recfix
 /utils/csv2rec
 /utils/mdb2rec
+/utils/recfmt
 /lib/arg-nonnull.h
 /lib/link-warning.h
 /lib/errno.h
@@ -88,6 +89,7 @@ libtool
 /man/recins.1
 /man/recsel.1
 /man/recset.1
+/man/recfmt.1
 /man/csv2rec.1
 /man/mdb2rec.1
 /man/recfix.1
