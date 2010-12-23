@@ -1719,6 +1719,9 @@ now it is leaking 200 megabytes per processed record.
 Created at 12 December 2010
 @end example
 
+Note that you can use any selection expression in the slots, including
+conditionals and string concatenation.
+
 @node recfmt Examples
 @section recfmt Examples
 
