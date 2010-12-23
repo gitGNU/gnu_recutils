@@ -1046,10 +1046,10 @@ permutation of the fields ``Email'', ``Age'' and ``Fixed'' present in
 the record, until one of the combinations succeeds.  At that point the
 computation is interrupted.
 
-The goal of a selection expression is to decide whether it applies to
-a candidate.  It is thus a boolean expression.  The final value of the
-expression depends on both the type and the value of the result
-launched by the top-most subexpression:
+When used to decide whether a record matches some criteria, the goal
+of a selection expression is to act as a boolean expression.  In that
+case the final value of the expression depends on both the type and
+the value of the result launched by the top-most subexpression:
 
 @itemize @minus
 @item If the result is an @b{integer}, the expression is true if its
@@ -1057,6 +1057,11 @@ value is not zero.
 @item If the result is a @b{real}, or a @b{string}, the expression
 evaluates to false.
 @end itemize
+
+Sometimes a selection expression is used to compute a result instead
+of a boolean.  In that case the returned value is converted to a
+string.  This is used when replacing the slots in templates
+(@pxref{recfmt Templates}).
 
 @node Field Expressions
 @section Field Expressions
