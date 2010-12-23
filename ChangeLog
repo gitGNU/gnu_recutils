@@ -1,5 +1,13 @@
 2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: first draft of the documentation for recfmt.
+	* doc/recutils.texi (recfmt): New chapter.
+	(recfmt Invocation): New section.
+	(recfmt Templates): New section.
+	(recfmt Examples): New section.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recfmt: use SEX expressions in template slots and change the slot
 	format.
 	* src/rec-sex.c (rec_sex_compile): Set the parser ast only if the

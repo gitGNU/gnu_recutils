@@ -74,6 +74,7 @@ Utilities
 * recdel::              Deleting records.
 * recset::              Managing fields.
 * recfix::              Fixing broken rec files, and diagnostics.
+* recfmt::              Formatting records using templates.
 
 * csv2rec::             Converting csv data into rec data.
 * mdb2rec::             Converting mdb files into rec files.
@@ -1602,6 +1603,104 @@ Used as a filter:
 
 @example
 $ cat data1.rec data2.rec | recfix
+@end example
+
+@node recfmt
+@chapter recfmt
+
+@command{recfmt} formats records using templates.
+
+@menu
+* recfmt Invocation::    Command line options.
+* recfmt Templates::     How to write templates.
+* recfmt Examples::      Examples of the usage of @command{recfmt}. 
+@end menu
+
+@node recfmt Invocation
+@section recfmt Invocation
+
+@command{recfmt} formats records using templates.  Synopsis:
+
+@example
+recfmt [OPTION]... [TEMPLATE]
+@end example
+
+This program always works as a filter, getting the data from the
+standard input and writing the result in the standard output.
+
+In addition to the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -f
+@itemx @w{@kbd{--filename}=@var{PATH}}
+Read the template from the file in @var{PATH} instead of the command
+line.
+@end table
+
+@node recfmt Templates
+@section recfmt Templates
+
+A recfmt template is a text string that may contain @dfn{template
+spots}.  Those spots are substituted in the template using the
+information of a given record.  Any text that is not into a spot is
+literally copied to the output.
+
+Spots are written surrounded by double curly braces, like:
+
+@example
+@{@{...@}@}
+@end example
+
+Spots contain selection expressions, that are executed every time the
+template is applied to a record.  The spot is then replaced by the
+string representation of the value returned by the expression.
+
+For example, consider the following template:
+
+@example
+Task @{@{Id@}@}: @{@{Summary@}@}
+------------------------
+@{@{Description@}@}
+--
+Created at @{@{CreationTime@}@}
+@end example
+
+When applied to the following record:
+
+@example
+Id: 123
+Summary: Fix recfmt.
+CreatedAt: 12 December 2010
+Description:
++ The recfmt tool shall be fixed, because right
++ now it is leaking 200 megabytes per processed record.
+@end example
+
+The result is:
+
+@example
+Task 123: Fix recfmt.
+------------------------
+The recfmt tool shall be fixed, because right
+now it is leaking 200 megabytes per processed record.
+--
+Created at 12 December 2010
+@end example
+
+@node recfmt Examples
+@section recfmt Examples
+
+Apply a template in the 
+
+@example
+recsel employees.rec | recfmt 'Dear @{@{Name@}@}, you are fired.'
+@end example
+
+Read the template from a file:
+
+@example
+recsel employees.rec | recfmt -f fire-letter.tmpl
 @end example
 
 @node csv2rec
