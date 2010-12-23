@@ -123,6 +123,8 @@ STRING             '([^'\n]|\\(.|\n))*'
 "&&"     { return REC_SEX_TOK_AND; }
 "||"     { return REC_SEX_TOK_OR; }
 "#"      { return REC_SEX_TOK_SHARP; }
+"?"      { return REC_SEX_TOK_QM; }
+":"      { return REC_SEX_TOK_COLON; }
 
 {FIELD_NAME}(\[[0-9]+\])? {
   int res;

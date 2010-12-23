@@ -1,5 +1,23 @@
 2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-sex: support for the conditional expression.
+	* doc/recutils.texi (SEX Operators): Documentation for the ternary
+	conditional operator added.
+
+	* src/rec-sex.c (rec_sex_eval_node): Manage REC_SEX_OP_COND.
+
+	* src/rec-sex-tab.y (CREATE_NODE_OP3): Macro defined.
+
+	* src/rec-sex-ast.h: New operation REC_SEX_OP_COND.
+
+	* src/rec-sex-tab.y: Declare REC_SEX_TOK_QM and REC_SEX_TOK_COLON
+	as tokens.
+
+	* src/rec-sex-lex.l: Recognize REC_SEX_TOK_QM and
+	REC_SEX_TOK_COLON.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: first draft of the documentation for recfmt.
 	* doc/recutils.texi (recfmt): New chapter.
 	(recfmt Invocation): New section.

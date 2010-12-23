@@ -1022,6 +1022,23 @@ The previous expression is replaced with the number of fields named
 @code{Email} in the record.  It can be zero if the record does not
 have a field with that name.
 
+@subsubsection Conditional Operator
+
+The ternary conditional operator can be used to select alternatives
+based on the value of some expression:
+
+@example
+expr1 ? expr2 : expr3
+@end example
+
+If @code{expr1} evaluates to true (i.e. it is an integer or the string
+representation of an integer and its value is not zero) then the
+operator yields @code{expr2}.  Otherwise it yields @code{expr3}.
+
+Note that there should be always at least one blank character between
+@code{expr2} and the colon (@code{:}) if @code{expr2} is a field name.
+This is because field names can optionally end with a colon.
+
 @node SEX Evaluation
 @subsection Evaluation of Selection Expressions
 

@@ -35,7 +35,7 @@
  * Data types
  */
 
-#define REC_SEX_AST_MAX_CHILDREN 2
+#define REC_SEX_AST_MAX_CHILDREN 3
 
 struct rec_sex_ast_node_s
 {

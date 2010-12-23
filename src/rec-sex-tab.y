@@ -58,7 +58,7 @@
       }                                                 \
     while (0)
 
-    #define CREATE_NODE_OP2(TYPE, RES, OP1, OP2)        \
+#define CREATE_NODE_OP2(TYPE, RES, OP1, OP2)            \
       do                                                \
         {                                               \
           /* Create the node.  */                       \
@@ -68,6 +68,20 @@
           /* Set children. */                           \
           rec_sex_ast_node_link ((RES), (OP1));         \
           rec_sex_ast_node_link ((RES), (OP2));         \
+        }                                               \
+     while (0)
+
+#define CREATE_NODE_OP3(TYPE, RES, OP1, OP2, OP3)       \
+      do                                                \
+        {                                               \
+          /* Create the node.  */                       \
+          (RES) = rec_sex_ast_node_new ();              \
+          rec_sex_ast_node_set_type ((RES), (TYPE));    \
+                                                        \
+          /* Set children. */                           \
+          rec_sex_ast_node_link ((RES), (OP1));         \
+          rec_sex_ast_node_link ((RES), (OP2));         \
+          rec_sex_ast_node_link ((RES), (OP3));         \
         }                                               \
      while (0)
   
@@ -84,6 +98,8 @@
 %token <node> REC_SEX_TOK_REAL
 %token <node> REC_SEX_TOK_STR
 %token <node> REC_SEX_TOK_NAM
+%token <node> REC_SEX_TOK_COLON
+%left <node> REC_SEX_TOK_QM 
 %left <node> REC_SEX_TOK_AND REC_SEX_TOK_OR
 %left <node> REC_SEX_TOK_EQL REC_SEX_TOK_NEQ REC_SEX_TOK_LT REC_SEX_TOK_GT
 %left <node> REC_SEX_TOK_SAMETIME REC_SEX_TOK_AFTER REC_SEX_TOK_BEFORE
@@ -115,6 +131,8 @@ exp : REC_SEX_TOK_INT          { $$ = $1; }
     | REC_SEX_TOK_REAL         { $$ = $1; }
     | REC_SEX_TOK_STR          { $$ = $1; }
     | REC_SEX_TOK_NAM          { $$ = $1; }
+    | exp REC_SEX_TOK_QM exp REC_SEX_TOK_COLON exp
+                               { CREATE_NODE_OP3 (REC_SEX_OP_COND, $$, $1, $3, $5); }
     | exp REC_SEX_TOK_EQL exp  { CREATE_NODE_OP2 (REC_SEX_OP_EQL, $$, $1, $3); }
     | exp REC_SEX_TOK_NEQ exp  { CREATE_NODE_OP2 (REC_SEX_OP_NEQ, $$, $1, $3); }
     | exp REC_SEX_TOK_MAT exp  

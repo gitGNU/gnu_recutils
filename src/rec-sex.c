@@ -391,6 +391,7 @@ rec_sex_eval_node (rec_sex_t sex,
   struct rec_sex_val_s res = {0, 0, 0, NULL};
   struct rec_sex_val_s child_val1 = {0, 0, 0, NULL};
   struct rec_sex_val_s child_val2 = {0, 0, 0, NULL};
+  struct rec_sex_val_s child_val3 = {0, 0, 0, NULL};
 
   *status = true;
 
@@ -856,6 +857,30 @@ rec_sex_eval_node (rec_sex_t sex,
         res.int_val = n;
         break;
       }
+    case REC_SEX_OP_COND:
+      {
+        int op1;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+        GET_CHILD_VAL (child_val3, 2);
+
+        /* Get the boolean value of the first operand.  */
+        ATOI_VAL (op1, child_val1);
+
+        /* Return the first or the second operand, depending on the
+           value of op1.  */
+        if (op1)
+          {
+            res = child_val2;
+          }
+        else
+          {
+            res = child_val3;
+          }
+
+        break;
+      }
       /* Values.  */
     case REC_SEX_INT:
       {
@@ -1019,7 +1044,6 @@ timespec_subtract (struct timespec *result,
   return (result->tv_sec < 0);
 }
 
-
 #if 0
 }
   /* Perform the carry for the later subtraction by updating Y. */
@@ -1045,5 +1069,7 @@ timespec_subtract (struct timespec *result,
   return x->tv_sec < y->tv_sec;
 }
 #endif /* 0 */
+
+
  
 /* End of rec-sex.c */
