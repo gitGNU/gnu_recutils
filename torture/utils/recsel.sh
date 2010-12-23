@@ -558,7 +558,7 @@ test_tool recsel-sex-real-biggerthan ok \
 
 test_tool recsel-sex-real-plus ok \
           recsel \
-          '-e "((field1 + 2) > 5.14) && ((field + 2) < 5.15)"' \
+          '-e "((field1 + 2) > 5.14) && ((field1 + 2) < 5.15)"' \
           real-fields \
 'field1: 3.14
 '
