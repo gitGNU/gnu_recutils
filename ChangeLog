@@ -1,5 +1,19 @@
 2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-sex: support for the string concatenation operator.
+	* doc/recutils.texi (SEX Operators): Documentation for the string
+	concatenation operator.
+
+	* src/rec-sex.c (rec_sex_eval_node): Manage REC_SEX_OP_CONCAT.
+
+	* src/rec-sex-ast.h: New operation REC_SEX_OP_CONCAT.
+
+	* src/rec-sex-tab.y: Declare REC_SEX_TOK_AMP as a token.
+
+	* src/rec-sex-lex.l: Recognize REC_SEX_TOK_AMP.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-sex: support for the conditional expression.
 	* doc/recutils.texi (SEX Operators): Documentation for the ternary
 	conditional operator added.

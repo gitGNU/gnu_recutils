@@ -105,6 +105,7 @@
 %left <node> REC_SEX_TOK_SAMETIME REC_SEX_TOK_AFTER REC_SEX_TOK_BEFORE
 %left <node> REC_SEX_TOK_SUB REC_SEX_TOK_ADD
 %left <node> REC_SEX_TOK_MUL REC_SEX_TOK_DIV REC_SEX_TOK_MOD REC_SEX_TOK_MAT
+%left <node> REC_SEX_TOK_AMP
 %left <node> REC_SEX_TOK_NEG  REC_SEX_TOK_MIN /* negation--unary minus */
 %right <node> REC_SEX_TOK_NOT
 %token <node> REC_SEX_TOK_BP REC_SEX_TOK_EP
@@ -160,6 +161,7 @@ exp : REC_SEX_TOK_INT          { $$ = $1; }
     | REC_SEX_TOK_NOT exp      { CREATE_NODE_OP1 (REC_SEX_OP_NOT, $$, $2); }
     | exp REC_SEX_TOK_AND exp  { CREATE_NODE_OP2 (REC_SEX_OP_AND, $$, $1, $3); }
     | exp REC_SEX_TOK_OR exp   { CREATE_NODE_OP2 (REC_SEX_OP_OR, $$, $1, $3); }
+    | exp REC_SEX_TOK_AMP exp  { CREATE_NODE_OP2 (REC_SEX_OP_CONCAT, $$, $1, $3); }
     | REC_SEX_TOK_SHARP REC_SEX_TOK_NAM    { CREATE_NODE_OP1 (REC_SEX_OP_SHA, $$, $2); }
     | REC_SEX_TOK_BP exp REC_SEX_TOK_EP { $$ = $2; }
 

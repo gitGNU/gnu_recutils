@@ -1022,6 +1022,15 @@ The previous expression is replaced with the number of fields named
 @code{Email} in the record.  It can be zero if the record does not
 have a field with that name.
 
+@subsubsection String Operators
+
+The string concatenation operator (@code{&}) can be used to
+concatenate any number of strings and field values.
+
+@example
+'foo' & Name & 'bar'
+@end example
+
 @subsubsection Conditional Operator
 
 The ternary conditional operator can be used to select alternatives

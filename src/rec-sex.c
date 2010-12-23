@@ -820,6 +820,34 @@ rec_sex_eval_node (rec_sex_t sex,
 
         break;
       }
+    case REC_SEX_OP_CONCAT:
+      {
+        size_t str1_size;
+        size_t str2_size;
+        
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        if ((child_val1.type == REC_SEX_VAL_STR)
+            && (child_val2.type == REC_SEX_VAL_STR))
+          {
+            str1_size = strlen (child_val1.str_val);
+            str2_size = strlen (child_val2.str_val);
+
+            res.type = REC_SEX_VAL_STR;
+            res.str_val = malloc (str1_size + str2_size + 1);
+            strncpy (res.str_val, child_val1.str_val, str1_size);
+            strncpy (res.str_val + str1_size, child_val2.str_val, str2_size);
+            res.str_val[str1_size + str2_size] = '\0';
+          }
+        else
+          {
+            *status = false;
+            return res;
+          }
+
+        break;
+      }
     case REC_SEX_OP_NOT:
       {
         int op;

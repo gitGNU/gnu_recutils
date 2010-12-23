@@ -112,6 +112,16 @@ test_tool recfmt-non-matching-records ok \
 'value22bis
 '
 
+# Apply a template with string concatenation.
+test_tool recfmt-concat ok \
+          recfmt \
+          '"{{field1 & '\'' '\'' & field2 & field3}}"' \
+          multiple-records \
+'value11 value12value13
+value21 value22value23
+value31 value32value33
+'
+
 # Try to apply an empty slot.
 test_tool recfmt-empty-slot xfail \
           recfmt \

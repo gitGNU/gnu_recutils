@@ -54,6 +54,7 @@ enum rec_sex_ast_node_type_e
   REC_SEX_OP_BEFORE,
   REC_SEX_OP_AFTER,
   REC_SEX_OP_COND,
+  REC_SEX_OP_CONCAT,
 
   /* Values.  */
   REC_SEX_INT,
