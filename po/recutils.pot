@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.1\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2010-12-23 21:59+0100\n"
+"POT-Creation-Date: 2010-12-24 00:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,6 +111,78 @@ msgstr ""
 
 #: lib/quotearg.c:273
 msgid "'"
+msgstr ""
+
+#: lib/regcomp.c:132
+msgid "Success"
+msgstr ""
+
+#: lib/regcomp.c:135
+msgid "No match"
+msgstr ""
+
+#: lib/regcomp.c:138
+msgid "Invalid regular expression"
+msgstr ""
+
+#: lib/regcomp.c:141
+msgid "Invalid collation character"
+msgstr ""
+
+#: lib/regcomp.c:144
+msgid "Invalid character class name"
+msgstr ""
+
+#: lib/regcomp.c:147
+msgid "Trailing backslash"
+msgstr ""
+
+#: lib/regcomp.c:150
+msgid "Invalid back reference"
+msgstr ""
+
+#: lib/regcomp.c:153
+msgid "Unmatched [ or [^"
+msgstr ""
+
+#: lib/regcomp.c:156
+msgid "Unmatched ( or \\("
+msgstr ""
+
+#: lib/regcomp.c:159
+msgid "Unmatched \\{"
+msgstr ""
+
+#: lib/regcomp.c:162
+msgid "Invalid content of \\{\\}"
+msgstr ""
+
+#: lib/regcomp.c:165
+msgid "Invalid range end"
+msgstr ""
+
+#: lib/regcomp.c:168
+msgid "Memory exhausted"
+msgstr ""
+
+#: lib/regcomp.c:171
+msgid "Invalid preceding regular expression"
+msgstr ""
+
+#: lib/regcomp.c:174
+msgid "Premature end of regular expression"
+msgstr ""
+
+#: lib/regcomp.c:177
+msgid "Regular expression too big"
+msgstr ""
+
+#: lib/regcomp.c:180
+msgid "Unmatched ) or \\)"
+msgstr ""
+
+#: lib/regcomp.c:701
+msgid "No previous regular expression"
 msgstr ""
 
 #: lib/w32spawn.h:40
@@ -547,6 +619,58 @@ msgid ""
 "        recfix data.rec\n"
 "        recfix data1.rec data2.rec\n"
 "        cat data1.rec data2.rec | recfix\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfmt synopsis.
+#. no-wrap
+#: utils/recfmt.c:78
+#, c-format
+msgid "Usage: recfmt [OPTION]... [TEMPLATE]\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfmt arguments.
+#. no-wrap
+#: utils/recfmt.c:83
+msgid "Apply a template to records read in the standard input.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfmt arguments.
+#. no-wrap
+#: utils/recfmt.c:89
+msgid ""
+"  -f, --file=FILENAME                 read the template to apply from a "
+"file.\n"
+msgstr ""
+
+#. TRANSLATORS: --help output, recfmt examples.
+#. no-wrap
+#: utils/recfmt.c:98
+msgid ""
+"Examples:\n"
+"\n"
+"        cat employees.rec | recfmt 'Dear {{Name}}, you are fired.'\n"
+"        cat employees.rec | recfmt -f fire-letter.tmpl\n"
+msgstr ""
+
+#: utils/recfmt.c:134
+#, c-format
+msgid "can't open file %s for reading.\n"
+msgstr ""
+
+#: utils/recfmt.c:152
+msgid "don't specify a template in the command line and -f at the same time.\n"
+msgstr ""
+
+#: utils/recfmt.c:175
+msgid "invalid expression in a template slot.\n"
+msgstr ""
+
+#: utils/recfmt.c:181
+msgid "error evaluating expression in a template slot.\n"
+msgstr ""
+
+#: utils/recfmt.c:215
+msgid "recfmt_apply_template: error compiling regexp. Please report this.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recinf synopsis.
