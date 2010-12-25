@@ -19,7 +19,7 @@ PublicVCSCheckout: git clone git://git.sv.gnu.org/recutils.git
 License: GPLv3PLUS
 License: GFDLv21PLUS
 Maintainer: Jose E. Marchesi <jemarch@gnu.org>
-Version: not released
+Version: 1.1
 MaturityLevel: Beta
 DevelList: http://www.gnu.org/mailman/listinfo/bug-recutils
 InterfaceStyle: CommandLine
