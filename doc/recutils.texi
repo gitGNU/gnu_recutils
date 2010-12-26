@@ -74,6 +74,7 @@ Utilities
 * recdel::              Deleting records.
 * recset::              Managing fields.
 * recfix::              Fixing broken rec files, and diagnostics.
+* recfmt::              Formatting records using templates.
 
 * csv2rec::             Converting csv data into rec data.
 * mdb2rec::             Converting mdb files into rec files.
@@ -759,7 +760,7 @@ synopsis is:
 %type: AField field
 @end example
 
-@include getdate.texi
+@include parse-datetime.texi
 
 @node External Descriptors
 @chapter External Descriptors
@@ -1021,6 +1022,32 @@ The previous expression is replaced with the number of fields named
 @code{Email} in the record.  It can be zero if the record does not
 have a field with that name.
 
+@subsubsection String Operators
+
+The string concatenation operator (@code{&}) can be used to
+concatenate any number of strings and field values.
+
+@example
+'foo' & Name & 'bar'
+@end example
+
+@subsubsection Conditional Operator
+
+The ternary conditional operator can be used to select alternatives
+based on the value of some expression:
+
+@example
+expr1 ? expr2 : expr3
+@end example
+
+If @code{expr1} evaluates to true (i.e. it is an integer or the string
+representation of an integer and its value is not zero) then the
+operator yields @code{expr2}.  Otherwise it yields @code{expr3}.
+
+Note that there should be always at least one blank character between
+@code{expr2} and the colon (@code{:}) if @code{expr2} is a field name.
+This is because field names can optionally end with a colon.
+
 @node SEX Evaluation
 @subsection Evaluation of Selection Expressions
 
@@ -1045,10 +1072,10 @@ permutation of the fields ``Email'', ``Age'' and ``Fixed'' present in
 the record, until one of the combinations succeeds.  At that point the
 computation is interrupted.
 
-The goal of a selection expression is to decide whether it applies to
-a candidate.  It is thus a boolean expression.  The final value of the
-expression depends on both the type and the value of the result
-launched by the top-most subexpression:
+When used to decide whether a record matches some criteria, the goal
+of a selection expression is to act as a boolean expression.  In that
+case the final value of the expression depends on both the type and
+the value of the result launched by the top-most subexpression:
 
 @itemize @minus
 @item If the result is an @b{integer}, the expression is true if its
@@ -1056,6 +1083,11 @@ value is not zero.
 @item If the result is a @b{real}, or a @b{string}, the expression
 evaluates to false.
 @end itemize
+
+Sometimes a selection expression is used to compute a result instead
+of a boolean.  In that case the returned value is converted to a
+string.  This is used when replacing the slots in templates
+(@pxref{recfmt Templates}).
 
 @node Field Expressions
 @section Field Expressions
@@ -1602,6 +1634,107 @@ Used as a filter:
 
 @example
 $ cat data1.rec data2.rec | recfix
+@end example
+
+@node recfmt
+@chapter recfmt
+
+@command{recfmt} formats records using templates.
+
+@menu
+* recfmt Invocation::    Command line options.
+* recfmt Templates::     How to write templates.
+* recfmt Examples::      Examples of the usage of @command{recfmt}. 
+@end menu
+
+@node recfmt Invocation
+@section recfmt Invocation
+
+@command{recfmt} formats records using templates.  Synopsis:
+
+@example
+recfmt [OPTION]... [TEMPLATE]
+@end example
+
+This program always works as a filter, getting the data from the
+standard input and writing the result in the standard output.
+
+In addition to the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -f
+@itemx @w{@kbd{--filename}=@var{PATH}}
+Read the template from the file in @var{PATH} instead of the command
+line.
+@end table
+
+@node recfmt Templates
+@section recfmt Templates
+
+A recfmt template is a text string that may contain @dfn{template
+spots}.  Those spots are substituted in the template using the
+information of a given record.  Any text that is not into a spot is
+literally copied to the output.
+
+Spots are written surrounded by double curly braces, like:
+
+@example
+@{@{...@}@}
+@end example
+
+Spots contain selection expressions, that are executed every time the
+template is applied to a record.  The spot is then replaced by the
+string representation of the value returned by the expression.
+
+For example, consider the following template:
+
+@example
+Task @{@{Id@}@}: @{@{Summary@}@}
+------------------------
+@{@{Description@}@}
+--
+Created at @{@{CreationTime@}@}
+@end example
+
+When applied to the following record:
+
+@example
+Id: 123
+Summary: Fix recfmt.
+CreatedAt: 12 December 2010
+Description:
++ The recfmt tool shall be fixed, because right
++ now it is leaking 200 megabytes per processed record.
+@end example
+
+The result is:
+
+@example
+Task 123: Fix recfmt.
+------------------------
+The recfmt tool shall be fixed, because right
+now it is leaking 200 megabytes per processed record.
+--
+Created at 12 December 2010
+@end example
+
+Note that you can use any selection expression in the slots, including
+conditionals and string concatenation.
+
+@node recfmt Examples
+@section recfmt Examples
+
+Apply a template in the 
+
+@example
+recsel employees.rec | recfmt 'Dear @{@{Name@}@}, you are fired.'
+@end example
+
+Read the template from a file:
+
+@example
+recsel employees.rec | recfmt -f fire-letter.tmpl
 @end example
 
 @node csv2rec

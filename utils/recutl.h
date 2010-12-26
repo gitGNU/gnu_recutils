@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 18:02:54 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-22 22:57:52 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -25,6 +25,8 @@
 
 #ifndef RECUTL_H
 #define RECUTL_H
+
+#include <progname.h>
 
 /*
  * Common arguments.
@@ -161,6 +163,7 @@ void recutl_print_help_record_selection (void);
 
 
 void recutl_error (const char *fmt, ...);
+void recutl_warning (const char *fmt, ...);
 void recutl_fatal (const char *fmt, ...);
 
 bool recutl_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
@@ -173,6 +176,8 @@ char *recutl_eval_field_expression (rec_fex_t fex,
 
 rec_db_t recutl_read_db_from_file (char *file_name);
 void recutl_write_db_to_file (rec_db_t db, char *file_name);
+
+char *recutl_read_file (char *file_name);
 
 #endif /* recutl.h */
 

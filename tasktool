@@ -84,6 +84,7 @@ tt_recdel=recdel
 tt_recset=recset
 tt_recfix=recfix
 tt_recinf=recinf
+tt_recfmt=recfmt
 
 ## Internal Variables ##
 #
@@ -1179,8 +1180,9 @@ tt_process_cmd_list ()
         fi
     fi
 
-    ${tt_recsel} -t ${tt_db_task} -e "$selection_expression" -C \
-                 -R ${tt_db_task_field_id},${tt_db_task_field_status},${tt_db_task_field_summary} ${tt_db}
+    template=`printf "{{${tt_db_task_field_id}}}\t{{${tt_db_task_field_status}}}\t{{${tt_db_task_field_summary}}}"`
+    ${tt_recsel} -t ${tt_db_task} -e "$selection_expression" ${tt_db} \
+                 | ${tt_recfmt} "$template"
 }
 
 # Process the 'create' subcommand

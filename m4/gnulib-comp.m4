@@ -59,7 +59,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module frexp-nolibm:
   # Code from module frexpl-nolibm:
   # Code from module gendocs:
-  # Code from module getdate:
   # Code from module getdtablesize:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
@@ -107,6 +106,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module printf-frexp:
   # Code from module printf-frexpl:
   # Code from module printf-safe:
+  # Code from module progname:
   # Code from module quotearg:
   # Code from module quotearg-simple:
   # Code from module rawmemchr:
@@ -231,7 +231,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_FREXPL_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexpl])
   # Code from module gendocs:
-  # Code from module getdate:
   # Code from module getdtablesize:
   gl_FUNC_GETDTABLESIZE
   gl_UNISTD_MODULE_INDICATOR([getdtablesize])
@@ -388,6 +387,9 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_PRINTF_FREXPL
   # Code from module printf-safe:
   m4_divert_text([INIT_PREPARE], [gl_printf_safe=yes])
+  # Code from module progname:
+  AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
+  AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
   # Code from module quotearg:
   gl_QUOTEARG
   # Code from module quotearg-simple:
@@ -643,7 +645,6 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/vc-list-files
   build-aux/warn-on-use.h
   doc/gendocs_template
-  doc/getdate.texi
   doc/parse-datetime.texi
   lib/alloca.in.h
   lib/asnprintf.c
@@ -677,7 +678,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fpucw.h
   lib/frexp.c
   lib/frexpl.c
-  lib/getdate.h
   lib/getdtablesize.c
   lib/getopt.c
   lib/getopt.in.h
@@ -698,7 +698,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isnanf.c
   lib/isnanl-nolibm.h
   lib/isnanl.c
-  lib/iswblank.c
   lib/langinfo.in.h
   lib/localcharset.c
   lib/localcharset.h
@@ -727,6 +726,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-frexpl.h
   lib/printf-parse.c
   lib/printf-parse.h
+  lib/progname.c
+  lib/progname.h
   lib/quotearg.c
   lib/quotearg.h
   lib/rawmemchr.c

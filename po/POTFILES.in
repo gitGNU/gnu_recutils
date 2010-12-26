@@ -7,6 +7,7 @@ lib/error.c
 lib/execute.c
 lib/getopt.c
 lib/quotearg.c
+lib/regcomp.c
 lib/w32spawn.h
 lib/wait-process.c
 lib/xalloc-die.c
@@ -22,6 +23,7 @@ utils/csv2rec.c
 utils/mdb2rec.c
 utils/recdel.c
 utils/recfix.c
+utils/recfmt.c
 utils/recinf.c
 utils/recins.c
 utils/recsel.c

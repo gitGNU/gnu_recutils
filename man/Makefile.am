@@ -21,6 +21,7 @@ man_MANS = recdel.1 \
            recins.1 \
            recsel.1 \
            recset.1 \
+           recfmt.1 \
            csv2rec.1
 
 if COMPILE_MDB2REC
@@ -61,5 +62,8 @@ recsel.1: $(top_srcdir)/utils/recsel.c $(common_mandeps)
 
 recset.1: $(top_srcdir)/utils/recset.c $(common_mandeps)
 	$(HELP2MAN) --name="manipulate fields in a recfile" ../utils/recset -o $@
+
+recfmt.1: $(top_srcdir)/utils/recfmt.c $(common_mandeps)
+	$(HELP2MAN) --name="apply a template to records" ../utils/recfmt -o $@
 
 # End of Makefile.am

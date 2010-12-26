@@ -1,3 +1,157 @@
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Preparation for 1.1.
+	* .x-sc_prohibit_have_config_h: New file.
+
+	* po/POTFILES.in: Updated.
+
+	* m4/pkg.m4: Relicense from GPLv2+ to GPLv3+.
+
+	* NEWS: Updated to version 1.1.
+
+	* man/Makefile.am (man_MANS): recfmt.1 added.
+	(recfmt.1): New rule.
+
+	* configure.ac: Package version changed to 1.1.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-sex: support for the string concatenation operator.
+	* doc/recutils.texi (SEX Operators): Documentation for the string
+	concatenation operator.
+
+	* src/rec-sex.c (rec_sex_eval_node): Manage REC_SEX_OP_CONCAT.
+
+	* src/rec-sex-ast.h: New operation REC_SEX_OP_CONCAT.
+
+	* src/rec-sex-tab.y: Declare REC_SEX_TOK_AMP as a token.
+
+	* src/rec-sex-lex.l: Recognize REC_SEX_TOK_AMP.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-sex: support for the conditional expression.
+	* doc/recutils.texi (SEX Operators): Documentation for the ternary
+	conditional operator added.
+
+	* src/rec-sex.c (rec_sex_eval_node): Manage REC_SEX_OP_COND.
+
+	* src/rec-sex-tab.y (CREATE_NODE_OP3): Macro defined.
+
+	* src/rec-sex-ast.h: New operation REC_SEX_OP_COND.
+
+	* src/rec-sex-tab.y: Declare REC_SEX_TOK_QM and REC_SEX_TOK_COLON
+	as tokens.
+
+	* src/rec-sex-lex.l: Recognize REC_SEX_TOK_QM and
+	REC_SEX_TOK_COLON.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: first draft of the documentation for recfmt.
+	* doc/recutils.texi (recfmt): New chapter.
+	(recfmt Invocation): New section.
+	(recfmt Templates): New section.
+	(recfmt Examples): New section.
+
+2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recfmt: use SEX expressions in template slots and change the slot
+	format.
+	* src/rec-sex.c (rec_sex_compile): Set the parser ast only if the
+	parsing was successful.
+
+	* src/rec-sex-tab.y (exp): Grammar changed to require an
+	expression.
+
+	* src/rec-sex.c (rec_sex_eval_str): New function.
+
+	* utils/recfmt.c (recfmt_apply_template): Use {{...}} marks
+	instead of <#...>.
+	(recfmt_get_subst): New function.
+
+2010-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recfmt: initial version.
+	* torture/utils/Makefile.am (TESTS): recfmt.sh added.
+
+	* torture/utils/recfmt.sh: New file.
+	(recfmt-empty-template): New test.
+	(recfmt-empty-file): New test.
+	(recfmt-all-records): New test.
+	(recfmt-slot-beginning): New test.
+	(recfmt-no-prolog): New test.
+	(recfmt-subscripts): New test.
+	(recfmt-non-matching-records): New test.
+	(recfmt-empty-slot): New test.
+	(recfmt-invalid-slot): New test.
+
+	* src/rec-record.c (rec_record_get_field_by_name): Return NULL if
+	the specified field is not found, instead of the last field of the
+	record.
+
+	* utils/recutl.h: New function recutl_warning.
+	New function recutl_read_file.
+	* utils/recutl.c (recutl_warning): Implemented.
+	(recutl_read_file): Implemented.
+
+	* utils/recfmt.c (recfmt_process_db): New function.
+	(rec_fmt_apply_template): New function.
+
+	* utils/Makefile.am (bin_PROGRAMS): recfmt added.
+
+	* utils/recfmt.c: New file.
+	(recutl_print_help): New function.
+	(recfmt_parse_args): New function.
+	(main): New function.
+
+2010-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: manage errors when running the utilities in the system
+	tests.
+	* torture/utils/testutils.sh: Make the tests to fail if there is
+	an error running a system test.
+
+2010-12-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Portability fixes.
+	* torture/utils/testutils.sh: Use the portable 'expr' instead of
+	'bc'.
+
+	* src/Makefile.am (AM_CFLAGS): gcc specific options -Wall and
+	-fno-strict-aliasing removed.
+
+	* utils/recutl.h: Include progname.h so the declaration of
+	program_name is accessible in all the utilities.
+
+	* utils/csv2rec.c: program_name global variable removed.
+	* utils/recset.c: Likewise.
+	* utils/recsel.c: Likewise.
+	* utils/recins.c: Likewise.
+	* utils/recinf.c: Likewise.
+	* utils/recfix.c: Likewise.
+	* utils/recdel.c: Likewise.
+	* utils/mdb2rec.c: Likewise.
+
+	* utils/recutl.c: Include progname.h and use set_progname.
+
+	* module 'progname' imported from gnulib.
+
+	* src/rec.c: Remove the setting of a program_name variable when
+	compiling with mingw.
+
+	* src/rec-sex.c (ATOTS_VAL): Use parse_datetime instead of
+	get_date.
+	Include parse-datetime.h instead of getdate.h.
+	* src/rec-types.c: Likewise.
+
+	* po/Makevars.template: Removed.
+
+	* README-dev: libcsv dependency removed.
+	Added a note asking for a recent version of flex.
+
+	* m4/pkg.m4: Copied from /usr/share/aclocal/pkg.m4.
+
 2010-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recnav: setup ncurses and cdk and implement the main loop of the

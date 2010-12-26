@@ -58,7 +58,7 @@
       }                                                 \
     while (0)
 
-    #define CREATE_NODE_OP2(TYPE, RES, OP1, OP2)        \
+#define CREATE_NODE_OP2(TYPE, RES, OP1, OP2)            \
       do                                                \
         {                                               \
           /* Create the node.  */                       \
@@ -68,6 +68,20 @@
           /* Set children. */                           \
           rec_sex_ast_node_link ((RES), (OP1));         \
           rec_sex_ast_node_link ((RES), (OP2));         \
+        }                                               \
+     while (0)
+
+#define CREATE_NODE_OP3(TYPE, RES, OP1, OP2, OP3)       \
+      do                                                \
+        {                                               \
+          /* Create the node.  */                       \
+          (RES) = rec_sex_ast_node_new ();              \
+          rec_sex_ast_node_set_type ((RES), (TYPE));    \
+                                                        \
+          /* Set children. */                           \
+          rec_sex_ast_node_link ((RES), (OP1));         \
+          rec_sex_ast_node_link ((RES), (OP2));         \
+          rec_sex_ast_node_link ((RES), (OP3));         \
         }                                               \
      while (0)
   
@@ -84,11 +98,14 @@
 %token <node> REC_SEX_TOK_REAL
 %token <node> REC_SEX_TOK_STR
 %token <node> REC_SEX_TOK_NAM
+%token <node> REC_SEX_TOK_COLON
+%left <node> REC_SEX_TOK_QM 
 %left <node> REC_SEX_TOK_AND REC_SEX_TOK_OR
 %left <node> REC_SEX_TOK_EQL REC_SEX_TOK_NEQ REC_SEX_TOK_LT REC_SEX_TOK_GT
 %left <node> REC_SEX_TOK_SAMETIME REC_SEX_TOK_AFTER REC_SEX_TOK_BEFORE
 %left <node> REC_SEX_TOK_SUB REC_SEX_TOK_ADD
 %left <node> REC_SEX_TOK_MUL REC_SEX_TOK_DIV REC_SEX_TOK_MOD REC_SEX_TOK_MAT
+%left <node> REC_SEX_TOK_AMP
 %left <node> REC_SEX_TOK_NEG  REC_SEX_TOK_MIN /* negation--unary minus */
 %right <node> REC_SEX_TOK_NOT
 %token <node> REC_SEX_TOK_BP REC_SEX_TOK_EP
@@ -100,14 +117,8 @@
 
 %% /* The grammar follows.  */
 
-input: /* Empty */
-     {
-       rec_sex_ast_t ast;
-
-       ast = rec_sex_ast_new ();
-       rec_sex_parser_set_ast (sex_parser, ast);
-     }
-     | exp
+input: 
+     exp
      {
        rec_sex_ast_t ast;
 
@@ -121,6 +132,8 @@ exp : REC_SEX_TOK_INT          { $$ = $1; }
     | REC_SEX_TOK_REAL         { $$ = $1; }
     | REC_SEX_TOK_STR          { $$ = $1; }
     | REC_SEX_TOK_NAM          { $$ = $1; }
+    | exp REC_SEX_TOK_QM exp REC_SEX_TOK_COLON exp
+                               { CREATE_NODE_OP3 (REC_SEX_OP_COND, $$, $1, $3, $5); }
     | exp REC_SEX_TOK_EQL exp  { CREATE_NODE_OP2 (REC_SEX_OP_EQL, $$, $1, $3); }
     | exp REC_SEX_TOK_NEQ exp  { CREATE_NODE_OP2 (REC_SEX_OP_NEQ, $$, $1, $3); }
     | exp REC_SEX_TOK_MAT exp  
@@ -148,6 +161,7 @@ exp : REC_SEX_TOK_INT          { $$ = $1; }
     | REC_SEX_TOK_NOT exp      { CREATE_NODE_OP1 (REC_SEX_OP_NOT, $$, $2); }
     | exp REC_SEX_TOK_AND exp  { CREATE_NODE_OP2 (REC_SEX_OP_AND, $$, $1, $3); }
     | exp REC_SEX_TOK_OR exp   { CREATE_NODE_OP2 (REC_SEX_OP_OR, $$, $1, $3); }
+    | exp REC_SEX_TOK_AMP exp  { CREATE_NODE_OP2 (REC_SEX_OP_CONCAT, $$, $1, $3); }
     | REC_SEX_TOK_SHARP REC_SEX_TOK_NAM    { CREATE_NODE_OP1 (REC_SEX_OP_SHA, $$, $2); }
     | REC_SEX_TOK_BP exp REC_SEX_TOK_EP { $$ = $2; }
 

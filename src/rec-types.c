@@ -30,7 +30,7 @@
 #include <regex.h>
 #include <string.h>
 #include <regex.h>
-#include <getdate.h>
+#include <parse-datetime.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
@@ -1005,11 +1005,11 @@ rec_type_check_date (rec_type_t type,
 
   if (strcmp (str, "") == 0)
     {
-      /* The get_date call accepts the empty string.  */
+      /* The parse_datetime call accepts the empty string.  */
       return false;
     }
 
-  ret = get_date (&tm, str, NULL);
+  ret = parse_datetime (&tm, str, NULL);
   if (!ret && errors)
     {
       rec_buf_puts (_("invalid date."), errors);

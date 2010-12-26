@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
-#include <getdate.h>
+#include <parse-datetime.h>
 
 #include <rec.h>
 #include <rec-utils.h>
@@ -117,7 +117,10 @@ rec_sex_compile (rec_sex_t sex,
   bool res;
 
   res = rec_sex_parser_run (sex->parser, expr);
-  sex->ast = rec_sex_parser_ast (sex->parser);
+  if (res)
+    {
+      sex->ast = rec_sex_parser_ast (sex->parser);
+    }
   return res;
 }
 
@@ -146,7 +149,48 @@ rec_sex_compile (rec_sex_t sex,
     }                                                                   \
   while (0)
 
+char *
+rec_sex_eval_str (rec_sex_t sex,
+                  rec_record_t record)
+{
+  char *res;
+  struct rec_sex_val_s val;
+  bool status;
 
+  rec_sex_ast_node_unfix (rec_sex_ast_top (sex->ast));
+  val = rec_sex_eval_node (sex,
+                           record,
+                           rec_sex_ast_top (sex->ast),
+                           &status);
+
+  if (!status)
+    {
+      /* Error evaluating the expression.  */
+      return NULL;
+    }
+
+  res = NULL;
+  switch (val.type)
+    {
+    case REC_SEX_VAL_INT:
+      {
+        asprintf (&res, "%d", val.int_val);
+        break;
+      }
+    case REC_SEX_VAL_REAL:
+      {
+        asprintf (&res, "%f", val.real_val);
+        break;
+      }
+    case REC_SEX_VAL_STR:
+      {
+        res = strdup (val.str_val);
+        break;
+      }
+    }
+
+  return res;
+}
 
 bool
 rec_sex_eval (rec_sex_t sex,
@@ -326,7 +370,7 @@ rec_sex_print_ast (rec_sex_t sex)
           }                                             \
         case REC_SEX_VAL_STR:                           \
           {                                             \
-            if (!get_date (&(DEST), (VAL).str_val, NULL))\
+            if (!parse_datetime (&(DEST), (VAL).str_val, NULL))\
             {                                           \
               *status = false;                          \
               return res;                               \
@@ -347,6 +391,7 @@ rec_sex_eval_node (rec_sex_t sex,
   struct rec_sex_val_s res = {0, 0, 0, NULL};
   struct rec_sex_val_s child_val1 = {0, 0, 0, NULL};
   struct rec_sex_val_s child_val2 = {0, 0, 0, NULL};
+  struct rec_sex_val_s child_val3 = {0, 0, 0, NULL};
 
   *status = true;
 
@@ -775,6 +820,34 @@ rec_sex_eval_node (rec_sex_t sex,
 
         break;
       }
+    case REC_SEX_OP_CONCAT:
+      {
+        size_t str1_size;
+        size_t str2_size;
+        
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        if ((child_val1.type == REC_SEX_VAL_STR)
+            && (child_val2.type == REC_SEX_VAL_STR))
+          {
+            str1_size = strlen (child_val1.str_val);
+            str2_size = strlen (child_val2.str_val);
+
+            res.type = REC_SEX_VAL_STR;
+            res.str_val = malloc (str1_size + str2_size + 1);
+            strncpy (res.str_val, child_val1.str_val, str1_size);
+            strncpy (res.str_val + str1_size, child_val2.str_val, str2_size);
+            res.str_val[str1_size + str2_size] = '\0';
+          }
+        else
+          {
+            *status = false;
+            return res;
+          }
+
+        break;
+      }
     case REC_SEX_OP_NOT:
       {
         int op;
@@ -810,6 +883,30 @@ rec_sex_eval_node (rec_sex_t sex,
 
         res.type = REC_SEX_VAL_INT;
         res.int_val = n;
+        break;
+      }
+    case REC_SEX_OP_COND:
+      {
+        int op1;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+        GET_CHILD_VAL (child_val3, 2);
+
+        /* Get the boolean value of the first operand.  */
+        ATOI_VAL (op1, child_val1);
+
+        /* Return the first or the second operand, depending on the
+           value of op1.  */
+        if (op1)
+          {
+            res = child_val2;
+          }
+        else
+          {
+            res = child_val3;
+          }
+
         break;
       }
       /* Values.  */
@@ -975,7 +1072,6 @@ timespec_subtract (struct timespec *result,
   return (result->tv_sec < 0);
 }
 
-
 #if 0
 }
   /* Perform the carry for the later subtraction by updating Y. */
@@ -1001,5 +1097,7 @@ timespec_subtract (struct timespec *result,
   return x->tv_sec < y->tv_sec;
 }
 #endif /* 0 */
+
+
  
 /* End of rec-sex.c */

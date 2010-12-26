@@ -154,6 +154,24 @@ Date: Tue Nov 30 12:00:00 CET 2010
 Date: Tue Nov 30 12:00:00 CET 2030
 '
 
+test_declare_input_file academy \
+'Name: John Smith
+Role: Professor
+Age: 52
+
+Name: Tom Johnson
+Role: Professor
+Age: 67
+
+Name: Tommy Junior
+Role: Student
+Age: 5
+
+Name: Johnny NotSoJunior
+Role: Student
+Age: 15
+'
+
 #
 # Declare tests
 #
@@ -558,7 +576,7 @@ test_tool recsel-sex-real-biggerthan ok \
 
 test_tool recsel-sex-real-plus ok \
           recsel \
-          '-e "((field1 + 2) > 5.14) && ((field + 2) < 5.15)"' \
+          '-e "((field1 + 2) > 5.14) && ((field1 + 2) < 5.15)"' \
           real-fields \
 'field1: 3.14
 '
@@ -632,6 +650,24 @@ test_tool recsel-sex-date-after ok \
 'Date: Tue Nov 30 12:00:00 CET 2010
 
 Date: Tue Nov 30 12:00:00 CET 2030
+'
+
+test_tool recsel-sex-conditional-1 ok \
+          recsel \
+          '-e "Role ~ '\''Professor'\'' ? Age > 65 : Age < 10" -p Name' \
+          academy \
+'Name: Tom Johnson
+
+Name: Tommy Junior
+'
+
+test_tool recsel-sex-conditional-2 ok \
+          recsel \
+          '-e "(Role ~ '\''Professor'\'') ? (Age < 65) : (Age > 10)" -p Name' \
+          academy \
+'Name: John Smith
+
+Name: Johnny NotSoJunior
 '
 
 #

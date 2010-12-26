@@ -862,6 +862,9 @@ bool rec_sex_compile (rec_sex_t sex, char *expr);
 /* Apply a sex expression to a record, setting RESULT in accordance.  */
 bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
 
+/* Apply a sex expression and get the result as a string.  */
+char *rec_sex_eval_str (rec_sex_t sex, rec_record_t record);
+
 void rec_sex_print_ast (rec_sex_t sex);
                              
 #endif /* !REC_H */

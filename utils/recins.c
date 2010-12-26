@@ -43,7 +43,6 @@ void recins_parse_args (int argc, char **argv);
  * Global variables
  */
 
-char         *program_name     = NULL;
 char         *recutl_type      = NULL;
 rec_sex_t     recutl_sex       = NULL;
 char         *recutl_sex_str   = NULL;

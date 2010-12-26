@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 15:18:23 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-23 16:04:06 jemarch"
  *
  *       File:         rec-sex-compile.c
  *       Date:         Mon Nov 15 15:12:24 2010
@@ -42,12 +42,6 @@ START_TEST(rec_sex_compile_nominal)
   sex = rec_sex_new (false);
   fail_if (sex == NULL);
   fail_if (!rec_sex_compile (sex,
-                             ""));
-  rec_sex_destroy (sex);
-
-  sex = rec_sex_new (false);
-  fail_if (sex == NULL);
-  fail_if (!rec_sex_compile (sex,
                              "true"));
   rec_sex_destroy (sex);
 
@@ -68,6 +62,11 @@ END_TEST
 START_TEST(rec_sex_compile_invalid)
 {
   rec_sex_t sex;
+
+  sex = rec_sex_new (false);
+  fail_if (sex == NULL);
+  fail_if (rec_sex_compile (sex, ""));
+  rec_sex_destroy (sex);
 
   sex = rec_sex_new (false);
   fail_if (sex == NULL);

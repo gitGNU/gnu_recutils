@@ -43,7 +43,6 @@ void recdel_parse_args (int argc, char **argv);
  * Global variables
  */
 
-char *program_name; /* Initialized in main() */
 char *recutl_type = NULL;
 bool recdel_comment = false;
 rec_sex_t recutl_sex = NULL;

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 18:03:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-22 23:04:40 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -35,18 +35,17 @@
 #include <locale.h>
 #include <gettext.h>
 #define _(str) gettext (str)
+#include <progname.h>
 
 #include <rec.h>
 #include <recutl.h>
-
-extern char *program_name;
 
 void recutl_print_help (void); /* Forward prototype.  */
 
 void
 recutl_init (char *util_name)
 {
-  program_name = xstrdup (util_name);
+  set_program_name (xstrdup (util_name));
 
   /* Initialize librec */
   rec_init ();
@@ -159,6 +158,18 @@ recutl_error (const char *fmt, ...)
   va_start (ap, fmt);
   fputs (program_name, stderr);
   fputs (": error: ", stderr);
+  vfprintf (stderr, fmt, ap);
+  va_end (ap);
+}
+
+void
+recutl_warning (const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start (ap, fmt);
+  fputs (program_name, stderr);
+  fputs (": warning: ", stderr);
   vfprintf (stderr, fmt, ap);
   va_end (ap);
 }
@@ -352,6 +363,32 @@ recutl_write_db_to_file (rec_db_t db,
           recutl_fatal (_("renaming file %s to %s\n"), tmp_file_name, file_name);
         }
     }
+}
+
+char *
+recutl_read_file (char *file_name)
+{
+  char *result;
+  FILE *in;
+  size_t file_size;
+
+  result = NULL;
+  in = fopen (file_name, "r");
+  if (in)
+    {
+      /* Get the size of the file.  */
+      fseek (in, 0, SEEK_END);
+      file_size = ftell (in);
+      fseek (in, 0, SEEK_SET);
+
+      /* Read the contents of the file into file_name.  */
+      result = xmalloc (file_size + 1);
+      fread (result, file_size, 1, in);
+      fclose (in);
+      result[file_size] = '\0';
+    }
+
+  return result;
 }
 
 /* End of recutl.c */
