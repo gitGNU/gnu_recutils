@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-20 20:30:52 jemarch"
+/* -*- mode: C -*- Time-stamp: "2010-12-26 19:08:08 jemarch"
  *
  *       File:         recnav.c
  *       Date:         Mon Dec 20 16:43:01 2010
@@ -42,13 +42,12 @@ void recnav_parse_args (int argc, char **argv);
 void recnav_navigate (rec_db_t db);
 void recnav_init_app (void);
 void recnav_cmd_about (void);
-/* void recnav_load_db (rec_db_t db); */
+void recnav_load_db (rec_db_t db);
 
 /*
  * Global variables.
  */
 
-char      *program_name        = NULL;
 CDKSCREEN *recnav_screen       = NULL;
 CDKLABEL  *recnav_app_title    = NULL;
 CDKMENU   *recnav_menu         = NULL;
@@ -143,18 +142,26 @@ recnav_cmd_about ()
 }
 
 void
-recnav_init_app ()
+recnav_create_app_title ()
+{
+  char *title[5];
+
+  /* Create the application title.  */
+  title[0] = "<C></U>recnav";
+  title[1] = "<C></B/24>GNU recutils";
+  recnav_app_title = newCDKLabel (recnav_screen,
+                                  CENTER, CENTER,
+                                  title,
+                                  2,
+                                  FALSE,
+                                  FALSE);
+}
+
+void
+recnav_create_menu ()
 {
   char *menulist[MAX_MENU_ITEMS][MAX_SUB_ITEMS];
   int sub_menu_size[10], menu_locations[10];
-  char *title[5];
-
-  /* Set up CDK.  */
-  recnav_app_window = initscr ();
-  recnav_screen = initCDKScreen (recnav_app_window);
-
-  /* Start CDK color.  */
-  initCDKColor ();
 
   /* Create the menu lists. */
 
@@ -183,18 +190,63 @@ recnav_init_app ()
                             A_BOLD | A_UNDERLINE,
                             A_REVERSE);
 
-  /* Create the application title.  */
-  title[0] = "<C></U>recnav";
-  title[1] = "<C></B/24>GNU recutils";
-  recnav_app_title = newCDKLabel (recnav_screen,
-                                  CENTER, CENTER,
-                                  title,
-                                  2,
-                                  FALSE,
-                                  FALSE);
+}
+
+void
+recnav_init_app ()
+{
+  /* Set up CDK.  */
+  recnav_app_window = initscr ();
+  recnav_screen = initCDKScreen (recnav_app_window);
+
+  /* Start CDK color.  */
+  initCDKColor ();
+
+  /* Create widgets.  */
+  recnav_create_menu ();
+  recnav_create_app_title ();
 
   /* Draw the CDK screen.  */
   refreshCDKScreen (recnav_screen);
+}
+
+void
+recnav_load_db (rec_db_t db)
+{
+  CDKITEMLIST *typeslist = NULL;
+  char *title = "<C>Pick a record type";
+  char *label = "</U/5>Type:";
+  size_t num_types, i;
+  char **info;
+  rec_rset_t rset;
+  int choice;
+
+  /* Create the choice list.  */
+  num_types = rec_db_size (db);
+  info = xmalloc (num_types * (sizeof (char *)));
+  for (i = 0; i < num_types; i++)
+    {
+      rset = rec_db_get_rset (db, i);
+      info[i] = xmalloc (strlen ("<C>") + strlen (rec_rset_type (rset)) + 1);
+      strncpy (info[i], "<C>", 3);
+      strncpy (info[i] + 3, rec_rset_type (rset), strlen (rec_rset_type (rset)));
+      info[i][strlen ("<C>") + strlen (rec_rset_type (rset))] = '\0';
+    }
+
+  /* Create the itemlist widget.  */
+  typeslist = newCDKItemlist (recnav_screen,
+                              10, 10,
+                              title,
+                              label,
+                              info,
+                              num_types,
+                              0,
+                              TRUE,
+                              FALSE);
+
+  choice = activateCDKItemlist (typeslist, 0);
+
+  free (info);
 }
 
 void
@@ -206,7 +258,7 @@ recnav_navigate (rec_db_t db)
   recnav_init_app ();
 
   /* Load the db.  */
-  /*  recnav_load_db (db); */
+  recnav_load_db (db);
 
   /* Loop until done.  */
   for (;;)

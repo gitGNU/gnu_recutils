@@ -1,3 +1,9 @@
+2010-12-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* man/Makefile.am (man_MANS): Add recnav.1 to the list of manpages
+	if the utility is going to be built.
+	(recnav.1): New rule.
+
 2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.1.

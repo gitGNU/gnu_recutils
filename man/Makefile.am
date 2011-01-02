@@ -28,6 +28,10 @@ if COMPILE_MDB2REC
 man_MANS += mdb2rec.1
 endif
 
+if COMPILE_RECNAV
+man_MANS += recnav.1
+endif
+
 EXTRA_DIST = $(man_MANS)
 MAINTAINERCLEANFILES = $(man_MANS)
 
@@ -65,5 +69,8 @@ recset.1: $(top_srcdir)/utils/recset.c $(common_mandeps)
 
 recfmt.1: $(top_srcdir)/utils/recfmt.c $(common_mandeps)
 	$(HELP2MAN) --name="apply a template to records" ../utils/recfmt -o $@
+
+recnav.1: $(top_srcdir)/utils/recnav.c $(common_mandeps)
+	$(HELP2MAN) --name="navigate the contents of a recfile" ../utils/recnav -o $@
 
 # End of Makefile.am

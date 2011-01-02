@@ -93,6 +93,7 @@ libtool
 /man/csv2rec.1
 /man/mdb2rec.1
 /man/recfix.1
+/man/recnav.1
 /po/stamp-po
 /po/POTFILES
 /po/remove-potcdate.sed
