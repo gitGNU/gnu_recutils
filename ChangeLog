@@ -1,3 +1,20 @@
+2011-01-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: support for comments in enum descriptions.
+	* doc/recutils.texi (Enumerated types): Comments in enum
+	descriptions documented.
+	Copyright updated.
+
+	* torture/utils/recfix.sh: New input file 'enum-valid'.
+	New input file 'enum-invalid-1'.
+	New input file 'enum-invalid-2'.
+	(recfix-enum-valid): New test.
+	(recfix-enum-invalid-1): New test.
+	(recfix-enum-invalid-2): New test.
+
+	* src/rec-types.c (rec_type_parse_enum): Skip comments in
+	enum descriptions.
+
 2010-12-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.1.
@@ -2465,7 +2482,7 @@
 
 	* Begin of the change log.
 
-Copyright 2009, 2010 Jose E. Marchesi
+Copyright 2009, 2010, 2011 Jose E. Marchesi
 
 Copying and distribution of this file, with or without modification, are
 permitted in any medium without royalty provided the copyright notice

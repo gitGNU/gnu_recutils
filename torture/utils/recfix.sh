@@ -2,7 +2,7 @@
 #
 # recfix.sh - System tests for recfix.
 #
-# Copyright (C) 2010 Jose E. Marchesi.
+# Copyright (C) 2010, 2011 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -162,6 +162,48 @@ test_declare_input_file multiple-rec \
 bar: 10
 '
 
+test_declare_input_file enum-valid \
+'%rec: foo
+%type: bar enum
++ KEY1 (This is key 1)
++ KEY2 (This is key 2)
++ KEY3 (This is key 3)
+
+bar: KEY1
+
+bar: KEY2
+
+bar: KEY3
+'
+
+test_declare_input_file enum-invalid-1 \
+'%rec: foo
+%type: bar enum
++ KEY1 (This is key 1)
++ KEY2 ((This is key 2)
++ KEY3 (This is key 3)
+
+bar: KEY1
+
+bar: KEY2
+
+bar: KEY3
+'
+
+test_declare_input_file enum-invalid-2 \
+'%rec: foo
+%type: bar enum
++ KEY1 (This is key 1)
++ KEY2 (This is key 2))
++ KEY3 (This is key 3)
+
+bar: KEY1
+
+bar: KEY2
+
+bar: KEY3
+'
+
 #
 # Declare tests.
 #
@@ -241,6 +283,22 @@ test_tool recfix-multiple-rec-in-descriptor xfail \
           recfix \
           '' \
           multiple-rec
+
+test_tool recfix-enum-valid ok \
+          recfix \
+          '' \
+          enum-valid \
+          ''
+
+test_tool recfix-enum-invalid-1 xfail \
+          recfix \
+          '' \
+          enum-invalid-1
+
+test_tool recfix-enum-invalid-2 xfail \
+          recfix \
+          '' \
+          enum-invalid-2
 
 #
 # Cleanup.

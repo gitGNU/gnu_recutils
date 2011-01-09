@@ -10,9 +10,9 @@
 This manual is for GNU recutils (version @value{VERSION},
 @value{UPDATED}).
 
-Copyright @copyright{} 2009, 2010 Jose E. Marchesi
+Copyright @copyright{} 2009, 2010, 2011 Jose E. Marchesi
 
-Copyright @copyright{} 1994-2010 Free Software Foundation, Inc.
+Copyright @copyright{} 1994-2011 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -704,14 +704,33 @@ That is useful in some cases such as:
 Fields of this type contain symbols taken from an enumeration.
 
 The type is described by writing the sequence of symbols conforming
-the enumeration:
+the enumeration.  Enumeration symbols are strings described by the
+following regexp:
+
+@example
+[a-zA-Z0-9][a-zA-Z0-9_-]*
+@end example
+
+The symbols are separated by blank characters (including newlines).
+
+For example:
 
 @example
 %type: Status enum NEW STARTED DONE CLOSED
 %type: Day enum Monday Tuesday Wednesday Thursday Friday Saturday Sunday
 @end example
 
-The symbols are separated by blank characters (including newlines).
+It is possible to insert comments when describing an enum type.  The
+comments are delimited by parenthesis.  The contents of the comments
+can be any character but parenthesis.  For example:
+
+@example
+%rec: Task
+%type: status enum
++ NEW         (The task was just created)
++ IN_PROGRESS (Task started)
++ CLOSED      (Task closed)
+@end example
 
 @dfn{Boolean} fields can be seen as special enumerations holding the
 binary values.

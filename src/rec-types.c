@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010,  2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1129,10 +1129,29 @@ rec_type_parse_enum (char *str, rec_type_t type)
   while (*p && (i < REC_ENUM_MAX_NAMES))
     {
       /* Skip blanks.  */
-      /* XXX and comments as well!.  */
       rec_skip_blanks (&p);
 
-      if (*p)
+
+      if (*p == '(')
+        {
+          /* Skip the comment.  */
+          p++;
+          while (*p && (*p != ')') && (*p != '('))
+            {
+              p++;
+            }
+          if (*p == ')')
+            {
+              p++;
+            }
+          else
+            {
+              /* Parse error: unterminated comment. */
+              p = NULL;
+              break;
+            }
+        }
+      else if (*p)
         {
           /* Parse an enum entry.  */
           if (!rec_parse_regexp (&p,
