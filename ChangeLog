@@ -1,5 +1,14 @@
 2011-01-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	TODO: put a comment at the beginning asking to execute ./tasktool
+	--help.
+	* tasktool (tt_db_template_header): Modified to include a note
+	about executing ./tasktool --help.
+
+	* TODO: Likewise.
+
+2011-01-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: support for comments in enum descriptions.
 	* doc/recutils.texi (Enumerated types): Comments in enum
 	descriptions documented.

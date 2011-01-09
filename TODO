@@ -2,8 +2,10 @@
 #
 # TODO file for GNU recutils.
 #
-# Please contact bug-recutils@gnu.org for any question or
-# request concerning this file.
+# Please execute ./tasktool --help
+#
+# Contact bug-recutils@gnu.org for any question or request concerning
+# this file.
 
 %rec: Task
 %key: Id

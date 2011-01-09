@@ -101,7 +101,9 @@ tt_db_template_header="\
 #
 # TODO file for ${tt_project_name}.
 #
-# Please contact ${tt_contact_email} for any question or
+# Please execute ./tasktool --help
+#
+# Contact ${tt_contact_email} for any question or
 # request concerning this file."
 
 tt_db_template_footer="\
