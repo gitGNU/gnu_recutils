@@ -433,7 +433,7 @@ Category: utils
 CreatedAt: Wed Dec  1 22:55:06 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: 
 + This option:
 + 
@@ -442,6 +442,7 @@ Description:
 + would set the value of the fields named 'foo' in records to 'bar'.  If
 + no field named 'foo' is found in a record, one is created with the
 + given value.
+ClosedAt: Fri Jan 14 20:41:44 CET 2011
 
 Id: 30
 Summary: Do not use open_memstream and fmemopen.

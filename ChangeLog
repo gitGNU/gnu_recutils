@@ -1,3 +1,8 @@
+2011-01-14 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 29 resolved to 'DONE'.
+
 2011-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	reset: support for the set-add operation.
