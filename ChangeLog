@@ -1,7 +1,14 @@
-2011-01-14 Jose E. Marchesi <jemarch@termi>
+2011-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	tasktool: use --set-add.
+	* tasktool (tt_process_cmd_resolve): Use the --set-add option of
+	tasktool to insert the ClosedAt field when resolving to DONE.
+
+2011-01-14 Jose E. Marchesi <jemarch@gnu.org>
 
 	Tasktool operations.
 	* TODO: Task 29 resolved to 'DONE'.
+	Task 29 resolved to 'DONE'.
 
 2011-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
