@@ -1,3 +1,24 @@
+2011-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	reset: support for the set-add operation.
+	* doc/recutils.texi (recset Invocation): Documentation for the -S,
+	--set-add command line option.
+
+	* torture/utils/recset.sh (recset-set-add-1): New test.
+	(recset-set-add-2): New test.
+	(recset-set-add-3): New test.
+
+	* utils/recset.c (RECSET_ACT_SET_ADD): New action.
+	(COMMON_ARGS): SET_ADD_ACTION_ARG added.
+	(recutl_print_help): Document -S, --set-add.
+	(recset_parse_args): Manage the set-add option.
+	(recset_process_actions): Likewise.
+	(recset_process_set): New parameter 'add_p' that tells whether to
+	add missing fields with the given value.
+	(CHECK_ACTION_PREREQ): New macro.
+	(recset_parse_args): Use CHECK_ACTION_PREREQ to avoid code
+	repetition.
+
 2011-01-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	TODO: put a comment at the beginning asking to execute ./tasktool

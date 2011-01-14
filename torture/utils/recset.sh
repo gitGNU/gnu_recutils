@@ -349,6 +349,35 @@ test_tool recset-rename-invalid-fex xfail \
           '--force -t Type1 -f field1,field2 -r foo' \
           renames-multiple
 
+test_tool recset-set-add-1 ok \
+          recset \
+          '-f field2 -S foo' \
+          one-record \
+'field1: value1
+field2: foo
+field3: value3
+'
+
+test_tool recset-set-add-2 ok \
+          recset \
+          '-f field4 -S foo' \
+          one-record \
+'field1: value1
+field2: value2
+field3: value3
+field4: foo
+'
+
+test_tool recset-set-add-3 ok \
+          recset \
+          '-f field2,field4 -S foo' \
+          one-record \
+'field1: value1
+field2: foo
+field3: value3
+field4: foo
+'
+
 #
 # Cleanup.
 #

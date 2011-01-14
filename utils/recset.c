@@ -42,7 +42,7 @@
 static void recset_parse_args (int argc, char **argv);
 static void recset_process_actions (rec_db_t db);
 static void recset_process_add (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
-static void recset_process_set (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
+static void recset_process_set (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool add_p);
 static void recset_process_ren (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
 static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
 
@@ -56,6 +56,7 @@ static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t 
 #define RECSET_ACT_DELETE  3
 #define RECSET_ACT_COMMENT 4
 #define RECSET_ACT_RENAME  5
+#define RECSET_ACT_SET_ADD 6
 
 char      *recutl_sex_str     = NULL;
 rec_sex_t  recutl_sex         = NULL;
@@ -87,6 +88,7 @@ enum
     DELETE_ACTION_ARG,
     COMMENT_ACTION_ARG,
     SET_ACTION_ARG,
+    SET_ADD_ACTION_ARG,
     FORCE_ARG,
     VERBOSE_ARG,
     NO_EXTERNAL_ARG
@@ -102,6 +104,7 @@ static const struct option GNU_longOptions[] =
     {"delete", no_argument, NULL, DELETE_ACTION_ARG},
     {"comment", no_argument, NULL, COMMENT_ACTION_ARG},
     {"set", required_argument, NULL, SET_ACTION_ARG},
+    {"set-add", required_argument, NULL, SET_ADD_ACTION_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
     {"verbose", no_argument, NULL, VERBOSE_ARG},
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
@@ -154,6 +157,8 @@ Fields selection options:\n\
 Actions:\n\
   -s, --set=VALUE                     change the value of the selected fields.\n\
   -a, --add=VALUE                     add the selected fields with the given value.\n\
+  -S, --set-add=VALUE                 change the value of the selected fields.  If they don't\n\
+                                        exist then add a new field with that value.\n\
   -r, --rename=NAME                   rename the selected fields to a given name.  If an entire\n\
                                         record set is selected then the field is renamed in the\n\
                                         record descriptor as well.\n\
@@ -176,6 +181,23 @@ Examples:\n\
   recutl_print_help_footer ();
 }
 
+/* This macro is used in recset_parse_args to avoid code repetition in
+   the actions (set, add, delete, ...) switch cases..  */
+#define CHECK_ACTION_PREREQ                     \
+  do                                                            \
+    {                                                           \
+      if (!recutl_fex)                                          \
+        {                                                       \
+          recutl_fatal (_("please specify some field with -f.\n")); \
+        }                                                       \
+                                                                \
+      if (recset_action != RECSET_ACT_NONE)                     \
+        {                                                       \
+          recutl_fatal (_("please specify just one action.\n")); \
+        }                                                       \
+    }                                                           \
+  while (0)
+
 static void
 recset_parse_args (int argc,
                    char **argv)
@@ -186,7 +208,7 @@ recset_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "dct:s:a:f:r:",
+                             "dct:s:S:a:f:r:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -230,16 +252,7 @@ recset_parse_args (int argc,
         case SET_ACTION_ARG:
         case 's':
           {
-            if (!recutl_fex)
-              {
-                recutl_fatal (_("please specify some field with -f.\n"));
-              }
-
-            if (recset_action != RECSET_ACT_NONE)
-              {
-                recutl_fatal (_("please specify just one action.\n"));
-              }
-            
+            CHECK_ACTION_PREREQ;
             recset_action = RECSET_ACT_SET;
             recset_value = xstrdup (optarg);
             break;
@@ -247,16 +260,7 @@ recset_parse_args (int argc,
         case RENAME_ACTION_ARG:
         case 'r':
           {
-            if (!recutl_fex)
-              {
-                recutl_fatal (_("please specify some field with -f.\n"));
-              }
-            
-            if (recset_action != RECSET_ACT_NONE)
-              {
-                recutl_fatal (_("please specify just one action.\n"));
-              }
-
+            CHECK_ACTION_PREREQ;
             if (rec_fex_size (recutl_fex) != 1)
               {
                 recutl_fatal (_("the rename operation requires just one field with an optional subscript.\n"));
@@ -277,49 +281,30 @@ recset_parse_args (int argc,
         case ADD_ACTION_ARG:
         case 'a':
           {
-            if (!recutl_fex)
-              {
-                recutl_fatal (_("please specify some field with -f.\n"));
-              }
-
-            if (recset_action != RECSET_ACT_NONE)
-              {
-                recutl_fatal (_("please specify just one action.\n"));
-              }
-
+            CHECK_ACTION_PREREQ;
             recset_action = RECSET_ACT_ADD;
+            recset_value = xstrdup (optarg);
+            break;
+          }
+        case SET_ADD_ACTION_ARG:
+        case 'S':
+          {
+            CHECK_ACTION_PREREQ;
+            recset_action = RECSET_ACT_SET_ADD;
             recset_value = xstrdup (optarg);
             break;
           }
         case DELETE_ACTION_ARG:
         case 'd':
           {
-            if (!recutl_fex)
-              {
-                recutl_fatal (_("please specify some field with -f.\n"));
-              }
-
-            if (recset_action != RECSET_ACT_NONE)
-              {
-                recutl_fatal (_("please specify just one action.\n"));
-              }
-
+            CHECK_ACTION_PREREQ;
             recset_action = RECSET_ACT_DELETE;
             break;
           }
         case COMMENT_ACTION_ARG:
         case 'c':
           {
-            if (!recutl_fex)
-              {
-                recutl_fatal (_("please specify some field with -f.\n"));
-              }
-
-            if (recset_action != RECSET_ACT_NONE)
-              {
-                recutl_fatal (_("please specify just one action.\n"));
-              }
-
+            CHECK_ACTION_PREREQ;
             recset_action = RECSET_ACT_COMMENT;
             break;
           }
@@ -421,12 +406,17 @@ recset_process_actions (rec_db_t db)
                   }
                 case RECSET_ACT_SET:
                   {
-                    recset_process_set (rset, record, recutl_fex);
+                    recset_process_set (rset, record, recutl_fex, false);
                     break;
                   }
                 case RECSET_ACT_ADD:
                   {
                     recset_process_add (rset, record, recutl_fex);
+                    break;
+                  }
+                case RECSET_ACT_SET_ADD:
+                  {
+                    recset_process_set (rset, record, recutl_fex, true);
                     break;
                   }
                 case RECSET_ACT_DELETE:
@@ -497,7 +487,8 @@ recset_process_add (rec_rset_t rset,
 static void
 recset_process_set (rec_rset_t rset,
                     rec_record_t record,
-                    rec_fex_t fex)
+                    rec_fex_t fex,
+                    bool add_p)
 {
   size_t i, j, min, max;
   size_t num_fields;
@@ -539,6 +530,13 @@ recset_process_set (rec_rset_t rset,
                   rec_field_set_value (field, recset_value);
                 }
             }
+        }
+
+      if (add_p && (num_fields == 0))
+        {
+          /* Add a field with this name and value.  */
+          field = rec_field_new (field_name, recset_value);
+          rec_record_append_field (record, field);
         }
     }
 }

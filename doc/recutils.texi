@@ -1497,8 +1497,7 @@ $ recdel -c -t Issue -e "Status = 'CLOSED'" TODO.rec
 @node recset
 @chapter recset
 
-@command{recset} manipulates the fields of records in a rec file, or
-rec data read from the standard input.
+@command{recset} manipulates the fields of records in a rec file.
 
 @menu
 * recset Invocation::     Command line options.
@@ -1559,6 +1558,10 @@ Set the value of the selected fields to @var{VALUE}.
 @item -a
 @itemx @w{@kbd{--add}=@var{VALUE}}
 Add a new field to the selected record with value @var{VALUE}.
+@item -S
+@itemx @w{@kbd{--set-add}=@var{VALUE}}
+Set the value of the selected fiels to @var{VALUE}.  If some of the
+fields don't exist in a record, append it with the specified value.
 @item -r
 @itemx @w{@kbd{--rename}=@var{VALUE}}
 Rename a field.  @var{VALUE} shall be a valid field name.  The field
@@ -1601,6 +1604,13 @@ Rename the secondary email fields from @code{Email} to
 
 @example
 $ recset -f Email[1] -r AltEmail friends.rec
+@end example
+
+Add a ClosedAt field to the selected record with the current date.  In
+case it already exists, set its value instead:
+
+@example
+$ recset -n 102 -f ClosedAt -S `date` tasks.rec
 @end example
 
 @node recfix
