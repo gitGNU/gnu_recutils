@@ -81,7 +81,7 @@ Usage: recfmt [OPTION]... [TEMPLATE]\n"));
   /* TRANSLATORS: --help output, recfmt arguments.
      no-wrap */
   fputs(_("\
-Apply a template to records read in the standard input.\n"), stdout);
+Apply a template to records read from standard input.\n"), stdout);
 
   puts ("");
   /* TRANSLATORS: --help output, recfmt arguments.

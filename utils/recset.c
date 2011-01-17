@@ -146,7 +146,7 @@ Alter or delete fields in records.\n"), stdout);
   /* TRANSLATORS: --help output, recset field selection options.
      no-wrap */
   fputs (_("\
-Fields selection options:\n\
+Field selection options:\n\
   -f, --fields=FIELDS                 comma-separated list of field names with optional\n\
                                         subscripts.\n"), stdout);
 

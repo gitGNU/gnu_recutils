@@ -92,8 +92,8 @@ Remove (or comment out) records from a rec file.\n"),
   /* TRANSLATORS: --help output, recdel arguments.
      no-wrap */
   fputs (_("\
-  -c, --comment                       comment the matching records instead of\n\
-                                         delete them.\n\
+  -c, --comment                       comment out the matching records instead of\n\
+                                        deleting them.\n\
       --force                         delete even in potentially dangerous situations.\n"),
          stdout);
 
@@ -107,8 +107,7 @@ Remove (or comment out) records from a rec file.\n"),
      no-wrap */
   fputs (_("\
 If no FILE is specified then the command acts like a filter, getting\n\
-the data from the standard input and writing the result in the\n\
-standard output.\n"),
+the data from standard input and writing the result to standard output.\n"),
          stdout);
 
   puts("");

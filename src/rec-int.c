@@ -401,7 +401,7 @@ rec_int_check_record_unique (rec_rset_t rset,
                   > 1)
                 {
                   asprintf (&tmp,
-                             _("%s:%s: error: field '%s' shall be unique in this record\n"),
+                             _("%s:%s: error: field '%s' should be unique in this record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
                              unique_field_str);

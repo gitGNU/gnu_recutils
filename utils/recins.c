@@ -124,8 +124,7 @@ Insert new records in a rec database.\n"), stdout);
      no-wrap */
   fputs (_("\
 If no FILE is specified then the command acts like a filter, getting\n\
-the data from the standard input and writing the result in the\n\
-standard output.\n"), stdout);
+the data from standard input and writing the result to standard output.\n"), stdout);
 
   puts ("");
   /* TRANSLATORS: --help output, recins examples.
