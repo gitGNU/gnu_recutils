@@ -113,10 +113,10 @@ Convert csv data into rec data.\n"), stdout);
   /* TRANSLATORS: --help output, csv2rec options.
      no-wrap */
   fputs (_("\
-  -t, --type                          Type name for the converted records.  If this\n\
-                                         parameter is ommited then no type is used.\n\
-  -s, --strict                        Be strict parsing the csv file.\n\
-  -e, --omit-empty                    Omit empty fields.\n"), stdout);
+  -t, --type                          type name for the converted records; if this\n\
+                                        parameter is ommited then no type is used.\n\
+  -s, --strict                        be strict parsing the csv file.\n\
+  -e, --omit-empty                    omit empty fields.\n"), stdout);
 
   recutl_print_help_common ();
 

@@ -105,13 +105,13 @@ Insert new records in a rec database.\n"), stdout);
   /* TRANSLATORS: --help output, recins arguments.
      no-wrap */
   fputs (_("\
-  -f, --field=STR                     field name.  Should be followed by a -v.\n\
-  -v, --value=STR                     field value.  Should be preceded by a -f.\n\
+  -f, --field=STR                     field name; should be followed by a -v.\n\
+  -v, --value=STR                     field value; should be preceded by an -f.\n\
   -r, --record=STR                    record that will be inserted in the file.\n\
       --force                         insert the record even if it is violating\n\
                                         record restrictions.\n\
       --no-external                   don't use external descriptors.\n\
-      --verbose                       get a detailed report if the integrity check\n\
+      --verbose                       give a detailed report if the integrity check\n\
                                         fails.\n"), stdout);
 
   recutl_print_help_common ();

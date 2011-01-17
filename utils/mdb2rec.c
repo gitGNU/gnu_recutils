@@ -114,7 +114,7 @@ Convert an mdb file into a rec file.\n"), stdout);
   fputs (_("\
   -s, --system-tables                 include system tables.\n\
   -e, --keep-empty-fields             don't prune empty fields in the rec\n\
-                                        output\n\
+                                        output.\n\
   -l, --list-tables                   dump a list of the table names contained\n\
                                         in the mdb file.\n"),
          stdout);
