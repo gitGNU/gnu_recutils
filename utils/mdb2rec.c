@@ -476,7 +476,7 @@ process_table (MdbCatalogEntry *entry)
               field = rec_field_new (field_name, field_value);
               if (!field)
                 {
-                  recutl_fatal (_("invalid field name %s\n"), col->name);
+                  recutl_fatal (_("invalid field name %s.\n"), col->name);
                 }
 
               rec_record_append_field (record, field);

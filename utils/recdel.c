@@ -207,7 +207,7 @@ recdel_delete_records (rec_db_t db)
           
           if (!parse_status)
             {
-              recutl_fatal (_("evaluating selection expression.\n"));
+              recutl_fatal (_("evaluating the selection expression.\n"));
             }
           
           numrec++;

@@ -448,15 +448,15 @@ recset_process_actions (rec_db_t db)
               rec_buf_close (errors_buf);
               if (!recset_verbose)
                 {
-                  recutl_error (_("operation aborted due to integrity failures\n"));
-                  recutl_error (_("use --verbose to get a detailed report\n"));
+                  recutl_error (_("operation aborted due to integrity failures.\n"));
+                  recutl_error (_("use --verbose to get a detailed report.\n"));
                 }
               else
                 {
                   recutl_error ("%s", errors_str);
                 }
 
-              recutl_fatal (_("use --force to skip the integrity check\n"));
+              recutl_fatal (_("use --force to skip the integrity check.\n"));
             }
         }
     }

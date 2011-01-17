@@ -271,7 +271,7 @@ void recins_parse_args (int argc,
 
             if (!(field_name = rec_parse_field_name_str (field_name_str)))
               {
-                recutl_fatal (_("invalid field name %s\n"), optarg);
+                recutl_fatal (_("invalid field name %s.\n"), optarg);
               }
             
             field = rec_field_new (field_name,
@@ -429,7 +429,7 @@ recins_add_new_record (rec_db_t db)
               recutl_error ("%s", errors_str);
             }
 
-          recutl_fatal (_("use --force to skip the integrity chech\n"));
+          recutl_fatal (_("use --force to skip the integrity check.\n"));
         }
     }
 }
