@@ -204,6 +204,28 @@ bar: KEY2
 bar: KEY3
 '
 
+test_declare_input_file prohibited-fields-ok \
+'%rec: foo
+%prohibit: banned
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file prohibited-fields \
+'%rec: foo
+%prohibit: banned1 banned2
+
+foo: bar
+banned1: foo
+
+bar: baz
+banned2: bar
+
+bar: foo
+'
+
 #
 # Declare tests.
 #
@@ -299,6 +321,17 @@ test_tool recfix-enum-invalid-2 xfail \
           recfix \
           '' \
           enum-invalid-2
+
+test_tool recfix-prohibited-fields-ok ok \
+          recfix \
+          '' \
+          prohibited-fields-ok \
+''
+
+test_tool recfix-prohibited-fields-fail xfail \
+          recfix \
+          '' \
+          prohibited-fields
 
 #
 # Cleanup.

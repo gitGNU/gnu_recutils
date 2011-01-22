@@ -1,3 +1,11 @@
+2011-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: tests checking the %prohibit restriction.
+	* torture/utils/recfix.sh: New input files prohibited-fields and
+	prohibited-fields-fail.
+	(recfix-prohibited-fields-ok): New test.
+	(recfix-prohibited-fields-fail): New test.
+
 2011-01-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Use Task instead of Issue in examples involving TODO.
