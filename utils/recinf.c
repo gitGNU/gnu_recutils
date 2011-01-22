@@ -119,7 +119,7 @@ Examples:\n\
 \n\
         recinf mydata.rec\n\
         recinf -d mydata.rec moredata.rec\n\
-        recinf -t Issue TODO\n"),
+        recinf -t Task TODO\n"),
          stdout);
 
   puts ("");

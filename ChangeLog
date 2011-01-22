@@ -1,3 +1,11 @@
+2011-01-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Use Task instead of Issue in examples involving TODO.
+	* doc/recutils.texi (recsel Examples): Issue replaced by Task.
+	(recins Examples): Likewise.
+	(recdel Examples): Likewise.
+	* utils/recinf.c (recutl_print_help): Likewise.
+
 2011-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	tasktool: use --set-add.

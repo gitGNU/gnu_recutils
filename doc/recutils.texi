@@ -1336,7 +1336,7 @@ Print the data using sexps instead of rec format.
 Print the closed bugs:
 
 @example
-$ recsel -t Issue -e "Status = 'CLOSED'" TODO.rec
+$ recsel -t Task -e "Status = 'CLOSED'" TODO.rec
 @end example
 
 Print the name of all the registrants less than twenty:
@@ -1422,7 +1422,7 @@ Matching records will get replaced.
 Create a new issue in the bugs database:
 
 @example
-$ recins -t Issue -f Id     -v 10           \
+$ recins -t Task  -f Id     -v 10           \
                   -f Title  -v "New issue." \
                   -f Status -v NEW          \
          TODO.rec
@@ -1491,7 +1491,7 @@ to delete all the records of some type, for example.
 Comment out closed issues in the bugs database:
 
 @example
-$ recdel -c -t Issue -e "Status = 'CLOSED'" TODO.rec
+$ recdel -c -t Task -e "Status = 'CLOSED'" TODO.rec
 @end example
 
 @node recset
