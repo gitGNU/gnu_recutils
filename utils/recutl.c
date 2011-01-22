@@ -143,7 +143,7 @@ recutl_fatal (const char *fmt, ...)
 
   va_start (ap, fmt);
   fputs (program_name, stderr);
-  fputs (": error: ", stderr);
+  fputs (_(": error: "), stderr);
   vfprintf (stderr, fmt, ap);
   va_end (ap);
 
@@ -157,7 +157,7 @@ recutl_error (const char *fmt, ...)
 
   va_start (ap, fmt);
   fputs (program_name, stderr);
-  fputs (": error: ", stderr);
+  fputs (_(": error: "), stderr);
   vfprintf (stderr, fmt, ap);
   va_end (ap);
 }
@@ -169,7 +169,7 @@ recutl_warning (const char *fmt, ...)
 
   va_start (ap, fmt);
   fputs (program_name, stderr);
-  fputs (": warning: ", stderr);
+  fputs (_(": warning: "), stderr);
   vfprintf (stderr, fmt, ap);
   va_end (ap);
 }
