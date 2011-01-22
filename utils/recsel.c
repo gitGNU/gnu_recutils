@@ -126,11 +126,11 @@ Select and print rec data.\n"), stdout);
 Output options:\n\
   -p, --print=FIELDS                  comma-separated list of fields to print for each\n\
                                         matching record.\n\
-  -P, --print-values=FIELDS           same than -p, but print the values of the selected\n\
+  -P, --print-values=FIELDS           as -p, but print only the values of the selected\n\
                                         fields.\n\
-  -R, --print-row=FIELDS              same than -P, but the values are printed separated by\n\
-                                        a blank character instead of newlines.\n\
-  -c, --count                         provide a count of the matching records instead of\n\
+  -R, --print-row=FIELDS              as -P, but separate the values with spaces instead\n\
+                                        of newlines.\n\
+  -c, --count                         print a count of the matching records instead of\n\
                                         the records themselves.\n"), stdout);
 
   puts ("");
