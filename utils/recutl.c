@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-22 23:04:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-23 21:01:22 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -326,6 +326,8 @@ recutl_write_db_to_file (rec_db_t db,
   char *tmp_file_name;
   rec_writer_t writer;
   int des;
+  struct stat st1;
+  int stat_result;
 
   if (!file_name)
     {
@@ -333,6 +335,9 @@ recutl_write_db_to_file (rec_db_t db,
     }
   else
     {
+      /* Record the original file attributes. */
+      stat_result = stat (file_name, &st1);
+
       /* Create a temporary file with the results. */
       tmp_file_name = xmalloc (100);
       strcpy (tmp_file_name, "recXXXXXX");
@@ -361,6 +366,12 @@ recutl_write_db_to_file (rec_db_t db,
         {
           remove (tmp_file_name);
           recutl_fatal (_("renaming file %s to %s\n"), tmp_file_name, file_name);
+        }
+
+      /* Restore the attributes of the original file. */
+      if (stat_result != -1)
+        {
+          chmod (file_name, st1.st_mode);
         }
     }
 }

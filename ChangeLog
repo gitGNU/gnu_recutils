@@ -1,5 +1,17 @@
 2011-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recutl: make recset and recins to keep the permissions of the
+	operated rec file.
+	* utils/recutl.c (recutl_write_db_to_file): New variables st1 and
+	stat_result.
+	(recutl_write_db_to_file): Record the file attributes of the
+	original rec file and use its mode in the replace file.
+	Copyright updated.
+
+	Problem reported, and solution outlined by Jean-François Ollier.
+
+2011-01-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: tests checking the %prohibit restriction.
 	* torture/utils/recfix.sh: New input files prohibited-fields and
 	prohibited-fields-fail.
