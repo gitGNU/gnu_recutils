@@ -63,7 +63,8 @@ The Rec Format
                           descriptors.
 * Date input formats::  Textual date representations that can be used
                           in Rec files.
-* External Descriptors::  Fetching descriptors from external sources.
+* External Descriptors:: Fetching descriptors from external sources.
+* Regular Expressions:: Flavor of regexps supported in recfiles.
 
 Utilities
 * Common Options::      Common command line arguments for the record
@@ -698,6 +699,9 @@ That is useful in some cases such as:
 %type: Filename regexp |(/[^/]/?)+|
 @end example
 
+The regexp flavor supported in recfiles are the POSIX EREs plus
+several GNU extensions.  @xref{Regular Expressions}.
+
 @node Enumerated types
 @section Enumerated types
 
@@ -833,6 +837,81 @@ the local record descriptor, that in this case contains just the
 
 If you are using the GNU recutils to process your recfiles, any URL
 schema supported by @code{libcurl} will work.
+
+@node Regular Expressions
+@chapter Regular Expressions
+
+The character @samp{.} matches any single character except the null character.
+
+@table @samp
+
+@item +
+indicates that the regular expression should match one or more occurrences of the previous atom or regexp.
+@item ?
+indicates that the regular expression should match zero or one occurrence of the previous atom or regexp.
+@item \+
+matches a @samp{+}
+@item \?
+matches a @samp{?}.
+@end table
+
+
+Bracket expressions are used to match ranges of characters.  Bracket expressions where the range is backward, for example @samp{[z-a]}, are invalid.  Within square brackets, @samp{\} is taken literally.  Character classes are supported; for example @samp{[[:digit:]]} will match a single decimal digit.
+
+GNU extensions are supported:
+@enumerate
+
+@item @samp{\w} matches a character within a word
+
+@item @samp{\W} matches a character which is not within a word
+
+@item @samp{\<} matches the beginning of a word
+
+@item @samp{\>} matches the end of a word
+
+@item @samp{\b} matches a word boundary
+
+@item @samp{\B} matches characters which are not a word boundary
+
+@item @samp{\`} matches the beginning of the whole input
+
+@item @samp{\'} matches the end of the whole input
+
+@end enumerate
+
+Grouping is performed with parentheses @samp{()}.  An unmatched
+@samp{)} matches just itself.  A backslash followed by a digit acts as
+a back-reference and matches the same thing as the previous grouped
+expression indicated by that number.  For example @samp{\2} matches
+the second group expression.  The order of group expressions is
+determined by the position of their opening parenthesis @samp{(}.
+
+The alternation operator is @samp{|}.
+
+The characters @samp{^} and @samp{$} always represent the beginning
+and end of a string respectively, except within square brackets.
+Within brackets, @samp{^} can be used to invert the membership of the
+character class being specified.
+
+@samp{*}, @samp{+} and @samp{?} are special at any point in a regular
+expression except the following places, where they are not allowed:
+@enumerate
+
+@item At the beginning of a regular expression
+
+@item After an open-group, signified by
+@samp{(}
+@item After the alternation operator @samp{|}
+
+@end enumerate
+
+
+Intervals are specified by @samp{@{} and @samp{@}}.  Invalid intervals
+such as @samp{a@{1z} are not accepted.
+
+The longest possible match is returned; this applies to the regular
+expression as a whole and (subject to this constraint) to
+subexpressions within groups.
 
 @node Common Options
 @chapter Common Options
@@ -975,6 +1054,9 @@ Name: Mr. Foo
 Email: mr.foo@@foo.com
 Email: foo@@foo.org
 @end example
+
+The regexp flavor supported in selection expressions are the POSIX
+EREs plus several GNU extensions.  @xref{Regular Expressions}.
 
 @subsubsection Parenthesized Expressions
 

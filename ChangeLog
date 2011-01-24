@@ -1,5 +1,12 @@
 2011-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: document the supported regexp flavor.
+	* doc/recutils.texi (Regular Expressions): New chapter.
+	(String types): Clarify the supported regexp flavor.
+	(Field Values): Likewise.
+
+2011-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	gnulib: update and import regexprops-generic.
 	* doc/regexprops-generic.texi: New file.
 
