@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2010 Free Software Foundation, Inc.
+# Copyright (C) 2002-2011 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl --no-vc-files announce-gen array-list autobuild closeout execute gendocs getopt-gnu gettext gettext-h gnupload list maintainer-makefile mkstemp parse-datetime progname regex strsep tempname vasnprintf-posix vasprintf
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=gl --no-vc-files announce-gen array-list autobuild closeout execute gendocs getopt-gnu gettext gettext-h gnupload list maintainer-makefile mkstemp parse-datetime progname regex regexprops-generic strsep tempname vasnprintf-posix vasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -36,6 +36,7 @@ gl_MODULES([
   parse-datetime
   progname
   regex
+  regexprops-generic
   strsep
   tempname
   vasnprintf-posix

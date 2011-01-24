@@ -1,6 +1,5 @@
-/* Formatted output to strings.
-   Copyright (C) 1999, 2002, 2006-2007, 2009-2011 Free Software Foundation,
-   Inc.
+/* Test wide character for being blank.
+   Copyright (C) 2008-2011 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,22 +18,10 @@
 #include <config.h>
 
 /* Specification.  */
-#ifdef IN_LIBASPRINTF
-# include "vasprintf.h"
-#else
-# include <stdio.h>
-#endif
-
-#include <stdarg.h>
+#include <wctype.h>
 
 int
-asprintf (char **resultp, const char *format, ...)
+iswblank (wint_t wc)
 {
-  va_list args;
-  int result;
-
-  va_start (args, format);
-  result = vasprintf (resultp, format, args);
-  va_end (args);
-  return result;
+  return wc == ' ' || wc == '\t';
 }

@@ -1,3 +1,10 @@
+2011-01-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	gnulib: update and import regexprops-generic.
+	* doc/regexprops-generic.texi: New file.
+
+	* lib/iswblank.c: New file.
+
 2011-01-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recutl: make recset and recins to keep the permissions of the

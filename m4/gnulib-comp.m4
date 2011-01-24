@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2010 Free Software Foundation, Inc.
+# Copyright (C) 2002-2011 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -111,6 +111,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module quotearg-simple:
   # Code from module rawmemchr:
   # Code from module regex:
+  # Code from module regexprops-generic:
   # Code from module sched:
   # Code from module setenv:
   # Code from module sigaction:
@@ -398,6 +399,7 @@ AC_DEFUN([gl_INIT],
   gl_STRING_MODULE_INDICATOR([rawmemchr])
   # Code from module regex:
   gl_REGEX
+  # Code from module regexprops-generic:
   # Code from module sched:
   gl_SCHED_H
   # Code from module setenv:
@@ -646,6 +648,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/warn-on-use.h
   doc/gendocs_template
   doc/parse-datetime.texi
+  doc/regexprops-generic.texi
   lib/alloca.in.h
   lib/asnprintf.c
   lib/asprintf.c
@@ -698,6 +701,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isnanf.c
   lib/isnanl-nolibm.h
   lib/isnanl.c
+  lib/iswblank.c
   lib/langinfo.in.h
   lib/localcharset.c
   lib/localcharset.h
