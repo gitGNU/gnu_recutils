@@ -1,3 +1,15 @@
+2011-01-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: Fix the description of %unique, %prohibit, %mandatory,
+	%url and %type.
+	* doc/recutils.texi (Record Descriptors): Fix the documentation of
+	%prohibit, %mandatory and %unique so it says that the field names
+	are separated by blanks.
+	(Record Descriptors): Note that %url can be followed by an URL or
+	a file path.
+	(Record Descriptors): Clarify that the list of field names in
+	%type shall be separated by commas.
+
 2011-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: document the supported regexp flavor.

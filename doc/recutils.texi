@@ -380,30 +380,30 @@ and @code{REC2} are described by @code{RECORD-DESCRIPTOR-1} while
 The record descriptor may contain the following predefined fields:
 
 @table @code
-@item %rec @var{type} [@var{url}]
+@item %rec: @var{type} [@var{url_or_file}]
 The value of this field is interpreted as the name of the kind of
-record described by the record descriptor followed by an optional
-URL.  The string used as the record type has the same restrictions
-that the field names. @xref{Fields and Records}.
+record described by the record descriptor followed by an optional URL
+or a file path.  The string used as the record type has the same
+restrictions that the field names. @xref{Fields and Records}.
 
 This field shall be unique in its containing record descriptor.
 
 It is highly recommended (but not enforced) to place this field in the
 first position of the record descriptor.
-@item %mandatory @var{field1},@var{field2},...,@var{fieldN}
+@item %mandatory: @var{field1} @var{field2} ... @var{fieldN}
 The value of this field shall be a list of field names separated by
-commas:
+one or more blank characters:
 
 @example
-%mandatory: IdentifyNumber,InStock
+%mandatory: IdentifyNumber InStock
 @end example
 
 Those fields will be considered mandatory. i.e. a field with this name
 shall be present in any record of this kind.  Records violating this
 restriction are considered invalid.
-@item %prohibit @var{field1},@var{field2},...,@var{fieldN}
+@item %prohibit: @var{field1} @var{field2} ... @var{fieldN}
 The value of this field shall be a list of field names separated by
-commas:
+one or more blank characters:
 
 @example
 %prohibit: Id
@@ -411,9 +411,9 @@ commas:
 
 Those fields cannot appear in any record of this kind.  Records
 violating this restriction are considered invalid.
-@item %unique @var{field1},@var{field2},...,@var{fieldN}
+@item %unique: @var{field1} @var{field2} ... @var{fieldN}
 The value of this field shall be a list of field names separated by
-commas:
+one or more blank characters:
 
 @example
 %unique IdNumber
@@ -421,7 +421,7 @@ commas:
 
 Any record containing more than one field with those names is
 considered invalid.
-@item %key @var{field}
+@item %key: @var{field}
 The value of this field is interpreted as the name of a field, that
 will be considered as the key of the records.
 
@@ -433,8 +433,10 @@ This field contains documentation about the record.
 
 It is like a comment, but this field can be managed in a programmatic
 way easier.
-@item %type @var{field_name_list} @var{type} @var{type_description}
-This field can be used to define types for fields.  @ref{Field Types}.
+@item %type: @var{field_name_list} @var{type} @var{type_description}
+This field can be used to define types for fields.
+@var{field_name_list} shall be a list of field names separated by
+commas.  @ref{Field Types}.
 @end table
 
 @node Compound Field Names
