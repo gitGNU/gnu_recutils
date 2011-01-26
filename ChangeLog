@@ -10,6 +10,8 @@
 	(Record Descriptors): Clarify that the list of field names in
 	%type shall be separated by commas.
 
+	Problems reported by Jean-François Ollier.
+
 2011-01-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: document the supported regexp flavor.
