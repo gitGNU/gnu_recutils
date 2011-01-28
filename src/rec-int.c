@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-19 17:46:14 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-28 20:26:51 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -102,11 +102,20 @@ rec_int_check_rset (rec_db_t db,
   int res;
   rec_rset_elem_t rset_elem;
   rec_record_t record;
+  rec_record_t descriptor;
 
   res = 0;
 
   if (remote_descriptor_p)
     {
+      /* Make a backup of the record descriptor to restore it
+         later.  */
+      descriptor = rec_rset_descriptor (rset);
+      if (descriptor)
+        {
+          descriptor = rec_record_dup (descriptor);
+        }
+
       /* Fetch the remote descriptor, if any, and merge it with the
          local descriptor.  */
       rec_int_merge_remote (rset);
@@ -133,6 +142,12 @@ rec_int_check_rset (rec_db_t db,
                                    rset,
                                    record, record,
                                    errors);
+    }
+
+  if (remote_descriptor_p)
+    {
+      /* Restore the original descriptor in the record set.  */
+      rec_rset_set_descriptor (rset, descriptor);
     }
 
   return res;

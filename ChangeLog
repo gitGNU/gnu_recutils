@@ -1,3 +1,14 @@
+2011-01-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: avoid descriptor expansion when using remote descriptors.
+	* src/rec-int.c (rec_int_check_rset): Save a backup of the
+	rset descriptor before to merge any remote descriptor, and restore
+	it before returning.
+
+	* torture/utils/recins.sh: New input files external-descriptor and
+	external-descriptor-types.
+	(recins-external-descriptor): New test.
+
 2011-01-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: Fix the description of %unique, %prohibit, %mandatory,
