@@ -1,5 +1,31 @@
 2011-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: recdel now performs an integrity check of the resulting
+	database.
+	* doc/recutils.texi (recdel Invocation): Documentation for
+	'--force' and '--verbose'.
+	(recins Invocation): Likewise.
+	(recset Invocation): Likewise.
+
+	* torture/utils/recdel.sh: New input file 'integrity-fail'.
+	New input file 'external-types'.
+	New input file 'external'.
+	(recdel-integrity-fail): New test.
+	(recdel-force-restrictions): New test.
+	(recdel-external-fail): New test.
+	(recdel-no-external): New test.
+
+	* utils/recins.c (recins_add_new_record): Use
+	recutl_check_integrity.
+
+	* utils/recdel.c: New parameter --verbose.
+	New parameter --no-external.
+
+	* utils/recutl.h: New function 'recutl_check_integrity'.
+	* uitls/recutl.c: Likewise.
+
+2011-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: fix the output of integrity error messages.
 	* utils/recins.c (recins_add_new_record): Dont use recutl_error to
 	report the integrity errors.

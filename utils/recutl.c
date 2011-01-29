@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-23 21:01:22 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-29 21:17:35 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -400,6 +400,33 @@ recutl_read_file (char *file_name)
     }
 
   return result;
+}
+
+void
+recutl_check_integrity (rec_db_t db,
+                        bool verbose_p,
+                        bool external_p)
+{
+  rec_buf_t errors_buf;
+  char *errors_str;
+  size_t errors_str_size;
+
+  errors_buf = rec_buf_new (&errors_str, &errors_str_size);
+  if (rec_int_check_db (db, false, external_p, errors_buf) > 0)
+    {
+      rec_buf_close (errors_buf);
+      if (!verbose_p)
+        {
+          recutl_error (_("operation aborted due to integrity failures.\n"));
+          recutl_error (_("use --verbose to get a detailed report.\n"));
+        }
+      else
+        {
+          fprintf (stderr, "%s", errors_str);
+        }
+
+      recutl_fatal (_("use --force to skip the integrity check.\n"));
+    }
 }
 
 /* End of recutl.c */

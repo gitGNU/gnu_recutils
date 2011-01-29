@@ -63,6 +63,28 @@ field2: value32
 field3: value33
 '
 
+test_declare_input_file integrity-fail \
+'%rec: IntegrityFail
+%type: Id int
+
+Id: foo
+
+Id: bar
+'
+
+test_declare_input_file external-types \
+'%rec: External
+%type: Id int
+'
+
+test_declare_input_file external \
+'%rec: External external-types.in
+
+Id: foo
+
+Id: bar
+'
+
 #
 # Declare tests.
 #
@@ -170,6 +192,35 @@ test_tool recdel-force-all ok \
           '--force' \
           multiple-records \
 ''
+
+test_tool recdel-integrity-fail xfail \
+          recdel \
+          '-t IntegrityFail -n 0' \
+          integrity-fail
+
+test_tool recdel-force-restrictions ok \
+          recdel \
+          '--force -t IntegrityFail -n 0' \
+          integrity-fail \
+'%rec: IntegrityFail
+%type: Id int
+
+Id: bar
+'
+
+test_tool recdel-external-fail xfail \
+          recdel \
+          '-t External -n 0' \
+          external
+
+test_tool recdel-no-external ok \
+          recdel \
+          '--no-external -t External -n 0' \
+          external \
+'%rec: External external-types.in
+
+Id: bar
+'
 
 #
 # Cleanup

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-22 22:57:52 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-29 21:09:48 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -178,6 +178,10 @@ rec_db_t recutl_read_db_from_file (char *file_name);
 void recutl_write_db_to_file (rec_db_t db, char *file_name);
 
 char *recutl_read_file (char *file_name);
+
+void recutl_check_integrity (rec_db_t db,
+                             bool verbose_p,
+                             bool external_p);
 
 #endif /* recutl.h */
 

@@ -414,22 +414,7 @@ recins_add_new_record (rec_db_t db)
   /* Integrity check.  */
   if (!recins_force && db)
     {
-      errors_buf = rec_buf_new (&errors_str, &errors_str_size);
-      if (rec_int_check_db (db, false, recins_external, errors_buf) > 0)
-        {
-          rec_buf_close (errors_buf);
-          if (!recins_verbose)
-            {
-              recutl_error (_("operation aborted due to integrity failures.\n"));
-              recutl_error (_("use --verbose to get a detailed report.\n"));
-            }
-          else
-            {
-              fprintf (stderr, "%s", errors_str);
-            }
-
-          recutl_fatal (_("use --force to skip the integrity check.\n"));
-        }
+      recutl_check_integrity (db, recins_verbose, recins_external);
     }
 }
 

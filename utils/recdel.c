@@ -50,6 +50,8 @@ char *recutl_sex_str = NULL;
 int recutl_num = -1;
 bool recutl_insensitive = false;
 bool recdel_force = false;
+bool recdel_verbose = false;
+bool recdel_external = true;
 char *recdel_file = NULL;  /* File from where to delete the
                               records.  */
 
@@ -62,7 +64,9 @@ enum
   COMMON_ARGS,
   RECORD_SELECTION_ARGS,
   COMMENT_ARG,
-  FORCE_ARG
+  FORCE_ARG,
+  VERBOSE_ARG,
+  NO_EXTERNAL_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -71,6 +75,8 @@ static const struct option GNU_longOptions[] =
     RECORD_SELECTION_LONG_ARGS,
     {"comment", no_argument, NULL, COMMENT_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
+    {"verbose", no_argument, NULL, VERBOSE_ARG},
+    {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -94,7 +100,11 @@ Remove (or comment out) records from a rec file.\n"),
   fputs (_("\
   -c, --comment                       comment out the matching records instead of\n\
                                         deleting them.\n\
-      --force                         delete even in potentially dangerous situations.\n"),
+      --force                         delete even in potentially dangerous situations,\n\
+                                        and if the deletion is violating record restrictions.\n\
+      --no-external                   don't use external descriptors.\n\
+      --verbose                       give a detailed report if the integrity check\n\
+                                        fails.\n"),
          stdout);
 
   recutl_print_help_common ();
@@ -136,6 +146,7 @@ recdel_delete_records (rec_db_t db)
   bool parse_status = true;
   rec_rset_elem_t rec_elem;
   rec_rset_elem_t new_elem;
+  rec_buf_t errors_buf;
 
   if (!rec_db_type_p (db, recutl_type))
     {
@@ -212,6 +223,12 @@ recdel_delete_records (rec_db_t db)
           numrec++;
         }
     }
+
+  /* Integrity check.  */
+  if (!recdel_force && db)
+    {
+      recutl_check_integrity (db, recdel_verbose, recdel_external);
+    }
 }
 
 void
@@ -236,6 +253,16 @@ recdel_parse_args (int argc,
         case FORCE_ARG:
           {
             recdel_force = true;
+            break;
+          }
+        case VERBOSE_ARG:
+          {
+            recdel_verbose = true;
+            break;
+          }
+        case NO_EXTERNAL_ARG:
+          {
+            recdel_external = false;
             break;
           }
         case COMMENT_ARG:

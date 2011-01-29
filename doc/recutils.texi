@@ -1482,6 +1482,8 @@ Add the fields of the record in @var{value}.  This option can be
 intermixed with @kbd{-f ... -v} pairs.
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
+@itemx @w{@kbd{--verbose}}
+Be verbose when reporting integrity problems.
 @end table
 
 Record selection arguments are supported as well.  If they are used
@@ -1567,6 +1569,10 @@ Comment the matching records out instead of removing them.
 @itemx @w{@kbd{--force}}
 Delete even in potentially dangerous situations, such as the request
 to delete all the records of some type, for example.
+@itemx @w{@kbd{--no-external}}
+Don't use external record descriptors.
+@itemx @w{@kbd{--verbose}}
+Be verbose when reporting integrity problems.
 @end table
 
 @node recdel Examples
@@ -1660,6 +1666,12 @@ Delete the selected fields in the selected records.
 Comment out the selected fields in the selected records.
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
+@itemx @w{@kbd{--verbose}}
+Be verbose when reporting integrity problems.
+@itemx @w{@kbd{--force}}
+Perform the requested operation even in potentially dangerous
+situations, or when the integrity of the data stored in the fail is
+affected.
 @end table
 
 @node recset Examples
