@@ -1,3 +1,14 @@
+2011-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: manage problems with the remote descriptors as integrity
+	errors.
+	* src/rec-int.c (rec_int_check_descriptor): Call
+	rec_int_merge_remote.
+	(rec_int_merge_remote): Return 1 if there is an error fetching the
+	remote descriptor.  0 otherwise.
+	(rec_int_merge_remote): Get an errors parameter.
+	(rec_int_merge_remote): Manage errors as integrity errors.
+
 2011-01-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: avoid descriptor expansion when using remote descriptors.

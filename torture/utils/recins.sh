@@ -85,16 +85,16 @@ test_declare_input_file comments-and-descriptor \
 %rec: foo
 '
 
-test_declare_input_file external-descriptor \
-'%rec: Patata external-descriptor-types
-
-foo: 10
-'
-
 test_declare_input_file external-descriptor-types \
 '%rec: Patata
 %type: foo int
 ' 
+
+test_declare_input_file external-descriptor \
+'%rec: Patata external-descriptor-types.in
+
+foo: 10
+'
 
 #
 # Declare tests.
@@ -258,7 +258,7 @@ test_tool recins-external-descriptor ok \
           recins \
           '-t Patata -f foo -v 20' \
           external-descriptor \
-'%rec: Patata external-descriptor-types
+'%rec: Patata external-descriptor-types.in
 
 foo: 10
 

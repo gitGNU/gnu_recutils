@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-28 20:26:51 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-29 19:39:41 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -58,7 +58,7 @@ static int rec_int_check_record_unique (rec_rset_t rset, rec_record_t record,
                                         rec_buf_t errors);
 static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
                                           rec_buf_t errors);
-static void rec_int_merge_remote (rec_rset_t rset);
+static int rec_int_merge_remote (rec_rset_t rset, rec_buf_t errors);
 static bool rec_int_rec_type_p (char *str);
 
 /*
@@ -106,19 +106,21 @@ rec_int_check_rset (rec_db_t db,
 
   res = 0;
 
-  if (remote_descriptor_p)
+  if (remote_descriptor_p
+      && (descriptor = rec_rset_descriptor (rset)))
     {
       /* Make a backup of the record descriptor to restore it
          later.  */
-      descriptor = rec_rset_descriptor (rset);
-      if (descriptor)
-        {
-          descriptor = rec_record_dup (descriptor);
-        }
+      descriptor = rec_record_dup (descriptor);
 
       /* Fetch the remote descriptor, if any, and merge it with the
-         local descriptor.  */
-      rec_int_merge_remote (rset);
+         local descriptor.  If there is any error, stop and report
+         it.  */
+      res = rec_int_merge_remote (rset, errors);
+      if (res > 0)
+        {
+          return res;
+        }
     }
 
   if (check_descriptor_p)
@@ -630,7 +632,6 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_fex_t fex;
   char *tmp;
 
-  res = 0;
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
@@ -755,9 +756,11 @@ rec_int_check_descriptor (rec_rset_t rset,
   return res;
 }
 
-void
-rec_int_merge_remote (rec_rset_t rset)
+int
+rec_int_merge_remote (rec_rset_t rset,
+                      rec_buf_t errors)
 {
+  int res;
   rec_parser_t parser;
   rec_field_name_t rec_fname;
   rec_record_t descriptor;
@@ -774,6 +777,9 @@ rec_int_merge_remote (rec_rset_t rset)
   FILE *external_file;
   int tmpfile_des;
   char tmpfile_name[14];
+  char *tmp;
+
+  res = 0;
 
   rec_fname = rec_parse_field_name_str ("%rec:");
   tmpfile_name[0] = '\0';
@@ -818,10 +824,13 @@ rec_int_merge_remote (rec_rset_t rset)
               curl_easy_setopt (curl, CURLOPT_FAILONERROR, 1);
               if (curl_easy_perform (curl) != 0)
                 {
-                  /* Print a warning and return.  */
-                  fprintf (stderr,
-                           _("warning: could not fetch remote descriptor from url %s.\n"),
-                           rec_url);
+                  /* Error.  */
+                  asprintf (&tmp, _("%s:%s: error: could not fetch remote descriptor from url %s.\n"),
+                            rec_field_source (rec_field), rec_field_location_str (rec_field),
+                            rec_url);
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++;
                   goto exit;
                 }
               curl_easy_cleanup (curl);
@@ -836,9 +845,12 @@ rec_int_merge_remote (rec_rset_t rset)
               external_file = fopen (rec_file, "r");
               if (!external_file)
                 {
-                  fprintf (stderr,
-                           _("warning: could not read external descriptor from file %s.\n"),
-                           rec_file);
+                  asprintf (&tmp, _("%s:%s: error: could not read external descriptor from file %s.\n"),
+                            rec_field_source (rec_field), rec_field_location_str (rec_field),
+                            rec_file);
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++;
                   goto exit;
                 }
               rec_source = rec_file;
@@ -849,9 +861,12 @@ rec_int_merge_remote (rec_rset_t rset)
           parser = rec_parser_new (external_file, rec_source);
           if (!rec_parse_db (parser, &remote_db))
             {
-              fprintf (stderr,
-                       _("warning: %s does not contain valid rec data.\n"),
-                       rec_url);
+              asprintf (&tmp, _("%s:%s: error: %s does not contain valid rec data.\n"),
+                        rec_field_source (rec_field), rec_field_location_str (rec_field),
+                        rec_source);
+              rec_buf_puts (tmp, errors);
+              free (tmp);
+              res++;
               goto exit;
             }
           rec_parser_destroy (parser);
@@ -861,9 +876,12 @@ rec_int_merge_remote (rec_rset_t rset)
           remote_rset = rec_db_get_rset_by_type (remote_db, rec_type);
           if (!remote_rset)
             {
-              fprintf (stderr,
-                       _("warning: %s does not contain information for %s.\n"),
-                       rec_source, rec_type);
+              asprintf (&tmp, _("%s:%s: error: %s does not contain information for type %s.\n"),
+                        rec_field_source (rec_field), rec_field_location_str (rec_field),
+                        rec_source, rec_type);
+              rec_buf_puts (tmp, errors);
+              free (tmp);
+              res++;
               goto exit;
             }
           remote_descriptor = rec_rset_descriptor (remote_rset);
@@ -905,6 +923,8 @@ rec_int_merge_remote (rec_rset_t rset)
 
   free (rec_url);
   free (rec_file);
+
+  return res;
 }
 
 static bool
