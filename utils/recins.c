@@ -425,7 +425,7 @@ recins_add_new_record (rec_db_t db)
             }
           else
             {
-              recutl_error ("%s", errors_str);
+              fprintf (stderr, "%s", errors_str);
             }
 
           recutl_fatal (_("use --force to skip the integrity check.\n"));

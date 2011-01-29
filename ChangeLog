@@ -1,5 +1,12 @@
 2011-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: fix the output of integrity error messages.
+	* utils/recins.c (recins_add_new_record): Dont use recutl_error to
+	report the integrity errors.
+	* utils/recset.c (recset_process_actions): Likewise.
+
+2011-01-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: manage problems with the remote descriptors as integrity
 	errors.
 	* src/rec-int.c (rec_int_check_descriptor): Call
