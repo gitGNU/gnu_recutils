@@ -100,7 +100,7 @@ test_declare_input_file auto-fields \
 '%rec: foo
 %type: myint int
 %type: myrange range 0 10
-%auto: myint myrange
+%auto: myrange myint
 
 myint: 10
 myrange: 0
@@ -290,14 +290,14 @@ test_tool recins-auto-fields ok \
 '%rec: foo
 %type: myint int
 %type: myrange range 0 10
-%auto: myint myrange
+%auto: myrange myint
 
 myint: 10
 myrange: 0
 
-foo: bar
 myint: 11
 myrange: 1
+foo: bar
 '
 
 test_tool recins-no-auto ok \
@@ -307,7 +307,7 @@ test_tool recins-no-auto ok \
 '%rec: foo
 %type: myint int
 %type: myrange range 0 10
-%auto: myint myrange
+%auto: myrange myint
 
 myint: 10
 myrange: 0
@@ -330,8 +330,8 @@ test_tool recins-auto-range-overflow-force ok \
 
 myrange: 10
 
-foo: bar
 myrange: 11
+foo: bar
 '
  
 #

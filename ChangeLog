@@ -1,5 +1,14 @@
 2011-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recins: prepend the auto-generated fields.
+	* torture/utils/recins.sh: Tests adapted.
+
+	* utils/recins.c (recins_add_auto_field_int): Prepend the
+	auto-generated field instead of appending it.
+	(recins_add_auto_field_date): Likewise.
+
+2011-01-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Documentation for the auto generated fields.
 	* doc/recutils.texi (Record Descriptors): List %auto in the list
 	of allowed special fields.

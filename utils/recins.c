@@ -159,6 +159,7 @@ recins_add_auto_field_int (rec_rset_t rset,
   int auto_value, field_value;
   char *end;
   char *auto_value_str;
+  rec_record_elem_t rec_elem;
 
   /* Find the auto value.  */
 
@@ -194,7 +195,8 @@ recins_add_auto_field_int (rec_rset_t rset,
   asprintf (&auto_value_str, "%d", auto_value);
   field = rec_field_new (rec_field_name_dup (field_name),
                          auto_value_str);
-  rec_record_append_field (record, field);
+  rec_elem = rec_record_elem_field_new (record, field);
+  rec_record_insert_at (record, rec_elem, 0);
   free (auto_value_str);
 }
 
@@ -204,6 +206,7 @@ recins_add_auto_field_date (rec_rset_t rset,
                             rec_record_t record)
 {
   rec_field_t auto_field;
+  rec_record_elem_t rec_elem;
   time_t t;
   char outstr[200];
   struct tm *tmp;
@@ -214,7 +217,8 @@ recins_add_auto_field_date (rec_rset_t rset,
 
   auto_field = rec_field_new (rec_field_name_dup (field_name),
                               outstr);
-  rec_record_append_field (record, auto_field);
+  rec_elem = rec_record_elem_field_new (record, auto_field);
+  rec_record_insert_at (record, rec_elem, 0);
 }
 
 rec_record_t
