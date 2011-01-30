@@ -100,7 +100,18 @@ test_declare_input_file auto-fields \
 '%rec: foo
 %type: myint int
 %type: myrange range 0 10
-%auto: myrange myint
+%auto: myint myrange
+
+myint: 10
+myrange: 0
+'
+
+test_declare_input_file auto-fields-several \
+'%rec: foo
+%type: myint int
+%type: myrange range 0 10
+%auto: myint
+%auto: myrange
 
 myint: 10
 myrange: 0
@@ -290,7 +301,25 @@ test_tool recins-auto-fields ok \
 '%rec: foo
 %type: myint int
 %type: myrange range 0 10
-%auto: myrange myint
+%auto: myint myrange
+
+myint: 10
+myrange: 0
+
+myint: 11
+myrange: 1
+foo: bar
+'
+
+test_tool recins-auto-fields-several ok \
+          recins \
+          '-t foo -f foo -v bar' \
+          auto-fields-several \
+'%rec: foo
+%type: myint int
+%type: myrange range 0 10
+%auto: myint
+%auto: myrange
 
 myint: 10
 myrange: 0
@@ -307,7 +336,7 @@ test_tool recins-no-auto ok \
 '%rec: foo
 %type: myint int
 %type: myrange range 0 10
-%auto: myrange myint
+%auto: myint myrange
 
 myint: 10
 myrange: 0

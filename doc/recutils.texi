@@ -889,6 +889,10 @@ so we include an @code{%auto} for the date:
 %auto: Id Date
 @end example
 
+Note that the auto fields are generated at the beginning of the new
+records, in the same order they are found in the @code{%auto}
+directives.
+
 @node External Descriptors
 @chapter External Descriptors
 
