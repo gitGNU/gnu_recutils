@@ -240,6 +240,15 @@ int rec_fex_size (rec_fex_t fex);
    the position is invalid then NULL is returned.  */
 rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
 
+/* Append an element at the end of the fex.  */
+void rec_fex_append (rec_fex_t fex,
+                     rec_field_name_t fname,
+                     int min,
+                     int max);
+
+/* Check whether a given field is contained in a fex.  */
+bool rec_fex_member_p (rec_fex_t fex, rec_field_name_t fname);
+
 /* Get the properties of a field expression element.  */
 rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
 void rec_fex_elem_set_field_name (rec_fex_elem_t elem, rec_field_name_t fname);
@@ -307,6 +316,11 @@ char *rec_type_descr_type (char *str);
    the name of the type.  */
 enum rec_type_kind_e rec_type_kind (rec_type_t type);
 char *rec_type_kind_str (rec_type_t type);
+
+/* Get the min and max parametes of a range type.  If the type does
+   not define a range then -1 is returned.  */
+int rec_type_min (rec_type_t type);
+int rec_type_max (rec_type_t type);
 
 /* Determine whether two types are the same type.
  * 
@@ -632,6 +646,10 @@ void rec_rset_set_type (rec_rset_t rset, char *type);
 
 rec_type_reg_t rec_rset_get_type_reg (rec_rset_t rset);
 
+/* Types.  */
+rec_type_t rec_rset_get_field_type (rec_rset_t rset,
+                                    rec_field_name_t field_name);
+
 /* Others.  */
 
 /* Rename a field in the record descriptor.  Field names are not
@@ -640,6 +658,9 @@ rec_type_reg_t rec_rset_get_type_reg (rec_rset_t rset);
 void rec_rset_rename_field (rec_rset_t rset,
                             rec_field_name_t field_name,
                             rec_field_name_t new_field_name);
+
+/* Get a fex with the auto-incremented fields in this record set.  */
+rec_fex_t rec_rset_auto (rec_rset_t rset);
 
 /*
  * DATABASES

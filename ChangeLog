@@ -1,3 +1,40 @@
+2011-01-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Implementation of auto generated fields.
+	* utils/recins.c: New argument --no-auto.
+
+	* src/rec-types.c (rec_type_min): New function.
+	(rec_type_max): New function.
+
+	* src/rec.h: New function rec_rset_get_field_type.
+
+	* utils/recins.c (recins_add_new_record): Add auto-set fields when
+	replacing a record.
+	(recins_insert_record): Likewise.
+	(recins_add_auto_fields): New function.
+	(recins_add_auto_field_int): New function.
+	(recins_add_auto_field_date): New function.
+
+	* torture/rec-fex/rec-fex-new.c: Adapt tests to the new semantics
+	of rec_fex_new (NULL,...).
+
+	* src/rec.h: New functions rec_fex_append and rec_fex_member_p.
+	* src/rec-fex.c (rec_fex_append): Implemented.
+	(rec_fex_member_p): Implemented.
+	(rec_fex_new): Create an empty FEX if the str parameter is NULL.
+
+	* src/rec-rset.c (struct rec_rset_s): New 'auto_fields' member.
+	(rec_rset_new): Initialize 'auto_fields'.
+	(rec_rset_set_descriptor): Call rec_rset_update_auto_fields.
+	(rec_rset_update_auto_fields): New function.
+	(rec_rset_auto): New function.
+
+	* src/rec.h: New function rec_rset_auto, that returns a list with
+	the names of the auto-set fields in the rset.
+
+	* src/rec-int.c (rec_int_check_descriptor): Check that
+	auto-incremented fields are of type int.
+
 2011-01-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: recdel now performs an integrity check of the resulting

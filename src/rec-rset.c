@@ -51,6 +51,9 @@ struct rec_rset_s
   /* Type registry.  */
   rec_type_reg_t type_reg;
 
+  /* Auto-set fields.  */
+  rec_fex_t auto_fields;
+
   /* Storage for records and comments.  */
   int record_type;
   int comment_type;
@@ -67,6 +70,7 @@ struct rec_rset_s
 /* Static functions implemented below.  */
 
 static void rec_rset_update_types (rec_rset_t rset);
+static void rec_rset_update_auto_fields (rec_rset_t rset);
 
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
 static void rec_rset_record_disp_fn (void *data);
@@ -96,6 +100,7 @@ rec_rset_new (void)
           rset->descriptor = NULL;
           rset->descriptor_pos = 0;
           rset->type_reg = NULL;
+          rset->auto_fields = NULL;
 
           /* register the types.  */
           rset->record_type = rec_mset_register_type (rset->mset,
@@ -444,8 +449,9 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
     }
   rset->descriptor = record;
 
-  /* Update the types registry.  */
+  /* Update the types registry and the auto fields.  */
   rec_rset_update_types (rset);
+  rec_rset_update_auto_fields (rset);
 }
 
 size_t
@@ -665,6 +671,27 @@ rec_rset_rename_field (rec_rset_t rset,
   rec_field_name_destroy (prohibit_field_name);
 }
 
+rec_fex_t
+rec_rset_auto (rec_rset_t rset)
+{
+  return rset->auto_fields;
+}
+
+rec_type_t
+rec_rset_get_field_type (rec_rset_t rset,
+                         rec_field_name_t field_name)
+{
+  rec_type_t res = NULL;
+
+  if (rset->type_reg)
+    {
+      res = rec_type_reg_get (rset->type_reg,
+                              field_name);
+    }
+
+  return res;
+}
+
 /*
  * Private functions
  */
@@ -709,6 +736,63 @@ static void *
 rec_rset_comment_dup_fn (void *data)
 {
   return (void *) rec_comment_dup ((rec_comment_t) data);
+}
+
+static void
+rec_rset_update_auto_fields (rec_rset_t rset)
+{
+  rec_record_elem_t record_elem;
+  rec_field_t field;
+  rec_field_name_t field_name;
+  rec_field_name_t auto_fname;
+  rec_field_name_t auto_field_name;
+  rec_fex_t fex;
+  size_t i;
+
+  /* Purge the existing list, if any.  */
+  if (rset->auto_fields)
+    {
+      rec_fex_destroy (rset->auto_fields);
+      rset->auto_fields = NULL;
+    }
+
+  /* Scan the record descriptor for %auto: directives, and build the
+     new list.  */
+  if (rset->descriptor)
+    {
+      auto_fname = rec_parse_field_name_str ("%auto:");
+
+      rset->auto_fields = rec_fex_new (NULL, REC_FEX_SIMPLE);
+
+      record_elem = rec_record_first_field (rset->descriptor);
+      while (rec_record_elem_p (record_elem))
+        {
+          field = rec_record_elem_field (record_elem);
+          field_name = rec_field_name (field);
+
+          if (rec_field_name_equal_p (field_name, auto_fname))
+            {
+              /* %auto: fields containing incorrect data are
+                  ignored.  */
+              fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+              if (fex)
+                {
+                  for (i = 0; i < rec_fex_size (fex); i++)
+                    {
+                      auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
+                      if (!rec_fex_member_p (rset->auto_fields, auto_field_name))
+                        {
+                          rec_fex_append (rset->auto_fields, auto_field_name, -1, -1);
+                        }
+                    }
+                }
+            }
+          
+          record_elem = rec_record_next_field (rset->descriptor, record_elem);
+        }
+
+      rec_field_name_destroy (auto_fname);
+    } 
 }
 
 static void

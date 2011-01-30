@@ -760,6 +760,40 @@ rec_type_equal_p (rec_type_t type1,
   return ret;
 }
 
+int
+rec_type_min (rec_type_t type)
+{
+  int res;
+
+  if (type->kind != REC_TYPE_RANGE)
+    {
+      res = -1;
+    }
+  else
+    {
+      res = type->data.range[0];
+    }
+
+  return res;
+}
+
+int
+rec_type_max (rec_type_t type)
+{
+  int res;
+
+  if (type->kind != REC_TYPE_RANGE)
+    {
+      res = -1;
+    }
+  else
+    {
+      res = type->data.range[1];
+    }
+
+  return res;
+}
+
 /*
  * Private functions.
  */

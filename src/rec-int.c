@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-29 19:39:41 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-30 18:41:00 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -628,9 +628,15 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t mandatory_fname;
   rec_field_name_t unique_fname;
   rec_field_name_t prohibit_fname;
+  rec_field_name_t auto_fname;
   char *field_value;
   rec_fex_t fex;
   char *tmp;
+  rec_field_name_t auto_field_name;
+  char *auto_field_name_str;
+  size_t i;
+  rec_type_reg_t type_reg;
+  rec_type_t type;
 
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
@@ -642,6 +648,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       mandatory_fname = rec_parse_field_name_str ("%mandatory:");
       unique_fname = rec_parse_field_name_str ("%unique:");
       prohibit_fname = rec_parse_field_name_str ("%prohibit:");
+      auto_fname = rec_parse_field_name_str ("%auto:");
 
       /* Check the type of the record set:
 
@@ -720,7 +727,8 @@ rec_int_check_descriptor (rec_rset_t rset,
             }
           else if (rec_field_name_equal_p (field_name, mandatory_fname)
                    || rec_field_name_equal_p (field_name, unique_fname)
-                   || rec_field_name_equal_p (field_name, prohibit_fname))
+                   || rec_field_name_equal_p (field_name, prohibit_fname)
+                   || rec_field_name_equal_p (field_name, auto_fname))
             {
               /* Check that the value of this field is a parseable
                  list of field names.  */
@@ -742,6 +750,37 @@ rec_int_check_descriptor (rec_rset_t rset,
                   res++;
                 }
             }
+          
+          if (rec_field_name_equal_p (field_name, auto_fname))
+            {
+              /* Check that the auto incremented fields have not been
+                 declared with a type other than 'int'. */
+              fex = rec_fex_new (field_value, REC_FEX_SIMPLE); /* Cannot fail.  */
+              for (i = 0; i < rec_fex_size (fex); i++)
+                {
+                  auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
+                  auto_field_name_str = rec_fex_elem_field_name_str (rec_fex_get (fex, i));
+                  type_reg = rec_rset_get_type_reg (rset);
+                  if (type_reg)
+                    {
+                      type = rec_type_reg_get (type_reg, auto_field_name);
+                      if ((!type) ||
+                          ! ((rec_type_kind (type) == REC_TYPE_INT)
+                             || (rec_type_kind (type) == REC_TYPE_RANGE)
+                             || (rec_type_kind (type) == REC_TYPE_DATE)))
+                        {
+                          asprintf (&tmp,
+                                    _("%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"),
+                                    rec_record_source (descriptor),
+                                    rec_record_location_str (descriptor),
+                                    auto_field_name_str);
+                          rec_buf_puts (tmp, errors);
+                          free (tmp);
+                          res++;
+                        }
+                    }
+                }
+            }
         }
 
       /* Destroy names.  */
@@ -751,6 +790,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       rec_field_name_destroy (mandatory_fname);
       rec_field_name_destroy (unique_fname);
       rec_field_name_destroy (prohibit_fname);
+      rec_field_name_destroy (auto_fname);
     }
 
   return res;

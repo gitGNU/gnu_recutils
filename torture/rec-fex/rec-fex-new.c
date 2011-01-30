@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-09 16:39:09 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-30 17:01:04 jemarch"
  *
  *       File:         rec-fex-new.c
  *       Date:         Tue Nov  9 14:04:42 2010
@@ -42,6 +42,11 @@ START_TEST(rec_fex_new_single)
   rec_field_name_t fname_foo;
   rec_field_name_t fname_foobar;
   rec_field_name_t fname_foobarbaz;
+
+  fex = rec_fex_new (NULL, REC_FEX_SIMPLE);
+  fail_if (fex == NULL);
+  fail_if (rec_fex_size (fex) != 0);
+  rec_fex_destroy (fex);
 
   fname_foo = rec_parse_field_name_str ("foo");
   fail_if (fname_foo == NULL);
@@ -283,9 +288,6 @@ START_TEST(rec_fex_new_invalid)
   rec_fex_t fex;
 
   fex = rec_fex_new ("", REC_FEX_SIMPLE);
-  fail_if (fex != NULL);
-
-  fex = rec_fex_new (NULL, REC_FEX_CSV);
   fail_if (fex != NULL);
 
   fex = rec_fex_new ("?", REC_FEX_SIMPLE);

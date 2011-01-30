@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <xalloc.h>
 #include <gettext.h>
+#include <errno.h>
+#include <time.h>
 #define _(str) gettext (str)
 
 #include <rec.h>
@@ -53,6 +55,7 @@ char         *recins_file      = NULL;
 bool          recins_force     = false;
 bool          recins_verbose   = false;
 bool          recins_external  = true;
+bool          recins_auto      = true;
 
 /*
  * Command line options management
@@ -67,7 +70,8 @@ enum
   FORCE_ARG,
   VERBOSE_ARG,
   NO_EXTERNAL_ARG,
-  RECORD_ARG
+  RECORD_ARG,
+  NO_AUTO_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -81,6 +85,7 @@ static const struct option GNU_longOptions[] =
     {"verbose", no_argument, NULL, VERBOSE_ARG},
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
     {"record", required_argument, NULL, RECORD_ARG},
+    {"no-auto", no_argument, NULL, NO_AUTO_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -111,6 +116,7 @@ Insert new records in a rec database.\n"), stdout);
       --force                         insert the record even if it is violating\n\
                                         record restrictions.\n\
       --no-external                   don't use external descriptors.\n\
+      --no-auto                       don't insert auto generated fields.\n\
       --verbose                       give a detailed report if the integrity check\n\
                                         fails.\n"), stdout);
 
@@ -140,6 +146,139 @@ Examples:\n\
   recutl_print_help_footer ();
 }
 
+void
+recins_add_auto_field_int (rec_rset_t rset,
+                           rec_field_name_t field_name,
+                           rec_record_t record)
+{
+  rec_rset_elem_t rset_elem;
+  rec_record_t rec;
+  rec_field_t field;
+  rec_field_t new_field;
+  size_t num_fields, i;
+  int auto_value, field_value;
+  char *end;
+  char *auto_value_str;
+
+  /* Find the auto value.  */
+
+  auto_value = 0;
+
+  rset_elem = rec_rset_first_record (rset);
+  while (rec_rset_elem_p (rset_elem))
+    {
+      rec = rec_rset_elem_record (rset_elem);
+
+      num_fields = rec_record_get_num_fields_by_name (rec, field_name);
+      for (i = 0; i < num_fields; i++)
+        {
+          field = rec_record_get_field_by_name (rec, field_name, i);
+          
+          /* Ignore fields that can't be converted to integer
+             values.  */
+          errno = 0;
+          field_value = strtol (rec_field_value (field), &end, 10);
+          if ((errno == 0) && (*end == '\0'))
+            {
+              if (auto_value <= field_value)
+                {
+                  auto_value = field_value + 1;
+                }
+            }
+        }
+
+      rset_elem = rec_rset_next_record (rset, rset_elem);
+    }
+       
+  /* Insert the auto field.  */
+  asprintf (&auto_value_str, "%d", auto_value);
+  field = rec_field_new (rec_field_name_dup (field_name),
+                         auto_value_str);
+  rec_record_append_field (record, field);
+  free (auto_value_str);
+}
+
+void
+recins_add_auto_field_date (rec_rset_t rset,
+                            rec_field_name_t field_name,
+                            rec_record_t record)
+{
+  rec_field_t auto_field;
+  time_t t;
+  char outstr[200];
+  struct tm *tmp;
+
+  t = time (NULL);
+  tmp = localtime (&t);
+  strftime (outstr, sizeof(outstr), "%a, %d %b %Y %T %z", tmp);
+
+  auto_field = rec_field_new (rec_field_name_dup (field_name),
+                              outstr);
+  rec_record_append_field (record, auto_field);
+}
+
+rec_record_t
+recins_add_auto_fields (rec_rset_t rset,
+                        rec_record_t record)
+{
+  rec_record_t res = NULL;
+  rec_field_name_t auto_field_name;
+  rec_fex_t auto_fields;
+  rec_type_t type;
+  int i;
+
+  res = rec_record_dup (record);
+
+  if (!recins_auto)
+    {
+      return res;
+    }
+
+  if (rset)
+    {
+      if (auto_fields = rec_rset_auto (rset))
+        {
+          for (i = 0; i < rec_fex_size (auto_fields); i++)
+            {
+              auto_field_name = rec_fex_elem_field_name (rec_fex_get (auto_fields, i));
+              
+              if (!rec_record_field_p (record, auto_field_name))
+                {
+                  /* The auto field is not already present in record, so add
+                     one automatically.  Depending on its type the value is
+                     calculated differently. If the record does not have a
+                     type, or the type is incorrect, ignore it.  */
+                  
+                  type = rec_rset_get_field_type (rset, auto_field_name);
+                  if (type)
+                    {
+                      switch (rec_type_kind (type))
+                        {
+                        case REC_TYPE_INT:
+                        case REC_TYPE_RANGE:
+                          {
+                            recins_add_auto_field_int (rset,
+                                                       auto_field_name,
+                                                       res);
+                            break;
+                          }
+                        case REC_TYPE_DATE:
+                          {
+                            recins_add_auto_field_date (rset,
+                                                        auto_field_name,
+                                                        res);
+                            break;
+                          }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  return res;
+}
+
 bool
 recins_insert_record (rec_db_t db,
                       char *type,
@@ -148,6 +287,7 @@ recins_insert_record (rec_db_t db,
   bool res;
   rec_rset_t rset;
   rec_rset_elem_t last_elem, new_elem;
+  rec_record_t record_to_insert;
 
   if (!record || (rec_record_num_fields (record) == 0))
     {
@@ -160,7 +300,10 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
-      new_elem = rec_rset_elem_record_new (rset, record);
+      /* Add auto-set fields required by this record set.  */
+      record_to_insert = recins_add_auto_fields (rset, record);
+
+      new_elem = rec_rset_elem_record_new (rset, record_to_insert);
 
       if (rec_rset_num_records (rset) == 0)
         {
@@ -296,6 +439,11 @@ void recins_parse_args (int argc,
             recins_external = false;
             break;
           }
+        case NO_AUTO_ARG:
+          {
+            recins_auto = false;
+            break;
+          }
         case RECORD_ARG:
         case 'r':
           {
@@ -368,6 +516,7 @@ recins_add_new_record (rec_db_t db)
   rec_buf_t errors_buf;
   char *errors_str;
   size_t errors_str_size;
+  rec_record_t record_to_insert;
 
   if ((recutl_num != -1)
       || (recutl_sex_str != NULL))
@@ -377,6 +526,10 @@ recins_add_new_record (rec_db_t db)
       if (rset)
         {
           num_rec = -1;
+     
+          /* Add auto-set fields required by this record set.  */
+          record_to_insert = recins_add_auto_fields (rset, recins_record);
+
           rset_elem = rec_rset_first_record (rset);
           while (rec_rset_elem_p (rset_elem))
             {
@@ -397,7 +550,7 @@ recins_add_new_record (rec_db_t db)
                 }
               else
                 {
-                  new_rset_elem = rec_rset_elem_record_new (rset, recins_record);
+                  new_rset_elem = rec_rset_elem_record_new (rset, record_to_insert);
                   rec_rset_insert_after (rset, rset_elem, new_rset_elem);
                   rec_rset_remove (rset, rset_elem);
                   rset_elem = rec_rset_next_record (rset, new_rset_elem);

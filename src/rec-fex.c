@@ -47,7 +47,7 @@ struct rec_fex_elem_s
   int min;
 };
 
-#define REC_FEX_MAX_ELEMS 20
+#define REC_FEX_MAX_ELEMS 120
 
 struct rec_fex_s
 {
@@ -80,36 +80,40 @@ rec_fex_new (char *str,
     {
       /* Initially the FEX is empty.  */
       new->num_elems = 0;
+      new->str = NULL;
       for (i = 0; i < REC_FEX_MAX_ELEMS; i++)
         {
           new->elems[i] = 0;
         }
 
-      /* Parse the string.  */
-      if (kind == REC_FEX_SUBSCRIPTS)
+      if (str != NULL)
         {
-          if (!rec_fex_parse_str_subscripts (new, str))
+          /* Parse the string.  */
+          if (kind == REC_FEX_SUBSCRIPTS)
             {
-              free (new);
-              new = NULL;
+              if (!rec_fex_parse_str_subscripts (new, str))
+                {
+                  free (new);
+                  new = NULL;
+                }
             }
-        }
-      else if (kind == REC_FEX_SIMPLE)
-        {
-          /* Simple FEX.  */
-          if (!rec_fex_parse_str_simple (new, str, " \t\n"))
+          else if (kind == REC_FEX_SIMPLE)
             {
-              free (new);
-              new = NULL;
+              /* Simple FEX.  */
+              if (!rec_fex_parse_str_simple (new, str, " \t\n"))
+                {
+                  free (new);
+                  new = NULL;
+                }
             }
-        }
-      else /* REC_FEX_CSV */
-        {
-          /* Simple FEX with fields separated by commas.  */
-          if (!rec_fex_parse_str_simple (new, str, ","))
+          else /* REC_FEX_CSV */
             {
-              free (new);
-              new = NULL;
+              /* Simple FEX with fields separated by commas.  */
+              if (!rec_fex_parse_str_simple (new, str, ","))
+                {
+                  free (new);
+                  new = NULL;
+                }
             }
         }
     }
@@ -359,6 +363,51 @@ rec_fex_str (rec_fex_t fex,
   rec_buf_close (buf);
 
   return result;
+}
+
+bool
+rec_fex_member_p (rec_fex_t fex,
+                  rec_field_name_t fname)
+{
+  bool res = false;
+  int i;
+  
+  for (i = 0; i < fex->num_elems; i++)
+    {
+      if (rec_field_name_equal_p (fname,
+                                  fex->elems[i]->field_name))
+        {
+          res = true;
+          break;
+        }
+    }
+
+  return res;
+}
+
+void
+rec_fex_append (rec_fex_t fex,
+                rec_field_name_t fname,
+                int min,
+                int max)
+{
+  rec_fex_elem_t new_elem;
+
+  if (fex->num_elems >= REC_FEX_MAX_ELEMS)
+    {
+      fprintf (stderr, _("internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"));
+      return;
+    }
+
+  new_elem = malloc (sizeof (struct rec_fex_elem_s));
+  if (new_elem)
+    {
+      new_elem->field_name = rec_field_name_dup (fname);
+      new_elem->str = strdup ("");
+      new_elem->min = min;
+      new_elem->max = max;
+      fex->elems[fex->num_elems++] = new_elem;
+    }
 }
 
 /*
