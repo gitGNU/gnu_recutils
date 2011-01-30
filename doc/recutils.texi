@@ -61,9 +61,11 @@ The Rec Format
 * Comments::            Comments are useful to store meta data.
 * Field Types::         Types for fields can be defined in record
                           descriptors.
+* Auto Generated Fields:: A way to implement auto-counters and
+                          timestamps.
+* External Descriptors:: Fetching descriptors from external sources.
 * Date input formats::  Textual date representations that can be used
                           in Rec files.
-* External Descriptors:: Fetching descriptors from external sources.
 * Regular Expressions:: Flavor of regexps supported in recfiles.
 
 Utilities
@@ -416,7 +418,7 @@ The value of this field shall be a list of field names separated by
 one or more blank characters:
 
 @example
-%unique IdNumber
+%unique: IdNumber
 @end example
 
 Any record containing more than one field with those names is
@@ -428,6 +430,16 @@ will be considered as the key of the records.
 Its effect is that any field with that name is both unique and
 mandatory, and additionally the values of those fields shall be
 unique. 
+@item %auto: @var{field1} @var{field2} ... @var{fieldN}
+The value of this field shall be a list of field names separated by
+one or more blank characters:
+
+@example
+%auto: Counter
+@end example
+
+The fields specified in the list will be auto-generated in newly
+created records.  @ref{Auto Generated Fields}.
 @item %doc
 This field contains documentation about the record.
 
@@ -785,7 +797,97 @@ synopsis is:
 %type: AField field
 @end example
 
-@include parse-datetime.texi
+@node Auto Generated Fields
+@chapter Auto Generated Fields
+
+Consider for example a list of articles in stock in a toys store:
+
+@example
+%rec: Item
+%key: Description
+
+Description: 2cm metal soldier WWII
+Amount: 2111
+
+Description: Flying Helicopter Indoor Maxi
+Amount: 8
+
+...
+@end example
+
+It would be natural to identify the items by its description, but it
+is also error prone: was it ``Flying Helicopter Indoor Maxi'' or
+``Flying Helicopter Maxi Indoor''? Was ``Helicopter'' in lower case or
+upper case?
+
+It is quite common in databases to use some kind of numeric ``Id'' to
+uniquely identify items like those ones.  Numbers are easy to manage:
+
+@example
+%rec: Item
+%key: Id
+%mandatory: Description
+
+Id: 0
+Description: 2cm metal soldier WWII
+Amount: 2111
+
+Id: 1
+Description: Flying Helicopter Indoor Maxi
+Amount: 8
+
+...
+@end example
+
+A problem of this approach is that we must be careful to not assign
+already used ids when we introduce more articles in the
+database. Other than its uniqueness, it is not important which number
+is associated with which article.
+
+To ease the management of those Ids database systems use to provide a
+facility called ``auto-counters''. Auto-counters can be implemented in
+recfiles using the @code{%auto} directive in the record descriptor:
+
+@example
+%rec: Item
+%key: Id
+%type: Id int
+%mandatory: Description
+%auto: Id
+
+Id: 0
+Description: 2cm metal soldier WWII
+Amount: 2111
+@end example
+
+Next time a new item is introduced in the database, the conforming
+application will note the @code{%auto}, and will create a new
+@code{Id} field for the new record with the bigger unused integer
+available.  In this example, the new record will have an Id of
+@code{1}.  The application can still provide an explicit Id for the
+new record.  In that case the field is not generated automatically.
+
+The concrete effect of the @code{%auto} directive depends on the type
+of the affected field:
+
+@itemize @minus
+@item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
+@item If it is a @code{date} then a field with the current date will be generated.
+@item Auto generated fields with other types are not allowed.
+@end itemize
+
+Auto generated dates can be used to implement automatic timestamps.
+Consider for example a ``Transfer'' record set registering bank
+transfers.  We want to save a timestamp every time a transfer is done,
+so we include an @code{%auto} for the date:
+
+@example
+%rec: Transfer
+%key: Id
+%type: Id int
+%type: Date date
+%auto: Id Date
+@end example
 
 @node External Descriptors
 @chapter External Descriptors
@@ -839,6 +941,8 @@ the local record descriptor, that in this case contains just the
 
 If you are using the GNU recutils to process your recfiles, any URL
 schema supported by @code{libcurl} will work.
+
+@include parse-datetime.texi
 
 @node Regular Expressions
 @chapter Regular Expressions
@@ -1484,6 +1588,8 @@ intermixed with @kbd{-f ... -v} pairs.
 Don't use external record descriptors.
 @itemx @w{@kbd{--verbose}}
 Be verbose when reporting integrity problems.
+@itemx @w{@kbd{--no-auto}}
+Don't generate @dfn{auto} fields. @xref{Auto Generated Fields}.
 @end table
 
 Record selection arguments are supported as well.  If they are used
