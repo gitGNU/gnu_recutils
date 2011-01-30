@@ -101,7 +101,7 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
   "Syntax table used in rec-mode")
 
 (defvar rec-font-lock-keywords
-  `(("^%\\(rec\\|key\\|unique\\|type\\|prohibit\\|mandatory\\|type\\|doc\\|fsort\\):" . font-lock-keyword-face)
+  `(("^%\\(rec\\|key\\|unique\\|type\\|prohibit\\|mandatory\\|type\\|doc\\|fsort|auto\\):" . font-lock-keyword-face)
     (,rec-field-name-re . font-lock-variable-name-face)
     ("^\\+" . font-lock-constant-face))
   "Font lock keywords used in rec-mode")
