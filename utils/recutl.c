@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-29 21:17:35 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-30 22:39:36 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -412,7 +412,7 @@ recutl_check_integrity (rec_db_t db,
   size_t errors_str_size;
 
   errors_buf = rec_buf_new (&errors_str, &errors_str_size);
-  if (rec_int_check_db (db, false, external_p, errors_buf) > 0)
+  if (rec_int_check_db (db, true, external_p, errors_buf) > 0)
     {
       rec_buf_close (errors_buf);
       if (!verbose_p)
