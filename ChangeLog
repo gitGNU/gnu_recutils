@@ -1,5 +1,23 @@
 2011-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Tests for the auto generated fields.
+	* torture/utils/recins.sh: New input files auto-fields and
+	auto-range-overflow.
+	(recins-auto-fields): New test.
+	(recins-no-auto): New test.
+	(recins-auto-range-overflow): New test.
+	(recins-auto-range-overflow-force): New test.
+
+	* torture/utils/recfix.sh: New input files auto-int, auto-range,
+	auto-date, auto-notype and auto-nofex.
+	(recfix-auto-int): New test.
+	(recfix-auto-range): New test.
+	(recfix-auto-date): New test.
+	(recfix-auto-notype): New test.
+	(recfix-auto-nofex): New test.
+
+2011-01-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Implementation of auto generated fields.
 	* utils/recins.c: New argument --no-auto.
 

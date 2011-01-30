@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-30 18:41:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-30 20:30:55 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -751,11 +751,11 @@ rec_int_check_descriptor (rec_rset_t rset,
                 }
             }
           
-          if (rec_field_name_equal_p (field_name, auto_fname))
+          if ((rec_field_name_equal_p (field_name, auto_fname))
+              && (fex = rec_fex_new (field_value, REC_FEX_SIMPLE)))
             {
               /* Check that the auto incremented fields have not been
                  declared with a type other than 'int'. */
-              fex = rec_fex_new (field_value, REC_FEX_SIMPLE); /* Cannot fail.  */
               for (i = 0; i < rec_fex_size (fex); i++)
                 {
                   auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));

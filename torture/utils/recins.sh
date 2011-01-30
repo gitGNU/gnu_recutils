@@ -96,6 +96,24 @@ test_declare_input_file external-descriptor \
 foo: 10
 '
 
+test_declare_input_file auto-fields \
+'%rec: foo
+%type: myint int
+%type: myrange range 0 10
+%auto: myint myrange
+
+myint: 10
+myrange: 0
+'
+
+test_declare_input_file auto-range-overflow \
+'%rec: foo
+%type: myrange range 0 10
+%auto: myrange
+
+myrange: 10
+'
+
 #
 # Declare tests.
 #
@@ -263,8 +281,59 @@ test_tool recins-external-descriptor ok \
 foo: 10
 
 foo: 20
-'          
+'
 
+test_tool recins-auto-fields ok \
+          recins \
+          '-t foo -f foo -v bar' \
+          auto-fields \
+'%rec: foo
+%type: myint int
+%type: myrange range 0 10
+%auto: myint myrange
+
+myint: 10
+myrange: 0
+
+foo: bar
+myint: 11
+myrange: 1
+'
+
+test_tool recins-no-auto ok \
+          recins \
+          '--no-auto -t foo -f foo -v bar' \
+          auto-fields \
+'%rec: foo
+%type: myint int
+%type: myrange range 0 10
+%auto: myint myrange
+
+myint: 10
+myrange: 0
+
+foo: bar
+'
+
+test_tool recins-auto-range-overflow xfail \
+          recins \
+          '-t foo -f foo -v bar' \
+          auto-range-overflow
+
+test_tool recins-auto-range-overflow-force ok \
+          recins \
+          '--force -t foo -f foo -v bar' \
+          auto-range-overflow \
+'%rec: foo
+%type: myrange range 0 10
+%auto: myrange
+
+myrange: 10
+
+foo: bar
+myrange: 11
+'
+ 
 #
 # Cleanup.
 #

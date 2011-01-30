@@ -226,6 +226,34 @@ banned2: bar
 bar: foo
 '
 
+test_declare_input_file auto-int \
+'%rec: foo
+%type: myint int
+%auto: myint
+'
+
+test_declare_input_file auto-range \
+'%rec: foo
+%type: myrange range 0 10
+%auto: myrange
+'
+
+test_declare_input_file auto-date \
+'%rec: foo
+%type: mydate date
+%auto: mydate
+'
+
+test_declare_input_file auto-notype \
+'%rec: foo
+%auto: myint
+'
+
+test_declare_input_file auto-nofex \
+'%rec: foo
+%auto: this%is#not%a^ fex
+'
+
 #
 # Declare tests.
 #
@@ -332,6 +360,34 @@ test_tool recfix-prohibited-fields-fail xfail \
           recfix \
           '' \
           prohibited-fields
+
+test_tool recfix-auto-int ok \
+          recfix \
+          '' \
+          auto-int \
+''
+
+test_tool recfix-auto-range ok \
+          recfix \
+          '' \
+          auto-range \
+''
+
+test_tool recfix-auto-date ok \
+          recfix \
+          '' \
+          auto-date \
+''
+
+test_tool recfix-auto-notype xfail \
+          recfix \
+          '' \
+          auto-notype
+
+test_tool recfix-auto-nofex xfail \
+          recfix \
+          '' \
+          auto-nofex
 
 #
 # Cleanup.
