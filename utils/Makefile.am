@@ -23,7 +23,7 @@ else
 endif
 
 bin_PROGRAMS = recinf recsel recins recdel recset recfix recfmt \
-               csv2rec $(MDB2REC)
+               csv2rec rec2csv $(MDB2REC)
 
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
@@ -67,6 +67,11 @@ recfmt_LDADD = $(COMMONLIBS)
 csv2rec_SOURCES = $(COMMONSRC) \
                   csv2rec.c
 csv2rec_LDADD = $(COMMONLIBS) \
+                $(top_builddir)/libcsv/libcsv.la
+
+rec2csv_SOURCES = $(COMMONSRC) \
+                  rec2csv.c
+rec2csv_LDADD = $(COMMONLIBS) \
                 $(top_builddir)/libcsv/libcsv.la
 
 mdb2rec_SOURCES = $(COMMONSRC) \

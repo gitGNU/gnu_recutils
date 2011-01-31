@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-29 21:09:48 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-31 22:34:52 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

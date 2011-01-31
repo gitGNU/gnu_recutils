@@ -1,3 +1,19 @@
+2011-01-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec2csv: skeleton of the utility.
+	* man/Makefile.am (man_MANS): rec2csv.1 added.
+	(rec2csv.1): New rule.
+
+	* utils/Makefile.am (bin_PROGRAMS): rec2csv added.
+	(rec2csv_SOURCES): Defined.
+	(rec2csv_LDADD): Defined.
+
+	* utils/rec2csv.c: New file.
+	(recutl_print_help): New function.
+	(parse_args): Likewise.
+	(rec2csv_process_data): Likewise.
+	(main): Likewise.
+
 2011-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recins: prepend the auto-generated fields.

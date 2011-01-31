@@ -22,7 +22,8 @@ man_MANS = recdel.1 \
            recsel.1 \
            recset.1 \
            recfmt.1 \
-           csv2rec.1
+           csv2rec.1 \
+           rec2csv.1
 
 if COMPILE_MDB2REC
 man_MANS += mdb2rec.1
@@ -38,6 +39,9 @@ common_mandeps = $(top_srcdir)/configure.ac \
 # Depend on the source, not the binary; we don't need to regenerate
 # the binary when any source file changes, only the main one.
 # Use -o so that the `missing' program can infer the output file.
+
+rec2csv.1: $(top_srcdir)/utils/rec2csv.c $(common_mandeps)
+	$(HELP2MAN) --name="rec to csv converter" ../utils/rec2csv -o $@
 
 csv2rec.1: $(top_srcdir)/utils/csv2rec.c $(common_mandeps)
 	$(HELP2MAN) --name="csv to rec converter" ../utils/csv2rec -o $@

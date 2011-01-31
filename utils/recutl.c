@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-30 22:39:36 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-01-31 22:35:08 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -129,7 +129,7 @@ recutl_print_version (void)
 Copyright (C) %s Jose E. Marchesi.\n\
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n\
 This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n"), "2010");
+There is NO WARRANTY, to the extent permitted by law.\n"), "2010, 2011");
 
   puts (_("\
 \n\
