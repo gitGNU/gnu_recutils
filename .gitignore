@@ -23,6 +23,7 @@ libtool
 /utils/recset
 /utils/recfix
 /utils/csv2rec
+/utils/rec2csv
 /utils/mdb2rec
 /utils/recfmt
 /lib/arg-nonnull.h
