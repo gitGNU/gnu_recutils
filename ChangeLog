@@ -1,3 +1,13 @@
+2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec2csv: print headers.
+	* utils/rec2csv.c (rec2csv_determine_fields): New function.
+	* utils/rec2csv.c (rec2csv_generate_csv): Likewise.
+
+	* src/rec-fex.c (rec_fex_member_p): Get arguments 'min' and 'max'.
+	* src/rec-rset.c (rec_rset_update_auto_fields): Use the additional
+	parameters of rec_fex_member_p.
+
 2011-01-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec2csv: skeleton of the utility.

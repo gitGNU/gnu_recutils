@@ -247,7 +247,7 @@ void rec_fex_append (rec_fex_t fex,
                      int max);
 
 /* Check whether a given field is contained in a fex.  */
-bool rec_fex_member_p (rec_fex_t fex, rec_field_name_t fname);
+bool rec_fex_member_p (rec_fex_t fex, rec_field_name_t fname, int min, int max);
 
 /* Get the properties of a field expression element.  */
 rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);

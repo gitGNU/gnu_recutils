@@ -780,7 +780,9 @@ rec_rset_update_auto_fields (rec_rset_t rset)
                   for (i = 0; i < rec_fex_size (fex); i++)
                     {
                       auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
-                      if (!rec_fex_member_p (rset->auto_fields, auto_field_name))
+                      if (!rec_fex_member_p (rset->auto_fields,
+                                             auto_field_name,
+                                             -1, -1))
                         {
                           rec_fex_append (rset->auto_fields, auto_field_name, -1, -1);
                         }

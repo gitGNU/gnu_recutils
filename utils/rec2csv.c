@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-31 22:31:46 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-02 02:01:07 jemarch"
  *
  *       File:         rec2csv.c
  *       Date:         Mon Jan 31 22:12:29 2011
@@ -39,6 +39,8 @@
 /* Forward declarations.  */
 static void rec2csv_parse_args (int argc, char **argv);
 static bool rec2csv_process_data (rec_db_t db);
+static rec_fex_t rec2csv_determine_fields (rec_rset_t rset);
+static void rec2csv_generate_csv (rec_rset_t rset, rec_fex_t fex);
 
 /*
  * Types
@@ -139,12 +141,126 @@ rec2csv_parse_args (int argc,
     }
 }
 
+static void
+rec2csv_generate_csv (rec_rset_t rset,
+                      rec_fex_t fex)
+{
+  rec_rset_elem_t rset_elem;
+  rec_fex_elem_t fex_elem;
+  rec_record_t record;
+  rec_field_t field;
+  char *field_name_str;
+  char *tmp;
+  int field_index;
+  size_t i;
+
+  /* Generate the row with headers.  */
+  for (i = 0; i < rec_fex_size (fex); i++)
+    {
+      if (i != 0)
+        {
+          putc (',', stdout);
+        }
+
+      fex_elem = rec_fex_get (fex, i);
+
+      /* The header is FNAME or FNAME_N where N is the index starting
+         at 1.  Note that we shall remove the trailing ':', if any. */
+      if (rec_fex_elem_min (fex_elem) != 0)
+        {
+          asprintf (&tmp, "%s_%d",
+                    rec_fex_elem_field_name_str (fex_elem),
+                    rec_fex_elem_min (fex_elem) + 1);
+        }
+      else
+        {
+          asprintf (&tmp, "%s",
+                    rec_fex_elem_field_name_str (fex_elem));
+        }
+
+      if (tmp[strlen(tmp)-1] == ':')
+        {
+          tmp[strlen(tmp)-1] = '\0';
+        }
+
+      csv_fwrite (stdout, tmp, strlen(tmp));
+      free (tmp);
+    }
+
+  putc ('\n', stdout);
+
+  /* Generate the data rows.  */
+
+}
+
+static rec_fex_t
+rec2csv_determine_fields (rec_rset_t rset)
+{
+  rec_fex_t fields;
+  rec_rset_elem_t rset_elem;
+  rec_record_t record;
+  rec_record_elem_t rec_elem;
+  rec_field_t field;
+  int field_index;
+  
+  fields = rec_fex_new (NULL, REC_FEX_SIMPLE);
+
+  rset_elem = rec_rset_null_elem ();
+  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
+    {
+      record = rec_rset_elem_record (rset_elem);
+
+      rec_elem = rec_record_null_elem ();
+      while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+        {
+          field = rec_record_elem_field (rec_elem);
+          field_index = rec_record_get_field_index_by_name (record, field);
+          
+          if (!rec_fex_member_p (fields,
+                                 rec_field_name (field),
+                                 field_index, field_index))
+            {
+              rec_fex_append (fields,
+                              rec_field_name (field),
+                              field_index, field_index);
+            }
+        }
+    }
+
+  return fields;
+}
+
 static bool
 rec2csv_process_data (rec_db_t db)
 {
   bool ret;
+  rec_fex_t row_fields;
+  size_t i;
+  rec_rset_t rset;
 
   ret = true;
+
+  for (i = 0; i < rec_db_size (db); i++)
+    {
+      rset = rec_db_get_rset (db, i);
+      if (((!rec2csv_record_type) && (!rec_rset_type (rset)))
+          || (rec2csv_record_type
+              && rec_rset_type (rset)
+              && (strcmp (rec_rset_type (rset),
+                          rec2csv_record_type) == 0)))
+        {
+          /* Process this record set.  */
+
+          /* Build the fields that will appear in the row. */
+          row_fields = rec2csv_determine_fields (rset);
+  
+          /* Generate the csv data.  */
+          rec2csv_generate_csv (rset, row_fields);
+
+          /* Cleanup.  */
+          rec_fex_destroy (row_fields);
+        }
+    }
 
   return ret;
 }

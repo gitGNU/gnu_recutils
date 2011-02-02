@@ -47,7 +47,7 @@ struct rec_fex_elem_s
   int min;
 };
 
-#define REC_FEX_MAX_ELEMS 120
+#define REC_FEX_MAX_ELEMS 256
 
 struct rec_fex_s
 {
@@ -367,7 +367,9 @@ rec_fex_str (rec_fex_t fex,
 
 bool
 rec_fex_member_p (rec_fex_t fex,
-                  rec_field_name_t fname)
+                  rec_field_name_t fname,
+                  int min,
+                  int max)
 {
   bool res = false;
   int i;
@@ -375,7 +377,9 @@ rec_fex_member_p (rec_fex_t fex,
   for (i = 0; i < fex->num_elems; i++)
     {
       if (rec_field_name_equal_p (fname,
-                                  fex->elems[i]->field_name))
+                                  fex->elems[i]->field_name)
+          && ((min == -1) || (fex->elems[i]->min))
+          && ((max == -1) || (fex->elems[i]->max)))
         {
           res = true;
           break;
@@ -403,7 +407,7 @@ rec_fex_append (rec_fex_t fex,
   if (new_elem)
     {
       new_elem->field_name = rec_field_name_dup (fname);
-      new_elem->str = strdup ("");
+      new_elem->str = rec_write_field_name_str (fname, REC_WRITER_NORMAL);
       new_elem->min = min;
       new_elem->max = max;
       fex->elems[fex->num_elems++] = new_elem;
