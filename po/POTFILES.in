@@ -21,6 +21,7 @@ src/rec-types.c
 src/rec-utils.c
 utils/csv2rec.c
 utils/mdb2rec.c
+utils/rec2csv.c
 utils/recdel.c
 utils/recfix.c
 utils/recfmt.c

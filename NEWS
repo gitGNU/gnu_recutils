@@ -1,11 +1,31 @@
 This NEWS file records noteworthy changes, very tersely.
 See the manual for detailed information.
 
-  Copyright 2010 Jose E. Marchesi.
+  Copyright 2010, 2011 Jose E. Marchesi.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
+
+ Version 1.1.90 (2 February 2011)
+* New utility rec2csv, to export rec data to csv files.
+* Support for auto-incremented fields and timestamps with the new
+  %auto field in record descriptors.
+* Support for comments in enum type descriptions.
+* recset now supports a new "set or add field" operation, implementing
+  the common case of setting the value of a field in case it exists,
+  or else add it to the record.
+* The flavor of regular expressions accepted in both selection
+  expressions and type descriptions is now documented in the user
+  manual.
+* recdel now performs an integrity check before to complete the
+  deletion.
+* The utilities no longer "expand" the contents of remote descriptors
+  in the local ones.
+* recset and recins no longer destroy the permissions of the rec file
+  that is being modified.
+* Many fixes in the documentation.
+* Lots of bug fixes.
 
  Version 1.1 (24 December 2010)
 * New utility recfmt, to format records based on templates.

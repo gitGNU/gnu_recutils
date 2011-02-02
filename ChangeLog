@@ -1,5 +1,18 @@
 2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.1.90.
+	* .x-sc_prohibit_strcmp: Added torture/*.
+
+	* .x-sc_prohibit_stddef_without_use: New file.
+
+	* po/recutils.pot: Updated for 1.1.90.
+
+	* NEWS: Updated for 1.1.90.
+
+	* configure.ac: Version changed to 1.1.90.
+
+2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec2csv: documentation.
 	* doc/recutils.texi (rec2csv): New section.
 	(rec2csv Invocation): New section.
