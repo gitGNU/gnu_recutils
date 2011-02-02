@@ -378,8 +378,8 @@ rec_fex_member_p (rec_fex_t fex,
     {
       if (rec_field_name_equal_p (fname,
                                   fex->elems[i]->field_name)
-          && ((min == -1) || (fex->elems[i]->min))
-          && ((max == -1) || (fex->elems[i]->max)))
+          && ((min == -1) || (fex->elems[i]->min == min))
+          && ((max == -1) || (fex->elems[i]->max == max)))
         {
           res = true;
           break;
