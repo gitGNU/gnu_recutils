@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-02 02:01:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-02 15:53:00 jemarch"
  *
  *       File:         rec2csv.c
  *       Date:         Mon Jan 31 22:12:29 2011
@@ -163,34 +163,62 @@ rec2csv_generate_csv (rec_rset_t rset,
         }
 
       fex_elem = rec_fex_get (fex, i);
+      field_name_str = xstrdup (rec_fex_elem_field_name_str (fex_elem));
 
       /* The header is FNAME or FNAME_N where N is the index starting
          at 1.  Note that we shall remove the trailing ':', if any. */
+
+      if (field_name_str[strlen(field_name_str)-1] == ':')
+        {
+          field_name_str[strlen(field_name_str)-1] = '\0';
+        }
+
+
       if (rec_fex_elem_min (fex_elem) != 0)
         {
           asprintf (&tmp, "%s_%d",
-                    rec_fex_elem_field_name_str (fex_elem),
+                    field_name_str,
                     rec_fex_elem_min (fex_elem) + 1);
         }
       else
         {
-          asprintf (&tmp, "%s",
-                    rec_fex_elem_field_name_str (fex_elem));
-        }
-
-      if (tmp[strlen(tmp)-1] == ':')
-        {
-          tmp[strlen(tmp)-1] = '\0';
+          asprintf (&tmp, "%s", field_name_str);
         }
 
       csv_fwrite (stdout, tmp, strlen(tmp));
+      free (field_name_str);
       free (tmp);
     }
 
   putc ('\n', stdout);
 
   /* Generate the data rows.  */
+  rset_elem = rec_rset_null_elem ();
+  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
+    {
+      record = rec_rset_elem_record (rset_elem);
 
+      for (i = 0; i < rec_fex_size (fex); i++)
+        {
+          if (i != 0)
+            {
+              putc (',', stdout);
+            }
+
+          fex_elem = rec_fex_get (fex, i);
+          field = rec_record_get_field_by_name (record,
+                                                rec_fex_elem_field_name (fex_elem),
+                                                rec_fex_elem_min (fex_elem));
+          if (field)
+            {
+              csv_fwrite (stdout,
+                          rec_field_value (field),
+                          strlen (rec_field_value (field)));
+            }
+        }
+
+      putc ('\n', stdout);
+    }
 }
 
 static rec_fex_t
@@ -243,11 +271,13 @@ rec2csv_process_data (rec_db_t db)
   for (i = 0; i < rec_db_size (db); i++)
     {
       rset = rec_db_get_rset (db, i);
-      if (((!rec2csv_record_type) && (!rec_rset_type (rset)))
-          || (rec2csv_record_type
-              && rec_rset_type (rset)
-              && (strcmp (rec_rset_type (rset),
-                          rec2csv_record_type) == 0)))
+      if (((rec2csv_record_type)
+           && rec_rset_type (rset)
+           && (strcmp (rec_rset_type (rset),
+                       rec2csv_record_type) == 0))
+          || (!rec2csv_record_type
+              && (!rec_rset_type (rset) ||
+                  (rec_db_size (db) == 1))))
         {
           /* Process this record set.  */
 
