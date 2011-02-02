@@ -1,5 +1,25 @@
 2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec2csv: tests.
+	* torture/utils/Makefile.am (TESTS): rec2csv added.
+
+	* torture/utils/rec2csv.sh: New file.  New input files
+	'default-records', 'missing-fields', 'missing-fields-first',
+	'multi-line', 'escape-quotes', 'repeated-fields',
+	'repeated-missing' and 'several-types'.
+	(rec2csv-default-record): New test.
+	(rec2csv-missing-fields): New test.
+	(rec2csv-missing-fields-first): New test.
+	(rec2csv-multi-line): New test.
+	(rec2csv-escape-quotes): New test.
+	(rec2csv-repeated-fields): New test.
+	(rec2csv-repeated-missing): New test.
+	(rec2csv-default-type): New test.
+	(rec2csv-with-type): New test.
+	(rec2csv-nonexistent-type): New test.
+
+2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec2csv: print data.
 	* utils/rec2csv.c (rec2csv_process_data): Process either the
 	specified record rset, or the default one, or the only rset
