@@ -80,6 +80,8 @@ Utilities
 * recfmt::              Formatting records using templates.
 
 * csv2rec::             Converting csv data into rec data.
+* rec2csv::             Converting rec data into csv data.
+
 * mdb2rec::             Converting mdb files into rec files.
 
 * GNU Free Documentation License:: Distribution terms for this document.
@@ -2022,6 +2024,136 @@ Used as a filter, and omitting empty fields:
 
 @example
 $ cat contacts.csv | csv2rec -e > contacts.rec
+@end example
+
+@node rec2csv
+@chapter rec2csv
+
+@command{rec2csv} reads the given rec files (or the data in the
+standard input if no file is specified) and prints out the converted
+comma-separated-values.
+
+@menu
+* rec2csv Invocation::     Command line options.
+* rec2csv Conversion::     How tables are extracted from record sets.
+* rec2csv Examples::       Examples of the usage of @command{rec2csv}.
+@end menu
+
+@node rec2csv Invocation
+@section rec2csv Invocation
+
+@command{rec2csv} converts rec data into CSV data.  Synopsis:
+
+@example
+rec2csv [OPTION]... [REC_FILE]...
+@end example
+
+The rec data can be read from files specified in the command line, or
+in the standard input.  The program echoes the converted data in the
+standard output.
+
+In addition of the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
+
+@table @samp
+@item -t @var{type}
+@itemx @w{@kbd{--type}=@var{type}}
+Type of the records to convert.  If no type is specified then the
+default records (with no name) are converted.
+@end table
+
+@node rec2csv Conversion
+@section rec2csv Conversion
+
+Record sets are not tables, even if tables can be easily emulated
+using records having the same fields in the same order.  For example:
+
+@example
+a: value
+b: value
+c: value
+
+a: value
+b: value
+c: value
+
+...
+@end example
+
+There are several ways records are more flexible than tables:
+
+@itemize @minus
+@item Fields can appear in a different order in several records.
+@item There can be several fields with the same name in a single record.
+@item Records can differ in the number of fields.
+@end itemize
+
+Since comma-separated-values files contain tables, the @code{rec2csv}
+utility implements an algorithm that deals with the previous
+difficulties, to generate a table that is what the user expects
+(likewise).
+
+The algorithm is the following.  The utility first scans the specified
+record set, building a list with the names that will become the table
+header.  For each field, a header is added with the form:
+
+@example
+FIELDNAME[_N]
+@end example
+
+where N is a number in the range @code{2..inf} and is the ``index'' of
+the field in its containing record plus one.  For example, consider
+the following record set:
+
+@example
+a: a1
+b: b11
+b: b12
+c: c1
+
+a: a2
+b: b2
+d: d2
+@end example
+
+The corresponding list of headers being:
+
+@example
+a b b_2 c a b d
+@end example
+
+Then duplicates are removed:
+
+@example
+a b b_2 c d
+@end example
+
+The resulting list of headers is then used to build the table in the
+generated csv file.  In this case:
+
+@example
+"a","b","b_2","c","d"
+"a1","b11","b12","c1",
+"a2","b2",,,"d2"
+@end example
+
+Note how missing fields are implemented as empty rows in the generated
+csv.
+
+@node rec2csv Examples
+@section rec2csv Examples
+
+Generate a csv file out of a rec file:
+
+@example
+$ rec2csv foo.rec > foo.csv
+@end example
+
+Same operation, but using the program as a filter and specifying a
+concrete type:
+
+@example
+$ cat inventory.rec | rec2csv -t Item > items.csv
 @end example
 
 @node mdb2rec

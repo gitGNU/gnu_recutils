@@ -1,5 +1,13 @@
 2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec2csv: documentation.
+	* doc/recutils.texi (rec2csv): New section.
+	(rec2csv Invocation): New section.
+	(rec2csv Examples): New section.
+	(rec2csv Conversion): New section.
+
+2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec2csv: tests.
 	* torture/utils/Makefile.am (TESTS): rec2csv added.
 
