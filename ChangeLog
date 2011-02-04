@@ -1,5 +1,12 @@
 2011-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.2.
+	* NEWS: Updated for 1.2.
+
+	* configure.ac: Version changed from 1.1.90 to 1.2.
+
+2011-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Translations for German, Swedish, Finnish and Ducht.
 	* po/de.po: New file from the FTP.
 	* po/sv.po: Likewise.
