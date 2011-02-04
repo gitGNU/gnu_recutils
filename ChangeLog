@@ -1,3 +1,9 @@
+2011-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: some examples fixed.
+	* doc/recutils.texi (Escalar types): Fix example.
+	(Enumerated types): Likewise.
+
 2011-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.1.90.

@@ -623,7 +623,7 @@ Signed @dfn{integers} are supported by using the @code{integer}
 declaration:
 
 @example
-%type: Id integer
+%type: Id int
 @end example
 
 Given that declaration, @code{Id} fields must contain integers, that
@@ -756,7 +756,7 @@ can be any character but parenthesis.  For example:
 binary values.
 
 @example
-%type: Yesno boolean
+%type: Yesno bool
 @end example
 
 The literals allowed in boolean fields are @code{yes/no}, @code{0/1}
