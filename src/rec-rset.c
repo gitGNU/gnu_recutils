@@ -26,6 +26,7 @@
 #include <config.h>
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #include <rec-mset.h>
 #include <rec.h>
@@ -54,6 +55,10 @@ struct rec_rset_s
   /* Auto-set fields.  */
   rec_fex_t auto_fields;
 
+  /* Size constraints.  */
+  size_t min_size;
+  size_t max_size;
+
   /* Storage for records and comments.  */
   int record_type;
   int comment_type;
@@ -71,6 +76,7 @@ struct rec_rset_s
 
 static void rec_rset_update_types (rec_rset_t rset);
 static void rec_rset_update_auto_fields (rec_rset_t rset);
+static void rec_rset_update_size_constraints (rec_rset_t rset);
 
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
 static void rec_rset_record_disp_fn (void *data);
@@ -101,6 +107,8 @@ rec_rset_new (void)
           rset->descriptor_pos = 0;
           rset->type_reg = NULL;
           rset->auto_fields = NULL;
+          rset->min_size = 0;
+          rset->max_size = SIZE_MAX;
 
           /* register the types.  */
           rset->record_type = rec_mset_register_type (rset->mset,
@@ -152,6 +160,8 @@ rec_rset_dup (rec_rset_t rset)
       new->record_type = rset->record_type;
       new->comment_type = rset->comment_type;
       new->mset = rec_mset_dup (rset->mset);
+      new->min_size = rset->min_size;
+      new->max_size = rset->max_size;
     }
 
   return new;
@@ -452,6 +462,7 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
   /* Update the types registry and the auto fields.  */
   rec_rset_update_types (rset);
   rec_rset_update_auto_fields (rset);
+  rec_rset_update_size_constraints (rset);
 }
 
 size_t
@@ -692,6 +703,33 @@ rec_rset_get_field_type (rec_rset_t rset,
   return res;
 }
 
+size_t
+rec_rset_min_records (rec_rset_t rset)
+{
+  return rset->min_size;
+}
+
+size_t
+rec_rset_max_records (rec_rset_t rset)
+{
+  return rset->max_size;
+}
+
+char *
+rec_rset_source (rec_rset_t rset)
+{
+  rec_rset_elem_t rset_elem;
+  rec_record_t record;
+  
+  record = rec_rset_descriptor (rset);
+  if (!record)
+    {
+      record = rec_rset_elem_record (rec_rset_get_record (rset, 0));
+    }
+
+  return rec_record_source (record);
+}
+
 /*
  * Private functions
  */
@@ -736,6 +774,71 @@ static void *
 rec_rset_comment_dup_fn (void *data)
 {
   return (void *) rec_comment_dup ((rec_comment_t) data);
+}
+
+static void
+rec_rset_update_size_constraints (rec_rset_t rset)
+{
+  rec_record_elem_t record_elem;
+  rec_field_t field;
+  rec_field_name_t size_fname;
+  enum rec_size_condition_e condition;
+  size_t size = 0;
+
+  /* Reset the constraints. */
+  rset->min_size = 0;
+  rset->max_size = SIZE_MAX;
+
+  /* Scan the record descriptor for %size: directives, and build the
+     new list.  */
+  if (rset->descriptor)
+    {
+      size_fname = rec_parse_field_name_str ("%size:");
+
+      field = rec_record_get_field_by_name (rset->descriptor,
+                                            size_fname,
+                                            0);
+
+      if (field && rec_match (rec_field_value (field), REC_INT_SIZE_RE))
+        {
+          /* Extract 'min' and 'max' and update the constraints in the
+             rset.  */
+          condition = rec_extract_size_condition (rec_field_value (field));
+          size = rec_extract_size (rec_field_value (field));
+          
+          /* Set min_size and max_size depending on the
+             condition.  */
+          switch (condition)
+            {
+            case SIZE_COND_E:
+              {
+                rset->min_size = size;
+                rset->max_size = size;
+                break;
+              }
+            case SIZE_COND_L:
+              {
+                rset->max_size = size - 1;
+                break;
+              }
+            case SIZE_COND_LE:
+              {
+                rset->max_size = size;
+                break;
+              }
+            case SIZE_COND_G:
+              {
+                rset->min_size = size + 1;
+                break;
+              }
+            case SIZE_COND_GE:
+              {
+                rset->min_size = size;
+                break;
+              }
+            }
+        }
+    }
 }
 
 static void

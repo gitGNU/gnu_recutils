@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.1.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2011-02-02 23:06+0100\n"
+"POT-Creation-Date: 2011-02-04 11:37+0100\n"
 "PO-Revision-Date: 2011-02-03 22:43+0200\n"
 "Last-Translator: Jorma Karvonen <karvonen.jorma@gmail.com>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/closeout.c:112
@@ -213,7 +213,9 @@ msgstr "muisti loppui"
 #: src/rec-fex.c:194
 #, c-format
 msgid "internal error: rec_resolver_check: error compiling regexp.\n"
-msgstr "sisäinen virhe: rec_resolver_check: virhe käännettäessä säännöllistä lauseketta.\n"
+msgstr ""
+"sisäinen virhe: rec_resolver_check: virhe käännettäessä säännöllistä "
+"lauseketta.\n"
 
 #: src/rec-fex.c:402
 #, c-format
@@ -223,17 +225,24 @@ msgstr "sisäinen virhe: REC_FEX_MAX_ELEMS ylitetty.  Ilmoita tästä.\n"
 #: src/rec-field-name.c:245
 #, c-format
 msgid "internal error: rec_field_name_str_p: error compiling regexp.\n"
-msgstr "sisäinen virhe: rec_field_name_str_p: virhe käännettäessä säännöllistä lauseketta.\n"
+msgstr ""
+"sisäinen virhe: rec_field_name_str_p: virhe käännettäessä säännöllistä "
+"lauseketta.\n"
 
 #: src/rec-field-name.c:267
 #, c-format
 msgid "internal error: rec_field_name_part_str_p: error compiling regexp.\n"
-msgstr "sisäinen virhe: rec_field_name_part_str_p: virhe käännettäessä säännöllistä lauseketta.\n"
+msgstr ""
+"sisäinen virhe: rec_field_name_part_str_p: virhe käännettäessä säännöllistä "
+"lauseketta.\n"
 
 #: src/rec-int.c:253
 #, c-format
-msgid "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
-msgstr "%s:%s: varoitus: tyyppi %s on ristiriidassa viitetyypin %s kanssa kohteessa rset %s.\n"
+msgid ""
+"%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
+msgstr ""
+"%s:%s: varoitus: tyyppi %s on ristiriidassa viitetyypin %s kanssa kohteessa "
+"rset %s.\n"
 
 #: src/rec-int.c:361
 #, c-format
@@ -297,8 +306,11 @@ msgstr "%s:%s: virhe: arvo kohteelle %s[%d] ei ole kenttänimien luettelo\n"
 
 #: src/rec-int.c:773
 #, c-format
-msgid "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
-msgstr "%s:%s: virhe: automaattisen askelkasvatuskentän %s pitäisi olla tyyppiä kokonaisluku, lukualue tai päivämäärä\n"
+msgid ""
+"%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
+msgstr ""
+"%s:%s: virhe: automaattisen askelkasvatuskentän %s pitäisi olla tyyppiä "
+"kokonaisluku, lukualue tai päivämäärä\n"
 
 #: src/rec-int.c:868
 #, c-format
@@ -323,17 +335,24 @@ msgstr "%s:%s: virhe: verkko-osoite %s ei sisällä tietoa tyypille %s.\n"
 #: src/rec-int.c:987
 #, c-format
 msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
-msgstr "sisäinen virhe: rec_int_rec_type_p: virhe käännettäessä säännöllistä lauseketta.\n"
+msgstr ""
+"sisäinen virhe: rec_int_rec_type_p: virhe käännettäessä säännöllistä "
+"lauseketta.\n"
 
 #: src/rec-types.c:428
 #, c-format
-msgid "internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() in rec_type_new().\n"
-msgstr "sisäinen virhe: rec-tyypit: saatiin REC_TYPE_NONE funktiosta rec_type_parse_type_kind() funktiossa rec_type_new().\n"
+msgid ""
+"internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() "
+"in rec_type_new().\n"
+msgstr ""
+"sisäinen virhe: rec-tyypit: saatiin REC_TYPE_NONE funktiosta "
+"rec_type_parse_type_kind() funktiossa rec_type_new().\n"
 
 #: src/rec-types.c:811
 #, c-format
 msgid "internal error: rec-types: error compiling regexp.\n"
-msgstr "sisäinen virhe: rec-types: virhe käännettäessä säännöllistä lauseketta.\n"
+msgstr ""
+"sisäinen virhe: rec-types: virhe käännettäessä säännöllistä lauseketta.\n"
 
 #: src/rec-types.c:887
 msgid "invalid integer."
@@ -388,12 +407,16 @@ msgstr "virheellinen enumeraatioarvo."
 #: src/rec-utils.c:86
 #, c-format
 msgid "internal error: rec_int_rec_extract_file: error compiling regexp.\n"
-msgstr "sisäinen virhe: rec_int_rec_extract_file: virhe käännettäessä säännöllistä lauseketta.\n"
+msgstr ""
+"sisäinen virhe: rec_int_rec_extract_file: virhe käännettäessä säännöllistä "
+"lauseketta.\n"
 
 #: src/rec-utils.c:114 src/rec-utils.c:142
 #, c-format
 msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
-msgstr "sisäinen virhe: rec_int_rec_extract_url: virhe käännettäessä säännöllistä lauseketta.\n"
+msgstr ""
+"sisäinen virhe: rec_int_rec_extract_url: virhe käännettäessä säännöllistä "
+"lauseketta.\n"
 
 #. TRANSLATORS: --help output, csv2rec synopsis.
 #. no-wrap
@@ -412,14 +435,19 @@ msgstr "Muunna csv-tietoa rec-tiedoksi.\n"
 #. no-wrap
 #: utils/csv2rec.c:115
 msgid ""
-"  -t, --type=TYPE                     type name for the converted records; if this\n"
-"                                        parameter is ommited then no type is used.\n"
+"  -t, --type=TYPE                     type name for the converted records; "
+"if this\n"
+"                                        parameter is ommited then no type is "
+"used.\n"
 "  -s, --strict                        be strict parsing the csv file.\n"
 "  -e, --omit-empty                    omit empty fields.\n"
 msgstr ""
-"  -t, --type=TYYPPI                   Muunnettujen tietueiden tyyppinimi. Jos tämä\n"
-"                                        parametri ohitetaan, mitään tyyppiä ei käytetä.\n"
-"  -s, --strict                        Noudata tiukkaa jäsennystä csv-tiedostossa.\n"
+"  -t, --type=TYYPPI                   Muunnettujen tietueiden tyyppinimi. "
+"Jos tämä\n"
+"                                        parametri ohitetaan, mitään tyyppiä "
+"ei käytetä.\n"
+"  -s, --strict                        Noudata tiukkaa jäsennystä csv-"
+"tiedostossa.\n"
 "  -e, --omit-empty                    Ohita tyhjät kentät.\n"
 
 #. TRANSLATORS: --help output, csv2rec examples.
@@ -489,13 +517,15 @@ msgid ""
 "  -s, --system-tables                 include system tables.\n"
 "  -e, --keep-empty-fields             don't prune empty fields in the rec\n"
 "                                        output.\n"
-"  -l, --list-tables                   dump a list of the table names contained\n"
+"  -l, --list-tables                   dump a list of the table names "
+"contained\n"
 "                                        in the mdb file.\n"
 msgstr ""
 "  -s, --system-tables                 sisällytä järjestelmätaulut.\n"
 "  -e, --keep-empty-fields             älä karsi tyhjiä kenttiä rec-\n"
 "                                        tulosteesta\n"
-"  -l, --list-tables                   vedosta mbd-tiedostoon sisältyvä taulu-\n"
+"  -l, --list-tables                   vedosta mbd-tiedostoon sisältyvä "
+"taulu-\n"
 "                                        nimien luettelo\n"
 
 #. TRANSLATORS: --help output, mdb2rec examples.
@@ -562,11 +592,15 @@ msgstr "Muunna rec-tietoa csv-tiedoksi.\n"
 #. no-wrap
 #: utils/rec2csv.c:93
 msgid ""
-"  -t, --type=TYPE                     record set to convert to csv; if this parameter\n"
-"                                        is ommited then the default record set is used\n"
+"  -t, --type=TYPE                     record set to convert to csv; if this "
+"parameter\n"
+"                                        is ommited then the default record "
+"set is used\n"
 msgstr ""
-"  -t, --type=TYYPPI                   csv-muotoon muunnettava tietuejoukko. Jos tämä parametri\n"
-"                                        ohitetaan, käytetään oletustietuejoukkoa\n"
+"  -t, --type=TYYPPI                   csv-muotoon muunnettava tietuejoukko. "
+"Jos tämä parametri\n"
+"                                        ohitetaan, käytetään "
+"oletustietuejoukkoa\n"
 
 #. TRANSLATORS: --help output, rec2csv examples.
 #. no-wrap
@@ -587,7 +621,9 @@ msgstr ""
 #: utils/recdel.c:88
 #, c-format
 msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n"
-msgstr "Käyttö: recdel [VALITSIMET]... [-t TYYPPI] [-n NUMERO | -e LAUSEKE] [TIEDOSTO]\n"
+msgstr ""
+"Käyttö: recdel [VALITSIMET]... [-t TYYPPI] [-n NUMERO | -e LAUSEKE] "
+"[TIEDOSTO]\n"
 
 #. TRANSLATORS: --help output, recdel short description.
 #. no-wrap
@@ -599,20 +635,28 @@ msgstr "Poista (tai muuta kommenteiksi) rec-tiedoston tietueita.\n"
 #. no-wrap
 #: utils/recdel.c:100
 msgid ""
-"  -c, --comment                       comment out the matching records instead of\n"
+"  -c, --comment                       comment out the matching records "
+"instead of\n"
 "                                        deleting them.\n"
-"      --force                         delete even in potentially dangerous situations,\n"
-"                                        and if the deletion is violating record restrictions.\n"
+"      --force                         delete even in potentially dangerous "
+"situations,\n"
+"                                        and if the deletion is violating "
+"record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
-"      --verbose                       give a detailed report if the integrity check\n"
+"      --verbose                       give a detailed report if the "
+"integrity check\n"
 "                                        fails.\n"
 msgstr ""
-"  -c, --comment                       muuta täsmäävät tietueet kommenteiksi sen sijaan että\n"
+"  -c, --comment                       muuta täsmäävät tietueet kommenteiksi "
+"sen sijaan että\n"
 "                                        ne poistettaisiin.\n"
-"      --force                         poista myös potentiaalisesti vaarallisissa tilanteissa, ja\n"
-"                                        jos poistaminen on ristiriidassa tietuerajoitusten kanssa.\n"
+"      --force                         poista myös potentiaalisesti "
+"vaarallisissa tilanteissa, ja\n"
+"                                        jos poistaminen on ristiriidassa "
+"tietuerajoitusten kanssa.\n"
 "      --no-external                   älä käytä ulkoisia selosteita.\n"
-"      --verbose                       anna yksityiskohtainen ilmoitus, jos integriteetti-\n"
+"      --verbose                       anna yksityiskohtainen ilmoitus, jos "
+"integriteetti-\n"
 "                                        tarkistus epäonnistuu.\n"
 
 #. TRANSLATORS: --help output, notes on recdel.
@@ -624,7 +668,8 @@ msgid ""
 "If no FILE is specified then the command acts like a filter, getting\n"
 "the data from standard input and writing the result to standard output.\n"
 msgstr ""
-"Jos TIEDOSTOa ei ole määritelty, silloin komento toimii kuin suodatin hakien\n"
+"Jos TIEDOSTOa ei ole määritelty, silloin komento toimii kuin suodatin "
+"hakien\n"
 "tietoja vakiosyötteestä ja kirjoittaen tuloksen vakiotulosteeseen.\n"
 
 #. TRANSLATORS: --help output, recdel examples.
@@ -634,12 +679,14 @@ msgid ""
 "Examples:\n"
 "\n"
 "        recdel -n 10 contacts.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n"
+"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
+"rec\n"
 msgstr ""
 "Esimerkit:\n"
 "\n"
 "        recdel -n 10 contacts.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n"
+"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
+"rec\n"
 
 #: utils/recdel.c:153
 #, c-format
@@ -657,7 +704,9 @@ msgstr "ohitetaan pyyntö poistaa kaikki %s-tyyppiset tietueet.\n"
 
 #: utils/recdel.c:285
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
-msgstr "käytä valitsinta --force jos haluat todella jatkaa, tai käytä joko valitsinta -n tai -e.\n"
+msgstr ""
+"käytä valitsinta --force jos haluat todella jatkaa, tai käytä joko "
+"valitsinta -n tai -e.\n"
 
 #: utils/recdel.c:293 utils/recset.c:436
 msgid "invalid selection expression.\n"
@@ -714,8 +763,12 @@ msgstr "Aseta mallinne tietuisiin, jotka on luettu vakiosyötteestä.\n"
 #. TRANSLATORS: --help output, recfmt arguments.
 #. no-wrap
 #: utils/recfmt.c:89
-msgid "  -f, --file=FILENAME                 read the template to apply from a file.\n"
-msgstr "  -f, --file=TIEDOSTONIMI             lue mallinne, joka haettiin tiedostosta.\n"
+msgid ""
+"  -f, --file=FILENAME                 read the template to apply from a "
+"file.\n"
+msgstr ""
+"  -f, --file=TIEDOSTONIMI             lue mallinne, joka haettiin "
+"tiedostosta.\n"
 
 #. TRANSLATORS: --help output, recfmt examples.
 #. no-wrap
@@ -738,7 +791,9 @@ msgstr "ei voida avata tiedostoa %s lukemista varten.\n"
 
 #: utils/recfmt.c:152
 msgid "don't specify a template in the command line and -f at the same time.\n"
-msgstr "älä määritä samalla kertaa sekä mallinnetta komentorivillä että valitsinta -f.\n"
+msgstr ""
+"älä määritä samalla kertaa sekä mallinnetta komentorivillä että valitsinta -"
+"f.\n"
 
 #: utils/recfmt.c:175
 msgid "invalid expression in a template slot.\n"
@@ -750,7 +805,9 @@ msgstr "virhe arvioitaessa lauseketta mallinnevälissä.\n"
 
 #: utils/recfmt.c:215
 msgid "recfmt_apply_template: error compiling regexp. Please report this.\n"
-msgstr "recfmt_apply_template: virhe käännettäessä säännöllistä lauseketta. Ilmoita tästä.\n"
+msgstr ""
+"recfmt_apply_template: virhe käännettäessä säännöllistä lauseketta. Ilmoita "
+"tästä.\n"
 
 #. TRANSLATORS: --help output, recinf synopsis.
 #. no-wrap
@@ -769,7 +826,8 @@ msgstr "Tulosta syötteeseen tallennettujen tietuiden tyypit.\n"
 #. no-wrap
 #: utils/recinf.c:96
 msgid ""
-"  -t, --type=RECORD_TYPE          print information on the records having the\n"
+"  -t, --type=RECORD_TYPE          print information on the records having "
+"the\n"
 "                                    specified type.\n"
 "  -d, --descriptor                include the full record descriptors.\n"
 "  -n, --names-only                output just the names of the record files\n"
@@ -778,7 +836,8 @@ msgstr ""
 "  -t, --type=TIETUE_TYYPPI        tulosta tietoja määritellyn tyyppisistä\n"
 "                                    tietueista.\n"
 "  -d, --descriptor                sisällytä täydet tietueselosteet.\n"
-"  -n, --names-only                tulosta vain syöteestä löydettyjen tietue-\n"
+"  -n, --names-only                tulosta vain syöteestä löydettyjen "
+"tietue-\n"
 "                                    tiedostojen nimet.\n"
 
 #. TRANSLATORS: --help output, recinf special options.
@@ -788,10 +847,12 @@ msgstr ""
 #: utils/recinf.c:109 utils/recsel.c:139
 msgid ""
 "Special options:\n"
-"  -S, --print-sexps                   print the data in sexps instead of rec format.\n"
+"  -S, --print-sexps                   print the data in sexps instead of rec "
+"format.\n"
 msgstr ""
 "Erikoisvalitsimet:\n"
-"  -S, --print-sexps                   tulosta tietoja sexps-muodossa eikä rec-muodossa.\n"
+"  -S, --print-sexps                   tulosta tietoja sexps-muodossa eikä "
+"rec-muodossa.\n"
 
 #. TRANSLATORS: --help output, recinf examples.
 #. no-wrap
@@ -818,8 +879,12 @@ msgstr "virhe: ei voida lukea tiedostoa %s\n"
 #. no-wrap
 #: utils/recins.c:101
 #, c-format
-msgid "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"
-msgstr "Käyttö: recins [VALITSIN]... [-t TYYPPI] [-n NUMERO | -e LAUSEKE] [(-f MERKKIJONO -v MERKKIJONO]|[-r RECDATA)]... [TIEDOSTO]\n"
+msgid ""
+"Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r "
+"RECDATA)]... [FILE]\n"
+msgstr ""
+"Käyttö: recins [VALITSIN]... [-t TYYPPI] [-n NUMERO | -e LAUSEKE] [(-f "
+"MERKKIJONO -v MERKKIJONO]|[-r RECDATA)]... [TIEDOSTO]\n"
 
 #. TRANSLATORS: --help output, recins short description.
 #. no-wrap
@@ -831,24 +896,34 @@ msgstr "Lisää uusia tietueita rec-tietokantaan.\n"
 #. no-wrap
 #: utils/recins.c:112
 msgid ""
-"  -f, --field=STR                     field name; should be followed by a -v.\n"
-"  -v, --value=STR                     field value; should be preceded by an -f.\n"
-"  -r, --record=STR                    record that will be inserted in the file.\n"
-"      --force                         insert the record even if it is violating\n"
+"  -f, --field=STR                     field name; should be followed by a -"
+"v.\n"
+"  -v, --value=STR                     field value; should be preceded by an -"
+"f.\n"
+"  -r, --record=STR                    record that will be inserted in the "
+"file.\n"
+"      --force                         insert the record even if it is "
+"violating\n"
 "                                        record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
 "      --no-auto                       don't insert auto generated fields.\n"
-"      --verbose                       give a detailed report if the integrity check\n"
+"      --verbose                       give a detailed report if the "
+"integrity check\n"
 "                                        fails.\n"
 msgstr ""
-"  -f, --field=MERKKIJONO              kenttänimi.  Pitäisi olla valitsimen -v jäljessä.\n"
-"  -v, --value=MERKKIJONO              kenttänimi.  Pitäisi edeltää valitsinta -f.\n"
+"  -f, --field=MERKKIJONO              kenttänimi.  Pitäisi olla valitsimen -"
+"v jäljessä.\n"
+"  -v, --value=MERKKIJONO              kenttänimi.  Pitäisi edeltää "
+"valitsinta -f.\n"
 "  -r, --record=MERKKIJONO             tietue, joka lisätään tiedostoon.\n"
-"      --force                         lisää tietue, vaikka se on ristiriidassa tietue-\n"
+"      --force                         lisää tietue, vaikka se on "
+"ristiriidassa tietue-\n"
 "                                        rajoitusten kanssa.\n"
 "      --no-external                   älä käytä ulkoisia selosteita.\n"
-"      --no-auto                       älä lisää automaattisesti tuotettuja kenttiä.\n"
-"      --verbose                       anna yksityiskohtainen ilmoitus, jos integriteetti-\n"
+"      --no-auto                       älä lisää automaattisesti tuotettuja "
+"kenttiä.\n"
+"      --verbose                       anna yksityiskohtainen ilmoitus, jos "
+"integriteetti-\n"
 "                                        tarkistus epäonnistuu.\n"
 
 #. TRANSLATORS: --help output, recins examples.
@@ -858,12 +933,14 @@ msgid ""
 "Examples:\n"
 "\n"
 "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n"
+"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other."
+"rec\n"
 msgstr ""
 "Esimerkit:\n"
 "\n"
 "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n"
+"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other."
+"rec\n"
 
 #: utils/recins.c:396
 msgid "a -f should be followed by a -v\n"
@@ -886,8 +963,12 @@ msgstr "tarjoa arvo kentälle %s\n"
 #. no-wrap
 #: utils/recsel.c:100
 #, c-format
-msgid "Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
-msgstr "Käyttö: recsel [VALITSIN]... [-t TYYPPI] [-n NUMERO | -e TIETUE_LAUSEKE] [-c | (-p|-P) KENTTÄ_LAUSEKE] [TIEDOSTO]...\n"
+msgid ""
+"Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) "
+"FIELD_EXPR] [FILE]...\n"
+msgstr ""
+"Käyttö: recsel [VALITSIN]... [-t TYYPPI] [-n NUMERO | -e TIETUE_LAUSEKE] [-c "
+"| (-p|-P) KENTTÄ_LAUSEKE] [TIEDOSTO]...\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
@@ -899,35 +980,48 @@ msgstr "Valitse ja tulosta rec-tietoja.\n"
 #. no-wrap
 #: utils/recsel.c:111
 msgid ""
-"  -d, --include-descriptors           print record descriptors along with the matched\n"
+"  -d, --include-descriptors           print record descriptors along with "
+"the matched\n"
 "                                        records.\n"
-"  -C, --collapse                      do not section the result in records with newlines.\n"
+"  -C, --collapse                      do not section the result in records "
+"with newlines.\n"
 msgstr ""
-"  -d, --include-descriptors           tulosta tietueselosteet täsmäävistä tietueista.\n"
-"  -C, --collapse                      älä jaa tulosta tietueissa lohkoihin rivinvaihdoilla.\n"
+"  -d, --include-descriptors           tulosta tietueselosteet täsmäävistä "
+"tietueista.\n"
+"  -C, --collapse                      älä jaa tulosta tietueissa lohkoihin "
+"rivinvaihdoilla.\n"
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
 #: utils/recsel.c:125
 msgid ""
 "Output options:\n"
-"  -p, --print=FIELDS                  comma-separated list of fields to print for each\n"
+"  -p, --print=FIELDS                  comma-separated list of fields to "
+"print for each\n"
 "                                        matching record.\n"
-"  -P, --print-values=FIELDS           as -p, but print only the values of the selected\n"
+"  -P, --print-values=FIELDS           as -p, but print only the values of "
+"the selected\n"
 "                                        fields.\n"
-"  -R, --print-row=FIELDS              as -P, but separate the values with spaces instead\n"
+"  -R, --print-row=FIELDS              as -P, but separate the values with "
+"spaces instead\n"
 "                                        of newlines.\n"
-"  -c, --count                         print a count of the matching records instead of\n"
+"  -c, --count                         print a count of the matching records "
+"instead of\n"
 "                                        the records themselves.\n"
 msgstr ""
 "Tulostusvalitsimet:\n"
-"  -p, --print=KENTÄT                  pilkulla eroteltu kenttien luettelo jokaiselle\n"
+"  -p, --print=KENTÄT                  pilkulla eroteltu kenttien luettelo "
+"jokaiselle\n"
 "                                        täsmäävälle tietueelle.\n"
-"  -P, --print-values=KENTÄT           sama kuin -p, mutta tulostaa vain valittujen\n"
+"  -P, --print-values=KENTÄT           sama kuin -p, mutta tulostaa vain "
+"valittujen\n"
 "                                        kenttien arvot.\n"
-"  -R, --print-row=KENTÄT              sama kuin -P, mutta tulostettavat arvot erotellaan\n"
-"                                        välilyönneillä eikä rivinvaihdoilla.\n"
-"  -c, --count                         tarjoa täsmäävien tietueiden lukumäärä eikä itse\n"
+"  -R, --print-row=KENTÄT              sama kuin -P, mutta tulostettavat "
+"arvot erotellaan\n"
+"                                        välilyönneillä eikä "
+"rivinvaihdoilla.\n"
+"  -c, --count                         tarjoa täsmäävien tietueiden lukumäärä "
+"eikä itse\n"
 "                                        tietueita.\n"
 
 #  Heittomerkit jätetty muuttamatta suomalaistyyppiseksi, koska käskyparametreissa heittomerkin tyyppi voi olla kriittinen.
@@ -938,12 +1032,14 @@ msgid ""
 "Examples:\n"
 "\n"
 "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"
+"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+"rec\n"
 msgstr ""
 "Esimerkit:\n"
 "\n"
 "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"
+"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+"rec\n"
 
 #: utils/recsel.c:196
 msgid "cannot specify -[pPR] and also -c.\n"
@@ -959,7 +1055,8 @@ msgstr "ei voida määritellä valitsinta -c ja myös valitsinta -p.\n"
 
 #: utils/recsel.c:276
 msgid "several record types found.  Please use -t to specify one.\n"
-msgstr "löydettiin useita tietuetyyppejä.  Käytä valitsinta -t määrittämään yksi.\n"
+msgstr ""
+"löydettiin useita tietuetyyppejä.  Käytä valitsinta -t määrittämään yksi.\n"
 
 #. TRANSLATORS: --help output, recset synopsis.
 #. no-wrap
@@ -979,11 +1076,13 @@ msgstr "Muuta tai poista kentät tietueissa.\n"
 #: utils/recset.c:135
 msgid ""
 "      --no-external                   don't use external descriptors.\n"
-"      --force                         alter the records even if violating record\n"
+"      --force                         alter the records even if violating "
+"record\n"
 "                                        restrictions.\n"
 msgstr ""
 "      --no-external                   älä käytä ulkoisia selosteita.\n"
-"      --force                         muuta tietueita vaikka se on ristiriidassa tietue-\n"
+"      --force                         muuta tietueita vaikka se on "
+"ristiriidassa tietue-\n"
 "                                        rajoitteiden kanssa.\n"
 
 #. TRANSLATORS: --help output, recset field selection options.
@@ -991,11 +1090,13 @@ msgstr ""
 #: utils/recset.c:148
 msgid ""
 "Field selection options:\n"
-"  -f, --fields=FIELDS                 comma-separated list of field names with optional\n"
+"  -f, --fields=FIELDS                 comma-separated list of field names "
+"with optional\n"
 "                                        subscripts.\n"
 msgstr ""
 "Kenttien valintavalitsimet:\n"
-"  -f, --fields=KENTÄT                 pilkulla eroteltu kenttänimien luettelo valinnaisilla\n"
+"  -f, --fields=KENTÄT                 pilkulla eroteltu kenttänimien "
+"luettelo valinnaisilla\n"
 "                                        alaindekseillä.\n"
 
 #. TRANSLATORS: --help output, recset actions.
@@ -1003,23 +1104,34 @@ msgstr ""
 #: utils/recset.c:156
 msgid ""
 "Actions:\n"
-"  -s, --set=VALUE                     change the value of the selected fields.\n"
-"  -a, --add=VALUE                     add the selected fields with the given value.\n"
-"  -S, --set-add=VALUE                 change the value of the selected fields.  If they don't\n"
-"                                        exist then add a new field with that value.\n"
-"  -r, --rename=NAME                   rename the selected fields to a given name.  If an entire\n"
-"                                        record set is selected then the field is renamed in the\n"
+"  -s, --set=VALUE                     change the value of the selected "
+"fields.\n"
+"  -a, --add=VALUE                     add the selected fields with the given "
+"value.\n"
+"  -S, --set-add=VALUE                 change the value of the selected "
+"fields.  If they don't\n"
+"                                        exist then add a new field with that "
+"value.\n"
+"  -r, --rename=NAME                   rename the selected fields to a given "
+"name.  If an entire\n"
+"                                        record set is selected then the "
+"field is renamed in the\n"
 "                                        record descriptor as well.\n"
 "  -d, --delete                        delete the selected fields.\n"
 "  -c, --comment                       comment out the selected fields.\n"
 msgstr ""
 "Toimet:\n"
 "  -s, --set=ARVO                      muuta valittujen kenttien arvoa.\n"
-"  -a, --add=ARVO                      lisää valitut kentät annetulla arvolla.\n"
-"  -S, --set-add=VALUE                 muuta valittujen kenttien arvo.  Jos niitä ei ole\n"
-"                                        olemassa, lisää uusi kenttä tuolla arvolla.\n"
-"  -r, --rename=NIMI                   nimeä uudelleen valitut kentät annetulla nimellä.  Jos koko\n"
-"                                        tietuejoukko on valittu niin silloin kenttä nimetään\n"
+"  -a, --add=ARVO                      lisää valitut kentät annetulla "
+"arvolla.\n"
+"  -S, --set-add=VALUE                 muuta valittujen kenttien arvo.  Jos "
+"niitä ei ole\n"
+"                                        olemassa, lisää uusi kenttä tuolla "
+"arvolla.\n"
+"  -r, --rename=NIMI                   nimeä uudelleen valitut kentät "
+"annetulla nimellä.  Jos koko\n"
+"                                        tietuejoukko on valittu niin silloin "
+"kenttä nimetään\n"
 "                                        uudelleen myös tietueselosteessa.\n"
 "  -d, --delete                        poista valitut kentät.\n"
 "  -c, --comment                       muuta valitut kentät kommenteiksi.\n"
@@ -1060,8 +1172,11 @@ msgid "creating the field expression.\n"
 msgstr "luodaan kenttälauseke.\n"
 
 #: utils/recset.c:266
-msgid "the rename operation requires just one field with an optional subscript.\n"
-msgstr "uudelleennimeämistoiminto vaatii vain yhden kentän valinnaisella alaindeksillä.\n"
+msgid ""
+"the rename operation requires just one field with an optional subscript.\n"
+msgstr ""
+"uudelleennimeämistoiminto vaatii vain yhden kentän valinnaisella "
+"alaindeksillä.\n"
 
 #: utils/recset.c:451 utils/recutl.c:420
 msgid "operation aborted due to integrity failures.\n"
@@ -1085,14 +1200,16 @@ msgstr "käytä valitsinta --force ohittamaan integriteettitarkistus.\n"
 msgid "Report bugs to: %s\n"
 msgstr ""
 "Ilmoita virheistä (englanniksi) osoitteeseen: %s\n"
-"Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge.net>\n"
+"Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge."
+"net>\n"
 
 #: utils/recutl.c:76
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr ""
 "Ilmoita %s-virheistä osoitteeseen: %s\n"
-"Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge.net>\n"
+"Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge."
+"net>\n"
 
 #: utils/recutl.c:80
 #, c-format
@@ -1106,7 +1223,8 @@ msgstr "%s kotisivu: <http://www.gnu.org/software/recutils/>\n"
 
 #: utils/recutl.c:85
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
-msgstr "Yleinen opaste GNU-ohjelmistojen käytöstä: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+"Yleinen opaste GNU-ohjelmistojen käytöstä: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
@@ -1123,16 +1241,20 @@ msgstr ""
 #: utils/recutl.c:105
 msgid ""
 "Record selection options:\n"
-"  -i, --case-insensitive              make strings case-insensitive in selection\n"
+"  -i, --case-insensitive              make strings case-insensitive in "
+"selection\n"
 "                                        expressions.\n"
-"  -t, --type=TYPE                     operate on records of the specified type only.\n"
+"  -t, --type=TYPE                     operate on records of the specified "
+"type only.\n"
 "  -e, --expression=EXPR               selection expression.\n"
 "  -n, --number=NUM                    select an specific record.\n"
 msgstr ""
 "Tietuevalintavalitsimet:\n"
-"  -i, --case-insensitive              tee merkkijonoista kirjainkoosta riippuvia valinta-\n"
+"  -i, --case-insensitive              tee merkkijonoista kirjainkoosta "
+"riippuvia valinta-\n"
 "                                        lausekkeissa.\n"
-"  -t, --type=TYYPPI                   tulosta vain määritellyntyyppiset tietueet.\n"
+"  -t, --type=TYYPPI                   tulosta vain määritellyntyyppiset "
+"tietueet.\n"
 "  -e, --expression=LAUSEKE            valintalauseke.\n"
 "  -n, --number=NUMERO                 valitse määritelty tietue.\n"
 
@@ -1140,12 +1262,14 @@ msgstr ""
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
 "This is free software: you are free to change and redistribute it.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
 "Copyright © %s Jose E. Marchesi.\n"
-"License GPLv3+: GNU GPL versio 3 tai myöhäisempi <http://gnu.org/licenses/gpl.html>.\n"
+"License GPLv3+: GNU GPL versio 3 tai myöhäisempi <http://gnu.org/licenses/"
+"gpl.html>.\n"
 "Tämä on vapaa ohjelmisto: voi muuttaa ja jakaa sitä vapaasti edelleen.\n"
 "Ohjelmalla EI OLE TAKUUTA siinä laajuudessa, minkä laki sallii.\n"
 
@@ -1183,13 +1307,16 @@ msgstr "nimetään tiedosto %s uudelleen nimellä %s\n"
 #~ msgstr "virheellinen kenttänimi %s\n"
 
 #~ msgid ""
-#~ "  -c, --comment                       comment the matching records instead of\n"
+#~ "  -c, --comment                       comment the matching records "
+#~ "instead of\n"
 #~ "                                         delete them.\n"
-#~ "      --force                         delete even in potentially dangerous situations.\n"
+#~ "      --force                         delete even in potentially "
+#~ "dangerous situations.\n"
 #~ msgstr ""
 #~ "  -c, --comment                       kommentoi täsmäävät tietueet äläkä\n"
 #~ "                                         poista niitä.\n"
-#~ "      --force                         poista jopa potentiaalisesti vaarallisissa tilanteissa.\n"
+#~ "      --force                         poista jopa potentiaalisesti "
+#~ "vaarallisissa tilanteissa.\n"
 
 #~ msgid "evaluating selection expression.\n"
 #~ msgstr "arvioidaan valintalauseketta.\n"

@@ -31,6 +31,19 @@
 #include <rec.h>
 #include <stdbool.h>
 
+enum rec_size_condition_e
+  {
+    SIZE_COND_E,
+    SIZE_COND_L,
+    SIZE_COND_LE,
+    SIZE_COND_G,
+    SIZE_COND_GE
+  };
+
+/* Non public constants used by several modules.  */
+
+#define REC_INT_SIZE_RE "^[ \t\n]*(>|<|>=|<=)?[ \t\n]*([0-9]+)[ \t\n]*$"
+
 /* Parse an integer/real in the NULL-terminated string STR and store
    it at NUMBER.  Return true if the conversion was successful.  false
    otherwise. */
@@ -41,6 +54,13 @@ bool rec_atod (char *str, double *number);
 char *rec_extract_url (char *str);
 char *rec_extract_file (char *str);
 char *rec_extract_type (char *str);
+
+/* Extract size and condition from a %size: field value.  */
+size_t rec_extract_size (char *str);
+enum rec_size_condition_e rec_extract_size_condition (char *str);
+
+/* Matching a string against a regexp.  */
+bool rec_match (char *str, char *regexp);
 
 /* Generic parsing routines.  */
 bool rec_blank_p (char c);

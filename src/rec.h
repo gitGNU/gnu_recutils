@@ -662,6 +662,13 @@ void rec_rset_rename_field (rec_rset_t rset,
 /* Get a fex with the auto-incremented fields in this record set.  */
 rec_fex_t rec_rset_auto (rec_rset_t rset);
 
+/* Get the size constraints of the rset.  */
+size_t rec_rset_min_records (rec_rset_t rset);
+size_t rec_rset_max_records (rec_rset_t rset);
+
+/* Locations.  */
+char *rec_rset_source (rec_rset_t rset);
+
 /*
  * DATABASES
  *

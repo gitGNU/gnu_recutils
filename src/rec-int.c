@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-07 12:51:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-07 22:52:28 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -103,6 +103,8 @@ rec_int_check_rset (rec_db_t db,
   rec_rset_elem_t rset_elem;
   rec_record_t record;
   rec_record_t descriptor;
+  size_t num_records, min_records, max_records;
+  char *tmp;
 
   res = 0;
 
@@ -135,6 +137,51 @@ rec_int_check_rset (rec_db_t db,
       return res;
     }
 
+  /* Verify rset size restrictions.  */
+  num_records = rec_rset_num_records (rset);
+  min_records = rec_rset_min_records (rset);
+  max_records = rec_rset_max_records (rset);
+
+  if (min_records == max_records)
+    {
+      if (num_records != min_records)
+        {
+          asprintf (&tmp,
+                    _("%s: error: the number of records of type %s shall be %d.\n"),
+                    rec_rset_source (rset),
+                    rec_rset_type (rset),
+                    min_records);
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+          res++;
+        }
+    }
+  else
+    {
+      if (num_records > rec_rset_max_records (rset))
+        {
+          asprintf (&tmp,
+                    _("%s: error: too many records of type %s. Maximum allowed are %d.\n"),
+                    rec_rset_source (rset),
+                    rec_rset_type (rset),
+                    rec_rset_max_records (rset));
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+          res++;
+        }
+      if (num_records < rec_rset_min_records (rset))
+        {
+          asprintf (&tmp,
+                    _("%s: error: too few records of type %s. Minimum allowed are %d.\n"),
+                    rec_rset_source (rset),
+                    rec_rset_type (rset),
+                    rec_rset_min_records (rset));
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+          res++;
+        }
+    }
+  
   rset_elem = rec_rset_null_elem ();
   while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
     {
@@ -287,6 +334,10 @@ rec_int_check_field_type (rec_db_t db,
 
   return res;
 }
+
+/*
+ * Private functions
+ */
 
 static int
 rec_int_check_record_types (rec_db_t db,
@@ -621,6 +672,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_record_t descriptor;
   rec_record_elem_t rec_elem;
   rec_field_t field;
+  char *field_name_str;
   rec_field_name_t field_name;
   rec_field_name_t rec_fname;
   rec_field_name_t key_fname;
@@ -629,6 +681,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t unique_fname;
   rec_field_name_t prohibit_fname;
   rec_field_name_t auto_fname;
+  rec_field_name_t size_fname;
   char *field_value;
   rec_fex_t fex;
   char *tmp;
@@ -637,6 +690,10 @@ rec_int_check_descriptor (rec_rset_t rset,
   size_t i;
   rec_type_reg_t type_reg;
   rec_type_t type;
+  bool invalid_sizes;
+  size_t size;
+  size_t size_min = 0;
+  size_t size_max = SIZE_MAX;
 
   res = 0;
 
@@ -651,6 +708,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       unique_fname = rec_parse_field_name_str ("%unique:");
       prohibit_fname = rec_parse_field_name_str ("%prohibit:");
       auto_fname = rec_parse_field_name_str ("%auto:");
+      size_fname = rec_parse_field_name_str ("%size:");
 
       /* Check the type of the record set:
 
@@ -704,12 +762,25 @@ rec_int_check_descriptor (rec_rset_t rset,
           res++;
         }
 
+      /* Only one 'size:' entry is allowed, if any.  */
+      if (rec_record_get_num_fields_by_name (descriptor, size_fname) > 1)
+        {
+          asprintf (&tmp,
+                    _("%s:%s: error: only one %%size field is allowed in a record descriptor\n"),
+                    rec_record_source (descriptor),
+                    rec_record_location_str (descriptor));
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+          res++;
+        }
+
       /* Iterate on fields.  */
       rec_elem = rec_record_null_elem ();
       while (rec_record_elem_p (rec_elem = rec_record_next_field (descriptor, rec_elem)))
         {
           field = rec_record_elem_field (rec_elem);
           field_name = rec_field_name (field);
+          field_name_str = rec_field_name_str (field);
           field_value = rec_field_value (field);
 
           if (rec_field_name_equal_p (field_name, type_fname))
@@ -752,6 +823,21 @@ rec_int_check_descriptor (rec_rset_t rset,
                   res++;
                 }
             }
+          else if (rec_field_name_equal_p (field_name, size_fname))
+            {
+              if (!rec_match (field_value, REC_INT_SIZE_RE))
+                {
+                  asprintf (&tmp,
+                            _("%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= or <=.\n"),
+                            rec_field_source (field),
+                            rec_field_location_str (field),
+                            field_name_str);
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++;
+                }
+            }
+
           
           if ((rec_field_name_equal_p (field_name, auto_fname))
               && (fex = rec_fex_new (field_value, REC_FEX_SIMPLE)))
@@ -793,6 +879,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       rec_field_name_destroy (unique_fname);
       rec_field_name_destroy (prohibit_fname);
       rec_field_name_destroy (auto_fname);
+      rec_field_name_destroy (size_fname);
     }
 
   return res;

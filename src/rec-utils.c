@@ -266,4 +266,94 @@ rec_letter_p (char c)
           || ((c >= 'A') && (c <= 'Z')));
 }
 
+bool
+rec_match (char *str,
+           char *reg)
+{
+  bool ret;
+  regex_t regexp;
+
+  if (regcomp (&regexp, reg, REG_EXTENDED) != 0)
+    {
+      fprintf (stderr, _("internal error: rec_match: error compiling regexp.\n"));
+      return false;
+    }
+
+  ret = (regexec (&regexp, str, 0, NULL, 0) == 0);
+  regfree (&regexp);
+
+  return ret;
+}
+
+size_t
+rec_extract_size (char *str)
+{
+  char *p;
+  char *condition_str;
+  size_t res;
+
+  if (!rec_match (str, REC_INT_SIZE_RE))
+    {
+      return 0;
+    }
+
+  p = str;
+  rec_skip_blanks (&p);
+  rec_parse_regexp (&p, "^[><]=?", &condition_str);
+  rec_skip_blanks (&p);
+  rec_parse_int (&p, &res);
+
+  return res;
+}
+
+enum rec_size_condition_e
+rec_extract_size_condition (char *str)
+{
+  char *p;
+  char *condition_str = NULL;
+  enum rec_size_condition_e condition;
+
+  if (!rec_match (str, REC_INT_SIZE_RE))
+    {
+      return SIZE_COND_E;
+    }
+
+  p = str;
+  rec_skip_blanks (&p);
+  rec_parse_regexp (&p, "^[><]=?", &condition_str);
+
+  if (condition_str)
+    {
+      if (strcmp (condition_str, ">") == 0)
+        {
+          condition = SIZE_COND_G;
+        }
+      else if (strcmp (condition_str, ">=") == 0)
+        {
+          condition = SIZE_COND_GE;
+        }
+      else if (strcmp (condition_str, "<") == 0)
+        {
+          condition = SIZE_COND_L;
+        }
+      else if (strcmp (condition_str, "<=") == 0)
+        {
+          condition = SIZE_COND_LE;
+        }
+      else
+        {
+          fprintf (stderr, "internal error: rec_extract_size_condition: invalid condition.\n");
+          return SIZE_COND_E;
+        }
+
+      free (condition_str);
+    }
+  else
+    {
+      condition = SIZE_COND_E;
+    }
+
+  return condition;
+}
+
 /* End of rec-utils.c */
