@@ -341,32 +341,23 @@ Description:
 + Whatever.
 
 Id: 25
-Summary: Support for %size, %max-size and %min-size special fields.
+Summary: Support for %size
 Category: librec
 CreatedAt: Wed Dec  1 18:51:23 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
 Status: TODO
 Description: 
-+ %size, %max-size and %min-size special fields can be used to define
-+ the minimum and the maximum number of records that should exist in a
-+ record set.
++ %size fields can be used to define the minimum and the maximum
++ number of records that should exist in a record set.
 + 
 + Example:
-+ 
-+    %rec: TasktoolControl
-+    %min-size: 1
-+    %max-size: 1
-+ 
-+ that is equivalent to
 + 
 +    %rec: TasktoolControl
 +    %size: 1
 + 
 + The previous example requires the existence of one (and only one)
 + TasktoolControl record.
-+ 
-+ Note that %size is not compatible with %max-size or %min-size.
 
 Id: 26
 Summary: rec_init shall build a list of predefined field names.
