@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-30 20:30:55 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-07 12:51:15 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -637,6 +637,8 @@ rec_int_check_descriptor (rec_rset_t rset,
   size_t i;
   rec_type_reg_t type_reg;
   rec_type_t type;
+
+  res = 0;
 
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)

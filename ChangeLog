@@ -1,3 +1,8 @@
+2011-02-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: problem with non initialized variable fixed.
+	* src/rec-int.c (rec_int_check_descriptor): Initialize 'res' to 0.
+
 2011-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.2.
