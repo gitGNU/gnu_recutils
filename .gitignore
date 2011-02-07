@@ -98,3 +98,9 @@ libtool
 /po/stamp-po
 /po/POTFILES
 /po/remove-potcdate.sed
+/po/de.gmo
+/po/fi.gmo
+/po/nl.gmo
+/po/sv.gmo
+/doc/manual
+

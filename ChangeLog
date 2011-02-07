@@ -1,5 +1,11 @@
 2011-02-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	List of ignored files updated.
+	* .gitignore: Ignore generated po/*mo files.
+	Ignore the doc/manual directory.
+
+2011-02-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: implementation of the %size field.
 	* src/rec-rset.c (rec_rset_min_records): New function.
 	(rec_rset_max_records): New function.
