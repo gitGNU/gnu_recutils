@@ -137,7 +137,7 @@ medium simple databases.
 The GNU recutils suite comprises:
 
 @itemize @minus
-@item This texinfo manual, describing the Rec format and the accompaying software.
+@item This texinfo manual, describing the Rec format and the accompanying software.
 @item A C library (librec) that provides a rich set of functions to manipulate rec data.
 @item A set of C utilities (recinf, recsel, recins, recdel, recset and  recfix) that can be used in shell scripts and in the command line to operate on rec files.
 @item An emacs mode, @code{rec-mode}.
@@ -402,7 +402,7 @@ one or more blank characters:
 %mandatory: IdentifyNumber InStock
 @end example
 
-Those fields will be considered mandatory. i.e. a field with this name
+Those fields will be considered mandatory; i.e., a field with this name
 shall be present in any record of this kind.  Records violating this
 restriction are considered invalid.
 @item %prohibit: @var{field1} @var{field2} ... @var{fieldN}
@@ -1139,6 +1139,7 @@ example, the expression:
 Email ~ "\\.org"
 @end example
 
+@noindent
 Will match any record in which there is a field named @samp{Email}
 whose value terminates in @samp{.org}.  If we are interested in the
 value of some specific email, we can specify its relative position
@@ -1496,6 +1497,8 @@ list of field names separated by commas.  For example:
 @example
 -p Name,Email
 @end example
+
+@noindent
 means to print the Name and the Email of every matching record.
 
 If this option is not specified then all the fields of the matching
@@ -1762,7 +1765,7 @@ Set the value of the selected fields to @var{VALUE}.
 Add a new field to the selected record with value @var{VALUE}.
 @item -S
 @itemx @w{@kbd{--set-add}=@var{VALUE}}
-Set the value of the selected fiels to @var{VALUE}.  If some of the
+Set the value of the selected fields to @var{VALUE}.  If some of the
 fields don't exist in a record, append it with the specified value.
 @item -r
 @itemx @w{@kbd{--rename}=@var{VALUE}}
@@ -1861,12 +1864,14 @@ Check and fix a rec database:
 $ recfix data.rec
 @end example
 
+@noindent
 The same, but with two files:
 
 @example
 $ recfix data1.rec data2.rec
 @end example
 
+@noindent
 Used as a filter:
 
 @example
@@ -1934,6 +1939,7 @@ Task @{@{Id@}@}: @{@{Summary@}@}
 Created at @{@{CreationTime@}@}
 @end example
 
+@noindent
 When applied to the following record:
 
 @example
@@ -1945,6 +1951,7 @@ Description:
 + now it is leaking 200 megabytes per processed record.
 @end example
 
+@noindent
 The result is:
 
 @example
@@ -2101,6 +2108,7 @@ header.  For each field, a header is added with the form:
 FIELDNAME[_N]
 @end example
 
+@noindent
 where N is a number in the range @code{2..inf} and is the ``index'' of
 the field in its containing record plus one.  For example, consider
 the following record set:

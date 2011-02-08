@@ -1,3 +1,11 @@
+2011-02-08  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	Fix typos and nits in the manual.
+	* doc/recutils.texi (Introduction, Record Descriptors)
+	(SEX Operands, recsel Invocation, recset Invocation)
+	(recfix Examples, recfmt Templates, rec2csv Conversion):
+	Fix typos, add a few @noindent's.
+
 2011-02-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	warnings fixed in the codebase.
