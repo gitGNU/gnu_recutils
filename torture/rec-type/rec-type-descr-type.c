@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-25 17:11:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-08 21:24:28 jemarch"
  *
  *       File:         rec-type-descr-type.c
  *       Date:         Thu Nov 25 16:58:19 2010
@@ -26,7 +26,7 @@
 #include <config.h>
 #include <check.h>
 
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <rec.h>

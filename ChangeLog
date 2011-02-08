@@ -1,5 +1,11 @@
 2011-02-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	portability fix for macos x.
+	* torture/rec-type/rec-type-descr-type.c: Include stdlib.h for
+	malloc, not malloc.h.  Macos X does not provide malloc.h
+
+2011-02-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: several texinfo fixes and improvements.
 	* doc/recutils.texi: Use @dots{}.
 	Use @: after i.e. and e.g. to avoid texinfo to insert double
