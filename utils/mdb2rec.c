@@ -242,9 +242,6 @@ get_field_name (MdbHandle *mdb,
 {
   rec_field_name_t field_name;
   char *field_name_str;
-  char *field_part_0;
-  char *field_part_1;
-  char *field_part_2;
   char *referenced_table;
   char *referenced_column;
   size_t i;
@@ -314,7 +311,7 @@ process_table (MdbCatalogEntry *entry)
   rec_rset_t rset;
   MdbTableDef *table;
   MdbHandle *mdb;
-  size_t i, j;
+  size_t i;
   MdbColumn *col;
   char *table_name;
   char *column_name;
@@ -497,8 +494,6 @@ static rec_db_t
 process_mdb (void)
 {
   rec_db_t db;
-  rec_rset_t rset;
-  FILE *in;
   MdbHandle *mdb;
   MdbCatalogEntry *entry;
   int i;
@@ -578,6 +573,12 @@ main (int argc, char *argv[])
       
       rec_writer_destroy (writer);
       rec_db_destroy (db);
+
+      ret = EXIT_SUCCESS;
+    }
+  else
+    {
+      ret = EXIT_FAILURE;
     }
 
   return ret;

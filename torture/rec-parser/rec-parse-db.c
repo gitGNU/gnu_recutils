@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-14 22:00:57 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-08 00:49:51 jemarch"
  *
  *       File:         rec-parse-db.c
  *       Date:         Sat Nov 13 21:59:40 2010
@@ -40,7 +40,6 @@ START_TEST(rec_parse_db_nominal)
 {
   rec_parser_t parser;
   rec_db_t db;
-  FILE *stm;
   char *str;
 
   str = "%rec: foo\n\nfoo: bar\n\n%rec: bar\n\nfoo: bar\n\nfoo: bar";

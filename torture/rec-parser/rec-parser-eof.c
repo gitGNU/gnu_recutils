@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-14 22:07:40 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-08 00:49:31 jemarch"
  *
  *       File:         rec-parser-eof.c
  *       Date:         Sat Nov 13 22:21:31 2010
@@ -41,7 +41,6 @@ START_TEST(rec_parser_eof_nominal)
   rec_parser_t parser;
   rec_field_t field;
   char *str;
-  int ci;
 
   str = "foo: bar";
   parser = rec_parser_new_str (str, "dummy");

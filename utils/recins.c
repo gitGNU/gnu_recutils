@@ -154,7 +154,6 @@ recins_add_auto_field_int (rec_rset_t rset,
   rec_rset_elem_t rset_elem;
   rec_record_t rec;
   rec_field_t field;
-  rec_field_t new_field;
   size_t num_fields, i;
   int auto_value, field_value;
   char *end;
@@ -240,7 +239,7 @@ recins_add_auto_fields (rec_rset_t rset,
 
   if (rset)
     {
-      if (auto_fields = rec_rset_auto (rset))
+      if ((auto_fields = rec_rset_auto (rset)))
         {
           for (i = (rec_fex_size (auto_fields) - 1);
                i >= 0;
@@ -273,6 +272,11 @@ recins_add_auto_fields (rec_rset_t rset,
                             recins_add_auto_field_date (rset,
                                                         auto_field_name,
                                                         res);
+                            break;
+                          }
+                        default:
+                          {
+                            /* Do nothing for other types.  */
                             break;
                           }
                         }
@@ -519,9 +523,6 @@ recins_add_new_record (rec_db_t db)
   rec_rset_elem_t new_rset_elem;
   size_t num_rec;
   bool parse_status;
-  rec_buf_t errors_buf;
-  char *errors_str;
-  size_t errors_str_size;
   rec_record_t record_to_insert;
 
   if ((recutl_num != -1)

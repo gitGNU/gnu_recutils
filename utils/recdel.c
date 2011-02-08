@@ -146,7 +146,6 @@ recdel_delete_records (rec_db_t db)
   bool parse_status = true;
   rec_rset_elem_t rec_elem;
   rec_rset_elem_t new_elem;
-  rec_buf_t errors_buf;
 
   if (!rec_db_type_p (db, recutl_type))
     {

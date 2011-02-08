@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-09 11:42:02 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-08 00:50:29 jemarch"
  *
  *       File:         rec-type-reg-get.c
  *       Date:         Fri Oct 29 21:30:27 2010
@@ -70,7 +70,6 @@ END_TEST
  */
 START_TEST(rec_type_reg_get_nonexisting)
 {
-  rec_type_t type;
   rec_field_name_t fname;
   rec_type_reg_t reg;
 

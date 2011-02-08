@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-07 22:52:28 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-08 01:02:01 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -690,10 +690,6 @@ rec_int_check_descriptor (rec_rset_t rset,
   size_t i;
   rec_type_reg_t type_reg;
   rec_type_t type;
-  bool invalid_sizes;
-  size_t size;
-  size_t size_min = 0;
-  size_t size_max = SIZE_MAX;
 
   res = 0;
 
@@ -924,7 +920,7 @@ rec_int_merge_remote (rec_rset_t rset,
 
       if (!rec_int_rec_type_p (rec_field_value (rec_field)))
         {
-          return;
+          return 0;
         }
 
       rec_type = rec_extract_type (rec_field_value (rec_field));

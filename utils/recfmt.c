@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-23 16:00:49 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-08 00:56:07 jemarch"
  *
  *       File:         recfmt.c
  *       Date:         Wed Dec 22 18:20:20 2010
@@ -195,7 +195,7 @@ recfmt_apply_template (rec_record_t record,
   char *tmp;
   size_t tmp_size;
   size_t result_size;
-  char *p, *n;
+  char *p;
   regex_t regexp;
   regmatch_t matches;
   char *subst_str;

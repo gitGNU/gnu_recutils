@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-02 15:53:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-02-08 00:55:39 jemarch"
  *
  *       File:         rec2csv.c
  *       Date:         Mon Jan 31 22:12:29 2011
@@ -151,7 +151,6 @@ rec2csv_generate_csv (rec_rset_t rset,
   rec_field_t field;
   char *field_name_str;
   char *tmp;
-  int field_index;
   size_t i;
 
   /* Generate the row with headers.  */

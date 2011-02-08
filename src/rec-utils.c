@@ -301,7 +301,7 @@ rec_extract_size (char *str)
   rec_skip_blanks (&p);
   rec_parse_regexp (&p, "^[><]=?", &condition_str);
   rec_skip_blanks (&p);
-  rec_parse_int (&p, &res);
+  rec_parse_int (&p, (int *) &res);
 
   return res;
 }

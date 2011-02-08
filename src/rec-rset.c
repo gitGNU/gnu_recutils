@@ -718,7 +718,6 @@ rec_rset_max_records (rec_rset_t rset)
 char *
 rec_rset_source (rec_rset_t rset)
 {
-  rec_rset_elem_t rset_elem;
   rec_record_t record;
   
   record = rec_rset_descriptor (rset);
@@ -779,7 +778,6 @@ rec_rset_comment_dup_fn (void *data)
 static void
 rec_rset_update_size_constraints (rec_rset_t rset)
 {
-  rec_record_elem_t record_elem;
   rec_field_t field;
   rec_field_name_t size_fname;
   enum rec_size_condition_e condition;

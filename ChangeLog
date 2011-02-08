@@ -1,3 +1,45 @@
+2011-02-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	warnings fixed in the codebase.
+	* src/rec-utils.c (rec_extract_size): Cast the second argument to
+	rec_parse_int from size_t* to int*.
+
+	* src/rec-rset.c (rec_rset_update_size_constraints): Unused
+	variable record_elem removed.
+	(rec_rset_source): Unused variable rset_elem removed.
+
+	* src/rec-int.c (rec_int_merge_remote): Return 0.
+	(rec_int_check_descriptor): Unused variables size_max, size_min,
+	size and invalid_sizes removed.
+
+	* utils/recins.c (recins_add_new_record): Unused variables
+	errors_str_size, errors_str and errors_buf removed.
+	(recins_add_auto_field_int): Unused variable new_field removed.
+
+	* utils/recdel.c (recdel_delete_records): Unused variable
+	'errors_buf' removed.
+
+	* utils/recfmt.c (recfmt_apply_template): Unused variable 'n'
+	removed.
+
+	* utils/rec2csv.c (rec2csv_generate_csv): Unused variable
+	'field_index' removed.
+
+	* utils/mdb2rec.c (get_field_name): Unused variables field_part_0,
+	field_part_1 and field_part_2 removed.
+	(process_table): Unused variable j removed.
+	(process_mdb): Unused variables 'in' and 'rset' removed.
+	(main): Set 'ret' to success or failure.
+
+	* torture/rec-type-reg/rec-type-reg-get.c (START_TEST): Unused
+	variable 'type' removed.
+
+	* torture/rec-parser/rec-parse-db.c (START_TEST): Unused variable
+	stm removed.
+
+	* torture/rec-parser/rec-parser-eof.c (START_TEST): Unused
+	variable ci removed.
+
 2011-02-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	List of ignored files updated.
