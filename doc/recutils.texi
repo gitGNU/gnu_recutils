@@ -112,7 +112,7 @@ settings for programs, and to encode data to be transmitted through
 networks.
 
 So it looks like all the needs are covered by the existing
-solutions... but consider the following characteristics of the data
+solutions@dots{} but consider the following characteristics of the data
 storage systems mentioned in the previous paragraph:
 
 @table @minus
@@ -124,7 +124,7 @@ storage systems mentioned in the previous paragraph:
 
 Regarding the first point (human readability), while it is clearly
 true for the binary files, some may argue XML files are indeed human
-readable... well... <bar><foo tag=''val''>try</foo> to r&iamp;ead
+readable@dots{} well@dots{} <bar><foo tag=''val''>try</foo> to r&iamp;ead
 <p>this</p></bar>.
 
 Recfiles are human-readable, human-writable and still they are easy to
@@ -394,7 +394,7 @@ This field shall be unique in its containing record descriptor.
 
 It is highly recommended (but not enforced) to place this field in the
 first position of the record descriptor.
-@item %mandatory: @var{field1} @var{field2} ... @var{fieldN}
+@item %mandatory: @var{field1} @var{field2} @dots{} @var{fieldN}
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -402,10 +402,10 @@ one or more blank characters:
 %mandatory: IdentifyNumber InStock
 @end example
 
-Those fields will be considered mandatory; i.e., a field with this name
+Those fields will be considered mandatory; i.e.@:, a field with this name
 shall be present in any record of this kind.  Records violating this
 restriction are considered invalid.
-@item %prohibit: @var{field1} @var{field2} ... @var{fieldN}
+@item %prohibit: @var{field1} @var{field2} @dots{} @var{fieldN}
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -415,7 +415,7 @@ one or more blank characters:
 
 Those fields cannot appear in any record of this kind.  Records
 violating this restriction are considered invalid.
-@item %unique: @var{field1} @var{field2} ... @var{fieldN}
+@item %unique: @var{field1} @var{field2} @dots{} @var{fieldN}
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -432,7 +432,7 @@ will be considered as the key of the records.
 Its effect is that any field with that name is both unique and
 mandatory, and additionally the values of those fields shall be
 unique. 
-@item %auto: @var{field1} @var{field2} ... @var{fieldN}
+@item %auto: @var{field1} @var{field2} @dots{} @var{fieldN}
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -575,9 +575,9 @@ kind of markers:
 #
 # This file contains the Bugs database of GNU recutils.
 #
-# Blah blah...
+# Blah blah@dots{}
 
-...
+@dots{}
 
 # End of TODO
 @end example
@@ -610,7 +610,7 @@ The following sections describe the supported types.
                           expressions. 
 * Enumerated types::    Enumerations and boolean values.
 * Time related types::  Dates and times.
-* Other types::         Emails, fields, ...
+* Other types::         Emails, fields, @dots{}
 @end menu
 
 @node Escalar types
@@ -665,7 +665,7 @@ Height: 10
 @section String types
 
 The @code{line} field type specifier can be used to restrict the value
-of a field to a single line, i.e. no newline characters are allowed.
+of a field to a single line, i.e.@: no newline characters are allowed.
 An example of a declaration and some fields:
 
 @example
@@ -814,7 +814,7 @@ Amount: 2111
 Description: Flying Helicopter Indoor Maxi
 Amount: 8
 
-...
+@dots{}
 @end example
 
 It would be natural to identify the items by its description, but it
@@ -838,7 +838,7 @@ Id: 1
 Description: Flying Helicopter Indoor Maxi
 Amount: 8
 
-...
+@dots{}
 @end example
 
 A problem of this approach is that we must be careful to not assign
@@ -905,7 +905,7 @@ be to keep the record descriptor in a separated file and then include
 it in any operation by using pipes.  For example:
 
 @example
-$ cat descriptor.rec data.rec | recsel ...
+$ cat descriptor.rec data.rec | recsel @dots{}
 @end example
 
 For those cases it is more convenient to use a @dfn{external
@@ -1254,7 +1254,7 @@ based on the value of some expression:
 expr1 ? expr2 : expr3
 @end example
 
-If @code{expr1} evaluates to true (i.e. it is an integer or the string
+If @code{expr1} evaluates to true (i.e.@: it is an integer or the string
 representation of an integer and its value is not zero) then the
 operator yields @code{expr2}.  Otherwise it yields @code{expr3}.
 
@@ -1312,7 +1312,7 @@ fields of a record.
 A FEX is composed by a sequence of @dfn{elements} separated by commas:
 
 @example
-ELEM_1,ELEM_2,...,ELEM_N
+ELEM_1,ELEM_2,@dots{},ELEM_N
 @end example
 
 Each element makes a reference to one or more fields in a record
@@ -1397,7 +1397,7 @@ record types contained in the input.
 Synopsis:
 
 @example
-recinf [OPTION]... [FILE]...
+recinf [@var{option}]@dots{} [@var{file}]@dots{}
 @end example
 
 The default behavior of the tool is to emit a line per record type in
@@ -1409,7 +1409,7 @@ $ recinf hackers.rec tasks.rec
 102 Task
 @end example
 
-If the input contains anonymous records, i.e. records that are before
+If the input contains anonymous records, i.e.@: records that are before
 the first record descriptor, the corresponding line resume won't have
 a type name:
 
@@ -1458,8 +1458,8 @@ part of records) based in some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [OPTION]... [-n NUM | -e RECORD_EXPR] [-c | (-p|-P|-R) FIELD_EXPR] \
-       [FILE]...
+recsel [@var{option}]@dots{} [-n @var{num} | -e @var{record_expr}] [-c | (-p|-P|-R) @var{field_expr}] \
+       [@var{file}]@dots{}
 @end example
 
 In addition of the common options described earlier (@pxref{Common
@@ -1560,8 +1560,8 @@ from the standard input.
 from the standard input.  Synopsis:
 
 @example
-recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] \
-       [(-f STR -v STR]|[-r RECDATA)]... [FILE]
+recins [@var{option}]@dots{} [t @var{type}] [-n @var{num} | -e @var{expr}] \
+       [(-f @var{str} -v @var{str}]|[-r @var{recdata})]@dots{} [@var{file}]
 @end example
 
 The new record that will be inserted by the command is constructed by
@@ -1592,7 +1592,7 @@ The value of the field being defined.
 @item -r
 @itemx @w{@kbd{--record}=@var{value}}
 Add the fields of the record in @var{value}.  This option can be
-intermixed with @kbd{-f ... -v} pairs.
+intermixed with @kbd{-f @dots{} -v} pairs.
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
 @itemx @w{@kbd{--verbose}}
@@ -1655,11 +1655,11 @@ read from the standard input.
 read from the standard input.  Synopsis:
 
 @example
-recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]
+recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{num} | -e @var{expr}] [@var{file}]
 @end example
 
-If no FILE is specified then the command acts like a filter, getting
-the data from the standard input and writing the result in the
+If no @var{file} is specified then the command acts like a filter,
+getting the data from the standard input and writing the result in the
 standard output.
 
 In addition to the common options described earlier (@pxref{Common
@@ -1716,11 +1716,11 @@ $ recdel -c -t Task -e "Status = 'CLOSED'" TODO.rec
 rec data read from the standard input.  Synopsis:
 
 @example
-recset [OPTION]... [FILE]...
+recset [@var{option}]@dots{} [@var{file}]@dots{}
 @end example
 
-If no FILE is specified then the command acts like a filter, getting
-the data from the standard input and writing the result in the
+If no @var{file} is specified then the command acts like a filter,
+getting the data from the standard input and writing the result in the
 standard output.
 
 In addition to the common options described earlier (@pxref{Common
@@ -1840,11 +1840,11 @@ $ recset -n 102 -f ClosedAt -S `date` tasks.rec
 @command{recfix} checks and fixes rec files.  Synopsis:
 
 @example
-recfix [OPTION]... [FILE]...
+recfix [@var{option}]@dots{} [@var{option}]@dots{}
 @end example
 
-If no FILE is specified then the command acts like a filter, getting
-the data from the standard input and writing the result in the
+If no @var{file} is specified then the command acts like a filter,
+getting the data from the standard input and writing the result in the
 standard output.
 
 In addition to the common options described earlier (@pxref{Common
@@ -1895,7 +1895,7 @@ $ cat data1.rec data2.rec | recfix
 @command{recfmt} formats records using templates.  Synopsis:
 
 @example
-recfmt [OPTION]... [TEMPLATE]
+recfmt [@var{option}]@dots{} [@var{template}]
 @end example
 
 This program always works as a filter, getting the data from the
@@ -1922,7 +1922,7 @@ literally copied to the output.
 Spots are written surrounded by double curly braces, like:
 
 @example
-@{@{...@}@}
+@{@{@dots{}@}@}
 @end example
 
 Spots contain selection expressions, that are executed every time the
@@ -1969,7 +1969,8 @@ conditionals and string concatenation.
 @node recfmt Examples
 @section recfmt Examples
 
-Apply a template in the 
+Apply a template to all the records stored in the @file{employees.rec}
+file:
 
 @example
 recsel employees.rec | recfmt 'Dear @{@{Name@}@}, you are fired.'
@@ -1999,7 +2000,7 @@ converted rec data, if possible.
 @command{csv2rec} converts CSV data into rec data.  Synopsis:
 
 @example
-csv2rec [OPTION]... [CSV_FILE]
+csv2rec [@var{option}]@dots{} [@var{csv_file}]
 @end example
 
 In addition of the common options described earlier (@pxref{Common
@@ -2052,7 +2053,7 @@ comma-separated-values.
 @command{rec2csv} converts rec data into CSV data.  Synopsis:
 
 @example
-rec2csv [OPTION]... [REC_FILE]...
+rec2csv [@var{option}]@dots{} [@var{rec_file}]@dots{}
 @end example
 
 The rec data can be read from files specified in the command line, or
@@ -2084,7 +2085,7 @@ a: value
 b: value
 c: value
 
-...
+@dots{}
 @end example
 
 There are several ways records are more flexible than tables:
@@ -2181,7 +2182,7 @@ converted rec data, if possible.
 @command{mdb2rec} converts mdb files into rec data.  Synopsis:
 
 @example
-mdb2rec [OPTION]... MDB_FILE [TABLE]
+mdb2rec [@var{option}]@dots{} @var{mdb_file} [@var{table}]
 @end example
 
 All the tables contained in the mdb file are exported unless a table
@@ -2256,7 +2257,7 @@ ProductID: 1
 ProductName: GNU generation T-shirt
 Discontinued: 0
 
-...
+@dots{}
 @end example
 
 A @dfn{record descriptor} is created for the record set containing the
@@ -2275,7 +2276,7 @@ CustomerID: GSOFT
 CompanyName: GNU Soft
 ContactName: Jose E. Marchesi
 
-...
+@dots{}
 @end example
 
 The list of orders is a bit more interesting, since it shows how
@@ -2295,7 +2296,7 @@ Customers:CustomerID: FBFOU
 Product:ProductID: 1
 OrderDate: 2010-08-01T12:30:01
 
-...
+@dots{}
 @end example
 
 Both CustomerID and ProductID are compound fields reflecting
@@ -2313,13 +2314,13 @@ tables, for which @kbd{-s} shall be used:
 @example
 $ mdb2rec sales.mdb
 %rec: Products
-...
+@dots{}
 
 %rec: Customers
-...
+@dots{}
 
 %rec: Orders
-...
+@dots{}
 @end example
 
 @node GNU Free Documentation License

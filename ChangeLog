@@ -1,3 +1,12 @@
+2011-02-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: several texinfo fixes and improvements.
+	* doc/recutils.texi: Use @dots{}.
+	Use @: after i.e. and e.g. to avoid texinfo to insert double
+	spacing.
+	(recfmt Examples): Fix incomplete statement.
+	Use @var{} for all the parameters in synopsis.
+
 2011-02-08  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
 
 	Fix typos and nits in the manual.
