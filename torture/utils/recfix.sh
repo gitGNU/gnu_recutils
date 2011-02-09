@@ -254,6 +254,110 @@ test_declare_input_file auto-nofex \
 %auto: this%is#not%a^ fex
 '
 
+test_declare_input_file size-invalid-1 \
+'%rec: foo
+%size: >
+'
+
+test_declare_input_file size-invalid-2 \
+'%rec: foo
+%size: foo
+'
+
+test_declare_input_file size-exact-zero \
+'%rec: foo
+%size: 0
+'
+
+test_declare_input_file size-exact-zero-invalid \
+'%rec: foo
+%size: 0
+
+foo: bar
+'
+
+test_declare_input_file size-exact \
+'%rec: foo
+%size: 2
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-exact-invalid \
+'%rec: foo
+%size: 2
+
+foo: bar
+'
+
+test_declare_input_file size-less \
+'%rec: foo
+%size: < 2
+
+foo: bar
+'
+
+test_declare_input_file size-less-invalid \
+'%rec: foo
+%size: < 2
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-less-equal \
+'%rec: foo
+%size: <= 2
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-less-equal-invalid \
+'%rec: foo
+%size: <= 1
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-bigger \
+'%rec: foo
+%size: > 1
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-bigger-invalid \
+'%rec: foo
+%size: > 2
+
+foo: bar
+'
+
+test_declare_input_file size-bigger-equal \
+'%rec: foo
+%size: >= 2
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-bigger-equal-invalid \
+'%rec: foo
+%size: >= 2
+
+foo: bar
+'
+
 #
 # Declare tests.
 #
@@ -388,6 +492,82 @@ test_tool recfix-auto-nofex xfail \
           recfix \
           '' \
           auto-nofex
+
+test_tool recfix-size-invalid-1 xfail \
+          recfix \
+          '' \
+          size-invalid-1
+
+test_tool recfix-size-invalid-2 xfail \
+          recfix \
+          '' \
+          size-invalid-2
+
+test_tool recfix-size-exact-zero ok \
+          recfix \
+          '' \
+          size-exact-zero \
+''
+
+test_tool recfix-size-exact-zero-invalid xfail \
+          recfix \
+          '' \
+          size-exact-zero-invalid
+
+test_tool recfix-size-exact ok \
+          recfix \
+          '' \
+          size-exact \
+''
+
+test_tool recfix-size-exact-invalid xfail \
+          recfix \
+          '' \
+          size-exact-invalid
+
+test_tool recfix-size-less ok \
+          recfix \
+          '' \
+          size-less \
+''
+
+test_tool recfix-size-less-invalid xfail \
+          recfix \
+          '' \
+          size-less-invalid
+
+test_tool recfix-size-less-equal ok \
+          recfix \
+          '' \
+          size-less-equal \
+''
+
+test_tool recfix-size-less-equal-invalid xfail \
+          recfix \
+          '' \
+          size-less-equal-invalid
+
+test_tool recfix-size-bigger ok \
+          recfix \
+          '' \
+          size-bigger \
+''
+
+test_tool recfix-size-bigger-invalid xfail \
+          recfix \
+          '' \
+          size-bigger-invalid
+
+test_tool recfix-size-bigger-equal ok \
+          recfix \
+          '' \
+          size-bigger-equal \
+''
+
+test_tool recfix-size-bigger-equal-invalid xfail \
+          recfix \
+          '' \
+          size-bigger-equal-invalid
 
 #
 # Cleanup.

@@ -1,3 +1,27 @@
+2011-02-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Tests for the %size special field.
+	* torture/utils/recfix.sh: New input files size-invalid-1,
+	size-invalid-2, size-exact-zero, size-exact-zero-invalid,
+	size-exact, size-exact-invalid, size-less, size-less-invalid,
+	size-less-equal, size-less-equal-invalid, size-bigger,
+	size-bigger-invalid, size-bigger-equal and
+	size-bigger-equal-invalid.
+	(recfix-size-invalid-1): New test.
+	(recfix-size-invalid-2): New test.
+	(recfix-size-exact-zero): New test.
+	(recfix-size-exact-zero-invalid): New test.
+	(recfix-size-exact): New test.
+	(recfix-size-exact-invalid): New test.
+	(recfix-size-less): New test.
+	(recfix-size-less-invalid): New test.
+	(recfix-size-less-equal): New test.
+	(recfix-size-less-equal-invalid): New test.
+	(recfix-size-bigger): New test.
+	(recfix-size-bigger-invalid): New test.
+	(recfix-size-bigger-equal): New test.
+	(recfix-size-bigger-equal-invalid): New test.
+
 2011-02-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	portability fix for macos x.
