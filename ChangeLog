@@ -1,5 +1,11 @@
 2011-02-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Documentation for %size.
+	* doc/recutils.texi (Record Descriptors): Documentation of the
+	%size special field.
+
+2011-02-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Tests for the %size special field.
 	* torture/utils/recfix.sh: New input files size-invalid-1,
 	size-invalid-2, size-exact-zero, size-exact-zero-invalid,

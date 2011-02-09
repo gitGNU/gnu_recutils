@@ -358,6 +358,12 @@ test_declare_input_file size-bigger-equal-invalid \
 foo: bar
 '
 
+test_declare_input_file size-several \
+'%rec: foo
+%size: 2
+%size: < 10
+'
+
 #
 # Declare tests.
 #
@@ -568,6 +574,11 @@ test_tool recfix-size-bigger-equal-invalid xfail \
           recfix \
           '' \
           size-bigger-equal-invalid
+
+test_tool recfix-size-several xfail \
+          recfix \
+          '' \
+          size-several
 
 #
 # Cleanup.

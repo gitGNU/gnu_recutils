@@ -451,6 +451,38 @@ way easier.
 This field can be used to define types for fields.
 @var{field_name_list} shall be a list of field names separated by
 commas.  @ref{Field Types}.
+
+@item %size: [@var{relational_operator}] @var{number}
+
+This field can be used to define constraints in the number of records
+stored in the record set.
+
+If no operator is specified then @var{number} is interpreted as the
+exact number of records of this type.  For example:
+
+@example
+%rec: Day
+%size: 7
+%type: Name enum
++ Monday Tuesday Wednesday Thursday Friday
++ Saturday Sunday
+%doc: There should be 7 days.
+@end example
+
+The optional @var{relational_operator} shall be one of @code{<},
+@code{<=}, @code{>} and @code{>=}.  For example:
+
+@example
+%rec: Item
+%key: Id
+%size: <= 100
+%doc: We have at much 100 different articles.
+@end example
+
+It is valid to specify a size of @code{0}, meaning that no records of
+this type shall exist in the file.
+
+This field shall appear only once in a record descriptor.
 @end table
 
 @node Compound Field Names
