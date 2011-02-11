@@ -7,6 +7,17 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 1.3 (11 February 2011)
+* A quite bad (and embarrassing) bug introduced in 1.2 has been
+  fixed.  The bug was causing recins, recdel and recset to report
+  random integrity failures, due to a uninitialized variable.
+* New special field %size, that allows to define constraints in the
+  size of record sets.
+* Several fixes in the user manual.
+* Little portability issue that prevented one of the tests to compile
+  in macos x has been fixed.
+* Translations updates.
+
  Version 1.2 (4 February 2011)
 * New utility rec2csv, to export rec data to csv files.
 * Support for auto-incremented fields and timestamps with the new
