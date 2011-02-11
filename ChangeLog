@@ -1,5 +1,12 @@
 2011-02-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.3.
+	* .gitignore: Trailing empty line removed.
+
+	* configure.ac: Version changed to 1.3.
+
+2011-02-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Translations updated.
 	* po/de.po: Updated from the translation project.
 	* po/fi.po: Likewise.

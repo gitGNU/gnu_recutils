@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.1.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2011-02-04 11:37+0100\n"
+"POT-Creation-Date: 2011-02-11 20:10+0100\n"
 "PO-Revision-Date: 2011-02-03 08:54+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -220,7 +220,9 @@ msgstr ""
 #: src/rec-fex.c:402
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
-msgstr "Interner Fehler: REC_FEX_MAX_ELEMS überschritten. Bitte einen Fehlerbericht senden.\n"
+msgstr ""
+"Interner Fehler: REC_FEX_MAX_ELEMS überschritten. Bitte einen Fehlerbericht "
+"senden.\n"
 
 #: src/rec-field-name.c:245
 #, c-format
@@ -236,97 +238,131 @@ msgstr ""
 "Interner Fehler: rec_field_name_part_str_p:\n"
 "Fehler beim Kompilieren des regulären Ausdrucks.\n"
 
-#: src/rec-int.c:253
+#: src/rec-int.c:150
 #, c-format
-msgid "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
+msgid "%s: error: the number of records of type %s shall be %d.\n"
+msgstr ""
+
+#: src/rec-int.c:164
+#, c-format
+msgid "%s: error: too many records of type %s. Maximum allowed are %d.\n"
+msgstr ""
+
+#: src/rec-int.c:175
+#, c-format
+msgid "%s: error: too few records of type %s. Minimum allowed are %d.\n"
+msgstr ""
+
+#: src/rec-int.c:300
+#, c-format
+msgid ""
+"%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
 msgstr "%s:%s: Warnung: Typ %s kollidiert mit Bezugstyp %s im rset %s.\n"
 
-#: src/rec-int.c:361
+#: src/rec-int.c:412
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr "%s:%s: Fehler: Obligatorisches Feld »%s« nicht im Datensatz gefunden\n"
 
-#: src/rec-int.c:421
+#: src/rec-int.c:472
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
 msgstr "%s:%s: Fehler: Feld »%s« sollte in diesem Datensatz einmalig sein\n"
 
-#: src/rec-int.c:481
+#: src/rec-int.c:532
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr "%s:%s: Fehler: Unzulässiges Feld »%s« im Datensatz gefunden\n"
 
-#: src/rec-int.c:539
+#: src/rec-int.c:590
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr "%s:%s: Fehler: Schlüsselfeld »%s« nicht im Datensatz gefunden\n"
 
-#: src/rec-int.c:550
+#: src/rec-int.c:601
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr "%s:%s: Fehler: Mehrere Schlüsselfelder »%s« im Datensatz\n"
 
-#: src/rec-int.c:595
+#: src/rec-int.c:646
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr "%s:%s: Fehler: Doppelter Schlüsselwert im Feld »%s« im Datensatz\n"
 
-#: src/rec-int.c:662
+#: src/rec-int.c:718
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr "%s:%s: Fehler: Fehlendes %%rec-Feld im Datensatzdeskriptor\n"
 
-#: src/rec-int.c:672
+#: src/rec-int.c:728
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr "%s:%s: Fehler: Zu viele %%rec-Felder im Datensatzdeskriptor\n"
 
-#: src/rec-int.c:684
+#: src/rec-int.c:740
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr "%s:%s: Fehler: Ungültiger Datensatztyp %s\n"
 
-#: src/rec-int.c:697
+#: src/rec-int.c:753
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr "%s:%s: Fehler: Nur ein %%rec-Feld im Datensatzdeskriptor zulässig\n"
 
-#: src/rec-int.c:720
+#: src/rec-int.c:765
+#, fuzzy, c-format
+msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
+msgstr "%s:%s: Fehler: Nur ein %%rec-Feld im Datensatzdeskriptor zulässig\n"
+
+#: src/rec-int.c:789
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr "%s:%s: Fehler: Ungültige Typangabe\n"
 
-#: src/rec-int.c:743
+#: src/rec-int.c:812
 #, c-format
 msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
 msgstr "%s:%s: Fehler: Wert für %s[%d] ist keine Feldnamenliste\n"
 
-#: src/rec-int.c:773
+#: src/rec-int.c:827
 #, c-format
-msgid "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
-msgstr "%s:%s: Fehler: Automatisch hochgezähltes Feld %s sollte vom Typ int, range oder date sein\n"
+msgid ""
+"%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= "
+"or <=.\n"
+msgstr ""
 
-#: src/rec-int.c:868
+#: src/rec-int.c:857
+#, c-format
+msgid ""
+"%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
+msgstr ""
+"%s:%s: Fehler: Automatisch hochgezähltes Feld %s sollte vom Typ int, range "
+"oder date sein\n"
+
+#: src/rec-int.c:953
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
-msgstr "%s:%s: Fehler: : Entfernter Deskriptor von Adresse %s konnte nicht geholt werden.\n"
+msgstr ""
+"%s:%s: Fehler: : Entfernter Deskriptor von Adresse %s konnte nicht geholt "
+"werden.\n"
 
-#: src/rec-int.c:888
+#: src/rec-int.c:973
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
-msgstr "%s:%s: Fehler: Externer Deskriptor aus Datei %s konnte nicht geholt werden.\n"
+msgstr ""
+"%s:%s: Fehler: Externer Deskriptor aus Datei %s konnte nicht geholt werden.\n"
 
-#: src/rec-int.c:904
+#: src/rec-int.c:989
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: Fehler: %s enthält keine gültigen rec-Daten.\n"
 
-#: src/rec-int.c:919
+#: src/rec-int.c:1004
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: Fehler: %s enthält keine Informationen für Typ %s.\n"
 
-#: src/rec-int.c:987
+#: src/rec-int.c:1072
 #, c-format
 msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
 msgstr ""
@@ -335,8 +371,12 @@ msgstr ""
 
 #: src/rec-types.c:428
 #, c-format
-msgid "internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() in rec_type_new().\n"
-msgstr "Interner Fehler: rec-types: REC_TYPE_NONE von rec_type_parse_type_kind() erhalten in rec_type_new().\n"
+msgid ""
+"internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() "
+"in rec_type_new().\n"
+msgstr ""
+"Interner Fehler: rec-types: REC_TYPE_NONE von rec_type_parse_type_kind() "
+"erhalten in rec_type_new().\n"
 
 #: src/rec-types.c:811
 #, c-format
@@ -409,6 +449,13 @@ msgstr ""
 "Interner Fehler: rec_int_rec_extract_url:\n"
 "Fehler beim Kompilieren des regulären Ausdrucks.\n"
 
+#: src/rec-utils.c:278
+#, fuzzy, c-format
+msgid "internal error: rec_match: error compiling regexp.\n"
+msgstr ""
+"Interner Fehler: rec-types:\n"
+"Fehler beim Kompilieren des regulären Ausdrucks.\n"
+
 #. TRANSLATORS: --help output, csv2rec synopsis.
 #. no-wrap
 #: utils/csv2rec.c:104
@@ -426,13 +473,17 @@ msgstr "CSV-Daten in rec-Daten-umwandeln.\n"
 #. no-wrap
 #: utils/csv2rec.c:115
 msgid ""
-"  -t, --type=TYPE                     type name for the converted records; if this\n"
-"                                        parameter is ommited then no type is used.\n"
+"  -t, --type=TYPE                     type name for the converted records; "
+"if this\n"
+"                                        parameter is ommited then no type is "
+"used.\n"
 "  -s, --strict                        be strict parsing the csv file.\n"
 "  -e, --omit-empty                    omit empty fields.\n"
 msgstr ""
-"  -t, --type                          Typname der konvertierten Datensätze. Falls\n"
-"                                       dieser Parameter fehlt, wird kein Typ\n"
+"  -t, --type                          Typname der konvertierten Datensätze. "
+"Falls\n"
+"                                       dieser Parameter fehlt, wird kein "
+"Typ\n"
 "                                       verwendet.\n"
 "  -s, --strict                        CSV-Datei strikt verarbeiten.\n"
 "  -e, --omit-empty                    Leere Felder weglassen.\n"
@@ -462,7 +513,7 @@ msgid "invalid field name '%s' in header\n"
 msgstr "Ungültiger Feldname »%s« in Header\n"
 
 #: utils/csv2rec.c:258 utils/csv2rec.c:297 utils/csv2rec.c:312
-#: utils/mdb2rec.c:340 utils/mdb2rec.c:453
+#: utils/mdb2rec.c:337 utils/mdb2rec.c:450
 msgid "out of memory\n"
 msgstr "Nicht genügend freier Speicher\n"
 
@@ -504,13 +555,15 @@ msgid ""
 "  -s, --system-tables                 include system tables.\n"
 "  -e, --keep-empty-fields             don't prune empty fields in the rec\n"
 "                                        output.\n"
-"  -l, --list-tables                   dump a list of the table names contained\n"
+"  -l, --list-tables                   dump a list of the table names "
+"contained\n"
 "                                        in the mdb file.\n"
 msgstr ""
 "  -s, --system-tables                 Systemtabellen einschließen.\n"
 "  -e, --keep-empty-fields             Leere Felder in rec-Ausgabe\n"
 "                                        nicht weglassen\n"
-"  -l, --list-tables                   Eine Liste der in der mdb-Datei enthaltenen\n"
+"  -l, --list-tables                   Eine Liste der in der mdb-Datei "
+"enthaltenen\n"
 "                                        Tabellennamen ausgeben.\n"
 
 #. TRANSLATORS: --help output, mdb2rec examples.
@@ -527,36 +580,36 @@ msgstr ""
 "        mdb2rec datenbank.mdb > datenbank.rec\n"
 "        mdb2rec datenbank.mdb Kunden > kunden.rec\n"
 
-#: utils/mdb2rec.c:266 utils/mdb2rec.c:347
+#: utils/mdb2rec.c:263 utils/mdb2rec.c:344
 #, c-format
 msgid "failed to normalise record type name %s\n"
 msgstr "Datensatztypname %s konnte nicht normalisiert werden\n"
 
-#: utils/mdb2rec.c:274 utils/mdb2rec.c:286
+#: utils/mdb2rec.c:271 utils/mdb2rec.c:283
 #, c-format
 msgid "failed to normalise field name %s\n"
 msgstr "Normalisieren des Feldnamens %s fehlgeschlagen\n"
 
-#: utils/mdb2rec.c:368
+#: utils/mdb2rec.c:365
 #, c-format
 msgid "failed to normalise the field name %s\n"
 msgstr "Feldname %s konnte nicht normalisiert werden\n"
 
-#: utils/mdb2rec.c:479 utils/recins.c:422 utils/recset.c:276
+#: utils/mdb2rec.c:476 utils/recins.c:426 utils/recset.c:276
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "Ungültiger Feldname %s.\n"
 
-#: utils/mdb2rec.c:511
+#: utils/mdb2rec.c:506
 msgid "out of memory"
 msgstr "Nicht genügend freier Speicher"
 
-#: utils/mdb2rec.c:521
+#: utils/mdb2rec.c:516
 #, c-format
 msgid "could not open file %s\n"
 msgstr "Datei %s konnte nicht geöffnet werden\n"
 
-#: utils/mdb2rec.c:528
+#: utils/mdb2rec.c:523
 msgid "file does not appear to be an Access database\n"
 msgstr "Datei scheint keine Access-Datenbank zu sein\n"
 
@@ -577,11 +630,15 @@ msgstr "REC-Daten in CSV-Daten-umwandeln.\n"
 #. no-wrap
 #: utils/rec2csv.c:93
 msgid ""
-"  -t, --type=TYPE                     record set to convert to csv; if this parameter\n"
-"                                        is ommited then the default record set is used\n"
+"  -t, --type=TYPE                     record set to convert to csv; if this "
+"parameter\n"
+"                                        is ommited then the default record "
+"set is used\n"
 msgstr ""
-"  -t, --type=TYPE                     Datensatz zum Umwandeln in csv; Falls dieser\n"
-"                                        Parameter fehlt, wird der vorgegebene Datensatz\n"
+"  -t, --type=TYPE                     Datensatz zum Umwandeln in csv; Falls "
+"dieser\n"
+"                                        Parameter fehlt, wird der "
+"vorgegebene Datensatz\n"
 "                                        verwendet\n"
 
 #. TRANSLATORS: --help output, rec2csv examples.
@@ -615,21 +672,30 @@ msgstr "Entfernen oder Auskommentieren von Datensätzen einer rec-Datei.\n"
 #. no-wrap
 #: utils/recdel.c:100
 msgid ""
-"  -c, --comment                       comment out the matching records instead of\n"
+"  -c, --comment                       comment out the matching records "
+"instead of\n"
 "                                        deleting them.\n"
-"      --force                         delete even in potentially dangerous situations,\n"
-"                                        and if the deletion is violating record restrictions.\n"
+"      --force                         delete even in potentially dangerous "
+"situations,\n"
+"                                        and if the deletion is violating "
+"record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
-"      --verbose                       give a detailed report if the integrity check\n"
+"      --verbose                       give a detailed report if the "
+"integrity check\n"
 "                                        fails.\n"
 msgstr ""
-"  -c, --comment                       Die betreffenden Datensätze auskommentieren,\n"
+"  -c, --comment                       Die betreffenden Datensätze "
+"auskommentieren,\n"
 "                                        anstatt sie zu löschen.\n"
-"      --force                         Auch in potenziell gefährlichen Situationen löschen,\n"
-"                                        auch wenn der Löschvorgang Einschränkungen des\n"
+"      --force                         Auch in potenziell gefährlichen "
+"Situationen löschen,\n"
+"                                        auch wenn der Löschvorgang "
+"Einschränkungen des\n"
 "                                        Datensatzes berührt.\n"
-"      --no-external                   Keine externen Deskriptoren verwenden.\n"
-"      --verbose                       Einen ausführlichen Bericht ausgeben, falls\n"
+"      --no-external                   Keine externen Deskriptoren "
+"verwenden.\n"
+"      --verbose                       Einen ausführlichen Bericht ausgeben, "
+"falls\n"
 "                                        die Integritätsprüfung scheitert.\n"
 
 #. TRANSLATORS: --help output, notes on recdel.
@@ -652,32 +718,36 @@ msgid ""
 "Examples:\n"
 "\n"
 "        recdel -n 10 contacts.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n"
+"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
+"rec\n"
 msgstr ""
 "Beispiele:\n"
 "\n"
 "        recdel -n 10 kontakte.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > andere.rec\n"
+"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > andere."
+"rec\n"
 
-#: utils/recdel.c:153
+#: utils/recdel.c:152
 #, c-format
 msgid "no records of type %s found.\n"
 msgstr "Keine Datensätze vom Typ %s gefunden.\n"
 
-#: utils/recdel.c:220 utils/recins.c:552 utils/recsel.c:331
+#: utils/recdel.c:219 utils/recins.c:553 utils/recsel.c:331
 msgid "evaluating the selection expression.\n"
 msgstr "Auswahlausdruck wird interpretiert.\n"
 
-#: utils/recdel.c:283
+#: utils/recdel.c:282
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr "Anfrage zum Löschen aller Datensätze des Typs %s wird ignoriert.\n"
 
-#: utils/recdel.c:285
+#: utils/recdel.c:284
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
-msgstr "Verwenden Sie --force, wenn Sie wirklich fortsetzen wollen, ansonsten -n oder -e.\n"
+msgstr ""
+"Verwenden Sie --force, wenn Sie wirklich fortsetzen wollen, ansonsten -n "
+"oder -e.\n"
 
-#: utils/recdel.c:293 utils/recset.c:436
+#: utils/recdel.c:292 utils/recset.c:436
 msgid "invalid selection expression.\n"
 msgstr "Ungültiger Auswahlausdruck.\n"
 
@@ -698,7 +768,8 @@ msgstr "rec-Dateien prüfen und korrigieren.\n"
 #. no-wrap
 #: utils/recfix.c:80
 msgid "      --no-external               don't use external descriptors.\n"
-msgstr "      --no-external               Keine externen Deskriptoren verwenden.\n"
+msgstr ""
+"      --no-external               Keine externen Deskriptoren verwenden.\n"
 
 #. TRANSLATORS: --help output, recfix examples.
 #. no-wrap
@@ -727,13 +798,18 @@ msgstr "Aufruf: recfmt [OPTION]... [VORLAGE]\n"
 #. no-wrap
 #: utils/recfmt.c:83
 msgid "Apply a template to records read from standard input.\n"
-msgstr "Eine Vorlage auf die aus der Standardeingabe gelesenen Datensätze anwenden.\n"
+msgstr ""
+"Eine Vorlage auf die aus der Standardeingabe gelesenen Datensätze anwenden.\n"
 
 #. TRANSLATORS: --help output, recfmt arguments.
 #. no-wrap
 #: utils/recfmt.c:89
-msgid "  -f, --file=FILENAME                 read the template to apply from a file.\n"
-msgstr "  -f, --file=DATEINAME                Zu benutzende Vorlage aus einer Datei holen.\n"
+msgid ""
+"  -f, --file=FILENAME                 read the template to apply from a "
+"file.\n"
+msgstr ""
+"  -f, --file=DATEINAME                Zu benutzende Vorlage aus einer Datei "
+"holen.\n"
 
 #. TRANSLATORS: --help output, recfmt examples.
 #. no-wrap
@@ -746,7 +822,8 @@ msgid ""
 msgstr ""
 "Beispiele:\n"
 "\n"
-"        cat angestellte.rec | recfmt 'Sehr geehrter {{Name}}, Sie sind entlassen.'\n"
+"        cat angestellte.rec | recfmt 'Sehr geehrter {{Name}}, Sie sind "
+"entlassen.'\n"
 "        cat angestellte.rec | recfmt -f kuendigung.tmpl\n"
 
 #: utils/recfmt.c:134
@@ -756,7 +833,9 @@ msgstr "Datei »%s« kann nicht zum Lesen geöffnet werden.\n"
 
 #: utils/recfmt.c:152
 msgid "don't specify a template in the command line and -f at the same time.\n"
-msgstr "Vorlage in der Befehlszeile und -f können nicht gleichzeitig angegeben werden.\n"
+msgstr ""
+"Vorlage in der Befehlszeile und -f können nicht gleichzeitig angegeben "
+"werden.\n"
 
 #: utils/recfmt.c:175
 msgid "invalid expression in a template slot.\n"
@@ -783,13 +862,15 @@ msgstr "Aufruf: recinf [OPTION]... [DATEI]...\n"
 #. no-wrap
 #: utils/recinf.c:89
 msgid "Print information about the types of records stored in the input.\n"
-msgstr "Informationen über die Datensatztypen in der Standardeingabe ausgeben.\n"
+msgstr ""
+"Informationen über die Datensatztypen in der Standardeingabe ausgeben.\n"
 
 #. TRANSLATORS: --help output, recinf arguments.
 #. no-wrap
 #: utils/recinf.c:96
 msgid ""
-"  -t, --type=RECORD_TYPE          print information on the records having the\n"
+"  -t, --type=RECORD_TYPE          print information on the records having "
+"the\n"
 "                                    specified type.\n"
 "  -d, --descriptor                include the full record descriptors.\n"
 "  -n, --names-only                output just the names of the record files\n"
@@ -797,8 +878,10 @@ msgid ""
 msgstr ""
 "  -t, --type=DATENSATZTYP         Informationen zu Datensätzen des\n"
 "                                    angegebenen Typs ausgeben.\n"
-"  -d, --descriptor                Vollständige Datensatzdeskriptoren einschließen.\n"
-"  -n, --names-only                Nur die Namen der in der Eingabe gefundenen\n"
+"  -d, --descriptor                Vollständige Datensatzdeskriptoren "
+"einschließen.\n"
+"  -n, --names-only                Nur die Namen der in der Eingabe "
+"gefundenen\n"
 "                                    Datensatzdateien ausgeben.\n"
 
 #. TRANSLATORS: --help output, recinf special options.
@@ -808,10 +891,12 @@ msgstr ""
 #: utils/recinf.c:109 utils/recsel.c:139
 msgid ""
 "Special options:\n"
-"  -S, --print-sexps                   print the data in sexps instead of rec format.\n"
+"  -S, --print-sexps                   print the data in sexps instead of rec "
+"format.\n"
 msgstr ""
 "Spezielle Optionen:\n"
-"  -S, --print-sexps                   Daten im sexps- anstelle des rec-Formats ausgeben.\n"
+"  -S, --print-sexps                   Daten im sexps- anstelle des rec-"
+"Formats ausgeben.\n"
 
 #. TRANSLATORS: --help output, recinf examples.
 #. no-wrap
@@ -838,8 +923,12 @@ msgstr "Fehler: Datei %s kann nicht gelesen werden\n"
 #. no-wrap
 #: utils/recins.c:101
 #, c-format
-msgid "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"
-msgstr "Aufruf: recins [OPTION]... [t TYP] [-n ZAHL | -e AUSDR] [(-f STR -v STR]|[-r RECDATEN)]... [DATEI]\n"
+msgid ""
+"Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r "
+"RECDATA)]... [FILE]\n"
+msgstr ""
+"Aufruf: recins [OPTION]... [t TYP] [-n ZAHL | -e AUSDR] [(-f STR -v STR]|[-r "
+"RECDATEN)]... [DATEI]\n"
 
 #. TRANSLATORS: --help output, recins short description.
 #. no-wrap
@@ -851,23 +940,33 @@ msgstr "Neue Datensätze in eine rec-Datenbank einfügen.\n"
 #. no-wrap
 #: utils/recins.c:112
 msgid ""
-"  -f, --field=STR                     field name; should be followed by a -v.\n"
-"  -v, --value=STR                     field value; should be preceded by an -f.\n"
-"  -r, --record=STR                    record that will be inserted in the file.\n"
-"      --force                         insert the record even if it is violating\n"
+"  -f, --field=STR                     field name; should be followed by a -"
+"v.\n"
+"  -v, --value=STR                     field value; should be preceded by an -"
+"f.\n"
+"  -r, --record=STR                    record that will be inserted in the "
+"file.\n"
+"      --force                         insert the record even if it is "
+"violating\n"
 "                                        record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
 "      --no-auto                       don't insert auto generated fields.\n"
-"      --verbose                       give a detailed report if the integrity check\n"
+"      --verbose                       give a detailed report if the "
+"integrity check\n"
 "                                        fails.\n"
 msgstr ""
-"  -f, --field=STR                     Feldname.  Darauf sollte ein -v folgen.\n"
+"  -f, --field=STR                     Feldname.  Darauf sollte ein -v "
+"folgen.\n"
 "  -v, --value=STR                     Feldwert.  Sollte auf ein -f folgen.\n"
 "  -r, --record=STR                    In die Datei einzufügender Datensatz.\n"
-"      --force                         Datensatz auch dann einfügen, wenn dies\n"
-"                                        Einschränkungen des Datensatzes berührt.\n"
-"      --no-external                   Keine externen Deskriptoren verwenden.\n"
-"      --verbose                       Einen ausführlichen Bericht ausgeben, falls\n"
+"      --force                         Datensatz auch dann einfügen, wenn "
+"dies\n"
+"                                        Einschränkungen des Datensatzes "
+"berührt.\n"
+"      --no-external                   Keine externen Deskriptoren "
+"verwenden.\n"
+"      --verbose                       Einen ausführlichen Bericht ausgeben, "
+"falls\n"
 "                                        die Intergritätsprüfung scheitert.\n"
 
 #. TRANSLATORS: --help output, recins examples.
@@ -877,26 +976,28 @@ msgid ""
 "Examples:\n"
 "\n"
 "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n"
+"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other."
+"rec\n"
 msgstr ""
 "Beispiele:\n"
 "\n"
 "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org kontakte.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > andere.rec\n"
+"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > andere."
+"rec\n"
 
-#: utils/recins.c:396
+#: utils/recins.c:400
 msgid "a -f should be followed by a -v\n"
 msgstr "Auf -f sollte ein -v folgen\n"
 
-#: utils/recins.c:434
+#: utils/recins.c:438
 msgid "a -v should be preceded by a -f\n"
 msgstr "Einem -v sollte ein -f vorausgehen\n"
 
-#: utils/recins.c:460
+#: utils/recins.c:464
 msgid "error while parsing the record provided by -r\n"
 msgstr "Fehler beim Einlesen des mit -r angegebenen Datensatzes\n"
 
-#: utils/recins.c:496
+#: utils/recins.c:500
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "Bitte geben Sie einen Wert für das Feld %s an\n"
@@ -905,8 +1006,12 @@ msgstr "Bitte geben Sie einen Wert für das Feld %s an\n"
 #. no-wrap
 #: utils/recsel.c:100
 #, c-format
-msgid "Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
-msgstr "Aufruf: recsel [OPTION]... [-t TYP] [-n ZAHL | -e DATENSAUSDR] [-c | (-p|-P) FELDAUSDR] [DATEI]...\n"
+msgid ""
+"Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) "
+"FIELD_EXPR] [FILE]...\n"
+msgstr ""
+"Aufruf: recsel [OPTION]... [-t TYP] [-n ZAHL | -e DATENSAUSDR] [-c | (-p|-P) "
+"FELDAUSDR] [DATEI]...\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
@@ -918,13 +1023,17 @@ msgstr "rec-Daten auswählen und ausgeben.\n"
 #. no-wrap
 #: utils/recsel.c:111
 msgid ""
-"  -d, --include-descriptors           print record descriptors along with the matched\n"
+"  -d, --include-descriptors           print record descriptors along with "
+"the matched\n"
 "                                        records.\n"
-"  -C, --collapse                      do not section the result in records with newlines.\n"
+"  -C, --collapse                      do not section the result in records "
+"with newlines.\n"
 msgstr ""
-"  -d, --include-descriptors           Datensatzdeskriptoren mit den übereinstimmenden\n"
+"  -d, --include-descriptors           Datensatzdeskriptoren mit den "
+"übereinstimmenden\n"
 "                                        Datensätzen ausgeben.\n"
-"  -C, --collapse                      Ergebnis in Datensätzen nicht in neue Zeile\n"
+"  -C, --collapse                      Ergebnis in Datensätzen nicht in neue "
+"Zeile\n"
 "                                        umbrechen.\n"
 
 #. TRANSLATORS: --help output, recsel output options.
@@ -932,23 +1041,33 @@ msgstr ""
 #: utils/recsel.c:125
 msgid ""
 "Output options:\n"
-"  -p, --print=FIELDS                  comma-separated list of fields to print for each\n"
+"  -p, --print=FIELDS                  comma-separated list of fields to "
+"print for each\n"
 "                                        matching record.\n"
-"  -P, --print-values=FIELDS           as -p, but print only the values of the selected\n"
+"  -P, --print-values=FIELDS           as -p, but print only the values of "
+"the selected\n"
 "                                        fields.\n"
-"  -R, --print-row=FIELDS              as -P, but separate the values with spaces instead\n"
+"  -R, --print-row=FIELDS              as -P, but separate the values with "
+"spaces instead\n"
 "                                        of newlines.\n"
-"  -c, --count                         print a count of the matching records instead of\n"
+"  -c, --count                         print a count of the matching records "
+"instead of\n"
 "                                        the records themselves.\n"
 msgstr ""
 "Ausgabeoptionen:\n"
-"  -p, --print=FELDER                  kommagetrennte Liste von Feldern, die für jeden\n"
-"                                        übereinstimmenden Datensatz auszugeben sind.\n"
-"  -P, --print-values=FELDER           Wie -p, aber die Werte der ausgewählten\n"
+"  -p, --print=FELDER                  kommagetrennte Liste von Feldern, die "
+"für jeden\n"
+"                                        übereinstimmenden Datensatz "
+"auszugeben sind.\n"
+"  -P, --print-values=FELDER           Wie -p, aber die Werte der "
+"ausgewählten\n"
 "                                        Felder ausgeben.\n"
-"  -R, --print-row=FELDER              Wie -P, aber ausgegebene Wert durch Leerzeichen\n"
-"                                        anstatt durch Zeilenumbrüche trennen.\n"
-"  -c, --count                         Anzahl der übereinstimmenden Datensätze anstelle\n"
+"  -R, --print-row=FELDER              Wie -P, aber ausgegebene Wert durch "
+"Leerzeichen\n"
+"                                        anstatt durch Zeilenumbrüche "
+"trennen.\n"
+"  -c, --count                         Anzahl der übereinstimmenden "
+"Datensätze anstelle\n"
 "                                        der Datensätze selbst ausgeben.\n"
 
 #. TRANSLATORS: --help output, recsel examples.
@@ -958,12 +1077,14 @@ msgid ""
 "Examples:\n"
 "\n"
 "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"
+"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+"rec\n"
 msgstr ""
 "Beispiele:\n"
 "\n"
 "        recsel -t Freund -e \"Name ~ 'Schmidt'\" freunde.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"
+"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+"rec\n"
 
 #: utils/recsel.c:196
 msgid "cannot specify -[pPR] and also -c.\n"
@@ -999,11 +1120,14 @@ msgstr "Felder in Datensätzen bearbeiten oder löschen.\n"
 #: utils/recset.c:135
 msgid ""
 "      --no-external                   don't use external descriptors.\n"
-"      --force                         alter the records even if violating record\n"
+"      --force                         alter the records even if violating "
+"record\n"
 "                                        restrictions.\n"
 msgstr ""
-"      --no-external                   keine externen Deskriptoren verwenden.\n"
-"      --force                         Datensätze auch dann bearbeiten, wenn Richtlinien\n"
+"      --no-external                   keine externen Deskriptoren "
+"verwenden.\n"
+"      --force                         Datensätze auch dann bearbeiten, wenn "
+"Richtlinien\n"
 "                                        dies untersagen.\n"
 
 #. TRANSLATORS: --help output, recset field selection options.
@@ -1011,11 +1135,13 @@ msgstr ""
 #: utils/recset.c:148
 msgid ""
 "Field selection options:\n"
-"  -f, --fields=FIELDS                 comma-separated list of field names with optional\n"
+"  -f, --fields=FIELDS                 comma-separated list of field names "
+"with optional\n"
 "                                        subscripts.\n"
 msgstr ""
 "Feldauswahloptionen:\n"
-"  -f, --fields=FELDER                 Kommagetrennte Liste von Feldnamen mit\n"
+"  -f, --fields=FELDER                 Kommagetrennte Liste von Feldnamen "
+"mit\n"
 "                                        optionalen Subskripten.\n"
 
 #. TRANSLATORS: --help output, recset actions.
@@ -1023,24 +1149,35 @@ msgstr ""
 #: utils/recset.c:156
 msgid ""
 "Actions:\n"
-"  -s, --set=VALUE                     change the value of the selected fields.\n"
-"  -a, --add=VALUE                     add the selected fields with the given value.\n"
-"  -S, --set-add=VALUE                 change the value of the selected fields.  If they don't\n"
-"                                        exist then add a new field with that value.\n"
-"  -r, --rename=NAME                   rename the selected fields to a given name.  If an entire\n"
-"                                        record set is selected then the field is renamed in the\n"
+"  -s, --set=VALUE                     change the value of the selected "
+"fields.\n"
+"  -a, --add=VALUE                     add the selected fields with the given "
+"value.\n"
+"  -S, --set-add=VALUE                 change the value of the selected "
+"fields.  If they don't\n"
+"                                        exist then add a new field with that "
+"value.\n"
+"  -r, --rename=NAME                   rename the selected fields to a given "
+"name.  If an entire\n"
+"                                        record set is selected then the "
+"field is renamed in the\n"
 "                                        record descriptor as well.\n"
 "  -d, --delete                        delete the selected fields.\n"
 "  -c, --comment                       comment out the selected fields.\n"
 msgstr ""
 "Aktionen:\n"
 "  -s, --set=WERT                      Wert der ausgewählten Felder ändern.\n"
-"  -a, --add=WERT                      Angegebenen Wert auf die ausgewählten Felder\n"
+"  -a, --add=WERT                      Angegebenen Wert auf die ausgewählten "
+"Felder\n"
 "                                       anwenden.\n"
-"  -r, --rename=NAME                   Die ausgewählten Felder in einen angegebenen\n"
-"                                       Namen umbenennen. Falls ein ganzer Datensatz\n"
-"                                       ausgewählt wird, dann wird das Feld im\n"
-"                                       Datensatzdeskriptor ebenfalls umbenannt.\n"
+"  -r, --rename=NAME                   Die ausgewählten Felder in einen "
+"angegebenen\n"
+"                                       Namen umbenennen. Falls ein ganzer "
+"Datensatz\n"
+"                                       ausgewählt wird, dann wird das Feld "
+"im\n"
+"                                       Datensatzdeskriptor ebenfalls "
+"umbenannt.\n"
 "  -d, --delete                        Ausgewählte Felder löschen.\n"
 "  -c, --comment                       Ausgewählte Felder auskommentieren.\n"
 
@@ -1059,7 +1196,8 @@ msgstr ""
 "\n"
 "        recset -f TmpName -d daten.rec\n"
 "        recset -f Email[1] -s ungueltige@email.com freunde.rec\n"
-"        recset -e \"Name ~ 'Schmidt'\" -f Email -a neue@email.com freunde.rec\n"
+"        recset -e \"Name ~ 'Schmidt'\" -f Email -a neue@email.com freunde."
+"rec\n"
 "        recset -f Email[1] -r AltEmail freunde.rec\n"
 
 #: utils/recset.c:191
@@ -1079,8 +1217,10 @@ msgid "creating the field expression.\n"
 msgstr "Feldausdruck wird erstellt.\n"
 
 #: utils/recset.c:266
-msgid "the rename operation requires just one field with an optional subscript.\n"
-msgstr "Die rename-aktion benötigt nur ein Feld mit einem optionalen Subskript.\n"
+msgid ""
+"the rename operation requires just one field with an optional subscript.\n"
+msgstr ""
+"Die rename-aktion benötigt nur ein Feld mit einem optionalen Subskript.\n"
 
 #: utils/recset.c:451 utils/recutl.c:420
 msgid "operation aborted due to integrity failures.\n"
@@ -1138,16 +1278,19 @@ msgstr ""
 #: utils/recutl.c:105
 msgid ""
 "Record selection options:\n"
-"  -i, --case-insensitive              make strings case-insensitive in selection\n"
+"  -i, --case-insensitive              make strings case-insensitive in "
+"selection\n"
 "                                        expressions.\n"
-"  -t, --type=TYPE                     operate on records of the specified type only.\n"
+"  -t, --type=TYPE                     operate on records of the specified "
+"type only.\n"
 "  -e, --expression=EXPR               selection expression.\n"
 "  -n, --number=NUM                    select an specific record.\n"
 msgstr ""
 "Optionen zur Datensatzauswahl:\n"
 "  -i, --case-insensitive              Groß- oder Kleinschreibung in\n"
 "                                        Auswahlausdrücken nicht beachten.\n"
-"  -t, --type=TYP                      Nur auf Datensätze des angegebenen Typs anwenden.\n"
+"  -t, --type=TYP                      Nur auf Datensätze des angegebenen "
+"Typs anwenden.\n"
 "  -e, --expression=AUSDR              Auswahlausdruck.\n"
 "  -n, --number=ZAHL                   Bestimmten Datensatz auswählen.\n"
 
@@ -1155,12 +1298,14 @@ msgstr ""
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
 "This is free software: you are free to change and redistribute it.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
 "Copyright (C) %s Jose E. Marchesi.\n"
-"Lizenz GPLv3+: GNU GPL Version 3 oder neuer <http://gnu.org/licenses/gpl.html>.\n"
+"Lizenz GPLv3+: GNU GPL Version 3 oder neuer <http://gnu.org/licenses/gpl."
+"html>.\n"
 "Dies ist freie Software: Sie können Sie frei verändern und weitergeben.\n"
 "Es gibt KEINE GARANTIE, soweit gesetzlich zulässig.\n"
 
@@ -1198,13 +1343,17 @@ msgstr "Datei %s wird in %s umbenannt\n"
 #~ msgstr "Ungültiger Feldname %s\n"
 
 #~ msgid ""
-#~ "  -c, --comment                       comment the matching records instead of\n"
+#~ "  -c, --comment                       comment the matching records "
+#~ "instead of\n"
 #~ "                                         delete them.\n"
-#~ "      --force                         delete even in potentially dangerous situations.\n"
+#~ "      --force                         delete even in potentially "
+#~ "dangerous situations.\n"
 #~ msgstr ""
-#~ "  -c, --comment                       Datensatztreffer auskommentieren, anstatt\n"
+#~ "  -c, --comment                       Datensatztreffer auskommentieren, "
+#~ "anstatt\n"
 #~ "                                         sie zu löschen.\n"
-#~ "      --force                         Auch in potenziell gefährlichen Situationen löschen.\n"
+#~ "      --force                         Auch in potenziell gefährlichen "
+#~ "Situationen löschen.\n"
 
 #~ msgid "evaluating selection expression.\n"
 #~ msgstr "Auswahlausdruck wird interpretiert.\n"
