@@ -1,3 +1,11 @@
+2011-02-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Translations updated.
+	* po/de.po: Updated from the translation project.
+	* po/fi.po: Likewise.
+	* po/nl.po: Likewise.
+	* po/sv.po: Likewise.
+
 2011-02-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Documentation for %size.
