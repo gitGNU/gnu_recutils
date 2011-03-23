@@ -1,3 +1,10 @@
+2011-03-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	readme: added note about year intervals in the copyrights.
+	* README: The GNU maintainers guide asks to include an explicit
+	statement explaining the usage of year intervals in the copyright
+	notifications.
+
 2011-02-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.3.
