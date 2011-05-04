@@ -1,6 +1,6 @@
 ;;; rec-mode.el --- Major mode for viewing/editing rec files
 
-;; Copyright (C) 2009 Jose E. Marchesi
+;; Copyright (C) 2009, 2010, 2011 Jose E. Marchesi
 
 ;; Maintainer: Jose E. Marchesi
 
