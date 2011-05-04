@@ -1,3 +1,8 @@
+2011-05-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	ob-rec.el imported in the repo.
+	* etc/ob-rec.el: New file.
+
 2011-03-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	readme: added note about year intervals in the copyrights.
