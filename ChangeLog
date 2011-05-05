@@ -3,6 +3,7 @@
 	Remove unneeded library linkages.  Problem reported by Sven Wick.
 	* utils/Makefile.am (mdb2rec_LDADD): Don't link mdb2rec with glib
 	in a direct way.
+	(COMMONLIBS): Don't link the utilities with libgnu.la.
 
 	* torture/Makefile.am (runtests_LDADD): Typo fixed: CHECK_LIBS to
 	CHECKLIBS.
