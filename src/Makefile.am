@@ -55,11 +55,13 @@ endif
 
 AM_LDFLAGS = -no-undefined
 AM_CPPFLAGS = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
-if REMOTE_DESCRIPTORS
-  AM_CPPFLAGS += -DREMOTE_DESCRIPTORS
-endif
 librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \
                    $(LIB_CLOCK_GETTIME)
+
+if REMOTE_DESCRIPTORS
+  AM_CPPFLAGS += -DREMOTE_DESCRIPTORS
+  librec_la_LIBADD += $(CURLLIBS)
+endif
 
 check-syntax: all
 

@@ -163,7 +163,7 @@ runtests_SOURCES = runtests.c \
 
 AM_CPPFLAGS = -I$(top_srcdir)/src \
               -I$(top_srcdir)/torture
-runtests_LDADD = $(CHECK_LIBS) ../src/librec.la
+runtests_LDADD = $(CHECKLIBS) ../src/librec.la
 
 clean-local:
 	-rm -f tests.log

@@ -1,3 +1,20 @@
+2011-05-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Remove unneeded library linkages.  Problem reported by Sven Wick.
+	* utils/Makefile.am (mdb2rec_LDADD): Don't link mdb2rec with glib
+	in a direct way.
+
+	* torture/Makefile.am (runtests_LDADD): Typo fixed: CHECK_LIBS to
+	CHECKLIBS.
+
+	* src/Makefile.am (librec_la_LIBADD): Link with libcurl only if
+	the REMOVE_ESCRIPTORS automake conditional is set.
+
+	* configure.ac: Avoid automatic linking with libcurl by specifying
+	an action for library-if-found in AC_CHECK_LIB.
+	Same for libcheck.
+	Subst CHECKLIBS.
+
 2011-05-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	ob-rec.el imported in the repo.

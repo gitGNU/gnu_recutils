@@ -77,6 +77,6 @@ rec2csv_LDADD = $(COMMONLIBS) \
 mdb2rec_SOURCES = $(COMMONSRC) \
                   mdb2rec.c
 mdb2rec_CFLAGS = $(GLIB_CFLAGS)
-mdb2rec_LDADD = $(COMMONLIBS) $(MDBLIBS) $(GLIB_LIBS)
+mdb2rec_LDADD = $(COMMONLIBS) $(MDBLIBS)
 
 # End of Makefile.am
