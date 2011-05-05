@@ -26,7 +26,7 @@ bin_PROGRAMS = recinf recsel recins recdel recset recfix recfmt \
                csv2rec rec2csv $(MDB2REC)
 
 COMMONSRC = recutl.h recutl.c
-COMMONLIBS = $(top_builddir)/src/librec.la
+COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
 
 AM_CFLAGS =
 if USE_COVERAGE
