@@ -1,3 +1,9 @@
+2011-05-10 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 25 resolved to 'DONE'.
+	Task 35 created.
+
 2011-05-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: support for double quotes for delimiting string literals,

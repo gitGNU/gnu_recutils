@@ -346,7 +346,7 @@ Category: librec
 CreatedAt: Wed Dec  1 18:51:23 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: 
 + %size fields can be used to define the minimum and the maximum
 + number of records that should exist in a record set.
@@ -358,6 +358,11 @@ Description:
 + 
 + The previous example requires the existence of one (and only one)
 + TasktoolControl record.
+Note: Tue May 10 16:44:52 CEST 2011
++ Task resolved to 'DONE'.
++ 
++ Already implemented.
+ClosedAt: Tue May 10 16:44:52 CEST 2011
 
 Id: 26
 Summary: rec_init shall build a list of predefined field names.
@@ -509,11 +514,30 @@ Description:
 + LGPLv2.1+.
 ClosedAt: Thu Dec 16 23:12:20 CET 2010
 
+Id: 35
+Summary: Support escaped characters in string literals.
+Category: librec
+CreatedAt: Tue May 10 16:49:10 CEST 2011
+Originator: jemarch@gnu.org
+AssignedTo: jemarch@gnu.org
+Status: TODO
+Description: The string literals supported in the selection expressions are not
++ supporting the escaping of characters, thus having to provide a real
++ newline character or tab character in order to have them included in
++ the value of the literal.
++ 
++ C-style scaped characters shall be supported in string literals.  An
++ initial list of supported characters is:
++ 
++   - \n   for newline.
++   - \t   for tab.
++   - \NNN for any ASCII character whose code is encoded in octal in NNN.
+
 %rec: TasktoolControl
 %type: NextFreeId int
 %mandatory: NextFreeId
 %unique: NextFreeId
 
-NextFreeId: 35
+NextFreeId: 36
 
 # End of TODO
