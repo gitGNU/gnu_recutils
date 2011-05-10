@@ -1117,7 +1117,13 @@ Additional zeroes in the left of the number are allowed, so both
 
 @subsubsection String Literals
 
-String values are delimited by the @code{'} character.  Examples are:
+String values are delimited by either the @code{'} character or the
+@code{"} character.  Whatever delimiter is used, the delimiter closing
+the literal shall equal to the delimiter used to open it.
+
+Note that newlines and tabs can be part of a string literal.
+
+Examples are:
 
 @example
 'Hello.'
@@ -1125,13 +1131,12 @@ String values are delimited by the @code{'} character.  Examples are:
 ''
 @end example
 
-The @code{'} and @code{\n} characters can be part of a string if they
+The @code{'} and @code{"} characters can be part of a string if they
 are escaped with a backslash, like in:
 
 @example
 'This string contains an apostrophe: \'.'
-'This string is a\
-multi lines string.'
+"This one a double quote: \"."
 @end example
 
 @subsubsection Field Values

@@ -670,6 +670,33 @@ test_tool recsel-sex-conditional-2 ok \
 Name: Johnny NotSoJunior
 '
 
+test_tool recsel-sex-string-single-quote ok \
+          recsel \
+          '-e "(Role ~ '\''Professor'\'')" -p Name' \
+          academy \
+'Name: John Smith
+
+Name: Tom Johnson
+'
+
+test_tool recsel-sex-string-double-quote ok \
+          recsel \
+          "-e '(Role ~ "\""Professor"\"")' -p Name" \
+          academy \
+'Name: John Smith
+
+Name: Tom Johnson
+'
+
+test_tool recsel-sex-string-multiline ok \
+          recsel \
+          "-e 'field2 = "\""
+foo
+bar"\""' -c" \
+          multiline \
+'1
+'
+
 #
 # Cleanup
 #

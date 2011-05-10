@@ -70,7 +70,7 @@ DIGIT              [0-9]
 LETTER             [a-zA-Z]
 FIELD_NAME_PART    {LETTER}[a-zA-Z0-9_]+":"?
 FIELD_NAME         ({FIELD_NAME_PART})+
-STRING             '([^'\n]|\\(.|\n))*'
+STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
 
 /* Please do not touch this comment' */
 
@@ -167,8 +167,8 @@ STRING             '([^'\n]|\\(.|\n))*'
   /*
    * Create a string node.
    */
-
-  /* Strip the " characters */
+  
+  /* Strip the quoting characters */
   yytext[strlen(yytext) - 1] = 0;
 
   yylval->node = rec_sex_ast_node_new ();

@@ -1,3 +1,20 @@
+2011-05-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: support for double quotes for delimiting string literals,
+	and unescaped newline characters.
+	* torture/utils/recsel.sh (recsel-sex-string-single-quote): New
+	test.
+	(recsel-sex-string-double-quote): New test.
+	(recsel-sex-string-multiline): New test.
+
+	* doc/recutils.texi (SEX Operands): Description of string literals
+	updated to cover the usage of " as a delimiter and the support for
+	non-scaped newline characters.
+
+	* src/rec-sex-lex.l: Regular expression for string literals
+	changed to support both ' and " style quotes and to support
+	newline characters.
+
 2011-05-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Remove unneeded library linkages.  Problem reported by Sven Wick.
