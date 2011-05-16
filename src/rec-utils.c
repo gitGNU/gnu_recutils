@@ -290,7 +290,7 @@ rec_extract_size (char *str)
 {
   char *p;
   char *condition_str;
-  size_t res;
+  int res;
 
   if (!rec_match (str, REC_INT_SIZE_RE))
     {
@@ -301,9 +301,9 @@ rec_extract_size (char *str)
   rec_skip_blanks (&p);
   rec_parse_regexp (&p, "^[><]=?", &condition_str);
   rec_skip_blanks (&p);
-  rec_parse_int (&p, (int *) &res);
+  rec_parse_int (&p, &res);
 
-  return res;
+  return (size_t) res;
 }
 
 enum rec_size_condition_e
