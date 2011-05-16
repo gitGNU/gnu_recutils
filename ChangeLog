@@ -1,3 +1,8 @@
+2011-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Fix size constraint handling on LP64 systems.  Patch sent by Daiki
+	Ueno.
+
 2011-05-10 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.
