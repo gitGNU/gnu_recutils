@@ -19,9 +19,16 @@ echo "Preparing git recutils infrastructure:"
 
 : ${ACLOCAL=aclocal}
 : ${AUTOHEADER=autoheader}
-: ${LIBTOOLIZE=libtoolize}
 : ${AUTOMAKE=automake --add-missing}
 : ${AUTOCONF=autoconf}
+
+# On MAC OS X, GNU libtoolize is named 'glibtoolize':
+if test `(uname -s) 2>/dev/null` = 'Darwin'
+then
+    : ${LIBTOOLIZE=glibtoolize}
+else
+    : ${LIBTOOLIZE=libtoolize}
+fi
 
 # So instead:
 cmd="$ACLOCAL -I m4 && $AUTOCONF && $AUTOHEADER && $LIBTOOLIZE && $AUTOMAKE"

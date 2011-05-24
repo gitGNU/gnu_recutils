@@ -1,3 +1,9 @@
+2011-05-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	On MAC OS X, GNU libtoolize is named 'glibtoolize'.
+	* autogen.sh: Use glibtoolize instead of libtoolize in Darwin
+	systems.  Reported and fixed by Sven Wick.
+
 2011-05-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Updates to the FSD file.
