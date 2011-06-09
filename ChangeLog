@@ -1,3 +1,8 @@
+2011-06-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	gitignore updated.
+	* .gitignore: Several entries added to the ignore list.
+
 2011-05-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	On MAC OS X, GNU libtoolize is named 'glibtoolize'.

@@ -23,8 +23,8 @@ libtool
 /utils/recset
 /utils/recfix
 /utils/csv2rec
-/utils/rec2csv
 /utils/mdb2rec
+/utils/rec2csv
 /utils/recfmt
 /lib/arg-nonnull.h
 /lib/link-warning.h
@@ -92,14 +92,11 @@ libtool
 /man/recset.1
 /man/recfmt.1
 /man/csv2rec.1
-/man/rec2csv.1
 /man/mdb2rec.1
 /man/recfix.1
+/man/recnav.1
 /po/stamp-po
 /po/POTFILES
 /po/remove-potcdate.sed
-/po/de.gmo
-/po/fi.gmo
-/po/nl.gmo
-/po/sv.gmo
-/doc/manual
+/po/*.gmo
+/man/rec2csv.1
