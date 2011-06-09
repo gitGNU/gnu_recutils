@@ -1,5 +1,10 @@
 2011-06-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	ob-rec.el is not part of Emacs.
+	* etc/ob-rec.el: Not part of Emacs yet.
+
+2011-06-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	gitignore updated.
 	* .gitignore: Several entries added to the ignore list.
 
