@@ -698,6 +698,11 @@ main (int argc, char *argv[])
   recset_parse_args (argc, argv);
 
   db = recutl_read_db_from_file (recset_file);
+  if (!db)
+    {
+      recutl_fatal (_("cannot read file %s\n"), recset_file);
+    }
+
   recset_process_actions (db);
   recutl_write_db_to_file (db, recset_file);
 

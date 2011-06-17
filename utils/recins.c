@@ -594,6 +594,11 @@ main (int argc, char *argv[])
   recins_parse_args (argc, argv);
 
   db = recutl_read_db_from_file (recins_file);
+  if (!db)
+    {
+      /* Create an empty database.  */
+      db = rec_db_new ();
+    }
   recins_add_new_record (db);
   recutl_write_db_to_file (db, recins_file);
 

@@ -316,6 +316,11 @@ main (int argc, char *argv[])
   recdel_parse_args (argc, argv);
 
   db = recutl_read_db_from_file (recdel_file);
+  if (!db)
+    {
+      recutl_fatal (_("cannot read file %s\n"), recdel_file);
+    }
+
   if (((recutl_num != -1) || recutl_sex) || recdel_force)
     {
       recdel_delete_records (db);

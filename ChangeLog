@@ -1,5 +1,22 @@
 2011-06-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recins: create the specified file if it does not exist.
+	* doc/recutils.texi (recins Invocation): recins will create a new
+	file if it does not exist.
+
+	* utils/recset.c (main): Likewise.
+
+	* utils/recdel.c (main): Print an error message if the file could
+	not be opened.
+
+	* utils/recutl.c (recutl_read_db_from_file): Return NULL if the
+	file could not be opened.
+
+	* utils/recins.c (main): If the specified file does not exist then
+	create and populate an empty database.
+
+2011-06-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recins: generate parseable dates that are locale independent.
 	* utils/recins.c: Include locale.h.
 	(recins_add_auto_field_date): Set the LC_TIME locale setting to

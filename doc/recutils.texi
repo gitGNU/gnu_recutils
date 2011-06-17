@@ -1609,6 +1609,8 @@ If no FILE is specified then the command acts like a filter, getting
 the data from the standard input and writing the result in the
 standard output.
 
+If the specified FILE does not exist, it is created.
+
 In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 

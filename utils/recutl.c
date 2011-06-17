@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-31 22:35:08 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-06-17 22:19:13 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -184,8 +184,8 @@ recutl_parse_db_from_file (FILE *in,
   rec_parser_t parser;
 
   res = true;
-  parser = rec_parser_new (in, file_name);
 
+  parser = rec_parser_new (in, file_name);
   while (rec_parse_rset (parser, &rset))
     {
       char *rset_type;
@@ -296,8 +296,7 @@ recutl_read_db_from_file (char *file_name)
       in = fopen (file_name, "r");
       if (in == NULL)
         {
-          recutl_fatal (_("cannot read file %s\n"), file_name);
-          exit (EXIT_FAILURE);
+          return NULL;
         }
     }
   else
