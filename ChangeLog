@@ -1,3 +1,11 @@
+2011-06-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recins: generate parseable dates that are locale independent.
+	* utils/recins.c: Include locale.h.
+	(recins_add_auto_field_date): Set the LC_TIME locale setting to
+	"C" before calling strftime and restore it to the environment
+	value afterwards.
+
 2011-06-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	ob-rec.el is not part of Emacs.

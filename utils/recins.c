@@ -31,6 +31,7 @@
 #include <xalloc.h>
 #include <gettext.h>
 #include <errno.h>
+#include <locale.h>
 #include <time.h>
 #define _(str) gettext (str)
 
@@ -212,7 +213,12 @@ recins_add_auto_field_date (rec_rset_t rset,
 
   t = time (NULL);
   tmp = localtime (&t);
+
+  setlocale (LC_TIME, "C"); /* We want english dates that can be
+                                 parsed with parse_datetime */
   strftime (outstr, sizeof(outstr), "%a, %d %b %Y %T %z", tmp);
+  setlocale (LC_TIME, ""); /* And restore the locale from the
+                              environment. */
 
   auto_field = rec_field_new (rec_field_name_dup (field_name),
                               outstr);
