@@ -1,3 +1,9 @@
+2011-06-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	m4: files installed by libtool removed.  They were causing a clash
+	on some systems shipping old versions of libtool.
+	* m4/ltoptions.m4: Deleted.
+
 2011-06-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recins: create the specified file if it does not exist.
