@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-08 00:56:07 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-06-19 12:47:24 jemarch"
  *
  *       File:         recfmt.c
  *       Date:         Wed Dec 22 18:20:20 2010
@@ -111,7 +111,7 @@ recfmt_parse_args (int argc,
                    char **argv)
 {
   char c;
-  char ret;
+  int ret;
 
   while ((ret = getopt_long (argc,
                              argv,

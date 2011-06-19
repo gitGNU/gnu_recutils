@@ -160,7 +160,7 @@ recsel_parse_args (int argc,
                    char **argv)
 {
   char c;
-  char ret;
+  int ret;
 
   while ((ret = getopt_long (argc,
                              argv,

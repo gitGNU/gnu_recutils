@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-21 22:04:23 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-06-19 12:46:34 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -103,7 +103,7 @@ recfix_parse_args (int argc,
                    char **argv)
 {
   char c;
-  char ret;
+  int ret;
 
   while ((ret = getopt_long (argc,
                              argv,

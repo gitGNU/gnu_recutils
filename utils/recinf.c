@@ -211,7 +211,7 @@ int
 main (int argc, char *argv[])
 {
   char c;
-  char ret;
+  int ret;
   char *file_name;
   FILE *in;
 

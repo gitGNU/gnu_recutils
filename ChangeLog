@@ -1,5 +1,16 @@
 2011-06-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: avoid the truncation of the result of getopt_long in
+	architectures featuring unsigned chars.
+	* utils/recfix.c (recfix_parse_args): 'ret' shall be an integer to
+	not truncate the -1 returned by getopt_long in architectures
+	featuring unsigned chars.
+	* utils/recsel.c (recsel_parse_args): Likewise.
+	* utils/recinf.c (main): Likewise.
+	* utils/recfmt.c (recfmt_parse_args): Likewise.
+
+2011-06-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	m4: files installed by libtool removed.  They were causing a clash
 	on some systems shipping old versions of libtool.
 	* m4/ltoptions.m4: Deleted.
