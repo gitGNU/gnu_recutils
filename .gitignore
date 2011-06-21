@@ -16,6 +16,8 @@ libtool
 /autom4te.cache
 /build-aux/compile
 /build-aux/ltmain.sh
+/build-aux/config.guess
+/build-aux/config.sub
 /utils/recdel
 /utils/recinf
 /utils/recsel
@@ -56,6 +58,7 @@ libtool
 /m4/ltversion.m4
 /m4/libtool.m4
 /m4/lt~obsolete.m4
+/m4/ltoptions.m4
 /src/config.h
 /src/config.h.in
 /src/stamp-h1

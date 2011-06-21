@@ -1,3 +1,20 @@
+2011-06-21  Jose E. Marchesi  <jco@terma.com>
+
+	build: get offline builds working again.
+	* man/Makefile.am (rec2csv.1): Use $(builddir) to get offline
+	builds working.
+	(csv2rec.1): Likewise.
+	(mdb2rec.1): Likewise.
+	(recdel.1): Likewise.
+	(recfix.1): Likewise.
+	(recinf.1): Likewise.
+	(recins.1): Likewise.
+	(recsel.1): Likewise.
+	(recset.1): Likewise.
+	(recfmt.1): Likewise.
+
+	* .gitignore: build-aux/config.guess, build-aux/config.sub.
+
 2011-06-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: avoid the truncation of the result of getopt_long in

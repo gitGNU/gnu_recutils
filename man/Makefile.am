@@ -41,33 +41,33 @@ common_mandeps = $(top_srcdir)/configure.ac \
 # Use -o so that the `missing' program can infer the output file.
 
 rec2csv.1: $(top_srcdir)/utils/rec2csv.c $(common_mandeps)
-	$(HELP2MAN) --name="rec to csv converter" ../utils/rec2csv -o $@
+	$(HELP2MAN) --name="rec to csv converter" $(builddir)/../utils/rec2csv -o $@
 
 csv2rec.1: $(top_srcdir)/utils/csv2rec.c $(common_mandeps)
-	$(HELP2MAN) --name="csv to rec converter" ../utils/csv2rec -o $@
+	$(HELP2MAN) --name="csv to rec converter" $(builddir)/../utils/csv2rec -o $@
 
 mdb2rec.1: $(top_srcdir)/utils/mdb2rec.c $(common_mandeps)
-	$(HELP2MAN) --name="mdb to rec converter" ../utils/mdb2rec -o $@
+	$(HELP2MAN) --name="mdb to rec converter" $(builddir)/../utils/mdb2rec -o $@
 
 recdel.1: $(top_srcdir)/utils/recdel.c $(common_mandeps)
-	$(HELP2MAN) --name="remove records from a recfile" ../utils/recdel -o $@
+	$(HELP2MAN) --name="remove records from a recfile" $(builddir)/../utils/recdel -o $@
 
 recfix.1: $(top_srcdir)/utils/recfix.c $(common_mandeps)
-	$(HELP2MAN) --name="check a recfile for errors" ../utils/recfix -o $@
+	$(HELP2MAN) --name="check a recfile for errors" $(builddir)/../utils/recfix -o $@
 
 recinf.1: $(top_srcdir)/utils/recinf.c $(common_mandeps)
-	$(HELP2MAN) --name="print information about a recfile" ../utils/recinf -o $@
+	$(HELP2MAN) --name="print information about a recfile" $(builddir)/../utils/recinf -o $@
 
 recins.1: $(top_srcdir)/utils/recins.c $(common_mandeps)
-	$(HELP2MAN) --name="insert records in a recfile" ../utils/recins -o $@
+	$(HELP2MAN) --name="insert records in a recfile" $(builddir)/../utils/recins -o $@
 
 recsel.1: $(top_srcdir)/utils/recsel.c $(common_mandeps)
-	$(HELP2MAN) --name="print records from a recfile" ../utils/recsel -o $@
+	$(HELP2MAN) --name="print records from a recfile" $(builddir)/../utils/recsel -o $@
 
 recset.1: $(top_srcdir)/utils/recset.c $(common_mandeps)
-	$(HELP2MAN) --name="manipulate fields in a recfile" ../utils/recset -o $@
+	$(HELP2MAN) --name="manipulate fields in a recfile" $(builddir)/../utils/recset -o $@
 
 recfmt.1: $(top_srcdir)/utils/recfmt.c $(common_mandeps)
-	$(HELP2MAN) --name="apply a template to records" ../utils/recfmt -o $@
+	$(HELP2MAN) --name="apply a template to records" $(builddir)/../utils/recfmt -o $@
 
 # End of Makefile.am
