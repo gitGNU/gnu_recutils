@@ -209,12 +209,15 @@ rec_parse_regexp (char **str, char *re, char **result)
       /* Try to match the regexp.  */
       if (regexec (&regexp, p, 1, &pm, 0) == 0)
         {
-          /* Get the match into 'result'.  Note that
-             since the pattern starts with a ^ rm_so shall be 0 and we
-             can use rm_eo relative to *p.  */
-          *result = malloc (pm.rm_eo + 1);
-          strncpy (*result, p, pm.rm_eo);
-          (*result)[pm.rm_eo] = '\0';
+          if (result)
+            {
+              /* Get the match into 'result'.  Note that
+                 since the pattern starts with a ^ rm_so shall be 0 and we
+                 can use rm_eo relative to *p.  */
+              *result = malloc (pm.rm_eo + 1);
+              strncpy (*result, p, pm.rm_eo);
+              (*result)[pm.rm_eo] = '\0';
+            }
 
           /* Advance 'p'.  */
           p = p + pm.rm_eo;

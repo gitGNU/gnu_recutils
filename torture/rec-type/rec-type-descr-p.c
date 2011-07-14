@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-02 15:20:17 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-descr-p.c
  *       Date:         Fri Oct 29 17:15:50 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,20 +36,20 @@
  */
 START_TEST(rec_type_descr_p_nominal)
 {
-  fail_if (!rec_type_descr_p ("foo int"));
-  fail_if (!rec_type_descr_p ("foo int  \n\n  "));
-  fail_if (!rec_type_descr_p ("foo bool"));
-  fail_if (!rec_type_descr_p ("foo range 10"));
-  fail_if (!rec_type_descr_p ("foo range 1 10"));
-  fail_if (!rec_type_descr_p ("foo real"));
-  fail_if (!rec_type_descr_p ("foo size 10"));
-  fail_if (!rec_type_descr_p ("foo line"));
-  fail_if (!rec_type_descr_p ("foo regexp /[abc][abc][abc]/"));
-  fail_if (!rec_type_descr_p ("foo regexp |/jo/jo|"));
-  fail_if (!rec_type_descr_p ("foo date"));
-  fail_if (!rec_type_descr_p ("foo enum A B C"));
-  fail_if (!rec_type_descr_p ("foo field"));
-  fail_if (!rec_type_descr_p ("foo email"));
+  fail_if (!rec_type_descr_p ("int"));
+  fail_if (!rec_type_descr_p ("int  \n\n  "));
+  fail_if (!rec_type_descr_p ("bool"));
+  fail_if (!rec_type_descr_p ("range 10"));
+  fail_if (!rec_type_descr_p ("range 1 10"));
+  fail_if (!rec_type_descr_p ("real"));
+  fail_if (!rec_type_descr_p ("size 10"));
+  fail_if (!rec_type_descr_p ("line"));
+  fail_if (!rec_type_descr_p ("regexp /[abc][abc][abc]/"));
+  fail_if (!rec_type_descr_p ("regexp |/jo/jo|"));
+  fail_if (!rec_type_descr_p ("date"));
+  fail_if (!rec_type_descr_p ("enum A B C"));
+  fail_if (!rec_type_descr_p ("field"));
+  fail_if (!rec_type_descr_p ("email"));
 }
 END_TEST
 
@@ -61,21 +61,21 @@ END_TEST
  */
 START_TEST(rec_type_descr_p_invalid)
 {
-  fail_if (rec_type_descr_p ("foo "));
-  fail_if (rec_type_descr_p ("foo  "));
-  fail_if (rec_type_descr_p ("foo int additionalstuff"));
-  fail_if (rec_type_descr_p ("foo invalidkeyword"));
-  fail_if (rec_type_descr_p ("foo range a b"));
-  fail_if (rec_type_descr_p ("foo range a 1"));
-  fail_if (rec_type_descr_p ("foo range 1 a"));
-  fail_if (rec_type_descr_p ("foo size"));
-  fail_if (rec_type_descr_p ("foo size xxx"));
-  fail_if (rec_type_descr_p ("foo size 10 extra"));
-  fail_if (rec_type_descr_p ("foo regexp"));
-  fail_if (rec_type_descr_p ("foo regexp foo"));
-  fail_if (rec_type_descr_p ("foo regexp /abc/ extra"));
-  fail_if (rec_type_descr_p ("foo enum"));
-  fail_if (rec_type_descr_p ("foo enum # ! '"));
+  fail_if (rec_type_descr_p (""));
+  fail_if (rec_type_descr_p (" "));
+  fail_if (rec_type_descr_p ("int additionalstuff"));
+  fail_if (rec_type_descr_p ("invalidkeyword"));
+  fail_if (rec_type_descr_p ("range a b"));
+  fail_if (rec_type_descr_p ("range a 1"));
+  fail_if (rec_type_descr_p ("range 1 a"));
+  fail_if (rec_type_descr_p ("size"));
+  fail_if (rec_type_descr_p ("size xxx"));
+  fail_if (rec_type_descr_p ("size 10 extra"));
+  fail_if (rec_type_descr_p ("regexp"));
+  fail_if (rec_type_descr_p ("regexp foo"));
+  fail_if (rec_type_descr_p ("regexp /abc/ extra"));
+  fail_if (rec_type_descr_p ("enum"));
+  fail_if (rec_type_descr_p ("enum # ! '"));
 }
 END_TEST
 

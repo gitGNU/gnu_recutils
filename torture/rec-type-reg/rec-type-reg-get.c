@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-08 00:50:29 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-reg-get.c
  *       Date:         Fri Oct 29 21:30:27 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +45,9 @@ START_TEST(rec_type_reg_get_nominal)
   fail_if (reg == NULL);
 
   /* Register a type.  */
-  type = rec_type_new ("foo int");
+  fname = rec_parse_field_name_str ("foo");
+  type = rec_type_new ("int");
   fail_if (type == NULL);
-  fname = 
-    rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo int"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
 
@@ -75,7 +74,7 @@ START_TEST(rec_type_reg_get_nonexisting)
 
   reg = rec_type_reg_new ();
   fail_if (reg == NULL);
-  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo int"), 0));
+  fname = rec_parse_field_name_str ("foo");
   fail_if (fname == NULL);
 
   fail_if (rec_type_reg_get (reg, fname) != NULL);

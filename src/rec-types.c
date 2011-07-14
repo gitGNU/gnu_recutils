@@ -271,35 +271,6 @@ rec_type_descr_p (char *str)
   return ret;
 }
 
-rec_fex_t
-rec_type_descr_fex (char *str)
-{
-  rec_fex_t fex = NULL;
-  char *p;
-  char *name;
-
-  if (!rec_type_descr_p (str))
-    {
-      return NULL;
-    }
-
-  p = str;
-
-  /* Skip blank characters.  */
-  rec_skip_blanks (&p);
-
-  /* Get the FEX.  */
-  if (rec_parse_regexp (&p,
-                        "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
-                        &name))
-    {
-      fex = rec_fex_new (name, REC_FEX_CSV); 
-      free (name);
-    }
-
-  return fex;
-}
-
 char *
 rec_type_descr_type (char *str)
 {
@@ -336,7 +307,6 @@ rec_type_new (char *str)
 {
   rec_type_t new;
   char *p;
-  char *field_name_str = NULL;
   char *type_name_str = NULL;
 
   p = str;
@@ -346,16 +316,6 @@ rec_type_new (char *str)
       goto exit;
     }
 
-  /* Skip the field name surrounded by blanks.  */
-  rec_skip_blanks (&p);
-  if (!rec_parse_regexp (&p,
-                              "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
-                              &field_name_str))
-    {
-      free (new);
-      new = NULL;
-      goto exit;
-    }
   rec_skip_blanks (&p);
 
   /* Get the type name.  */
@@ -450,7 +410,6 @@ rec_type_new (char *str)
 
  exit:
 
-  free (field_name_str);
   free (type_name_str);
 
   return new;

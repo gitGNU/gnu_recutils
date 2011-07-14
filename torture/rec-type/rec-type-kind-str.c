@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 18:22:42 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-kind-str.c
  *       Date:         Fri Oct 29 18:17:18 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,57 +41,57 @@ START_TEST(rec_type_kind_str_nominal)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo int");
+  type = rec_type_new ("int");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "int") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo bool");
+  type = rec_type_new ("bool");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "bool") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo range 1 10");
+  type = rec_type_new ("range 1 10");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "range") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo real");
+  type = rec_type_new ("real");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "real") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo size 10");
+  type = rec_type_new ("size 10");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "size") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo line");
+  type = rec_type_new ("line");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "line") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo regexp /[abc]/");
+  type = rec_type_new ("regexp /[abc]/");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "regexp") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo date");
+  type = rec_type_new ("date");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "date") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo enum A B C");
+  type = rec_type_new ("enum A B C");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "enum") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo email");
+  type = rec_type_new ("email");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "email") != 0);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo field");
+  type = rec_type_new ("field");
   fail_if (type == NULL);
   fail_if (strcmp (rec_type_kind_str (type), "field") != 0);
   rec_type_destroy (type);

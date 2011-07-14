@@ -86,6 +86,10 @@ static bool rec_rset_comment_equal_fn (void *data1, void *data2);
 static void rec_rset_comment_disp_fn (void *data);
 static void *rec_rset_comment_dup_fn (void *data);
 
+static bool rec_rset_type_field_p (const char *str);
+static rec_fex_t rec_rset_type_field_fex (const char *str);
+static char *rec_rset_type_field_type (const char *str);
+
 /*
  * Public functions.
  */
@@ -606,12 +610,12 @@ rec_rset_rename_field (rec_rset_t rset,
             {
               /* Process a %type entry.  Invalid entries are
                  skipped.  */
-              if (!rec_type_descr_p (rec_field_value (field)))
+              if (!rec_rset_type_field_p (rec_field_value (field)))
                 {
                   continue;
                 }
 
-              fex = rec_type_descr_fex (rec_field_value (field));
+              fex = rec_rset_type_field_fex (rec_field_value (field));
               if (fex)
                 {
                   for (j = 0; j < rec_fex_size (fex); j++)
@@ -626,7 +630,7 @@ rec_rset_rename_field (rec_rset_t rset,
                     }
 
                   fex_str = rec_fex_str (fex, REC_FEX_CSV);
-                  type_str = rec_type_descr_type (rec_field_value (field));
+                  type_str = rec_rset_type_field_type (rec_field_value (field));
                   
                   buf = rec_buf_new (&result, &result_size);
                   rec_buf_puts (fex_str, buf);
@@ -926,12 +930,26 @@ rec_rset_update_types (rec_rset_t rset)
           
           /* Only valid type descriptors are considered.  Invalid
              descriptors are ignored.  */
-          if (rec_type_descr_p (descr_field_value))
+          if (rec_rset_type_field_p (descr_field_value))
             {
-              fex = rec_type_descr_fex (descr_field_value);
+              fex = rec_rset_type_field_fex (descr_field_value);
               for (j = 0; j < rec_fex_size (fex); j++)
                 {
-                  type = rec_type_new (descr_field_value);
+                  char *p;
+
+                  /* Get the list of fields having this type.  */
+                  p = descr_field_value;
+                  rec_skip_blanks (&p);
+                  if (!rec_parse_regexp (&p,
+                                         "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                                         NULL))
+                    {
+                      /* Invalid descriptor.  Ignore it.  */
+                      continue;
+                    }
+
+                  /* Create the type itself.  */
+                  type = rec_type_new (p);
                   if (type)
                     {
                       rec_type_reg_register (rset->type_reg,
@@ -944,6 +962,75 @@ rec_rset_update_types (rec_rset_t rset)
 
       rec_field_name_destroy (type_field_name);
     }
+}
+
+static bool
+rec_rset_type_field_p (const char *str)
+{
+  char *p;
+
+  p = str;
+
+  /* Check the fex */
+
+  rec_skip_blanks (&p);
+  if (!rec_parse_regexp (&p,
+                         "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                         NULL))
+    {
+      return false;
+    }
+  rec_skip_blanks (&p);
+
+  /* Check the type description.  */
+
+  if (!rec_type_descr_p (p))
+    {
+      return false;
+    }
+
+  return true;
+}
+
+static rec_fex_t
+rec_rset_type_field_fex (const char *str)
+{
+  rec_fex_t fex = NULL;
+  char *p;
+  char *name;
+
+  p = str;
+
+  if (rec_parse_regexp (&p,
+                        "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                        &name))
+    {
+      fex = rec_fex_new (name, REC_FEX_CSV);
+      free (name);
+    }
+
+  return fex;
+}
+
+static char*
+rec_rset_type_field_type (const char *str)
+{
+  char *result = NULL;
+  char *p;
+
+  if (rec_rset_type_field_p (str))
+    {
+      p = str;
+
+      rec_skip_blanks (&p);
+      rec_parse_regexp (&p, "^" REC_FNAME_RE "(," REC_FNAME_RE ")*", NULL);
+      rec_skip_blanks (&p);
+
+      /* Return the rest of the string.  */
+      result = strdup (p);
+    }
+
+  return result;
 }
 
 /* End of rec-rset.c */

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-09 11:40:10 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-reg-register.c
  *       Date:         Fri Oct 29 21:15:17 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,22 +45,22 @@ START_TEST (rec_type_reg_register_nominal)
   fail_if (reg == NULL);
 
   /* Register two types.  */
-  type = rec_type_new ("foo int");
+  fname = rec_parse_field_name_str ("foo");
+  type = rec_type_new ("int");
   fail_if (type == NULL);
-  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo int"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
-
-  type = rec_type_new ("bar range 1 10");
+  
+  fname = rec_parse_field_name_str ("bar");
+  type = rec_type_new ("range 1 10");
   fail_if (type == NULL);
-  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("bar range 1 10"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
 
   /* Register 'foo' again with another type.  */
-  type = rec_type_new ("foo bool");
+  fname = rec_parse_field_name_str ("foo");
+  type = rec_type_new ("bool");
   fail_if (type == NULL);
-  fname = rec_fex_elem_field_name (rec_fex_get (rec_type_descr_fex ("foo bool"), 0));
   fail_if (fname == NULL);
   rec_type_reg_register (reg, fname, type);
 

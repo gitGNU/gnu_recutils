@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-08 01:02:01 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-06-27 22:59:52 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -781,8 +781,26 @@ rec_int_check_descriptor (rec_rset_t rset,
 
           if (rec_field_name_equal_p (field_name, type_fname))
             {
+              char *p;
+
+              /* Check for the list of fields.  */
+              p = field_value;
+              rec_skip_blanks (&p);
+              if (!rec_parse_regexp (&p, "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                                     NULL))
+                {
+                  asprintf (&tmp,
+                            _("%s:%s: error: expected a comma-separated list of fields \
+before the type specification\n"),
+                            rec_field_source (field),
+                            rec_field_location_str (field));
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++;
+                }
+
               /* Check the type descriptor.  */
-              if (!rec_type_descr_p (field_value))
+              if (!rec_type_descr_p (p))
                 {
                   /* XXX: make rec_type_descr_p to report more details.  */
                   asprintf (&tmp,

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 20:53:36 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-check.c
  *       Date:         Fri Oct 29 18:50:01 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ START_TEST(rec_type_check_int)
   rec_type_t type;
   char *err_str;
 
-  type = rec_type_new ("foo int");
+  type = rec_type_new ("int");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -70,7 +70,7 @@ START_TEST(rec_type_check_bool)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo bool");
+  type = rec_type_new ("bool");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -96,7 +96,7 @@ START_TEST(rec_type_check_range)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo range -10 10");
+  type = rec_type_new ("range -10 10");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -127,7 +127,7 @@ START_TEST(rec_type_check_real)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo real");
+  type = rec_type_new ("real");
   
   /* Positive tests.  */
   fail_if (!rec_type_check (type, "3", NULL));
@@ -157,7 +157,7 @@ START_TEST(rec_type_check_size)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo size 5");
+  type = rec_type_new ("size 5");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -183,7 +183,7 @@ START_TEST(rec_type_check_line)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo line");
+  type = rec_type_new ("line");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -208,7 +208,7 @@ START_TEST(rec_type_check_regexp)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo regexp /[abc][abc][abc]$/");
+  type = rec_type_new ("regexp /[abc][abc][abc]$/");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -233,7 +233,7 @@ START_TEST(rec_type_check_date)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo date");
+  type = rec_type_new ("date");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -257,7 +257,7 @@ START_TEST(rec_type_check_enum)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo enum A B C");
+  type = rec_type_new ("enum A B C");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -286,7 +286,7 @@ START_TEST(rec_type_check_field)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo field");
+  type = rec_type_new ("field");
   fail_if (type == NULL);
 
   /* Positive tests.  */
@@ -314,7 +314,7 @@ START_TEST(rec_type_check_email)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo email");
+  type = rec_type_new ("email");
   fail_if (type == NULL);
 
   /* Positive tests.  */

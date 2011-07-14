@@ -1,3 +1,47 @@
+2011-07-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: improvements in the api of rec_type.
+	* torture/rec-type/rec-type-check.c: Changed to use the new
+	rec_type_* API.
+	* torture/rec-type/rec-type-descr-p.c: Likewise.
+	* torture/rec-type-reg/rec-type-reg-get.c: Likewise.
+	* torture/rec-type-reg/rec-type-reg-register.c: Likewise.
+	* torture/rec-type/rec-type-new.c: Likewise.
+	* torture/rec-type/rec-type-kind-str.c: Likewise.
+	* torture/rec-type/rec-type-kind.c: Likewise.
+	* torture/rec-type/rec-type-equal-p.c: Likewise.
+	* torture/rec-type/rec-type-destroy.c: Likewise.
+
+	* torture/rec-type/tsuite-rec-type.c: Tests for rec_type_descr_fex
+	and rec_type_descr_type removed.
+
+	* src/rec-rset.c (rec_rset_type_field_type): New function.
+	(rec_rset_rename_field): Use rec_rset_type_field_type instead of
+	rec_type_descr_type.
+
+	* src/rec-types.c: rec_type_descr_fex function removed.
+	* src/rec.h: Likewise.
+
+	* src/rec-rset.c (rec_rset_update_types): Parse the list of fields
+	before invoking rec_type_new while processing %type: special
+	fields.
+	(rec_rset_type_field_p): New function.
+	(rec_rset_update_types): Use rec_rset_type_field_p instead of
+	rec_type_descr_p.
+	(rec_rset_rename_field): Likewise.
+	(rec_rset_type_field_fex): New function.
+	(rec_rset_rename_field): Use rec_rset_type_field_fex instead of
+	rec_type_descr_fex.
+	(rec_rset_update_types): Likewise.
+
+	* src/rec-int.c (rec_int_check_descriptor): Likewise.
+
+	* src/rec-types.c (rec_type_new): Do not expect the list of field
+	names in the STR parameter.
+
+	* src/rec-utils.c (rec_parse_regexp): Don't store the result of
+	the parsing in 'result' if it is NULL.
+
 2011-06-21  Jose E. Marchesi  <jco@terma.com>
 
 	build: get offline builds working again.

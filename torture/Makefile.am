@@ -62,8 +62,6 @@ REC_FIELD_NAME_TSUITE = rec-field-name/rec-field-name-new.c \
 REC_TYPE_TSUITE = rec-type/rec-type-new.c \
                   rec-type/rec-type-destroy.c \
                   rec-type/rec-type-descr-p.c \
-                  rec-type/rec-type-descr-fex.c \
-                  rec-type/rec-type-descr-type.c \
                   rec-type/rec-type-kind.c \
                   rec-type/rec-type-kind-str.c \
                   rec-type/rec-type-equal-p.c \

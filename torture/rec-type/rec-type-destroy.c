@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 18:09:15 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-destroy.c
  *       Date:         Fri Oct 29 16:57:32 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ START_TEST(rec_type_destroy_nominal)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo int");
+  type = rec_type_new ("int");
   fail_if (type == NULL);
 
   rec_type_destroy (type);

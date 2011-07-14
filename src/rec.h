@@ -303,15 +303,6 @@ void rec_type_destroy (rec_type_t type);
 /* Determine whether a string contains a valid type description.  */
 bool rec_type_descr_p (char *str);
 
-/* Extract the fex of a string containing a type description.  Return
-   NULL if STR is not a valid type description.  */
-rec_fex_t rec_type_descr_fex (char *str);
-
-/* Extract the type part (everything but the fex) of a string
-   containing a type description.  Return NULL if STR is not a valid
-   type description.  */
-char *rec_type_descr_type (char *str);
-
 /* Get the kind of the type.  The _str version returns a string with
    the name of the type.  */
 enum rec_type_kind_e rec_type_kind (rec_type_t type);

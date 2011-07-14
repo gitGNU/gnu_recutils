@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 18:12:53 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-kind.c
  *       Date:         Fri Oct 29 18:08:46 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,57 +38,57 @@ START_TEST(rec_type_kind_nominal)
 {
   rec_type_t type;
 
-  type = rec_type_new ("foo int");
+  type = rec_type_new ("int");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_INT);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo bool");
+  type = rec_type_new ("bool");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_BOOL);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo range 1 10");
+  type = rec_type_new ("range 1 10");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_RANGE);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo real");
+  type = rec_type_new ("real");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_REAL);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo size 10");
+  type = rec_type_new ("size 10");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_SIZE);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo line");
+  type = rec_type_new ("line");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_LINE);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo regexp /[abc]/");
+  type = rec_type_new ("regexp /[abc]/");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_REGEXP);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo date");
+  type = rec_type_new ("date");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_DATE);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo enum A B C");
+  type = rec_type_new ("enum A B C");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_ENUM);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo field");
+  type = rec_type_new ("field");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_FIELD);
   rec_type_destroy (type);
 
-  type = rec_type_new ("foo email");
+  type = rec_type_new ("email");
   fail_if (type == NULL);
   fail_if (rec_type_kind (type) != REC_TYPE_EMAIL);
   rec_type_destroy (type);

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 18:40:45 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-equal-p.c
  *       Date:         Fri Oct 29 18:33:21 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,86 +39,86 @@ START_TEST(rec_type_equal_p_nominal)
   rec_type_t type1;
   rec_type_t type2;
 
-  type1 = rec_type_new ("foo int");
-  type2 = rec_type_new ("bar int");
+  type1 = rec_type_new ("int");
+  type2 = rec_type_new ("int");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo bool");
-  type2 = rec_type_new ("bar bool");
+  type1 = rec_type_new ("bool");
+  type2 = rec_type_new ("bool");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo range 1 10");
-  type2 = rec_type_new ("bar range 1 10");
+  type1 = rec_type_new ("range 1 10");
+  type2 = rec_type_new ("range 1 10");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo range 1 10");
-  type2 = rec_type_new ("bar range -10 0");
+  type1 = rec_type_new ("range 1 10");
+  type2 = rec_type_new ("range -10 0");
   fail_if (rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo real");
-  type2 = rec_type_new ("bar real");
+  type1 = rec_type_new ("real");
+  type2 = rec_type_new ("real");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo size 10");
-  type2 = rec_type_new ("bar size 10");
+  type1 = rec_type_new ("size 10");
+  type2 = rec_type_new ("size 10");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo size 10");
-  type2 = rec_type_new ("bar size 20");
+  type1 = rec_type_new ("size 10");
+  type2 = rec_type_new ("size 20");
   fail_if (rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo line");
-  type2 = rec_type_new ("bar line");
+  type1 = rec_type_new ("line");
+  type2 = rec_type_new ("line");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo date");
-  type2 = rec_type_new ("bar date");
+  type1 = rec_type_new ("date");
+  type2 = rec_type_new ("date");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo enum A B C");
-  type2 = rec_type_new ("bar enum A B C \n\n  ");
+  type1 = rec_type_new ("enum A B C");
+  type2 = rec_type_new ("enum A B C \n\n  ");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo enum A B C");
-  type2 = rec_type_new ("bar enum B C A");
+  type1 = rec_type_new ("enum A B C");
+  type2 = rec_type_new ("enum B C A");
   fail_if (rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo enum A B C");
-  type2 = rec_type_new ("bar enum B C A D");
+  type1 = rec_type_new ("enum A B C");
+  type2 = rec_type_new ("enum B C A D");
   fail_if (rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo field");
-  type2 = rec_type_new ("bar field");
+  type1 = rec_type_new ("field");
+  type2 = rec_type_new ("field");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
 
-  type1 = rec_type_new ("foo email");
-  type2 = rec_type_new ("bar email");
+  type1 = rec_type_new ("email");
+  type2 = rec_type_new ("email");
   fail_if (!rec_type_equal_p (type1, type2));
   rec_type_destroy (type1);
   rec_type_destroy (type2);
