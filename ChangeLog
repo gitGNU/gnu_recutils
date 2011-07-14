@@ -1,5 +1,27 @@
 2011-07-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: attribute 'name' for types.
+	* torture/rec-type/tsuite-rec-type.c (tsuite_rec_type): Test cases
+	for rec_type_name and rec_type_set_name added.
+
+	* torture/rec-type/rec-type-name.c: New file.
+	(rec_type_name_anonymous): New test.
+	(rec_type_name_nominal): New test.
+
+	* torture/rec-type/rec-type-set-name.c: New file.
+	(rec_type_set_name_nominal): New test.
+
+	* src/rec-types.c: New field 'name' in struct rec_type_s to hold
+	the name of the type, or NULL for an anonymous type.
+	(rec_type_name): New function.
+	(rec_type_set_name): New function.
+	(rec_type_new): Initialize the name to NULL.
+	(rec_type_new): type_name_str renamed to type_kind_str to avoid
+	confusion.
+	(rec_type_destroy): Deallocate type->name upon destruction.
+
+2011-07-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: improvements in the api of rec_type.
 	* torture/rec-type/rec-type-check.c: Changed to use the new
 	rec_type_* API.

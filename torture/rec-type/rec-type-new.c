@@ -153,11 +153,9 @@ START_TEST(rec_type_new_invalid)
 
   type = rec_type_new ("enum");
   fail_if (type != NULL);
-  rec_type_destroy (type);
 
   type = rec_type_new ("enum  ");
   fail_if (type != NULL);
-  rec_type_destroy (type);
 
   type = rec_type_new ("enum # ! '");
   fail_if (type != NULL);

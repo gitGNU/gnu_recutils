@@ -195,6 +195,8 @@
 
 struct rec_type_s
 {
+  char *name;                 /* Name of the type.  May be NULL in an
+                                 anonymous type.  */
   enum rec_type_kind_e kind;  /* Kind of the type.  */
   char *expr;                 /* Copy of the type descriptor used to
                                  create the type.  */
@@ -307,7 +309,7 @@ rec_type_new (char *str)
 {
   rec_type_t new;
   char *p;
-  char *type_name_str = NULL;
+  char *type_kind_str = NULL;
 
   p = str;
   new = malloc (sizeof (struct rec_type_s));
@@ -315,11 +317,12 @@ rec_type_new (char *str)
     {
       goto exit;
     }
+  new->name = NULL; /* Newly created types are anonyous. */
 
   rec_skip_blanks (&p);
 
-  /* Get the type name.  */
-  if (!rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name_str))
+  /* Get the type kind.  */
+  if (!rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_kind_str))
     {
       free (new);
       new = NULL;
@@ -327,7 +330,7 @@ rec_type_new (char *str)
     }
 
   /* Continue parsing depending on the kind of type.  */
-  new->kind = rec_type_parse_type_kind (type_name_str);
+  new->kind = rec_type_parse_type_kind (type_kind_str);
   switch (new->kind)
     {
     case REC_TYPE_SIZE:
@@ -410,7 +413,7 @@ rec_type_new (char *str)
 
  exit:
 
-  free (type_name_str);
+  free (type_kind_str);
 
   return new;
 }
@@ -594,6 +597,7 @@ rec_type_check (rec_type_t type,
 void
 rec_type_destroy (rec_type_t type)
 {
+  free (type->name);
   free (type);
 }
 
@@ -670,6 +674,18 @@ rec_type_reg_get (rec_type_reg_t reg,
     }
 
   return res;
+}
+
+const char *
+rec_type_name (rec_type_t type)
+{
+  return type->name;
+}
+
+void
+rec_type_set_name (rec_type_t type, const char *name)
+{
+  type->name = strdup (name);
 }
 
 bool

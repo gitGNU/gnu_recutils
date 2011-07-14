@@ -313,6 +313,12 @@ char *rec_type_kind_str (rec_type_t type);
 int rec_type_min (rec_type_t type);
 int rec_type_max (rec_type_t type);
 
+/* Get and set the name of a type.  Types are created anonymous by
+   rec_type_new, so the getter will return NULL unless a name is
+   set.  */
+const char *rec_type_name (rec_type_t type);
+void rec_type_set_name (rec_type_t type, const char *name);
+
 /* Determine whether two types are the same type.
  * 
  * Two types are equal if,
