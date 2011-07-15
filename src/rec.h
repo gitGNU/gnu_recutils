@@ -370,16 +370,35 @@ rec_type_reg_t rec_type_reg_new (void);
 /* Destroy a type registry, freeing resources.  */
 void rec_type_reg_destroy (rec_type_reg_t reg);
 
-/* Add TYPE as the type for the field name NAME in the type registry
-   REG.  If the field NAME is already associated in REG, the previous
+/* Insert a new type in the type registry.  If a type with the same
+   name already exists in the registry then it gets replaced.  */
+void rec_type_reg_add (rec_type_reg_t reg, rec_type_t type);
+
+/* Create an association of a field name and a type name in the
+   registry.  If the specified type does not exist in the registry
+   then 'false' is returned.  Otherwise 'true' is returned.  If the
+   field NAME is already associated in REG, the previous association
+   gets overwritten.  */
+bool rec_type_reg_assoc (rec_type_reg_t reg,
+                         rec_field_name_t name,
+                         const char *type_name);
+
+/* Create an association of a field name and an anonymous type.  If
+   the field NAME is already associated in REG, the previous
    association gets overwritten.  */
-void rec_type_reg_register (rec_type_reg_t reg, rec_field_name_t name, rec_type_t type);
+void rec_type_reg_assoc_anon (rec_type_reg_t reg,
+                              rec_field_name_t name,
+                              rec_type_t type);
+
+/* Get the type named TYPE_NAME stored in REG.  If it does not exist
+   NULL is returned.  */
+rec_type_t rec_type_reg_get (rec_type_reg_t reg, const char *type_name);
 
 /* Get the type associated with the field NAME.  If no association for
    that field name exists in the registry then NULL is returned.  Note
    that the used equality function is: EQUAL || REF.  See above for
    details on field name equality.  */
-rec_type_t rec_type_reg_get (rec_type_reg_t reg, rec_field_name_t name);
+rec_type_t rec_type_reg_field_type (rec_type_reg_t reg, rec_field_name_t name);
 
 /*
  * FIELDS

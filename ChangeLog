@@ -1,3 +1,19 @@
+2011-07-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: support for named types in type registries.
+	* src/rec-rset.c (rec_rset_get_field_type): Likewise.
+
+	* src/rec-int.c (rec_int_check_field_type): Use
+	rec_type_reg_get_type instead of rec_type_reg_get.
+	(rec_int_check_descriptor): Likewise.
+
+	* src/rec-types.c (rec_type_reg_add): New function.
+	(rec_type_reg_assoc_anon): Renamed from rec_type_reg_register.
+	(rec_type_reg_assoc): New function.
+	(rec_type_reg_get): New function.
+	(rec_type_reg_assoc): Renamed from rec_type_reg_get and adapted to
+	use the new registry internal structure.
+
 2011-07-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: attribute 'name' for types.

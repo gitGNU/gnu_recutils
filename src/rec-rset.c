@@ -700,8 +700,8 @@ rec_rset_get_field_type (rec_rset_t rset,
 
   if (rset->type_reg)
     {
-      res = rec_type_reg_get (rset->type_reg,
-                              field_name);
+      res = rec_type_reg_field_type (rset->type_reg,
+                                     field_name);
     }
 
   return res;
@@ -952,9 +952,9 @@ rec_rset_update_types (rec_rset_t rset)
                   type = rec_type_new (p);
                   if (type)
                     {
-                      rec_type_reg_register (rset->type_reg,
-                                             rec_fex_elem_field_name (rec_fex_get (fex, j)),
-                                             type);
+                      rec_type_reg_assoc_anon (rset->type_reg,
+                                               rec_fex_elem_field_name (rec_fex_get (fex, j)),
+                                               type);
                     }
                 }
             }
