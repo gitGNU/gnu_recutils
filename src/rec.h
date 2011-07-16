@@ -219,7 +219,8 @@ enum rec_fex_kind_e
 
 /* Create a field expression structure from a string.  A fex kind
    shall be specified in KIND.  If STR does not contain a valid FEX of
-   the given kind then NULL is returned.  */
+   the given kind then NULL is returned.  If STR is NULL then an empty
+   fex is returned.  */
 rec_fex_t rec_fex_new (char *str,
                        enum rec_fex_kind_e kind);
 
@@ -353,7 +354,8 @@ bool rec_type_check (rec_type_t type, char *str, char **error_str);
 /*
  * TYPE REGISTRIES.
  *
- * Type registries are collections of associations:
+ * Type registries are collections of named types, and type<->field
+ * name associations:
  *
  *     TYPE <-> FIELD NAME
  *

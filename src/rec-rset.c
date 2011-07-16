@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <rec-mset.h>
 #include <rec.h>
@@ -37,6 +38,20 @@
  * A record set is a set of zero or more non-special records
  * intermixed with comments, maybe preceded by a record descriptor.
  */
+
+struct rec_rset_fprops_s
+{
+  rec_field_name_t fname;
+
+  bool key_p;      /* The field is the key of the record set.  */
+  bool auto_p;     /* Auto-field.  */
+  rec_type_t type; /* The field has an anonymous type.  */
+  char *type_name; /* The field has a type in the types registry.  */
+
+  struct rec_rset_fprops_s *next;
+};
+
+typedef struct rec_rset_fprops_s *rec_rset_fprops_t;
 
 #define REC_RSET_MAX_ORDER 256
 
@@ -49,11 +64,11 @@ struct rec_rset_s
                             need to track it in order to write back
                             the record properly.  */
 
+  /* Field properties.  */
+  rec_rset_fprops_t field_props;
+
   /* Type registry.  */
   rec_type_reg_t type_reg;
-
-  /* Auto-set fields.  */
-  rec_fex_t auto_fields;
 
   /* Size constraints.  */
   size_t min_size;
@@ -90,6 +105,10 @@ static bool rec_rset_type_field_p (const char *str);
 static rec_fex_t rec_rset_type_field_fex (const char *str);
 static char *rec_rset_type_field_type (const char *str);
 
+static rec_rset_fprops_t rec_rset_get_props (rec_rset_t rset,
+                                             rec_field_name_t fname,
+                                             bool create_p);
+
 /*
  * Public functions.
  */
@@ -110,9 +129,11 @@ rec_rset_new (void)
           rset->descriptor = NULL;
           rset->descriptor_pos = 0;
           rset->type_reg = NULL;
-          rset->auto_fields = NULL;
           rset->min_size = 0;
           rset->max_size = SIZE_MAX;
+
+          /* No field properties, initially.  */
+          rset->field_props = NULL;
 
           /* register the types.  */
           rset->record_type = rec_mset_register_type (rset->mset,
@@ -140,6 +161,8 @@ rec_rset_new (void)
 void
 rec_rset_destroy (rec_rset_t rset)
 {
+  rec_rset_fprops_t props, aux = NULL;
+
   if (rset->descriptor)
     {
       rec_record_destroy (rset->descriptor);
@@ -147,6 +170,20 @@ rec_rset_destroy (rec_rset_t rset)
   if (rset->type_reg)
     {
       rec_type_reg_destroy (rset->type_reg);
+    }
+
+  props = rset->field_props;
+  while (props)
+    {
+      aux = props;
+
+      if (aux->type)
+        {
+          rec_type_destroy (aux->type);
+        }
+      free (aux->type_name);
+      props = props->next;
+      free (aux);
     }
 
   rec_mset_destroy (rset->mset);
@@ -689,7 +726,24 @@ rec_rset_rename_field (rec_rset_t rset,
 rec_fex_t
 rec_rset_auto (rec_rset_t rset)
 {
-  return rset->auto_fields;
+  rec_fex_t fex;
+  rec_rset_fprops_t props;
+
+  fex = rec_fex_new (NULL, REC_FEX_SIMPLE);
+
+  props = rset->field_props;
+  while (props)
+    {
+      if (props->auto_p)
+        {
+          rec_fex_append (fex,
+                          props->fname,
+                          -1, -1);
+        }
+      props = props->next;
+    }
+
+  return fex;
 }
 
 rec_type_t
@@ -846,6 +900,7 @@ rec_rset_update_size_constraints (rec_rset_t rset)
 static void
 rec_rset_update_auto_fields (rec_rset_t rset)
 {
+  rec_rset_fprops_t props = NULL;
   rec_record_elem_t record_elem;
   rec_field_t field;
   rec_field_name_t field_name;
@@ -854,11 +909,12 @@ rec_rset_update_auto_fields (rec_rset_t rset)
   rec_fex_t fex;
   size_t i;
 
-  /* Purge the existing list, if any.  */
-  if (rset->auto_fields)
+  /* Reset all the auto marks in the field properties.  */
+  props = rset->field_props;
+  while (props)
     {
-      rec_fex_destroy (rset->auto_fields);
-      rset->auto_fields = NULL;
+      props->auto_p = false;
+      props = props->next;
     }
 
   /* Scan the record descriptor for %auto: directives, and build the
@@ -866,8 +922,6 @@ rec_rset_update_auto_fields (rec_rset_t rset)
   if (rset->descriptor)
     {
       auto_fname = rec_parse_field_name_str ("%auto:");
-
-      rset->auto_fields = rec_fex_new (NULL, REC_FEX_SIMPLE);
 
       record_elem = rec_record_first_field (rset->descriptor);
       while (rec_record_elem_p (record_elem))
@@ -885,12 +939,8 @@ rec_rset_update_auto_fields (rec_rset_t rset)
                   for (i = 0; i < rec_fex_size (fex); i++)
                     {
                       auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
-                      if (!rec_fex_member_p (rset->auto_fields,
-                                             auto_field_name,
-                                             -1, -1))
-                        {
-                          rec_fex_append (rset->auto_fields, auto_field_name, -1, -1);
-                        }
+                      props = rec_rset_get_props (rset, auto_field_name, true);
+                      props->auto_p = true;
                     }
                 }
             }
@@ -1032,5 +1082,46 @@ rec_rset_type_field_type (const char *str)
 
   return result;
 }
+
+static rec_rset_fprops_t
+rec_rset_get_props (rec_rset_t rset,
+                    rec_field_name_t fname,
+                    bool create_p)
+{
+  rec_rset_fprops_t props = NULL;
+  
+  props = rset->field_props;
+  while (props)
+    {
+      if (rec_field_name_equal_p (fname, props->fname))
+        {
+          break;
+        }
+
+      props = props->next;
+    }
+
+  if (!props && create_p)
+    {
+      /* Create a new properties structure for this field name and
+         initialize it.  */
+      props = malloc (sizeof (struct rec_rset_fprops_s));
+      if (props)
+        {
+          props->fname = rec_field_name_dup (fname);
+          props->key_p = false;
+          props->auto_p = false;
+          props->type = NULL;
+          props->type_name = NULL;
+          
+          /* Prepend it to the field properties list.  */
+          props->next = rset->field_props;
+          rset->field_props = props;
+        }
+    }
+
+  return props;
+}
+
 
 /* End of rec-rset.c */

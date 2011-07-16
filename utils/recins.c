@@ -247,9 +247,7 @@ recins_add_auto_fields (rec_rset_t rset,
     {
       if ((auto_fields = rec_rset_auto (rset)))
         {
-          for (i = (rec_fex_size (auto_fields) - 1);
-               i >= 0;
-               i--)
+          for (i = 0; i < rec_fex_size (auto_fields); i++)
             {
               auto_field_name = rec_fex_elem_field_name (rec_fex_get (auto_fields, i));
               

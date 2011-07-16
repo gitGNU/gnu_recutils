@@ -1,5 +1,24 @@
 2011-07-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: manage auto fields with the new fields properties
+	structure in record sets.
+	* utils/recins.c (recins_add_auto_fields): rec_rset_auto now
+	returns the auto fields in the right order, so no need to reverse
+	it.
+
+	* src/rec-rset.c: New structure rec_rset_fprops_s to hold the
+	properties of a field.
+	New field field_props in the rec_rset_s struct.
+	(rec_rset_new): Initialise field_props to NULL.
+	(rec_rset_get_props): New function.
+	(rec_rset_update_auto_fields): Update field_props instead of the
+	auto_fields fex.
+	(rec_rset_auto): Build a fex from the contents of field_props and
+	return it.
+	(rec_rset_destroy): Destroy field_props.
+
+2011-07-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: type-reg tests adapted.
 	* torture/rec-type-reg/rec-type-reg-assoc-anon.c: Renamed from
 	rec-type-reg-register.c, and adapted to the new semantics.
