@@ -211,23 +211,11 @@ struct rec_type_s
   } data;
 };
 
-struct rec_type_reg_assoc_s
-{
-  rec_field_name_t name;
-
-  rec_type_t type;
-  char *type_name;  /* Used if type is NULL. */
-};
-
-#define REC_TYPE_REG_MAX_ASSOCS 100
 #define REC_TYPE_REG_MAX_TYPES  100
 
 struct rec_type_reg_s
 {
-  size_t num_assocs;
   size_t num_types;
-  
-  struct rec_type_reg_assoc_s assocs[REC_TYPE_REG_MAX_ASSOCS];
   rec_type_t types[REC_TYPE_REG_MAX_TYPES];
 };
 
@@ -615,7 +603,6 @@ rec_type_reg_new (void)
   new = malloc (sizeof (struct rec_type_reg_s));
   if (new)
     {
-      new->num_assocs = 0;
       new->num_types = 0;
     }
 
@@ -626,18 +613,11 @@ void
 rec_type_reg_destroy (rec_type_reg_t reg)
 {
   size_t i;
-
-  for (i = 0; i < reg->num_assocs; i++)
-    {
-      rec_field_name_destroy (reg->assocs[i].name);
-      if (reg->assocs[i].type)
-        {
-          rec_type_destroy (reg->assocs[i].type);
-        }
-      
-      free (reg->assocs[i].type_name);
-    }
   
+  for (i = 0; i < reg->num_types; i++)
+    {
+      rec_type_destroy (reg->types[i]);
+    }
   free (reg);
 }
 
@@ -670,80 +650,6 @@ rec_type_reg_add (rec_type_reg_t reg,
     }
 }
 
-bool
-rec_type_reg_assoc (rec_type_reg_t reg,
-                    rec_field_name_t name,
-                    const char *type_name)
-{
-  size_t i;
-
-  if (rec_type_reg_get (reg, type_name) == NULL)
-    {
-      /* Type not found.  */
-      return false;
-    }
-
-  for (i = 0; i < reg->num_assocs; i++)
-    {
-      if (rec_field_name_equal_p (reg->assocs[i].name, name)
-          || rec_field_name_ref_p (reg->assocs[i].name, name))
-        {
-          /* Replace this entry.  */
-
-          free (reg->assocs[i].name);
-          free (reg->assocs[i].type_name);
-          reg->assocs[i].type_name = NULL;
-          if (reg->assocs[i].type)
-            {
-              rec_type_destroy (reg->assocs[i].type);
-            }
-          break;
-        }
-    }
-
-  reg->assocs[i].name = rec_field_name_dup (name);
-  reg->assocs[i].type = NULL;
-  reg->assocs[i].type_name = strdup (type_name);
-
-  return true;
-}
-
-void
-rec_type_reg_assoc_anon (rec_type_reg_t reg,
-                         rec_field_name_t name,
-                         rec_type_t type)
-{
-  size_t i;
-
-  for (i = 0; i < reg->num_assocs; i++)
-    {
-      if (rec_field_name_equal_p (reg->assocs[i].name, name)
-          || rec_field_name_ref_p (reg->assocs[i].name, name))
-        {
-          /* Replace this entry.  */
-
-          free (reg->assocs[i].name);
-          free (reg->assocs[i].type_name);
-          reg->assocs[i].type_name = NULL;
-          if (reg->assocs[i].type)
-            {
-              rec_type_destroy (reg->assocs[i].type);
-            }
-          break;
-        }
-    }
-
-  reg->assocs[i].name = rec_field_name_dup (name);
-  reg->assocs[i].type = type;
-  reg->assocs[i].type_name = NULL;
-
-  if (i == reg->num_assocs)
-    {
-      /* We added a new entry.  */
-      reg->num_assocs++;
-    }
-}
-
 rec_type_t
 rec_type_reg_get (rec_type_reg_t reg,
                   const char *type_name)
@@ -758,32 +664,6 @@ rec_type_reg_get (rec_type_reg_t reg,
       if (other_name && (strcmp (type_name, other_name) == 0))
         {
           type = reg->types[i];
-          break;
-        }
-    }
-
-  return type;
-}
-
-rec_type_t
-rec_type_reg_field_type (rec_type_reg_t reg,
-                         rec_field_name_t name)
-{
-  rec_type_t type = NULL;
-  size_t i = 0;
-  size_t j = 0;
-
-  for (i = 0; i < reg->num_assocs; i++)
-    {
-      if (rec_field_name_equal_p (reg->assocs[i].name, name)
-          || rec_field_name_ref_p (reg->assocs[i].name, name))
-        {
-          type = reg->assocs[i].type;
-          if (type == NULL)
-            {
-              type = rec_type_reg_get (reg, reg->assocs[i].type_name);
-            }
-
           break;
         }
     }

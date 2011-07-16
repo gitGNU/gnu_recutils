@@ -1,5 +1,28 @@
 2011-07-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: manage anonymous types using the fields props structures.
+	* src/rec-rset.c (rec_rset_new): Create an empty types registry.
+
+	* src/rec-types.c: Data structures storing the associations
+	removed.
+	(rec_type_reg_destroy): Assocs code removed. Destroy the types.
+	(rec_type_reg_assoc): Deleted.
+	(rec_type_reg_assoc_anon): Deleted.
+	(rec_type_reg_field_type): Deleted.
+
+	* src/rec-int.c (rec_int_check_field_type): Use
+	rec_rset_get_field_name instead of the type registry of the rset.
+	(rec_int_check_descriptor): Likewise.
+
+	* src/rec-rset.c (rec_rset_update_field_props): Renamed from
+	rec_rset_update_auto_fields.
+	(rec_rset_get_field_type): Use the field properties to find and
+	return the type of a given field.
+	(rec_rset_update_field_props): Update type properties in the field
+	props.
+
+2011-07-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: manage auto fields with the new fields properties
 	structure in record sets.
 	* utils/recins.c (recins_add_auto_fields): rec_rset_auto now

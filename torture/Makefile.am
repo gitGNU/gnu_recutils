@@ -73,8 +73,7 @@ REC_TYPE_TSUITE = rec-type/rec-type-new.c \
 REC_TYPE_REG_TSUITE = rec-type-reg/rec-type-reg-new.c \
                       rec-type-reg/rec-type-reg-destroy.c \
                       rec-type-reg/tsuite-rec-type-reg.c \
-                      rec-type-reg/rec-type-reg-get.c \
-                      rec-type-reg/rec-type-reg-assoc-anon.c
+                      rec-type-reg/rec-type-reg-get.c
 
 REC_FEX_TSUITE = rec-fex/rec-fex-new.c \
                  rec-fex/rec-fex-destroy.c \

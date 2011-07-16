@@ -43,7 +43,6 @@ struct rec_rset_fprops_s
 {
   rec_field_name_t fname;
 
-  bool key_p;      /* The field is the key of the record set.  */
   bool auto_p;     /* Auto-field.  */
   rec_type_t type; /* The field has an anonymous type.  */
   char *type_name; /* The field has a type in the types registry.  */
@@ -90,7 +89,7 @@ struct rec_rset_s
 /* Static functions implemented below.  */
 
 static void rec_rset_update_types (rec_rset_t rset);
-static void rec_rset_update_auto_fields (rec_rset_t rset);
+static void rec_rset_update_field_props (rec_rset_t rset);
 static void rec_rset_update_size_constraints (rec_rset_t rset);
 
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
@@ -128,9 +127,11 @@ rec_rset_new (void)
           /* No descriptor, initially.  */
           rset->descriptor = NULL;
           rset->descriptor_pos = 0;
-          rset->type_reg = NULL;
           rset->min_size = 0;
           rset->max_size = SIZE_MAX;
+
+          /* Create an empty type registry.  */
+          rset->type_reg = rec_type_reg_new ();
 
           /* No field properties, initially.  */
           rset->field_props = NULL;
@@ -167,10 +168,8 @@ rec_rset_destroy (rec_rset_t rset)
     {
       rec_record_destroy (rset->descriptor);
     }
-  if (rset->type_reg)
-    {
-      rec_type_reg_destroy (rset->type_reg);
-    }
+
+  rec_type_reg_destroy (rset->type_reg);
 
   props = rset->field_props;
   while (props)
@@ -501,8 +500,8 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
   rset->descriptor = record;
 
   /* Update the types registry and the auto fields.  */
-  rec_rset_update_types (rset);
-  rec_rset_update_auto_fields (rset);
+  /* rec_rset_update_types (rset); */
+  rec_rset_update_field_props (rset);
   rec_rset_update_size_constraints (rset);
 }
 
@@ -713,7 +712,7 @@ rec_rset_rename_field (rec_rset_t rset,
     }
 
   /* Update the types registry.  */
-  rec_rset_update_types (rset);
+  /*  rec_rset_update_types (rset); */
 
   /* Cleanup.  */
   rec_field_name_destroy (type_field_name);
@@ -750,15 +749,20 @@ rec_type_t
 rec_rset_get_field_type (rec_rset_t rset,
                          rec_field_name_t field_name)
 {
-  rec_type_t res = NULL;
+  rec_type_t type = NULL;
+  rec_rset_fprops_t props = NULL;
 
-  if (rset->type_reg)
+  props = rec_rset_get_props (rset, field_name, false);
+  if (props)
     {
-      res = rec_type_reg_field_type (rset->type_reg,
-                                     field_name);
+      type = props->type;
+      if (!type)
+        {
+          type = rec_type_reg_get (rset->type_reg, props->type_name);
+        }
     }
-
-  return res;
+  
+  return type;
 }
 
 size_t
@@ -898,7 +902,7 @@ rec_rset_update_size_constraints (rec_rset_t rset)
 }
 
 static void
-rec_rset_update_auto_fields (rec_rset_t rset)
+rec_rset_update_field_props (rec_rset_t rset)
 {
   rec_rset_fprops_t props = NULL;
   rec_record_elem_t record_elem;
@@ -906,29 +910,74 @@ rec_rset_update_auto_fields (rec_rset_t rset)
   rec_field_name_t field_name;
   rec_field_name_t auto_fname;
   rec_field_name_t auto_field_name;
+  rec_field_name_t type_fname;
+  char *field_value;
   rec_fex_t fex;
   size_t i;
+  rec_type_t type;
 
-  /* Reset all the auto marks in the field properties.  */
+  /* Reset the field properties.  */
   props = rset->field_props;
   while (props)
     {
       props->auto_p = false;
+      if (props->type)
+        {
+          rec_type_destroy (props->type);
+          props->type = NULL;
+        }
+
       props = props->next;
     }
 
-  /* Scan the record descriptor for %auto: directives, and build the
-     new list.  */
+  /* Scan the record descriptor for % directives, and update the
+     fields properties accordingly.  */
   if (rset->descriptor)
     {
       auto_fname = rec_parse_field_name_str ("%auto:");
+      type_fname = rec_parse_field_name_str ("%type:");
 
       record_elem = rec_record_first_field (rset->descriptor);
       while (rec_record_elem_p (record_elem))
         {
           field = rec_record_elem_field (record_elem);
           field_name = rec_field_name (field);
+          field_value = rec_field_value (field);
 
+          /* Update fields of anonymous types.  Only valid %type:
+             descriptors are considered.  Invalid descriptors are
+             ignored.  */
+          if (rec_field_name_equal_p (field_name, type_fname)
+              && rec_rset_type_field_p (field_value))
+            {
+              fex = rec_rset_type_field_fex (field_value);
+              for (i = 0; i < rec_fex_size (fex); i++)
+                {
+                  char *p;
+
+                  p = rec_rset_type_field_type (field_value);
+                  type = rec_type_new (p);
+                  if (type)
+                    {
+                      /* Note that if the field is already associated
+                         with an anonymous type, it is destroyed. */
+                      props = rec_rset_get_props (rset,
+                                                  rec_fex_elem_field_name (rec_fex_get (fex, i)),
+                                                  true);
+                      if (props->type)
+                        {
+                          rec_type_destroy (props->type);
+                        }
+                      free (props->type_name);
+                      props->type_name = NULL;
+                      props->type = type;
+                    }
+
+                  free (p);
+                }
+            }
+
+          /* Update auto fields.  */
           if (rec_field_name_equal_p (field_name, auto_fname))
             {
               /* %auto: fields containing incorrect data are
@@ -944,74 +993,19 @@ rec_rset_update_auto_fields (rec_rset_t rset)
                     }
                 }
             }
-          
+
           record_elem = rec_record_next_field (rset->descriptor, record_elem);
         }
 
       rec_field_name_destroy (auto_fname);
+      rec_field_name_destroy (type_fname);
     } 
 }
 
 static void
 rec_rset_update_types (rec_rset_t rset)
 {
-  rec_field_t descr_field;
-  rec_field_name_t type_field_name;
-  char *descr_field_value;
-  size_t i, num_fields, j;
-  rec_type_t type;
-  rec_fex_t fex;
-
-  if (rset->descriptor)
-    {
-      /* Update the types registry.  */
-      if (rset->type_reg)
-        {
-          rec_type_reg_destroy (rset->type_reg);
-        }
-      rset->type_reg = rec_type_reg_new ();
-      
-      type_field_name = rec_parse_field_name_str ("%type:");
-      num_fields = rec_record_get_num_fields_by_name (rset->descriptor, type_field_name);
-      for (i = 0; i < num_fields; i++)
-        {
-          descr_field = rec_record_get_field_by_name (rset->descriptor, type_field_name, i);
-          descr_field_value = rec_field_value (descr_field);
-          
-          /* Only valid type descriptors are considered.  Invalid
-             descriptors are ignored.  */
-          if (rec_rset_type_field_p (descr_field_value))
-            {
-              fex = rec_rset_type_field_fex (descr_field_value);
-              for (j = 0; j < rec_fex_size (fex); j++)
-                {
-                  char *p;
-
-                  /* Get the list of fields having this type.  */
-                  p = descr_field_value;
-                  rec_skip_blanks (&p);
-                  if (!rec_parse_regexp (&p,
-                                         "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
-                                         NULL))
-                    {
-                      /* Invalid descriptor.  Ignore it.  */
-                      continue;
-                    }
-
-                  /* Create the type itself.  */
-                  type = rec_type_new (p);
-                  if (type)
-                    {
-                      rec_type_reg_assoc_anon (rset->type_reg,
-                                               rec_fex_elem_field_name (rec_fex_get (fex, j)),
-                                               type);
-                    }
-                }
-            }
-        }
-
-      rec_field_name_destroy (type_field_name);
-    }
+  /* XXX: writeme */
 }
 
 static bool
@@ -1109,7 +1103,6 @@ rec_rset_get_props (rec_rset_t rset,
       if (props)
         {
           props->fname = rec_field_name_dup (fname);
-          props->key_p = false;
           props->auto_p = false;
           props->type = NULL;
           props->type_name = NULL;

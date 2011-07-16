@@ -354,13 +354,7 @@ bool rec_type_check (rec_type_t type, char *str, char **error_str);
 /*
  * TYPE REGISTRIES.
  *
- * Type registries are collections of named types, and type<->field
- * name associations:
- *
- *     TYPE <-> FIELD NAME
- *
- * Those registries are used in record sets to store the types of some
- * fields, but can be used for other purposes.  The following API
+ * Type registries are collections of named types. The following API
  * provides facilities to maintain type registries.
  */
 
@@ -376,31 +370,9 @@ void rec_type_reg_destroy (rec_type_reg_t reg);
    name already exists in the registry then it gets replaced.  */
 void rec_type_reg_add (rec_type_reg_t reg, rec_type_t type);
 
-/* Create an association of a field name and a type name in the
-   registry.  If the specified type does not exist in the registry
-   then 'false' is returned.  Otherwise 'true' is returned.  If the
-   field NAME is already associated in REG, the previous association
-   gets overwritten.  */
-bool rec_type_reg_assoc (rec_type_reg_t reg,
-                         rec_field_name_t name,
-                         const char *type_name);
-
-/* Create an association of a field name and an anonymous type.  If
-   the field NAME is already associated in REG, the previous
-   association gets overwritten.  */
-void rec_type_reg_assoc_anon (rec_type_reg_t reg,
-                              rec_field_name_t name,
-                              rec_type_t type);
-
 /* Get the type named TYPE_NAME stored in REG.  If it does not exist
    NULL is returned.  */
 rec_type_t rec_type_reg_get (rec_type_reg_t reg, const char *type_name);
-
-/* Get the type associated with the field NAME.  If no association for
-   that field name exists in the registry then NULL is returned.  Note
-   that the used equality function is: EQUAL || REF.  See above for
-   details on field name equality.  */
-rec_type_t rec_type_reg_field_type (rec_type_reg_t reg, rec_field_name_t name);
 
 /*
  * FIELDS
@@ -661,7 +633,6 @@ char *rec_rset_url  (rec_rset_t rset);
 void rec_rset_set_type (rec_rset_t rset, char *type);
 
 /* Type registry.  */
-
 rec_type_reg_t rec_rset_get_type_reg (rec_rset_t rset);
 
 /* Types.  */

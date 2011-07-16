@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-15 23:23:59 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-16 21:09:22 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -228,7 +228,6 @@ rec_int_check_field_type (rec_db_t db,
                           rec_buf_t errors)
 {
   bool res;
-  rec_type_reg_t type_reg;
   rec_field_name_t field_name;
   const char *rset_name;
   rec_rset_t referred_rset;
@@ -274,20 +273,13 @@ rec_int_check_field_type (rec_db_t db,
 
       if (referred_rset)
         {
-          type_reg = rec_rset_get_type_reg (referred_rset);
-          if (type_reg)
-            {
-              referred_type = rec_type_reg_field_type (type_reg, rec_field_name (field));
-            }
+          referred_type = rec_rset_get_field_type (referred_rset,
+                                                   rec_field_name (field));
         }
     }
 
   /* Get the referring type, if any.  */
-  type_reg = rec_rset_get_type_reg (rset);
-  if (type_reg)
-    {
-      referring_type = rec_type_reg_field_type (type_reg, rec_field_name (field));
-    }
+  referring_type = rec_rset_get_field_type (rset, rec_field_name (field));
 
   /* The referring type takes precedence.  */
   if (referring_type)
@@ -688,7 +680,6 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t auto_field_name;
   char *auto_field_name_str;
   size_t i;
-  rec_type_reg_t type_reg;
   rec_type_t type;
 
   res = 0;
@@ -862,24 +853,20 @@ before the type specification\n"),
                 {
                   auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
                   auto_field_name_str = rec_fex_elem_field_name_str (rec_fex_get (fex, i));
-                  type_reg = rec_rset_get_type_reg (rset);
-                  if (type_reg)
+                  type = rec_rset_get_field_type (rset, auto_field_name);
+                  if ((!type) ||
+                      ! ((rec_type_kind (type) == REC_TYPE_INT)
+                         || (rec_type_kind (type) == REC_TYPE_RANGE)
+                         || (rec_type_kind (type) == REC_TYPE_DATE)))
                     {
-                      type = rec_type_reg_field_type (type_reg, auto_field_name);
-                      if ((!type) ||
-                          ! ((rec_type_kind (type) == REC_TYPE_INT)
-                             || (rec_type_kind (type) == REC_TYPE_RANGE)
-                             || (rec_type_kind (type) == REC_TYPE_DATE)))
-                        {
-                          asprintf (&tmp,
-                                    _("%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"),
-                                    rec_record_source (descriptor),
-                                    rec_record_location_str (descriptor),
-                                    auto_field_name_str);
-                          rec_buf_puts (tmp, errors);
-                          free (tmp);
-                          res++;
-                        }
+                      asprintf (&tmp,
+                                _("%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"),
+                                rec_record_source (descriptor),
+                                rec_record_location_str (descriptor),
+                                auto_field_name_str);
+                      rec_buf_puts (tmp, errors);
+                      free (tmp);
+                      res++;
                     }
                 }
             }
