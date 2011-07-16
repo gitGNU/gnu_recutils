@@ -1,9 +1,9 @@
 /* -*- mode: C -*-
  *
- *       File:         rec-type-reg-register.c
+ *       File:         rec-type-reg-assoc-anon.c
  *       Date:         Fri Oct 29 21:15:17 2010
  *
- *       GNU recutils - rec_type_reg_register unit tests
+ *       GNU recutils - rec_type_reg_assoc_anon unit tests
  *
  */
 
@@ -29,13 +29,13 @@
 #include <rec.h>
 
 /*-
- * Test: rec_type_reg_register_nominal
- * Unit: rec_type_reg_register
+ * Test: rec_type_reg_assoc_anon_nominal
+ * Unit: rec_type_reg_assoc_anon
  * Description:
  * + Registration of a field->type association in
  * + a type registry.
  */
-START_TEST (rec_type_reg_register_nominal)
+START_TEST (rec_type_reg_assoc_anon_nominal)
 {
   rec_type_t type;
   rec_field_name_t fname;
@@ -49,22 +49,22 @@ START_TEST (rec_type_reg_register_nominal)
   type = rec_type_new ("int");
   fail_if (type == NULL);
   fail_if (fname == NULL);
-  rec_type_reg_register (reg, fname, type);
+  rec_type_reg_assoc_anon (reg, fname, type);
   
   fname = rec_parse_field_name_str ("bar");
   type = rec_type_new ("range 1 10");
   fail_if (type == NULL);
   fail_if (fname == NULL);
-  rec_type_reg_register (reg, fname, type);
+  rec_type_reg_assoc_anon (reg, fname, type);
 
   /* Register 'foo' again with another type.  */
   fname = rec_parse_field_name_str ("foo");
   type = rec_type_new ("bool");
   fail_if (type == NULL);
   fail_if (fname == NULL);
-  rec_type_reg_register (reg, fname, type);
+  rec_type_reg_assoc_anon (reg, fname, type);
 
-  fail_if (rec_type_kind (rec_type_reg_get (reg, fname))
+  fail_if (rec_type_kind (rec_type_reg_field_type (reg, fname))
            != REC_TYPE_BOOL);
 
   rec_type_reg_destroy (reg);
@@ -75,12 +75,12 @@ END_TEST
  * Test case creation function
  */
 TCase *
-test_rec_type_reg_register (void)
+test_rec_type_reg_assoc_anon (void)
 {
-  TCase *tc = tcase_create ("rec_type_reg_register");
-  tcase_add_test (tc, rec_type_reg_register_nominal);
+  TCase *tc = tcase_create ("rec_type_reg_assoc_anon");
+  tcase_add_test (tc, rec_type_reg_assoc_anon_nominal);
 
   return tc;
 }
 
-/* End of rec-type-reg-register.c */
+/* End of rec-type-reg-assoc-anon.c */

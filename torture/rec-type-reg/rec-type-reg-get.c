@@ -32,27 +32,26 @@
  * Test: rec_type_reg_get_nominal
  * Unit: rec_type_reg_get
  * Description:
- * + Get an existing association from a type registry.
+ * + Insert a type in a type registry and get it.
+ * + The call shall success.
  */
 START_TEST(rec_type_reg_get_nominal)
 {
   rec_type_t type;
   rec_type_t type2;
-  rec_field_name_t fname;
   rec_type_reg_t reg;
 
   reg = rec_type_reg_new ();
   fail_if (reg == NULL);
 
   /* Register a type.  */
-  fname = rec_parse_field_name_str ("foo");
   type = rec_type_new ("int");
+  rec_type_set_name (type, "foo");
   fail_if (type == NULL);
-  fail_if (fname == NULL);
-  rec_type_reg_register (reg, fname, type);
+  rec_type_reg_add (reg, type);
 
   /* Get the type and compare.  */
-  type2 = rec_type_reg_get (reg, fname);
+  type2 = rec_type_reg_get (reg, "foo");
   fail_if (type2 == NULL);
   fail_if (type2 != type);
 
@@ -64,22 +63,18 @@ END_TEST
  * Test: rec_type_reg_get_nonexisting
  * Unit: rec_type_reg_get
  * Description:
- * + Try to get a nonexisting association
+ * + Try to get a nonexisting named type
  * + from a type registry.
  */
 START_TEST(rec_type_reg_get_nonexisting)
 {
-  rec_field_name_t fname;
   rec_type_reg_t reg;
 
   reg = rec_type_reg_new ();
   fail_if (reg == NULL);
-  fname = rec_parse_field_name_str ("foo");
-  fail_if (fname == NULL);
 
-  fail_if (rec_type_reg_get (reg, fname) != NULL);
+  fail_if (rec_type_reg_get (reg, "foo") != NULL);
   
-  rec_field_name_destroy (fname);
   rec_type_reg_destroy (reg);
 }
 END_TEST

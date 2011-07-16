@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-15 23:35:37 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-16 11:11:05 jemarch"
  *
  *       File:         tsuite-rec-type-reg.c
  *       Date:         Fri Oct 29 20:58:54 2010
@@ -28,8 +28,8 @@
 
 extern TCase *test_rec_type_reg_new (void);
 extern TCase *test_rec_type_reg_destroy (void);
-/*extern TCase *test_rec_type_reg_register (void);
-  extern TCase *test_rec_type_reg_get (void); */
+extern TCase *test_rec_type_reg_assoc_anon (void);
+extern TCase *test_rec_type_reg_get (void);
 
 Suite *
 tsuite_rec_type_reg ()
@@ -39,8 +39,8 @@ tsuite_rec_type_reg ()
   s = suite_create ("rec-type-reg");
   suite_add_tcase (s, test_rec_type_reg_new ());
   suite_add_tcase (s, test_rec_type_reg_destroy ());
-  /*  suite_add_tcase (s, test_rec_type_reg_register ());
-      suite_add_tcase (s, test_rec_type_reg_get ()); */
+  suite_add_tcase (s, test_rec_type_reg_assoc_anon ());
+  suite_add_tcase (s, test_rec_type_reg_get ());
 
   return s;
 }

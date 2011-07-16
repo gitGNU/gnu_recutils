@@ -1,3 +1,12 @@
+2011-07-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: type-reg tests adapted.
+	* torture/rec-type-reg/rec-type-reg-assoc-anon.c: Renamed from
+	rec-type-reg-register.c, and adapted to the new semantics.
+
+	* torture/rec-type-reg/rec-type-reg-get.c: Adapted to the new
+	semantics of rec_type_reg_get.
+
 2011-07-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: support for named types in type registries.
