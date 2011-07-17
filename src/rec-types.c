@@ -213,10 +213,19 @@ struct rec_type_s
 
 #define REC_TYPE_REG_MAX_TYPES  100
 
+struct rec_type_reg_entry_s
+{
+  char *type_name;
+
+  rec_type_t type;
+  char *to_type;
+  bool visited_p;
+};
+
 struct rec_type_reg_s
 {
   size_t num_types;
-  rec_type_t types[REC_TYPE_REG_MAX_TYPES];
+  struct rec_type_reg_entry_s types[REC_TYPE_REG_MAX_TYPES];
 };
 
 /*
@@ -616,7 +625,12 @@ rec_type_reg_destroy (rec_type_reg_t reg)
   
   for (i = 0; i < reg->num_types; i++)
     {
-      rec_type_destroy (reg->types[i]);
+      if (reg->types[i].type)
+        {
+          rec_type_destroy (reg->types[i].type);
+        }
+      free (reg->types[i].type_name);
+      free (reg->types[i].to_type);
     }
   free (reg);
 }
@@ -626,23 +640,67 @@ rec_type_reg_add (rec_type_reg_t reg,
                   rec_type_t type)
 {
   size_t i;
-  const char *type_name;
-  const char *other_name;
+  const char *type_name = NULL;
 
   type_name = rec_type_name (type);
+  if (!type_name)
+    {
+      /* The registry only contains named types.  */
+      return;
+    }
+
   for (i = 0; i < reg->num_types; i++)
     {
-      other_name = rec_type_name (reg->types[i]);
-      if (type_name && other_name
-          && (strcmp (type_name, other_name) == 0))
+      if (strcmp (reg->types[i].type_name, type_name) == 0)
         {
           /* Replace this entry.  */
-          rec_type_destroy (reg->types[i]);
+          if (reg->types[i].type)
+            {
+              rec_type_destroy (reg->types[i].type);
+            }
+          free (reg->types[i].type_name);
+          free (reg->types[i].to_type);
           break;
         }
     }
 
-  reg->types[i] = type;
+  reg->types[i].type_name = strdup (rec_type_name (type));
+  reg->types[i].type = type;
+  reg->types[i].to_type = NULL;
+  reg->types[i].visited_p = false;
+  if (i == reg->num_types)
+    {
+      /* We added a new entry.  */
+      reg->num_types++;
+    }
+}
+
+void
+rec_type_reg_add_synonym (rec_type_reg_t reg,
+                          const char *type_name,
+                          const char *to_type)
+{
+  size_t i;
+
+  for (i = 0; i < reg->num_types; i++)
+    {
+      if (strcmp (reg->types[i].type_name, type_name) == 0)
+        {
+          /* Replace this entry.  */
+          if (reg->types[i].type)
+            {
+              rec_type_destroy (reg->types[i].type);
+            }
+          free (reg->types[i].type_name);
+          free (reg->types[i].to_type);
+          break;
+        }
+    }
+
+  reg->types[i].type_name = strdup (type_name);
+  reg->types[i].to_type = strdup (to_type);
+  reg->types[i].type = NULL;
+  reg->types[i].visited_p = false;
   if (i == reg->num_types)
     {
       /* We added a new entry.  */
@@ -656,18 +714,38 @@ rec_type_reg_get (rec_type_reg_t reg,
 {
   size_t i;
   rec_type_t type = NULL;
-  const char *other_name = NULL;
 
   for (i = 0; i < reg->num_types; i++)
     {
-      other_name = rec_type_name (reg->types[i]);
-      if (other_name && (strcmp (type_name, other_name) == 0))
+      if (strcmp (reg->types[i].type_name, type_name) == 0)
         {
-          type = reg->types[i];
-          break;
+          if (reg->types[i].type)
+            {
+              /* Type found.  */
+              type = reg->types[i].type;
+              break;
+            }
+          else
+            {
+              /* Loop detection.  */
+              if (reg->types[i].visited_p)
+                {
+                  break;
+                }
+              
+              /* Mark this entry as visited and follow the name.  */
+              reg->types[i].visited_p = true;
+              type = rec_type_reg_get (reg, reg->types[i].to_type);
+            }
         }
     }
 
+  /* Reset the visited flags.  */
+  for (i = 0; i < reg->num_types; i++)
+    {
+      reg->types[i].visited_p = false;
+    }
+  
   return type;
 }
 

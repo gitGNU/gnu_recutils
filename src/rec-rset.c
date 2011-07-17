@@ -989,10 +989,10 @@ rec_rset_update_field_props (rec_rset_t rset)
                       if (props->type)
                         {
                           rec_type_destroy (props->type);
-                          props->type = type;
                         }
                       free (props->type_name);
                       props->type_name = NULL;
+                      props->type = type;
                     }
                   
                   free (p);
@@ -1032,9 +1032,9 @@ rec_rset_update_types (rec_rset_t rset)
   rec_field_name_t field_name;
   char *field_value;
   rec_field_name_t typedef_fname;
-  char *p;
+  char *p, *q = NULL;
   rec_type_t type;
-  char *type_name;
+  char *type_name, *to_type = NULL;
   
 
   /* Scan the record descriptor for %typedef directives and update the
@@ -1074,6 +1074,23 @@ rec_rset_update_types (rec_rset_t rset)
                       /* Create and insert the type in the type
                          registry.  */
                       rec_type_reg_add (rset->type_reg, type);
+                    }
+                  else
+                    {
+                      /* This could be a synonym.  Try to parse a type
+                         name and, if the operation succeeds, insert
+                         the synonym in the registry.  */
+                      rec_skip_blanks (&p);
+                      q = p;
+                      if (rec_parse_regexp (&q,
+                                            "^" REC_TYPE_NAME_RE "[ \t\n]*",
+                                            NULL))
+                        {
+                          rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &to_type);
+                          rec_type_reg_add_synonym (rset->type_reg,
+                                                    type_name,
+                                                    to_type);
+                        }
                     }
                   
                   free (type_name);

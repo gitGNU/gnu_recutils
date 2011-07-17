@@ -1,5 +1,21 @@
 2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: support for synonyms in type registries.
+	* src/rec-rset.c (rec_rset_update_types): Manage the declaration
+	of synonyms in %typedef entries.
+
+	* src/rec-types.c: New struct rec_type_reg_entry_s.
+	(rec_type_reg_destroy): Adapted to the new structure of type
+	registry entries.
+	(rec_type_reg_add): Likewise.
+	(rec_type_reg_get): Likewise.
+	(rec_type_reg_add_synonym): New function.
+
+	* src/rec-int.c (rec_int_check_descriptor): Check for the
+	existance of referred named types.
+
+2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: support for %typedef.
 	* src/rec-int.c (rec_int_check_descriptor): Verify %typedef
 	entries.

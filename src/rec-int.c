@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-17 12:42:25 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-17 13:38:49 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -682,7 +682,8 @@ rec_int_check_descriptor (rec_rset_t rset,
   char *auto_field_name_str;
   size_t i;
   rec_type_t type;
-  char *p = NULL;
+  char *type_name = NULL;
+  char *p, *q = NULL;
 
   res = 0;
 
@@ -794,17 +795,43 @@ before the type specification\n"),
               /* Check the type descriptor.  Note that it can be
                  either a type specification or a type name.  */
               rec_skip_blanks (&p);
-              if (!rec_type_descr_p (p)
-                  && !rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE "[ \t\n]*$", NULL))
+              if (!rec_type_descr_p (p))
                 {
-                  /* XXX: make rec_type_descr_p to report more details.  */
-                  asprintf (&tmp,
-                             _("%s:%s: error: invalid type specification\n"),
-                             rec_field_source (field),
-                             rec_field_location_str (field));
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
-                  res++;
+                  q = p;
+                  if (rec_parse_regexp (&q, "^" REC_TYPE_NAME_RE "[ \t\n]*$",
+                                        NULL))
+                    {
+                      /* The named type shall exist in the record set
+                         type registry.
+                      
+                         XXX: but this is probably a warning rather
+                         than an error.  */
+
+                      rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name);
+                      if (!rec_type_reg_get (rec_rset_get_type_reg (rset), type_name))
+                        {
+                          asprintf (&tmp,
+                                    _("%s:%s: error: the referred type %s \
+does not exist\n"),
+                                    rec_field_source (field),
+                                    rec_field_location_str (field),
+                                    type_name);
+                          rec_buf_puts (tmp, errors);
+                          free (tmp);
+                          res++;
+                        }
+                    }
+                  else
+                    {
+                      /* XXX: make rec_type_descr_p to report more details.  */
+                      asprintf (&tmp,
+                                _("%s:%s: error: invalid typedef specification\n"),
+                                rec_field_source (field),
+                                rec_field_location_str (field));
+                      rec_buf_puts (tmp, errors);
+                      free (tmp);
+                      res++;
+                    }
                 }
             }
           else if (rec_field_name_equal_p (field_name, typedef_fname))
@@ -827,17 +854,43 @@ specification\n"),
               /* Check the type descriptor.  Note that it can be
                  either a type specification or a type name.  */
               rec_skip_blanks (&p);
-              if (!rec_type_descr_p (p)
-                  && !rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE "[ \t\n]*$", NULL))
+              if (!rec_type_descr_p (p))
                 {
-                  /* XXX: make rec_type_descr_p to report more details.  */
-                  asprintf (&tmp,
-                             _("%s:%s: error: invalid type specification\n"),
-                             rec_field_source (field),
-                             rec_field_location_str (field));
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
-                  res++;
+                  q = p;
+                  if (rec_parse_regexp (&q, "^" REC_TYPE_NAME_RE "[ \t\n]*$",
+                                        NULL))
+                    {
+                      /* The named type shall exist in the record set
+                         type registry.
+                      
+                         XXX: but this is probably a warning rather
+                         than an error.  */
+
+                      rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name);
+                      if (!rec_type_reg_get (rec_rset_get_type_reg (rset), type_name))
+                        {
+                          asprintf (&tmp,
+                                    _("%s:%s: error: the referred type %s \
+does not exist\n"),
+                                    rec_field_source (field),
+                                    rec_field_location_str (field),
+                                    type_name);
+                          rec_buf_puts (tmp, errors);
+                          free (tmp);
+                          res++;
+                        }
+                    }
+                  else
+                    {
+                      /* XXX: make rec_type_descr_p to report more details.  */
+                      asprintf (&tmp,
+                                _("%s:%s: error: invalid typedef specification\n"),
+                                rec_field_source (field),
+                                rec_field_location_str (field));
+                      rec_buf_puts (tmp, errors);
+                      free (tmp);
+                      res++;
+                    }
                 }
             }
           else if (rec_field_name_equal_p (field_name, mandatory_fname)

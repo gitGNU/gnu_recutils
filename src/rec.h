@@ -371,6 +371,12 @@ void rec_type_reg_destroy (rec_type_reg_t reg);
    name already exists in the registry then it gets replaced.  */
 void rec_type_reg_add (rec_type_reg_t reg, rec_type_t type);
 
+/* Insert a new type in the type registry as a synonim of another
+   type.  If a type with the same name already exists in the registry
+   then it gets replaced.  */
+void rec_type_reg_add_synonym (rec_type_reg_t reg, const char *type_name,
+                               const char *to_name);
+
 /* Get the type named TYPE_NAME stored in REG.  If it does not exist
    NULL is returned.  */
 rec_type_t rec_type_reg_get (rec_type_reg_t reg, const char *type_name);
