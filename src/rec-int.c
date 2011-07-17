@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-16 21:09:22 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-17 12:42:25 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -669,6 +669,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t rec_fname;
   rec_field_name_t key_fname;
   rec_field_name_t type_fname;
+  rec_field_name_t typedef_fname;
   rec_field_name_t mandatory_fname;
   rec_field_name_t unique_fname;
   rec_field_name_t prohibit_fname;
@@ -681,6 +682,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   char *auto_field_name_str;
   size_t i;
   rec_type_t type;
+  char *p = NULL;
 
   res = 0;
 
@@ -691,6 +693,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       rec_fname = rec_parse_field_name_str ("%rec:");
       key_fname = rec_parse_field_name_str ("%key:");
       type_fname = rec_parse_field_name_str ("%type:");
+      typedef_fname = rec_parse_field_name_str ("%typedef:");
       mandatory_fname = rec_parse_field_name_str ("%mandatory:");
       unique_fname = rec_parse_field_name_str ("%unique:");
       prohibit_fname = rec_parse_field_name_str ("%prohibit:");
@@ -772,8 +775,6 @@ rec_int_check_descriptor (rec_rset_t rset,
 
           if (rec_field_name_equal_p (field_name, type_fname))
             {
-              char *p;
-
               /* Check for the list of fields.  */
               p = field_value;
               rec_skip_blanks (&p);
@@ -790,8 +791,44 @@ before the type specification\n"),
                   res++;
                 }
 
-              /* Check the type descriptor.  */
-              if (!rec_type_descr_p (p))
+              /* Check the type descriptor.  Note that it can be
+                 either a type specification or a type name.  */
+              rec_skip_blanks (&p);
+              if (!rec_type_descr_p (p)
+                  && !rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE "[ \t\n]*$", NULL))
+                {
+                  /* XXX: make rec_type_descr_p to report more details.  */
+                  asprintf (&tmp,
+                             _("%s:%s: error: invalid type specification\n"),
+                             rec_field_source (field),
+                             rec_field_location_str (field));
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++;
+                }
+            }
+          else if (rec_field_name_equal_p (field_name, typedef_fname))
+            {
+              /* Check for the type name.  */
+              p = field_value;
+              rec_skip_blanks (&p);
+              if (!rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, NULL))
+                {
+                  asprintf (&tmp,
+                            _("%s:%s: error: expected a type name before the type \
+specification\n"),
+                            rec_field_source (field),
+                            rec_field_location_str (field));
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++;
+                }
+              
+              /* Check the type descriptor.  Note that it can be
+                 either a type specification or a type name.  */
+              rec_skip_blanks (&p);
+              if (!rec_type_descr_p (p)
+                  && !rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE "[ \t\n]*$", NULL))
                 {
                   /* XXX: make rec_type_descr_p to report more details.  */
                   asprintf (&tmp,
@@ -876,6 +913,7 @@ before the type specification\n"),
       rec_field_name_destroy (rec_fname);
       rec_field_name_destroy (key_fname);
       rec_field_name_destroy (type_fname);
+      rec_field_name_destroy (typedef_fname);
       rec_field_name_destroy (mandatory_fname);
       rec_field_name_destroy (unique_fname);
       rec_field_name_destroy (prohibit_fname);

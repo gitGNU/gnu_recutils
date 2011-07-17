@@ -109,6 +109,7 @@ typedef struct rec_field_name_s *rec_field_name_t;
 #define REC_FNAME_RE                                                  \
   REC_FNAME_PART_RE "(" ":" REC_FNAME_PART_RE ")*:?"
 
+#define REC_TYPE_NAME_RE "[a-zA-Z][a-zA-Z0-9_-]*"
 #define REC_URL_REGEXP "(file|http|ftp|https)://[^ \t]+"
 #define REC_FILE_REGEXP "(/?[^/ \t\n]+)+"
 

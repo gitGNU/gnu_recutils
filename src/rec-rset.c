@@ -500,7 +500,7 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
   rset->descriptor = record;
 
   /* Update the types registry and the auto fields.  */
-  /* rec_rset_update_types (rset); */
+  rec_rset_update_types (rset);
   rec_rset_update_field_props (rset);
   rec_rset_update_size_constraints (rset);
 }
@@ -712,7 +712,7 @@ rec_rset_rename_field (rec_rset_t rset,
     }
 
   /* Update the types registry.  */
-  /*  rec_rset_update_types (rset); */
+  rec_rset_update_field_props (rset);
 
   /* Cleanup.  */
   rec_field_name_destroy (type_field_name);
@@ -915,6 +915,8 @@ rec_rset_update_field_props (rec_rset_t rset)
   rec_fex_t fex;
   size_t i;
   rec_type_t type;
+  char *p, *q = NULL;
+  char *type_name = NULL;
 
   /* Reset the field properties.  */
   props = rset->field_props;
@@ -944,35 +946,55 @@ rec_rset_update_field_props (rec_rset_t rset)
           field_name = rec_field_name (field);
           field_value = rec_field_value (field);
 
-          /* Update fields of anonymous types.  Only valid %type:
-             descriptors are considered.  Invalid descriptors are
-             ignored.  */
+          /* Update field types.  Only valid %type: descriptors are
+             considered.  Invalid descriptors are ignored.  */
           if (rec_field_name_equal_p (field_name, type_fname)
               && rec_rset_type_field_p (field_value))
             {
               fex = rec_rset_type_field_fex (field_value);
               for (i = 0; i < rec_fex_size (fex); i++)
                 {
-                  char *p;
-
                   p = rec_rset_type_field_type (field_value);
                   type = rec_type_new (p);
-                  if (type)
+                  if (!type)
                     {
-                      /* Note that if the field is already associated
-                         with an anonymous type, it is destroyed. */
+                      /* p is the name of the type.  Set it as a field
+                         property.  Note that if the field is already
+                         associated with an anonymous type, or a type
+                         name, they are replaced.  */
+
+                      q = p;
+                      rec_parse_regexp (&q, "^" REC_TYPE_NAME_RE, &type_name);
                       props = rec_rset_get_props (rset,
                                                   rec_fex_elem_field_name (rec_fex_get (fex, i)),
                                                   true);
                       if (props->type)
                         {
                           rec_type_destroy (props->type);
+                          props->type = NULL;
+                        }
+                      free (props->type_name);
+                      props->type_name = type_name;
+                    }
+                  else
+                    {
+                      /* Set the type as a field property.  Note that
+                         if the field is already associated with an
+                         anonymous type, or a type name, they are
+                         replaced.  */
+
+                      props = rec_rset_get_props (rset,
+                                                  rec_fex_elem_field_name (rec_fex_get (fex, i)),
+                                                  true);
+                      if (props->type)
+                        {
+                          rec_type_destroy (props->type);
+                          props->type = type;
                         }
                       free (props->type_name);
                       props->type_name = NULL;
-                      props->type = type;
                     }
-
+                  
                   free (p);
                 }
             }
@@ -1005,7 +1027,65 @@ rec_rset_update_field_props (rec_rset_t rset)
 static void
 rec_rset_update_types (rec_rset_t rset)
 {
-  /* XXX: writeme */
+  rec_field_t field;
+  rec_record_elem_t record_elem;
+  rec_field_name_t field_name;
+  char *field_value;
+  rec_field_name_t typedef_fname;
+  char *p;
+  rec_type_t type;
+  char *type_name;
+  
+
+  /* Scan the record descriptor for %typedef directives and update the
+     types registry accordingly.  */
+  if (rset->descriptor)
+    {
+      /* Create some field names.  */
+      typedef_fname = rec_parse_field_name_str ("%typedef:");
+
+      /* Purge the registry.  */
+      rec_type_reg_destroy (rset->type_reg);
+      rset->type_reg = rec_type_reg_new ();
+
+      /* Iterate on the fields of the descriptor.  */
+      record_elem = rec_record_first_field (rset->descriptor);
+      while (rec_record_elem_p (record_elem))
+        {
+          field = rec_record_elem_field (record_elem);
+          field_name = rec_field_name (field);
+          field_value = rec_field_value (field);
+
+          if (rec_field_name_equal_p (field_name, typedef_fname))
+            {
+              p = field_value;
+              rec_skip_blanks (&p);
+
+              /* Get the name of the type.  */
+              if (rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name))
+                {
+                  /* Get the type.  */
+                  type = rec_type_new (p);
+                  if (type)
+                    {
+                      /* Set the name of the type.  */
+                      rec_type_set_name (type, type_name);
+
+                      /* Create and insert the type in the type
+                         registry.  */
+                      rec_type_reg_add (rset->type_reg, type);
+                    }
+                  
+                  free (type_name);
+                }
+            }
+
+          record_elem = rec_record_next_field (rset->descriptor,
+                                               record_elem);
+        }
+
+      rec_field_name_destroy (typedef_fname);
+    }
 }
 
 static bool
@@ -1026,14 +1106,10 @@ rec_rset_type_field_p (const char *str)
     }
   rec_skip_blanks (&p);
 
-  /* Check the type description.  */
+  /* Check the type description, or the name of a type.  */
 
-  if (!rec_type_descr_p (p))
-    {
-      return false;
-    }
-
-  return true;
+  return (rec_type_descr_p (p)
+          || rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE "[ \t\n]*$", NULL));
 }
 
 static rec_fex_t

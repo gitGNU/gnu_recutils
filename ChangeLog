@@ -1,3 +1,22 @@
+2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: support for %typedef.
+	* src/rec-int.c (rec_int_check_descriptor): Verify %typedef
+	entries.
+
+	* src/rec-types.c: REC_TYPE_NAME_RE renamed to REC_TYPE_CLASS_RE
+	to not collide with the macro of the same name defined in rec.h.
+
+	* src/rec.h (REC_TYPE_NAME_RE): New constant.
+
+	* src/rec-int.c (rec_int_check_descriptor): Accept type names in
+	type descriptions.
+
+	* src/rec-rset.c (rec_rset_rename_field): Update field props after
+	the rename of a field.
+	(rec_rset_update_types): Rewritten to process %typedef entries.
+	(rec_rset_type_field_p): Allow %type entries with named types.
+
 2011-07-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: manage anonymous types using the fields props structures.

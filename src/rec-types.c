@@ -99,7 +99,7 @@
   "$"
   
 /* Regular expression denoting a type name.  */
-#define REC_TYPE_NAME_RE                               \
+#define REC_TYPE_CLASS_RE                               \
   "(" REC_TYPE_INT_NAME   "|" REC_TYPE_RANGE_NAME  "|" \
       REC_TYPE_REAL_NAME  "|" REC_TYPE_SIZE_NAME   "|" \
       REC_TYPE_LINE_NAME  "|" REC_TYPE_REGEXP_NAME "|" \
@@ -316,7 +316,7 @@ rec_type_new (char *str)
   rec_skip_blanks (&p);
 
   /* Get the type kind.  */
-  if (!rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_kind_str))
+  if (!rec_parse_regexp (&p, "^" REC_TYPE_CLASS_RE, &type_kind_str))
     {
       free (new);
       new = NULL;
