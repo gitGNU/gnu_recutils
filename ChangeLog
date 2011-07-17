@@ -1,5 +1,35 @@
 2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: system tests for typedefs.
+	* torture/utils/recfix.sh (typedef-valid): New input file.
+	(typedef-valid-xfail): Likewise.
+	(typedef-valid-with-blanks): Likewise.
+	(typedef-valid-with-blanks-xfail): Likewise.
+	(typedef-valid-order): Likewise.
+	(typedef-valid-order-xfail): Likewise.
+	(typedef-valid-chain): Likewise.
+	(typedef-valid-chain-xfail): Likewise.
+	(typedef-valid-multiple): Likewise.
+	(typedef-valid-multiple-xfail): Likewise.
+	(typedef-invalid-bad-type): Likewise.
+	(typedef-invalid-chain-undefined): Likewise.
+	(typedef-invalid-chain-loop): Likewise.
+	(recfix-typedef-valid): New test.
+	(recfix-typedef-valid-xfail): Likewise.
+	(recfix-typedef-valid-with-blanks): Likewise.
+	(recfix-typedef-valid-with-blanks-xfail): Likewise.
+	(recfix-typedef-valid-order): Likewise.
+	(recfix-typedef-valid-order-xfail): Likewise.
+	(recfix-typedef-valid-chain): Likewise.
+	(recfix-typedef-valid-chain-xfail): Likewise.
+	(recfix-typedef-valid-multiple): Likewise.
+	(recfix-typedef-valid-multiple-xfail): Likewise.
+	(recfix-typedef-invalid-bad-type): Likewise.
+	(recfix-typedef-invalid-chain-undefined): Likewise.
+	(recfix-typedef-invalid-chain-loop): Likewise.
+
+2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: documentation for %typedef.
 	* doc/recutils.texi (Field Types): Rewritten to introduce field
 	types in a clearer way.

@@ -364,6 +364,122 @@ test_declare_input_file size-several \
 %size: < 10
 '
 
+test_declare_input_file typedef-valid \
+'%rec: foo
+%typedef: Id_t int
+%type: Id Id_t
+
+Id: 10
+'
+
+test_declare_input_file typedef-valid-xfail \
+'%rec: foo
+%typedef: Id_t int
+%type: Id Id_t
+
+Id: xx
+'
+
+test_declare_input_file typedef-valid-with-blanks \
+'%rec: foo
+%typedef:     
++ Id_t int
+%type: Id Id_t    
++    
+
+Id: 10
+'
+
+test_declare_input_file typedef-valid-with-blanks-xfail \
+'%rec: foo
+%typedef:     
++ Id_t int
+%type: Id Id_t    
++    
+
+Id: xx
+'
+
+test_declare_input_file typedef-valid-order \
+'%rec: foo
+%type: Id Id_t
+%typedef: Id_t int
+
+Id: 10
+'
+
+test_declare_input_file typedef-valid-order-xfail \
+'%rec: foo
+%type: Id Id_t
+%typedef: Id_t int
+
+Id: xx
+'
+
+test_declare_input_file typedef-valid-chain \
+'%rec: foo
+%typedef: Foo_t Bar_t
+%typedef: Bar_t Baz_t
+%typedef: Baz_t int
+%type: Foo Foo_t
+
+Foo: 10
+'
+
+test_declare_input_file typedef-valid-chain-xfail \
+'%rec: foo
+%typedef: Foo_t Bar_t
+%typedef: Bar_t Baz_t
+%typedef: Baz_t int
+%type: Foo Foo_t
+
+Foo: xx
+'
+
+test_declare_input_file typedef-valid-multiple \
+'%rec: foo
+%typedef: Foo_t int
+%typedef: Foo_t email
+%type: Foo Foo_t
+
+Foo: foo@bar.baz
+'
+
+test_declare_input_file typedef-valid-multiple-xfail \
+'%rec: foo
+%typedef: Foo_t int
+%typedef: Foo_t email
+%type: Foo Foo_t
+
+Foo: 10
+'
+
+test_declare_input_file typedef-invalid-bad-type \
+'%rec: foo
+%typedef: Id_t int invalid
+%type: Id Id_t
+
+Id: 10
+'
+
+test_declare_input_file typedef-invalid-chain-undefined \
+'%rec: foo
+%typedef: Id_t Undefined_t
+%type: Id Id_t
+
+Id: 10
+'
+
+test_declare_input_file typedef-invalid-chain-loop \
+'%rec: foo
+%typedef: Foo_t Bar_t
+%typedef: Bar_t Baz_t
+%typedef: Baz_t Foo_t
+%type: Id Foo_t
+
+Id: 10
+'
+
 #
 # Declare tests.
 #
@@ -579,6 +695,76 @@ test_tool recfix-size-several xfail \
           recfix \
           '' \
           size-several
+
+test_tool recfix-typedef-valid ok \
+          recfix \
+          '' \
+          typedef-valid \
+''
+
+test_tool recfix-typedef-valid-xfail xfail \
+          recfix \
+          '' \
+          typedef-valid-xfail
+
+test_tool recfix-typedef-valid-with-blanks ok \
+          recfix \
+          '' \
+          typedef-valid-with-blanks \
+''
+
+test_tool recfix-typedef-valid-with-blanks-xfail xfail \
+          recfix \
+          '' \
+          typedef-valid-with-blanks-xfail
+
+test_tool recfix-typedef-valid-order ok \
+          recfix \
+          '' \
+          typedef-valid-order \
+''
+
+test_tool recfix-typedef-valid-order-xfail xfail \
+          recfix \
+          '' \
+          typedef-valid-order-xfail
+
+test_tool recfix-typedef-valid-chain ok \
+          recfix \
+          '' \
+          typedef-valid-chain \
+''
+
+test_tool recfix-typedef-valid-chain-xfail xfail \
+          recfix \
+          '' \
+          typedef-valid-chain-xfail
+
+test_tool recfix-typedef-valid-multiple ok \
+          recfix \
+          '' \
+          typedef-valid-multiple \
+''
+
+test_tool recfix-typedef-valid-multiple-xfail xfail \
+          recfix \
+          '' \
+          typedef-valid-multiple-xfail
+
+test_tool recfix-typedef-invalid-bad-type xfail \
+          recfix \
+          '' \
+          typedef-invalid-bad-type
+
+test_tool recfix-typedef-invalid-chain-undefined xfail \
+          recfix \
+          '' \
+          typedef-invalid-chain-undefined
+
+test_tool recfix-typedef-invalid-chain-loop xfail \
+          recfix \
+          '' \
+          typedef-invalid-chain-loop
 
 #
 # Cleanup.
