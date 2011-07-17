@@ -1,5 +1,18 @@
 2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: documentation for %typedef.
+	* doc/recutils.texi (Field Types): Rewritten to introduce field
+	types in a clearer way.
+	(Declaring types): New section.
+	(Type descriptions): New section.
+	(Escalar types): Rewritten as a subsection.
+	(String types): Likewise.
+	(Enumerated types): Likewise.
+	(Other types): Likewise.
+	(Types and fields): New section.
+
+2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: support for synonyms in type registries.
 	* src/rec-rset.c (rec_rset_update_types): Manage the declaration
 	of synonyms in %typedef entries.

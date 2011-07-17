@@ -617,36 +617,164 @@ kind of markers:
 @node Field Types
 @chapter Field Types
 
-The default way to interpret the contents of fields in recfiles is as
-unrestricted text strings.  However, sometimes it is useful to impose
-some restrictions on the strings composing the values of fields. It is
-thus possible to declare in a record descriptor that fields with a
-given name shall contain values of a given type.  The syntax is:
+Field values are, by default, unrestricted text strings.  However, it
+is often useful to impose some restrictions on the values of certain
+fields.  For example, consider the following record:
 
 @example
-%type: @var{field_list} @var{type} @var{type_description}
+Id: 111
+Name: Jose E. Marchesi
+Age: 30
+MaritalStatus: single
+Phone: +49 666 666 66
+@end example
+
+Where @code{Id} is a numeric identifier for a person. @code{Name} will
+never use several lines. @code{Age} will tipically be in the range
+@code{0..120}, and there are only a few valid values for
+@code{MaritalStatus}: single, married and widow.  Phones may be
+restricted to some standard format as well to be valid.  All those
+restrictions (and many others) can be enforced by using @dfn{field
+types}.
+
+There are two kind of field types: anonymous and named.  Those are
+described in the following subsections.
+
+@menu
+* Declaring types::     Declaration of types in record descriptors.
+* Types and fields::    Associating fields with types.
+* Type descriptions::   List of supported types.
+@end menu
+
+@node Declaring types
+@section Declaring types
+
+A type can be declared in a record descriptor by using the
+@code{%typedef} special field.  The syntax is:
+
+@example
+%typedef: @var{type_name} @var{type_description}
 @end example
 
 @noindent
-where @var{field_list} is a list of field names separated by
-commas. Fields having those names will be of this type in the current
-record set, @var{type} is the name of a supported field type and
-@var{type_description} is additional information that varies from type
-to type.
+Where @var{type_name} is the name of the new type, and
+@var{type_description} a description which varies depending of the
+kind of type.  For example, this is how a type @code{Age_t} could
+be defined as numbers in the range @code{0..120}:
 
-The following sections describe the supported types.
+@example
+%typedef: Age_t range 0 120
+@end example
+
+@noindent
+Type names are identifiers having the following syntax:
+
+@example
+[a-zA-Z][a-zA-Z0-9_-]*
+@end example
+
+@noindent
+Even though any identifier with that syntax could be used for types,
+it is a good idea to consistently follow some convention to help
+distinguishing type names from field names.  For example, the
+@code{_t} suffix could be used for types.
+
+A type can be declared to be a synonym of another type.  The syntax
+is:
+
+@example
+%typedef: @var{type_name} @var{other_type_name}
+@end example
+
+@noindent
+Where @var{type_name} is declared to be a synonym of
+@var{other_type_name}.  This is useful to avoid duplicated type
+descriptions.  For example, consider the following example:
+
+@example
+%typedef: Id_t          int
+%typedef: Item_t        Id_t
+%typedef: Transaction_t Id_t
+@end example
+
+@noindent
+Both @code{Item_t} and @code{Transaction_t} are synonyms for the type
+@code{Id_t}.  They are both numeric identifiers.
+
+The order of the @code{%typedef} fields is not relevant.  In
+particular, a type definition can reference other type that is defined
+below.  The previous example could have been written as:
+
+@example
+%typedef: Item_t        Id_t
+%typedef: Transaction_t Id_t
+%typedef: Id_t          int
+@end example
+
+@noindent
+Integrity checks will complain if undefined types are referenced, and
+if there are loops (direct or indirect) in type declarations.  For
+example, the following set of declarations contains a loop and are
+thus invalid:
+
+@example
+%typedef: A_t B_t
+%typedef: B_t C_t
+%typedef: C_t A_t
+@end example
+
+@noindent
+The scope of a type is the record descriptor where it is defined.
+
+@node Types and fields
+@section Types and fields
+
+Fields can be declared to have a given type by using the @code{%type}
+special field in a record descriptor.  The synopsis is:
+
+@example
+%type: @var{field_list} @var{type_name_or_description}
+@end example
+
+@noindent
+Where @var{field_list} is a list of field names separated by
+commas.  @var{type_name_or_description} can be either a type name
+declared with @code{%typedef}, or a type description.  Type names are
+useful when several fields are declared to be of the same type:
+
+@example
+%typedef: Id_t    int
+%type:    Id      Id_t
+%type:    Product Id_t
+@end example
+
+@noindent
+Anonymous types can be used by writing a type description instead of a
+type name.  They help to avoid superfluous type declarations.  A
+record containing a single Id field, for example, can be defined
+without having to use a @code{%typedef} in the following way:
+
+@example
+%rec: Task
+%type: Id int
+@end example
+
+@node Type descriptions
+@section Type descriptions
+
+The following sections describe the supported kind of types in the rec
+format.
 
 @menu
 * Escalar types::       Numbers and ranges.
-* String types::        Lines, limited strings and regular
-                          expressions. 
+* String types::        Lines, limited strings and regular expressions. 
 * Enumerated types::    Enumerations and boolean values.
 * Time related types::  Dates and times.
 * Other types::         Emails, fields, @dots{}
 @end menu
 
 @node Escalar types
-@section Escalar types
+@subsection Escalar types
 
 The rec format supports the declaration of fields of the following
 escalar types: integer numbers, ranges and reals.
@@ -655,60 +783,81 @@ Signed @dfn{integers} are supported by using the @code{integer}
 declaration:
 
 @example
-%type: Id int
+%typedef: Id_t int
 @end example
 
-Given that declaration, @code{Id} fields must contain integers, that
-may be negative.  Valid examples are:
+@noindent
+Given that declaration, Fields of type @code{Id_t} must contain
+integers, that may be negative.  Valid examples are:
 
 @example
+%type: Id Id_t
+
 Id: 100
 Id: -23
 Id: 0020
 @end example
 
+@noindent
 Sometimes it is desirable to reduce the @dfn{range} of integers allowed in a
 field.  That can be achieved by using a range type declaration:
 
 @example
-%type: PercentComplete range 0 100
+%typedef: Percentage_t range 0 100
 @end example
 
+@noindent
 Note that it is possible to omit the minimum index in ranges.  In that
 case it is implicitly zero:
 
 @example
-%type: PercentComplete range 100
+%typedef: Percentage_t range 100
 @end example
 
-@dfn{Real} fields can be declared with the @code{real} type
-specifier.  A wide range of real numbers can be represented this way,
-only limited by the underlying floating point representation.  Example
-of the declaration of real fields and their usage:
+@noindent
+@dfn{Real} fields can be declared with the @code{real} type specifier.
+A wide range of real numbers can be represented this way, only limited
+by the underlying floating point representation.  For example:
 
 @example
-%type: Width,Height real
+%typedef: Longitude_t real
+@end example
+
+@noindent
+Examples of fields of type real:
+
+@example
+%rec: Rectangle
+%typedef: Longitude_t real
+%type: Width  Longitude_t
+%type: Height Longitude_t
 
 Width: 25.01
 Height: 10
 @end example
 
 @node String types
-@section String types
+@subsection String types
 
 The @code{line} field type specifier can be used to restrict the value
 of a field to a single line, i.e.@: no newline characters are allowed.
-An example of a declaration and some fields:
+For example, a type for proper names could be declared as:
 
 @example
-%type: Name line
+%typedef: Name_t line
+@end example
 
+@noindent
+Examples of fields of type line:
+
+@example
 Name: Mr. Foo Bar
 Name: Mss. Bar Baz
 Name: This is
 + invalid
 @end example
 
+@noindent
 Sometimes it is the maximum size of the field value that shall be
 restricted.  The @code{size} field type specifier can be used to
 define the maximum number of characters a field value can have.  For
@@ -717,41 +866,50 @@ paper-based forms system allowing up to 25 characters width entries,
 we could declare the entries as:
 
 @example
-%type: Address size 25
+%typedef: Address_t size 25
 @end example
 
+@noindent
 Arbitrary restrictions can be defined by using regular expressions.
 The @dfn{regexp} field type specifier introduces an ERE (extended
 regular expression) that will be matched against fields having that
 name.  The synopsis is:
 
 @example
-%type: Baz regexp /RE/
+%typedef: @var{type_name} regexp /@var{re}/
 @end example
 
-For example, consider the @code{ID_card} field containing numbers of
-ID cards of some country:
+@noindent
+For example, consider the @code{Id_t} type designed to represent
+the encoding of the identifier of ID cards in some country:
 
 @example
-%type: ID_card regexp /[0-9]@{9@}[a-zA-Z]/
-
-ID_card: 123456789Z
-ID_card: invalid id card
+%typedef: Id_t regexp /[0-9]@{9@}[a-zA-Z]/
 @end example
 
+@noindent
+Examples of fields of type @code{Id_t} are:
+
+@example
+IDCard: 123456789Z
+IDCard: invalid id card
+@end example
+
+@noindent
 Note that the slashes delimiting the @code{RE} can be replaced with
 any other character that is not itself used as part of the regexp.
 That is useful in some cases such as:
 
 @example
-%type: Filename regexp |(/[^/]/?)+|
+%typedef: Path_t regexp |(/[^/]/?)+|
 @end example
 
+@noindent
 The regexp flavor supported in recfiles are the POSIX EREs plus
 several GNU extensions.  @xref{Regular Expressions}.
 
 @node Enumerated types
-@section Enumerated types
+@subsection Enumerated types
 
 Fields of this type contain symbols taken from an enumeration.
 
@@ -763,72 +921,77 @@ following regexp:
 [a-zA-Z0-9][a-zA-Z0-9_-]*
 @end example
 
+@noindent
 The symbols are separated by blank characters (including newlines).
-
 For example:
 
 @example
-%type: Status enum NEW STARTED DONE CLOSED
-%type: Day enum Monday Tuesday Wednesday Thursday Friday Saturday Sunday
+%typedef: Status_t enum NEW STARTED DONE CLOSED
+%typedef: Day_t enum Monday Tuesday Wednesday Thursday Friday
++                    Saturday Sunday
 @end example
 
+@noindent
 It is possible to insert comments when describing an enum type.  The
-comments are delimited by parenthesis.  The contents of the comments
-can be any character but parenthesis.  For example:
+comments are delimited by parenthesis pairs.  The contents of the
+comments can be any character but parenthesis.  For example:
 
 @example
-%rec: Task
-%type: status enum
+%typedef: TaskStatus_t enum
 + NEW         (The task was just created)
 + IN_PROGRESS (Task started)
 + CLOSED      (Task closed)
 @end example
 
+@noindent
 @dfn{Boolean} fields can be seen as special enumerations holding the
 binary values.
 
 @example
-%type: Yesno bool
+%typedef: Yesno_t bool
 @end example
 
+@noindent
 The literals allowed in boolean fields are @code{yes/no}, @code{0/1}
 and @code{true/false}.  Examples are:
 
 @example
-Yesno: 1
-Yesno: yes
-Yesno: false
+SwitchedOn: 1
+SwitchedOn: yes
+SwitchedOn: false
 @end example
 
 @node Time related types
-@section Time related types
+@subsection Time related types
 
 The @dfn{Date} field type specifier can be used to declare dates and
 times.  The synopsis is:
 
 @example
-%type: Born date
+%typedef: @var{type_name} date
 @end example
 
+@noindent
 The several date/time syntax supported by librec is provided by the
 @code{date} module from gnulib.  @xref{Date input formats}.
 
 @node Other types
-@section Other types
+@subsection Other types
 
 The @dfn{Email} field type specifier is used to declare electronic
 addresses such as emails.  The synopsis is:
 
 @example
-%type: Email email
+%typedef: Email_t email
 @end example
 
+@noindent
 Sometimes it is useful to make fields to store field names.  For that
 purpose the @dfn{Field} field type specifier is supported.  The
 synopsis is:
 
 @example
-%type: AField field
+%typedef: Field_t field
 @end example
 
 @node Auto Generated Fields
