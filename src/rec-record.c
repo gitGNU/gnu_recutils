@@ -91,13 +91,15 @@ rec_record_new (void)
                                                        "field",
                                                        rec_record_field_disp_fn,
                                                        rec_record_field_equal_fn,
-                                                       rec_record_field_dup_fn);
+                                                       rec_record_field_dup_fn,
+                                                       NULL);
 
           record->comment_type = rec_mset_register_type (record->mset,
                                                          "comment",
                                                          rec_record_comment_disp_fn,
                                                          rec_record_comment_equal_fn,
-                                                         rec_record_comment_dup_fn);
+                                                         rec_record_comment_dup_fn,
+                                                         NULL);
         }
       else
         {

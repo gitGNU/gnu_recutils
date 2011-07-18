@@ -58,6 +58,7 @@ struct rec_mset_s
   rec_mset_disp_fn_t disp_fn[MAX_NTYPES];
   rec_mset_equal_fn_t equal_fn[MAX_NTYPES];
   rec_mset_dup_fn_t dup_fn[MAX_NTYPES];
+  rec_mset_compare_fn_t compare_fn[MAX_NTYPES];
 
   /* Statistics.  */
   int count[MAX_NTYPES];
@@ -72,6 +73,7 @@ struct rec_mset_s
 static bool rec_mset_elem_equal_fn (const void *e1,
                                     const void *e2);
 static void rec_mset_elem_dispose_fn (const void *e);
+static int  rec_mset_elem_compare_fn (const void *e1, const void *e2);
 
 /*
  * Public functions.
@@ -95,6 +97,7 @@ rec_mset_new (void)
           new->equal_fn[i] = NULL;
           new->disp_fn[i] = NULL;
           new->dup_fn[i] = NULL;
+          new->compare_fn[i] = NULL;
         }
 
       new->elem_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
@@ -144,6 +147,7 @@ rec_mset_dup (rec_mset_t mset)
           new->disp_fn[i] = mset->disp_fn[i];
           new->equal_fn[i] = mset->equal_fn[i];
           new->dup_fn[i] = mset->dup_fn[i];
+          new->compare_fn[i] = mset->compare_fn[i];
         }
 
       /* Duplicate the elements.  */
@@ -184,7 +188,8 @@ rec_mset_register_type (rec_mset_t mset,
                         char *name,
                         rec_mset_disp_fn_t disp_fn,
                         rec_mset_equal_fn_t equal_fn,
-                        rec_mset_dup_fn_t dup_fn)
+                        rec_mset_dup_fn_t dup_fn,
+                        rec_mset_compare_fn_t compare_fn)
 {
   int new_type;
 
@@ -194,6 +199,7 @@ rec_mset_register_type (rec_mset_t mset,
   mset->disp_fn[new_type] = disp_fn;
   mset->equal_fn[new_type] = equal_fn;
   mset->dup_fn[new_type] = dup_fn;
+  mset->compare_fn[new_type] = compare_fn;
 
   return new_type;
 }
@@ -531,6 +537,20 @@ rec_mset_dump (rec_mset_t mset)
   printf("END MSET\n");
 }
 
+void
+rec_mset_add_sorted (rec_mset_t mset,
+                     rec_mset_elem_t elem)
+{
+  gl_sortedlist_nx_add (mset->elem_list,
+                        rec_mset_elem_compare_fn,
+                        (void *) elem);
+  mset->count[0]++;
+  if (elem->type != 0)
+    {
+      mset->count[elem->type]++;
+    }
+}
+
 /*
  * Private functions.
  */
@@ -562,6 +582,27 @@ rec_mset_elem_dispose_fn (const void *e)
 
   elem = (rec_mset_elem_t) e;
   rec_mset_elem_destroy (elem);
+}
+
+static int
+rec_mset_elem_compare_fn (const void *e1,
+                          const void *e2)
+{
+  int result = 0;
+  rec_mset_elem_t elem1;
+  rec_mset_elem_t elem2;
+
+  elem1 = (rec_mset_elem_t) e1;
+  elem2 = (rec_mset_elem_t) e2;
+
+  if (elem1->mset->compare_fn)
+    {
+      result = (elem1->mset->compare_fn[elem1->type]) (elem1->data,
+                                                       elem2->data,
+                                                       elem2->type);
+    }
+
+  return result;
 }
 
 /* End of rec-mset.c */

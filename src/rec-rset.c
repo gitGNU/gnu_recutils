@@ -33,11 +33,15 @@
 #include <rec.h>
 #include <rec-utils.h>
 
-/* Record Set Data Structure.
+/* Record Set Data Structures.
  *
  * A record set is a set of zero or more non-special records
  * intermixed with comments, maybe preceded by a record descriptor.
  */
+
+/* The fprops structure contains useful properties associated with
+   fields.  Those properties are usually extracted from the record
+   descriptor of the rset.  */
 
 struct rec_rset_fprops_s
 {
@@ -51,6 +55,9 @@ struct rec_rset_fprops_s
 };
 
 typedef struct rec_rset_fprops_s *rec_rset_fprops_t;
+
+/* The rec_rset_s structure contains the data associated with a record
+   set.  */
 
 #define REC_RSET_MAX_ORDER 256
 
@@ -69,6 +76,9 @@ struct rec_rset_s
   /* Type registry.  */
   rec_type_reg_t type_reg;
 
+  /* Field to order by.  */
+  rec_field_name_t order_by_field;
+
   /* Size constraints.  */
   size_t min_size;
   size_t max_size;
@@ -78,6 +88,20 @@ struct rec_rset_s
   int comment_type;
   rec_mset_t mset;
 };
+
+/* The 'record_type' in the mset contains a list of pointers to
+   rec_rset_record_s structures, instead of pointers to rec_record_t.
+   This is done in this way to allow the callbacks to access to
+   properties of the containing record set by using the 'rset'
+   field.  */
+
+struct rec_rset_record_s
+{
+  rec_rset_t   rset;
+  rec_record_t record;
+};
+
+typedef struct rec_rset_record_s *rec_rset_record_t;
 
 /* Set of names for special fields */
 
@@ -95,10 +119,12 @@ static void rec_rset_update_size_constraints (rec_rset_t rset);
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
 static void rec_rset_record_disp_fn (void *data);
 static void *rec_rset_record_dup_fn (void *data);
+static int  rec_rset_record_compare_fn (void *data1, void *data2, int type2);
 
 static bool rec_rset_comment_equal_fn (void *data1, void *data2);
 static void rec_rset_comment_disp_fn (void *data);
 static void *rec_rset_comment_dup_fn (void *data);
+static int  rec_rset_comment_compare_fn (void *data1, void *data2, int type2);
 
 static bool rec_rset_type_field_p (const char *str);
 static rec_fex_t rec_rset_type_field_fex (const char *str);
@@ -136,17 +162,22 @@ rec_rset_new (void)
           /* No field properties, initially.  */
           rset->field_props = NULL;
 
+          /* No order by field, initially.  */
+          rset->order_by_field = NULL;
+
           /* register the types.  */
           rset->record_type = rec_mset_register_type (rset->mset,
                                                       "record",
                                                       rec_rset_record_disp_fn,
                                                       rec_rset_record_equal_fn,
-                                                      rec_rset_record_dup_fn);
+                                                      rec_rset_record_dup_fn,
+                                                      rec_rset_record_compare_fn);
           rset->comment_type = rec_mset_register_type (rset->mset,
                                                        "comment",
                                                        rec_rset_comment_disp_fn,
                                                        rec_rset_comment_equal_fn,
-                                                       rec_rset_comment_dup_fn);
+                                                       rec_rset_comment_dup_fn,
+                                                       rec_rset_comment_compare_fn);
         }
       else
         {
@@ -185,6 +216,11 @@ rec_rset_destroy (rec_rset_t rset)
       free (aux);
     }
 
+  if (rset->order_by_field)
+    {
+      rec_field_name_destroy (rset->order_by_field);
+    }
+
   rec_mset_destroy (rset->mset);
   free (rset);
 }
@@ -202,6 +238,15 @@ rec_rset_dup (rec_rset_t rset)
       new->mset = rec_mset_dup (rset->mset);
       new->min_size = rset->min_size;
       new->max_size = rset->max_size;
+      /* XXX: make copies of the following structures.  */
+      new->type_reg = NULL;
+      new->field_props = NULL;
+
+      if (rset->order_by_field)
+        {
+          new->order_by_field =
+            rec_field_name_dup (rset->order_by_field);
+        }
     }
 
   return new;
@@ -308,7 +353,15 @@ rec_rset_append_record (rec_rset_t rset,
   rec_rset_elem_t elem;
   
   elem = rec_rset_elem_record_new (rset, record);
-  rec_mset_append (rset->mset, elem.mset_elem);
+
+  if (rset->order_by_field)
+    {
+      rec_mset_add_sorted (rset->mset, elem.mset_elem);
+    }
+  else
+    {
+      rec_mset_append (rset->mset, elem.mset_elem);
+    }
 }
 
 void
@@ -432,9 +485,18 @@ rec_rset_elem_record_new (rec_rset_t rset,
                           rec_record_t record)
 {
   rec_rset_elem_t elem;
+  rec_rset_record_t rset_record = NULL;
+
+  /* Create the rset_record to insert in the mset.  */
+
+  rset_record = malloc (sizeof (struct rec_rset_record_s));
+  rset_record->rset = rset;
+  rset_record->record = record;
+
+  /* Insert it in the mset.  */
 
   elem.mset_elem = rec_mset_elem_new (rset->mset, rset->record_type);
-  rec_mset_elem_set_data (elem.mset_elem, (void *) record);
+  rec_mset_elem_set_data (elem.mset_elem, (void *) rset_record);
 
   return elem;
 }
@@ -474,7 +536,9 @@ rec_rset_elem_comment_p (rec_rset_t rset,
 rec_record_t
 rec_rset_elem_record (rec_rset_elem_t elem)
 {
-  return (rec_record_t) rec_mset_elem_data (elem.mset_elem);
+  rec_rset_record_t rset_record =
+    (rec_rset_record_t) rec_mset_elem_data (elem.mset_elem);
+  return rset_record->record;
 }
 
 rec_comment_t
@@ -798,7 +862,10 @@ rec_rset_source (rec_rset_t rset)
 static void
 rec_rset_record_disp_fn (void *data)
 {
-  rec_record_destroy ((rec_record_t) data);
+  rec_rset_record_t rset_record = (rec_rset_record_t) data;
+
+  rec_record_destroy (rset_record->record);
+  free (rset_record);
 }
 
 static bool
@@ -813,7 +880,155 @@ rec_rset_record_equal_fn (void *data1,
 static void *
 rec_rset_record_dup_fn (void *data)
 {
-  return (void *) rec_record_dup ((rec_record_t) data);
+  rec_rset_record_t rset_record = (rec_rset_record_t) data;
+  rec_rset_record_t new = NULL;
+
+  new = malloc (sizeof (struct rec_rset_record_s));
+  new->rset = rset_record->rset;
+  new->record = rec_record_dup (rset_record->record);
+
+  return (void *) new;
+}
+
+static int
+rec_rset_record_compare_fn (void *data1,
+                            void *data2,
+                            int type2)
+{
+  rec_rset_t rset                  = NULL;
+  rec_rset_record_t rset_record_1  = NULL; 
+  rec_rset_record_t rset_record_2  = NULL;
+  rec_field_name_t order_by_field  = NULL;
+  rec_record_t record1             = NULL;
+  rec_record_t record2             = NULL;
+  rec_field_t field1               = NULL;
+  rec_field_t field2               = NULL;
+  rec_field_name_t field_name      = NULL;
+  rec_type_t field_type            = NULL;
+  int type_comparison              = 0;
+  int int1, int2                   = 0;
+
+  /* data1 is a record.  data2 may be a record or a comment.
+     order_by_field can't be NULL, because this callback is invoked
+     only if rec_mset_add_sorted is used to add an element to the
+     list.
+
+     The following rules apply here:
+     
+     1. If data2 is a comment, data1 > data2.
+     2. If data2 is a record descriptor, data1 > data2.
+     3. If data2 is a regular record,
+
+        3.1. If group_by is not in both record1 and record2,
+             data1 > data2.
+ 
+        3.2. Else,
+
+             3.2.1. If type(order_by_field) == int, range, or real:
+                    compare by numerical order.
+
+             3.2.3. If type(order_by_field) == bool:
+                    true < false.
+
+             3.2.4. If type(order_by_field) == date:
+                    compare by date chronology order.
+
+             3.2.2. Otherwise: compare by lexicographical order.
+
+    Note that record1 will always be a regular record.  Never a
+    descriptor.
+  */
+
+  /* Get the first record and the rset.  */
+  rset_record_1 = (rec_rset_record_t) data1;
+  record1 = rset_record_1->record;
+  rset = rset_record_1->rset;
+
+  if (type2 == rset->comment_type)
+    {
+      return -1; /* 1. */
+    }
+
+  /* Get the second record.  */
+  rset_record_2 = (rec_rset_record_t) data2;
+  record2 = rset_record_2->record;
+
+  field_name = rec_parse_field_name_str ("%rec:");
+  if (rec_record_get_field_by_name (record2,
+                                    field_name,
+                                    0))
+    {
+      free (field_name);
+      return -1; /* 2. */
+    }
+  free (field_name);
+                                    
+  /* Get the order by field and check if it is present in both
+     registers.  */
+  order_by_field = rset_record_1->rset->order_by_field;
+  field1 = rec_record_get_field_by_name (record1, order_by_field, 0);
+  field2 = rec_record_get_field_by_name (record2, order_by_field, 0);
+  
+  if (!(field1 && field2))
+    {
+      return -1; /* 3.1.  */
+    }
+
+  /* Discriminate by field type.  */
+  field_type = rec_rset_get_field_type (rset,
+                                        order_by_field);
+  if (field_type)
+    {
+      switch (rec_type_kind (field_type))
+        {
+        case REC_TYPE_INT:
+        case REC_TYPE_RANGE:
+          {
+            if (!rec_atoi (rec_field_value(field1), &int1)
+                || !rec_atoi (rec_field_value(field2), &int2))
+              {
+                goto lexi;
+              }
+
+            if (int1 < int2)
+              {
+                type_comparison = -1;
+              }
+            else if (int1 > int2)
+              {
+                type_comparison = 1;
+              }
+            else
+              {
+                type_comparison = 0;
+              }
+
+            break;
+          }
+        case REC_TYPE_REAL:
+        case REC_TYPE_BOOL:
+        case REC_TYPE_DATE:
+        default:
+          {
+          lexi:
+            /* Lexicographic order.  */
+            type_comparison =
+              strcmp (rec_field_value (field1),
+                      rec_field_value (field2)); /* 3.2.2.  */
+            break;
+          }
+        }
+    }
+  else
+    {
+      /* Non typed fields contain free text, so apply a lexicographic
+         order as well.  */
+      type_comparison =
+        strcmp (rec_field_value (field1),
+                rec_field_value (field2)); /* 3.2.2.  */
+    }
+
+  return type_comparison;
 }
 
 static void
@@ -835,6 +1050,16 @@ static void *
 rec_rset_comment_dup_fn (void *data)
 {
   return (void *) rec_comment_dup ((rec_comment_t) data);
+}
+
+static int
+rec_rset_comment_compare_fn (void *data1,
+                             void *data2,
+                             int   type2)
+{
+  /* data1 is an element containing a comment.  Is is always smaller
+     than any record.  */
+  return 1;
 }
 
 static void
@@ -911,6 +1136,7 @@ rec_rset_update_field_props (rec_rset_t rset)
   rec_field_name_t auto_fname;
   rec_field_name_t auto_field_name;
   rec_field_name_t type_fname;
+  rec_field_name_t sort_fname;
   char *field_value;
   rec_fex_t fex;
   size_t i;
@@ -938,6 +1164,7 @@ rec_rset_update_field_props (rec_rset_t rset)
     {
       auto_fname = rec_parse_field_name_str ("%auto:");
       type_fname = rec_parse_field_name_str ("%type:");
+      sort_fname = rec_parse_field_name_str ("%sort:");
 
       record_elem = rec_record_first_field (rset->descriptor);
       while (rec_record_elem_p (record_elem))
@@ -1016,11 +1243,33 @@ rec_rset_update_field_props (rec_rset_t rset)
                 }
             }
 
+          /* Update sort fields.  Since only one field can be set as
+             the sorting criteria, the last field takes
+             precedence.  */
+          if (rec_field_name_equal_p (field_name, sort_fname))
+            {
+              /* Parse the field name in the field value.  Invalid
+                 entries are just ignored.  */
+              p = rec_field_value (field);
+              rec_skip_blanks (&p);
+              q = p;
+              if (rec_parse_regexp (&q, "^" REC_TYPE_NAME_RE "[ \n\t]*", NULL))
+                {
+                  rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &q);
+                  if (rset->order_by_field)
+                    {
+                      rec_field_name_destroy (rset->order_by_field);
+                    }
+                  rset->order_by_field = rec_parse_field_name_str (q);
+                }
+            }
+
           record_elem = rec_record_next_field (rset->descriptor, record_elem);
         }
 
       rec_field_name_destroy (auto_fname);
       rec_field_name_destroy (type_fname);
+      rec_field_name_destroy (sort_fname);
     } 
 }
 

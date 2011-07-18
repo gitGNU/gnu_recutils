@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 16:35:46 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-mset-count.c
  *       Date:         Thu Oct 28 20:17:55 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,8 @@ START_TEST(rec_mset_count_existing)
                                  TYPE1,
                                  type1_disp,
                                  type1_equal,
-                                 type1_dup);
+                                 type1_dup,
+                                 NULL);
   elem1 = malloc (sizeof (struct type1_t));
   fail_if (elem1 == NULL);
   elem1->i = 1;

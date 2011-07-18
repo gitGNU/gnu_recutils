@@ -1,3 +1,38 @@
+2011-07-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: initial support for %sort.
+	* src/rec-rset.c (rec_rset_comment_compare_fn): New function.
+	(rec_rset_record_compare_fn): New function.
+	(rec_rset_update_field_props): Manage the %sort special field.
+
+	* src/rec-record.c (rec_record_new): Pass NULL for the compare
+	function to rec_mset_register_type.
+
+	* src/rec-mset.c (rec_mset_add_sorted): New function.
+	(rec_mset_new): Initialize the compare_fn function for types to
+	NULL.
+	(rec_mset_dup): Make a copy of compare_fn.
+	(rec_mset_register_type): Get a compare_fn argument.
+	(rec_mset_elem_compare_fn): New function.
+
+	* src/rec-mset.h: New type rec_mset_compare_fn_t.
+
+	* src/rec-rset.c: New attribute 'order_by_field' in struct
+	rec_rsets.
+	New structure rec_rset_record_s.
+	(rec_rset_new): Initialise the order by field name to NULL.
+	(rec_rset_destroy): Destroy the order by field name if it exists
+	in the record set.
+	(rec_rset_dup): Care about the order by field, if any.
+	(rec_rset_append_record): Use rec_mset_add_sorted to add the
+	record to the mset if there is a sort by field.
+	(rec_rset_elem_record_new): Insert a rec_rset_record_t instead of a
+	rec_record_t in the mset.
+	(rec_rset_record_disp_fn): Destroy a rec_rset_record_t structure,
+	including the contained record.
+	(rec_rset_record_dup_fn): Dup a rec_rset_record_t structure,
+	including the contained record.
+
 2011-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	torture: system tests for typedefs.

@@ -55,6 +55,7 @@ typedef struct rec_mset_elem_s *rec_mset_elem_t;
 typedef void (*rec_mset_disp_fn_t) (void *data);
 typedef bool (*rec_mset_equal_fn_t) (void *data1, void *data2);
 typedef void *(*rec_mset_dup_fn_t) (void *data);
+typedef int (*rec_mset_compare_fn_t) (void *data1, void *data2, int type2);
 
 /*
  * Constants.
@@ -76,7 +77,8 @@ int rec_mset_register_type (rec_mset_t mset,
                             char *name,
                             rec_mset_disp_fn_t disp_fn,
                             rec_mset_equal_fn_t equal_fn,
-                            rec_mset_dup_fn_t dup_fn);
+                            rec_mset_dup_fn_t dup_fn,
+                            rec_mset_compare_fn_t compare_fn);
 
 /* Statistics.  */
 int rec_mset_count (rec_mset_t mset, int type);
@@ -84,9 +86,10 @@ int rec_mset_count (rec_mset_t mset, int type);
 /* Getting and setting elements.  */
 rec_mset_elem_t rec_mset_get (rec_mset_t mset, int type, int position);
 
-bool rec_mset_remove_at (rec_mset_t mset, int position);
-void rec_mset_insert_at (rec_mset_t mset, rec_mset_elem_t elem, int position);
-void rec_mset_append (rec_mset_t mset, rec_mset_elem_t elem);
+bool rec_mset_remove_at  (rec_mset_t mset, int position);
+void rec_mset_insert_at  (rec_mset_t mset, rec_mset_elem_t elem, int position);
+void rec_mset_append     (rec_mset_t mset, rec_mset_elem_t elem);
+void rec_mset_add_sorted (rec_mset_t mset, rec_mset_elem_t elem);
 
 rec_mset_elem_t rec_mset_remove (rec_mset_t mset, rec_mset_elem_t elem);
 void rec_mset_insert_after (rec_mset_t mset, rec_mset_elem_t elem, rec_mset_elem_t new_elem);

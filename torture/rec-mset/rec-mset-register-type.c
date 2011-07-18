@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-01 16:36:07 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-mset-register-type.c
  *       Date:         Thu Oct 28 20:10:18 2010
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,8 @@ START_TEST(rec_mset_register_type_nominal)
                                  TYPE1,
                                  type1_disp,
                                  type1_equal,
-                                 type1_dup);
+                                 type1_dup,
+                                 NULL);
 
   fail_if (type <= 0);
   rec_mset_destroy (mset);
