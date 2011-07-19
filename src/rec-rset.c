@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,7 @@ struct rec_rset_s
 
   /* Field to order by.  */
   rec_field_name_t order_by_field;
+  bool ordered_p;
 
   /* Size constraints.  */
   size_t min_size;
@@ -103,6 +104,16 @@ struct rec_rset_record_s
 
 typedef struct rec_rset_record_s *rec_rset_record_t;
 
+/* Same for comment_type and rec_rset_comment_s.  */
+
+struct rec_rset_comment_s
+{
+  rec_rset_t rset;
+  rec_comment_t comment;
+};
+
+typedef struct rec_rset_comment_s *rec_rset_comment_t;
+
 /* Set of names for special fields */
 
 #define REC_NAME_REC "%rec"
@@ -119,7 +130,7 @@ static void rec_rset_update_size_constraints (rec_rset_t rset);
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
 static void rec_rset_record_disp_fn (void *data);
 static void *rec_rset_record_dup_fn (void *data);
-static int  rec_rset_record_compare_fn (void *data1, void *data2, int type2);
+static int  rec_rset_record_compare_fn (void *data1, void *data2, int type1);
 
 static bool rec_rset_comment_equal_fn (void *data1, void *data2);
 static void rec_rset_comment_disp_fn (void *data);
@@ -164,6 +175,7 @@ rec_rset_new (void)
 
           /* No order by field, initially.  */
           rset->order_by_field = NULL;
+          rset->ordered_p = false;
 
           /* register the types.  */
           rset->record_type = rec_mset_register_type (rset->mset,
@@ -247,6 +259,7 @@ rec_rset_dup (rec_rset_t rset)
           new->order_by_field =
             rec_field_name_dup (rset->order_by_field);
         }
+      new->ordered_p = rset->ordered_p;
     }
 
   return new;
@@ -334,7 +347,8 @@ rec_rset_insert_at (rec_rset_t rset,
                     rec_rset_elem_t elem,
                     int position)
 {
-  if (rset->order_by_field
+  if (rset->ordered_p
+      && rset->order_by_field
       && rec_rset_elem_record_p (rset, elem))
     {
       /* Don't insert the record at the requested position: use a
@@ -354,7 +368,8 @@ void
 rec_rset_append (rec_rset_t rset,
                  rec_rset_elem_t elem)
 {
-  if (rset->order_by_field
+  if (rset->ordered_p
+      && rset->order_by_field
       && rec_rset_elem_record_p (rset, elem))
     {
       /* Don't append the record: use a sorting criteria instead.  */
@@ -374,7 +389,7 @@ rec_rset_append_record (rec_rset_t rset,
   
   elem = rec_rset_elem_record_new (rset, record);
 
-  if (rset->order_by_field)
+  if (rset->ordered_p && rset->order_by_field)
     {
       rec_mset_add_sorted (rset->mset, elem.mset_elem);
     }
@@ -435,7 +450,8 @@ rec_rset_insert_after (rec_rset_t rset,
                        rec_rset_elem_t elem,
                        rec_rset_elem_t new_elem)
 {
-  if (rset->order_by_field
+  if (rset->ordered_p
+      && rset->order_by_field
       && rec_rset_elem_record_p (rset, new_elem))
     {
       /* Don't insert the record at the specified location: use a
@@ -536,9 +552,18 @@ rec_rset_elem_comment_new (rec_rset_t rset,
                            rec_comment_t comment)
 {
   rec_rset_elem_t elem;
+  rec_rset_comment_t rset_comment = NULL;
+
+  /* Create the rset_comment to insert in the mset.  */
+
+  rset_comment = malloc (sizeof (struct rec_rset_comment_s));
+  rset_comment->rset = rset;
+  rset_comment->comment = comment;
+
+  /* Insert it in the mset.  */
 
   elem.mset_elem = rec_mset_elem_new (rset->mset, rset->comment_type);
-  rec_mset_elem_set_data (elem.mset_elem, (void *) comment);
+  rec_mset_elem_set_data (elem.mset_elem, (void *) rset_comment);
   
   return elem;
 }
@@ -574,7 +599,9 @@ rec_rset_elem_record (rec_rset_elem_t elem)
 rec_comment_t
 rec_rset_elem_comment (rec_rset_elem_t elem)
 {
-  return (rec_comment_t) rec_mset_elem_data (elem.mset_elem);
+  rec_rset_comment_t rset_comment =
+    (rec_rset_comment_t) rec_mset_elem_data (elem.mset_elem);
+  return rset_comment->comment;
 }
 
 rec_record_t
@@ -885,6 +912,20 @@ rec_rset_source (rec_rset_t rset)
   return rec_record_source (record);
 }
 
+void
+rec_rset_set_ordered (rec_rset_t rset,
+                      bool ordered_p)
+{
+  rset->ordered_p = ordered_p;
+}
+
+bool
+rec_rset_ordered (rec_rset_t rset)
+{
+  return rset->ordered_p;
+}
+
+
 /*
  * Private functions
  */
@@ -933,75 +974,63 @@ rec_rset_record_compare_fn (void *data1,
   rec_record_t record2             = NULL;
   rec_field_t field1               = NULL;
   rec_field_t field2               = NULL;
-  rec_field_name_t field_name      = NULL;
   rec_type_t field_type            = NULL;
   int type_comparison              = 0;
   int int1, int2                   = 0;
 
-  /* data1 is a record.  data2 may be a record or a comment.
+  /* data1 and data2 are both records.
+
      order_by_field can't be NULL, because this callback is invoked
      only if rec_mset_add_sorted is used to add an element to the
      list.
 
      The following rules apply here:
      
-     1. If data2 is a comment, data1 > data2.
-     2. If data2 is a record descriptor, data1 > data2.
-     3. If data2 is a regular record,
-
-        3.1. If group_by is not in both record1 and record2,
-             data1 > data2.
+     1. If group_by is not in both record1 and record2,
+        data1 < data2.
  
-        3.2. Else,
+     2. Else,
 
-             3.2.1. If type(order_by_field) == int, range, or real:
-                    compare by numerical order.
+     2.1 If type(order_by_field) == int, range, or real:
+         compare by numerical order.
 
-             3.2.3. If type(order_by_field) == bool:
-                    true < false.
+     2.2. If type(order_by_field) == bool:
+          true < false.
 
-             3.2.4. If type(order_by_field) == date:
-                    compare by date chronology order.
+     2.2.1. If type(order_by_field) == date:
+            compare by date chronology order.
 
-             3.2.2. Otherwise: compare by lexicographical order.
+     2.2.2. Otherwise: compare by lexicographical order.
 
     Note that record1 will always be a regular record.  Never a
     descriptor.
   */
 
-  /* Get the first record and the rset.  */
+  /* Get the records and the containing rset.  */
   rset_record_1 = (rec_rset_record_t) data1;
+  rset_record_2 = (rec_rset_record_t) data2;
   record1 = rset_record_1->record;
+  record2 = rset_record_2->record;
   rset = rset_record_1->rset;
 
-  if (type2 == rset->comment_type)
-    {
-      return -1; /* 1. */
-    }
-
-  /* Get the second record.  */
-  rset_record_2 = (rec_rset_record_t) data2;
-  record2 = rset_record_2->record;
-
-  field_name = rec_parse_field_name_str ("%rec:");
-  if (rec_record_get_field_by_name (record2,
-                                    field_name,
-                                    0))
-    {
-      free (field_name);
-      return -1; /* 2. */
-    }
-  free (field_name);
-                                    
   /* Get the order by field and check if it is present in both
      registers.  */
   order_by_field = rset_record_1->rset->order_by_field;
   field1 = rec_record_get_field_by_name (record1, order_by_field, 0);
   field2 = rec_record_get_field_by_name (record2, order_by_field, 0);
   
-  if (!(field1 && field2))
+  if (field1 && !field2)
     {
-      return -1; /* 3.1.  */
+      return 1; /* field1 > field2 */
+    }
+  else if (!field1 && field2)
+    {
+      return -1;  /* field1 < field2 */
+
+    }
+  else if (!field1 && !field2)
+    {
+      return 0; /* field1 == field2 */
     }
 
   /* Discriminate by field type.  */
@@ -1064,7 +1093,10 @@ rec_rset_record_compare_fn (void *data1,
 static void
 rec_rset_comment_disp_fn (void *data)
 {
-  rec_comment_destroy ((rec_comment_t) data);
+  rec_rset_comment_t rset_comment = (rec_rset_comment_t) data;
+
+  rec_comment_destroy (rset_comment->comment);
+  free (rset_comment);
 }
 
 static bool
@@ -1079,7 +1111,14 @@ rec_rset_comment_equal_fn (void *data1,
 static void *
 rec_rset_comment_dup_fn (void *data)
 {
-  return (void *) rec_comment_dup ((rec_comment_t) data);
+  rec_rset_comment_t rset_comment = (rec_rset_comment_t) data;
+  rec_rset_comment_t new = NULL;
+
+  new = malloc (sizeof (struct rec_rset_comment_s));
+  new->rset = rset_comment->rset;
+  new->comment = rec_comment_dup (rset_comment->comment);
+
+  return (void *) new;
 }
 
 static int
@@ -1087,9 +1126,9 @@ rec_rset_comment_compare_fn (void *data1,
                              void *data2,
                              int   type2)
 {
-  /* data1 is an element containing a comment.  Is is always smaller
-     than any record.  */
-  return 1;
+  /* data1 is a comment, and data2 is a record.  The comment is always
+     < than the record.  */
+  return -1;
 }
 
 static void

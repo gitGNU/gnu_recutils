@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-06-17 22:19:13 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-19 23:11:00 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -39,6 +39,8 @@
 
 #include <rec.h>
 #include <recutl.h>
+
+bool recutl_sort_p = false;
 
 void recutl_print_help (void); /* Forward prototype.  */
 
@@ -186,6 +188,7 @@ recutl_parse_db_from_file (FILE *in,
   res = true;
 
   parser = rec_parser_new (in, file_name);
+  rec_parser_set_ordered (parser, recutl_sort_p);
   while (rec_parse_rset (parser, &rset))
     {
       char *rset_type;
@@ -426,6 +429,12 @@ recutl_check_integrity (rec_db_t db,
 
       recutl_fatal (_("use --force to skip the integrity check.\n"));
     }
+}
+
+void
+recutl_sorting_parser (bool sort_p)
+{
+  recutl_sort_p = sort_p;
 }
 
 /* End of recutl.c */

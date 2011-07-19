@@ -665,6 +665,10 @@ size_t rec_rset_max_records (rec_rset_t rset);
 /* Locations.  */
 char *rec_rset_source (rec_rset_t rset);
 
+/* Ordered attribute.  */
+void rec_rset_set_ordered (rec_rset_t rset, bool sorted_p);
+bool rec_rset_ordered (rec_rset_t rset);
+
 /*
  * DATABASES
  *
@@ -801,6 +805,10 @@ bool rec_parser_error (rec_parser_t parser);
 
 /* Reset the error status and EOF of a parser. */
 void rec_parser_reset (rec_parser_t parser);
+
+/* Parser properties.  */
+void rec_parser_set_ordered (rec_parser_t parser, bool ordered_p);
+bool rec_parser_ordered (rec_parser_t parser);
 
 /* Print a message with details on the last parser error.
  *

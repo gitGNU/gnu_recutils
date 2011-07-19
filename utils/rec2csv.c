@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-08 00:55:39 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-19 23:11:37 jemarch"
  *
  *       File:         rec2csv.c
  *       Date:         Mon Jan 31 22:12:29 2011
@@ -303,6 +303,7 @@ main (int argc, char *argv[])
   res = 0;
 
   recutl_init ("rec2csv");
+  recutl_sorting_parser (true);
 
   /* Parse arguments.  */
   rec2csv_parse_args (argc, argv);

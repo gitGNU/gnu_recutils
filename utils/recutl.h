@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-31 22:34:52 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-19 23:10:33 jemarch"
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010
@@ -182,6 +182,8 @@ char *recutl_read_file (char *file_name);
 void recutl_check_integrity (rec_db_t db,
                              bool verbose_p,
                              bool external_p);
+
+void recutl_sorting_parser (bool sort_p);
 
 #endif /* recutl.h */
 

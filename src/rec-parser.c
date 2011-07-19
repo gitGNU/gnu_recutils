@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,6 +85,8 @@ struct rec_parser_s
   size_t line; /* Current line number. */
   size_t character; /* Current offset from the beginning of the file,
                        in characters.  */
+
+  bool ordered_p; /* Sort the stuff while parsing.  */
 };
 
 const char *rec_parser_error_strings[] =
@@ -112,6 +114,7 @@ rec_parser_new (FILE *in,
     {
       parser->in_file = in;
       parser->in_buffer = NULL;
+      parser->ordered_p = false;
 
       if (!rec_parser_init_common (parser, source))
         {
@@ -471,6 +474,9 @@ rec_parse_rset (rec_parser_t parser,
       return false;
     }
 
+  /* Set the ordered attribute of the rset to the desired value.  */
+  rec_rset_set_ordered (new, parser->ordered_p);
+
   /* Set the descriptor for this record set.  */
   rec_rset_set_descriptor (new, parser->prev_descriptor);
   parser->prev_descriptor = NULL;
@@ -671,6 +677,19 @@ rec_parse_record_str (char *str)
     }
 
   return record;
+}
+
+void
+rec_parser_set_ordered (rec_parser_t parser,
+                        bool ordered_p)
+{
+  parser->ordered_p = ordered_p;
+}
+
+bool
+rec_parser_ordered (rec_parser_t parser)
+{
+  return parser->ordered_p;
 }
 
 /*

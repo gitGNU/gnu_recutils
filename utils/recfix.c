@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-06-19 12:46:34 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-19 23:12:43 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -154,6 +154,7 @@ main (int argc, char *argv[])
   rec_db_t db;
 
   recutl_init ("recfix");
+  recutl_sorting_parser (false);
 
   res = EXIT_SUCCESS;
 

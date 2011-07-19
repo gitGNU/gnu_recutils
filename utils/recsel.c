@@ -409,6 +409,7 @@ main (int argc, char *argv[])
   res = 0;
 
   recutl_init ("recsel");
+  recutl_sorting_parser (true);
 
   /* Parse arguments.  */
   recsel_parse_args (argc, argv);

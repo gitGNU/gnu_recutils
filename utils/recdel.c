@@ -312,6 +312,7 @@ main (int argc, char *argv[])
   rec_db_t db;
 
   recutl_init ("recdel");
+  recutl_sorting_parser (false);
 
   recdel_parse_args (argc, argv);
 

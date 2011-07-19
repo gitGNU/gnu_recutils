@@ -1,3 +1,44 @@
+2011-07-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: record sorting implementation, and tools adjusted.
+	* utils/recset.c (main): Likewise.
+
+	* utils/recsel.c (main): Likewise.
+
+	* utils/recfmt.c (main): Likewise.
+
+	* utils/recfix.c (main): Likewise.
+
+	* utils/recdel.c (main): Likewise.
+
+	* utils/rec2csv.c (main): Call recutl_sorting_parser with the
+	appropriate value.
+
+	* utils/recutl.c (recutl_sorting_parser): New function.
+
+	* utils/recutl.c (recutl_parse_db_from_file): Set the ordered
+	attribute of the parser to the value of the global recutl_sort_p.
+
+	* src/rec-parser.c (rec_parser_new): Initialise ordered_p to
+	false.
+	(rec_parser_set_ordered): New function.
+	(rec_parser_ordered): New function.
+	(rec_parse_rset): Set the ordered attribute of the newly created
+	record set to the desired value.
+
+	* src/rec-rset.c: New structure rec_rset_comment_s.
+	(rec_rset_elem_comment_new): Use rec_rset_comment_s.
+	(rec_rset_elem_comment): Likewise.
+	(rec_rset_comment_disp_fn): Likewise.
+	(rec_rset_comment_dup_fn): Likewise.
+	(rec_rset_set_ordered): New function.
+	(rec_rset_ordered): New function.
+	(rec_rset_insert_at): Insert sorting only if ordered_p.
+	(rec_rset_append): Likewise.
+	(rec_rset_append_record): Likewise.
+	(rec_rset_insert_after): Likewise.
+	(rec_rset_dup): Copy ordered_p.
+
 2011-07-19  Jose E. Marchesi  <jco@terma.com>
 
 	librec: use mset_add_sort in all record inserting operations in
