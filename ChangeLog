@@ -1,15 +1,9 @@
 2011-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: record sorting implementation, and tools adjusted.
-	* utils/recset.c (main): Likewise.
-
 	* utils/recsel.c (main): Likewise.
 
 	* utils/recfmt.c (main): Likewise.
-
-	* utils/recfix.c (main): Likewise.
-
-	* utils/recdel.c (main): Likewise.
 
 	* utils/rec2csv.c (main): Call recutl_sorting_parser with the
 	appropriate value.

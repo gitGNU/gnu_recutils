@@ -693,7 +693,6 @@ main (int argc, char *argv[])
   rec_db_t db;
   
   recutl_init ("recset");
-  recutl_sorting_parser (false);
 
   /* Parse arguments.  */
   recset_parse_args (argc, argv);
