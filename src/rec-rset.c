@@ -334,16 +334,36 @@ rec_rset_insert_at (rec_rset_t rset,
                     rec_rset_elem_t elem,
                     int position)
 {
-  rec_mset_insert_at (rset->mset,
-                      elem.mset_elem,
-                      position);
+  if (rset->order_by_field
+      && rec_rset_elem_record_p (rset, elem))
+    {
+      /* Don't insert the record at the requested position: use a
+         sorting criteria instead.  */
+      rec_mset_add_sorted (rset->mset, elem.mset_elem);
+    }
+  else
+    {
+      /* Insert at the requested position.  */
+      rec_mset_insert_at (rset->mset,
+                          elem.mset_elem,
+                          position);
+    }
 }
 
 void
 rec_rset_append (rec_rset_t rset,
                  rec_rset_elem_t elem)
 {
-  rec_mset_append (rset->mset, elem.mset_elem);
+  if (rset->order_by_field
+      && rec_rset_elem_record_p (rset, elem))
+    {
+      /* Don't append the record: use a sorting criteria instead.  */
+      rec_mset_add_sorted (rset->mset, elem.mset_elem);
+    }
+  else
+    {
+      rec_mset_append (rset->mset, elem.mset_elem);
+    }
 }
 
 void
@@ -415,9 +435,19 @@ rec_rset_insert_after (rec_rset_t rset,
                        rec_rset_elem_t elem,
                        rec_rset_elem_t new_elem)
 {
-  rec_mset_insert_after (rset->mset,
-                         elem.mset_elem,
-                         new_elem.mset_elem);
+  if (rset->order_by_field
+      && rec_rset_elem_record_p (rset, new_elem))
+    {
+      /* Don't insert the record at the specified location: use a
+         sorting criteria instead.  */
+      rec_mset_add_sorted (rset->mset, new_elem.mset_elem);
+    }
+  else
+    {
+      rec_mset_insert_after (rset->mset,
+                             elem.mset_elem,
+                             new_elem.mset_elem);
+    }
 }
 
 rec_rset_elem_t

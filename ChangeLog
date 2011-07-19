@@ -1,3 +1,13 @@
+2011-07-19  Jose E. Marchesi  <jco@terma.com>
+
+	librec: use mset_add_sort in all record inserting operations in
+	rec-rset.
+	* src/rec-rset.c (rec_rset_insert_at): If the rset has a sort by
+	field and the element to be inserted is a record, insert it using
+	the sorting criteria instead of the requested location.
+	(rec_rset_append): Likewise.
+	(rec_rset_insert_after): Likewise.
+
 2011-07-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: initial support for %sort.
