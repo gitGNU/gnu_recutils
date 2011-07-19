@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-19 23:21:54 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-20 00:27:14 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -78,7 +78,7 @@ Check and fix rec files.\n"),
   /* TRANSLATORS: --help output, recfix arguments.
      no-wrap */
   fputs (_("\
-      --no-external               don't use external descriptors.\n"),
+      --no-external                   don't use external descriptors.\n"),
          stdout);
 
   recutl_print_help_common ();
