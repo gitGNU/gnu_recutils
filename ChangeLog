@@ -1,5 +1,16 @@
 2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: check the integrity of %sort entries, and tests.
+	* torture/utils/recfix.sh (recfix-sortcheck-valid): New test.
+	(recfix-sortcheck-with-blanks): Likewise.
+	(recfix-sortcheck-invalid-empty): Likewise.
+	(recfix-sortcheck-invalid-field-name): Likewise.
+
+	* src/rec-int.c (rec_int_check_descriptor): Make sure that %sort
+	fields have correct values.
+
+2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: options -S,--sort supported in recsel and rec2csv.
 	* utils/rec2csv.c (recutl_print_help): Documentation for
 	--sort,-S.

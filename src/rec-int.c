@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-17 13:38:49 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-21 20:49:36 jemarch"
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010
@@ -675,6 +675,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t prohibit_fname;
   rec_field_name_t auto_fname;
   rec_field_name_t size_fname;
+  rec_field_name_t sort_fname;
   char *field_value;
   rec_fex_t fex;
   char *tmp;
@@ -700,6 +701,7 @@ rec_int_check_descriptor (rec_rset_t rset,
       prohibit_fname = rec_parse_field_name_str ("%prohibit:");
       auto_fname = rec_parse_field_name_str ("%auto:");
       size_fname = rec_parse_field_name_str ("%size:");
+      sort_fname = rec_parse_field_name_str ("%sort:");
 
       /* Check the type of the record set:
 
@@ -918,6 +920,23 @@ does not exist\n"),
                   res++;
                 }
             }
+          else if (rec_field_name_equal_p (field_name, sort_fname))
+            {
+              if (!rec_match (field_value,
+                              "^"
+                              "[ \n\t]*" REC_FNAME_RE "[ \n\t]*"
+                              "$"))
+                {
+                  asprintf (&tmp,
+                            _("%s:%s: error: value for %s shall be a field name.\n"),
+                            rec_field_source (field),
+                            rec_field_location_str (field),
+                            field_name_str);
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++ ;
+                }
+            }
           else if (rec_field_name_equal_p (field_name, size_fname))
             {
               if (!rec_match (field_value, REC_INT_SIZE_RE))
@@ -972,6 +991,7 @@ does not exist\n"),
       rec_field_name_destroy (prohibit_fname);
       rec_field_name_destroy (auto_fname);
       rec_field_name_destroy (size_fname);
+      rec_field_name_destroy (sort_fname);
     }
 
   return res;

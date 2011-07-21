@@ -480,6 +480,28 @@ test_declare_input_file typedef-invalid-chain-loop \
 Id: 10
 '
 
+test_declare_input_file sortcheck-valid \
+'%rec: foo
+%sort: AField
+'
+
+test_declare_input_file sortcheck-with-blanks \
+'%rec: foo
+%sort:       
++       AField \
+   
+'
+
+test_declare_input_file sortcheck-invalid-empty \
+'%rec: foo
+%sort:
+'
+
+test_declare_input_file sortcheck-invalid-field-name \
+'%rec: foo
+%sort: A/Field
+'
+
 #
 # Declare tests.
 #
@@ -765,6 +787,28 @@ test_tool recfix-typedef-invalid-chain-loop xfail \
           recfix \
           '' \
           typedef-invalid-chain-loop
+
+test_tool recfix-sortcheck-valid ok \
+          recfix \
+          '' \
+          sortcheck-valid \
+''
+
+test_tool recfix-sortcheck-with-blanks ok \
+          recfix \
+          '' \
+          sortcheck-with-blanks \
+''
+
+test_tool recfix-sortcheck-invalid-empty xfail \
+          recfix \
+          '' \
+          sortcheck-invalid-empty
+
+test_tool recfix-sortcheck-invalid-field-name xfail \
+          recfix \
+          '' \
+          sortcheck-invalid-field-name
 
 #
 # Cleanup.
