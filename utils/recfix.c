@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-20 00:27:14 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-21 21:16:27 jemarch"
  *
  *       File:         recfix.c
  *       Date:         Tue Apr 27 12:21:48 2010
@@ -41,7 +41,9 @@ bool recfix_process_data (rec_db_t db);
  * Global variables.
  */
 
-bool recfix_external = true;
+bool  recfix_external = true;
+char *recfix_file     = NULL;
+bool  recfix_op_sort  = false;
 
 /*
  * Command line options management.
@@ -50,13 +52,15 @@ bool recfix_external = true;
 enum
 {
   COMMON_ARGS,
-  NO_EXTERNAL_ARG
+  NO_EXTERNAL_ARG,
+  SORT_ARG
 };
 
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
+    {"sort", no_argument, NULL, SORT_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -66,7 +70,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recfix synopsis.
      no-wrap */
   printf (_("\
-Usage: recfix [OPTION]... [FILE]...\n"));
+Usage: recfix [OPTION]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recfix short description.
      no-wrap */
@@ -78,10 +82,18 @@ Check and fix rec files.\n"),
   /* TRANSLATORS: --help output, recfix arguments.
      no-wrap */
   fputs (_("\
-      --no-external                   don't use external descriptors.\n"),
+      --no-external                   don't use external descriptors.\n\
+      --sort                          sort the records in the specified file.\n"),
          stdout);
 
   recutl_print_help_common ();
+
+  puts("");
+  /* TRANSLATORS: --help output, notes on recfix.
+     no-wrap */
+  fputs (_("\
+If no FILE is specified then the command acts like a filter, getting\n\
+the data from standard input and writing the result to standard output.\n"), stdout);
 
   puts("");
   /* TRANSLATORS: --help output, recfix examples.
@@ -90,7 +102,6 @@ Check and fix rec files.\n"),
 Examples:\n\
 \n\
         recfix data.rec\n\
-        recfix data1.rec data2.rec\n\
         cat data1.rec data2.rec | recfix\n"),
          stdout);
 
@@ -120,11 +131,33 @@ recfix_parse_args (int argc,
             recfix_external = false;
             break;
           }
+        case SORT_ARG:
+          {
+            /* Sort all records when parsing.  */
+            recutl_sorting_parser (true, NULL, NULL);
+
+            /* Mark the operation.  */
+            recfix_op_sort = true;
+
+            break;
+          }
         default:
           {
             exit (EXIT_FAILURE);
           }
         }
+    }
+
+  /* Read the name of the file to work on.  */
+  if (optind < argc)
+    {
+      if ((argc - optind) != 1)
+        {
+          recutl_print_help ();
+          exit (EXIT_FAILURE);
+        }
+
+      recfix_file = argv[optind++];
     }
 }
 
@@ -160,8 +193,7 @@ main (int argc, char *argv[])
   /* Parse arguments.  */
   recfix_parse_args (argc, argv);
 
-  /* Get the input data.  */
-  db = recutl_build_db (argc, argv);
+  db = recutl_read_db_from_file (recfix_file);
   if (!db)
     {
       res = EXIT_FAILURE;
@@ -173,7 +205,10 @@ main (int argc, char *argv[])
       res = EXIT_FAILURE;
     }
 
-  rec_db_destroy (db);
+  if ((res == EXIT_SUCCESS) && recfix_op_sort)
+    {
+      recutl_write_db_to_file (db, recfix_file);
+    }
 
   return res;
 }

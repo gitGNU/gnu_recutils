@@ -1,5 +1,16 @@
 2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recfix: support the phisical sort operation.
+	* utils/recfix.c (main): Use recutl_read_db_from_file.
+	(recfix_parse_args): Set the value of recfix_file from the command
+	line and complain if no file was provided.
+	(recutl_print_help): Document the new usage of the command.
+	(recutl_print_help): Documnt the --sort option.
+	(recfix_parse_args): Manage --sort.
+	(main): Update the rec file if an operation requires it.
+
+2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: check the integrity of %sort entries, and tests.
 	* torture/utils/recfix.sh (recfix-sortcheck-valid): New test.
 	(recfix-sortcheck-with-blanks): Likewise.
