@@ -1,5 +1,12 @@
 2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: documentation for the sorting option of recfix.
+	* doc/recutils.texi (recfix Invocation): Synopsis fixed.
+	(recfix Invocation): Document the --sort operation.
+	(recfix Examples): Example of --sort added.
+
+2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recfix: support the phisical sort operation.
 	* utils/recfix.c (main): Use recutl_read_db_from_file.
 	(recfix_parse_args): Set the value of recfix_file from the command

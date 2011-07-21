@@ -2041,7 +2041,7 @@ $ recset -n 102 -f ClosedAt -S `date` tasks.rec
 @command{recfix} checks and fixes rec files.  Synopsis:
 
 @example
-recfix [@var{option}]@dots{} [@var{option}]@dots{}
+recfix [@var{option}]@dots{} [@var{file}]
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
@@ -2054,6 +2054,13 @@ Options}) the program accepts the following options.
 @table @samp
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
+@itemx @w{@kbd{--sort}}
+Perform a physical sort of all the records contained in the file (or
+the standard input) after checking for its integrity.  The sorting
+criteria is provided by the @code{%sort} special field, if any.  If
+there is an integrity failure the sorting is not performed.
+
+Note that this is a destructive operation.
 @end table
 
 @node recfix Examples
@@ -2066,17 +2073,17 @@ $ recfix data.rec
 @end example
 
 @noindent
-The same, but with two files:
-
-@example
-$ recfix data1.rec data2.rec
-@end example
-
-@noindent
 Used as a filter:
 
 @example
 $ cat data1.rec data2.rec | recfix
+@end example
+
+@noindent
+Physically sort the record sets contained in a file:
+
+@example
+$ recfix --sort data.rec
 @end example
 
 @node recfmt
