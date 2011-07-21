@@ -925,6 +925,24 @@ rec_rset_ordered (rec_rset_t rset)
   return rset->ordered_p;
 }
 
+void
+rec_rset_set_order_by_field (rec_rset_t rset,
+                             rec_field_name_t field_name)
+{
+  if (rset->order_by_field)
+    {
+      rec_field_name_destroy (rset->order_by_field);
+    }
+  
+  rset->order_by_field = rec_field_name_dup (field_name);
+}
+
+rec_field_name_t
+rec_rset_order_by_field (rec_rset_t rset)
+{
+  return rset->order_by_field;
+}
+
 
 /*
  * Private functions
@@ -1329,7 +1347,9 @@ rec_rset_update_field_props (rec_rset_t rset)
                     {
                       rec_field_name_destroy (rset->order_by_field);
                     }
+
                   rset->order_by_field = rec_parse_field_name_str (q);
+                  free (q);
                 }
             }
 

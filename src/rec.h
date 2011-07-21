@@ -669,6 +669,10 @@ char *rec_rset_source (rec_rset_t rset);
 void rec_rset_set_ordered (rec_rset_t rset, bool sorted_p);
 bool rec_rset_ordered (rec_rset_t rset);
 
+/* Order_by field.  */
+void rec_rset_set_order_by_field (rec_rset_t rset, rec_field_name_t field_name);
+rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
+
 /*
  * DATABASES
  *
@@ -809,6 +813,9 @@ void rec_parser_reset (rec_parser_t parser);
 /* Parser properties.  */
 void rec_parser_set_ordered (rec_parser_t parser, bool ordered_p);
 bool rec_parser_ordered (rec_parser_t parser);
+void rec_parser_sort_rset (rec_parser_t parser,
+                           char *rset_name,
+                           rec_field_name_t field_name);
 
 /* Print a message with details on the last parser error.
  *

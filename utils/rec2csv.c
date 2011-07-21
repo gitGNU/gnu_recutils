@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-19 23:11:37 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec2csv.c
  *       Date:         Mon Jan 31 22:12:29 2011
@@ -50,7 +50,8 @@ static void rec2csv_generate_csv (rec_rset_t rset, rec_fex_t fex);
  * Global variables
  */
 
-char *rec2csv_record_type = NULL;
+char             *rec2csv_record_type   = NULL;
+rec_field_name_t  rec2csv_sort_by_field = NULL;
 
 /*
  * Command line options management
@@ -59,13 +60,15 @@ char *rec2csv_record_type = NULL;
 enum
   {
     COMMON_ARGS,
-    RECORD_TYPE_ARG
+    RECORD_TYPE_ARG,
+    SORT_ARG
   };
 
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
     {"type", required_argument, NULL, RECORD_TYPE_ARG},
+    {"sort", required_argument, NULL, SORT_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -92,7 +95,8 @@ Convert rec data into csv data.\n"), stdout);
      no-wrap */
   fputs (_("\
   -t, --type=TYPE                     record set to convert to csv; if this parameter\n\
-                                        is ommited then the default record set is used\n"),
+                                        is omitted then the default record set is used\n\
+  -S, --sort=FIELD                    sort the output by the specified field.\n"),
          stdout);
 
   recutl_print_help_common ();
@@ -119,7 +123,7 @@ rec2csv_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "t:",
+                             "t:S:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -133,12 +137,34 @@ rec2csv_parse_args (int argc,
             rec2csv_record_type = xstrdup (optarg);
             break;
           }
+        case SORT_ARG:
+        case 'S':
+          {
+            if (rec2csv_sort_by_field)
+              {
+                recutl_fatal (_("only one field can be specified as a sorting criteria.\n"));
+              }
+
+            /* Parse the field name.  */
+            rec2csv_sort_by_field = rec_parse_field_name_str (optarg);
+            if (!rec2csv_sort_by_field)
+              {
+                recutl_fatal (_("invalid field name in -S.\n"));
+              }
+
+            break;
+          }
         default:
           {
             exit (EXIT_FAILURE);
           }
         }
     }
+
+  /* Set the sorting criteria for the parser.  */
+  recutl_sorting_parser (true,
+                         rec2csv_record_type,
+                         rec2csv_sort_by_field);
 }
 
 static void
@@ -303,7 +329,6 @@ main (int argc, char *argv[])
   res = 0;
 
   recutl_init ("rec2csv");
-  recutl_sorting_parser (true);
 
   /* Parse arguments.  */
   rec2csv_parse_args (argc, argv);

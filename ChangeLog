@@ -1,3 +1,30 @@
+2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: options -S,--sort supported in recsel and rec2csv.
+	* utils/rec2csv.c (recutl_print_help): Documentation for
+	--sort,-S.
+	(rec2csv_parse_args): Manage --sort, -S.
+
+	* utils/recsel.c: New command-line argument --sort, -S.
+	(recutl_print_help): Documentation for --sort, -S.
+	(recsel_parse_args): Manage -S.
+
+	* doc/recutils.texi (recinf Invocation): -S is not like
+	--print-sexps anymore.
+
+	* utils/recutl.c (recutl_sorting_parser): Get a field name as a
+	sorting criteria.
+
+	* src/rec-rset.c (rec_rset_update_field_props): %sort only has an
+	effect if order_by_field is not already set in the record set.
+
+	* src/rec-parser.c (rec_parser_new): Initialize order_by_field to
+	NULL.
+	(rec_parser_set_order_by_field): New function.
+
+	* src/rec-rset.c: New function.
+	(rec_rset_order_by_field): New function.
+
 2011-07-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: record sorting implementation, and tools adjusted.

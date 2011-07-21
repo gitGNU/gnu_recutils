@@ -55,6 +55,7 @@ bool       recsel_count        = false;
 bool       recutl_insensitive  = false;
 bool       recsel_descriptors  = false;
 size_t     recutl_num          = -1;
+rec_field_name_t recutl_sort_by_field = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 
 /*
@@ -71,7 +72,8 @@ enum
   COLLAPSE_ARG,
   COUNT_ARG,
   DESCRIPTOR_ARG,
-  PRINT_SEXPS_ARG
+  PRINT_SEXPS_ARG,
+  SORT_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -85,6 +87,7 @@ static const struct option GNU_longOptions[] =
     {"count", no_argument, NULL, COUNT_ARG},
     {"include-descriptors", no_argument, NULL, DESCRIPTOR_ARG},
     {"print-sexps", no_argument, NULL, PRINT_SEXPS_ARG},
+    {"sort", required_argument, NULL, SORT_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -111,7 +114,8 @@ Select and print rec data.\n"), stdout);
   fputs (_("\
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
-  -C, --collapse                      do not section the result in records with newlines.\n"),
+  -C, --collapse                      do not section the result in records with newlines.\n\
+  -S, --sort=FIELD                    sort the output by the specified field.\n"),
          stdout);
   
   recutl_print_help_common ();
@@ -138,7 +142,7 @@ Output options:\n\
      no-wrap */
   fputs (_("\
 Special options:\n\
-  -S, --print-sexps                   print the data in sexps instead of rec format.\n"),
+      --print-sexps                   print the data in sexps instead of rec format.\n"),
          stdout);
 
   puts ("");
@@ -165,7 +169,7 @@ recsel_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "SCdcp:P:R:",
+                             "S:Cdcp:P:R:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -181,9 +185,25 @@ recsel_parse_args (int argc,
             break;
           }
         case PRINT_SEXPS_ARG:
-        case 'S':
           {
             recsel_write_mode = REC_WRITER_SEXP;
+            break;
+          }
+        case SORT_ARG:
+        case 'S':
+          {
+            if (recutl_sort_by_field)
+              {
+                recutl_fatal (_("only one field can be specified as a sorting criteria.\n"));
+              }
+
+            /* Parse the field name.  */
+            recutl_sort_by_field = rec_parse_field_name_str (optarg);
+            if (!recutl_sort_by_field)
+              {
+                recutl_fatal (_("invalid field name in -S.\n"));
+              }
+
             break;
           }
         case PRINT_ARG:
@@ -249,6 +269,10 @@ recsel_parse_args (int argc,
 
         }
     }
+
+  
+  /* Set the sorting criteria for the parser.  */
+  recutl_sorting_parser (true, recutl_type, recutl_sort_by_field);
 }
 
 bool
@@ -409,7 +433,6 @@ main (int argc, char *argv[])
   res = 0;
 
   recutl_init ("recsel");
-  recutl_sorting_parser (true);
 
   /* Parse arguments.  */
   recsel_parse_args (argc, argv);

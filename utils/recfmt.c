@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-19 23:13:03 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-21 20:22:27 jemarch"
  *
  *       File:         recfmt.c
  *       Date:         Wed Dec 22 18:20:20 2010
@@ -298,7 +298,7 @@ main (int argc, char *argv[])
   rec_db_t db;
 
   recutl_init ("recfmt");
-  recutl_sorting_parser (true);
+  recutl_sorting_parser (true, NULL, NULL);
 
   recfmt_parse_args (argc, argv);
 

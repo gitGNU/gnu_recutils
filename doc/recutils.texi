@@ -1633,7 +1633,6 @@ Print all the record descriptors present in the file.
 Output just the names of the record types found in the input.  If the
 input is composed by anonymous records only then don't emit any
 output.
-@item -S
 @itemx @w{@kbd{--print-sexps}}
 Print the data in the form of sexps (lisp expressions) instead of rec
 format.  This option is intended to be used by lisp programs.

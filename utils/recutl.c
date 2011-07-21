@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-19 23:11:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-07-21 20:21:02 jemarch"
  *
  *       File:         recutl.c
  *       Date:         Thu Apr 22 17:30:48 2010
@@ -40,7 +40,9 @@
 #include <rec.h>
 #include <recutl.h>
 
-bool recutl_sort_p = false;
+bool             recutl_sort_p         = false;
+char             *recutl_order_rset    = NULL;
+rec_field_name_t recutl_order_by_field = NULL;
 
 void recutl_print_help (void); /* Forward prototype.  */
 
@@ -189,6 +191,7 @@ recutl_parse_db_from_file (FILE *in,
 
   parser = rec_parser_new (in, file_name);
   rec_parser_set_ordered (parser, recutl_sort_p);
+  rec_parser_sort_rset (parser, recutl_order_rset, recutl_order_by_field);
   while (rec_parse_rset (parser, &rset))
     {
       char *rset_type;
@@ -432,9 +435,12 @@ recutl_check_integrity (rec_db_t db,
 }
 
 void
-recutl_sorting_parser (bool sort_p)
+recutl_sorting_parser (bool sort_p,
+                       char *rset_name,
+                       rec_field_name_t field_name)
 {
   recutl_sort_p = sort_p;
+  recutl_order_by_field = field_name;
 }
 
 /* End of recutl.c */

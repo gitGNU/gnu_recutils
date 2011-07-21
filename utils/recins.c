@@ -588,7 +588,6 @@ main (int argc, char *argv[])
   rec_db_t db;
 
   recutl_init ("recins");
-  recutl_sorting_parser (false);
 
   recins_parse_args (argc, argv);
 
