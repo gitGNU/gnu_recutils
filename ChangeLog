@@ -1,3 +1,12 @@
+2011-07-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: documentation for %sort and %typedef.
+	* doc/recutils.texi (Record Descriptors): Document %typedef in the
+	list of special fields.
+	(Record Descriptors): Likewise for %sort.
+	(recsel Invocation): Document -S,--sort.
+	(rec2csv Invocation): Likewise.
+
 2011-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: documentation for the sorting option of recfix.

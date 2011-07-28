@@ -447,14 +447,24 @@ This field contains documentation about the record.
 
 It is like a comment, but this field can be managed in a programmatic
 way easier.
+@item %typedef: @var{type_name} (@var{type_descriptor}|@var{type_name})
+This field is used to define named types.  @ref{Field Types}.
+
 @item %type: @var{field_name_list} @var{type} @var{type_description}
-This field can be used to define types for fields.
-@var{field_name_list} shall be a list of field names separated by
-commas.  @ref{Field Types}.
+This field is used to associate fields with types with
+types. @ref{Field Types}.
+
+@item %sort: @var{field_name}
+This field is used to specify the desired sorting criteria for the
+records contained in the record set.  Utilities displaying data from
+the recfile shall honour this field, even if the records are not
+physically sorted in the file.
+
+If several @code{%sort} fields are specified in a record descriptor
+then the last one takes precedence.
 
 @item %size: [@var{relational_operator}] @var{number}
-
-This field can be used to define constraints in the number of records
+This field is used to define constraints in the number of records
 stored in the record set.
 
 If no operator is specified then @var{number} is interpreted as the
@@ -1714,6 +1724,11 @@ spaces instead of newlines.
 If this option is specified then recsel will print the number of
 matching records instead of the records themselves.  This option is
 incompatible with @option{-p}, @option{-P} and @option{-R}.
+@item -S
+@itemx @w{@kbd{--sort}=@var{field}}
+Sort the output by @var{field}.  This option has precedence to
+whatever sorting criteria is specified in the corresponding record
+descriptor with @code{%sort}.
 @end table
 
 Some @dfn{special options} are available to ease the communication
@@ -1721,7 +1736,6 @@ between the recutils and other programs, such as lisp interpreters.
 Those options are not intended to be used by human operators.
 
 @table @samp
-@item -S
 @itemx @w{@kbd{--print-sexps}}
 Print the data using sexps instead of rec format.
 @end table
@@ -2276,6 +2290,11 @@ Options}) the program accepts the following options.
 @itemx @w{@kbd{--type}=@var{type}}
 Type of the records to convert.  If no type is specified then the
 default records (with no name) are converted.
+@item -S
+@itemx @w{@kbd{--sort}=@var{field}}
+Sort the output by @var{field}.  This option has precedence to
+whatever sorting criteria is specified in the corresponding record
+descriptor with @code{%sort}.
 @end table
 
 @node rec2csv Conversion
