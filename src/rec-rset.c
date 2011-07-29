@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <parse-datetime.h>
 
 #include <rec-mset.h>
 #include <rec.h>
@@ -1085,6 +1086,29 @@ rec_rset_record_compare_fn (void *data1,
         case REC_TYPE_REAL:
         case REC_TYPE_BOOL:
         case REC_TYPE_DATE:
+          {
+            struct timespec op1;
+            struct timespec op2;
+            struct timespec diff;
+
+            if (parse_datetime (&op1,
+                                rec_field_value (field1),
+                                NULL)
+                && parse_datetime (&op2,
+                                   rec_field_value (field2),
+                                   NULL))
+              {
+                type_comparison =
+                  rec_timespec_subtract (&diff, &op1, &op2);
+              }
+            else
+              {
+                /* Invalid date => lexicographic order.  */
+                goto lexi;
+              }
+
+            break;
+          }
         default:
           {
           lexi:

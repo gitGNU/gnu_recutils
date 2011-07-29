@@ -66,9 +66,6 @@ static struct rec_sex_val_s rec_sex_eval_node (rec_sex_t sex,
                                                bool *status);
 static bool rec_sex_op_real_p (struct rec_sex_val_s op1,
                                struct rec_sex_val_s op2);
-static int timespec_subtract (struct timespec *result,
-                              struct timespec *x,
-                              struct timespec *y);
 
 /*
  * Public functions.
@@ -688,7 +685,7 @@ rec_sex_eval_node (rec_sex_t sex,
         ATOTS_VAL (op2, child_val2);
 
         res.type = REC_SEX_VAL_INT;
-        res.int_val = timespec_subtract (&diff, &op1, &op2);
+        res.int_val = rec_timespec_subtract (&diff, &op1, &op2);
         break;
       }
     case REC_SEX_OP_AFTER:
@@ -704,7 +701,7 @@ rec_sex_eval_node (rec_sex_t sex,
         ATOTS_VAL (op2, child_val2);
 
         res.type = REC_SEX_VAL_INT;
-        res.int_val = (!timespec_subtract (&diff, &op1, &op2)
+        res.int_val = (!rec_timespec_subtract (&diff, &op1, &op2)
                        && ((diff.tv_sec != 0) || (diff.tv_nsec != 0)));
         break;
       }
@@ -720,7 +717,7 @@ rec_sex_eval_node (rec_sex_t sex,
         ATOTS_VAL (op1, child_val1);
         ATOTS_VAL (op2, child_val2);
 
-        timespec_subtract (&diff, &op1, &op2);
+        rec_timespec_subtract (&diff, &op1, &op2);
 
         res.type = REC_SEX_VAL_INT;
         res.int_val = ((diff.tv_sec == 0) && (diff.tv_nsec == 0));
@@ -1053,51 +1050,5 @@ rec_sex_op_real_p (struct rec_sex_val_s op1,
 
   return ret;
 }
-
-static int
-timespec_subtract (struct timespec *result,
-                   struct timespec *x,
-                   struct timespec *y)
-{
-  result->tv_sec = x->tv_sec - y->tv_sec;
-  result->tv_nsec = x->tv_nsec - y->tv_nsec;
-  if (result->tv_nsec < 0)
-    {
-      /* Overflow.  Subtract one second.  */
-      result->tv_sec--;
-      result->tv_nsec += 1000000000;
-    }
-
-  /* Return whether there is an overflow in the 'tv_sec' field.  */
-  return (result->tv_sec < 0);
-}
-
-#if 0
-}
-  /* Perform the carry for the later subtraction by updating Y. */
-  if (x->tv_usec < y->tv_usec)
-    {
-      int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
-      y->tv_usec -= 1000000 * nsec;
-      y->tv_sec += nsec;
-    }
-  if (x->tv_usec - y->tv_usec > 1000000)
-    {
-      int nsec = (x->tv_usec - y->tv_usec) / 1000000;
-      y->tv_usec += 1000000 * nsec;
-      y->tv_sec -= nsec;
-    }
-
-  /* Compute the time remaining to wait.
-     `tv_usec' is certainly positive. */
-  result->tv_sec = x->tv_sec - y->tv_sec;
-  result->tv_usec = x->tv_usec - y->tv_usec;
-  
-  /* Return 1 if result is negative. */
-  return x->tv_sec < y->tv_sec;
-}
-#endif /* 0 */
-
-
  
 /* End of rec-sex.c */

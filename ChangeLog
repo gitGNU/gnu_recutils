@@ -1,3 +1,13 @@
+2011-07-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: sorting by date values implemented.
+	* src/rec-rset.c (rec_rset_record_compare_fn): Sorting by date
+	value implementing.
+
+	* src/rec-sex.c (rec_sex_eval_node): Use rec_timespec_subtract.
+
+	* src/rec-utils.c (rec_timespec_subtract): Moved from rec-sex.c.
+
 2011-07-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: documentation for %sort and %typedef.

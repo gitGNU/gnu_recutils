@@ -359,4 +359,22 @@ rec_extract_size_condition (char *str)
   return condition;
 }
 
+int
+rec_timespec_subtract (struct timespec *result,
+                       struct timespec *x,
+                       struct timespec *y)
+{
+  result->tv_sec = x->tv_sec - y->tv_sec;
+  result->tv_nsec = x->tv_nsec - y->tv_nsec;
+  if (result->tv_nsec < 0)
+    {
+      /* Overflow.  Subtract one second.  */
+      result->tv_sec--;
+      result->tv_nsec += 1000000000;
+    }
+
+  /* Return whether there is an overflow in the 'tv_sec' field.  */
+  return (result->tv_sec < 0);
+}
+
 /* End of rec-utils.c */

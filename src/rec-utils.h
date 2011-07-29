@@ -70,6 +70,11 @@ bool rec_parse_int (char **str, int *num);
 void rec_skip_blanks (char **str);
 bool rec_parse_regexp (char **str, char *re, char **result);
 
+/* Miscellanea.  */
+int rec_timespec_subtract (struct timespec *result,
+                           struct timespec *x,
+                           struct timespec *y);
+
 #endif /* rec-utils.h */
 
 /* End of rec-utils.h.  */
