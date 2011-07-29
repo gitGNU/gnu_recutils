@@ -653,7 +653,11 @@ described in the following subsections.
 @menu
 * Declaring types::     Declaration of types in record descriptors.
 * Types and fields::    Associating fields with types.
-* Type descriptions::   List of supported types.
+* Escalar types::       Numbers and ranges.
+* String types::        Lines, limited strings and regular expressions. 
+* Enumerated types::    Enumerations and boolean values.
+* Time related types::  Dates and times.
+* Other types::         Emails, fields, @dots{}
 @end menu
 
 @node Declaring types
@@ -769,22 +773,8 @@ without having to use a @code{%typedef} in the following way:
 %type: Id int
 @end example
 
-@node Type descriptions
-@section Type descriptions
-
-The following sections describe the supported kind of types in the rec
-format.
-
-@menu
-* Escalar types::       Numbers and ranges.
-* String types::        Lines, limited strings and regular expressions. 
-* Enumerated types::    Enumerations and boolean values.
-* Time related types::  Dates and times.
-* Other types::         Emails, fields, @dots{}
-@end menu
-
 @node Escalar types
-@subsection Escalar types
+@section Escalar types
 
 The rec format supports the declaration of fields of the following
 escalar types: integer numbers, ranges and reals.
@@ -847,7 +837,7 @@ Height: 10
 @end example
 
 @node String types
-@subsection String types
+@section String types
 
 The @code{line} field type specifier can be used to restrict the value
 of a field to a single line, i.e.@: no newline characters are allowed.
@@ -919,7 +909,7 @@ The regexp flavor supported in recfiles are the POSIX EREs plus
 several GNU extensions.  @xref{Regular Expressions}.
 
 @node Enumerated types
-@subsection Enumerated types
+@section Enumerated types
 
 Fields of this type contain symbols taken from an enumeration.
 
@@ -972,7 +962,7 @@ SwitchedOn: false
 @end example
 
 @node Time related types
-@subsection Time related types
+@section Time related types
 
 The @dfn{Date} field type specifier can be used to declare dates and
 times.  The synopsis is:
@@ -986,7 +976,7 @@ The several date/time syntax supported by librec is provided by the
 @code{date} module from gnulib.  @xref{Date input formats}.
 
 @node Other types
-@subsection Other types
+@section Other types
 
 The @dfn{Email} field type specifier is used to declare electronic
 addresses such as emails.  The synopsis is:
