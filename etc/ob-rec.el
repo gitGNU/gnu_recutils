@@ -41,6 +41,7 @@ This function is called by `org-babel-execute-src-block'."
 	 (cmdline (cdr (assoc :cmdline params)))
 	 (rec-type (cdr (assoc :type params)))
 	 (fields (cdr (assoc :fields params)))
+         (sort (cdr (assoc :sort params)))
 	 (cmd (concat "recsel"
 		      (when rec-type (concat " -t " rec-type " "))
 		      " " (expand-file-name in-file)
@@ -48,14 +49,19 @@ This function is called by `org-babel-execute-src-block'."
                         (concat " -e " "\""
                                 (replace-regexp-in-string "\"" "\\\\\"" body)
                                 "\""))
-		      (when fields (concat " -p " fields " "))
-		      " | rec2csv")))
+                      (when sort (concat " -S " sort " "))
+		      (when fields (concat " -p " fields " "))))
+         (do-raw (or (member "scalar" result-params)
+                     (member "html" result-params)
+                     (member "code" result-params)
+                     (equal (point-min) (point-max)))))
+    (unless do-raw
+      ;; Get the csv representation, that will be used by
+      ;; org-table-convert-region below.
+      (setq cmd (concat cmd " | rec2csv")))
     (with-temp-buffer
       (shell-command cmd (current-buffer))
-      (if (or (member "scalar" result-params)
-              (member "html" result-params)
-              (member "code" result-params)
-              (equal (point-min) (point-max)))
+      (if do-raw
           (buffer-string)
 	(org-table-convert-region (point-min) (point-max) '(4))
         (org-table-to-lisp)))))
