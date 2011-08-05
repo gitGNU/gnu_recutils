@@ -185,6 +185,7 @@ we loan it to anyone?  Was it lost in the last move?  Is it in some
 hidden place at home?
 @end itemize
 
+@noindent
 The contents of the rec file follows:
 
 @example
