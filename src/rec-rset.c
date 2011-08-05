@@ -750,12 +750,14 @@ rec_rset_rename_field (rec_rset_t rset,
   rec_field_name_t mandatory_field_name;
   rec_field_name_t unique_field_name;
   rec_field_name_t prohibit_field_name;
+  rec_field_name_t sort_field_name;
 
   type_field_name = rec_parse_field_name_str ("%type:");
   key_field_name = rec_parse_field_name_str ("%key:");
   mandatory_field_name = rec_parse_field_name_str ("%mandatory:");
   unique_field_name = rec_parse_field_name_str ("%unique:");
   prohibit_field_name = rec_parse_field_name_str ("%prohibit:");
+  sort_field_name = rec_parse_field_name_str ("%sort:");
   
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
@@ -806,7 +808,8 @@ rec_rset_rename_field (rec_rset_t rset,
           else if (rec_field_name_eql_p (rec_field_name (field), key_field_name)
                    || rec_field_name_eql_p (rec_field_name (field), mandatory_field_name)
                    || rec_field_name_eql_p (rec_field_name (field), unique_field_name)
-                   || rec_field_name_eql_p (rec_field_name (field), prohibit_field_name))
+                   || rec_field_name_eql_p (rec_field_name (field), prohibit_field_name)
+                   || rec_field_name_eql_p (rec_field_name (field), sort_field_name))
             {
               /* Rename the field in the fex expression that is the
                  value of the field.  Skip invalid entries.  */
@@ -842,6 +845,7 @@ rec_rset_rename_field (rec_rset_t rset,
   rec_field_name_destroy (mandatory_field_name);
   rec_field_name_destroy (unique_field_name);
   rec_field_name_destroy (prohibit_field_name);
+  rec_field_name_destroy (sort_field_name);
 }
 
 rec_fex_t

@@ -55,6 +55,7 @@ test_declare_input_file renames \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 field2: field121
@@ -68,6 +69,7 @@ test_declare_input_file renames-multiple \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 field2: field121
@@ -174,6 +176,7 @@ test_tool recset-rename ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 foo: field121
@@ -190,6 +193,7 @@ test_tool recset-rename-first ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 foo: field121
@@ -206,6 +210,7 @@ test_tool recset-rename-middle ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 field2: field121
@@ -222,6 +227,7 @@ test_tool recset-rename-last ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 field2: field121
@@ -238,6 +244,7 @@ test_tool recset-rename-range-first ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 foo: field121
@@ -254,6 +261,7 @@ test_tool recset-rename-range-last ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 field2: field121
@@ -270,6 +278,7 @@ test_tool recset-rename-range-all ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 foo: field121
@@ -286,6 +295,7 @@ test_tool recset-rename-all ok \
 %key: field1
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 field1: field11
 foo: field121
@@ -308,6 +318,7 @@ test_tool recset-rename-all-descriptor ok \
 %key: field1
 %type: foo line
 %mandatory: foo
+%sort: foo
 
 field1: field11
 foo: field121
@@ -330,6 +341,7 @@ test_tool recset-rename-all-key ok \
 %key: foo:bar:baz
 %type: field2 line
 %mandatory: field2
+%sort: field2
 
 foo:bar:baz: field11
 field2: field121

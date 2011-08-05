@@ -1,3 +1,12 @@
+2011-08-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: acknowledge %sort entries when renaming fields.
+	* src/rec-rset.c (rec_rset_rename_field): Rename fields used as
+	sorting criteria in %sort: entries.
+
+	* torture/utils/recset.sh: Tests renaming fields updated to cover
+	%sort entries.
+
 2011-08-05  Jose E. Marchesi  <jco@terma.com>
 
 	* etc/ob-rec.el (org-babel-execute:rec): Separate header when
