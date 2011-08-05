@@ -1,3 +1,17 @@
+2011-08-05  Jose E. Marchesi  <jco@terma.com>
+
+	* etc/ob-rec.el (org-babel-execute:rec): Separate header when
+	generating tables.
+	(org-babel-execute:rec): Generate raw data when executed with
+	results: verbatim.
+
+2011-08-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	ob-rec: support for :sort and minor fixes.
+	* etc/ob-rec.el (org-babel-execute:rec): Support for :sort added.
+	(org-babel-execute:rec): Emit rec data, and not csv, when executed
+	with results: scalar, html or code.
+
 2011-07-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: sorting by date values implemented.
