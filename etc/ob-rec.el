@@ -54,6 +54,7 @@ This function is called by `org-babel-execute-src-block'."
          (do-raw (or (member "scalar" result-params)
                      (member "html" result-params)
                      (member "code" result-params)
+                     (member "verbatim" result-params)
                      (equal (point-min) (point-max)))))
     (unless do-raw
       ;; Get the csv representation, that will be used by
