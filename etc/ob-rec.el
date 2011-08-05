@@ -5,7 +5,7 @@
 ;; Author: Jose E. Marchesi
 ;; Keywords: literate programming, reproducible research
 ;; Homepage: http://orgmode.org
-;; Version: 7.4
+;; Version: 7.7
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -65,7 +65,9 @@ This function is called by `org-babel-execute-src-block'."
       (if do-raw
           (buffer-string)
 	(org-table-convert-region (point-min) (point-max) '(4))
-        (org-table-to-lisp)))))
+        (let ((table (org-table-to-lisp)))
+          ;; The first row always contains the table header.
+          (cons (car table) (cons 'hline (cdr table))))))))
     
 (provide 'ob-rec)
 
