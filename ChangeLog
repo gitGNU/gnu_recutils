@@ -1,3 +1,8 @@
+2011-08-15  Thien-Thi Nguyen  <ttn@gnuvola.org>  (tiny change)
+
+	librec: Don't #include <config.h> in rec.h.
+	* src/rec.h: Don't #include <config.h>.
+
 2011-08-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: acknowledge %sort entries when renaming fields.

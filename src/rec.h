@@ -26,13 +26,11 @@
 #ifndef REC_H
 #define REC_H
 
-#include <config.h>
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <fcntl.h>
 
-/* 
+/*
  * rec format version implemented by this library.
  */
 
@@ -40,7 +38,7 @@
 #define REC_VERSION_MINOR 0
 #define REC_VERSION_STRING "1.0"
 
-/* 
+/*
  * INITIALIZATION of the library
  */
 
@@ -139,7 +137,7 @@ rec_field_name_t rec_field_name_dup (rec_field_name_t fname);
  * - Two given field names are EQUAL if and only if their name parts
  *   with the biggest index are identical.  The following names are
  *   thus equal:
- *   
+ *
  *         A:B:C:  .EQUAL. X:Y:C:  .EQUAL. C:
  *
  * - A given field name NAME2 is a reference of a field name NAME1 if
@@ -322,7 +320,7 @@ const char *rec_type_name (rec_type_t type);
 void rec_type_set_name (rec_type_t type, const char *name);
 
 /* Determine whether two types are the same type.
- * 
+ *
  * Two types are equal if,
  *
  * - They are of the same kind, and
@@ -330,7 +328,7 @@ void rec_type_set_name (rec_type_t type, const char *name);
  * - Depending on the kind of types:
  *
  *   + For sizes
- *    
+ *
  *     The maximum size specified in both types is the same.
  *
  *   + For ranges
@@ -859,7 +857,7 @@ enum rec_writer_mode_e
   REC_WRITER_NORMAL,
   REC_WRITER_SEXP
 };
-  
+
 typedef enum rec_writer_mode_e rec_writer_mode_t;
 
 bool rec_write_comment (rec_writer_t writer, rec_comment_t comment, rec_writer_mode_t mode);
@@ -905,7 +903,7 @@ bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
 char *rec_sex_eval_str (rec_sex_t sex, rec_record_t record);
 
 void rec_sex_print_ast (rec_sex_t sex);
-                             
+
 #endif /* !REC_H */
 
 /* End of rec.h */
