@@ -1,5 +1,9 @@
 2011-08-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* configure.ac: Complain if flex or bison are not found and exit.
+
+2011-08-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* Time-stamp marks removed from the entire codebase and syntax
 	checks fixes.
 

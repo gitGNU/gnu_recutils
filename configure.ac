@@ -34,7 +34,19 @@ gl_EARLY
 AC_PROG_LIBTOOL
 AC_PROG_CC
 AM_PROG_CC_C_O
+
+dnl Both lex and yacc are required to generate the lexer/parser source
+dnl files.
+
+AM_PROG_LEX
+if test "$LEX" != flex; then
+   AC_ERROR([flex is required.  Please install it and rerun configure.])
+fi
+
 AC_PROG_YACC
+if test "$YACC" != "bison -y"; then
+   AC_ERROR([bison is required.  Please install it and rerun configure.])
+fi
 
 dnl System
 AC_CANONICAL_HOST
@@ -94,10 +106,6 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
 AM_CONDITIONAL([COMPILE_MDB2REC],
                [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])
 AM_CONDITIONAL([REMOTE_DESCRIPTORS], [test "x$have_curl" = "xyes"])
-
-dnl Search for required programs
-
-AM_PROG_LEX
 
 dnl Platform-based compilation options
 compile_w32_system=no
