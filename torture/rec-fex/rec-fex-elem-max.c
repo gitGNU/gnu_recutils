@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 12:52:28 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-fex-elem-max.c
  *       Date:         Fri Nov 12 12:38:03 2010

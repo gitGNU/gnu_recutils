@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: ""
+/* -*- mode: C -*-
  *
  *       File:         mdb2rec.c
  *       Date:         Fri Aug 20 22:46:31 2010

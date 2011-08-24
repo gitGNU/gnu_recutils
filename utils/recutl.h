@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-21 20:19:33 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         recutl.h
  *       Date:         Thu Apr 22 17:29:52 2010

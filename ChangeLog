@@ -1,3 +1,8 @@
+2011-08-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* Time-stamp marks removed from the entire codebase and syntax
+	checks fixes.
+
 2011-08-15  Thien-Thi Nguyen  <ttn@gnuvola.org>  (tiny change)
 
 	librec: Don't #include <config.h> in rec.h.

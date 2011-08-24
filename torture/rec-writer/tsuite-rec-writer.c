@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 14:47:04 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-writer.c
  *       Date:         Sun Nov 14 10:54:46 2010

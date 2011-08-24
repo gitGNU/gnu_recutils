@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-18 12:20:17 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-write-record.c
  *       Date:         Sun Nov 14 13:27:25 2010

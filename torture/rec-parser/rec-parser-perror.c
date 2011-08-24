@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-14 22:08:28 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-parser-perror.c
  *       Date:         Sat Nov 13 22:37:26 2010

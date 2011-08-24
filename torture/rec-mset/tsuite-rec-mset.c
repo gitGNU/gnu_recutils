@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:46:06 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-mset.c
  *       Date:         Thu Oct 28 16:45:34 2010

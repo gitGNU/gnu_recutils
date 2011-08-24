@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-18 12:20:31 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-write-rset.c
  *       Date:         Mon Nov 15 13:56:25 2010

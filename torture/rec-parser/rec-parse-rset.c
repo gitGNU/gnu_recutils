@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-14 22:10:34 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-parse-rset.c
  *       Date:         Sat Nov 13 21:30:44 2010

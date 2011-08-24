@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 11:26:24 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-comment-new.c
  *       Date:         Fri Oct 29 11:22:47 2010

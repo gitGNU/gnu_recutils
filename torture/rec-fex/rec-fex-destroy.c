@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-09 16:48:02 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-fex-destroy.c
  *       Date:         Tue Nov  9 15:54:08 2010

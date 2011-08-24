@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 14:24:38 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-name-eql-p.c
  *       Date:         Fri Oct 29 14:18:02 2010

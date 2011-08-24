@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 12:37:13 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-fex-elem-field-name-str.c
  *       Date:         Fri Nov 12 12:28:57 2010

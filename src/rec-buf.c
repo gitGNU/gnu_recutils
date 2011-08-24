@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-17 19:12:27 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-buf.c
  *       Date:         Fri Dec 17 18:40:53 2010

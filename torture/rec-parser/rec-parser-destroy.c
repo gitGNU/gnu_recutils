@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 15:31:08 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-parser-destroy.c
  *       Date:         Sat Nov 13 15:29:18 2010

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 12:06:06 jco"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-comment.c
  *       Date:         Fri Oct 29 11:19:36 2010

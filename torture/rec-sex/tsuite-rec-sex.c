@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 15:22:36 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-sex.c
  *       Date:         Mon Nov 15 15:04:12 2010

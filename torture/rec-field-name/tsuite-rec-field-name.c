@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 15:45:24 jco"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-field-name.c
  *       Date:         Fri Oct 29 13:43:08 2010

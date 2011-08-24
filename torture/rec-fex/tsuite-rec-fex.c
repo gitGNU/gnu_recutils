@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-25 16:20:22 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-fex.c
  *       Date:         Tue Nov  9 14:02:54 2010

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-18 12:20:40 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-write-db.c
  *       Date:         Mon Nov 15 14:06:38 2010

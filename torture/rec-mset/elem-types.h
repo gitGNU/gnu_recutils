@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-28 20:26:09 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         elem-types.h
  *       Date:         Thu Oct 28 20:01:31 2010

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 15:46:39 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-name-size.c
  *       Date:         Fri Oct 29 14:58:14 2010

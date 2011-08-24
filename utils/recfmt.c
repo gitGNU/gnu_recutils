@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-21 20:22:27 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         recfmt.c
  *       Date:         Wed Dec 22 18:20:20 2010

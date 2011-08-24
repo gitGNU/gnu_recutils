@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-07-21 20:49:36 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-int.c
  *       Date:         Thu Jul 15 18:23:26 2010

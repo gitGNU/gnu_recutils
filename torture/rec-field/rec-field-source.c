@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 14:55:47 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-source.c
  *       Date:         Fri Nov 12 14:53:14 2010

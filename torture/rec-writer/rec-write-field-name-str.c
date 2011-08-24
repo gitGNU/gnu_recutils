@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 14:17:56 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-write-field-name-str.c
  *       Date:         Mon Nov 15 14:14:56 2010

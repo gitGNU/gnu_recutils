@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 15:37:15 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-name-str-p.c
  *       Date:         Fri Oct 29 15:33:14 2010

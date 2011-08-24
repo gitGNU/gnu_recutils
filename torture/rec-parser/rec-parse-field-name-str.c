@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-13 15:57:23 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-parse-field-name-str.c
  *       Date:         Sat Nov 13 15:42:21 2010

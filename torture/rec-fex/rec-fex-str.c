@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-25 16:21:58 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-fex-str.c
  *       Date:         Thu Nov 25 16:13:12 2010

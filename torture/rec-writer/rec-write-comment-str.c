@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 14:46:39 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-write-comment-str.c
  *       Date:         Mon Nov 15 14:43:35 2010

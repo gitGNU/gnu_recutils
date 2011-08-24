@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-02-08 00:49:51 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-parse-db.c
  *       Date:         Sat Nov 13 21:59:40 2010

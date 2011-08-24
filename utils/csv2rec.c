@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-01-31 22:13:01 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         csv2rec.c
  *       Date:         Fri Aug 20 16:35:25 2010

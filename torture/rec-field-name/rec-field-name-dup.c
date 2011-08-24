@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 14:59:14 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-name-dup.c
  *       Date:         Fri Oct 29 14:08:32 2010

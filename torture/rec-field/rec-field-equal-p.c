@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 13:44:53 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-equal-p.c
  *       Date:         Fri Nov 12 13:34:34 2010

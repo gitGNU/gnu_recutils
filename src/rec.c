@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: ""
+/* -*- mode: C -*-
  *
  *       File:         rec.c
  *       Date:         Sun Oct 24 19:47:16 2010

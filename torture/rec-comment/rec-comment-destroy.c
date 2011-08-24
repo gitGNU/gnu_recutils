@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 11:29:53 jco"
+/* -*- mode: C -*-
  *
  *       File:         rec-comment-destroy.c
  *       Date:         Fri Oct 29 11:27:27 2010

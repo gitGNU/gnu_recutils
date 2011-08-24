@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 13:24:25 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-destroy.c
  *       Date:         Fri Nov 12 13:19:45 2010

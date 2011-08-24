@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 12:47:38 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-fex-elem-min.c
  *       Date:         Fri Nov 12 12:38:03 2010

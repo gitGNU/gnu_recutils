@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-12-14 21:48:56 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         tsuite-rec-parser.c
  *       Date:         Sat Nov 13 15:20:44 2010

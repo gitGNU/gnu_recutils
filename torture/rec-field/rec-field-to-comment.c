@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 15:46:47 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-to-comment.c
  *       Date:         Fri Nov 12 15:38:17 2010

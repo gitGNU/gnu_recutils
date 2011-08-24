@@ -68,7 +68,7 @@ This function is called by `org-babel-execute-src-block'."
         (let ((table (org-table-to-lisp)))
           ;; The first row always contains the table header.
           (cons (car table) (cons 'hline (cdr table))))))))
-    
+
 (provide 'ob-rec)
 
 ;; ob-rec.el ends here

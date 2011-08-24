@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 21:12:00 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-type-reg-destroy.c
  *       Date:         Fri Oct 29 21:09:51 2010

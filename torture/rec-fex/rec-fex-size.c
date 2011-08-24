@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-10 12:06:09 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-fex-size.c
  *       Date:         Wed Nov 10 11:59:31 2010

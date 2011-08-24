@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-15 15:11:37 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-sex-destroy.c
  *       Date:         Mon Nov 15 15:06:48 2010

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-12 15:18:50 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-char-location-str.c
  *       Date:         Fri Nov 12 15:01:45 2010

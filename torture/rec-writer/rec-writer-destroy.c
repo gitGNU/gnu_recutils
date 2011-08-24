@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-11-14 15:07:05 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-writer-destroy.c
  *       Date:         Sun Nov 14 10:57:39 2010

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2010-10-29 21:26:23 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-field-name-part-normalise.c
  *       Date:         Fri Oct 29 15:38:54 2010
