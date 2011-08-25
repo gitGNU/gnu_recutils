@@ -1,3 +1,7 @@
+2011-08-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (recfmt Templates): Typo fixed.
+
 2011-08-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Introduction): Comment about YAML.

@@ -2154,7 +2154,7 @@ Task @{@{Id@}@}: @{@{Summary@}@}
 ------------------------
 @{@{Description@}@}
 --
-Created at @{@{CreationTime@}@}
+Created at @{@{CreatedAt@}@}
 @end example
 
 @noindent
