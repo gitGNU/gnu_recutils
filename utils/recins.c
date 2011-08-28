@@ -417,14 +417,19 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
+      rec_record_t aux;
+
       /* Add auto-set fields required by this record set.  */
       record_to_insert = recins_add_auto_fields (rset, record);
+      rec_record_destroy (record);
 
 #if defined REC_CRYPT_SUPPORT
-          /* Encrypt the value of fields declared as confidential in
-             this record set.  */
+      /* Encrypt the value of fields declared as confidential in
+         this record set.  */
 
-          record_to_insert = recins_encrypt_fields (rset, recins_record);
+      aux = record_to_insert;
+      record_to_insert = recins_encrypt_fields (rset, record_to_insert);
+      rec_record_destroy (aux);
 #endif
 
       new_elem = rec_rset_elem_record_new (rset, record_to_insert);
@@ -656,17 +661,21 @@ recins_add_new_record (rec_db_t db)
       rset = rec_db_get_rset_by_type (db, recutl_type);
       if (rset)
         {
+          rec_record_t aux;
+
           num_rec = -1;
      
           /* Add auto-set fields required by this record set.  */
           record_to_insert = recins_add_auto_fields (rset, recins_record);
+          rec_record_destroy (recins_record);
 
 #if defined REC_CRYPT_SUPPORT
           /* Encrypt the value of fields declared as confidential in
              this record set.  */
 
-
-          record_to_insert = recins_encrypt_fields (rset, recins_record);
+          aux = record_to_insert;
+          record_to_insert = recins_encrypt_fields (rset, record_to_insert);
+          rec_record_destroy (aux);
 #endif
 
           rset_elem = rec_rset_first_record (rset);

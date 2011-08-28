@@ -1,5 +1,16 @@
 2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	lib: regression affecting auto fields fixed.
+	* utils/recins.c (recins_add_new_record): Fix regression causing
+	the loosing of the auto fields.
+	(recins_add_new_record): Avoid memory leak destroying
+	recins_record.
+
+	* src/rec-rset.c (rec_rset_get_props): Initialize confidential_p
+	to false.
+
+2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	crypt: support for CRC and encrypted prefix.
 	* src/rec-crypt.c: Include crc.h.
 	(rec_decrypt): Check the CRC of decrypted data.

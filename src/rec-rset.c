@@ -1663,6 +1663,7 @@ rec_rset_get_props (rec_rset_t rset,
         {
           props->fname = rec_field_name_dup (fname);
           props->auto_p = false;
+          props->confidential_p = false;
           props->type = NULL;
           props->type_name = NULL;
           
