@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,8 @@ static int rec_int_check_record_unique (rec_rset_t rset, rec_record_t record,
                                         rec_buf_t errors);
 static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
                                           rec_buf_t errors);
+static int rec_int_check_record_secrets (rec_rset_t rset, rec_record_t record,
+                                         rec_buf_t errors);
 static int rec_int_merge_remote (rec_rset_t rset, rec_buf_t errors);
 static bool rec_int_rec_type_p (char *str);
 
@@ -216,7 +218,8 @@ rec_int_check_record (rec_db_t db,
     + rec_int_check_record_types     (db, rset, record, errors)
     + rec_int_check_record_mandatory (rset, record, errors)
     + rec_int_check_record_unique    (rset, record, errors)
-    + rec_int_check_record_prohibit  (rset, record, errors);
+    + rec_int_check_record_prohibit  (rset, record, errors)
+    + rec_int_check_record_secrets   (rset, record, errors);
 
   return res;
 }
@@ -536,6 +539,43 @@ rec_int_check_record_prohibit (rec_rset_t rset,
     }
 
   return res;
+}
+
+static int
+rec_int_check_record_secrets (rec_rset_t rset,
+                              rec_record_t record,
+                              rec_buf_t errors)
+{
+  int res;
+  rec_field_t field;
+  rec_record_elem_t rec_elem;
+  char *tmp;
+
+  res = 0;
+
+  rec_elem = rec_record_null_elem ();
+  while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+    {
+      field = rec_record_elem_field (rec_elem);
+
+      /* If the field is confidential it must be encrypted.  Encrypted
+         field values can be recognized by the "encrypted-"
+         prefix.  */
+#define REC_ENCRYPTED_PREFIX "encrypted-"
+      if (rec_rset_field_confidential_p (rset, rec_field_name (field))
+          && (strncmp (rec_field_value (field),
+                       REC_ENCRYPTED_PREFIX,
+                       strlen (REC_ENCRYPTED_PREFIX)) != 0))
+        {
+          asprintf (&tmp,
+                    _("%s:%s: error: confidential field is not encrypted\n"),
+                    rec_record_source (record),
+                    rec_record_location_str (record));
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+          res++;
+        }
+    }
 }
 
 static int
