@@ -35,6 +35,9 @@
 #include <locale.h>
 #include <gettext.h>
 #define _(str) gettext (str)
+#if defined REC_CRYPT_SUPPORT
+#   include <gcrypt.h>
+#endif
 #include <progname.h>
 
 #include <rec.h>
@@ -50,6 +53,12 @@ void
 recutl_init (char *util_name)
 {
   set_program_name (xstrdup (util_name));
+
+#if defined REC_CRYPT_SUPPORT
+  /* Initialize libgcrypt */
+  gcry_check_version (NULL);
+  gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
+#endif
 
   /* Initialize librec */
   rec_init ();

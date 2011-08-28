@@ -34,6 +34,7 @@
 #include <locale.h>
 #include <time.h>
 #define _(str) gettext (str)
+#include <base64.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -57,6 +58,7 @@ bool          recins_force     = false;
 bool          recins_verbose   = false;
 bool          recins_external  = true;
 bool          recins_auto      = true;
+char         *recins_password  = NULL;
 
 /*
  * Command line options management
@@ -72,7 +74,8 @@ enum
   VERBOSE_ARG,
   NO_EXTERNAL_ARG,
   RECORD_ARG,
-  NO_AUTO_ARG
+  NO_AUTO_ARG,
+  PASSWORD_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -87,6 +90,7 @@ static const struct option GNU_longOptions[] =
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
     {"record", required_argument, NULL, RECORD_ARG},
     {"no-auto", no_argument, NULL, NO_AUTO_ARG},
+    {"password", required_argument, NULL, PASSWORD_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -120,6 +124,14 @@ Insert new records in a rec database.\n"), stdout);
       --no-auto                       don't insert auto generated fields.\n\
       --verbose                       give a detailed report if the integrity check\n\
                                         fails.\n"), stdout);
+
+#if defined REC_CRYPT_SUPPORT
+  /* TRANSLATORS: --help output, encryption related options.
+     no-wrap */
+  fputs (_("\
+  -s, --password=STR                  encrypt confidential fields with the given password.\n"),
+         stdout);
+#endif
 
   recutl_print_help_common ();
 
@@ -226,6 +238,81 @@ recins_add_auto_field_date (rec_rset_t rset,
   rec_record_insert_at (record, rec_elem, 0);
 }
 
+#if defined REC_CRYPT_SUPPORT
+
+rec_record_t
+recins_encrypt_fields (rec_rset_t rset,
+                       rec_record_t record)
+{
+  rec_field_t field;
+  rec_record_t res = NULL;
+  rec_field_name_t field_name;
+  rec_fex_t confidential_fields;
+  size_t i, k, num_fields;
+  
+  res = rec_record_dup (record);
+
+  if (rset)
+    {
+      confidential_fields = rec_rset_confidential (rset);
+      if (!recins_password && (rec_fex_size (confidential_fields) > 0))
+        {
+          recutl_warning ("the record set contains confidential fields but no password was provided\n");
+          recutl_warning ("the resulting record will have those fields unencrypted!\n");
+          return res;
+        }
+
+      for (i = 0; i < rec_fex_size (confidential_fields); i++)
+        {
+          field_name = rec_fex_elem_field_name (rec_fex_get (confidential_fields, i));
+
+          num_fields = rec_record_get_num_fields_by_name (res, field_name);
+          for (k = 0; k < num_fields; k++)
+            {
+              field = rec_record_get_field_by_name (res, field_name, k);
+              if (field)
+                {
+                  /* Encrypt the value of this field.  */
+                  char *field_value = xstrdup (rec_field_value (field));
+                  char *field_value_encrypted;
+                  char *field_value_base64;
+                  size_t out_size, base64_size;
+
+                  if (!rec_encrypt (field_value,
+                                    strlen (field_value),
+                                    recins_password,
+                                    &field_value_encrypted,
+                                    &out_size))
+                    {
+                      recutl_fatal (_("rec_encrypt failed.  Please report this\n"));
+                    }
+
+                  /* Encode the encrypted into base64.  */
+                  base64_size = base64_encode_alloc (field_value_encrypted,
+                                                     out_size,
+                                                     &field_value_base64);
+                  base64_encode (field_value_encrypted,
+                                 out_size,
+                                 field_value_base64,
+                                 base64_size);
+
+                  /* Replace the value of the field.  */
+                  rec_field_set_value (field, field_value_base64);
+
+                  /* Free resources.  */
+                  free (field_value);
+                  free (field_value_encrypted);
+                  free (field_value_base64);
+                }
+            }
+        }
+    }  
+
+  return res;
+}
+
+#endif /* REC_CRYPT_SUPPORT */
+
 rec_record_t
 recins_add_auto_fields (rec_rset_t rset,
                         rec_record_t record)
@@ -317,6 +404,13 @@ recins_insert_record (rec_db_t db,
       /* Add auto-set fields required by this record set.  */
       record_to_insert = recins_add_auto_fields (rset, record);
 
+#if defined REC_CRYPT_SUPPORT
+          /* Encrypt the value of fields declared as confidential in
+             this record set.  */
+
+          record_to_insert = recins_encrypt_fields (rset, recins_record);
+#endif
+
       new_elem = rec_rset_elem_record_new (rset, record_to_insert);
 
       if (rec_rset_num_records (rset) == 0)
@@ -377,7 +471,7 @@ void recins_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "f:v:r:",
+                             "f:v:r:s:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -458,6 +552,17 @@ void recins_parse_args (int argc,
             recins_auto = false;
             break;
           }
+        case PASSWORD_ARG:
+        case 's':
+          {
+            if (recins_password != NULL)
+              {
+                recutl_fatal (_("more than one password was specified\n"));
+              }
+
+            recins_password = xstrdup (optarg);
+            break;
+          }
         case RECORD_ARG:
         case 'r':
           {
@@ -466,7 +571,6 @@ void recins_parse_args (int argc,
             if (!provided_record)
               {
                 recutl_fatal (_("error while parsing the record provided by -r\n"));
-                exit (EXIT_FAILURE);
               }
 
             if (recins_record)
@@ -540,6 +644,14 @@ recins_add_new_record (rec_db_t db)
      
           /* Add auto-set fields required by this record set.  */
           record_to_insert = recins_add_auto_fields (rset, recins_record);
+
+#if defined REC_CRYPT_SUPPORT
+          /* Encrypt the value of fields declared as confidential in
+             this record set.  */
+
+
+          record_to_insert = recins_encrypt_fields (rset, recins_record);
+#endif
 
           rset_elem = rec_rset_first_record (rset);
           while (rec_rset_elem_p (rset_elem))

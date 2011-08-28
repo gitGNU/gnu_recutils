@@ -29,6 +29,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <base64.h>
 
 #include <rec.h>
 #include <rec-utils.h>
@@ -49,6 +50,9 @@ struct rec_writer_s
 
   bool eof;
   int line;  /* Current line number. */
+
+  char *password;    /* Password to use to decrypt encrypted
+                        fields.  */
 };
 
 rec_writer_t
@@ -63,6 +67,7 @@ rec_writer_new (FILE *file_out)
       new->buf_out = NULL;
       new->line = 1;
       new->eof = false;
+      new->password = NULL;
     }
 
   return new;
@@ -97,6 +102,7 @@ rec_writer_destroy (rec_writer_t writer)
       rec_buf_close (writer->buf_out);
     }
 
+/*  free (writer->password); */
   free (writer);
 }
 
@@ -177,6 +183,18 @@ rec_write_field (rec_writer_t writer,
                  rec_field_t field,
                  rec_writer_mode_t mode)
 {
+  rec_write_field_with_rset (writer,
+                             NULL,
+                             field,
+                             mode);
+}
+
+bool
+rec_write_field_with_rset (rec_writer_t writer,
+                           rec_rset_t rset,
+                           rec_field_t field,
+                           rec_writer_mode_t mode)
+{
   size_t pos;
   rec_field_name_t fname;
   const char *fvalue;
@@ -220,6 +238,52 @@ rec_write_field (rec_writer_t writer,
     }
 
   fvalue = rec_field_value (field);
+
+#if defined REC_CRYPT_SUPPORT
+
+  /* If this field is confidential and the writer has a configured
+     password, decrypt the value.  Otherwise just write the encrypted
+     string.  */
+
+  if (rset
+      && rec_rset_field_confidential_p (rset, fname)
+      && writer->password)
+    {
+      char *base64_decoded;
+      size_t base64_decoded_size;
+      char *decrypted_value;
+      size_t decrypted_value_size;
+
+      /* Decode the Base64.  */
+
+      if (base64_decode_alloc (fvalue,
+                               strlen(fvalue),
+                               &base64_decoded,
+                               &base64_decoded_size))
+        {
+          base64_decode (fvalue,
+                         strlen(fvalue),
+                         base64_decoded,
+                         &base64_decoded_size);
+      
+          /* Decrypt.  */
+
+          if (rec_decrypt (base64_decoded,
+                            base64_decoded_size,
+                            writer->password,
+                            &decrypted_value,
+                            &decrypted_value_size))
+            {
+              fvalue = decrypted_value;      
+            }
+
+          /* Free resources.  */
+          free (base64_decoded);
+        }
+    }
+
+#endif /* REC_CRYPT_SUPPORT */
+
   for (pos = 0; pos < strlen (fvalue); pos++)
     {
       if (fvalue[pos] == '\n')
@@ -353,6 +417,18 @@ rec_write_record (rec_writer_t writer,
                   rec_record_t record,
                   rec_writer_mode_t mode)
 {
+  rec_write_record_with_rset (writer,
+                             NULL,
+                             record,
+                             mode);
+}
+
+bool
+rec_write_record_with_rset (rec_writer_t writer,
+                            rec_rset_t rset,
+                            rec_record_t record,
+                            rec_writer_mode_t mode)
+{
   bool ret;
   rec_field_t field;
   rec_comment_t comment;
@@ -384,7 +460,10 @@ rec_write_record (rec_writer_t writer,
         {
           /* Write a field.  */
           field = rec_record_elem_field (elem);
-          if (!rec_write_field (writer, field, mode))
+          if (!rec_write_field_with_rset (writer,
+                                          rset,
+                                          field,
+                                          mode))
             {
               ret = false;
               break;
@@ -578,7 +657,6 @@ rec_write_rset (rec_writer_t writer,
       position++;
     }
 
-
   /* Special case:
    *
    * # comment 1
@@ -690,6 +768,14 @@ rec_write_comment_str (rec_comment_t comment,
     }
   
   return result;
+}
+
+void
+rec_writer_set_password (rec_writer_t writer,
+                         char *password)
+{
+  free (writer->password);
+  writer->password = strdup (password);
 }
 
 /*

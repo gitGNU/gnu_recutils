@@ -28,12 +28,11 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_PROG_RANLIB])
   # Code from module alloca-opt:
   # Code from module announce-gen:
-  # Code from module arg-nonnull:
   # Code from module array-list:
   # Code from module autobuild:
   AB_INIT
+  # Code from module base64:
   # Code from module btowc:
-  # Code from module c++defs:
   # Code from module c-ctype:
   # Code from module clock-time:
   # Code from module cloexec:
@@ -121,6 +120,10 @@ AC_DEFUN([gl_EARLY],
   # Code from module signbit:
   # Code from module sigprocmask:
   # Code from module size_max:
+  # Code from module snippet/_Noreturn:
+  # Code from module snippet/arg-nonnull:
+  # Code from module snippet/c++defs:
+  # Code from module snippet/warn-on-use:
   # Code from module spawn:
   # Code from module ssize_t:
   # Code from module stat:
@@ -132,6 +135,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module strchrnul:
   # Code from module streq:
   # Code from module strerror:
+  # Code from module strerror-override:
   # Code from module string:
   # Code from module strsep:
   # Code from module sys_stat:
@@ -151,7 +155,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module verify:
   # Code from module wait-process:
   # Code from module waitpid:
-  # Code from module warn-on-use:
   # Code from module wchar:
   # Code from module wcrtomb:
   # Code from module wctype-h:
@@ -176,10 +179,14 @@ AC_DEFUN([gl_INIT],
   gl_COMMON
   gl_source_base='lib'
 gl_FUNC_ALLOCA
+gl_FUNC_BASE64
 gl_FUNC_BTOWC
+if test $HAVE_BTOWC = 0 || test $REPLACE_BTOWC = 1; then
+  AC_LIBOBJ([btowc])
+  gl_PREREQ_BTOWC
+fi
 gl_WCHAR_MODULE_INDICATOR([btowc])
 gl_CLOCK_TIME
-gl_CLOEXEC
 gl_MODULE_INDICATOR_FOR_TESTS([cloexec])
 gl_CLOSE_STREAM
 gl_MODULE_INDICATOR([close-stream])
@@ -191,6 +198,10 @@ gl_ENVIRON
 gl_UNISTD_MODULE_INDICATOR([environ])
 gl_HEADER_ERRNO_H
 gl_ERROR
+if test $ac_cv_lib_error_at_line = no; then
+  AC_LIBOBJ([error])
+  gl_PREREQ_ERROR
+fi
 m4_ifdef([AM_XGETTEXT_OPTION],
   [AM_][XGETTEXT_OPTION([--flag=error:3:c-format])
    AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
@@ -200,22 +211,52 @@ gl_FUNC_FCNTL
 gl_FCNTL_MODULE_INDICATOR([fcntl])
 gl_FCNTL_H
 gl_FLOAT_H
+if test $REPLACE_FLOAT_LDBL = 1; then
+  AC_LIBOBJ([float])
+fi
 gl_FUNC_FPENDING
+if test $ac_cv_func___fpending = no; then
+  AC_LIBOBJ([fpending])
+  gl_PREREQ_FPENDING
+fi
 gl_FUNC_FREXP_NO_LIBM
+if test $gl_func_frexp_no_libm != yes; then
+  AC_LIBOBJ([frexp])
+fi
 gl_MATH_MODULE_INDICATOR([frexp])
 gl_FUNC_FREXPL_NO_LIBM
+if test $HAVE_DECL_FREXPL = 0 || test $gl_func_frexpl_no_libm = no; then
+  AC_LIBOBJ([frexpl])
+fi
 gl_MATH_MODULE_INDICATOR([frexpl])
 gl_FUNC_GETDTABLESIZE
+if test $HAVE_GETDTABLESIZE = 0; then
+  AC_LIBOBJ([getdtablesize])
+fi
 gl_UNISTD_MODULE_INDICATOR([getdtablesize])
 gl_FUNC_GETOPT_GNU
+if test $REPLACE_GETOPT = 1; then
+  AC_LIBOBJ([getopt])
+  AC_LIBOBJ([getopt1])
+  gl_PREREQ_GETOPT
+fi
 gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
 gl_FUNC_GETOPT_POSIX
+if test $REPLACE_GETOPT = 1; then
+  AC_LIBOBJ([getopt])
+  AC_LIBOBJ([getopt1])
+  gl_PREREQ_GETOPT
+fi
 dnl you must add AM_GNU_GETTEXT([external]) or similar to configure.ac.
 AM_GNU_GETTEXT_VERSION([0.18.1])
 AC_SUBST([LIBINTL])
 AC_SUBST([LTLIBINTL])
 gl_GETTIME
 gl_FUNC_GETTIMEOFDAY
+if test $HAVE_GETTIMEOFDAY = 0 || test $REPLACE_GETTIMEOFDAY = 1; then
+  AC_LIBOBJ([gettimeofday])
+  gl_PREREQ_GETTIMEOFDAY
+fi
 gl_SYS_TIME_MODULE_INDICATOR([gettimeofday])
 # Autoconf 2.61a.99 and earlier don't support linking a file only
 # in VPATH builds.  But since GNUmakefile is for maintainer use
@@ -229,37 +270,86 @@ m4_if(m4_version_compare([2.61a.100],
         [GNUmakefile=$GNUmakefile])])
 gl_INLINE
 gl_FUNC_ISNAND_NO_LIBM
+if test $gl_func_isnand_no_libm != yes; then
+  AC_LIBOBJ([isnand])
+  gl_PREREQ_ISNAND
+fi
 gl_FUNC_ISNANF_NO_LIBM
+if test $gl_func_isnanf_no_libm != yes; then
+  AC_LIBOBJ([isnanf])
+  gl_PREREQ_ISNANF
+fi
 gl_FUNC_ISNANL_NO_LIBM
+if test $gl_func_isnanl_no_libm != yes; then
+  AC_LIBOBJ([isnanl])
+  gl_PREREQ_ISNANL
+fi
 gl_LANGINFO_H
 gl_LIST
 gl_LOCALCHARSET
 LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(top_builddir)/$gl_source_base\""
 AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
 gl_FUNC_LSTAT
+if test $REPLACE_LSTAT = 1; then
+  AC_LIBOBJ([lstat])
+  gl_PREREQ_LSTAT
+fi
 gl_SYS_STAT_MODULE_INDICATOR([lstat])
 AC_CONFIG_COMMANDS_PRE([m4_ifdef([AH_HEADER],
   [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
 gl_FUNC_MALLOC_GNU
+if test $REPLACE_MALLOC = 1; then
+  AC_LIBOBJ([malloc])
+fi
 gl_MODULE_INDICATOR([malloc-gnu])
 gl_FUNC_MALLOC_POSIX
+if test $REPLACE_MALLOC = 1; then
+  AC_LIBOBJ([malloc])
+fi
 gl_STDLIB_MODULE_INDICATOR([malloc-posix])
 gl_MALLOCA
 gl_MATH_H
 gl_FUNC_MBRTOWC
+if test $HAVE_MBRTOWC = 0 || test $REPLACE_MBRTOWC = 1; then
+  AC_LIBOBJ([mbrtowc])
+  gl_PREREQ_MBRTOWC
+fi
 gl_WCHAR_MODULE_INDICATOR([mbrtowc])
 gl_FUNC_MBSINIT
+if test $HAVE_MBSINIT = 0 || test $REPLACE_MBSINIT = 1; then
+  AC_LIBOBJ([mbsinit])
+  gl_PREREQ_MBSINIT
+fi
 gl_WCHAR_MODULE_INDICATOR([mbsinit])
 gl_FUNC_MBTOWC
+if test $REPLACE_MBTOWC = 1; then
+  AC_LIBOBJ([mbtowc])
+  gl_PREREQ_MBTOWC
+fi
 gl_STDLIB_MODULE_INDICATOR([mbtowc])
 gl_FUNC_MEMCHR
+if test $HAVE_MEMCHR = 0 || test $REPLACE_MEMCHR = 1; then
+  AC_LIBOBJ([memchr])
+  gl_PREREQ_MEMCHR
+fi
 gl_STRING_MODULE_INDICATOR([memchr])
 gl_FUNC_MKSTEMP
+if test $HAVE_MKSTEMP = 0 || test $REPLACE_MKSTEMP = 1; then
+  AC_LIBOBJ([mkstemp])
+  gl_PREREQ_MKSTEMP
+fi
 gl_STDLIB_MODULE_INDICATOR([mkstemp])
 gl_FUNC_MKTIME
+if test $REPLACE_MKTIME = 1; then
+  AC_LIBOBJ([mktime])
+  gl_PREREQ_MKTIME
+fi
 gl_TIME_MODULE_INDICATOR([mktime])
 gl_MULTIARCH
 gl_FUNC_NL_LANGINFO
+if test $HAVE_NL_LANGINFO = 0 || test $REPLACE_NL_LANGINFO = 1; then
+  AC_LIBOBJ([nl_langinfo])
+fi
 gl_LANGINFO_MODULE_INDICATOR([nl_langinfo])
 gl_FUNC_OPEN
 gl_FCNTL_MODULE_INDICATOR([open])
@@ -302,7 +392,8 @@ gl_SPAWN_MODULE_INDICATOR([posix_spawnattr_setsigmask])
 gl_POSIX_SPAWN
 if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
   AC_LIBOBJ([spawnp])
-  gl_POSIX_SPAWN_INTERNAL
+  AC_LIBOBJ([spawni])
+  gl_PREREQ_POSIX_SPAWN_INTERNAL
 fi
 gl_SPAWN_MODULE_INDICATOR([posix_spawnp])
 gl_FUNC_PRINTF_FREXP
@@ -312,22 +403,50 @@ AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
 AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
 gl_QUOTEARG
 gl_FUNC_RAWMEMCHR
+if test $HAVE_RAWMEMCHR = 0; then
+  AC_LIBOBJ([rawmemchr])
+  gl_PREREQ_RAWMEMCHR
+fi
 gl_STRING_MODULE_INDICATOR([rawmemchr])
 gl_REGEX
+if test $ac_use_included_regex = yes; then
+  AC_LIBOBJ([regex])
+  gl_PREREQ_REGEX
+fi
 gl_SCHED_H
 gl_FUNC_SETENV
+if test $HAVE_SETENV = 0 || test $REPLACE_SETENV = 1; then
+  AC_LIBOBJ([setenv])
+fi
 gl_STDLIB_MODULE_INDICATOR([setenv])
 gl_SIGACTION
+if test $HAVE_SIGACTION = 0; then
+  AC_LIBOBJ([sigaction])
+  gl_PREREQ_SIGACTION
+fi
 gl_SIGNAL_MODULE_INDICATOR([sigaction])
 gl_SIGNAL_H
 gl_SIGNBIT
+if test $REPLACE_SIGNBIT = 1; then
+  AC_LIBOBJ([signbitf])
+  AC_LIBOBJ([signbitd])
+  AC_LIBOBJ([signbitl])
+fi
 gl_MATH_MODULE_INDICATOR([signbit])
 gl_SIGNALBLOCKING
+if test $HAVE_POSIX_SIGNALBLOCKING = 0; then
+  AC_LIBOBJ([sigprocmask])
+  gl_PREREQ_SIGPROCMASK
+fi
 gl_SIGNAL_MODULE_INDICATOR([sigprocmask])
 gl_SIZE_MAX
 gl_SPAWN_H
 gt_TYPE_SSIZE_T
 gl_FUNC_STAT
+if test $REPLACE_STAT = 1; then
+  AC_LIBOBJ([stat])
+  gl_PREREQ_STAT
+fi
 gl_SYS_STAT_MODULE_INDICATOR([stat])
 AM_STDBOOL_H
 gl_STDDEF_H
@@ -335,11 +454,29 @@ gl_STDINT_H
 gl_STDIO_H
 gl_STDLIB_H
 gl_FUNC_STRCHRNUL
+if test $HAVE_STRCHRNUL = 0 || test $REPLACE_STRCHRNUL = 1; then
+  AC_LIBOBJ([strchrnul])
+  gl_PREREQ_STRCHRNUL
+fi
 gl_STRING_MODULE_INDICATOR([strchrnul])
 gl_FUNC_STRERROR
+if test $REPLACE_STRERROR = 1; then
+  AC_LIBOBJ([strerror])
+fi
+gl_MODULE_INDICATOR([strerror])
 gl_STRING_MODULE_INDICATOR([strerror])
+AC_REQUIRE([gl_HEADER_ERRNO_H])
+AC_REQUIRE([gl_FUNC_STRERROR_0])
+if test -n "$ERRNO_H" || test $REPLACE_STRERROR_0 = 1; then
+  AC_LIBOBJ([strerror-override])
+  gl_PREREQ_SYS_H_WINSOCK2
+fi
 gl_HEADER_STRING_H
 gl_FUNC_STRSEP
+if test $HAVE_STRSEP = 0; then
+  AC_LIBOBJ([strsep])
+  gl_PREREQ_STRSEP
+fi
 gl_STRING_MODULE_INDICATOR([strsep])
 gl_HEADER_SYS_STAT_H
 AC_PROG_MKDIR_P
@@ -350,10 +487,18 @@ AC_PROG_MKDIR_P
 gl_FUNC_GEN_TEMPNAME
 gl_HEADER_TIME_H
 gl_TIME_R
+if test $HAVE_LOCALTIME_R = 0 || test $REPLACE_LOCALTIME_R = 1; then
+  AC_LIBOBJ([time_r])
+  gl_PREREQ_TIME_R
+fi
 gl_TIME_MODULE_INDICATOR([time_r])
 gl_TIMESPEC
 gl_UNISTD_H
 gl_FUNC_UNSETENV
+if test $HAVE_UNSETENV = 0 || test $REPLACE_UNSETENV = 1; then
+  AC_LIBOBJ([unsetenv])
+  gl_PREREQ_UNSETENV
+fi
 gl_STDLIB_MODULE_INDICATOR([unsetenv])
 gl_FUNC_VASNPRINTF
 gl_FUNC_VASNPRINTF_POSIX
@@ -364,9 +509,16 @@ m4_ifdef([AM_XGETTEXT_OPTION],
    AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
 gl_WAIT_PROCESS
 gl_FUNC_WAITPID
+if test $HAVE_WAITPID = 0; then
+  AC_LIBOBJ([waitpid])
+fi
 gl_SYS_WAIT_MODULE_INDICATOR([waitpid])
 gl_WCHAR_H
 gl_FUNC_WCRTOMB
+if test $HAVE_WCRTOMB = 0 || test $REPLACE_WCRTOMB = 1; then
+  AC_LIBOBJ([wcrtomb])
+  gl_PREREQ_WCRTOMB
+fi
 gl_WCHAR_MODULE_INDICATOR([wcrtomb])
 gl_WCTYPE_H
 gl_XALLOC
@@ -508,20 +660,23 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/announce-gen
-  build-aux/arg-nonnull.h
-  build-aux/c++defs.h
   build-aux/config.rpath
   build-aux/gendocs.sh
   build-aux/gnupload
+  build-aux/snippet/_Noreturn.h
+  build-aux/snippet/arg-nonnull.h
+  build-aux/snippet/c++defs.h
+  build-aux/snippet/warn-on-use.h
   build-aux/useless-if-before-free
   build-aux/vc-list-files
-  build-aux/warn-on-use.h
   doc/gendocs_template
   doc/parse-datetime.texi
   doc/regexprops-generic.texi
   lib/alloca.in.h
   lib/asnprintf.c
   lib/asprintf.c
+  lib/base64.c
+  lib/base64.h
   lib/btowc.c
   lib/c-ctype.c
   lib/c-ctype.h
@@ -546,6 +701,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fcntl.c
   lib/fcntl.in.h
   lib/float+.h
+  lib/float.c
   lib/float.in.h
   lib/fpending.c
   lib/fpending.h
@@ -646,6 +802,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strchrnul.c
   lib/strchrnul.valgrind
   lib/streq.h
+  lib/strerror-override.c
+  lib/strerror-override.h
   lib/strerror.c
   lib/string.in.h
   lib/strsep.c
@@ -678,10 +836,10 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/00gnulib.m4
   m4/alloca.m4
   m4/autobuild.m4
+  m4/base64.m4
   m4/bison.m4
   m4/btowc.m4
   m4/clock_time.m4
-  m4/cloexec.m4
   m4/close-stream.m4
   m4/closeout.m4
   m4/codeset.m4
@@ -791,6 +949,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strerror.m4
   m4/string_h.m4
   m4/strsep.m4
+  m4/sys_socket_h.m4
   m4/sys_stat_h.m4
   m4/sys_time_h.m4
   m4/sys_wait_h.m4

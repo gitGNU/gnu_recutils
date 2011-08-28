@@ -1,3 +1,58 @@
+2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-writer.c (rec_write_record_with_rset): New function.
+	(rec_write_field_with_rset): New function.
+
+	* utils/recsel.c (recsel_process_data): Set the password of the
+	writer, if specified on the command line.
+
+	* src/rec-writer.c (rec_writer_new): Initialize the password field
+	of the writer structure.
+	(rec_writer_destroy): Free the memory used by the password, if
+	any.
+	(rec_writer_set_password): New function.
+
+	* utils/recsel.c (recutl_print_help): Support the -s, --password
+	option.
+	(recsel_parse_args): Likewise.
+
+	* src/rec-crypt.c (rec_decrypt): New function.
+
+2011-08-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* utils/recins.c: Include base64.h.
+
+	* gnulib base64 module imported.
+
+2011-08-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/Makefile.am (librec_la_SOURCES): Compile rec-crypt.c if
+	encryption is supported.
+
+	* src/rec-crypt.c: New file.
+
+	* utils/recins.c (recins_encrypt_fields): New function.
+
+	* src/rec-rset.c (rec_rset_confidential): New function.
+
+	* utils/recins.c: New variable recins_password.
+	(recutl_print_help): Document -s,--password.
+	(recins_parse_args): Set recins_password.
+
+	* src/rec-utils.c (rec_encrypt): New function.
+	(rec_decrypt): New function.
+	(rec_passphrase_cb): New function.
+
+	* src/rec-utils.c: Include gcrypt.h.
+
+	* src/rec-int.c (rec_int_check_descriptor): Check for the value of
+	%confidential entries.
+
+	* src/rec-rset.c (rec_rset_rename_field): Rename field names in
+	%confidential fields.
+	(rec_rset_update_field_props): Set the confidential property of
+	fields.
+
 2011-08-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (recfmt Templates): Typo fixed.

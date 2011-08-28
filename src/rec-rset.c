@@ -48,7 +48,10 @@ struct rec_rset_fprops_s
 {
   rec_field_name_t fname;
 
-  bool auto_p;     /* Auto-field.  */
+  bool auto_p;         /* Auto-field.  */
+#if defined REC_CRYPT_SUPPORT
+  bool confidential_p; /* Confidential field.  */
+#endif
   rec_type_t type; /* The field has an anonymous type.  */
   char *type_name; /* The field has a type in the types registry.  */
 
@@ -751,6 +754,9 @@ rec_rset_rename_field (rec_rset_t rset,
   rec_field_name_t unique_field_name;
   rec_field_name_t prohibit_field_name;
   rec_field_name_t sort_field_name;
+#if defined REC_CRYPT_SUPPORT
+  rec_field_name_t confidential_field_name;
+#endif
 
   type_field_name = rec_parse_field_name_str ("%type:");
   key_field_name = rec_parse_field_name_str ("%key:");
@@ -758,6 +764,9 @@ rec_rset_rename_field (rec_rset_t rset,
   unique_field_name = rec_parse_field_name_str ("%unique:");
   prohibit_field_name = rec_parse_field_name_str ("%prohibit:");
   sort_field_name = rec_parse_field_name_str ("%sort:");
+#if defined REC_CRYPT_SUPPORT
+  confidential_field_name = rec_parse_field_name_str ("%confidential:");
+#endif
   
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
@@ -809,6 +818,9 @@ rec_rset_rename_field (rec_rset_t rset,
                    || rec_field_name_eql_p (rec_field_name (field), mandatory_field_name)
                    || rec_field_name_eql_p (rec_field_name (field), unique_field_name)
                    || rec_field_name_eql_p (rec_field_name (field), prohibit_field_name)
+#if defined REC_CRYPT_SUPPORT
+                   || rec_field_name_eql_p (rec_field_name (field), confidential_field_name)
+#endif
                    || rec_field_name_eql_p (rec_field_name (field), sort_field_name))
             {
               /* Rename the field in the fex expression that is the
@@ -846,6 +858,9 @@ rec_rset_rename_field (rec_rset_t rset,
   rec_field_name_destroy (unique_field_name);
   rec_field_name_destroy (prohibit_field_name);
   rec_field_name_destroy (sort_field_name);
+#if defined REC_CRYPT_SUPPORT
+  rec_field_name_destroy (confidential_field_name);
+#endif
 }
 
 rec_fex_t
@@ -870,6 +885,61 @@ rec_rset_auto (rec_rset_t rset)
 
   return fex;
 }
+
+#if defined REC_CRYPT_SUPPORT
+
+bool
+rec_rset_field_confidential_p (rec_rset_t rset,
+                               rec_field_name_t field_name)
+{
+  rec_fex_t fex;
+  size_t fex_size;
+  size_t i;
+  bool result = false;
+  rec_field_name_t fex_field_name;
+
+  fex = rec_rset_confidential (rset);
+  fex_size = rec_fex_size (fex);
+
+  for (i = 0; i < fex_size; i++)
+    {
+      fex_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
+      if (rec_field_name_eql_p (field_name,
+                                fex_field_name))
+        {
+          result = true;
+          break;
+        }
+    }
+
+  return result;
+}
+
+rec_fex_t
+rec_rset_confidential (rec_rset_t rset)
+{
+  rec_fex_t fex;
+  rec_rset_fprops_t props;
+
+  fex = rec_fex_new (NULL, REC_FEX_SIMPLE);
+
+  props = rset->field_props;
+  while (props)
+    {
+      if (props->confidential_p)
+        {
+          rec_fex_append (fex,
+                          props->fname,
+                          -1, -1);
+        }
+
+      props = props->next;
+    }
+
+  return fex;
+}
+
+#endif /* REC_CRYPT_SUPPORT */
 
 rec_type_t
 rec_rset_get_field_type (rec_rset_t rset,
@@ -1250,6 +1320,10 @@ rec_rset_update_field_props (rec_rset_t rset)
   rec_field_name_t field_name;
   rec_field_name_t auto_fname;
   rec_field_name_t auto_field_name;
+#if defined REC_CRYPT_SUPPORT
+  rec_field_name_t confidential_field_name;
+  rec_field_name_t confidential_fname;
+#endif
   rec_field_name_t type_fname;
   rec_field_name_t sort_fname;
   char *field_value;
@@ -1280,6 +1354,9 @@ rec_rset_update_field_props (rec_rset_t rset)
       auto_fname = rec_parse_field_name_str ("%auto:");
       type_fname = rec_parse_field_name_str ("%type:");
       sort_fname = rec_parse_field_name_str ("%sort:");
+#if defined REC_CRYPT_SUPPORT
+      confidential_fname = rec_parse_field_name_str ("%confidential:");
+#endif
 
       record_elem = rec_record_first_field (rset->descriptor);
       while (rec_record_elem_p (record_elem))
@@ -1381,12 +1458,35 @@ rec_rset_update_field_props (rec_rset_t rset)
                 }
             }
 
+#if defined REC_CRYPT_SUPPORT
+          /* Update confidential fields.  */
+          if (rec_field_name_equal_p (field_name, confidential_fname))
+            {
+              /* Parse the field names in the field value.  Ignore
+                 invalid entries.  */
+              fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+              if (fex)
+                {
+                  for (i = 0; i < rec_fex_size (fex); i++)
+                    {
+                      confidential_field_name =
+                        rec_fex_elem_field_name (rec_fex_get (fex, i));
+                      props = rec_rset_get_props (rset, confidential_field_name, true);
+                      props->confidential_p = true;
+                    }
+                }
+            }
+#endif /* REC_CRYPT_SUPPORT */
+
           record_elem = rec_record_next_field (rset->descriptor, record_elem);
         }
 
       rec_field_name_destroy (auto_fname);
       rec_field_name_destroy (type_fname);
       rec_field_name_destroy (sort_fname);
+#if defined REC_CRYPT_SUPPORT
+      rec_field_name_destroy (confidential_fname);
+#endif
     } 
 }
 

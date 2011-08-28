@@ -45,6 +45,10 @@ librec_la_SOURCES = rec.c \
                     rec-types.c \
                     rec-buf.c
 
+if CRYPT
+   librec_la_SOURCES += rec-crypt.c
+endif
+
 BUILT_SOURCES = rec-sex-tab.h
 AM_YFLAGS = -d
 AM_LFLAGS = -d

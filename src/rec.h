@@ -656,6 +656,12 @@ void rec_rset_rename_field (rec_rset_t rset,
 /* Get a fex with the auto-incremented fields in this record set.  */
 rec_fex_t rec_rset_auto (rec_rset_t rset);
 
+/* Get a fex with the confidential fields in this record set.  */
+rec_fex_t rec_rset_confidential (rec_rset_t rset);
+
+/* Determine whether fields having a given name are confidential.  */
+bool rec_rset_field_confidential_p (rec_rset_t rset, rec_field_name_t field_name);
+
 /* Get the size constraints of the rset.  */
 size_t rec_rset_min_records (rec_rset_t rset);
 size_t rec_rset_max_records (rec_rset_t rset);
@@ -837,6 +843,9 @@ typedef struct rec_writer_s *rec_writer_t;
    memory, return NULL. */
 rec_writer_t rec_writer_new (FILE *out);
 
+/* Set the password to use when writing encrypted fields.  */
+void rec_writer_set_password (rec_writer_t writer, char *password);
+
 /* Create a writer associated with a given string.  If not enough
    memory, return NULL.  */
 rec_writer_t rec_writer_new_str (char **str, size_t *str_size);
@@ -863,7 +872,11 @@ typedef enum rec_writer_mode_e rec_writer_mode_t;
 bool rec_write_comment (rec_writer_t writer, rec_comment_t comment, rec_writer_mode_t mode);
 bool rec_write_field_name (rec_writer_t writer, rec_field_name_t field_name, rec_writer_mode_t mode);
 bool rec_write_field (rec_writer_t writer, rec_field_t field, rec_writer_mode_t mode);
+bool rec_write_field_with_rset (rec_writer_t writer, rec_rset_t rset, rec_field_t field,
+                                rec_writer_mode_t mode);
 bool rec_write_record (rec_writer_t writer, rec_record_t record, rec_writer_mode_t mode);
+bool rec_write_record_with_rset (rec_writer_t writer, rec_rset_t rset, rec_record_t record,
+                                 rec_writer_mode_t mode);
 bool rec_write_record_with_fex (rec_writer_t writer, rec_record_t record, rec_fex_t fex,
                                 rec_writer_mode_t mode,
                                 bool print_values_p, bool print_in_a_row_p);
@@ -903,6 +916,26 @@ bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
 char *rec_sex_eval_str (rec_sex_t sex, rec_record_t record);
 
 void rec_sex_print_ast (rec_sex_t sex);
+
+/*
+ * Encryption routines.
+ */
+
+#if defined REC_CRYPT_SUPPORT
+
+bool rec_encrypt (char *in,
+                  size_t in_size,
+                  char *password,
+                  char **out,
+                  size_t *out_size);
+
+bool rec_decrypt (char *in,
+                  size_t in_size,
+                  char *password,
+                  char **out,
+                  size_t *out_size);
+
+#endif /* REC_CRYPT_SUPPORT */
 
 #endif /* !REC_H */
 

@@ -676,6 +676,9 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t auto_fname;
   rec_field_name_t size_fname;
   rec_field_name_t sort_fname;
+#if defined REC_CRYPT_SUPPORT
+  rec_field_name_t confidential_fname;
+#endif
   char *field_value;
   rec_fex_t fex;
   char *tmp;
@@ -702,6 +705,9 @@ rec_int_check_descriptor (rec_rset_t rset,
       auto_fname = rec_parse_field_name_str ("%auto:");
       size_fname = rec_parse_field_name_str ("%size:");
       sort_fname = rec_parse_field_name_str ("%sort:");
+#if defined REC_CRYPT_SUPPORT
+      confidential_fname = rec_parse_field_name_str ("%confidential:");
+#endif
 
       /* Check the type of the record set:
 
@@ -951,8 +957,26 @@ does not exist\n"),
                   res++;
                 }
             }
+#if defined REC_CRYPT_SUPPORT
+          else if (rec_field_name_equal_p (field_name, confidential_fname))
+            {
+              if (!rec_match (field_value,
+                              "^"
+                              "[ \n\t]*" REC_FNAME_RE "([ \n\t]+" REC_FNAME_RE ")*"
+                              "[ \n\t]*$"))
+                {
+                  asprintf (&tmp,
+                            _("%s:%s: error: value for %s shall be a list of field names.\n"),
+                            rec_field_source (field),
+                            rec_field_location_str (field),
+                            field_name_str);
+                  rec_buf_puts (tmp, errors);
+                  free (tmp);
+                  res++;
+                }
+            }
+#endif /* REC_CRYPT_SUPPORT */          
 
-          
           if ((rec_field_name_equal_p (field_name, auto_fname))
               && (fex = rec_fex_new (field_value, REC_FEX_SIMPLE)))
             {
@@ -992,6 +1016,9 @@ does not exist\n"),
       rec_field_name_destroy (auto_fname);
       rec_field_name_destroy (size_fname);
       rec_field_name_destroy (sort_fname);
+#if defined REC_CRYPT_SUPPORT
+      rec_field_name_destroy (confidential_fname);
+#endif
     }
 
   return res;

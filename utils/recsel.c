@@ -57,6 +57,7 @@ bool       recsel_descriptors  = false;
 size_t     recutl_num          = -1;
 rec_field_name_t recutl_sort_by_field = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
+char      *recsel_password     = NULL;
 
 /*
  * Command line options management.
@@ -73,7 +74,8 @@ enum
   COUNT_ARG,
   DESCRIPTOR_ARG,
   PRINT_SEXPS_ARG,
-  SORT_ARG
+  SORT_ARG,
+  PASSWORD_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -88,6 +90,7 @@ static const struct option GNU_longOptions[] =
     {"include-descriptors", no_argument, NULL, DESCRIPTOR_ARG},
     {"print-sexps", no_argument, NULL, PRINT_SEXPS_ARG},
     {"sort", required_argument, NULL, SORT_ARG},
+    {"password", required_argument, NULL, PASSWORD_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -117,6 +120,14 @@ Select and print rec data.\n"), stdout);
   -C, --collapse                      do not section the result in records with newlines.\n\
   -S, --sort=FIELD                    sort the output by the specified field.\n"),
          stdout);
+
+#if defined REC_CRYPT_SUPPORT
+  /* TRANSLATORS: --help output, encryption related options.
+     no-wrap */
+  fputs (_("\
+  -s, --password=STR                  encrypt confidential fields with the given password.\n"),
+         stdout);
+#endif
   
   recutl_print_help_common ();
 
@@ -148,7 +159,7 @@ Special options:\n\
   puts ("");
   /* TRANSLATORS: --help output, recsel examples.
      no-wrap */
-  fputs (_("\
+ fputs (_("\
 Examples:\n\
 \n\
         recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n\
@@ -169,7 +180,7 @@ recsel_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "S:Cdcp:P:R:",
+                             "S:Cdcp:P:R:s:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -187,6 +198,17 @@ recsel_parse_args (int argc,
         case PRINT_SEXPS_ARG:
           {
             recsel_write_mode = REC_WRITER_SEXP;
+            break;
+          }
+        case PASSWORD_ARG:
+        case 's':
+          {
+            if (recsel_password != NULL)
+              {
+                recutl_fatal (_("more than one password was specified\n"));
+              }
+
+            recsel_password = xstrdup (optarg);
             break;
           }
         case SORT_ARG:
@@ -291,6 +313,11 @@ recsel_process_data (rec_db_t db)
   ret = true;
 
   writer = rec_writer_new (stdout);
+  if (recsel_password)
+    {
+      rec_writer_set_password (writer,
+                               recsel_password);
+    }
 
   /* If the database contains more than one type of records and the
      user did'nt specify the recutl_type then ask the user to clear
@@ -406,7 +433,10 @@ recsel_process_data (rec_db_t db)
                 }
               else
                 {
-                  rec_write_record (writer, record, recsel_write_mode);
+                  rec_write_record_with_rset (writer,
+                                              rset,
+                                              record,
+                                              recsel_write_mode);
                 }
 
               written++;
