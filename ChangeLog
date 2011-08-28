@@ -1,5 +1,11 @@
 2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	gnulib: imported module crc.
+	* lib/crc.c: Imported from gnulib.
+	* lib/crc.h: Likewise.
+
+2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/rec-writer.c (rec_write_record_with_rset): New function.
 	(rec_write_field_with_rset): New function.
 

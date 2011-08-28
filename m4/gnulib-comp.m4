@@ -39,6 +39,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module close-stream:
   # Code from module closeout:
   # Code from module configmake:
+  # Code from module crc:
   # Code from module dosname:
   # Code from module dup2:
   # Code from module environ:
@@ -687,6 +688,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/closeout.c
   lib/closeout.h
   lib/config.charset
+  lib/crc.c
+  lib/crc.h
   lib/dosname.h
   lib/dup2.c
   lib/errno.in.h
