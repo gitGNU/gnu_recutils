@@ -103,3 +103,4 @@ libtool
 /po/remove-potcdate.sed
 /po/*.gmo
 /man/rec2csv.1
+config.cache
