@@ -1,5 +1,12 @@
 2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	crypt: support for CRC and encrypted prefix.
+	* src/rec-crypt.c: Include crc.h.
+	(rec_decrypt): Check the CRC of decrypted data.
+	(rec_encrypt): Append the CRC when encrypting.
+
+2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	gnulib: imported module crc.
 	* lib/crc.c: Imported from gnulib.
 	* lib/crc.h: Likewise.

@@ -277,6 +277,7 @@ recins_encrypt_fields (rec_rset_t rset,
                   char *field_value_encrypted;
                   char *field_value_base64;
                   size_t out_size, base64_size;
+                  char *aux;
 
                   if (!rec_encrypt (field_value,
                                     strlen (field_value),
@@ -296,6 +297,21 @@ recins_encrypt_fields (rec_rset_t rset,
                                  field_value_base64,
                                  base64_size);
 
+                  /* Prepend "encrypted-".  */
+#define REC_ENCRYPTED_PREFIX "encrypted-"
+                  aux = malloc (strlen (field_value_base64)
+                                + strlen (REC_ENCRYPTED_PREFIX) + 1);
+                  memcpy (aux,
+                          REC_ENCRYPTED_PREFIX,
+                          strlen (REC_ENCRYPTED_PREFIX));
+                  memcpy (aux + strlen (REC_ENCRYPTED_PREFIX),
+                          field_value_base64,
+                          strlen (field_value_base64));
+                  aux[strlen (field_value_base64)
+                      + strlen (REC_ENCRYPTED_PREFIX)] = '\0';
+                  free (field_value_base64);
+                  field_value_base64 = aux;
+                  
                   /* Replace the value of the field.  */
                   rec_field_set_value (field, field_value_base64);
 

@@ -245,34 +245,43 @@ rec_write_field_with_rset (rec_writer_t writer,
      password, decrypt the value.  Otherwise just write the encrypted
      string.  */
 
+#define REC_ENCRYPTED_PREFIX "encrypted-"
+
   if (rset
       && rec_rset_field_confidential_p (rset, fname)
-      && writer->password)
+      && writer->password
+      && (strlen (fvalue) >= strlen (REC_ENCRYPTED_PREFIX))
+      && (strncmp (fvalue, REC_ENCRYPTED_PREFIX,
+                   strlen (REC_ENCRYPTED_PREFIX)) == 0))
     {
+      char *field_value;
       char *base64_decoded;
       size_t base64_decoded_size;
       char *decrypted_value;
       size_t decrypted_value_size;
+      
+      /* Skip the "encrypted-" prefix.  */
+      field_value = fvalue + strlen (REC_ENCRYPTED_PREFIX);
 
       /* Decode the Base64.  */
 
-      if (base64_decode_alloc (fvalue,
-                               strlen(fvalue),
+      if (base64_decode_alloc (field_value,
+                               strlen(field_value),
                                &base64_decoded,
                                &base64_decoded_size))
         {
-          base64_decode (fvalue,
-                         strlen(fvalue),
+          base64_decode (field_value,
+                         strlen(field_value),
                          base64_decoded,
                          &base64_decoded_size);
       
           /* Decrypt.  */
 
           if (rec_decrypt (base64_decoded,
-                            base64_decoded_size,
-                            writer->password,
-                            &decrypted_value,
-                            &decrypted_value_size))
+                           base64_decoded_size,
+                           writer->password,
+                           &decrypted_value,
+                           &decrypted_value_size))
             {
               fvalue = decrypted_value;      
             }

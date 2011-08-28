@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-08-28 19:49:04 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-08-28 20:27:45 jemarch"
  *
  *       File:         rec-crypt.c
  *       Date:         Fri Aug 26 19:50:51 2011
@@ -25,7 +25,9 @@
 
 #include <config.h>
 
+#include <string.h>
 #include <gcrypt.h>
+#include <crc.h>
 
 #include <rec.h>
 #include <rec-utils.h>
@@ -47,14 +49,27 @@ rec_encrypt (char   *in,
   char key[AESV2_KEYSIZE];
   char iv[AESV2_BLKSIZE];
   size_t padding;
+  uint32_t crc;
+  char *real_in;
+  size_t real_in_size;
+
+  /* Append four bytes to the input buffer, containing the CRC of its
+     contents.  This will be used as a control token to determine
+     whether the correct key is used in decryption.  */
+  
+  crc = crc32 (in, in_size);
+  real_in_size = in_size + 4;
+  real_in = malloc (real_in_size + 4);
+  memcpy (real_in, in, real_in_size);
+  memcpy (real_in + real_in_size - 4, &crc, 4);
 
   /* The size of the input buffer must be bigger than AESV2_BLKSIZE,
      and must contain an entire number of blocks.  We assure that by
      padding the buffer with \0 characters.  */
 
-  if ((in_size % AESV2_BLKSIZE) != 0)
+  if ((real_in_size % AESV2_BLKSIZE) != 0)
     {
-      padding = AESV2_BLKSIZE - (in_size % AESV2_BLKSIZE);
+      padding = AESV2_BLKSIZE - (real_in_size % AESV2_BLKSIZE);
     }
   else
     {
@@ -63,12 +78,12 @@ rec_encrypt (char   *in,
 
   if (padding != 0)
     {
-      in_size = in_size + padding;
-      in = realloc (in, in_size);
+      real_in_size = real_in_size + padding;
+      real_in = realloc (real_in, real_in_size);
 
       for (i = 0; i < padding; i++)
         {
-          in[in_size - i - 1] = '\0';
+          real_in[real_in_size - i - 1] = '\0';
         }
     }  
 
@@ -102,13 +117,13 @@ rec_encrypt (char   *in,
   gcry_cipher_setiv (handler, iv, AESV2_BLKSIZE);
 
   /* Encrypt the data.  */
-  *out_size = in_size;
+  *out_size = real_in_size;
   *out = malloc (*out_size);
   if (gcry_cipher_encrypt (handler,
                            *out,
                            *out_size,
-                           in,
-                           in_size) != 0)
+                           real_in,
+                           real_in_size) != 0)
     {
       /* Error.  */
       return false;
@@ -183,12 +198,23 @@ rec_decrypt (char   *in,
 
   /* Make sure the decrypted data is ok by checking the CRC at the end
      of the sequence.  */
-  //  if ((*out_size < 4)
-  //      || (strcmp ((*out)[(*out_size)-REC_CRYPT_CTRL_SEQ_SIZE],
-  //                  REC_CRYPT_CTRL_SEQ) != 0))
-  //    {
-  //      return false;
-  //    }
+
+  if (strlen(*out) > 4)
+    {
+      uint32_t crc;
+      memcpy (&crc, *out + strlen(*out) - 4, 4);
+
+      if (crc32 (*out, strlen(*out) - 4) != crc)
+        {
+          return false;
+        }
+
+      (*out)[strlen(*out) - 4] = '\0';
+    }
+  else
+    {
+      return false;
+    }
 
   /* Close the handler.  */
   gcry_cipher_close (handler);
