@@ -102,14 +102,15 @@ AC_SUBST([MDBLIBS])
 AC_ARG_ENABLE([encryption],
               AS_HELP_STRING([--enable-encryption],
                              [Compile recutils with encryption support (default is YES)]),
-              [crypt_support=$enableval], [crypt_support=yes])
+              [crypt_enabled=$enableval], [crypt_enabled=yes])
 
 AC_LIB_HAVE_LINKFLAGS([gcrypt],[gpg-error],[#include <gpg-error.h>])
 crypt_support=$HAVE_LIBGCRYPT
-if test "x$crypt_support" = "xyes"; then
+if test "x$crypt_support" = "xyes" && test "x$crypt_enabled" = "xyes"; then
    AC_DEFINE([REC_CRYPT_SUPPORT],[1],[Compile encryption support])
 fi
-AM_CONDITIONAL([CRYPT], [test "x$crypt_support" != "xno"])
+AM_CONDITIONAL([CRYPT], [test "x$crypt_support" != "xno" \
+                         && test "x$crypt_enabled" != "xno"])
 
 have_glib=no
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],

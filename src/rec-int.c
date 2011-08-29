@@ -58,8 +58,12 @@ static int rec_int_check_record_unique (rec_rset_t rset, rec_record_t record,
                                         rec_buf_t errors);
 static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
                                           rec_buf_t errors);
+
+#if defined REC_CRYPT_SUPPORT
 static int rec_int_check_record_secrets (rec_rset_t rset, rec_record_t record,
                                          rec_buf_t errors);
+#endif
+
 static int rec_int_merge_remote (rec_rset_t rset, rec_buf_t errors);
 static bool rec_int_rec_type_p (char *str);
 
@@ -218,8 +222,11 @@ rec_int_check_record (rec_db_t db,
     + rec_int_check_record_types     (db, rset, record, errors)
     + rec_int_check_record_mandatory (rset, record, errors)
     + rec_int_check_record_unique    (rset, record, errors)
-    + rec_int_check_record_prohibit  (rset, record, errors)
-    + rec_int_check_record_secrets   (rset, record, errors);
+#if defined REC_CRYPT_SUPPORT
+    + rec_int_check_record_secrets   (rset, record, errors)
+#endif
+    + rec_int_check_record_prohibit  (rset, record, errors);
+
 
   return res;
 }
@@ -541,6 +548,8 @@ rec_int_check_record_prohibit (rec_rset_t rset,
   return res;
 }
 
+#if defined REC_CRYPT_SUPPORT
+
 static int
 rec_int_check_record_secrets (rec_rset_t rset,
                               rec_record_t record,
@@ -577,6 +586,8 @@ rec_int_check_record_secrets (rec_rset_t rset,
         }
     }
 }
+
+#endif /* REC_CRYPT_SUPPORT */
 
 static int
 rec_int_check_record_key (rec_rset_t rset,

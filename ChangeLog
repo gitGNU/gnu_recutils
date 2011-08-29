@@ -1,5 +1,11 @@
 2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	crypt: fix build with crypt support disabled.
+	* src/rec-rset.c (rec_rset_get_props): Update confidential_p only
+	if compiling with encryption support.
+
+2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recfix: check for non-encrypted confidential fields.
 	* src/rec-int.c: Copyright year updated.
 	(rec_int_check_record): Call rec_int_check_record_secrets.
