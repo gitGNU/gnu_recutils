@@ -28,6 +28,10 @@ bin_PROGRAMS = recinf recsel recins recdel recset recfix recfmt \
 COMMONSRC = recutl.h recutl.c
 COMMONLIBS = $(top_builddir)/lib/libgnu.la $(top_builddir)/src/librec.la
 
+if CRYPT
+  COMMONLIBS += $(LTLIBGCRYPT)
+endif
+
 AM_CFLAGS =
 if USE_COVERAGE
   AM_CFLAGS += -fprofile-arcs -ftest-coverage

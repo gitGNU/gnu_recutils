@@ -1,3 +1,10 @@
+2011-09-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	build: linking with libgcrypt fixed.
+	* src/Makefile.am (librec_la_LIBADD): Link with $LTLIBGCRYPT if
+	compiling with encryption support.
+	* utils/Makefile.am (COMMONLIBS): Likewise.
+
 2011-08-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	crypt: fix build with crypt support disabled.

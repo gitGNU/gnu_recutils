@@ -62,6 +62,10 @@ AM_CPPFLAGS = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
 librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \
                    $(LIB_CLOCK_GETTIME)
 
+if CRYPT
+   librec_la_LIBADD += $(LTLIBGCRYPT)
+endif
+
 if REMOTE_DESCRIPTORS
   AM_CPPFLAGS += -DREMOTE_DESCRIPTORS
   librec_la_LIBADD += $(CURLLIBS)
