@@ -1241,6 +1241,7 @@ Print a help message, then exit successfully.
 @item @w{@kbd{--}}
 Delimit the option list.  Later arguments, if any, are treated as
 operands even if they begin with @option{-}.  For example,
+@code{recsel -- -p} reads from the file named @file{r}.
 @end table
 
 @menu
