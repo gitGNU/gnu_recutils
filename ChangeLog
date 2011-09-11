@@ -1,3 +1,10 @@
+2011-09-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recfix: normalise invocation to allow more commands.
+	* utils/recfix.c: New type recfix_op.
+	(recutl_print_help): Adapted to the new synopsis of recfix.
+	(recutl_print_help): Don't include examples in the --help output.
+
 2011-09-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	build: linking with libgcrypt fixed.

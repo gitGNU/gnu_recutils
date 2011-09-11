@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010,2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,27 @@ void recfix_parse_args (int argc, char **argv);
 bool recfix_process_data (rec_db_t db);
 
 /*
+ * Data types.
+ */
+
+/* recfix supports several operations, enumerated in the following
+   type.  */
+
+enum recfix_op
+{
+  RECFIX_OP_CHECK,
+  RECFIX_OP_SORT,
+  RECFIX_OP_ENCRYPT,
+  RECFIX_OP_DECRYPT
+};
+
+/*
  * Global variables.
  */
 
 bool  recfix_external = true;
 char *recfix_file     = NULL;
-bool  recfix_op_sort  = false;
+int   recfix_op       = RECFIX_OP_CHECK;
 
 /*
  * Command line options management.
@@ -53,14 +68,14 @@ enum
 {
   COMMON_ARGS,
   NO_EXTERNAL_ARG,
-  SORT_ARG
+  OP_SORT_ARG
 };
 
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
-    {"sort", no_argument, NULL, SORT_ARG},
+    {"sort", no_argument, NULL, OP_SORT_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -70,7 +85,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recfix synopsis.
      no-wrap */
   printf (_("\
-Usage: recfix [OPTION]... [FILE]\n"));
+Usage: recfix [OPTION]... [OPERATION] [OP_OPTION]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recfix short description.
      no-wrap */
@@ -79,14 +94,35 @@ Check and fix rec files.\n"),
          stdout);
 
   puts ("");
-  /* TRANSLATORS: --help output, recfix arguments.
+  /* TRANSLATORS: --help output, recfix global arguments.
      no-wrap */
   fputs (_("\
-      --no-external                   don't use external descriptors.\n\
-      --sort                          sort the records in the specified file.\n"),
+  -t, --type=TYPE                     process only records of the given type.\n\
+      --no-external                   don't use external descriptors.\n"),
          stdout);
 
   recutl_print_help_common ();
+
+  puts("");
+  /* TRANSLATORS: --help output, recfix operations.
+     no-wrap */
+  fputs (_("\
+Operations:\n\
+      --check                         check integrity of the specified file.  This\n\
+                                        is the default operation.\n\
+      --sort                          sort the records in the specified file.\n\
+      --encrypt                       encrypt confidential fields in the specified file.\n\
+      --decrypt                       decrypt confidential fields in the specified file.\n"),
+         stdout);
+
+  puts("");
+  /* TRANSLATORS: --help output, recfix encryption and decryption
+     options.
+     no-wrap */
+  fputs (_("\
+De/Encryption options:\n\
+  -s, --password=PASSWORD             encrypt/decrypt with this password.\n"),
+         stdout);
 
   puts("");
   /* TRANSLATORS: --help output, notes on recfix.
@@ -94,16 +130,6 @@ Check and fix rec files.\n"),
   fputs (_("\
 If no FILE is specified then the command acts like a filter, getting\n\
 the data from standard input and writing the result to standard output.\n"), stdout);
-
-  puts("");
-  /* TRANSLATORS: --help output, recfix examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        recfix data.rec\n\
-        cat data1.rec data2.rec | recfix\n"),
-         stdout);
 
   puts("");
   recutl_print_help_footer ();
@@ -131,13 +157,13 @@ recfix_parse_args (int argc,
             recfix_external = false;
             break;
           }
-        case SORT_ARG:
+        case OP_SORT_ARG:
           {
             /* Sort all records when parsing.  */
             recutl_sorting_parser (true, NULL, NULL);
 
             /* Mark the operation.  */
-            recfix_op_sort = true;
+            recfix_op = RECFIX_OP_SORT;
 
             break;
           }
@@ -205,7 +231,8 @@ main (int argc, char *argv[])
       res = EXIT_FAILURE;
     }
 
-  if ((res == EXIT_SUCCESS) && recfix_op_sort)
+  if ((res == EXIT_SUCCESS)
+      && (recfix_op == RECFIX_OP_SORT))
     {
       recutl_write_db_to_file (db, recfix_file);
     }
