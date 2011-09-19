@@ -1,3 +1,11 @@
+2011-09-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	lib: missing sorting cases added.
+	* src/rec-rset.c (rec_rset_record_compare_fn): Date sorting
+	algorithm fixed.
+	(rec_rset_record_compare_fn): Real sorting implemented.
+	(rec_rset_record_compare_fn): Likewise for booleans.
+
 2011-09-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: argument description fixed.

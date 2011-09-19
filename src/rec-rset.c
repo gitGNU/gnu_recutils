@@ -1070,6 +1070,8 @@ rec_rset_record_compare_fn (void *data1,
   rec_type_t field_type            = NULL;
   int type_comparison              = 0;
   int int1, int2                   = 0;
+  double real1, real2              = 0;
+  bool bool1, bool2                = false;
 
   /* data1 and data2 are both records.
 
@@ -1158,7 +1160,52 @@ rec_rset_record_compare_fn (void *data1,
             break;
           }
         case REC_TYPE_REAL:
+          {
+            if (!rec_atod (rec_field_value (field1), &real1)
+                || !rec_atod (rec_field_value (field2), &real2))
+              {
+                goto lexi;
+              }
+
+            if (real1 < real2)
+              {
+                type_comparison = -1;
+              }
+            else if (real1 > real2)
+              {
+                type_comparison = 1;
+              }
+            else
+              {
+                type_comparison = 0;
+              }
+
+            break;
+          }
         case REC_TYPE_BOOL:
+          {
+            /* Boolean fields storing 'false' come first.  */
+            
+            bool1 = rec_match (rec_field_value (field1),
+                               "[ \t]*(1|yes|true)[ \t]*");
+            bool2 = rec_match (rec_field_value (field2),
+                               "[ \t]*(1|yes|true)[ \t]*");
+
+            if (!bool1 && bool2)
+              {
+                type_comparison = -1;
+              }
+            else if (bool1 == bool2)
+              {
+                type_comparison = 0;
+              }
+            else
+              {
+                type_comparison = 1;
+              }
+
+            break;
+          }
         case REC_TYPE_DATE:
           {
             struct timespec op1;
@@ -1172,8 +1219,22 @@ rec_rset_record_compare_fn (void *data1,
                                    rec_field_value (field2),
                                    NULL))
               {
-                type_comparison =
-                  rec_timespec_subtract (&diff, &op1, &op2);
+                if ((op1.tv_sec == op2.tv_sec)
+                    && (op1.tv_nsec == op2.tv_nsec))
+                  {
+                    /* op1 == op2 */
+                    type_comparison = 0;
+                  }
+                else if (rec_timespec_subtract (&diff, &op1, &op2))
+                  {
+                    /* op1 < op2 */
+                    type_comparison = -1;
+                  }
+                else
+                  {
+                    /* op1 > op2 */
+                    type_comparison = 1;
+                  }
               }
             else
               {
