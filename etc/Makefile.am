@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+dist_lisp_DATA = rec-mode.el
+
 etcdir=$(pkgdatadir)/etc
-etc_DATA = FSD.rec rec-mode.el
-EXTRA_DIST = FSD.rec rec-mode.el
+dist_etc_DATA = FSD.rec
 
 # End of Makefile.am

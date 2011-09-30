@@ -1,3 +1,10 @@
+2011-09-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	build: install lisp files in the proper directory.
+	* etc/Makefile.am: Install rec-mode.el in the proper place, and
+	use the dist_ prefix instead of the EXTRA_DIST automake variable.
+	Suggested by Ludovic Courtes.
+
 2011-09-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	lib: missing sorting cases added.
