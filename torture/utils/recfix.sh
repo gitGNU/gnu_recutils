@@ -502,9 +502,60 @@ test_declare_input_file sortcheck-invalid-field-name \
 %sort: A/Field
 '
 
+test_declare_input_file confidential \
+'%rec: foo
+%confidential: Foo Bar Baz
+
+Foo: encrypted-foo
+Bar: encrypted-bar
+Baz: encrypted-baz
+
+%rec: bar
+
+Foo: jorl
+Bar: jarl
+Baz: jerl
+'
+
+test_declare_input_file confidential-several \
+'%rec: foo
+%confidential: Foo Bar Baz
+%confidential: Jorl
+'
+
+test_declare_input_file confidential-with-unencrypted-fields \
+'%rec: foo
+%confidential: Foo
+
+Foo: encrypted-foo
+
+Foo: Not encrypted
+'
+
+test_declare_input_file confidential-fields \
+'%rec: foo
+%confidential: Password WebPassword
+
+User: user1
+Password: secret1
+Password: secret2
+WebPassword: websecret1
+
+User: user2
+Password: secret2
+Password: secret22
+WebPassword: websecret2
+'
+
 #
 # Declare tests.
 #
+
+test_tool recfix-with-operation ok \
+          recfix \
+          '--check' \
+          type-int-valid \
+''
 
 test_tool recfix-type-int-valid ok \
           recfix \
@@ -809,6 +860,23 @@ test_tool recfix-sortcheck-invalid-field-name xfail \
           recfix \
           '' \
           sortcheck-invalid-field-name
+
+test_tool recfix-confidential ok \
+          recfix \
+          '--check' \
+          confidential \
+''
+
+test_tool recfix-confidential-several ok \
+          recfix \
+          '--check' \
+          confidential-several \
+''
+
+test_tool recfix-confidential-with-unencrypted-fields xfail \
+          recfix \
+          '--check' \
+          confidential-with-unencrypted-fields
 
 #
 # Cleanup.

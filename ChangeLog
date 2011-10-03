@@ -1,5 +1,17 @@
 2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: tests for the --check operation of recfix regarding
+	encryption, and some fixes.
+	* src/rec-int.c (rec_int_check_record_secrets): Return the number
+	of errors that occurred while checking the integrity.
+
+	* torture/utils/recfix.sh (recfix-with-operation): New test.
+	(recfix-confidential): Likewise.
+	(recfix-invalid-confidential): Likewise.
+	(recfix-confidential-with-unencrypted-fields): Likewise.
+
+2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: documentation for recfix updated.
 	* doc/recutils.texi (recfix Invocation): Documentation for the new
 	synopsis of recfix, including a description of all the supported

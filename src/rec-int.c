@@ -585,6 +585,8 @@ rec_int_check_record_secrets (rec_rset_t rset,
           res++;
         }
     }
+
+  return res;
 }
 
 #endif /* REC_CRYPT_SUPPORT */
