@@ -371,19 +371,13 @@ recfix_do_crypt ()
   rec_db_t db;
   size_t n_rset;
 
-  /* Read the database from the specified file and check its
-     integrity.  */
+  /* Read the database from the specified file. */
 
   db = recutl_read_db_from_file (recfix_file);
   if (!db)
     {
       return EXIT_FAILURE;
     }
-
-  /*  if (!recfix_check_database (db))
-    {
-      return EXIT_FAILURE;
-      } */
 
   /* Encrypt/decrypt any unencrypted/encrypted field marked as
      "confidential" using the given password.  */

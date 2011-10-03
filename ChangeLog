@@ -1,5 +1,10 @@
 2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* utils/recfix.c (recfix_do_crypt): Don't check integrity before
+	doing an en/decryption operation.
+
+2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: more encryption related routines, and encryption support
 	in recfix.
 	* utils/recfix.c (recfix_do_crypt): Use rec_decrypt_record.
