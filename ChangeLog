@@ -1,5 +1,14 @@
 2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: documentation for recfix updated.
+	* doc/recutils.texi (recfix Invocation): Documentation for the new
+	synopsis of recfix, including a description of all the supported
+	operations.
+	(recfix Examples): Add more examples covering the several
+	supported operations.
+
+2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* utils/recfix.c (recfix_do_crypt): Don't check integrity before
 	doing an en/decryption operation.
 

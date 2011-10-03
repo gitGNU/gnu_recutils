@@ -2052,7 +2052,7 @@ $ recset -n 102 -f ClosedAt -S `date` tasks.rec
 @command{recfix} checks and fixes rec files.  Synopsis:
 
 @example
-recfix [@var{option}]@dots{} [@var{file}]
+recfix [@var{option}]@dots{} [@var{operation}] [@var{op_option}]@dots{} [@var{file}]
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
@@ -2060,11 +2060,22 @@ getting the data from the standard input and writing the result in the
 standard output.
 
 In addition to the common options described earlier (@pxref{Common
-Options}) the program accepts the following options.
+Options}) the program accepts the following global options.
 
 @table @samp
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
+@end table
+
+The effect of running @command{recfix} depends on the operation it
+performs.  The operation mode is selected by using one of the
+following options.
+
+@table @samp
+@itemx @w{@kbd{--check}}
+Check the integrity of the database contained in the file, printing
+diagnostics messages in case something is not right.  This is the
+default operation.
 @itemx @w{@kbd{--sort}}
 Perform a physical sort of all the records contained in the file (or
 the standard input) after checking for its integrity.  The sorting
@@ -2072,22 +2083,37 @@ criteria is provided by the @code{%sort} special field, if any.  If
 there is an integrity failure the sorting is not performed.
 
 Note that this is a destructive operation.
+@itemx @w{@kbd{--encrypt}}
+Encrypt all the non encrypted fields in the database which are marked
+as confidential.  This operation requires a password.
+
+Note that this is a destructive operation.
+@itemx @w{@kbd{--decrypt}}
+Decrypt all the encrypted fields in the database which are marked as
+confidential.  This operation requires a password.
+
+Note that this is a descructive operation.
+@end table
+
+Some operations make use of certain specific options, which are
+described in the table below.
+
+@table @samp
+@item -s @var{secret}
+@itemx @w{@kbd{--password}=@var{secret}}
+Password used to encrypt or decrypt fields.
 @end table
 
 @node recfix Examples
 @section recfix Examples
 
-Check and fix a rec database:
+Check and fix a rec database, invoked both destructively and as a
+filter:
 
 @example
+$ recfix --check data.rec
 $ recfix data.rec
-@end example
-
-@noindent
-Used as a filter:
-
-@example
-$ cat data1.rec data2.rec | recfix
+$ cat data.rec | recfix --check data.rec
 @end example
 
 @noindent
@@ -2095,6 +2121,14 @@ Physically sort the record sets contained in a file:
 
 @example
 $ recfix --sort data.rec
+@end example
+
+@noindent
+Encrypt any non encrypted confidential fields in a file using a given
+password:
+
+@example
+$ recfix --encrypt -s "passphrase" secrets.rec
 @end example
 
 @node recfmt
