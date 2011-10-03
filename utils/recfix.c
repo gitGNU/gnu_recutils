@@ -131,8 +131,7 @@ Check and fix rec files.\n"),
      no-wrap */
   fputs (_("\
 Operations:\n\
-      --check                         check integrity of the specified file.  This\n\
-                                        is the default operation.\n\
+      --check                         check integrity of the specified file.  Default.\n\
       --sort                          sort the records in the specified file.\n"),
          stdout);
 
