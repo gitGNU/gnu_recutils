@@ -27,6 +27,7 @@
 
 #include <getopt.h>
 #include <stdlib.h>
+#include <xalloc.h>
 #include <gettext.h>
 #define _(str) gettext (str)
 
@@ -34,8 +35,14 @@
 #include <recutl.h>
 
 /* Forward prototypes.  */
-void recfix_parse_args (int argc, char **argv);
-bool recfix_process_data (rec_db_t db);
+static void recfix_parse_args (int argc, char **argv);
+static bool recfix_check_database (rec_db_t db);
+
+static int recfix_do_check (void);
+static int recfix_do_sort (void);
+#if defined REC_CRYPT_SUPPORT
+static int recfix_do_crypt (void);
+#endif
 
 /*
  * Data types.
@@ -46,10 +53,13 @@ bool recfix_process_data (rec_db_t db);
 
 enum recfix_op
 {
+  RECFIX_OP_INVALID,
   RECFIX_OP_CHECK,
-  RECFIX_OP_SORT,
+#if defined REC_CRYPT_SUPPORT
   RECFIX_OP_ENCRYPT,
-  RECFIX_OP_DECRYPT
+  RECFIX_OP_DECRYPT,
+#endif
+  RECFIX_OP_SORT
 };
 
 /*
@@ -58,7 +68,8 @@ enum recfix_op
 
 bool  recfix_external = true;
 char *recfix_file     = NULL;
-int   recfix_op       = RECFIX_OP_CHECK;
+int   recfix_op       = RECFIX_OP_INVALID;
+char *recfix_password = NULL;
 
 /*
  * Command line options management.
@@ -68,14 +79,26 @@ enum
 {
   COMMON_ARGS,
   NO_EXTERNAL_ARG,
-  OP_SORT_ARG
+  PASSWORD_ARG,
+  OP_SORT_ARG,
+#if defined REC_CRYPT_SUPPORT
+  OP_ENCRYPT_ARG,
+  OP_DECRYPT_ARG,
+#endif
+  OP_CHECK_ARG
 };
 
 static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
+    {"password", required_argument, NULL, PASSWORD_ARG},
+    {"check", no_argument, NULL, OP_CHECK_ARG},
     {"sort", no_argument, NULL, OP_SORT_ARG},
+#if defined REC_CRYPT_SUPPORT
+    {"encrypt", no_argument, NULL, OP_ENCRYPT_ARG},
+    {"decrypt", no_argument, NULL, OP_DECRYPT_ARG},
+#endif
     {NULL, 0, NULL, 0}
   };
 
@@ -110,7 +133,13 @@ Check and fix rec files.\n"),
 Operations:\n\
       --check                         check integrity of the specified file.  This\n\
                                         is the default operation.\n\
-      --sort                          sort the records in the specified file.\n\
+      --sort                          sort the records in the specified file.\n"),
+         stdout);
+
+#if defined REC_CRYPT_SUPPORT
+    /* TRANSLATORS: --help output, recfix operations related with encryption.
+       no-wrap */
+    fputs (_("\
       --encrypt                       encrypt confidential fields in the specified file.\n\
       --decrypt                       decrypt confidential fields in the specified file.\n"),
          stdout);
@@ -123,6 +152,7 @@ Operations:\n\
 De/Encryption options:\n\
   -s, --password=PASSWORD             encrypt/decrypt with this password.\n"),
          stdout);
+#endif /* REC_CRYPT_SUPPORT */
 
   puts("");
   /* TRANSLATORS: --help output, notes on recfix.
@@ -135,7 +165,7 @@ the data from standard input and writing the result to standard output.\n"), std
   recutl_print_help_footer ();
 }
 
-void
+static void
 recfix_parse_args (int argc,
                    char **argv)
 {
@@ -144,7 +174,11 @@ recfix_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
+#if defined REC_CRYPT_SUPPORT
+                             "s:",
+#else
                              "",
+#endif
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -157,22 +191,98 @@ recfix_parse_args (int argc,
             recfix_external = false;
             break;
           }
-        case OP_SORT_ARG:
+#if defined REC_CRYPT_SUPPORT
+        case 's':
+        case PASSWORD_ARG:
           {
-            /* Sort all records when parsing.  */
-            recutl_sorting_parser (true, NULL, NULL);
+            if (recfix_op == RECFIX_OP_INVALID)
+              {
+                recutl_fatal (_("--password|-s must be used as an operation argument.\n"));
+              }
 
-            /* Mark the operation.  */
-            recfix_op = RECFIX_OP_SORT;
+            if ((recfix_op != RECFIX_OP_ENCRYPT)
+                && (recfix_op != RECFIX_OP_DECRYPT))
+              {
+                recutl_fatal (_("the specified operation does not require a password.\n"));
+              }
 
+            if (recfix_password != NULL)
+              {
+                recutl_fatal (_("please specify just one password.\n"));
+              }
+
+            recfix_password = xstrdup (optarg);
             break;
           }
+#endif /* REC_CRYPT_SUPPORT */
+        case OP_CHECK_ARG:
+          {
+            if (recfix_op != RECFIX_OP_INVALID)
+              {
+                recutl_fatal (_("please specify just one operation.\n"));
+              }
+
+            recfix_op = RECFIX_OP_CHECK;
+            break;
+          }
+        case OP_SORT_ARG:
+          {
+            if (recfix_op != RECFIX_OP_INVALID)
+              {
+                recutl_fatal (_("please specify just one operation.\n"));
+              }
+
+            recfix_op = RECFIX_OP_SORT;
+            break;
+          }
+#if defined REC_CRYPT_SUPPORT
+        case OP_ENCRYPT_ARG:
+          {
+            if (recfix_op != RECFIX_OP_INVALID)
+              {
+                recutl_fatal (_("please specify just one operation.\n"));
+              }
+
+            recfix_op = RECFIX_OP_ENCRYPT;
+            break;
+          }
+        case OP_DECRYPT_ARG:
+          {
+            if (recfix_op != RECFIX_OP_INVALID)
+              {
+                recutl_fatal (_("please specify just one operation.\n"));
+              }
+
+            recfix_op = RECFIX_OP_DECRYPT;
+            break;
+          }
+#endif /* REC_CRYPT_SUPPORT */
         default:
           {
             exit (EXIT_FAILURE);
           }
         }
     }
+
+  /* The default operation is check, in case the user did not specify
+     any in the command line.  */
+
+  if (recfix_op == RECFIX_OP_INVALID)
+    {
+      recfix_op = RECFIX_OP_CHECK;
+    }
+
+#if defined REC_CRYPT_SUPPORT
+  /* The encrypt and decrypt operations require the user to specify a
+     password.  */
+
+  if (((recfix_op == RECFIX_OP_ENCRYPT)
+       || (recfix_op == RECFIX_OP_DECRYPT))
+      && (recfix_password == NULL))
+    {
+      recutl_fatal ("please specify a password.\n");
+    }
+#endif /* REC_CRYPT_SUPPORT */
 
   /* Read the name of the file to work on.  */
   if (optind < argc)
@@ -187,8 +297,8 @@ recfix_parse_args (int argc,
     }
 }
 
-bool
-recfix_process_data (rec_db_t db)
+static bool
+recfix_check_database (rec_db_t db)
 {
   bool ret;
   char *errors;
@@ -206,35 +316,175 @@ recfix_process_data (rec_db_t db)
   return ret;
 }
 
-int
-main (int argc, char *argv[])
+static int
+recfix_do_check ()
 {
-  int res;
   rec_db_t db;
 
-  recutl_init ("recfix");
-
-  res = EXIT_SUCCESS;
-
-  /* Parse arguments.  */
-  recfix_parse_args (argc, argv);
+  /* Read the database from the specified file and check its
+     integrity.  */
 
   db = recutl_read_db_from_file (recfix_file);
   if (!db)
     {
-      res = EXIT_FAILURE;
+      return EXIT_FAILURE;
     }
 
-  /* Process the data.  */
-  if (!recfix_process_data (db))
+  if (!recfix_check_database (db))
     {
-      res = EXIT_FAILURE;
+      return EXIT_FAILURE;
     }
 
-  if ((res == EXIT_SUCCESS)
-      && (recfix_op == RECFIX_OP_SORT))
+  return EXIT_SUCCESS;
+}
+
+static int
+recfix_do_sort ()
+{
+  rec_db_t db;
+
+  /* Read the database from the specified file using a sorting parser,
+     and check its integrity.  If it is ok, write it back to the
+     file.  */
+
+  recutl_sorting_parser (true, NULL, NULL);
+  db = recutl_read_db_from_file (recfix_file);
+  if (!db)
     {
-      recutl_write_db_to_file (db, recfix_file);
+      return EXIT_FAILURE;
+    }
+  
+  if (!recfix_check_database (db))
+    {
+      return EXIT_FAILURE;
+    }
+
+  recutl_write_db_to_file (db, recfix_file);
+  return EXIT_SUCCESS;
+}
+
+#if defined REC_CRYPT_SUPPORT
+
+static int
+recfix_do_crypt ()
+{
+  rec_db_t db;
+  size_t n_rset;
+
+  /* Read the database from the specified file and check its
+     integrity.  */
+
+  db = recutl_read_db_from_file (recfix_file);
+  if (!db)
+    {
+      return EXIT_FAILURE;
+    }
+
+  /*  if (!recfix_check_database (db))
+    {
+      return EXIT_FAILURE;
+      } */
+
+  /* Encrypt/decrypt any unencrypted/encrypted field marked as
+     "confidential" using the given password.  */
+
+  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
+    {
+      rec_rset_elem_t elem_rset;
+      rec_fex_t confidential_fields;
+      rec_rset_t rset =
+        rec_db_get_rset (db, n_rset);
+
+      /* Skip record sets not having any confidential fields.  */
+
+      confidential_fields = rec_rset_confidential (rset);
+      if (confidential_fields == NULL)
+        {
+          continue;
+        }
+
+      /* Process every record of the record set.  */
+
+      elem_rset = rec_rset_first_record (rset);
+      while (rec_rset_elem_p (elem_rset))
+        {
+          rec_record_elem_t elem_record;
+          rec_record_t record =
+            rec_rset_elem_record (elem_rset);
+
+          if (recfix_op == RECFIX_OP_ENCRYPT)
+            {
+              /* Encrypt any unencrypted confidential field in this
+                 record.  */
+
+              if (!rec_encrypt_record (rset, record, recfix_password))
+                {
+                  recutl_fatal (_("encrypting a record. Please report this."));
+                }
+            }
+          else
+            {
+              /* Decrypt any encrypted confidential field in this
+                 record.  */
+
+              rec_decrypt_record (rset, record, recfix_password);
+            }
+
+          elem_rset = rec_rset_next_record (rset, elem_rset);
+        }
+    }
+
+  /* Write the modified database back to the file.  */
+
+  recutl_write_db_to_file (db, recfix_file);
+
+  return EXIT_SUCCESS;
+}
+
+#endif /* REC_CRYPT_SUPPORT */
+
+int
+main (int argc, char *argv[])
+{
+  int res     = EXIT_SUCCESS;
+  rec_db_t db = NULL;
+
+  recutl_init ("recfix");
+
+  /* Parse arguments.  */
+
+  recfix_parse_args (argc, argv);
+
+  /* Execute the proper operation as specified in the recfix_op
+     variable.  */
+
+  switch (recfix_op)
+    {
+    case RECFIX_OP_CHECK:
+      {
+        res = recfix_do_check ();
+        break;
+      }
+    case RECFIX_OP_SORT:
+      {
+        res = recfix_do_sort ();
+        break;
+      }
+#if defined REC_CRYPT_SUPPORT
+    case RECFIX_OP_ENCRYPT:
+    case RECFIX_OP_DECRYPT:
+      {
+        res = recfix_do_crypt ();
+        break;
+      }
+#endif /* REC_CRYPT_SUPPORT */
+    default:
+      {
+        /* This point shall not be reached.  */
+
+        res = EXIT_FAILURE;
+        recutl_fatal (_("unknown operation in recfix: please report this as a bug.\n"));
+      }
     }
 
   return res;

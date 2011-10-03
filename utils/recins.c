@@ -238,97 +238,6 @@ recins_add_auto_field_date (rec_rset_t rset,
   rec_record_insert_at (record, rec_elem, 0);
 }
 
-#if defined REC_CRYPT_SUPPORT
-
-rec_record_t
-recins_encrypt_fields (rec_rset_t rset,
-                       rec_record_t record)
-{
-  rec_field_t field;
-  rec_record_t res = NULL;
-  rec_field_name_t field_name;
-  rec_fex_t confidential_fields;
-  size_t i, k, num_fields;
-  
-  res = rec_record_dup (record);
-
-  if (rset)
-    {
-      confidential_fields = rec_rset_confidential (rset);
-      if (!recins_password && (rec_fex_size (confidential_fields) > 0))
-        {
-          recutl_warning ("the record set contains confidential fields but no password was provided\n");
-          recutl_warning ("the resulting record will have those fields unencrypted!\n");
-          return res;
-        }
-
-      for (i = 0; i < rec_fex_size (confidential_fields); i++)
-        {
-          field_name = rec_fex_elem_field_name (rec_fex_get (confidential_fields, i));
-
-          num_fields = rec_record_get_num_fields_by_name (res, field_name);
-          for (k = 0; k < num_fields; k++)
-            {
-              field = rec_record_get_field_by_name (res, field_name, k);
-              if (field)
-                {
-                  /* Encrypt the value of this field.  */
-                  char *field_value = xstrdup (rec_field_value (field));
-                  char *field_value_encrypted;
-                  char *field_value_base64;
-                  size_t out_size, base64_size;
-                  char *aux;
-
-                  if (!rec_encrypt (field_value,
-                                    strlen (field_value),
-                                    recins_password,
-                                    &field_value_encrypted,
-                                    &out_size))
-                    {
-                      recutl_fatal (_("rec_encrypt failed.  Please report this\n"));
-                    }
-
-                  /* Encode the encrypted into base64.  */
-                  base64_size = base64_encode_alloc (field_value_encrypted,
-                                                     out_size,
-                                                     &field_value_base64);
-                  base64_encode (field_value_encrypted,
-                                 out_size,
-                                 field_value_base64,
-                                 base64_size);
-
-                  /* Prepend "encrypted-".  */
-#define REC_ENCRYPTED_PREFIX "encrypted-"
-                  aux = malloc (strlen (field_value_base64)
-                                + strlen (REC_ENCRYPTED_PREFIX) + 1);
-                  memcpy (aux,
-                          REC_ENCRYPTED_PREFIX,
-                          strlen (REC_ENCRYPTED_PREFIX));
-                  memcpy (aux + strlen (REC_ENCRYPTED_PREFIX),
-                          field_value_base64,
-                          strlen (field_value_base64));
-                  aux[strlen (field_value_base64)
-                      + strlen (REC_ENCRYPTED_PREFIX)] = '\0';
-                  free (field_value_base64);
-                  field_value_base64 = aux;
-                  
-                  /* Replace the value of the field.  */
-                  rec_field_set_value (field, field_value_base64);
-
-                  /* Free resources.  */
-                  free (field_value);
-                  free (field_value_encrypted);
-                  free (field_value_base64);
-                }
-            }
-        }
-    }  
-
-  return res;
-}
-
-#endif /* REC_CRYPT_SUPPORT */
-
 rec_record_t
 recins_add_auto_fields (rec_rset_t rset,
                         rec_record_t record)
@@ -417,19 +326,30 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
-      rec_record_t aux;
-
       /* Add auto-set fields required by this record set.  */
       record_to_insert = recins_add_auto_fields (rset, record);
       rec_record_destroy (record);
 
 #if defined REC_CRYPT_SUPPORT
-      /* Encrypt the value of fields declared as confidential in
-         this record set.  */
-
-      aux = record_to_insert;
-      record_to_insert = recins_encrypt_fields (rset, record_to_insert);
-      rec_record_destroy (aux);
+      {
+        /* Encrypt the value of fields declared as confidential in
+           this record set.  */
+        
+        rec_fex_t confidential_fields =
+          rec_rset_confidential (rset);
+        if (!recins_password && (rec_fex_size (confidential_fields) > 0))
+          {
+            recutl_warning (_("the record set contains confidential fields but no password was provided\n"));
+            recutl_warning (_("the resulting record will have those fields unencrypted!\n"));
+          }
+        else
+          {
+            if (!rec_encrypt_record (rset, record_to_insert, recins_password))
+              {
+                recutl_fatal ("encrypting a record.  Please report this.\n");
+              }
+          }
+      }
 #endif
 
       new_elem = rec_rset_elem_record_new (rset, record_to_insert);
@@ -661,8 +581,6 @@ recins_add_new_record (rec_db_t db)
       rset = rec_db_get_rset_by_type (db, recutl_type);
       if (rset)
         {
-          rec_record_t aux;
-
           num_rec = -1;
      
           /* Add auto-set fields required by this record set.  */
@@ -670,12 +588,25 @@ recins_add_new_record (rec_db_t db)
           rec_record_destroy (recins_record);
 
 #if defined REC_CRYPT_SUPPORT
-          /* Encrypt the value of fields declared as confidential in
-             this record set.  */
-
-          aux = record_to_insert;
-          record_to_insert = recins_encrypt_fields (rset, record_to_insert);
-          rec_record_destroy (aux);
+      {
+        /* Encrypt the value of fields declared as confidential in
+           this record set.  */
+        
+        rec_fex_t confidential_fields =
+          rec_rset_confidential (rset);
+        if (!recins_password && (rec_fex_size (confidential_fields) > 0))
+          {
+            recutl_warning (_("the record set contains confidential fields but no password was provided\n"));
+            recutl_warning (_("the resulting record will have those fields unencrypted!\n"));
+          }
+        else
+          {
+            if (!rec_encrypt_record (rset, record_to_insert, recins_password))
+              {
+                recutl_fatal ("encrypting a record.  Please report this.\n");
+              }
+          }
+      }
 #endif
 
           rset_elem = rec_rset_first_record (rset);

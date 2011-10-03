@@ -923,6 +923,8 @@ void rec_sex_print_ast (rec_sex_t sex);
 
 #if defined REC_CRYPT_SUPPORT
 
+#define REC_ENCRYPTED_PREFIX "encrypted-"
+
 bool rec_encrypt (char *in,
                   size_t in_size,
                   char *password,
@@ -934,6 +936,20 @@ bool rec_decrypt (char *in,
                   char *password,
                   char **out,
                   size_t *out_size);
+
+bool rec_encrypt_field (rec_field_t field,
+                        char *password);
+
+bool rec_encrypt_record (rec_rset_t rset,
+                         rec_record_t record,
+                         char *password);
+
+bool rec_decrypt_field (rec_field_t field,
+                        char *password);
+
+bool rec_decrypt_record (rec_rset_t rset,
+                         rec_record_t record,
+                         char *password);
 
 #endif /* REC_CRYPT_SUPPORT */
 

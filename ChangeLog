@@ -1,3 +1,39 @@
+2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: more encryption related routines, and encryption support
+	in recfix.
+	* utils/recfix.c (recfix_do_crypt): Use rec_decrypt_record.
+
+	* src/rec-crypt.c (rec_decrypt_record): New function.
+
+	* src/rec-writer.c (rec_write_field_with_rset): Use
+	rec_decrypt_field.
+
+	* src/rec-crypt.c (rec_decrypt_field): New function.
+
+	* utils/recfix.c (recfix_do_crypt): Adapted to the new semantics
+	of rec_encrypt_record.
+	* utils/recins.c (recins_insert_record): Likewise.
+	(recins_add_new_record): Likewise.
+
+	* src/rec-crypt.c (rec_encrypt_field): New function.
+	(rec_encrypt_record): Use rec_encrypt_field.
+
+2011-09-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* utils/recins.c (recins_insert_record): Use rec_encrypt_record.
+	(recins_encrypt_fields): Function removed.
+
+	* src/rec-crypt.c (rec_encrypt_record): New function.
+
+	* utils/recfix.c (main): Invoke the recfix_do_* functions
+	depending on the selected operation.
+	(recfix_do_check): New function.
+	(recfix_check_database): Renamed from recfix_process_data.
+	(recfix_parse_args): Made static, and adapted to use the new
+	recfix_do_* functions.
+	(recfix_do_sort): New function.
+
 2011-09-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	build: install lisp files in the proper directory.

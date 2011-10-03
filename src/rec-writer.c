@@ -29,7 +29,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <base64.h>
 
 #include <rec.h>
 #include <rec-utils.h>
@@ -237,62 +236,14 @@ rec_write_field_with_rset (rec_writer_t writer,
         }
     }
 
-  fvalue = rec_field_value (field);
-
 #if defined REC_CRYPT_SUPPORT
-
-  /* If this field is confidential and the writer has a configured
-     password, decrypt the value.  Otherwise just write the encrypted
-     string.  */
-
-#define REC_ENCRYPTED_PREFIX "encrypted-"
-
-  if (rset
-      && rec_rset_field_confidential_p (rset, fname)
-      && writer->password
-      && (strlen (fvalue) >= strlen (REC_ENCRYPTED_PREFIX))
-      && (strncmp (fvalue, REC_ENCRYPTED_PREFIX,
-                   strlen (REC_ENCRYPTED_PREFIX)) == 0))
+  if (writer->password)
     {
-      char *field_value;
-      char *base64_decoded;
-      size_t base64_decoded_size;
-      char *decrypted_value;
-      size_t decrypted_value_size;
-      
-      /* Skip the "encrypted-" prefix.  */
-      field_value = fvalue + strlen (REC_ENCRYPTED_PREFIX);
-
-      /* Decode the Base64.  */
-
-      if (base64_decode_alloc (field_value,
-                               strlen(field_value),
-                               &base64_decoded,
-                               &base64_decoded_size))
-        {
-          base64_decode (field_value,
-                         strlen(field_value),
-                         base64_decoded,
-                         &base64_decoded_size);
-      
-          /* Decrypt.  */
-
-          if (rec_decrypt (base64_decoded,
-                           base64_decoded_size,
-                           writer->password,
-                           &decrypted_value,
-                           &decrypted_value_size))
-            {
-              fvalue = decrypted_value;      
-            }
-
-          /* Free resources.  */
-          free (base64_decoded);
-        }
+      rec_decrypt_field (field, writer->password);
     }
-
 #endif /* REC_CRYPT_SUPPORT */
 
+  fvalue = rec_field_value (field);
   for (pos = 0; pos < strlen (fvalue); pos++)
     {
       if (fvalue[pos] == '\n')

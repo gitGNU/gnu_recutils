@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-08-28 20:27:45 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-10-03 16:22:47 jemarch"
  *
  *       File:         rec-crypt.c
  *       Date:         Fri Aug 26 19:50:51 2011
@@ -28,6 +28,7 @@
 #include <string.h>
 #include <gcrypt.h>
 #include <crc.h>
+#include <base64.h>
 
 #include <rec.h>
 #include <rec-utils.h>
@@ -220,6 +221,184 @@ rec_decrypt (char   *in,
   gcry_cipher_close (handler);
 
   return true;
+}
+
+bool
+rec_encrypt_record (rec_rset_t rset,
+                    rec_record_t record,
+                    char *password)
+{
+  rec_field_t field;
+  bool res;
+  rec_field_name_t field_name;
+  rec_fex_t confidential_fields;
+  size_t i, k, num_fields;
+
+  res = true;
+
+  if (rset)
+    {
+      confidential_fields = rec_rset_confidential (rset);
+      for (i = 0; i < rec_fex_size (confidential_fields); i++)
+        {
+          field_name = rec_fex_elem_field_name (rec_fex_get (confidential_fields, i));
+
+          num_fields = rec_record_get_num_fields_by_name (record, field_name);
+          for (k = 0; k < num_fields; k++)
+            {
+              field = rec_record_get_field_by_name (record, field_name, k);
+              if (field)
+                {
+                  res = rec_encrypt_field (field, password);
+                  if (!res)
+                    {
+                      break;
+                    }
+                }
+            }
+        }
+    }
+
+  return res;
+}
+
+bool
+rec_encrypt_field (rec_field_t field,
+                   char *password)
+{
+  char *field_value;
+  char *field_value_encrypted;
+  char *field_value_base64;
+  size_t out_size, base64_size;
+  char *aux;
+
+  field_value = strdup (rec_field_value (field));
+  if (!rec_encrypt (field_value,
+                    strlen (field_value),
+                    password,
+                    &field_value_encrypted,
+                    &out_size))
+    {
+      return false;
+    }
+  
+  /* Encode the encrypted value into base64.  */
+
+  base64_size = base64_encode_alloc (field_value_encrypted,
+                                     out_size,
+                                     &field_value_base64);
+  base64_encode (field_value_encrypted,
+                 out_size,
+                 field_value_base64,
+                 base64_size);
+
+  /* Prepennd "encrypted-".  */
+  aux = malloc (strlen (field_value_base64)
+                + strlen (REC_ENCRYPTED_PREFIX) + 1);
+  memcpy (aux,
+          REC_ENCRYPTED_PREFIX,
+          strlen (REC_ENCRYPTED_PREFIX));
+  memcpy (aux + strlen (REC_ENCRYPTED_PREFIX),
+          field_value_base64,
+          strlen (field_value_base64));
+  aux[strlen (field_value_base64)
+      + strlen (REC_ENCRYPTED_PREFIX)] = '\0';
+  free (field_value_base64);
+  field_value_base64 = aux;
+  
+  /* Replace the value of the field.  */
+  rec_field_set_value (field, field_value_base64);
+  
+  /* Free resources.  */
+  free (field_value);
+  free (field_value_encrypted);
+  free (field_value_base64);
+
+  return true;
+}
+
+bool
+rec_decrypt_field (rec_field_t field,
+                   char *password)
+{
+  char *field_value;
+  char *base64_decoded;
+  size_t base64_decoded_size;
+  char *decrypted_value;
+  size_t decrypted_value_size;
+
+  /* Make sure the field is encrypted.  */
+  if ((strlen (rec_field_value (field)) < strlen (REC_ENCRYPTED_PREFIX))
+      || (strncmp (rec_field_value (field), REC_ENCRYPTED_PREFIX,
+                   strlen (REC_ENCRYPTED_PREFIX)) != 0))
+    {
+      return false;
+    }
+
+  /* Skip the "encrypted-" prefix.  */
+  field_value = rec_field_value (field) + strlen (REC_ENCRYPTED_PREFIX);
+
+  /* Decode the Base64.  */
+
+  if (base64_decode_alloc (field_value,
+                           strlen(field_value),
+                           &base64_decoded,
+                           &base64_decoded_size))
+    {
+      base64_decode (field_value,
+                     strlen(field_value),
+                     base64_decoded,
+                     &base64_decoded_size);
+      
+      /* Decrypt.  */
+
+      if (rec_decrypt (base64_decoded,
+                       base64_decoded_size,
+                       password,
+                       &decrypted_value,
+                       &decrypted_value_size))
+        {
+          rec_field_set_value (field, decrypted_value);
+        }
+
+      /* Free resources.  */
+      free (base64_decoded);
+    }
+
+  return true;
+}
+
+bool
+rec_decrypt_record (rec_rset_t rset,
+                    rec_record_t record,
+                    char *password)
+{
+  bool res = true;
+  size_t i, num_fields, k;
+  rec_field_t field;
+  rec_field_name_t field_name;
+  rec_fex_t confidential_fields;
+
+  if (rset)
+    {
+      confidential_fields = rec_rset_confidential (rset);
+      for (i = 0; i < rec_fex_size (confidential_fields); i++)
+        {
+          field_name = rec_fex_elem_field_name (rec_fex_get (confidential_fields, i));
+
+          num_fields = rec_record_get_num_fields_by_name (record, field_name);
+          for (k = 0; k < num_fields; k++)
+            {
+              field = rec_record_get_field_by_name (record, field_name, k);
+              if (field)
+                {
+                  res = rec_decrypt_field (field, password);
+                }
+            }
+        }
+    }
+
+  return res;
 }
 
 /* End of rec-crypt.c */
