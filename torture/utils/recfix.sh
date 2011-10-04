@@ -547,6 +547,50 @@ Password: secret22
 WebPassword: websecret2
 '
 
+test_declare_input_file encrypt \
+'%rec: Account
+%confidential: Secret
+
+Secret: foo
+
+Secret: bar
+
+%rec: Jorl
+
+Secret: jojo
+
+%rec: jojo
+%confidential: joo
+
+joo: je
+fo: fu
+
+joo: ji
+fo: ja
+'
+
+test_declare_input_file decrypt \
+'%rec: Account
+%confidential: Secret
+
+Secret: encrypted-xsU/pJwqJBZv3+6tn2AzTA==
+
+Secret: encrypted-V1xOls6u5Zw/D5AOtZ9gfQ==
+
+%rec: Jorl
+
+Secret: jojo
+
+%rec: jojo
+%confidential: joo
+
+joo: encrypted-MhsqXvDjqU9vOXG8QoHxKg==
+fo: fu
+
+joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
+fo: ja
+'
+
 #
 # Declare tests.
 #
@@ -877,6 +921,116 @@ test_tool recfix-confidential-with-unencrypted-fields xfail \
           recfix \
           '--check' \
           confidential-with-unencrypted-fields
+
+test_tool recfix-encrypt ok \
+          recfix \
+          '--encrypt -s foo' \
+          encrypt \
+'%rec: Account
+%confidential: Secret
+
+Secret: encrypted-xsU/pJwqJBZv3+6tn2AzTA==
+
+Secret: encrypted-V1xOls6u5Zw/D5AOtZ9gfQ==
+
+%rec: Jorl
+
+Secret: jojo
+
+%rec: jojo
+%confidential: joo
+
+joo: encrypted-MhsqXvDjqU9vOXG8QoHxKg==
+fo: fu
+
+joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
+fo: ja
+'
+
+test_tool recfix-encrypt-password-long ok \
+          recfix \
+          '--encrypt --password=foo' \
+          encrypt \
+'%rec: Account
+%confidential: Secret
+
+Secret: encrypted-xsU/pJwqJBZv3+6tn2AzTA==
+
+Secret: encrypted-V1xOls6u5Zw/D5AOtZ9gfQ==
+
+%rec: Jorl
+
+Secret: jojo
+
+%rec: jojo
+%confidential: joo
+
+joo: encrypted-MhsqXvDjqU9vOXG8QoHxKg==
+fo: fu
+
+joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
+fo: ja
+'
+
+test_tool recfix-encrypt-without-password xfail \
+          recfix \
+          '--encrypt' \
+          encrypt
+
+test_tool recfix-encrypt-password-before-operation xfail \
+          recfix \
+          '-s foo --encrypt' \
+          encrypt
+
+test_tool recfix-decrypt ok \
+          recfix \
+          '--decrypt -s foo' \
+          decrypt \
+'%rec: Account
+%confidential: Secret
+
+Secret: foo
+
+Secret: bar
+
+%rec: Jorl
+
+Secret: jojo
+
+%rec: jojo
+%confidential: joo
+
+joo: je
+fo: fu
+
+joo: ji
+fo: ja
+'
+
+test_tool recfix-decrypt-invalid-password ok \
+          recfix \
+          '--decrypt -s bar' \
+          decrypt \
+'%rec: Account
+%confidential: Secret
+
+Secret: encrypted-xsU/pJwqJBZv3+6tn2AzTA==
+
+Secret: encrypted-V1xOls6u5Zw/D5AOtZ9gfQ==
+
+%rec: Jorl
+
+Secret: jojo
+
+%rec: jojo
+%confidential: joo
+
+joo: encrypted-MhsqXvDjqU9vOXG8QoHxKg==
+fo: fu
+
+joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
+fo: ja
+'
 
 #
 # Cleanup.

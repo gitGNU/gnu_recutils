@@ -1,3 +1,12 @@
+2011-10-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: tests for the --encrypt and --decrypt options of recfix.
+	* torture/utils/recfix.sh (recfix-encrypt): New test.
+	(recfix-encrypt-password-long): Likewise.
+	(recfix-encrypt-without-password): Likewise.
+	(recfix-encrypt-password-before-operation): Likewise.
+	(recfix-decrypt-invalid-password): Likewise.
+
 2011-10-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	torture: tests for the --check operation of recfix regarding
