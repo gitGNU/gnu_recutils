@@ -2551,7 +2551,7 @@ $ mdb2rec sales.mdb Orders
 
 OrderID: 10248
 Customers:CustomerID: FBFOU
-Product:ProductID: 1
+Products:ProductID: 1
 OrderDate: 2010-08-01T12:30:01
 
 @dots{}
