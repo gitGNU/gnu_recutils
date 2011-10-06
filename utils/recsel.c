@@ -125,7 +125,7 @@ Select and print rec data.\n"), stdout);
   /* TRANSLATORS: --help output, encryption related options.
      no-wrap */
   fputs (_("\
-  -s, --password=STR                  encrypt confidential fields with the given password.\n"),
+  -s, --password=STR                  decrypt confidential fields with the given password.\n"),
          stdout);
 #endif
   

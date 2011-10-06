@@ -1,3 +1,8 @@
+2011-10-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	utils: typo fixed in help string.
+	* utils/recsel.c (recutl_print_help): Typo in help string fixed.
+
 2011-10-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	build: documentation of dependencies updated.
