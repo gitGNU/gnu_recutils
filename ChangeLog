@@ -1,3 +1,8 @@
+2011-10-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	build: documentation of dependencies updated.
+	* README-dev: Dependency on libgcrypt documented.
+
 2011-10-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: little fix.

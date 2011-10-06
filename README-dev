@@ -34,6 +34,8 @@ for the needed packages and drives the conditional compilation of the
 impacted utitilities.  The dependencies are:
 - mdb2rec depends on glib 2.0 and libmdb, available at
   http://mdbtools.sf.net.
+- The encryption support depends on libgcrypt, available at
+  http://www.gnu.org/s/libgcrypt.
 
 Building
 --------
