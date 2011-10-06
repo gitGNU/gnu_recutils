@@ -1,5 +1,22 @@
 2011-10-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recfix: manage --encrypt when there are already encrypted fields
+	in the database.
+	* torture/utils/recfix.sh (recfix-encrypt-already-encrypted): New
+	test.
+	(recfix-encrypt-already-encrypted-force): New test.
+
+	* utils/recfix.c (recfix_do_crypt): Emit an error if an already
+	encrypted field is found, unless --force was specified in the
+	command line.
+	(recutl_print_help): --force documented.
+	(recfix_parse_args): Recognize --force.
+
+	* src/rec-crypt.c (rec_encrypt_field): Make sure the field is not
+	already encrypted before encrypting it.
+
+2011-10-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: typo fixed in help string.
 	* utils/recsel.c (recutl_print_help): Typo in help string fixed.
 

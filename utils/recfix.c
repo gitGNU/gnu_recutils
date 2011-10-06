@@ -70,6 +70,7 @@ bool  recfix_external = true;
 char *recfix_file     = NULL;
 int   recfix_op       = RECFIX_OP_INVALID;
 char *recfix_password = NULL;
+bool  recfix_force    = false;
 
 /*
  * Command line options management.
@@ -80,6 +81,7 @@ enum
   COMMON_ARGS,
   NO_EXTERNAL_ARG,
   PASSWORD_ARG,
+  FORCE_ARG,
   OP_SORT_ARG,
 #if defined REC_CRYPT_SUPPORT
   OP_ENCRYPT_ARG,
@@ -92,6 +94,7 @@ static const struct option GNU_longOptions[] =
   {
     COMMON_LONG_ARGS,
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
+    {"force", no_argument, NULL, FORCE_ARG},
     {"password", required_argument, NULL, PASSWORD_ARG},
     {"check", no_argument, NULL, OP_CHECK_ARG},
     {"sort", no_argument, NULL, OP_SORT_ARG},
@@ -121,7 +124,8 @@ Check and fix rec files.\n"),
      no-wrap */
   fputs (_("\
   -t, --type=TYPE                     process only records of the given type.\n\
-      --no-external                   don't use external descriptors.\n"),
+      --no-external                   don't use external descriptors.\n\
+      --force                         force the requested operation.\n"),
          stdout);
 
   recutl_print_help_common ();
@@ -188,6 +192,11 @@ recfix_parse_args (int argc,
         case NO_EXTERNAL_ARG:
           {
             recfix_external = false;
+            break;
+          }
+        case FORCE_ARG:
+          {
+            recfix_force = true;
             break;
           }
 #if defined REC_CRYPT_SUPPORT
@@ -410,9 +419,11 @@ recfix_do_crypt ()
               /* Encrypt any unencrypted confidential field in this
                  record.  */
 
-              if (!rec_encrypt_record (rset, record, recfix_password))
+              if (!rec_encrypt_record (rset, record, recfix_password)
+                  && !recfix_force)
                 {
-                  recutl_fatal (_("encrypting a record. Please report this."));
+                  recutl_error (_("the database contains already encrypted fields\n"));
+                  recutl_fatal (_("please use --force or --decrypt\n"));
                 }
             }
           else

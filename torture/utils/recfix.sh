@@ -591,6 +591,17 @@ joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
 fo: ja
 '
 
+test_declare_input_file encrypt-already-encrypted \
+'%rec: Account
+%confidential: Secret
+
+Id: 1
+Secret: encrypted-xsU/pJwqJBZv3+6tn2AzTA==
+
+Id: 2
+Secret: bar
+'
+
 #
 # Declare tests.
 #
@@ -981,6 +992,25 @@ test_tool recfix-encrypt-password-before-operation xfail \
           recfix \
           '-s foo --encrypt' \
           encrypt
+
+test_tool recfix-encrypt-already-encrypted xfail \
+          recfix \
+          '--encrypt -s foo' \
+          encrypt-already-encrypted
+
+test_tool recfix-encrypt-already-encrypted-force ok \
+          recfix \
+          '--force --encrypt -s foo' \
+          encrypt-already-encrypted \
+'%rec: Account
+%confidential: Secret
+
+Id: 1
+Secret: encrypted-xsU/pJwqJBZv3+6tn2AzTA==
+
+Id: 2
+Secret: encrypted-V1xOls6u5Zw/D5AOtZ9gfQ==
+'
 
 test_tool recfix-decrypt ok \
           recfix \
