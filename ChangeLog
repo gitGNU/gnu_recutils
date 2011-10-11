@@ -1,3 +1,7 @@
+2011-10-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* README-dev: URL to the git repo updated.
+
 2011-10-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recfix: manage --encrypt when there are already encrypted fields

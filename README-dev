@@ -2,14 +2,14 @@ This README.dev file describes the development environment.
 
   Copyright (C) 2002, 2003, 2005, 2006, 2008, 2010
   Free Software Foundation, Inc.
-  Copyright (C) 2010 Jose E. Marchesi.
+  Copyright (C) 2010, 2011 Jose E. Marchesi.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
-The development sources are available through anonymous CVS at Savannah:
-  http://savannah.gnu.org/cvs/?group=recutils
+The development sources are available through anonymous git at Savannah:
+  http://savannah.gnu.org/git/?group=recutils
 
 
 Autotools
@@ -32,10 +32,27 @@ There are some third party dependencies needed to build some of the
 utilities shipped in this distribution.  The configure script checks
 for the needed packages and drives the conditional compilation of the
 impacted utitilities.  The dependencies are:
-- mdb2rec depends on glib 2.0 and libmdb, available at
-  http://mdbtools.sf.net.
-- The encryption support depends on libgcrypt, available at
-  http://www.gnu.org/s/libgcrypt.
+- The development files of the libuuid library are needed.  Version
+  2.17.2 works fine, but almost any version will do it.  In Debian and
+  derivatives you can just install the package uuid-dev.
+- The GNU Privacy Guard (gnupg) is required in order to support
+  encryption.  The following libraries are required: libgpg-error and
+  libgcrypt.  Any recent version of those libraries will work.  gnupg
+  can be obtained at http://gnupg.org.
+- The testing infrastructure uses the Check library.  At the moment
+  the svn version of the library if needed.  The configure script will
+  check if you have the right version.  libcheck can be obtained at
+  http://sourceforge.net/projects/check/.
+
+The following dependencies are optional.  Missing them will result in
+a less capable library:
+- libcurl is required by the HTTP filesystem implementation.  Any
+  recent version must work.  The library can be obtained at
+  http://curl.haxx.se/libcurl/.
+- The JBIG2 decoding filters require the libjbig2dec library.
+  jbig2dec can be obtained at http://jbig2dec.sourceforge.net/.
+- The DCT filters require the libjpeg library. libjpeg can be obtained
+  at http://libjpeg.sourceforge.net/.
 
 Building
 --------
