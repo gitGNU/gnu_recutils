@@ -1,3 +1,13 @@
+2011-10-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: tests for the --sort operation of recfix.
+	* torture/utils/recfix.sh (recfix-sort-ints): New test.
+	(recfix-sort-ranges): New test.
+	(recfix-sort-reals): New test.
+	(recfix-sort-lex): New test.
+	(recfix-sort-dates): New test.
+	(recfix-sort-booleans): New test.
+
 2011-10-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* README-dev: URL to the git repo updated.

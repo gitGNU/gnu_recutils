@@ -491,7 +491,6 @@ test_declare_input_file sortcheck-with-blanks \
 +       AField \
    
 '
-
 test_declare_input_file sortcheck-invalid-empty \
 '%rec: foo
 %sort:
@@ -500,6 +499,128 @@ test_declare_input_file sortcheck-invalid-empty \
 test_declare_input_file sortcheck-invalid-field-name \
 '%rec: foo
 %sort: A/Field
+'
+
+test_declare_input_file sortcheck-with-several-fields-invalid \
+'%rec: foo
+%sort: BField
+%sort: AField
+'
+
+test_declare_input_file unsorted-int \
+'%rec: foo
+%type: Id int
+%sort: Id
+
+Id: 4
+Name: A Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+
+Id: 3
+Name: B Field
+'
+
+test_declare_input_file unsorted-range \
+'%rec: foo
+%type: Id range 0 10
+%sort: Id
+
+Id: 4
+Name: A Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+
+Id: 3
+Name: B Field
+'
+
+test_declare_input_file unsorted-real \
+'%rec: foo
+%type: Id real
+%sort: Id
+
+Id: 4.2
+Name: A Field
+
+Id: 2.2
+Name: C Field
+
+Id: 1.2
+Name: D Field
+
+Id: 3.2
+Name: B Field
+'
+
+test_declare_input_file unsorted-lex \
+'%rec: foo
+%sort: Name
+
+Id: 4
+Name: A Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+
+Id: 3
+Name: B Field
+'
+
+test_declare_input_file unsorted-bool \
+'%rec: foo
+%type: Bool bool
+%sort: Bool
+
+Id: 5
+Bool: 1
+
+Id: 1
+Bool: 0
+
+Id: 3
+Bool: no
+
+Id: 6
+Bool: true
+
+Id: 2
+Bool: false
+
+Id: 4
+Bool: yes
+'
+
+test_declare_input_file unsorted-date \
+'%rec: foo
+%type: Date date
+%sort: Date
+
+Id: 1
+Date: 24 September 1972
+
+Id: 3
+Date: 23 October 1972
+
+Id: 5
+Date: 26 May 1984
+
+Id: 2
+Date: 23 September 1972
+
+Id: 4
+Date: 1 April 1999
 '
 
 test_declare_input_file confidential \
@@ -601,6 +722,8 @@ Secret: encrypted-xsU/pJwqJBZv3+6tn2AzTA==
 Id: 2
 Secret: bar
 '
+
+
 
 #
 # Declare tests.
@@ -1060,6 +1183,141 @@ fo: fu
 
 joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
 fo: ja
+'
+
+test_tool recfix-sort-ints ok \
+          recfix \
+          '--sort' \
+          unsorted-int \
+'%rec: foo
+%type: Id int
+%sort: Id
+
+Id: 1
+Name: D Field
+
+Id: 2
+Name: C Field
+
+Id: 3
+Name: B Field
+
+Id: 4
+Name: A Field
+'
+
+test_tool recfix-sort-ranges ok \
+          recfix \
+          '--sort' \
+          unsorted-range \
+'%rec: foo
+%type: Id range 0 10
+%sort: Id
+
+Id: 1
+Name: D Field
+
+Id: 2
+Name: C Field
+
+Id: 3
+Name: B Field
+
+Id: 4
+Name: A Field
+'
+
+
+test_tool recfix-sort-reals ok \
+          recfix \
+          '--sort' \
+          unsorted-real \
+'%rec: foo
+%type: Id real
+%sort: Id
+
+Id: 1.2
+Name: D Field
+
+Id: 2.2
+Name: C Field
+
+Id: 3.2
+Name: B Field
+
+Id: 4.2
+Name: A Field
+'
+
+test_tool recfix-sort-lex ok \
+          recfix \
+          '--sort' \
+          unsorted-lex \
+'%rec: foo
+%sort: Name
+
+Id: 4
+Name: A Field
+
+Id: 3
+Name: B Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+'
+
+test_tool recfix-sort-dates ok \
+          recfix \
+          '--sort' \
+          unsorted-date \
+'%rec: foo
+%type: Date date
+%sort: Date
+
+Id: 2
+Date: 23 September 1972
+
+Id: 1
+Date: 24 September 1972
+
+Id: 3
+Date: 23 October 1972
+
+Id: 5
+Date: 26 May 1984
+
+Id: 4
+Date: 1 April 1999
+'
+
+test_tool recfix-sort-booleans ok \
+          recfix \
+          '--sort' \
+          unsorted-bool \
+'%rec: foo
+%type: Bool bool
+%sort: Bool
+
+Id: 3
+Bool: no
+
+Id: 2
+Bool: false
+
+Id: 1
+Bool: 0
+
+Id: 6
+Bool: true
+
+Id: 4
+Bool: yes
+
+Id: 5
+Bool: 1
 '
 
 #
