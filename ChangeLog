@@ -1,5 +1,10 @@
 2011-10-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/recutils.texi (Comments): Relocated.
+	(Fields and Records): Matusalen -> Matusalem.
+
+2011-10-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: document the encryption options in recsel and recins.
 	* doc/recutils.texi (recsel Invocation): Global options added,
 	including a description of the --password argument.

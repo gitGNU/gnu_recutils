@@ -56,9 +56,9 @@ Overview
 
 The Rec Format
 * Fields and Records::  The basic structures conforming Rec files.
+* Comments::            Comments are useful to store meta data.
 * Record Descriptors::  Describing different types of records.
 * Compound Field Names:: Referencing record instances.
-* Comments::            Comments are useful to store meta data.
 * Field Types::         Types for fields can be defined in record
                           descriptors.
 * Auto Generated Fields:: A way to implement auto-counters and
@@ -338,8 +338,47 @@ Age: 36
 Name: Peter the Great
 Age: 53
 
-Name: Matusalen
+Name: Matusalem
 Age: 969
+@end example
+
+@node Comments
+@chapter Comments
+
+Any line having an @code{#} (ASCII 0x23) character in the first column
+is a comment line.
+
+Comment lines are quite useful to insert additional information that
+is not part of the database but useful otherwise.
+
+It is also quite convenient to comment-out information from the
+recfile without having to remove it in a definitive way: you may want
+to recover the data into the database later!  Comment lines can be
+used to comment-out both full registers and single fields:
+
+@example
+Name: Jose E. Marchesi
+# Occupation: Software Engineer
+# Severe lack of brain capacity
+# Fired on 02/01/2009 (without compensation)
+Occupation: Unoccupied
+@end example
+
+Comments are also useful for headers, footers, comment blocks and all
+kind of markers:
+
+@example
+# -*- mode: rec -*-
+#
+# TODO
+#
+# This file contains the Bugs database of GNU recutils.
+#
+# Blah blah@dots{}
+
+@dots{}
+
+# End of TODO
 @end example
 
 @node Record Descriptors
@@ -589,45 +628,6 @@ Same applies to several compound fields with explicit roles:
 Name: GNU foo
 Hacker:Name:Maintainer: Elvis 'The King' Presley
 Hacker:Name:Maintainer: Michael 'The other King' Jackson
-@end example
-
-@node Comments
-@chapter Comments
-
-Any line having an @code{#} (ASCII 0x23) character in the first column
-is a comment line.
-
-Comment lines are quite useful to insert additional information that
-is not part of the database but useful otherwise.
-
-It is also quite convenient to comment-out information from the
-recfile without having to remove it in a definitive way: you may want
-to recover the data into the database later!  Comment lines can be
-used to comment-out both full registers and single fields:
-
-@example
-Name: Jose E. Marchesi
-# Occupation: Software Engineer
-# Severe lack of brain capacity
-# Fired on 02/01/2009 (without compensation)
-Occupation: Unoccupied
-@end example
-
-Comments are also useful for headers, footers, comment blocks and all
-kind of markers:
-
-@example
-# -*- mode: rec -*-
-#
-# TODO
-#
-# This file contains the Bugs database of GNU recutils.
-#
-# Blah blah@dots{}
-
-@dots{}
-
-# End of TODO
 @end example
 
 @node Field Types
