@@ -1675,6 +1675,26 @@ If no FILE is specified then the command acts like a filter, getting
 the data from the standard input and writing the result in the
 standard output.
 
+@noindent
+The following @dfn{global options} are available.
+
+@table @samp
+@item -C
+@item @w{@kbd{--collapse}}
+Do not section the result in records with newlines.
+@item -d
+@itemx @w{@kbd{--include-descriptors}}
+Print record descriptors along with the matched records
+@item -s @var{secret}
+@itemx @w{@kbd{--password}=@var{secret}}
+Try to decrypt confidential fields with the given password.
+@item -S
+@itemx @w{@kbd{--sort}=@var{field}}
+Sort the output by @var{field}.  This option has precedence to
+whatever sorting criteria is specified in the corresponding record
+descriptor with @code{%sort}.
+@end table
+
 The @dfn{selection options} are used to select a subset of
 the records in the input.
 
@@ -1721,11 +1741,6 @@ spaces instead of newlines.
 If this option is specified then recsel will print the number of
 matching records instead of the records themselves.  This option is
 incompatible with @option{-p}, @option{-P} and @option{-R}.
-@item -S
-@itemx @w{@kbd{--sort}=@var{field}}
-Sort the output by @var{field}.  This option has precedence to
-whatever sorting criteria is specified in the corresponding record
-descriptor with @code{%sort}.
 @end table
 
 Some @dfn{special options} are available to ease the communication
@@ -1805,6 +1820,9 @@ The value of the field being defined.
 @itemx @w{@kbd{--record}=@var{value}}
 Add the fields of the record in @var{value}.  This option can be
 intermixed with @kbd{-f @dots{} -v} pairs.
+@item -s
+@itemx @w{@kbd{--password}}
+Encrypt confidential fields with the given password.
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
 @itemx @w{@kbd{--verbose}}
@@ -1827,6 +1845,9 @@ set.
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).
 Matching records will get replaced.
+@item -i
+@itemx @w{@kbd{--case-insensitive}}
+Make strings case-insensitive in selection expressions.
 @end table
 
 @node recins Examples
