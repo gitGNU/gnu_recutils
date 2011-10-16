@@ -28,7 +28,6 @@
 #include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
-#include <xalloc.h>
 #include <gettext.h>
 #define _(str) gettext (str)
 

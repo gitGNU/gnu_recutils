@@ -2,4 +2,5 @@ ABOUT-NLS
 INSTALL
 lib/*
 doc/fdl.texi
+doc/regexprops-generic.texi
 po/ChangeLog

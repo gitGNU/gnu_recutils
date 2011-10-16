@@ -1,3 +1,18 @@
+2011-10-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	syntax fixes.
+	* utils/recdel.c: Don't include xalloc.h.
+
+	* .x-sc_prohibit_undesirable_word_seq: New file.
+
+	* .x-sc_prohibit_strings_without_use: New file.
+
+	* .x-sc_prohibit_path_max_allocation: New file.
+
+	* .x-sc_prohibit_doubled_word: Ignored lib/*.
+
+	* README-dev: Spell file systme.
+
 2011-10-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Comments): Relocated.

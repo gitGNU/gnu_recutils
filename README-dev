@@ -46,7 +46,7 @@ impacted utitilities.  The dependencies are:
 
 The following dependencies are optional.  Missing them will result in
 a less capable library:
-- libcurl is required by the HTTP filesystem implementation.  Any
+- libcurl is required by the HTTP file system implementation.  Any
   recent version must work.  The library can be obtained at
   http://curl.haxx.se/libcurl/.
 - The JBIG2 decoding filters require the libjbig2dec library.
