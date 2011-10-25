@@ -58,12 +58,18 @@ The Rec Format
 * Fields and Records::  The basic structures conforming Rec files.
 * Comments::            Comments are useful to store meta data.
 * Record Descriptors::  Describing different types of records.
+
+* %rec::                External and remote descriptors.
+* %mandatory and %prohibit:: Requiring or forbidding specific fields.
+* %unique and %key::    Working with keys.
+* %auto::               Auto counters and time-stamps.
+* %doc::                Documenting your database.
+* %typedef and %type::  Field types.
+* %sort::               Keeping your record sets sorted.
+* %size::               Restricting the size of your database.
+* %confidential::       Storing confidential information.
+
 * Compound Field Names:: Referencing record instances.
-* Field Types::         Types for fields can be defined in record
-                          descriptors.
-* Auto Generated Fields:: A way to implement auto-counters and
-                          timestamps.
-* External Descriptors:: Fetching descriptors from external sources.
 * Date input formats::  Textual date representations that can be used
                           in Rec files.
 * Regular Expressions:: Flavor of regexps supported in recfiles.
@@ -112,8 +118,8 @@ settings for programs, and to encode data to be transmitted through
 networks.
 
 So it looks like all the needs are covered by the existing
-solutions@dots{} but consider the following characteristics of the data
-storage systems mentioned in the previous paragraph:
+solutions@dots{} but consider the following characteristics of the
+data storage systems mentioned in the previous paragraph:
 
 @table @minus
 @item The stored data is not directly readable by humans.
@@ -384,12 +390,12 @@ kind of markers:
 @node Record Descriptors
 @chapter Record Descriptors
 
-It is possible to specify certain properties of a set of records by
-preceding them by a @dfn{record descriptor}.  A record descriptor is
-itself a record, and uses fields with some predefined names to store
-the properties.  The most basic property that can be specified for a
-set of records is their @dfn{type}.  The special field name
-@code{%rec} is used for that purpose:
+Certain properties of a set of records can be specified by preceding
+them with a @dfn{record descriptor}.  A record descriptor is itself a
+record, and uses fields with some predefined names to store the
+properties.  The most basic property that can be specified for a set
+of records is their @dfn{type}.  The special field name @code{%rec} is
+used for that purpose:
 
 @example
 %rec: Entry
@@ -401,35 +407,101 @@ Id: 2
 Name: Entry 2
 @end example
 
-The presence of another record descriptor marks the end of the
-application of the previous one.  So, in a file with the following
-structure:
+The records following the descriptors are then identified as having
+its type.  So in the example above we would say there are two records
+of type ``Entry''.
+
+The effect of a record descriptor ends when another descriptor is
+found in the stream of records.  This allows to store different kind
+of records in the same database.  For example, consider you have to
+maintain a depot.  You will need to keep records of both the current
+stockage and the movements.
+
+The following example shows the usage of two record descriptors to
+store both kind of records: articles and movements.
 
 @example
-REC0
+%rec: Article
 
-RECORD-DESCRIPTOR-1
+Id: 1
+Title: Article 1
 
-REC1
+Id: 2
+Title: Article 2
 
-REC2
+%rec: Movement
 
-RECORD-DESCRIPTOR-2
+Id: 1
+Type: sell
+Date: 20 April 2011
 
-REC3
-
-REC4
+Id: 2
+Type: adquisition
+Date: 21 April 2011
 @end example
 
-@code{REC0} is not described by any record descriptor.  @code{REC1}
-and @code{REC2} are described by @code{RECORD-DESCRIPTOR-1} while
-@code{REC3} and @code{REC4} are described by
-@code{RECORD-DESCRIPTOR-2}.
+Besides determining the type of the records that follows in the
+stream, record descriptors can be used to describe other properties of
+those records.  That can be done by using the so-called @dfn{special
+fields}, having special names from a predefined set.  Consider for
+example the following database, where the descriptor is used to
+specify a primary key and a mandatory field:
 
-The record descriptor may contain the following predefined fields:
+@example
+%rec: Item
+%key: Id
+%mandatory: Title
+
+Id: 10
+Title: Notebook (big)
+
+Id: 11
+Title: Fountain Pen
+@end example
+
+Note that the names of special fields always start with the character
+@code{%}.  Also note that it is also possible to use non-special
+fields in a record descriptor, but such fields will have no effect on
+the described record set.
+
+What follows is an exhaustive list of the supported special fields.
+They are discussed in deep in the following sections.
 
 @table @code
-@item %rec: @var{type} [@var{url_or_file}]
+@item %rec
+Used to name the type of a set of records and to mark record
+descriptors.
+@item %mandatory
+@item %prohibit
+Those special fields are used to control which fields can and cannot
+be included in records.
+@item %unique
+@item %key
+Used to specify unique fields and primary keys.
+@item %auto
+Used to automatically generate certain fields when creating new
+records, like auto counter and time-stamps.
+@item %doc
+Used to describe the contents of a record set.
+@item %typedef
+@item %type
+Used to define named types and to associated types with fields.
+@item %sort
+Used to keep your records sorted by some given field.
+@item %size
+Used to control the dimensions of a record set.
+@item %confidential
+Used to store confidential information.
+@end table
+
+@node %rec
+@chapter %rec
+
+@example
+%rec: @var{type} [@var{url_or_file}]
+@end example
+
+@noindent
 The value of this field is interpreted as the name of the kind of
 record described by the record descriptor followed by an optional URL
 or a file path.  The string used as the record type has the same
@@ -439,7 +511,64 @@ This field shall be unique in its containing record descriptor.
 
 It is highly recommended (but not enforced) to place this field in the
 first position of the record descriptor.
-@item %mandatory: @var{field1} @var{field2} @dots{} @var{fieldN}
+
+Sometimes it is convenient to store records of the same type in
+different files.  The duplication of record descriptors in this case
+would surely lead to consistency problems.  A possible solution would
+be to keep the record descriptor in a separated file and then include
+it in any operation by using pipes.  For example:
+
+@example
+$ cat descriptor.rec data.rec | recsel @dots{}
+@end example
+
+For those cases it is more convenient to use a @dfn{external
+descriptor}.  External descriptors can be built appending a file path
+to the @code{%rec} field value, like:
+
+@example
+%rec: FSD_Entry /path/to/file.rec
+@end example
+
+The previous example indicates that a record descriptor describing the
+@code{FSD_Entry} records shall be read from the file
+@file{/path/to/file.rec}.  A record descriptor for @code{FSD_Entry}
+may not exist in the external file.  Both relative and absolute paths
+can be specified there.
+
+URLs can be used as sources for external descriptors as well:
+
+@example
+%rec: Department http://www.myorg.com/Org.rec
+@end example
+
+The URL shall point to a text file containing rec data.  If there is a
+record descriptor in the remote file documenting the @code{Department}
+type, it will be used.
+
+Note that the local record descriptor can provide additional fields to
+``expand'' the record type.  For example:
+
+@example
+%rec: FSD_Entry http://www.jemarch.net/downloads/FSD.rec
+%mandatory: Rating
+@end example
+
+The record descriptor above is including the contents of the
+@code{FSD_Entry} record descriptor from the URL, and adding them to
+the local record descriptor, that in this case contains just the
+@code{%mandatory} field.
+
+If you are using the GNU recutils to process your recfiles, any URL
+schema supported by @code{libcurl} will work.
+
+@node %mandatory and %prohibit
+@chapter %mandatory and %prohibit
+
+@example
+%mandatory: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -450,7 +579,11 @@ one or more blank characters:
 Those fields will be considered mandatory; i.e.@:, a field with this name
 shall be present in any record of this kind.  Records violating this
 restriction are considered invalid.
-@item %prohibit: @var{field1} @var{field2} @dots{} @var{fieldN}
+
+@example
+%prohibit: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -460,7 +593,14 @@ one or more blank characters:
 
 Those fields cannot appear in any record of this kind.  Records
 violating this restriction are considered invalid.
-@item %unique: @var{field1} @var{field2} @dots{} @var{fieldN}
+
+@node %unique and %key
+@chapter %unique and %key
+
+@example
+%unique: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -470,14 +610,25 @@ one or more blank characters:
 
 Any record containing more than one field with those names is
 considered invalid.
-@item %key: @var{field}
+
+@example
+%key: @var{field}
+@end example
+
 The value of this field is interpreted as the name of a field, that
 will be considered as the key of the records.
 
 Its effect is that any field with that name is both unique and
 mandatory, and additionally the values of those fields shall be
 unique. 
-@item %auto: @var{field1} @var{field2} @dots{} @var{fieldN}
+
+@node %auto
+@chapter %auto
+
+@example
+%auto: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+
 The value of this field shall be a list of field names separated by
 one or more blank characters:
 
@@ -486,152 +637,111 @@ one or more blank characters:
 @end example
 
 The fields specified in the list will be auto-generated in newly
-created records.  @ref{Auto Generated Fields}.
-@item %doc
-This field contains documentation about the record.
+created records.
 
-It is like a comment, but this field can be managed in a programmatic
-way easier.
-@item %typedef: @var{type_name} (@var{type_descriptor}|@var{type_name})
-This field is used to define named types.  @ref{Field Types}.
-
-@item %type: @var{field_name_list} @var{type} @var{type_description}
-This field is used to associate fields with types with
-types. @ref{Field Types}.
-
-@item %sort: @var{field_name}
-This field is used to specify the desired sorting criteria for the
-records contained in the record set.  Utilities displaying data from
-the recfile shall honour this field, even if the records are not
-physically sorted in the file.
-
-If several @code{%sort} fields are specified in a record descriptor
-then the last one takes precedence.
-
-@item %size: [@var{relational_operator}] @var{number}
-This field is used to define constraints in the number of records
-stored in the record set.
-
-If no operator is specified then @var{number} is interpreted as the
-exact number of records of this type.  For example:
+Consider for example a list of articles in stock in a toys store:
 
 @example
-%rec: Day
-%size: 7
-%type: Name enum
-+ Monday Tuesday Wednesday Thursday Friday
-+ Saturday Sunday
-%doc: There should be 7 days.
+%rec: Item
+%key: Description
+
+Description: 2cm metal soldier WWII
+Amount: 2111
+
+Description: Flying Helicopter Indoor Maxi
+Amount: 8
+
+@dots{}
 @end example
 
-The optional @var{relational_operator} shall be one of @code{<},
-@code{<=}, @code{>} and @code{>=}.  For example:
+It would be natural to identify the items by its description, but it
+is also error prone: was it ``Flying Helicopter Indoor Maxi'' or
+``Flying Helicopter Maxi Indoor''? Was ``Helicopter'' in lower case or
+upper case?
+
+It is quite common in databases to use some kind of numeric ``Id'' to
+uniquely identify items like those ones.  Numbers are easy to manage:
 
 @example
 %rec: Item
 %key: Id
-%size: <= 100
-%doc: We have at much 100 different articles.
+%mandatory: Description
+
+Id: 0
+Description: 2cm metal soldier WWII
+Amount: 2111
+
+Id: 1
+Description: Flying Helicopter Indoor Maxi
+Amount: 8
+
+@dots{}
 @end example
 
-It is valid to specify a size of @code{0}, meaning that no records of
-this type shall exist in the file.
+A problem of this approach is that we must be careful to not assign
+already used ids when we introduce more articles in the
+database. Other than its uniqueness, it is not important which number
+is associated with which article.
 
-This field shall appear only once in a record descriptor.
-@end table
-
-@node Compound Field Names
-@chapter Compound Field Names
-
-It is possible to make a reference to a record (or set of records) of
-a certain type by using a @dfn{compound field name}.  A compound field
-is composed by three components separated by double colon characters
-(@code{:}):
+To ease the management of those Ids database systems use to provide a
+facility called ``auto-counters''. Auto-counters can be implemented in
+recfiles using the @code{%auto} directive in the record descriptor:
 
 @example
-TYPE:FIELD[:ROLE]:
+%rec: Item
+%key: Id
+%type: Id int
+%mandatory: Description
+%auto: Id
+
+Id: 0
+Description: 2cm metal soldier WWII
+Amount: 2111
 @end example
 
-The first component is a record type, usually defined somewhere else
-(@pxref{Record Descriptors}). The second component is the name of a
-field.  Finally, an optional third component is the role played by the
-referenced field in the referencing record.
+Next time a new item is introduced in the database, the conforming
+application will note the @code{%auto}, and will create a new
+@code{Id} field for the new record with the bigger unused integer
+available.  In this example, the new record will have an Id of
+@code{1}.  The application can still provide an explicit Id for the
+new record.  In that case the field is not generated automatically.
 
-The simplest kind of reference is one without an explicit role.  It is
-used when only one association between records of different types is
-desired.  Consider for example:
+The concrete effect of the @code{%auto} directive depends on the type
+of the affected field:
+
+@itemize @minus
+@item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
+@item If it is a @code{date} then a field with the current date will be generated.
+@item Auto generated fields with other types are not allowed.
+@end itemize
+
+Auto generated dates can be used to implement automatic timestamps.
+Consider for example a ``Transfer'' record set registering bank
+transfers.  We want to save a timestamp every time a transfer is done,
+so we include an @code{%auto} for the date:
 
 @example
-%rec: Maintainer
-
-Name: Jose E. Marchesi
-Package:Name: recutils
+%rec: Transfer
+%key: Id
+%type: Id int
+%type: Date date
+%auto: Id Date
 @end example
 
-In the previous example it is pretty clear which role is played by the
-referenced package in the @code{Maintainer} record: it is the package
-maintained by the maintainer.  But sometimes the role is not that
-identifiable.  Consider for example the following record:
+Note that the auto fields are generated at the beginning of the new
+records, in the same order they are found in the @code{%auto}
+directives.
 
-@example
-%rec: Bug
+@node %doc
+@chapter %doc
 
-Id: 203
-Title: recsel crashes with files bigger than 2gb
-Hacker:Name: Smitha Johnson
-@end example
+This field contains documentation about the record.
 
-Seems to be a bug report.  But, what is the relationship between
-Smitha Johnson and the bug? Is she the reporter?  Or perhaps she is
-the hacker that is working to fix it?  Is she the hacker that closed
-the bug?  We can clarify the role of Smitha by using the third part of
-the compound field: her role.
+It is like a comment, but this field can be managed in a programmatic
+way easier.
 
-@example
-Id: 203
-Title: recsel crashes with files bigger than 2gb
-Hacker:Name:Reporter: Smitha Johnson
-@end example
-
-So now the situation is clear: Smitha is the reporter.
-
-It is possible to make references to different instances of the same
-record type by using roles.  Supposing that we want to record who is
-the assignee of the bug report, we can introduce the new role
-@code{Assignee}:
-
-@example
-Id: 203
-Title: recsel crashes with files bigger than 2gb
-Hacker:Name:Reporter: Smitha Johnson
-Hacker:Name:Assignee: Juan Valdes 
-@end example
-
-Note that, like in the case of regular fields, there can be several
-compound fields with the same name and the same implicit role in a
-record, like in:
-
-@example
-%rec: Maintainer
-
-Name: Jose E. Marchesi
-Package:Name: GNU PDF
-Package:Name: GNU Ferret
-Package:Name: GNU rec
-@end example
-
-Same applies to several compound fields with explicit roles:
-
-@example
-%rec: Package
-
-Name: GNU foo
-Hacker:Name:Maintainer: Elvis 'The King' Presley
-Hacker:Name:Maintainer: Michael 'The other King' Jackson
-@end example
-
-@node Field Types
-@chapter Field Types
+@node %typedef and %type
+@chapter %typedef and %type
 
 Field values are, by default, unrestricted text strings.  However, it
 is often useful to impose some restrictions on the values of certain
@@ -1000,154 +1110,155 @@ synopsis is:
 %typedef: Field_t field
 @end example
 
-@node Auto Generated Fields
-@chapter Auto Generated Fields
 
-Consider for example a list of articles in stock in a toys store:
-
-@example
-%rec: Item
-%key: Description
-
-Description: 2cm metal soldier WWII
-Amount: 2111
-
-Description: Flying Helicopter Indoor Maxi
-Amount: 8
-
-@dots{}
-@end example
-
-It would be natural to identify the items by its description, but it
-is also error prone: was it ``Flying Helicopter Indoor Maxi'' or
-``Flying Helicopter Maxi Indoor''? Was ``Helicopter'' in lower case or
-upper case?
-
-It is quite common in databases to use some kind of numeric ``Id'' to
-uniquely identify items like those ones.  Numbers are easy to manage:
+@node %sort
+@chapter %sort
 
 @example
-%rec: Item
-%key: Id
-%mandatory: Description
-
-Id: 0
-Description: 2cm metal soldier WWII
-Amount: 2111
-
-Id: 1
-Description: Flying Helicopter Indoor Maxi
-Amount: 8
-
-@dots{}
+%sort: @var{field_name}
 @end example
 
-A problem of this approach is that we must be careful to not assign
-already used ids when we introduce more articles in the
-database. Other than its uniqueness, it is not important which number
-is associated with which article.
+This field is used to specify the desired sorting criteria for the
+records contained in the record set.  Utilities displaying data from
+the recfile shall honour this field, even if the records are not
+physically sorted in the file.
 
-To ease the management of those Ids database systems use to provide a
-facility called ``auto-counters''. Auto-counters can be implemented in
-recfiles using the @code{%auto} directive in the record descriptor:
+If several @code{%sort} fields are specified in a record descriptor
+then the last one takes precedence.
+
+@node %size
+@chapter %size
+
+@example
+%size: [@var{relational_operator}] @var{number}
+@end example
+
+This field is used to define constraints in the number of records
+stored in the record set.
+
+If no operator is specified then @var{number} is interpreted as the
+exact number of records of this type.  For example:
+
+@example
+%rec: Day
+%size: 7
+%type: Name enum
++ Monday Tuesday Wednesday Thursday Friday
++ Saturday Sunday
+%doc: There should be 7 days.
+@end example
+
+The optional @var{relational_operator} shall be one of @code{<},
+@code{<=}, @code{>} and @code{>=}.  For example:
 
 @example
 %rec: Item
 %key: Id
-%type: Id int
-%mandatory: Description
-%auto: Id
-
-Id: 0
-Description: 2cm metal soldier WWII
-Amount: 2111
+%size: <= 100
+%doc: We have at much 100 different articles.
 @end example
 
-Next time a new item is introduced in the database, the conforming
-application will note the @code{%auto}, and will create a new
-@code{Id} field for the new record with the bigger unused integer
-available.  In this example, the new record will have an Id of
-@code{1}.  The application can still provide an explicit Id for the
-new record.  In that case the field is not generated automatically.
+It is valid to specify a size of @code{0}, meaning that no records of
+this type shall exist in the file.
 
-The concrete effect of the @code{%auto} directive depends on the type
-of the affected field:
+This field shall appear only once in a record descriptor.
 
-@itemize @minus
-@item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
-@item If it is a @code{date} then a field with the current date will be generated.
-@item Auto generated fields with other types are not allowed.
-@end itemize
+@node %confidential
+@chapter %confidential
 
-Auto generated dates can be used to implement automatic timestamps.
-Consider for example a ``Transfer'' record set registering bank
-transfers.  We want to save a timestamp every time a transfer is done,
-so we include an @code{%auto} for the date:
+@node Compound Field Names
+@chapter Compound Field Names
+
+Please note that the features described in this chapter are very
+likely to change in the near future.  It is thus recommended to not
+rely on them in your own databases.
+
+It is possible to make a reference to a record (or set of records) of
+a certain type by using a @dfn{compound field name}.  A compound field
+is composed by three components separated by double colon characters
+(@code{:}):
 
 @example
-%rec: Transfer
-%key: Id
-%type: Id int
-%type: Date date
-%auto: Id Date
+TYPE:FIELD[:ROLE]:
 @end example
 
-Note that the auto fields are generated at the beginning of the new
-records, in the same order they are found in the @code{%auto}
-directives.
+The first component is a record type, usually defined somewhere else
+(@pxref{Record Descriptors}). The second component is the name of a
+field.  Finally, an optional third component is the role played by the
+referenced field in the referencing record.
 
-@node External Descriptors
-@chapter External Descriptors
-
-Sometimes it is convenient to store records of the same type in
-different files.  The duplication of record descriptors in this case
-would surely lead to consistency problems.  A possible solution would
-be to keep the record descriptor in a separated file and then include
-it in any operation by using pipes.  For example:
+The simplest kind of reference is one without an explicit role.  It is
+used when only one association between records of different types is
+desired.  Consider for example:
 
 @example
-$ cat descriptor.rec data.rec | recsel @dots{}
+%rec: Maintainer
+
+Name: Jose E. Marchesi
+Package:Name: recutils
 @end example
 
-For those cases it is more convenient to use a @dfn{external
-descriptor}.  External descriptors can be built appending a file path
-to the @code{%rec} field value, like:
+In the previous example it is pretty clear which role is played by the
+referenced package in the @code{Maintainer} record: it is the package
+maintained by the maintainer.  But sometimes the role is not that
+identifiable.  Consider for example the following record:
 
 @example
-%rec: FSD_Entry /path/to/file.rec
+%rec: Bug
+
+Id: 203
+Title: recsel crashes with files bigger than 2gb
+Hacker:Name: Smitha Johnson
 @end example
 
-The previous example indicates that a record descriptor describing the
-@code{FSD_Entry} records shall be read from the file
-@file{/path/to/file.rec}.  A record descriptor for @code{FSD_Entry}
-may not exist in the external file.  Both relative and absolute paths
-can be specified there.
-
-URLs can be used as sources for external descriptors as well:
+Seems to be a bug report.  But, what is the relationship between
+Smitha Johnson and the bug? Is she the reporter?  Or perhaps she is
+the hacker that is working to fix it?  Is she the hacker that closed
+the bug?  We can clarify the role of Smitha by using the third part of
+the compound field: her role.
 
 @example
-%rec: Department http://www.myorg.com/Org.rec
+Id: 203
+Title: recsel crashes with files bigger than 2gb
+Hacker:Name:Reporter: Smitha Johnson
 @end example
 
-The URL shall point to a text file containing rec data.  If there is a
-record descriptor in the remote file documenting the @code{Department}
-type, it will be used.
+So now the situation is clear: Smitha is the reporter.
 
-Note that the local record descriptor can provide additional fields to
-``expand'' the record type.  For example:
+It is possible to make references to different instances of the same
+record type by using roles.  Supposing that we want to record who is
+the assignee of the bug report, we can introduce the new role
+@code{Assignee}:
 
 @example
-%rec: FSD_Entry http://www.jemarch.net/downloads/FSD.rec
-%mandatory: Rating
+Id: 203
+Title: recsel crashes with files bigger than 2gb
+Hacker:Name:Reporter: Smitha Johnson
+Hacker:Name:Assignee: Juan Valdes 
 @end example
 
-The record descriptor above is including the contents of the
-@code{FSD_Entry} record descriptor from the URL, and adding them to
-the local record descriptor, that in this case contains just the
-@code{%mandatory} field.
+Note that, like in the case of regular fields, there can be several
+compound fields with the same name and the same implicit role in a
+record, like in:
 
-If you are using the GNU recutils to process your recfiles, any URL
-schema supported by @code{libcurl} will work.
+@example
+%rec: Maintainer
+
+Name: Jose E. Marchesi
+Package:Name: GNU PDF
+Package:Name: GNU Ferret
+Package:Name: GNU rec
+@end example
+
+Same applies to several compound fields with explicit roles:
+
+@example
+%rec: Package
+
+Name: GNU foo
+Hacker:Name:Maintainer: Elvis 'The King' Presley
+Hacker:Name:Maintainer: Michael 'The other King' Jackson
+@end example
 
 @include parse-datetime.texi
 
@@ -1828,7 +1939,7 @@ Don't use external record descriptors.
 @itemx @w{@kbd{--verbose}}
 Be verbose when reporting integrity problems.
 @itemx @w{@kbd{--no-auto}}
-Don't generate @dfn{auto} fields. @xref{Auto Generated Fields}.
+Don't generate @dfn{auto} fields. @xref{%auto}.
 @end table
 
 Record selection arguments are supported as well.  If they are used

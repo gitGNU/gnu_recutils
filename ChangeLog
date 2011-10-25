@@ -1,3 +1,7 @@
+2011-10-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (Record Descriptors): Reworked and simplified.
+
 2011-10-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	syntax fixes.
