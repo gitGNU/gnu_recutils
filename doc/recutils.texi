@@ -62,9 +62,9 @@ The Rec Format
 * %rec::                External and remote descriptors.
 * %mandatory and %prohibit:: Requiring or forbidding specific fields.
 * %unique and %key::    Working with keys.
-* %auto::               Auto counters and time-stamps.
 * %doc::                Documenting your database.
 * %typedef and %type::  Field types.
+* %auto::               Auto counters and time-stamps.
 * %sort::               Keeping your record sets sorted.
 * %size::               Restricting the size of your database.
 * %confidential::       Storing confidential information.
@@ -497,20 +497,40 @@ Used to store confidential information.
 @node %rec
 @chapter %rec
 
+The @code{%rec} special field is used for two main purposes: to
+identify a record as a record descriptor, and to provide a name for
+the described record set.  The synopsis of the usage of the field is
+the following:
+
 @example
 %rec: @var{type} [@var{url_or_file}]
 @end example
 
 @noindent
-The value of this field is interpreted as the name of the kind of
-record described by the record descriptor followed by an optional URL
-or a file path.  The string used as the record type has the same
-restrictions that the field names. @xref{Fields and Records}.
+@var{type} is the name of the kind of records described by the
+descriptor.  It is mandatory to specify it, and it follows the same
+lexical conventions used by field names.  @xref{Fields and Records}.
+There is a non-enforced convention to use singular nouns, because the
+name makes reference to the type of a single entity, even if it
+applies to all the records contained in the record set.  For example,
+the following record set contains transactions, and the type specified
+in the record descriptor is @code{Transaction}.
 
-This field shall be unique in its containing record descriptor.
+@example
+%rec: Transaction
 
-It is highly recommended (but not enforced) to place this field in the
-first position of the record descriptor.
+Id: 10
+Title: House rent
+
+Id: 11
+Title: Loan
+@end example
+
+@noindent
+Only one @code{%rec} field shall appear in a record descriptor.  If
+there are more it is considered an integrity violation.  It is highly
+recommended (but not enforced) to place this field in the first
+position of the record descriptor.
 
 Sometimes it is convenient to store records of the same type in
 different files.  The duplication of record descriptors in this case
@@ -522,6 +542,7 @@ it in any operation by using pipes.  For example:
 $ cat descriptor.rec data.rec | recsel @dots{}
 @end example
 
+@noindent
 For those cases it is more convenient to use a @dfn{external
 descriptor}.  External descriptors can be built appending a file path
 to the @code{%rec} field value, like:
@@ -536,12 +557,14 @@ The previous example indicates that a record descriptor describing the
 may not exist in the external file.  Both relative and absolute paths
 can be specified there.
 
-URLs can be used as sources for external descriptors as well:
+URLs can be used as sources for external descriptors as well. In that
+case we talk about @dfn{remote descriptors}.  For example:
 
 @example
 %rec: Department http://www.myorg.com/Org.rec
 @end example
 
+@noindent
 The URL shall point to a text file containing rec data.  If there is a
 record descriptor in the remote file documenting the @code{Department}
 type, it will be used.
@@ -554,6 +577,7 @@ Note that the local record descriptor can provide additional fields to
 %mandatory: Rating
 @end example
 
+@noindent
 The record descriptor above is including the contents of the
 @code{FSD_Entry} record descriptor from the URL, and adding them to
 the local record descriptor, that in this case contains just the
@@ -565,172 +589,139 @@ schema supported by @code{libcurl} will work.
 @node %mandatory and %prohibit
 @chapter %mandatory and %prohibit
 
+Those special field names are used to restrict the fields that can
+appear in the records stored in a database.  Their usage is:
+
 @example
 %mandatory: @var{field1} @var{field2} @dots{} @var{fieldN}
-@end example
-
-The value of this field shall be a list of field names separated by
-one or more blank characters:
-
-@example
-%mandatory: IdentifyNumber InStock
-@end example
-
-Those fields will be considered mandatory; i.e.@:, a field with this name
-shall be present in any record of this kind.  Records violating this
-restriction are considered invalid.
-
-@example
 %prohibit: @var{field1} @var{field2} @dots{} @var{fieldN}
 @end example
 
-The value of this field shall be a list of field names separated by
-one or more blank characters:
+@noindent
+In both cases the list of field names are separated by one or more
+blank characters.
+
+The fields listed in some @code{%mandatory} entry will be considered
+mandatory; i.e.@:, at least one field with this name shall be present
+in any record of this kind.  Records violating this restriction will
+be considered invalid and a checking tool will report the situation as
+a data integrity failure.
+
+Consider for example an ``addressbook'' database where each record
+stores the information associated with a contact.  The records will be
+heterogeneous, in the sense they won't feature exactly the same
+fields: the contact of an internet shop will probably have an
+@code{Url} field, while the entry for our grandmother probably wont.
+We still want to make sure that every entry has at a field: the name
+of the contact.  In that case we could use @code{%mandatory} as
+follows:
 
 @example
-%prohibit: Id
+%rec: Contact
+%mandatory: Name
+
+Name: Granny
+Phone: +12 23456677
+
+Name: Yoyodyne Corp.
+Email: sales@@yoyod.com
+Phone: +98 43434433
 @end example
 
-Those fields cannot appear in any record of this kind.  Records
-violating this restriction are considered invalid.
+@noindent
+Similarly, the fields listed in some @code{%prohibit} entry will be
+considered forbidden; i.e.@:, no field with this name shall be present
+in any record of this kind.  Again, records violating this restriction
+will be considered invalid.
+
+This can be useful when some field name is reserved for some future
+use.  For example, if we want to make sure no @code{Telex} will be
+even used in our contacts database, we would change the record
+descriptor as follows:
+
+@example
+%rec: Contact
+%mandatory: Name
+%prohibit: Telex
+@end example
+
+@noindent
+Several @code{%mandatory} and/or @code{%prohibit} fields can appear in
+the same record descriptor.  The set of mandatory or prohibited fields
+is the union of all the entries.  For example, in the following
+database both @code{Id} and @code{id} are prohibited:
+
+@example
+%rec: Entry
+%prohibit: Id
+%prohibit: id
+@end example
 
 @node %unique and %key
 @chapter %unique and %key
 
+These special field names are used to avoid several instances of the
+same field in a record, and to implement keys in record sets.  Their
+usage is:
+
 @example
 %unique: @var{field1} @var{field2} @dots{} @var{fieldN}
-@end example
-
-The value of this field shall be a list of field names separated by
-one or more blank characters:
-
-@example
-%unique: IdNumber
-@end example
-
-Any record containing more than one field with those names is
-considered invalid.
-
-@example
 %key: @var{field}
 @end example
 
-The value of this field is interpreted as the name of a field, that
-will be considered as the key of the records.
+@noindent
+The list of field names are separated by one or more blank characters.
 
-Its effect is that any field with that name is both unique and
-mandatory, and additionally the values of those fields shall be
-unique. 
+The @code{%unique} special field allows to declare fields as unique,
+meaning there cannot exist more than one field with the same name in a
+single record.
 
-@node %auto
-@chapter %auto
-
-@example
-%auto: @var{field1} @var{field2} @dots{} @var{fieldN}
-@end example
-
-The value of this field shall be a list of field names separated by
-one or more blank characters:
+For example, an entry in an addressbook database could contain an
+@code{Age} field.  It does not make sense for a single person to be of
+several ages, so that field could be declared as ``unique'' in the
+corresponding record descriptor as follows:
 
 @example
-%auto: Counter
+%rec: Contact
+%mandatory: Name
+%unique: Age
 @end example
 
-The fields specified in the list will be auto-generated in newly
-created records.
+@noindent
+Several @code{%unique} fields can appear in the same record
+descriptor.  The set of unique fields is the union of all the entries.
 
-Consider for example a list of articles in stock in a toys store:
+@code{%key} makes the referred field the primary key of the record
+set.  Its effect is that any field with that name must be both unique
+and mandatory, and additionally the values of those fields shall be
+unique in the context of the record set.  This closely corresponds to
+the notion of ``primary key'' usually implemented in the relational
+systems.
 
-@example
-%rec: Item
-%key: Description
-
-Description: 2cm metal soldier WWII
-Amount: 2111
-
-Description: Flying Helicopter Indoor Maxi
-Amount: 8
-
-@dots{}
-@end example
-
-It would be natural to identify the items by its description, but it
-is also error prone: was it ``Flying Helicopter Indoor Maxi'' or
-``Flying Helicopter Maxi Indoor''? Was ``Helicopter'' in lower case or
-upper case?
-
-It is quite common in databases to use some kind of numeric ``Id'' to
-uniquely identify items like those ones.  Numbers are easy to manage:
+Consider for example a database of items in a stockage.  Each item is
+idenfitied by a numerical @code{Id} field.  No item may have more than
+one @code{Id}, and no items may exist without an associated
+@code{Id}.  Additionally, no two items may share the same @code{Id}.
+This common situation can be implementing by declaring @code{Id} as
+the key in the record descriptor:
 
 @example
 %rec: Item
 %key: Id
-%mandatory: Description
-
-Id: 0
-Description: 2cm metal soldier WWII
-Amount: 2111
+%mandatory: Title
 
 Id: 1
-Description: Flying Helicopter Indoor Maxi
-Amount: 8
+Title: Box
 
-@dots{}
+Id: 2
+Title: Sticker big
 @end example
 
-A problem of this approach is that we must be careful to not assign
-already used ids when we introduce more articles in the
-database. Other than its uniqueness, it is not important which number
-is associated with which article.
-
-To ease the management of those Ids database systems use to provide a
-facility called ``auto-counters''. Auto-counters can be implemented in
-recfiles using the @code{%auto} directive in the record descriptor:
-
-@example
-%rec: Item
-%key: Id
-%type: Id int
-%mandatory: Description
-%auto: Id
-
-Id: 0
-Description: 2cm metal soldier WWII
-Amount: 2111
-@end example
-
-Next time a new item is introduced in the database, the conforming
-application will note the @code{%auto}, and will create a new
-@code{Id} field for the new record with the bigger unused integer
-available.  In this example, the new record will have an Id of
-@code{1}.  The application can still provide an explicit Id for the
-new record.  In that case the field is not generated automatically.
-
-The concrete effect of the @code{%auto} directive depends on the type
-of the affected field:
-
-@itemize @minus
-@item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
-@item If it is a @code{date} then a field with the current date will be generated.
-@item Auto generated fields with other types are not allowed.
-@end itemize
-
-Auto generated dates can be used to implement automatic timestamps.
-Consider for example a ``Transfer'' record set registering bank
-transfers.  We want to save a timestamp every time a transfer is done,
-so we include an @code{%auto} for the date:
-
-@example
-%rec: Transfer
-%key: Id
-%type: Id int
-%type: Date date
-%auto: Id Date
-@end example
-
-Note that the auto fields are generated at the beginning of the new
-records, in the same order they are found in the @code{%auto}
-directives.
+@noindent
+It would not make sense to have several primary keys in a record set,
+and thus it is not allowed to have several @code{%key} fields in the
+same record descriptor.  That situation is considered a data integrity
+violation and will be reported by a checking tool.
 
 @node %doc
 @chapter %doc
@@ -1110,6 +1101,115 @@ synopsis is:
 %typedef: Field_t field
 @end example
 
+@node %auto
+@chapter %auto
+
+This special field allows to include auto-generated fields in our
+databases.  Its usage is:
+
+@example
+%auto: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+
+@noindent
+The list of field names are separated by one or more blank characters.
+
+Auto generated fields are a very useful facility usually providen by
+database implementations.  Consider for example a list of articles in
+stock in a toys store:
+
+@example
+%rec: Item
+%key: Description
+
+Description: 2cm metal soldier WWII
+Amount: 2111
+
+Description: Flying Helicopter Indoor Maxi
+Amount: 8
+
+@dots{}
+@end example
+
+It would be natural to identify the items by its description, but it
+is also error prone: was it ``Flying Helicopter Indoor Maxi'' or
+``Flying Helicopter Maxi Indoor''? Was ``Helicopter'' in lower case or
+upper case?
+
+It is quite common in databases to use some kind of numeric ``Id'' to
+uniquely identify items like those ones.  That is because numbers are
+easy to operate with, and to increase.   So we could add a new
+numeric @code{Id} field and use it as the primary key:
+
+@example
+%rec: Item
+%key: Id
+%mandatory: Description
+
+Id: 0
+Description: 2cm metal soldier WWII
+Amount: 2111
+
+Id: 1
+Description: Flying Helicopter Indoor Maxi
+Amount: 8
+
+@dots{}
+@end example
+
+A problem of this approach is that we must be careful to not assign
+already used ids when we introduce more articles in the
+database. Other than its uniqueness, it is not important which number
+is associated with which article.
+
+To ease the management of those Ids database systems use to provide a
+facility called ``auto-counters''. Auto-counters can be implemented in
+recfiles using the @code{%auto} directive in the record descriptor:
+
+@example
+%rec: Item
+%key: Id
+%type: Id int
+%mandatory: Description
+%auto: Id
+
+Id: 0
+Description: 2cm metal soldier WWII
+Amount: 2111
+@end example
+
+Next time a new item is introduced in the database, the conforming
+application will note the @code{%auto}, and will create a new
+@code{Id} field for the new record with the bigger unused integer
+available.  In this example, the new record will have an Id of
+@code{1}.  The application can still provide an explicit Id for the
+new record.  In that case the field is not generated automatically.
+
+The concrete effect of the @code{%auto} directive depends on the type
+of the affected field:
+
+@itemize @minus
+@item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
+@item If it is a @code{date} then a field with the current date will be generated.
+@item Auto generated fields with other types are not allowed.
+@end itemize
+
+Auto generated dates can be used to implement automatic timestamps.
+Consider for example a ``Transfer'' record set registering bank
+transfers.  We want to save a timestamp every time a transfer is done,
+so we include an @code{%auto} for the date:
+
+@example
+%rec: Transfer
+%key: Id
+%type: Id int
+%type: Date date
+%auto: Id Date
+@end example
+
+Note that the auto fields are generated at the beginning of the new
+records, in the same order they are found in the @code{%auto}
+directives.
 
 @node %sort
 @chapter %sort

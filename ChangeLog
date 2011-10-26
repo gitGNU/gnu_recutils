@@ -1,3 +1,11 @@
+2011-10-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: documenttion for %mandatory, %prohibit, %unique, %key and
+	%auto rewritten.
+	* doc/recutils.texi (%mandatory and %prohibit): Written.
+	(%unique and %key): Written.
+	(%auto): Improved and relocated.
+
 2011-10-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Record Descriptors): Reworked and simplified.
