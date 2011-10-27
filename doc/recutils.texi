@@ -1226,8 +1226,10 @@ Meaning that the desired order for the records will be determined by
 the contents of the fields named @code{field_name}.  The sorting is
 always done in ascending order, and there may be records not featuring
 fields named @code{field_name}, i.e. it is not mandatory for the
-sorting field to be mandatory :D.  If several @code{%sort} fields are
-specified in a record descriptor then the last one takes precedence.
+sorting field to be mandatory :D.
+
+It is an error to have more than one @code{%sort} field in the same
+record descriptor, as only one field can be used as sorting criteria.
 
 Consider for example that we want to keep the records in our stockage
 system ordered by entry date.  We could achieve that by using the

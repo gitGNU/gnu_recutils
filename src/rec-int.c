@@ -826,6 +826,18 @@ rec_int_check_descriptor (rec_rset_t rset,
           res++;
         }
 
+      /* Only one 'sort:' entry is allowed, if any.  */
+      if (rec_record_get_num_fields_by_name (descriptor, sort_fname) > 1)
+        {
+          asprintf (&tmp,
+                    _("%s:%s: error: only one %%sort field is allowed in a record descriptor\n"),
+                    rec_record_source (descriptor),
+                    rec_record_location_str (descriptor));
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+          res++;
+        }
+
       /* Iterate on fields.  */
       rec_elem = rec_record_null_elem ();
       while (rec_record_elem_p (rec_elem = rec_record_next_field (descriptor, rec_elem)))

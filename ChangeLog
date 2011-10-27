@@ -1,5 +1,17 @@
 2011-10-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Don't allow several %sort entries in record descriptors.
+	* doc/recutils.texi (%sort): Document that only one %sort per
+	record descriptor is allowed.
+
+	* torture/utils/recfix.sh (recfix-sort-several-fields-invalid):
+	New test.
+
+	* src/rec-int.c (rec_int_check_descriptor): It is an error to have
+	several %sort fields in a record descriptor.
+
+2011-10-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: documentation for %sort.
 	* doc/recutils.texi (%sort): Written.
 

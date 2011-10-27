@@ -1185,6 +1185,11 @@ joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
 fo: ja
 '
 
+test_tool recfix-sort-several-fields-invalid xfail \
+          recfix \
+          '--check' \
+          sortcheck-with-several-fields-invalid
+
 test_tool recfix-sort-ints ok \
           recfix \
           '--sort' \
