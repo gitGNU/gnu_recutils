@@ -1,3 +1,8 @@
+2011-10-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: documentation for %sort.
+	* doc/recutils.texi (%sort): Written.
+
 2011-10-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: documenttion for %mandatory, %prohibit, %unique, %key and

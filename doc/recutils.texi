@@ -1214,28 +1214,88 @@ directives.
 @node %sort
 @chapter %sort
 
+This special field allows to set a sorting criteria for the records
+contained in a record set.  Its usage is:
+
 @example
 %sort: @var{field_name}
 @end example
 
-This field is used to specify the desired sorting criteria for the
-records contained in the record set.  Utilities displaying data from
-the recfile shall honour this field, even if the records are not
-physically sorted in the file.
+@noindent
+Meaning that the desired order for the records will be determined by
+the contents of the fields named @code{field_name}.  The sorting is
+always done in ascending order, and there may be records not featuring
+fields named @code{field_name}, i.e. it is not mandatory for the
+sorting field to be mandatory :D.  If several @code{%sort} fields are
+specified in a record descriptor then the last one takes precedence.
 
-If several @code{%sort} fields are specified in a record descriptor
-then the last one takes precedence.
+Consider for example that we want to keep the records in our stockage
+system ordered by entry date.  We could achieve that by using the
+following record descriptor in the database:
+
+@example
+%rec: Item
+%type: Date date
+%sort: Date
+
+Id: 1
+Title: Staplers
+Date: 10 February 2011
+
+Id: 2
+Title: Ruler Pack 20
+Date: 2 March 2009
+
+@dots{}
+@end example
+
+@noindent
+As you can see in the example above, the fact we use @code{%sort} in a
+database does not mean that the database will be always physically
+ordered.  Unsorted record sets are not considered a data integrity
+problem, and thus the diagnosis tools must not declare a recfile as
+invalid because of this.  Some tool may provide a way to physically
+order the fields in the file.  That is certainly the case of the GNU
+recutils, where @command{recfix} can be used for that purpose.
+@xref{recfix}.
+
+On the other hand any program listing, presenting or processing data
+extracted from the recfile must honour the @code{%sort} entry.  For
+example, when using the following @command{recsel} program in the
+database above we would get the output sorted by date:
+
+@example
+$ recsel stockage.rec
+Id: 2
+Title: Ruler Pack 20
+Date: 2 March 2009
+
+Id: 1
+Title: Staplers
+Date: 10 February 2011
+@end example
+
+@noindent
+The sorting of the selected field depends on its type:
+
+@itemize @minus
+@item Numeric fields (integers, ranges, reals) are numerically ordered.
+@item Boolean fields are ordered considering that ``false'' values come first.
+@item Dates are ordered as expected.
+@item Any other kind of field is ordered using a lexicographic order.
+@end itemize
 
 @node %size
 @chapter %size
+
+This special field is used to define constraints in the number of
+records stored in a record set.  Its usage is:
 
 @example
 %size: [@var{relational_operator}] @var{number}
 @end example
 
-This field is used to define constraints in the number of records
-stored in the record set.
-
+@noindent
 If no operator is specified then @var{number} is interpreted as the
 exact number of records of this type.  For example:
 
@@ -1269,9 +1329,11 @@ This field shall appear only once in a record descriptor.
 @node Compound Field Names
 @chapter Compound Field Names
 
-Please note that the features described in this chapter are very
+@cartouche
+@strong{Please note that the features described in this chapter are very
 likely to change in the near future.  It is thus recommended to not
-rely on them in your own databases.
+rely on them in your own databases.}
+@end cartouche
 
 It is possible to make a reference to a record (or set of records) of
 a certain type by using a @dfn{compound field name}.  A compound field
