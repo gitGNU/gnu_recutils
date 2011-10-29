@@ -1,3 +1,8 @@
+2011-10-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: documentation for %confidential fields.
+	* doc/recutils.texi (%confidential): Written.
+
 2011-10-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Don't allow several %sort entries in record descriptors.

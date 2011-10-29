@@ -1113,6 +1113,9 @@ databases.  Its usage is:
 
 @noindent
 The list of field names are separated by one or more blank characters.
+There can be several @code{%auto} fields in the same record
+descriptor, the effective list of auto-generated fields being the
+union of all the entries.
 
 Auto generated fields are a very useful facility usually providen by
 database implementations.  Consider for example a list of articles in
@@ -1327,6 +1330,94 @@ This field shall appear only once in a record descriptor.
 
 @node %confidential
 @chapter %confidential
+
+This special field allows to declare a set of fields as
+@dfn{confidential}, meaning they contain sensible information such as
+passwords or secrets.  Its usage is:
+
+@example
+%confidential: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+
+@noindent
+The list of field names are separated by one or more blank characters.
+There can be several @code{%confidential} fields in the same record
+descriptor, the effective list of confidential fields being the union
+of all the entries.
+
+Declaring a field as confidential indicates that its contents must not
+be stored in plain text, but encrypted with a password-based
+mechanism.  When the information is retrieved from the database the
+confidential fields are unencrypted if the correct password is
+provided.  Likewise, when information is inserted in the database the
+confidential fields are encrypted with some given password.
+
+For example, consider a database of users of some service.  For each
+user we want to store a name, a login name, an email address and a
+password.  All this information is public with the obvious exception
+of the password.  Thus we declare the @code{Password} field as
+confidential in the corresponding record descriptor:
+
+@example
+%rec: Account
+%type: Name line
+%type: Login line
+%type: Email email
+%confidential: Password
+@end example
+
+The rec format does not impose the usage of a specific encryption
+algorithm, but requires that:
+
+@itemize @minus
+@item The algorithm must be password-based.
+@item The value of any encrypted field shall begin with the string
+@code{encrypted-} followed by the encrypted data.
+@item The encrypted data must be encoded in some ASCII encoding such
+as base64.
+@end itemize
+
+The above rules assure that it is possible to determine whether a
+given field is encrypted.  For example, the following is an excerpt
+from the account database described above.  It contains an entry with
+the password encrypted and another with the password unencrypted:
+
+@example
+Name: Mr. Foo
+Login: foo
+Email: foo@@foo.com
+Password: encrypted-AAABBBCCDDDEEEFFF
+
+Name: Mr. Bar
+Login: bar
+Email: bar@@bar.com
+Password: secret
+@end example
+
+Unencrypted confidential fields are considered a data integrity error,
+and utilities like @code{recfix} will report it.  The same utility can
+be used to ``fix'' the database by massively encripting any
+unencrypted field.
+
+Nothing prevents the usage of several passwords in the same database.
+This allows the establishment of several level of securities or
+security profiles.  For example, we may want to store different
+passwords for different online services:
+
+@example
+%rec: Account
+%confidential: WebPassword ShellPassword
+@end example
+
+@noindent
+We could then encrypt WebPassword entries using a password shared
+among all the webmasters, and the ShellPassword entries with a more
+restricted password available only to the administrator of the
+machine.
+
+The GNU recutils fully support encypted fields.  See the documentation
+for @code{recsel}, @code{recins} and @code{recfix} for details on how
+to operate on files containing confidential fields.
 
 @node Compound Field Names
 @chapter Compound Field Names
