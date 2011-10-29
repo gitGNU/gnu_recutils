@@ -54,11 +54,12 @@ Overview
 * Introduction::        Introducing the GNU recutils.
 * A Little Example::    Recutils in action.
 
-The Rec Format
+The Basic Rec Format
 * Fields and Records::  The basic structures conforming Rec files.
 * Comments::            Comments are useful to store meta data.
 * Record Descriptors::  Describing different types of records.
 
+Special Fields
 * %rec::                External and remote descriptors.
 * %mandatory and %prohibit:: Requiring or forbidding specific fields.
 * %unique and %key::    Working with keys.
@@ -69,12 +70,13 @@ The Rec Format
 * %size::               Restricting the size of your database.
 * %confidential::       Storing confidential information.
 
+Advanced Topics and Reference
 * Compound Field Names:: Referencing record instances.
 * Date input formats::  Textual date representations that can be used
                           in Rec files.
 * Regular Expressions:: Flavor of regexps supported in recfiles.
 
-Utilities
+The Recutils
 * Common Options::      Common command line arguments for the record
                           utilities.
 * recinf::              Printing information about rec files.
@@ -84,10 +86,8 @@ Utilities
 * recset::              Managing fields.
 * recfix::              Fixing broken rec files, and diagnostics.
 * recfmt::              Formatting records using templates.
-
 * csv2rec::             Converting csv data into rec data.
 * rec2csv::             Converting rec data into csv data.
-
 * mdb2rec::             Converting mdb files into rec files.
 
 * GNU Free Documentation License:: Distribution terms for this document.
