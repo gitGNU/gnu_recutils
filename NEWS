@@ -7,6 +7,23 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 1.4 (???)
+* Support for encryption with the new %confidential special field.
+* Support for named types with the new %typedef special field.
+* Support for sorting with the new %sort special field.
+* Recutils support for org-babel is now included in the distribution
+  as ob-rec.el.  It allows to read rec data into org documents in both
+  raw and table formats.
+* It is now possible to use double quotes for delimiting string
+  literals in selection expressions, as well as single quotes.
+  Unescapted newline characters are also supported.
+* The manual have been vastly improved.
+* recfix now supports several operations: check, sort, encrypt and
+  decrypt.
+* recins now generates parseable locale independent dates when
+  generating time-stamps in auto-fields.
+* Lots of bug fixes.
+
  Version 1.3 (11 February 2011)
 * A quite bad (and embarrassing) bug introduced in 1.2 has been
   fixed.  The bug was causing recins, recdel and recset to report
