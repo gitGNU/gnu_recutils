@@ -2021,6 +2021,7 @@ part of records) based in some criteria specified by the user.
 @menu
 * recsel Invocation::      Command line options.
 * recsel Examples::        Examples of the usage of @command{recsel}.
+* recsel Encryption::      Reading confidential data.
 @end menu
 
 @node recsel Invocation
@@ -2132,6 +2133,89 @@ Print the name of all the registrants less than twenty:
 @example
 $ recsel -e 'Age < 20' -P Partner registrants.rec
 @end example
+
+@node recsel Encryption
+@section recsel Encryption
+
+The contents of confidential fields can be read using the
+@option{-s|--password} command line option to @command{recsel}.  When
+used, any selected record containing encrypted fields will try to
+decrypt them with the given password.  If the operation succeeds then
+the output will include the unencrypted data.  Otherwise the
+@acronym{ASCII}-encoded encrypted data will be emitted.
+
+For example, consider the following database storing information about
+the user accounts of some online service.  Each entry stores a login,
+a full name, email and a password.  The password is declared as
+confidential:
+
+@example
+%rec: Account
+%key: Login
+%confidential: Password
+
+Login: foo
+Name: Mr. Foo
+Email: foo@@foo.com
+Password: encrypted-AAABBBCCCDDD
+
+Login: bar
+Name: Ms. Bar
+Email: bar@@bar.org
+Password: encrypted-XXXYYYZZZUUU
+@end example
+
+@noindent
+If we use @command{recsel} to get a list of records of type
+@code{Account} without specifying a password, we would get the
+following output with the encrypted values:
+
+@example
+$ recsel -t Account -p Login,Password accounts.rec
+Login: foo
+Password: encrypted-AAABBBCCCDDD
+
+Login: bar
+Password: encrypted-XXXYYYZZZUUU
+@end example
+
+@noindent
+If we specify a password and both entries were encrypted using that
+password, we would get the unencrypted values:
+
+@example
+$ recsel -t Account -s secret -p Login,Password accounts.rec
+Login: foo
+Password: foosecret
+
+Login: bar
+Password: barsecret
+@end example
+
+Note that nothing prevents to have confidential fields encrypted with
+different passwords.  As discussed in @pxref{%confidential} this can
+be useful to implement several ``levels'' of security.  For example,
+we may have an entry in our database with data about the account of
+the administrator of the online service.  In that case we could want
+to store the password associated with that account using a
+differentiated password.  In that case the output of the last command
+would have been:
+
+@example
+$ recsel -t Account -s secret -p Login,Password accounts.rec
+Login: foo
+Password: foosecret
+
+Login: bar
+Password: barsecret
+
+Login: admin
+Password: encrypted-TTTVVVBBBNNN
+@end example
+
+@noindent
+We would need to invoke @command{recsel} with the password used to
+encrypt the admin entry in order to read it back unencrypted.
 
 @node recins
 @chapter recins

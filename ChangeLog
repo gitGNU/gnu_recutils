@@ -1,3 +1,7 @@
+2011-10-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (recsel Encryption): Written.
+
 2011-10-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: documentation for %confidential fields.
