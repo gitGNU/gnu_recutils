@@ -334,7 +334,7 @@ typedef struct
     Idx idx;			/* for BACK_REF */
     re_context_type ctx_type;	/* for ANCHOR */
   } opr;
-#if __GNUC__ >= 2 && !__STRICT_ANSI__
+#if __GNUC__ >= 2 && !defined __STRICT_ANSI__
   re_token_type_t type : 8;
 #else
   re_token_type_t type;
@@ -415,11 +415,7 @@ struct re_dfa_t;
 typedef struct re_dfa_t re_dfa_t;
 
 #ifndef _LIBC
-# if defined __i386__ && !defined __EMX__
-#  define internal_function   __attribute ((regparm (3), stdcall))
-# else
-#  define internal_function
-# endif
+# define internal_function
 #endif
 
 static reg_errcode_t re_string_realloc_buffers (re_string_t *pstr,

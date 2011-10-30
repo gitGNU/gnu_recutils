@@ -105,3 +105,4 @@ libtool
 /man/rec2csv.1
 config.cache
 torture/utils/config.sh
+/lib/strings.h
