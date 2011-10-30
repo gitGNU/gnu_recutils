@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,7 +277,7 @@ recfmt_process_db (rec_db_t db, char *template)
       rset_size = rec_rset_num_records (rset);
 
       /* Iterate on all the records.  */
-      for (n_rec = 0; n_rec < rec_rset_num_records (rset); n_rec++)
+      for (n_rec = 0; n_rec < rset_size; n_rec++)
         {
           rec = rec_rset_elem_record (rec_rset_get_record (rset, n_rec));
 

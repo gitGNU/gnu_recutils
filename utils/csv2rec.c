@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,7 +329,6 @@ process_csv (void)
 {
   struct csv2rec_ctx ctx;
   FILE *in;
-  FILE *out;
   struct csv_parser p;
   unsigned char options = 0;
   char buf[1024];
@@ -359,8 +358,6 @@ process_csv (void)
     {
       in = stdin;
     }
-
-  out = stdout;
 
   /* Initialize the csv library.  */
   if (csv_init (&p, options) != 0)

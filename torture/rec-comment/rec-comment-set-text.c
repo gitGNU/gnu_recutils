@@ -44,11 +44,11 @@ START_TEST(rec_comment_set_text_nominal)
   comment = rec_comment_new ("abc");
   fail_if (comment == NULL);
 
-  rec_comment_set_text (comment, "xyz");
+  rec_comment_set_text (&comment, "xyz");
   fail_if (strcmp ("xyz",
                    rec_comment_text (comment)) != 0);
 
-  rec_comment_set_text (comment, "");
+  rec_comment_set_text (&comment, "");
   fail_if (strcmp ("",
                    rec_comment_text (comment)) != 0);
   

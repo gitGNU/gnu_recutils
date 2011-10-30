@@ -64,11 +64,11 @@ rec_comment_text (rec_comment_t comment)
 }
 
 void
-rec_comment_set_text (rec_comment_t comment,
+rec_comment_set_text (rec_comment_t *comment,
                       char *text)
 {
-  free (comment);
-  comment = strdup (text);
+  free (*comment);
+  *comment = strdup (text);
 }
 
 bool

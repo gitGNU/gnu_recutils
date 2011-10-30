@@ -86,7 +86,7 @@ rec_comment_t rec_comment_dup (rec_comment_t comment);
 
 /* Getting/Setting properties.  */
 char *rec_comment_text (rec_comment_t comment);
-void rec_comment_set_text (rec_comment_t comment, char *text);
+void rec_comment_set_text (rec_comment_t *comment, char *text);
 
 /* Testing comments.  */
 bool rec_comment_equal_p (rec_comment_t comment1, rec_comment_t comment2);

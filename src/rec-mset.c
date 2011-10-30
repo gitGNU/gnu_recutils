@@ -262,7 +262,6 @@ rec_mset_remove_at (rec_mset_t mset,
                     int position)
 {
   rec_mset_elem_t elem;
-  int elem_type;
   bool removed;
 
   removed = false;
@@ -279,7 +278,6 @@ rec_mset_remove_at (rec_mset_t mset,
         }
       
       elem = rec_mset_get (mset, MSET_ANY, position);
-      elem_type = elem->type;
 
       if (gl_list_remove_at (mset->elem_list,
                              position))

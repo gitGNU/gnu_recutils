@@ -522,7 +522,17 @@ rec_sex_eval_node (rec_sex_t sex,
             ATOI_VAL (op2, child_val2);
             
             res.type = REC_SEX_VAL_INT;
-            res.int_val = op1 / op2;
+            
+            if (op2 != 0)
+              {
+                res.int_val = op1 / op2;
+              }
+            else
+              {
+                /* Error: division by zero */
+                *status = false;
+                return res;
+              }
           }
 
         break;
@@ -540,7 +550,17 @@ rec_sex_eval_node (rec_sex_t sex,
         ATOI_VAL (op2, child_val2);
 
         res.type = REC_SEX_VAL_INT;
-        res.int_val = op1 % op2;
+
+        if (op2 != 0)
+          {
+            res.int_val = op1 % op2;
+          }
+        else
+          {
+            /* Error: division by zero */
+            *status = false;
+            return res;
+          }
 
         break;
       }

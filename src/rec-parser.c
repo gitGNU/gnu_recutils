@@ -184,15 +184,14 @@ rec_parser_perror (rec_parser_t parser,
 
   va_start (ap, fmt);
   vfprintf (stderr, fmt, ap);
-  fputs (":", stderr);
-  if (number_str)
-    {
-      asprintf (&number_str, "%zu", parser->line);
-      fputs (number_str, stderr);
-      fputs (": error: ", stderr);
-      fputs (gettext (rec_parser_error_strings[parser->error]), stderr);
-      fputc ('\n', stderr);
-    }
+  fputs (": ", stderr);
+  number_str = malloc(10);
+  asprintf (&number_str, "%zu", parser->line);
+  fputs (number_str, stderr);
+  free (number_str);
+  fputs (": error: ", stderr);
+  fputs (gettext (rec_parser_error_strings[parser->error]), stderr);
+  fputc ('\n', stderr);
 
   va_end (ap);
 }
