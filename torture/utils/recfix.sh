@@ -22,6 +22,7 @@
 #
 
 : ${srcdir=.}
+. $srcdir/config.sh
 . $srcdir/testutils.sh
 test_init "recfix"
 
@@ -1039,17 +1040,19 @@ test_tool recfix-sortcheck-invalid-field-name xfail \
           '' \
           sortcheck-invalid-field-name
 
+if test "$CRYPT_SUPPORT" = "yes"; then
+
 test_tool recfix-confidential ok \
           recfix \
           '--check' \
           confidential \
-''
+          ''
 
 test_tool recfix-confidential-several ok \
           recfix \
           '--check' \
           confidential-several \
-''
+          ''
 
 test_tool recfix-confidential-with-unencrypted-fields xfail \
           recfix \
@@ -1184,6 +1187,8 @@ fo: fu
 joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
 fo: ja
 '
+
+fi # CRYPT_SUPPORT
 
 test_tool recfix-sort-several-fields-invalid xfail \
           recfix \

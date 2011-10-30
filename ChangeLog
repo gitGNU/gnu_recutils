@@ -1,5 +1,22 @@
 2011-10-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Don't run tests associated with confidential fields when building
+	the tools without crypt support.
+	* .gitignore: torture/utils/config.sh added.
+
+	* torture/utils/recfix.sh: include config.sh and test the
+	encryption support only if the utilities were built with that
+	support.
+
+	* configure.ac: Generate torture/utils/config.sh
+
+	* torture/utils/config.sh.in: New file.
+
+	* configure.ac (REC_CRYPT_SUPPORT): Define and subst
+	CRYPT_SUPPORT.
+
+2011-10-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Fixes for problems detected by the clang analyzer.
 	* src/rec-sex.c (rec_sex_eval_node): Take care about possible
 	divisions by zero when evaluating / and %.

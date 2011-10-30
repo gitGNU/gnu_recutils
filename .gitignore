@@ -104,3 +104,4 @@ libtool
 /po/*.gmo
 /man/rec2csv.1
 config.cache
+torture/utils/config.sh

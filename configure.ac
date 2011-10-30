@@ -104,13 +104,19 @@ AC_ARG_ENABLE([encryption],
                              [Compile recutils with encryption support (default is YES)]),
               [crypt_enabled=$enableval], [crypt_enabled=yes])
 
-AC_LIB_HAVE_LINKFLAGS([gcrypt],[gpg-error],[#include <gpg-error.h>])
-crypt_support=$HAVE_LIBGCRYPT
-if test "x$crypt_support" = "xyes" && test "x$crypt_enabled" = "xyes"; then
-   AC_DEFINE([REC_CRYPT_SUPPORT],[1],[Compile encryption support])
+crypt_support=no
+if test "x$crypt_enabled" = "xyes"; then
+
+   AC_LIB_HAVE_LINKFLAGS([gcrypt],[gpg-error],[#include <gpg-error.h>])
+   crypt_support=$HAVE_LIBGCRYPT
+
+   if test "x$crypt_support" = "xyes"; then
+      AC_DEFINE([REC_CRYPT_SUPPORT],[1],[Compile encryption support])
+   fi
 fi
-AM_CONDITIONAL([CRYPT], [test "x$crypt_support" != "xno" \
-                         && test "x$crypt_enabled" != "xno"])
+
+AM_CONDITIONAL([CRYPT], [test "x$crypt_support" = "xyes"])
+AC_SUBST([crypt_support])
 
 have_glib=no
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
@@ -151,6 +157,7 @@ AC_OUTPUT(Makefile
           po/Makefile.in
           torture/Makefile
           torture/utils/Makefile
+          torture/utils/config.sh
           man/Makefile
           etc/Makefile)
 
