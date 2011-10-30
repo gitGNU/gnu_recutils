@@ -38,15 +38,12 @@ AM_PROG_CC_C_O
 dnl Both lex and yacc are required to generate the lexer/parser source
 dnl files.
 
-AM_PROG_LEX
-if test "$LEX" != flex; then
-   AC_ERROR([flex is required.  Please install it and rerun configure.])
-fi
+: ${LEX='flex'}
+: ${LEXLIB='-lfl'}
+AC_ARG_VAR([LEX], [The flex implementation to use.])
+AC_ARG_VAR([LEXLIB], [Options for linking with the flex runtime library.])
 
-AC_PROG_YACC
-if test "$YACC" != "bison -y"; then
-   AC_ERROR([bison is required.  Please install it and rerun configure.])
-fi
+gl_BISON
 
 dnl System
 AC_CANONICAL_HOST

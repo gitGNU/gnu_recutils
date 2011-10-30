@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <gettext.h>
 #define _(str) gettext (str)
+#include <xalloc.h>
 
 #include <rec.h>
 #include <recutl.h>

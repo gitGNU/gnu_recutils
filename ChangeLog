@@ -1,5 +1,12 @@
 2011-10-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	configure: do not require flex and bison at build time.
+	* utils/recdel.c: Include xalloc.h.
+
+	* configure.ac: Use gl_BISON instead of AM_PROG_YACC.
+
+2011-10-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Don't run tests associated with confidential fields when building
 	the tools without crypt support.
 	* .gitignore: torture/utils/config.sh added.
