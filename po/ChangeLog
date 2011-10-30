@@ -1,3 +1,8 @@
+2011-10-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	translations: ukrainian translation.
+	* uk.po: New file.
+
 2010-10-24  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.in.in: Upgrade to gettext-0.18.1.
