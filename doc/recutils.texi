@@ -2142,7 +2142,7 @@ The contents of confidential fields can be read using the
 used, any selected record containing encrypted fields will try to
 decrypt them with the given password.  If the operation succeeds then
 the output will include the unencrypted data.  Otherwise the
-@acronym{ASCII}-encoded encrypted data will be emitted.
+ASCII-encoded encrypted data will be emitted.
 
 For example, consider the following database storing information about
 the user accounts of some online service.  Each entry stores a login,
