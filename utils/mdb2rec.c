@@ -120,17 +120,6 @@ Convert an mdb file into a rec file.\n"), stdout);
          stdout);
 
   recutl_print_help_common ();
-
-  puts ("");
-  /* TRANSLATORS: --help output, mdb2rec examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        mdb2rec database.mdb > database.rec\n\
-        mdb2rec database.mdb Customers > customers.rec\n"),
-         stdout);
-
   puts ("");
   recutl_print_help_footer ();
 }

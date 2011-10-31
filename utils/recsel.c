@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,16 +154,6 @@ Output options:\n\
   fputs (_("\
 Special options:\n\
       --print-sexps                   print the data in sexps instead of rec format.\n"),
-         stdout);
-
-  puts ("");
-  /* TRANSLATORS: --help output, recsel examples.
-     no-wrap */
- fputs (_("\
-Examples:\n\
-\n\
-        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n\
-        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"),
          stdout);
 
   puts ("");

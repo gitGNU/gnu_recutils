@@ -100,16 +100,6 @@ Convert rec data into csv data.\n"), stdout);
          stdout);
 
   recutl_print_help_common ();
-
-  puts ("");
-  /* TRANSLATORS: --help output, rec2csv examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        rec2csv contacts.rec > contacts.csv\n\
-        cat contacts.rec | rec2csv -t Contact > contacts.csv\n"), stdout);
-
   puts ("");
   recutl_print_help_footer ();
 }

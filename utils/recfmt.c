@@ -91,17 +91,6 @@ Apply a template to records read from standard input.\n"), stdout);
         stdout);
 
   recutl_print_help_common ();
-
-  puts ("");
-  /* TRANSLATORS: --help output, recfmt examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        cat employees.rec | recfmt 'Dear {{Name}}, you are fired.'\n\
-        cat employees.rec | recfmt -f fire-letter.tmpl\n"),
-         stdout);
-  
   puts ("");
   recutl_print_help_footer ();
 }

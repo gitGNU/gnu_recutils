@@ -119,16 +119,6 @@ Convert csv data into rec data.\n"), stdout);
   -e, --omit-empty                    omit empty fields.\n"), stdout);
 
   recutl_print_help_common ();
-
-  puts ("");
-  /* TRANSLATORS: --help output, csv2rec examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        csv2rec contacts.csv > contacts.rec\n\
-        cat contacts.csv | csv2rec > contacts.rec\n"), stdout);
-
   puts ("");
   recutl_print_help_footer ();
 }

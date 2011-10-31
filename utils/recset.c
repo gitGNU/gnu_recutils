@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,18 +165,6 @@ Actions:\n\
   -d, --delete                        delete the selected fields.\n\
   -c, --comment                       comment out the selected fields.\n"), stdout);
 
-  puts ("");
-  /* TRANSLATORS: --help output, recset examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        recset -f TmpName -d data.rec\n\
-        recset -f Email[1] -s invalid@email.com friends.rec\n\
-        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n\
-        recset -f Email[1] -r AltEmail friends.rec\n"),
-         stdout);
-  
   puts ("");
   recutl_print_help_footer ();
 }

@@ -1,3 +1,17 @@
+2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>a
+
+	Examples sections removed from the --help outputs.
+	* utils/csv2rec.c (recutl_print_help): Examples removed from
+	--help output.
+	* utils/recset.c (recutl_print_help): Likewise.
+	* utils/recsel.c (recutl_print_help): Likewise.
+	* utils/recins.c (recutl_print_help): Likewise.
+	* utils/recinf.c (recutl_print_help): Likewise.
+	* utils/recfmt.c (recutl_print_help): Likewise.
+	* utils/recdel.c (recutl_print_help): Likewise.
+	* utils/rec2csv.c (recutl_print_help): Likewise.
+	* utils/mdb2rec.c (recutl_print_help): Likewise.
+
 2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	gnulib update.

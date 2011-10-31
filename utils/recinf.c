@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,17 +111,6 @@ Special options:\n\
   -S, --print-sexps                   print the data in sexps instead of rec format.\n"),
          stdout);
   
-  puts ("");
-  /* TRANSLATORS: --help output, recinf examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        recinf mydata.rec\n\
-        recinf -d mydata.rec moredata.rec\n\
-        recinf -t Task TODO\n"),
-         stdout);
-
   puts ("");
   recutl_print_help_footer ();
 }

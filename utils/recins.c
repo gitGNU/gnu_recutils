@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,16 +144,6 @@ Insert new records in a rec database.\n"), stdout);
   fputs (_("\
 If no FILE is specified then the command acts like a filter, getting\n\
 the data from standard input and writing the result to standard output.\n"), stdout);
-
-  puts ("");
-  /* TRANSLATORS: --help output, recins examples.
-     no-wrap */
-  fputs (_("\
-Examples:\n\
-\n\
-        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n\
-        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n"),
-         stdout);
 
   puts ("");
   recutl_print_help_footer ();
