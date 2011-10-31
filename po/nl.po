@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.1.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2011-10-30 14:07+0100\n"
+"POT-Creation-Date: 2011-10-31 22:54+0100\n"
 "PO-Revision-Date: 2011-02-03 22:04+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "write error"
 msgstr "schrijffout"
 
-#: lib/error.c:185
+#: lib/error.c:187
 msgid "Unknown system error"
 msgstr "Onbekende systeemfout"
 
@@ -187,12 +187,12 @@ msgstr "Ongepaarde ) of \\)"
 msgid "No previous regular expression"
 msgstr "Geen eerdere reguliere expressie"
 
-#: lib/w32spawn.h:40
+#: lib/w32spawn.h:43
 #, c-format
 msgid "_open_osfhandle failed"
 msgstr "_open_osfhandle() is mislukt"
 
-#: lib/w32spawn.h:81
+#: lib/w32spawn.h:84
 #, c-format
 msgid "cannot restore fd %d: dup2 failed"
 msgstr "kan bestandsdescriptor %d niet herstellen: dup2() is mislukt"
@@ -487,7 +487,7 @@ msgstr ""
 "**interne programmafout**: rec_int_rec_extract_url(): fout bij compileren "
 "van regexp.\n"
 
-#: src/rec-utils.c:281
+#: src/rec-utils.c:285
 #, fuzzy, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
 msgstr ""
@@ -523,50 +523,36 @@ msgstr ""
 "  -s, --strict             streng zijn bij ontleden van CSV-bestand\n"
 "  -e, --omit-empty         lege velden weglaten\n"
 
-#. TRANSLATORS: --help output, csv2rec examples.
-#. no-wrap
-#: utils/csv2rec.c:126
-msgid ""
-"Examples:\n"
-"\n"
-"        csv2rec contacts.csv > contacts.rec\n"
-"        cat contacts.csv | csv2rec > contacts.rec\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        csv2rec contacten.csv > contacten.rec\n"
-"        cat contacten.csv | csv2rec > contacten.rec\n"
-
-#: utils/csv2rec.c:223
+#: utils/csv2rec.c:213
 #, c-format
 msgid "reached maximum number of fields: %d\n"
 msgstr "maximum aantal velden (%d) is bereikt\n"
 
-#: utils/csv2rec.c:241
+#: utils/csv2rec.c:231
 #, c-format
 msgid "invalid field name '%s' in header\n"
 msgstr "ongeldige veldnaam '%s' in kopregel\n"
 
-#: utils/csv2rec.c:258 utils/csv2rec.c:297 utils/csv2rec.c:312
-#: utils/mdb2rec.c:337 utils/mdb2rec.c:450
+#: utils/csv2rec.c:248 utils/csv2rec.c:287 utils/csv2rec.c:302
+#: utils/mdb2rec.c:326 utils/mdb2rec.c:439
 msgid "out of memory\n"
 msgstr "onvoldoende geheugen beschikbaar\n"
 
-#: utils/csv2rec.c:268
+#: utils/csv2rec.c:258
 msgid "not enough headers"
 msgstr "niet genoeg koppen"
 
-#: utils/csv2rec.c:355 utils/recdel.c:320 utils/recset.c:703
-#: utils/recutl.c:250
+#: utils/csv2rec.c:344 utils/recdel.c:311 utils/recset.c:691
+#: utils/recutl.c:251
 #, c-format
 msgid "cannot read file %s\n"
 msgstr "kan bestand %s niet lezen\n"
 
-#: utils/csv2rec.c:368
+#: utils/csv2rec.c:355
 msgid "failed to initialize csv parser\n"
 msgstr "initialiseren van CSV-ontleder is mislukt\n"
 
-#: utils/csv2rec.c:386
+#: utils/csv2rec.c:373
 #, c-format
 msgid "error while parsing CSV file: %s\n"
 msgstr "fout tijdens ontleden van CSV-bestand: %s\n"
@@ -599,50 +585,36 @@ msgstr ""
 "  -e, --keep-empty-fields    lege velden in rec-uitvoer niet weglaten\n"
 "  -l, --list-tables          een lijst van tabelnamen in mdb-bestand tonen\n"
 
-#. TRANSLATORS: --help output, mdb2rec examples.
-#. no-wrap
-#: utils/mdb2rec.c:127
-msgid ""
-"Examples:\n"
-"\n"
-"        mdb2rec database.mdb > database.rec\n"
-"        mdb2rec database.mdb Customers > customers.rec\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        mdb2rec databank.mdb > databank.rec\n"
-"        mdb2rec databank.mdb Klanten > klanten.rec\n"
-
-#: utils/mdb2rec.c:263 utils/mdb2rec.c:344
+#: utils/mdb2rec.c:252 utils/mdb2rec.c:333
 #, c-format
 msgid "failed to normalise record type name %s\n"
 msgstr "kan recordtypenaam %s niet normaliseren\n"
 
-#: utils/mdb2rec.c:271 utils/mdb2rec.c:283
+#: utils/mdb2rec.c:260 utils/mdb2rec.c:272
 #, c-format
 msgid "failed to normalise field name %s\n"
 msgstr "kan veldnaam %s niet normaliseren\n"
 
-#: utils/mdb2rec.c:365
+#: utils/mdb2rec.c:354
 #, c-format
 msgid "failed to normalise the field name %s\n"
 msgstr "kan veldnaam %s niet normaliseren\n"
 
-#: utils/mdb2rec.c:476 utils/recins.c:465 utils/recset.c:276
+#: utils/mdb2rec.c:465 utils/recins.c:455 utils/recset.c:264
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "ongeldige veldnaam %s.\n"
 
-#: utils/mdb2rec.c:506
+#: utils/mdb2rec.c:495
 msgid "out of memory"
 msgstr "onvoldoende geheugen beschikbaar"
 
-#: utils/mdb2rec.c:516
+#: utils/mdb2rec.c:505
 #, c-format
 msgid "could not open file %s\n"
 msgstr "kan bestand %s niet openen\n"
 
-#: utils/mdb2rec.c:523
+#: utils/mdb2rec.c:512
 msgid "file does not appear to be an Access database\n"
 msgstr "bestand schijnt geen Access-databank te zijn\n"
 
@@ -676,32 +648,18 @@ msgstr ""
 "                               wordt, dan wordt de standaard recordset "
 "gebruikt\n"
 
-#. TRANSLATORS: --help output, rec2csv examples.
-#. no-wrap
-#: utils/rec2csv.c:107
-msgid ""
-"Examples:\n"
-"\n"
-"        rec2csv contacts.rec > contacts.csv\n"
-"        cat contacts.rec | rec2csv -t Contact > contacts.csv\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        rec2csv contacten.rec > contacten.csv\n"
-"        cat contacten.rec | rec2csv -t Contact > contacten.csv\n"
-
-#: utils/rec2csv.c:145 utils/recsel.c:219
+#: utils/rec2csv.c:135 utils/recsel.c:209
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr ""
 
-#: utils/rec2csv.c:152 utils/recsel.c:226
+#: utils/rec2csv.c:142 utils/recsel.c:216
 #, fuzzy
 msgid "invalid field name in -S.\n"
 msgstr "ongeldige veldnaam %s.\n"
 
 #. TRANSLATORS: --help output, recdel synopsis.
 #. no-wrap
-#: utils/recdel.c:87
+#: utils/recdel.c:88
 #, c-format
 msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n"
 msgstr ""
@@ -709,13 +667,13 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recdel short description.
 #. no-wrap
-#: utils/recdel.c:92
+#: utils/recdel.c:93
 msgid "Remove (or comment out) records from a rec file.\n"
 msgstr "Verwijdert records uit een rec-bestand (of zet ze om in commentaar).\n"
 
 #. TRANSLATORS: --help output, recdel arguments.
 #. no-wrap
-#: utils/recdel.c:99
+#: utils/recdel.c:100
 msgid ""
 "  -c, --comment                       comment out the matching records "
 "instead of\n"
@@ -744,7 +702,7 @@ msgstr ""
 #. no-wrap
 #. TRANSLATORS: --help output, notes on recins.
 #. no-wrap
-#: utils/recdel.c:117 utils/recfix.c:163 utils/recins.c:144
+#: utils/recdel.c:118 utils/recfix.c:163 utils/recins.c:144
 msgid ""
 "If no FILE is specified then the command acts like a filter, getting\n"
 "the data from standard input and writing the result to standard output.\n"
@@ -754,42 +712,26 @@ msgstr ""
 "de gegevens van standaardinvoer en schrijft het resultaat naar "
 "standaarduitvoer.\n"
 
-#. TRANSLATORS: --help output, recdel examples.
-#. no-wrap
-#: utils/recdel.c:125
-msgid ""
-"Examples:\n"
-"\n"
-"        recdel -n 10 contacts.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
-"rec\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        recdel -n 10 contacten.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > ander."
-"rec\n"
-
-#: utils/recdel.c:151
+#: utils/recdel.c:142
 #, c-format
 msgid "no records of type %s found.\n"
 msgstr "geen records van type %s gevonden.\n"
 
-#: utils/recdel.c:218 utils/recins.c:625 utils/recsel.c:382
+#: utils/recdel.c:209 utils/recins.c:615 utils/recsel.c:372
 msgid "evaluating the selection expression.\n"
 msgstr "evalueren van selectie-expressie\n"
 
-#: utils/recdel.c:281
+#: utils/recdel.c:272
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr "verzoek om alle records van type %s te verwijderen wordt genegeerd.\n"
 
-#: utils/recdel.c:283
+#: utils/recdel.c:274
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr ""
 "gebruik optie '--force' als u echt door wilt gaan, of gebruik '-n' of '-e'\n"
 
-#: utils/recdel.c:291 utils/recset.c:436
+#: utils/recdel.c:282 utils/recset.c:424
 msgid "invalid selection expression.\n"
 msgstr "ongeldige selectie-expressie.\n"
 
@@ -876,15 +818,15 @@ msgstr "u kunt slechts één actie opgeven.\n"
 msgid "please specify just one operation.\n"
 msgstr "u kunt slechts één actie opgeven.\n"
 
-#: utils/recfix.c:425
+#: utils/recfix.c:424
 msgid "the database contains already encrypted fields\n"
 msgstr ""
 
-#: utils/recfix.c:426
+#: utils/recfix.c:425
 msgid "please use --force or --decrypt\n"
 msgstr ""
 
-#: utils/recfix.c:490
+#: utils/recfix.c:488
 msgid "unknown operation in recfix: please report this as a bug.\n"
 msgstr ""
 
@@ -910,38 +852,24 @@ msgid ""
 msgstr ""
 "  -f, --file=BESTANDSNAAM    te gebruiken sjabloon uit dit bestand lezen\n"
 
-#. TRANSLATORS: --help output, recfmt examples.
-#. no-wrap
-#: utils/recfmt.c:98
-msgid ""
-"Examples:\n"
-"\n"
-"        cat employees.rec | recfmt 'Dear {{Name}}, you are fired.'\n"
-"        cat employees.rec | recfmt -f fire-letter.tmpl\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        cat werknemers.rec | recfmt 'Beste {{Naam}}, u bent ontslagen.'\n"
-"        cat werknemers.rec | recfmt -f ontslagbrief.tmpl\n"
-
-#: utils/recfmt.c:134
+#: utils/recfmt.c:123
 #, c-format
 msgid "can't open file %s for reading.\n"
 msgstr "kan bestand %s niet openen om te lezen.\n"
 
-#: utils/recfmt.c:152
+#: utils/recfmt.c:141
 msgid "don't specify a template in the command line and -f at the same time.\n"
 msgstr "optie '-f' gaat niet samen met een sjabloon op de opdrachtregel.\n"
 
-#: utils/recfmt.c:175
+#: utils/recfmt.c:164
 msgid "invalid expression in a template slot.\n"
 msgstr "ongeldige expressie opgegeven voor sjabloon.\n"
 
-#: utils/recfmt.c:181
+#: utils/recfmt.c:170
 msgid "error evaluating expression in a template slot.\n"
 msgstr "fout tijdens evalueren van sjabloonexpressie.\n"
 
-#: utils/recfmt.c:215
+#: utils/recfmt.c:204
 msgid "recfmt_apply_template: error compiling regexp. Please report this.\n"
 msgstr ""
 "**interne programmafout**: recfmt_apply_template(): fout bij compileren van "
@@ -988,23 +916,7 @@ msgstr ""
 "  -S, --print-sexps          de gegevens als S-expressies tonen\n"
 "                               in plaats van in rec-indeling\n"
 
-#. TRANSLATORS: --help output, recinf examples.
-#. no-wrap
-#: utils/recinf.c:117
-msgid ""
-"Examples:\n"
-"\n"
-"        recinf mydata.rec\n"
-"        recinf -d mydata.rec moredata.rec\n"
-"        recinf -t Task TODO\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        recinf mijngegevens.rec\n"
-"        recinf -d mijngegevens.rec meergegevens.rec\n"
-"        recinf -t Task TODO\n"
-
-#: utils/recinf.c:270
+#: utils/recinf.c:259
 #, c-format
 msgid "error: cannot read file %s\n"
 msgstr "fout: kan bestand %s niet lezen\n"
@@ -1065,48 +977,32 @@ msgid ""
 "given password.\n"
 msgstr ""
 
-#. TRANSLATORS: --help output, recins examples.
-#. no-wrap
-#: utils/recins.c:151
-msgid ""
-"Examples:\n"
-"\n"
-"        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other."
-"rec\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        recins -f Naam -v \"Hr Foo\" -f Email -v foo@foo.org contacten.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > ander."
-"rec\n"
-
-#: utils/recins.c:342 utils/recins.c:599
+#: utils/recins.c:332 utils/recins.c:589
 msgid ""
 "the record set contains confidential fields but no password was provided\n"
 msgstr ""
 
-#: utils/recins.c:343 utils/recins.c:600
+#: utils/recins.c:333 utils/recins.c:590
 msgid "the resulting record will have those fields unencrypted!\n"
 msgstr ""
 
-#: utils/recins.c:439
+#: utils/recins.c:429
 msgid "a -f should be followed by a -v\n"
 msgstr "optie '-f' dient gevolgd te worden door optie '-v'\n"
 
-#: utils/recins.c:477
+#: utils/recins.c:467
 msgid "a -v should be preceded by a -f\n"
 msgstr "optie '-v' dient voorafgegaan te worden door optie '-f'\n"
 
-#: utils/recins.c:501 utils/recsel.c:208
+#: utils/recins.c:491 utils/recsel.c:198
 msgid "more than one password was specified\n"
 msgstr ""
 
-#: utils/recins.c:514
+#: utils/recins.c:504
 msgid "error while parsing the record provided by -r\n"
 msgstr "fout tijdens ontleden van record gegeven met optie '-r'\n"
 
-#: utils/recins.c:549
+#: utils/recins.c:539
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "u dient een waarde op te geven voor veld %s\n"
@@ -1192,35 +1088,19 @@ msgstr ""
 "  -S, --print-sexps          de gegevens als S-expressies tonen\n"
 "                               in plaats van in rec-indeling\n"
 
-#. TRANSLATORS: --help output, recsel examples.
-#. no-wrap
-#: utils/recsel.c:162
-msgid ""
-"Examples:\n"
-"\n"
-"        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
-"rec\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        recsel -t Vriend -e \"Naam ~ 'Jansen'\" vrienden.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
-"rec\n"
-
-#: utils/recsel.c:238
+#: utils/recsel.c:228
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr "opties '-c' en '-[pPR][' gaan niet samen.\n"
 
-#: utils/recsel.c:264
+#: utils/recsel.c:254
 msgid "internal error creating the field expression.\n"
 msgstr "**interne programmafout** tijdens aanmaken van de veldexpressie.\n"
 
-#: utils/recsel.c:280
+#: utils/recsel.c:270
 msgid "cannot specify -c and also -p.\n"
 msgstr "opties '-c' en '-p' gaan niet samen.\n"
 
-#: utils/recsel.c:327
+#: utils/recsel.c:317
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr ""
 "meerdere recordtypes gevonden.  Gebruik optie '-t' om er één op te geven.\n"
@@ -1304,55 +1184,36 @@ msgstr ""
 "  -d, --delete               de geselecteerde velden verwijderen\n"
 "  -c, --comment              de geselecteerde velden omzetten in commentaar\n"
 
-#. TRANSLATORS: --help output, recset examples.
-#. no-wrap
-#: utils/recset.c:171
-msgid ""
-"Examples:\n"
-"\n"
-"        recset -f TmpName -d data.rec\n"
-"        recset -f Email[1] -s invalid@email.com friends.rec\n"
-"        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
-"        recset -f Email[1] -r AltEmail friends.rec\n"
-msgstr ""
-"Voorbeelden:\n"
-"\n"
-"        recset -f TmpName -d data.rec\n"
-"        recset -f Email[1] -s ongeldig@email.com vrienden.rec\n"
-"        recset -e \"Naam ~ 'Jansen'\" -f Email -a new@email.com vrienden."
-"rec\n"
-"        recset -f Email[1] -r AltEmail vrienden.rec\n"
-
-#: utils/recset.c:191
+#: utils/recset.c:179
 msgid "please specify some field with -f.\n"
 msgstr "u dient bij optie '-f' een veld op te geven.\n"
 
-#: utils/recset.c:196
+#: utils/recset.c:184
 msgid "please specify just one action.\n"
 msgstr "u kunt slechts één actie opgeven.\n"
 
-#: utils/recset.c:236
+#: utils/recset.c:224
 msgid "invalid field expression in -f.\n"
 msgstr "ongeldige veldexpressie bij optie '-f'.\n"
 
-#: utils/recset.c:244
+#: utils/recset.c:232
 msgid "creating the field expression.\n"
 msgstr "aanmaken van de veldexpressie.\n"
 
-#: utils/recset.c:266
+#: utils/recset.c:254
 msgid ""
 "the rename operation requires just one field with an optional subscript.\n"
 msgstr "hernoemen vereist slechts één veld met een optionele index.\n"
 
-#: utils/recset.c:451 utils/recutl.c:434
+#: utils/recset.c:439 utils/recutl.c:435
 msgid "operation aborted due to integrity failures.\n"
 msgstr "bewerking is afgebroken wegens integriteitsproblemen.\n"
 
-#: utils/recset.c:452 utils/recutl.c:435
+#: utils/recset.c:440 utils/recutl.c:436
 msgid "use --verbose to get a detailed report.\n"
 msgstr "gebruik optie '--verbose' voor een gedetailleerd rapport.\n"
 
-#: utils/recset.c:459 utils/recutl.c:442
+#: utils/recset.c:447 utils/recutl.c:443
 msgid "use --force to skip the integrity check.\n"
 msgstr "gebruik optie '--force' op de integriteitscontrole over te slaan.\n"
 
@@ -1361,38 +1222,38 @@ msgstr "gebruik optie '--force' op de integriteitscontrole over te slaan.\n"
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: utils/recutl.c:86
+#: utils/recutl.c:87
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr ""
 "Rapporteer gebreken in het programma aan <%s>;\n"
 "meld fouten in de vertaling aan <vertaling@vrijschrift.org>.\n"
 
-#: utils/recutl.c:89
+#: utils/recutl.c:90
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr ""
 "Rapporteer gebreken in het programma '%s' aan <%s>;\n"
 "meld fouten in de vertaling aan <vertaling@vrijschrift.org>.\n"
 
-#: utils/recutl.c:93
+#: utils/recutl.c:94
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr "Webpagina van %s: <%s>\n"
 
-#: utils/recutl.c:95
+#: utils/recutl.c:96
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
 msgstr "Webpagina van %s: <http://www.gnu.org/software/recutils/>\n"
 
-#: utils/recutl.c:98
+#: utils/recutl.c:99
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr ""
 "Algemene hulp bij gebruik van GNU-software: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
-#: utils/recutl.c:107
+#: utils/recutl.c:108
 msgid ""
 "      --help                          print a help message and exit.\n"
 "      --version                       show version and exit.\n"
@@ -1402,7 +1263,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
-#: utils/recutl.c:118
+#: utils/recutl.c:119
 msgid ""
 "Record selection options:\n"
 "  -i, --case-insensitive              make strings case-insensitive in "
@@ -1420,7 +1281,7 @@ msgstr ""
 "  -e, --expression=EXPR      te gebruiken selectie-expressie\n"
 "  -n, --number=NUMMER        een specifiek record selecteren\n"
 
-#: utils/recutl.c:141
+#: utils/recutl.c:142
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
@@ -1437,7 +1298,7 @@ msgstr ""
 "Deze software kent GEEN GARANTIE, voor zover de wet dit toestaat.\n"
 "\n"
 
-#: utils/recutl.c:147
+#: utils/recutl.c:148
 msgid ""
 "\n"
 "Written by Jose E. Marchesi."
@@ -1445,27 +1306,142 @@ msgstr ""
 "\n"
 "Geschreven door Jose E. Marchesi."
 
-#: utils/recutl.c:159 utils/recutl.c:173
+#: utils/recutl.c:160 utils/recutl.c:174
 msgid ": error: "
 msgstr ": fout: "
 
-#: utils/recutl.c:185
+#: utils/recutl.c:186
 msgid ": warning: "
 msgstr ": waarschuwing: "
 
-#: utils/recutl.c:211
+#: utils/recutl.c:212
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr "duplicaat recordset '%s' uit %s.\n"
 
-#: utils/recutl.c:361
+#: utils/recutl.c:362
 msgid "cannot create a unique name.\n"
 msgstr "kan geen unieke naam aanmaken.\n"
 
-#: utils/recutl.c:382
+#: utils/recutl.c:383
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr "hernoemen van bestand %s naar %s\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        csv2rec contacts.csv > contacts.rec\n"
+#~ "        cat contacts.csv | csv2rec > contacts.rec\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        csv2rec contacten.csv > contacten.rec\n"
+#~ "        cat contacten.csv | csv2rec > contacten.rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        mdb2rec database.mdb > database.rec\n"
+#~ "        mdb2rec database.mdb Customers > customers.rec\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        mdb2rec databank.mdb > databank.rec\n"
+#~ "        mdb2rec databank.mdb Klanten > klanten.rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        rec2csv contacts.rec > contacts.csv\n"
+#~ "        cat contacts.rec | rec2csv -t Contact > contacts.csv\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        rec2csv contacten.rec > contacten.csv\n"
+#~ "        cat contacten.rec | rec2csv -t Contact > contacten.csv\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recdel -n 10 contacts.rec\n"
+#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
+#~ "rec\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        recdel -n 10 contacten.rec\n"
+#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > ander."
+#~ "rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        cat employees.rec | recfmt 'Dear {{Name}}, you are fired.'\n"
+#~ "        cat employees.rec | recfmt -f fire-letter.tmpl\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        cat werknemers.rec | recfmt 'Beste {{Naam}}, u bent ontslagen.'\n"
+#~ "        cat werknemers.rec | recfmt -f ontslagbrief.tmpl\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recinf mydata.rec\n"
+#~ "        recinf -d mydata.rec moredata.rec\n"
+#~ "        recinf -t Task TODO\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        recinf mijngegevens.rec\n"
+#~ "        recinf -d mijngegevens.rec meergegevens.rec\n"
+#~ "        recinf -t Task TODO\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts."
+#~ "rec\n"
+#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > "
+#~ "other.rec\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        recins -f Naam -v \"Hr Foo\" -f Email -v foo@foo.org contacten."
+#~ "rec\n"
+#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > "
+#~ "ander.rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
+#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+#~ "rec\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        recsel -t Vriend -e \"Naam ~ 'Jansen'\" vrienden.rec\n"
+#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+#~ "rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recset -f TmpName -d data.rec\n"
+#~ "        recset -f Email[1] -s invalid@email.com friends.rec\n"
+#~ "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends."
+#~ "rec\n"
+#~ "        recset -f Email[1] -r AltEmail friends.rec\n"
+#~ msgstr ""
+#~ "Voorbeelden:\n"
+#~ "\n"
+#~ "        recset -f TmpName -d data.rec\n"
+#~ "        recset -f Email[1] -s ongeldig@email.com vrienden.rec\n"
+#~ "        recset -e \"Naam ~ 'Jansen'\" -f Email -a new@email.com vrienden."
+#~ "rec\n"
+#~ "        recset -f Email[1] -r AltEmail vrienden.rec\n"
 
 #~ msgid "      --no-external               don't use external descriptors.\n"
 #~ msgstr "      --no-external          geen externe descriptors gebruiken\n"

@@ -24,7 +24,7 @@ TESTS = recinf.sh \
         recfmt.sh \
         rec2csv.sh
 EXTRA_DIST = $(TESTS) testutils.sh
-TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) \
+TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) builddir=$(builddir) \
                     PATH=$(srcdir)$(PATH_SEPARATOR)$(top_builddir)/utils$(PATH_SEPARATOR)$$PATH
 
 # End of Makefile.am

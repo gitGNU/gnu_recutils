@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.1.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2011-10-30 14:07+0100\n"
+"POT-Creation-Date: 2011-10-31 22:54+0100\n"
 "PO-Revision-Date: 2011-02-03 22:43+0200\n"
 "Last-Translator: Jorma Karvonen <karvonen.jorma@gmail.com>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "write error"
 msgstr "kirjoitusvirhe"
 
-#: lib/error.c:185
+#: lib/error.c:187
 msgid "Unknown system error"
 msgstr "Tuntematon järjestelmävirhe"
 
@@ -186,12 +186,12 @@ msgstr "Pariton ) tai \\)"
 msgid "No previous regular expression"
 msgstr "Ei edellistä säännöllistä lauseketta"
 
-#: lib/w32spawn.h:40
+#: lib/w32spawn.h:43
 #, c-format
 msgid "_open_osfhandle failed"
 msgstr "_open_osfhandle epäonnistui"
 
-#: lib/w32spawn.h:81
+#: lib/w32spawn.h:84
 #, c-format
 msgid "cannot restore fd %d: dup2 failed"
 msgstr "ei voi palauttaa fd %d: dup2 epäonnistui"
@@ -482,7 +482,7 @@ msgstr ""
 "sisäinen virhe: rec_int_rec_extract_url: virhe käännettäessä säännöllistä "
 "lauseketta.\n"
 
-#: src/rec-utils.c:281
+#: src/rec-utils.c:285
 #, fuzzy, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
 msgstr ""
@@ -520,50 +520,36 @@ msgstr ""
 "tiedostossa.\n"
 "  -e, --omit-empty                    Ohita tyhjät kentät.\n"
 
-#. TRANSLATORS: --help output, csv2rec examples.
-#. no-wrap
-#: utils/csv2rec.c:126
-msgid ""
-"Examples:\n"
-"\n"
-"        csv2rec contacts.csv > contacts.rec\n"
-"        cat contacts.csv | csv2rec > contacts.rec\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        csv2rec contacts.csv > contacts.rec\n"
-"        cat contacts.csv | csv2rec > contacts.rec\n"
-
-#: utils/csv2rec.c:223
+#: utils/csv2rec.c:213
 #, c-format
 msgid "reached maximum number of fields: %d\n"
 msgstr "saavutettiin kenttien enimmäismäärä: %d\n"
 
-#: utils/csv2rec.c:241
+#: utils/csv2rec.c:231
 #, c-format
 msgid "invalid field name '%s' in header\n"
 msgstr "virheellinen kenttänimi ’%s’ otsakkeessa\n"
 
-#: utils/csv2rec.c:258 utils/csv2rec.c:297 utils/csv2rec.c:312
-#: utils/mdb2rec.c:337 utils/mdb2rec.c:450
+#: utils/csv2rec.c:248 utils/csv2rec.c:287 utils/csv2rec.c:302
+#: utils/mdb2rec.c:326 utils/mdb2rec.c:439
 msgid "out of memory\n"
 msgstr "muisti loppui\n"
 
-#: utils/csv2rec.c:268
+#: utils/csv2rec.c:258
 msgid "not enough headers"
 msgstr "otsakkeita ei ole tarpeeksi"
 
-#: utils/csv2rec.c:355 utils/recdel.c:320 utils/recset.c:703
-#: utils/recutl.c:250
+#: utils/csv2rec.c:344 utils/recdel.c:311 utils/recset.c:691
+#: utils/recutl.c:251
 #, c-format
 msgid "cannot read file %s\n"
 msgstr "ei voida lukea tiedostoa %s\n"
 
-#: utils/csv2rec.c:368
+#: utils/csv2rec.c:355
 msgid "failed to initialize csv parser\n"
 msgstr "csv-jäsentimen alustus epäonnistui\n"
 
-#: utils/csv2rec.c:386
+#: utils/csv2rec.c:373
 #, c-format
 msgid "error while parsing CSV file: %s\n"
 msgstr "virhe jäsennettäessä CSV-tiedostoa: %s\n"
@@ -599,50 +585,36 @@ msgstr ""
 "taulu-\n"
 "                                        nimien luettelo\n"
 
-#. TRANSLATORS: --help output, mdb2rec examples.
-#. no-wrap
-#: utils/mdb2rec.c:127
-msgid ""
-"Examples:\n"
-"\n"
-"        mdb2rec database.mdb > database.rec\n"
-"        mdb2rec database.mdb Customers > customers.rec\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        mdb2rec database.mdb > database.rec\n"
-"        mdb2rec database.mdb Customers > customers.rec\n"
-
-#: utils/mdb2rec.c:263 utils/mdb2rec.c:344
+#: utils/mdb2rec.c:252 utils/mdb2rec.c:333
 #, c-format
 msgid "failed to normalise record type name %s\n"
 msgstr "tietuetyypin nimen %s normalisointi epäonnistui\n"
 
-#: utils/mdb2rec.c:271 utils/mdb2rec.c:283
+#: utils/mdb2rec.c:260 utils/mdb2rec.c:272
 #, c-format
 msgid "failed to normalise field name %s\n"
 msgstr "kenttänimen %s normalisointi epäonnistui\n"
 
-#: utils/mdb2rec.c:365
+#: utils/mdb2rec.c:354
 #, c-format
 msgid "failed to normalise the field name %s\n"
 msgstr "kenttänimen %s normalisointi epäonnistui\n"
 
-#: utils/mdb2rec.c:476 utils/recins.c:465 utils/recset.c:276
+#: utils/mdb2rec.c:465 utils/recins.c:455 utils/recset.c:264
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "virheellinen kenttänimi %s.\n"
 
-#: utils/mdb2rec.c:506
+#: utils/mdb2rec.c:495
 msgid "out of memory"
 msgstr "muisti loppui"
 
-#: utils/mdb2rec.c:516
+#: utils/mdb2rec.c:505
 #, c-format
 msgid "could not open file %s\n"
 msgstr "ei voitu avata tiedostoa %s\n"
 
-#: utils/mdb2rec.c:523
+#: utils/mdb2rec.c:512
 msgid "file does not appear to be an Access database\n"
 msgstr "tiedosto ei näytä olevan Access-tietokanta\n"
 
@@ -676,32 +648,18 @@ msgstr ""
 "                                        ohitetaan, käytetään "
 "oletustietuejoukkoa\n"
 
-#. TRANSLATORS: --help output, rec2csv examples.
-#. no-wrap
-#: utils/rec2csv.c:107
-msgid ""
-"Examples:\n"
-"\n"
-"        rec2csv contacts.rec > contacts.csv\n"
-"        cat contacts.rec | rec2csv -t Contact > contacts.csv\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        rec2csv contacts.rec > contacts.csv\n"
-"        cat contacts.rec | rec2csv -t Contact > contacts.csv\n"
-
-#: utils/rec2csv.c:145 utils/recsel.c:219
+#: utils/rec2csv.c:135 utils/recsel.c:209
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr ""
 
-#: utils/rec2csv.c:152 utils/recsel.c:226
+#: utils/rec2csv.c:142 utils/recsel.c:216
 #, fuzzy
 msgid "invalid field name in -S.\n"
 msgstr "virheellinen kenttänimi %s.\n"
 
 #. TRANSLATORS: --help output, recdel synopsis.
 #. no-wrap
-#: utils/recdel.c:87
+#: utils/recdel.c:88
 #, c-format
 msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n"
 msgstr ""
@@ -710,13 +668,13 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recdel short description.
 #. no-wrap
-#: utils/recdel.c:92
+#: utils/recdel.c:93
 msgid "Remove (or comment out) records from a rec file.\n"
 msgstr "Poista (tai muuta kommenteiksi) rec-tiedoston tietueita.\n"
 
 #. TRANSLATORS: --help output, recdel arguments.
 #. no-wrap
-#: utils/recdel.c:99
+#: utils/recdel.c:100
 msgid ""
 "  -c, --comment                       comment out the matching records "
 "instead of\n"
@@ -748,7 +706,7 @@ msgstr ""
 #. no-wrap
 #. TRANSLATORS: --help output, notes on recins.
 #. no-wrap
-#: utils/recdel.c:117 utils/recfix.c:163 utils/recins.c:144
+#: utils/recdel.c:118 utils/recfix.c:163 utils/recins.c:144
 msgid ""
 "If no FILE is specified then the command acts like a filter, getting\n"
 "the data from standard input and writing the result to standard output.\n"
@@ -757,43 +715,27 @@ msgstr ""
 "hakien\n"
 "tietoja vakiosyötteestä ja kirjoittaen tuloksen vakiotulosteeseen.\n"
 
-#. TRANSLATORS: --help output, recdel examples.
-#. no-wrap
-#: utils/recdel.c:125
-msgid ""
-"Examples:\n"
-"\n"
-"        recdel -n 10 contacts.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
-"rec\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        recdel -n 10 contacts.rec\n"
-"        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
-"rec\n"
-
-#: utils/recdel.c:151
+#: utils/recdel.c:142
 #, c-format
 msgid "no records of type %s found.\n"
 msgstr "%s-tyyppisiä tietueita ei löytynyt.\n"
 
-#: utils/recdel.c:218 utils/recins.c:625 utils/recsel.c:382
+#: utils/recdel.c:209 utils/recins.c:615 utils/recsel.c:372
 msgid "evaluating the selection expression.\n"
 msgstr "arvioidaan valintalauseketta.\n"
 
-#: utils/recdel.c:281
+#: utils/recdel.c:272
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr "ohitetaan pyyntö poistaa kaikki %s-tyyppiset tietueet.\n"
 
-#: utils/recdel.c:283
+#: utils/recdel.c:274
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr ""
 "käytä valitsinta --force jos haluat todella jatkaa, tai käytä joko "
 "valitsinta -n tai -e.\n"
 
-#: utils/recdel.c:291 utils/recset.c:436
+#: utils/recdel.c:282 utils/recset.c:424
 msgid "invalid selection expression.\n"
 msgstr "virheellinen valintalauseke.\n"
 
@@ -879,15 +821,15 @@ msgstr "määritä vain yksi toiminto.\n"
 msgid "please specify just one operation.\n"
 msgstr "määritä vain yksi toiminto.\n"
 
-#: utils/recfix.c:425
+#: utils/recfix.c:424
 msgid "the database contains already encrypted fields\n"
 msgstr ""
 
-#: utils/recfix.c:426
+#: utils/recfix.c:425
 msgid "please use --force or --decrypt\n"
 msgstr ""
 
-#: utils/recfix.c:490
+#: utils/recfix.c:488
 msgid "unknown operation in recfix: please report this as a bug.\n"
 msgstr ""
 
@@ -914,40 +856,26 @@ msgstr ""
 "  -f, --file=TIEDOSTONIMI             lue mallinne, joka haettiin "
 "tiedostosta.\n"
 
-#. TRANSLATORS: --help output, recfmt examples.
-#. no-wrap
-#: utils/recfmt.c:98
-msgid ""
-"Examples:\n"
-"\n"
-"        cat employees.rec | recfmt 'Dear {{Name}}, you are fired.'\n"
-"        cat employees.rec | recfmt -f fire-letter.tmpl\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        cat employees.rec | recfmt 'Rakas {{Nimi}}, olet erotettu.'\n"
-"        cat employees.rec | recfmt -f fire-letter.tmpl\n"
-
-#: utils/recfmt.c:134
+#: utils/recfmt.c:123
 #, c-format
 msgid "can't open file %s for reading.\n"
 msgstr "ei voida avata tiedostoa %s lukemista varten.\n"
 
-#: utils/recfmt.c:152
+#: utils/recfmt.c:141
 msgid "don't specify a template in the command line and -f at the same time.\n"
 msgstr ""
 "älä määritä samalla kertaa sekä mallinnetta komentorivillä että valitsinta -"
 "f.\n"
 
-#: utils/recfmt.c:175
+#: utils/recfmt.c:164
 msgid "invalid expression in a template slot.\n"
 msgstr "virheellinen lauseke mallinnevälissä.\n"
 
-#: utils/recfmt.c:181
+#: utils/recfmt.c:170
 msgid "error evaluating expression in a template slot.\n"
 msgstr "virhe arvioitaessa lauseketta mallinnevälissä.\n"
 
-#: utils/recfmt.c:215
+#: utils/recfmt.c:204
 msgid "recfmt_apply_template: error compiling regexp. Please report this.\n"
 msgstr ""
 "recfmt_apply_template: virhe käännettäessä säännöllistä lauseketta. Ilmoita "
@@ -996,23 +924,7 @@ msgstr ""
 "  -S, --print-sexps                   tulosta tietoja sexps-muodossa eikä "
 "rec-muodossa.\n"
 
-#. TRANSLATORS: --help output, recinf examples.
-#. no-wrap
-#: utils/recinf.c:117
-msgid ""
-"Examples:\n"
-"\n"
-"        recinf mydata.rec\n"
-"        recinf -d mydata.rec moredata.rec\n"
-"        recinf -t Task TODO\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        recinf mydata.rec\n"
-"        recinf -d mydata.rec moredata.rec\n"
-"        recinf -t Task TODO\n"
-
-#: utils/recinf.c:270
+#: utils/recinf.c:259
 #, c-format
 msgid "error: cannot read file %s\n"
 msgstr "virhe: ei voida lukea tiedostoa %s\n"
@@ -1076,48 +988,32 @@ msgid ""
 "given password.\n"
 msgstr ""
 
-#. TRANSLATORS: --help output, recins examples.
-#. no-wrap
-#: utils/recins.c:151
-msgid ""
-"Examples:\n"
-"\n"
-"        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other."
-"rec\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
-"        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other."
-"rec\n"
-
-#: utils/recins.c:342 utils/recins.c:599
+#: utils/recins.c:332 utils/recins.c:589
 msgid ""
 "the record set contains confidential fields but no password was provided\n"
 msgstr ""
 
-#: utils/recins.c:343 utils/recins.c:600
+#: utils/recins.c:333 utils/recins.c:590
 msgid "the resulting record will have those fields unencrypted!\n"
 msgstr ""
 
-#: utils/recins.c:439
+#: utils/recins.c:429
 msgid "a -f should be followed by a -v\n"
 msgstr "valitsimen -f pitäisi seurata valitsinta -v\n"
 
-#: utils/recins.c:477
+#: utils/recins.c:467
 msgid "a -v should be preceded by a -f\n"
 msgstr "valitsimen -v pitäisi edeltää valitsinta -f\n"
 
-#: utils/recins.c:501 utils/recsel.c:208
+#: utils/recins.c:491 utils/recsel.c:198
 msgid "more than one password was specified\n"
 msgstr ""
 
-#: utils/recins.c:514
+#: utils/recins.c:504
 msgid "error while parsing the record provided by -r\n"
 msgstr "virhe jäsennettäessä valitsimen -r tarjoamaa tietuetta\n"
 
-#: utils/recins.c:549
+#: utils/recins.c:539
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "tarjoa arvo kentälle %s\n"
@@ -1211,36 +1107,19 @@ msgstr ""
 "  -S, --print-sexps                   tulosta tietoja sexps-muodossa eikä "
 "rec-muodossa.\n"
 
-#  Heittomerkit jätetty muuttamatta suomalaistyyppiseksi, koska käskyparametreissa heittomerkin tyyppi voi olla kriittinen.
-#. TRANSLATORS: --help output, recsel examples.
-#. no-wrap
-#: utils/recsel.c:162
-msgid ""
-"Examples:\n"
-"\n"
-"        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
-"rec\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-"        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
-"rec\n"
-
-#: utils/recsel.c:238
+#: utils/recsel.c:228
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr "ei voida määritellä sekä valitsimia -[pPR] että myös valitsinta -c.\n"
 
-#: utils/recsel.c:264
+#: utils/recsel.c:254
 msgid "internal error creating the field expression.\n"
 msgstr "sisäinen virhe luotaessa kenttälauseketta.\n"
 
-#: utils/recsel.c:280
+#: utils/recsel.c:270
 msgid "cannot specify -c and also -p.\n"
 msgstr "ei voida määritellä valitsinta -c ja myös valitsinta -p.\n"
 
-#: utils/recsel.c:327
+#: utils/recsel.c:317
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr ""
 "löydettiin useita tietuetyyppejä.  Käytä valitsinta -t määrittämään yksi.\n"
@@ -1323,57 +1202,38 @@ msgstr ""
 "  -d, --delete                        poista valitut kentät.\n"
 "  -c, --comment                       muuta valitut kentät kommenteiksi.\n"
 
-#  Heittomerkit jätetty muuttamatta suomalaistyyppiseksi, koska käskyparametreissa heittomerkin tyyppi voi olla kriittinen.
-#. TRANSLATORS: --help output, recset examples.
-#. no-wrap
-#: utils/recset.c:171
-msgid ""
-"Examples:\n"
-"\n"
-"        recset -f TmpName -d data.rec\n"
-"        recset -f Email[1] -s invalid@email.com friends.rec\n"
-"        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
-"        recset -f Email[1] -r AltEmail friends.rec\n"
-msgstr ""
-"Esimerkit:\n"
-"\n"
-"        recset -f TmpName -d data.rec\n"
-"        recset -f Email[1] -s invalid@email.com friends.rec\n"
-"        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
-"        recset -f Email[1] -r AltEmail friends.rec\n"
-
-#: utils/recset.c:191
+#: utils/recset.c:179
 msgid "please specify some field with -f.\n"
 msgstr "määritä joku kenttä valitsimen -f kanssa.\n"
 
-#: utils/recset.c:196
+#: utils/recset.c:184
 msgid "please specify just one action.\n"
 msgstr "määritä vain yksi toiminto.\n"
 
-#: utils/recset.c:236
+#: utils/recset.c:224
 msgid "invalid field expression in -f.\n"
 msgstr "virheellinen kenttälauseke valitsimessa -f.\n"
 
-#: utils/recset.c:244
+#: utils/recset.c:232
 msgid "creating the field expression.\n"
 msgstr "luodaan kenttälauseke.\n"
 
-#: utils/recset.c:266
+#: utils/recset.c:254
 msgid ""
 "the rename operation requires just one field with an optional subscript.\n"
 msgstr ""
 "uudelleennimeämistoiminto vaatii vain yhden kentän valinnaisella "
 "alaindeksillä.\n"
 
-#: utils/recset.c:451 utils/recutl.c:434
+#: utils/recset.c:439 utils/recutl.c:435
 msgid "operation aborted due to integrity failures.\n"
 msgstr "toiminta keskeytettiin integriteettivirheiden vuoksi.\n"
 
-#: utils/recset.c:452 utils/recutl.c:435
+#: utils/recset.c:440 utils/recutl.c:436
 msgid "use --verbose to get a detailed report.\n"
 msgstr "käytä valitsinta --verbose samaan yksityiskohtainen ilmoitus.\n"
 
-#: utils/recset.c:459 utils/recutl.c:442
+#: utils/recset.c:447 utils/recutl.c:443
 msgid "use --force to skip the integrity check.\n"
 msgstr "käytä valitsinta --force ohittamaan integriteettitarkistus.\n"
 
@@ -1382,7 +1242,7 @@ msgstr "käytä valitsinta --force ohittamaan integriteettitarkistus.\n"
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: utils/recutl.c:86
+#: utils/recutl.c:87
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr ""
@@ -1390,7 +1250,7 @@ msgstr ""
 "Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge."
 "net>\n"
 
-#: utils/recutl.c:89
+#: utils/recutl.c:90
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr ""
@@ -1398,24 +1258,24 @@ msgstr ""
 "Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge."
 "net>\n"
 
-#: utils/recutl.c:93
+#: utils/recutl.c:94
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr "%s kotisivu: <%s>\n"
 
-#: utils/recutl.c:95
+#: utils/recutl.c:96
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
 msgstr "%s kotisivu: <http://www.gnu.org/software/recutils/>\n"
 
-#: utils/recutl.c:98
+#: utils/recutl.c:99
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr ""
 "Yleinen opaste GNU-ohjelmistojen käytöstä: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
-#: utils/recutl.c:107
+#: utils/recutl.c:108
 msgid ""
 "      --help                          print a help message and exit.\n"
 "      --version                       show version and exit.\n"
@@ -1425,7 +1285,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
-#: utils/recutl.c:118
+#: utils/recutl.c:119
 msgid ""
 "Record selection options:\n"
 "  -i, --case-insensitive              make strings case-insensitive in "
@@ -1445,7 +1305,7 @@ msgstr ""
 "  -e, --expression=LAUSEKE            valintalauseke.\n"
 "  -n, --number=NUMERO                 valitse määritelty tietue.\n"
 
-#: utils/recutl.c:141
+#: utils/recutl.c:142
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
@@ -1460,7 +1320,7 @@ msgstr ""
 "Tämä on vapaa ohjelmisto: voi muuttaa ja jakaa sitä vapaasti edelleen.\n"
 "Ohjelmalla EI OLE TAKUUTA siinä laajuudessa, minkä laki sallii.\n"
 
-#: utils/recutl.c:147
+#: utils/recutl.c:148
 msgid ""
 "\n"
 "Written by Jose E. Marchesi."
@@ -1468,27 +1328,144 @@ msgstr ""
 "\n"
 "Tekijä: Jose E. Marchesi."
 
-#: utils/recutl.c:159 utils/recutl.c:173
+#: utils/recutl.c:160 utils/recutl.c:174
 msgid ": error: "
 msgstr ": virhe: "
 
-#: utils/recutl.c:185
+#: utils/recutl.c:186
 msgid ": warning: "
 msgstr ": varoitus: "
 
-#: utils/recutl.c:211
+#: utils/recutl.c:212
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr "kaksoiskappale tietuejoukko ’%s’ kohteesta %s.\n"
 
-#: utils/recutl.c:361
+#: utils/recutl.c:362
 msgid "cannot create a unique name.\n"
 msgstr "ei voida luoda uniikkia nimeä.\n"
 
-#: utils/recutl.c:382
+#: utils/recutl.c:383
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr "nimetään tiedosto %s uudelleen nimellä %s\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        csv2rec contacts.csv > contacts.rec\n"
+#~ "        cat contacts.csv | csv2rec > contacts.rec\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        csv2rec contacts.csv > contacts.rec\n"
+#~ "        cat contacts.csv | csv2rec > contacts.rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        mdb2rec database.mdb > database.rec\n"
+#~ "        mdb2rec database.mdb Customers > customers.rec\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        mdb2rec database.mdb > database.rec\n"
+#~ "        mdb2rec database.mdb Customers > customers.rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        rec2csv contacts.rec > contacts.csv\n"
+#~ "        cat contacts.rec | rec2csv -t Contact > contacts.csv\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        rec2csv contacts.rec > contacts.csv\n"
+#~ "        cat contacts.rec | rec2csv -t Contact > contacts.csv\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recdel -n 10 contacts.rec\n"
+#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
+#~ "rec\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        recdel -n 10 contacts.rec\n"
+#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
+#~ "rec\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        cat employees.rec | recfmt 'Dear {{Name}}, you are fired.'\n"
+#~ "        cat employees.rec | recfmt -f fire-letter.tmpl\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        cat employees.rec | recfmt 'Rakas {{Nimi}}, olet erotettu.'\n"
+#~ "        cat employees.rec | recfmt -f fire-letter.tmpl\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recinf mydata.rec\n"
+#~ "        recinf -d mydata.rec moredata.rec\n"
+#~ "        recinf -t Task TODO\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        recinf mydata.rec\n"
+#~ "        recinf -d mydata.rec moredata.rec\n"
+#~ "        recinf -t Task TODO\n"
+
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts."
+#~ "rec\n"
+#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > "
+#~ "other.rec\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts."
+#~ "rec\n"
+#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > "
+#~ "other.rec\n"
+
+#  Heittomerkit jätetty muuttamatta suomalaistyyppiseksi, koska käskyparametreissa heittomerkin tyyppi voi olla kriittinen.
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
+#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+#~ "rec\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
+#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
+#~ "rec\n"
+
+#  Heittomerkit jätetty muuttamatta suomalaistyyppiseksi, koska käskyparametreissa heittomerkin tyyppi voi olla kriittinen.
+#~ msgid ""
+#~ "Examples:\n"
+#~ "\n"
+#~ "        recset -f TmpName -d data.rec\n"
+#~ "        recset -f Email[1] -s invalid@email.com friends.rec\n"
+#~ "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends."
+#~ "rec\n"
+#~ "        recset -f Email[1] -r AltEmail friends.rec\n"
+#~ msgstr ""
+#~ "Esimerkit:\n"
+#~ "\n"
+#~ "        recset -f TmpName -d data.rec\n"
+#~ "        recset -f Email[1] -s invalid@email.com friends.rec\n"
+#~ "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends."
+#~ "rec\n"
+#~ "        recset -f Email[1] -r AltEmail friends.rec\n"
 
 #~ msgid "      --no-external               don't use external descriptors.\n"
 #~ msgstr "      --no-external               älä käytä ulkoisia selosteita.\n"

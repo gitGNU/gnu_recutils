@@ -22,7 +22,9 @@
 #
 
 : ${srcdir=.}
-. $srcdir/config.sh
+: ${builddir=.}
+
+. $builddir/config.sh
 . $srcdir/testutils.sh
 test_init "recfix"
 
