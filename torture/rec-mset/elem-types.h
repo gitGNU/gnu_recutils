@@ -44,7 +44,7 @@ type1_disp (void *data)
   struct type1_t *s;
 
   s = (struct type1_t *) data;
-  free (data);
+  free (s);
 }
 
 static bool
@@ -89,7 +89,7 @@ type2_disp (void *data)
   struct type2_t *s;
 
   s = (struct type2_t *) data;
-  free (data);
+  free (s);
 }
 
 static bool type2_equal (void *data1,

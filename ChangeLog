@@ -1,3 +1,10 @@
+2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: fix warnings in the rec-mset unit tests.
+	* torture/rec-mset/elem-types.h (type1_disp): Free s instead of
+	the void pointer.
+	(type2_disp): Likewise.
+
 2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>a
 
 	Examples sections removed from the --help outputs.
