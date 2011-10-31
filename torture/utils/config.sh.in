@@ -18,5 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 CRYPT_SUPPORT=@crypt_support@
+EXEEXT=@EXEEXT@
 
 # End of config.sh.in

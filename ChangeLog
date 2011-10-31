@@ -1,5 +1,14 @@
 2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: support the running of the tests in Windows.
+	* torture/utils/testutils.sh: Append $EXEEXT to the utility name.
+	Source config.sh.
+
+	* torture/utils/config.sh.in (EXEEXT): Make it available to the
+	tests.
+
+2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Fixes to avoid warnings while compiling the codebase.
 	* src/rec-utils.c (rec_parse_regexp): Set result to NULL if there
 	is not match.

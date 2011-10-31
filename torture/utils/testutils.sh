@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+: ${srcdir=.}
+. $srcdir/config.sh
+
 # Create an input file.
 # 
 # $1 => Name of the file.
@@ -90,7 +93,7 @@ test_tool ()
     printf "  %s " $1
 
     status=$2
-    utility=$3
+    utility=$3$EXEEXT
     parameters=$4
     input_file="$5.in"
     ok_file="$1.ok"
