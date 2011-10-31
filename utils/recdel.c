@@ -183,8 +183,8 @@ recdel_delete_records (rec_db_t db)
           record = rec_rset_elem_record (rec_elem);
           
           if (((recutl_num == -1) && !recutl_sex)
-              || ((recutl_num == -1) &&
-                  ((recutl_sex &&
+              || (((recutl_num == -1) &&
+                   (recutl_sex &&
                     (rec_sex_eval (recutl_sex, record, &parse_status))))
                   || (recutl_num == numrec)))
             {

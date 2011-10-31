@@ -740,7 +740,7 @@ rec_int_check_descriptor (rec_rset_t rset,
   size_t i;
   rec_type_t type;
   char *type_name = NULL;
-  char *p, *q = NULL;
+  const char *p, *q = NULL;
 
   res = 0;
 

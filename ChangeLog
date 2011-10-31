@@ -1,5 +1,47 @@
 2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Fixes to avoid warnings while compiling the codebase.
+	* src/rec-utils.c (rec_parse_regexp): Set result to NULL if there
+	is not match.
+
+	* src/rec-types.c (rec_type_descr_p): Get a const char* parameter.
+	(rec_type_new): Likewise.
+
+	* src/rec-rset.c (rec_rset_update_field_props): Make p and q const
+	char*.
+
+	* src/rec-utils.c (rec_skip_blanks): Get a const char** parameter.
+	(rec_parse_regexp): Likewise.
+	(rec_atoi): Likewise.
+	(rec_atod): Likewise.
+	(rec_extract_file): Likewise.
+	(rec_extract_url): Likewise.
+	(rec_extract_type): Likewise.
+	(rec_parse_int): Likewise.
+	(rec_extract_size_condition): Likewise.
+
+	* src/rec-rset.c (rec_rset_type_field_p): Make local pointer p
+	const.
+
+	* src/rec-writer.c (rec_write_record): Return
+	rec_write_record_with_rset.
+	(rec_write_field): Likewise with rec_write_field_with_rset.
+
+	* utils/recset.c (recset_process_actions): Parenthesis around &&
+	and || added.
+	* utils/recdel.c (recdel_delete_records): Likewise.
+
+	* utils/mdb2rec.c (process_table): Use column_name instead of
+	col->name.
+
+	* utils/recfix.c (recfix_do_crypt): Unused variable elem_record
+	removed.
+	(main): Unused variable db removed.
+
+	* utils/recutl.c: Include sys/stat.h.
+
+2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: fix warnings in the rec-mset unit tests.
 	* torture/rec-mset/elem-types.h (type1_disp): Free s instead of
 	the void pointer.

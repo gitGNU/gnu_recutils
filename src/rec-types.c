@@ -249,17 +249,17 @@ static bool rec_type_check_field (rec_type_t type, char *str, rec_buf_t errors);
 
 /* Parsing routines.  */
 
-static char *rec_type_parse_size (char *str, rec_type_t type);
-static char *rec_type_parse_enum (char *str, rec_type_t type);
-static char *rec_type_parse_regexp_type (char *str, rec_type_t type);
-static char *rec_type_parse_range (char *str, rec_type_t type);
+static const char *rec_type_parse_size (const char *str, rec_type_t type);
+static const char *rec_type_parse_enum (const char *str, rec_type_t type);
+static const char *rec_type_parse_regexp_type (const char *str, rec_type_t type);
+static const char *rec_type_parse_range (const char *str, rec_type_t type);
 
 /*
  * Public functions.
  */
 
 bool
-rec_type_descr_p (char *str)
+rec_type_descr_p (const char *str)
 {
   bool ret;
   rec_type_t aux_type;
@@ -281,7 +281,7 @@ rec_type_descr_type (char *str)
 {
   char *result = NULL;
   char *name;
-  char *p;
+  const char *p;
 
   if (rec_type_descr_p (str))
     {
@@ -308,10 +308,10 @@ rec_type_descr_type (char *str)
 }
 
 rec_type_t
-rec_type_new (char *str)
+rec_type_new (const char *str)
 {
   rec_type_t new;
-  char *p;
+  const char *p;
   char *type_kind_str = NULL;
 
   p = str;
@@ -976,7 +976,7 @@ rec_type_check_range (rec_type_t type,
                       rec_buf_t errors)
 {
   bool ret;
-  char *p;
+  const char *p;
   int num;
   char *tmp;
 
@@ -1122,7 +1122,7 @@ rec_type_check_enum (rec_type_t type,
                      rec_buf_t errors)
 {
   size_t i;
-  char *p, *b;
+  const char *p, *b;
   char name[100];
 
   if (!rec_type_check_re (REC_TYPE_ENUM_VALUE_RE, str))
@@ -1170,10 +1170,10 @@ rec_type_check_enum (rec_type_t type,
   return false;
 }
 
-static char *
-rec_type_parse_size (char *str, rec_type_t type)
+static const char *
+rec_type_parse_size (const char *str, rec_type_t type)
 {
-  char *p;
+  const char *p;
   int size;
 
   p = str;
@@ -1194,10 +1194,10 @@ rec_type_parse_size (char *str, rec_type_t type)
   return p;
 }
 
-static char *
-rec_type_parse_enum (char *str, rec_type_t type)
+static const char *
+rec_type_parse_enum (const char *str, rec_type_t type)
 {
-  char *p;
+  const char *p;
   size_t i, j;
   
   p = str;
@@ -1267,10 +1267,10 @@ rec_type_parse_enum (char *str, rec_type_t type)
   return p;
 }
 
-static char *
-rec_type_parse_regexp_type (char *str, rec_type_t type)
+static const char *
+rec_type_parse_regexp_type (const char *str, rec_type_t type)
 {
-  char *p;
+  const char *p;
   char re[200];
   bool end_regexp;
   size_t i;
@@ -1339,10 +1339,10 @@ rec_type_parse_regexp_type (char *str, rec_type_t type)
   return p;
 }
 
-static char *
-rec_type_parse_range (char *str, rec_type_t type)
+static const char *
+rec_type_parse_range (const char *str, rec_type_t type)
 {
-  char *p;
+  const char *p;
 
   p = str;
 

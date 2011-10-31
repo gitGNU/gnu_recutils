@@ -410,7 +410,6 @@ recfix_do_crypt ()
       elem_rset = rec_rset_first_record (rset);
       while (rec_rset_elem_p (elem_rset))
         {
-          rec_record_elem_t elem_record;
           rec_record_t record =
             rec_rset_elem_record (elem_rset);
 
@@ -451,7 +450,6 @@ int
 main (int argc, char *argv[])
 {
   int res     = EXIT_SUCCESS;
-  rec_db_t db = NULL;
 
   recutl_init ("recfix");
 

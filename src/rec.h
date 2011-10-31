@@ -295,13 +295,13 @@ enum rec_type_kind_e
 typedef struct rec_type_s *rec_type_t;
 
 /* Create a new type based on the textual description in STR.  */
-rec_type_t rec_type_new (char *str);
+rec_type_t rec_type_new (const char *str);
 
 /* Destroy a type.  */
 void rec_type_destroy (rec_type_t type);
 
 /* Determine whether a string contains a valid type description.  */
-bool rec_type_descr_p (char *str);
+bool rec_type_descr_p (const char *str);
 
 /* Get the kind of the type.  The _str version returns a string with
    the name of the type.  */

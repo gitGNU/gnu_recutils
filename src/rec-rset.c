@@ -1391,7 +1391,6 @@ rec_rset_update_field_props (rec_rset_t rset)
   rec_fex_t fex;
   size_t i;
   rec_type_t type;
-  char *p, *q = NULL;
   char *type_name = NULL;
 
   /* Reset the field properties.  */
@@ -1434,17 +1433,17 @@ rec_rset_update_field_props (rec_rset_t rset)
               fex = rec_rset_type_field_fex (field_value);
               for (i = 0; i < rec_fex_size (fex); i++)
                 {
-                  p = rec_rset_type_field_type (field_value);
-                  type = rec_type_new (p);
+                  char *field_type = rec_rset_type_field_type (field_value);
+                  type = rec_type_new (field_type);
                   if (!type)
                     {
-                      /* p is the name of the type.  Set it as a field
-                         property.  Note that if the field is already
-                         associated with an anonymous type, or a type
-                         name, they are replaced.  */
-
-                      q = p;
-                      rec_parse_regexp (&q, "^" REC_TYPE_NAME_RE, &type_name);
+                      /* Set field_type as a field property.  Note
+                         that if the field is already associated with
+                         an anonymous type, or a type name, they are
+                         replaced.  */
+                      
+                      const char *p = field_type;
+                      rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name);
                       props = rec_rset_get_props (rset,
                                                   rec_fex_elem_field_name (rec_fex_get (fex, i)),
                                                   true);
@@ -1475,7 +1474,7 @@ rec_rset_update_field_props (rec_rset_t rset)
                       props->type = type;
                     }
                   
-                  free (p);
+                  free (field_type);
                 }
             }
 
@@ -1503,19 +1502,21 @@ rec_rset_update_field_props (rec_rset_t rset)
             {
               /* Parse the field name in the field value.  Invalid
                  entries are just ignored.  */
-              p = rec_field_value (field);
-              rec_skip_blanks (&p);
-              q = p;
-              if (rec_parse_regexp (&q, "^" REC_TYPE_NAME_RE "[ \n\t]*", NULL))
+              
+              const char *field_value = rec_field_value (field);
+              char *type_name = NULL;
+
+              rec_skip_blanks (&field_value);
+              rec_parse_regexp (&field_value, "^" REC_TYPE_NAME_RE "[ \n\t]*", &type_name);
+              if (type_name)
                 {
-                  rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &q);
                   if (rset->order_by_field)
                     {
                       rec_field_name_destroy (rset->order_by_field);
                     }
 
-                  rset->order_by_field = rec_parse_field_name_str (q);
-                  free (q);
+                  rset->order_by_field = rec_parse_field_name_str (type_name);
+                  free (type_name);
                 }
             }
 
@@ -1559,7 +1560,7 @@ rec_rset_update_types (rec_rset_t rset)
   rec_field_name_t field_name;
   char *field_value;
   rec_field_name_t typedef_fname;
-  char *p, *q = NULL;
+  const char *p, *q = NULL;
   rec_type_t type;
   char *type_name, *to_type = NULL;
   
@@ -1635,9 +1636,7 @@ rec_rset_update_types (rec_rset_t rset)
 static bool
 rec_rset_type_field_p (const char *str)
 {
-  char *p;
-
-  p = str;
+  const char *p = str;
 
   /* Check the fex */
 
@@ -1660,7 +1659,7 @@ static rec_fex_t
 rec_rset_type_field_fex (const char *str)
 {
   rec_fex_t fex = NULL;
-  char *p;
+  const char *p;
   char *name;
 
   p = str;
@@ -1680,7 +1679,7 @@ static char*
 rec_rset_type_field_type (const char *str)
 {
   char *result = NULL;
-  char *p;
+  const char *p;
 
   if (rec_rset_type_field_p (str))
     {

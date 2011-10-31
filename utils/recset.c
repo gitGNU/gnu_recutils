@@ -379,9 +379,9 @@ recset_process_actions (rec_db_t db)
           record = rec_rset_elem_record (rec_elem);
           
           if (((recutl_num == -1) && !recutl_sex)
-              || ((recutl_num == -1) &&
+              || (((recutl_num == -1) &&
                   ((recutl_sex &&
-                    (rec_sex_eval (recutl_sex, record, &parse_status))))
+                    (rec_sex_eval (recutl_sex, record, &parse_status)))))
                   || (recutl_num == numrec)))
             {
               /* Process a copy of this record.  */

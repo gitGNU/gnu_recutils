@@ -549,7 +549,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
                     char *str)
 {
   bool ret;
-  char *p;
+  const char *p;
 
   ret = true;
   p = str;

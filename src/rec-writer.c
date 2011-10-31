@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,10 +182,10 @@ rec_write_field (rec_writer_t writer,
                  rec_field_t field,
                  rec_writer_mode_t mode)
 {
-  rec_write_field_with_rset (writer,
-                             NULL,
-                             field,
-                             mode);
+  return rec_write_field_with_rset (writer,
+                                    NULL,
+                                    field,
+                                    mode);
 }
 
 bool
@@ -377,10 +377,10 @@ rec_write_record (rec_writer_t writer,
                   rec_record_t record,
                   rec_writer_mode_t mode)
 {
-  rec_write_record_with_rset (writer,
-                             NULL,
-                             record,
-                             mode);
+  return rec_write_record_with_rset (writer,
+                                     NULL,
+                                     record,
+                                     mode);
 }
 
 bool

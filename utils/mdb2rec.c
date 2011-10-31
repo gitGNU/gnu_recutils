@@ -348,11 +348,11 @@ process_table (MdbCatalogEntry *entry)
       col = g_ptr_array_index (table->columns, i);
       column_name = col->name;
       type_value[0] = 0;
-      normalised = rec_field_name_part_normalise (col->name);
+      normalised = rec_field_name_part_normalise (column_name);
       if (!normalised)
         {
           recutl_fatal (_("failed to normalise the field name %s\n"),
-                        col->name);
+                        column_name);
         }
 
       /* Emit a field type specification.  */
@@ -449,7 +449,7 @@ process_table (MdbCatalogEntry *entry)
             }
 
           /* Compute the name of the field.  */
-          field_name = get_field_name (mdb, table_name, col->name); 
+          field_name = get_field_name (mdb, table_name, column_name); 
 
           /* Compute the value of the field.  */
           field_value = xmalloc (bound_lens[i] + 1);
@@ -462,7 +462,7 @@ process_table (MdbCatalogEntry *entry)
               field = rec_field_new (field_name, field_value);
               if (!field)
                 {
-                  recutl_fatal (_("invalid field name %s.\n"), col->name);
+                  recutl_fatal (_("invalid field name %s.\n"), column_name);
                 }
 
               rec_record_append_field (record, field);

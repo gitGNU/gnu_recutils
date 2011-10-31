@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include <rec-utils.h>
 
 bool
-rec_atoi (char *str,
+rec_atoi (const char *str,
           int *number)
 {
   bool res;
@@ -55,7 +55,7 @@ rec_atoi (char *str,
 }
 
 bool
-rec_atod (char *str,
+rec_atod (const char *str,
           double *number)
 {
   bool res;
@@ -74,7 +74,7 @@ rec_atod (char *str,
 }
 
 char *
-rec_extract_file (char *str)
+rec_extract_file (const char *str)
 {
   regex_t regexp;
   regmatch_t matches;
@@ -102,7 +102,7 @@ rec_extract_file (char *str)
 }
 
 char *
-rec_extract_url (char *str)
+rec_extract_url (const char *str)
 {
   regex_t regexp;
   regmatch_t matches;
@@ -130,7 +130,7 @@ rec_extract_url (char *str)
 }
 
 char *
-rec_extract_type (char *str)
+rec_extract_type (const char *str)
 {
   regex_t regexp;
   regmatch_t matches;
@@ -158,10 +158,10 @@ rec_extract_type (char *str)
 }
 
 bool
-rec_parse_int (char **str, int *num)
+rec_parse_int (const char **str, int *num)
 {
   bool ret;
-  char *p, *b;
+  const char *p, *b;
   char number[30];
   bool first = true;
 
@@ -188,10 +188,10 @@ rec_parse_int (char **str, int *num)
 }
 
 bool
-rec_parse_regexp (char **str, char *re, char **result)
+rec_parse_regexp (const char **str, const char *re, char **result)
 {
   bool ret;
-  char *p;
+  const char *p;
   regex_t regexp;
   regmatch_t pm;
 
@@ -225,6 +225,10 @@ rec_parse_regexp (char **str, char *re, char **result)
       else
         {
           ret = false;
+          if (result)
+            {
+              *result = NULL;
+            }
         }
 
       regfree (&regexp);
@@ -235,9 +239,9 @@ rec_parse_regexp (char **str, char *re, char **result)
 }
 
 void
-rec_skip_blanks (char **str)
+rec_skip_blanks (const char **str)
 {
-  char *p;
+  const char *p;
 
   p = *str;
   while (rec_blank_p (*p))
@@ -270,8 +274,8 @@ rec_letter_p (char c)
 }
 
 bool
-rec_match (char *str,
-           char *reg)
+rec_match (const char *str,
+           const char *reg)
 {
   bool ret;
   regex_t regexp;
@@ -289,9 +293,9 @@ rec_match (char *str,
 }
 
 size_t
-rec_extract_size (char *str)
+rec_extract_size (const char *str)
 {
-  char *p;
+  const char *p;
   char *condition_str;
   int res;
 
@@ -310,9 +314,9 @@ rec_extract_size (char *str)
 }
 
 enum rec_size_condition_e
-rec_extract_size_condition (char *str)
+rec_extract_size_condition (const char *str)
 {
-  char *p;
+  const char *p;
   char *condition_str = NULL;
   enum rec_size_condition_e condition;
 

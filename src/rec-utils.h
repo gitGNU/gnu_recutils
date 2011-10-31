@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,28 +47,28 @@ enum rec_size_condition_e
 /* Parse an integer/real in the NULL-terminated string STR and store
    it at NUMBER.  Return true if the conversion was successful.  false
    otherwise. */
-bool rec_atoi (char *str, int *number);
-bool rec_atod (char *str, double *number);
+bool rec_atoi (const char *str, int *number);
+bool rec_atod (const char *str, double *number);
 
 /* Extract type and url from a %rec: field value.  */
-char *rec_extract_url (char *str);
-char *rec_extract_file (char *str);
-char *rec_extract_type (char *str);
+char *rec_extract_url (const char *str);
+char *rec_extract_file (const char *str);
+char *rec_extract_type (const char *str);
 
 /* Extract size and condition from a %size: field value.  */
-size_t rec_extract_size (char *str);
-enum rec_size_condition_e rec_extract_size_condition (char *str);
+size_t rec_extract_size (const char *str);
+enum rec_size_condition_e rec_extract_size_condition (const char *str);
 
 /* Matching a string against a regexp.  */
-bool rec_match (char *str, char *regexp);
+bool rec_match (const char *str, const char *regexp);
 
 /* Generic parsing routines.  */
 bool rec_blank_p (char c);
 bool rec_digit_p (char c);
 bool rec_letter_p (char c);
-bool rec_parse_int (char **str, int *num);
-void rec_skip_blanks (char **str);
-bool rec_parse_regexp (char **str, char *re, char **result);
+bool rec_parse_int (const char **str, int *num);
+void rec_skip_blanks (const char **str);
+bool rec_parse_regexp (const char **str, const char *re, char **result);
 
 /* Miscellanea.  */
 int rec_timespec_subtract (struct timespec *result,

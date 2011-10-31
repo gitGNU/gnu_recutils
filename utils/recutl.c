@@ -39,6 +39,7 @@
 #   include <gcrypt.h>
 #endif
 #include <progname.h>
+#include <sys/stat.h>
 
 #include <rec.h>
 #include <recutl.h>
