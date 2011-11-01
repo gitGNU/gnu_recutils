@@ -1,3 +1,10 @@
+2011-11-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: portability problem with malloc.h fixed.
+	* torture/rec-fex/rec-fex-str.c: Include stdlib.h instead of
+	malloc.h to avoid problems in systems not featuring the second
+	header.
+
 2011-10-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	torture: support the running of the tests in Windows.

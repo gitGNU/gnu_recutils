@@ -26,7 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <check.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #include <rec.h>
 
