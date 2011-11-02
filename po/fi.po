@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU recutils 1.1.90\n"
+"Project-Id-Version: GNU recutils 1.3.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2011-10-31 22:54+0100\n"
-"PO-Revision-Date: 2011-02-03 22:43+0200\n"
+"POT-Creation-Date: 2011-11-02 20:45+0100\n"
+"PO-Revision-Date: 2011-10-31 00:28+0300\n"
 "Last-Translator: Jorma Karvonen <karvonen.jorma@gmail.com>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "Language: fi\n"
@@ -33,9 +33,9 @@ msgid "%s subprocess failed"
 msgstr "%s aliprosessi epäonnistui"
 
 #: lib/getopt.c:547 lib/getopt.c:576
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option '%s' is ambiguous; possibilities:"
-msgstr "%s: valitsin ’%s’ ei ole yksiselitteinen\n"
+msgstr "%s: valitsin ’%s’ ei ole yksiselitteinen; mahdollisuudet:"
 
 #: lib/getopt.c:624 lib/getopt.c:628
 #, c-format
@@ -239,17 +239,20 @@ msgstr ""
 #: src/rec-int.c:156
 #, c-format
 msgid "%s: error: the number of records of type %s shall be %d.\n"
-msgstr ""
+msgstr "%s: virhe: tietuetyypin %s lukumäärän pitäisi olla %d.\n"
 
 #: src/rec-int.c:170
 #, c-format
 msgid "%s: error: too many records of type %s. Maximum allowed are %d.\n"
 msgstr ""
+"%s: virhe: liian monta %s-tyyppistä tietuetta. Sallitaan enintään %d.\n"
 
 #: src/rec-int.c:181
 #, c-format
 msgid "%s: error: too few records of type %s. Minimum allowed are %d.\n"
 msgstr ""
+"%s: virhe: liian vähän %s-tyyppisiä tietueita. Sallittu vähimmäismäärä on "
+"%d.\n"
 
 #: src/rec-int.c:302
 #, c-format
@@ -275,9 +278,9 @@ msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr "%s:%s: virhe: kielletty kenttä ’%s’ löytyi tietueessa\n"
 
 #: src/rec-int.c:580
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
-msgstr "%s:%s: virhe: pakollista kenttää ’%s’ ei löytynyt tietueesta\n"
+msgstr "%s:%s: virhe: luotttamuksellinen kenttä ei ole salattu\n"
 
 #: src/rec-int.c:635
 #, c-format
@@ -315,14 +318,14 @@ msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr "%s:%s: virhe: vain yksi %%key-kenttä sallitaan tietueselosteessa\n"
 
 #: src/rec-int.c:821
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
-msgstr "%s:%s: virhe: vain yksi %%key-kenttä sallitaan tietueselosteessa\n"
+msgstr "%s:%s: virhe: vain yksi %%size-kenttä sallitaan tietueselosteessa\n"
 
 #: src/rec-int.c:833
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
-msgstr "%s:%s: virhe: vain yksi %%key-kenttä sallitaan tietueselosteessa\n"
+msgstr "%s:%s: virhe: vain yksi %%sort-kenttä sallitaan tietueselosteessa\n"
 
 #: src/rec-int.c:859
 #, c-format
@@ -330,21 +333,23 @@ msgid ""
 "%s:%s: error: expected a comma-separated list of fields before the type "
 "specification\n"
 msgstr ""
+"%s:%s: virhe: odotettiin pilkulla eroteltua kenttien luetteloa ennen "
+"tyyppimäärittelyä\n"
 
 #: src/rec-int.c:887 src/rec-int.c:946
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
-msgstr "%s:%s: virhe: väärä tietuetyyppi %s\n"
+msgstr "%s:%s: virhe: viitattu tyyppi %s ei ole olemassa\n"
 
 #: src/rec-int.c:901 src/rec-int.c:960
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: invalid typedef specification\n"
-msgstr "%s:%s: virhe: virheellinen tyyppimäärittely\n"
+msgstr "%s:%s: virhe: virheellinen typedef-määrittely\n"
 
 #: src/rec-int.c:918
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
-msgstr "%s:%s: virhe: virheellinen tyyppimäärittely\n"
+msgstr "%s:%s: virhe: odotettiin tyyppinimeä ennen tyyppimäärittelyä\n"
 
 #: src/rec-int.c:984
 #, c-format
@@ -352,9 +357,9 @@ msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
 msgstr "%s:%s: virhe: arvo kohteelle %s[%d] ei ole kenttänimien luettelo\n"
 
 #: src/rec-int.c:1002
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: value for %s shall be a field name.\n"
-msgstr "%s:%s: virhe: arvo kohteelle %s[%d] ei ole kenttänimien luettelo\n"
+msgstr "%s:%s: virhe: arvon kohteelle %s pitää olla kenttänimi\n"
 
 #: src/rec-int.c:1016
 #, c-format
@@ -362,11 +367,12 @@ msgid ""
 "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= "
 "or <=.\n"
 msgstr ""
+"%s:%s: virhe: arvon %s pitäisi olla numero, jota edeltää >, <, >= tai <=.\n"
 
 #: src/rec-int.c:1034
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: value for %s shall be a list of field names.\n"
-msgstr "%s:%s: virhe: arvo kohteelle %s[%d] ei ole kenttänimien luettelo\n"
+msgstr "%s:%s: virhe: arvon kohteelle %s on oltava kenttänimien luettelo\n"
 
 #: src/rec-int.c:1061
 #, c-format
@@ -483,10 +489,10 @@ msgstr ""
 "lauseketta.\n"
 
 #: src/rec-utils.c:285
-#, fuzzy, c-format
+#, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
 msgstr ""
-"sisäinen virhe: rec-types: virhe käännettäessä säännöllistä lauseketta.\n"
+"sisäinen virhe: rec_match: virhe käännettäessä säännöllistä lauseketta.\n"
 
 #. TRANSLATORS: --help output, csv2rec synopsis.
 #. no-wrap
@@ -634,7 +640,6 @@ msgstr "Muunna rec-tietoa csv-tiedoksi.\n"
 #. TRANSLATORS: --help output, rec2csv options.
 #. no-wrap
 #: utils/rec2csv.c:96
-#, fuzzy
 msgid ""
 "  -t, --type=TYPE                     record set to convert to csv; if this "
 "parameter\n"
@@ -647,15 +652,16 @@ msgstr ""
 "Jos tämä parametri\n"
 "                                        ohitetaan, käytetään "
 "oletustietuejoukkoa\n"
+"  -S, --sort=KENTTÄ                   lajittele tuloste määritellyn kentän "
+"mukaan.\n"
 
 #: utils/rec2csv.c:135 utils/recsel.c:209
 msgid "only one field can be specified as a sorting criteria.\n"
-msgstr ""
+msgstr "vain yksi kenttä voidaan määritellä lajittelukriteerinä.\n"
 
 #: utils/rec2csv.c:142 utils/recsel.c:216
-#, fuzzy
 msgid "invalid field name in -S.\n"
-msgstr "virheellinen kenttänimi %s.\n"
+msgstr "virheellinen kenttänimi valitsimelle -S.\n"
 
 #. TRANSLATORS: --help output, recdel synopsis.
 #. no-wrap
@@ -742,9 +748,10 @@ msgstr "virheellinen valintalauseke.\n"
 #. TRANSLATORS: --help output, recfix synopsis.
 #. no-wrap
 #: utils/recfix.c:113
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: recfix [OPTION]... [OPERATION] [OP_OPTION]... [FILE]\n"
-msgstr "Käyttö: recfix [VALITSIN]... [TIEDOSTO]...\n"
+msgstr ""
+"Käyttö: recfix [VALITSIN]... [TOIMINTO] [TOIMINTO_VALITSIN]... [TIEDOSTO]\n"
 
 #. TRANSLATORS: --help output, recfix short description.
 #. no-wrap
@@ -755,13 +762,14 @@ msgstr "Tarkista ja korjaa rec-tiedostot.\n"
 #. TRANSLATORS: --help output, recfix global arguments.
 #. no-wrap
 #: utils/recfix.c:125
-#, fuzzy
 msgid ""
 "  -t, --type=TYPE                     process only records of the given "
 "type.\n"
 "      --no-external                   don't use external descriptors.\n"
 "      --force                         force the requested operation.\n"
 msgstr ""
+"  -t, --type=TYYPPI                   prosessoi vain tietyn tyyppiset "
+"tietueet.\n"
 "  -c, --comment                       kommentoi täsmäävät tietueet äläkä\n"
 "                                         poista niitä.\n"
 "      --force                         poista jopa potentiaalisesti "
@@ -770,7 +778,6 @@ msgstr ""
 #. TRANSLATORS: --help output, recfix operations.
 #. no-wrap
 #: utils/recfix.c:136
-#, fuzzy
 msgid ""
 "Operations:\n"
 "      --check                         check integrity of the specified "
@@ -778,21 +785,25 @@ msgid ""
 "      --sort                          sort the records in the specified "
 "file.\n"
 msgstr ""
-"      --help                          tulosta opasteviesti ja poistu.\n"
-"      --version                       näytä versio ja poistu.\n"
+"Toiminnot:\n"
+"      --check                         tarkista määritellyn tiedosto "
+"integriteetti.  Oletus.\n"
+"      --sort                          lajittele tietueet määritellyssä "
+"tiedostossa.\n"
 
 #. TRANSLATORS: --help output, recfix operations related with encryption.
 #. no-wrap
 #: utils/recfix.c:145
-#, fuzzy
 msgid ""
 "      --encrypt                       encrypt confidential fields in the "
 "specified file.\n"
 "      --decrypt                       decrypt confidential fields in the "
 "specified file.\n"
 msgstr ""
-"      --help                          tulosta opasteviesti ja poistu.\n"
-"      --version                       näytä versio ja poistu.\n"
+"      --encrypt                       salaa luottamukselliset kentät "
+"määritellyssä tiedostossa.\n"
+"      --decrypt                       pura luottamuksellisten kenttien "
+"salaus määritellyssä tiedostossa.\n"
 
 #. TRANSLATORS: --help output, recfix encryption and decryption
 #. options.
@@ -802,36 +813,36 @@ msgid ""
 "De/Encryption options:\n"
 "  -s, --password=PASSWORD             encrypt/decrypt with this password.\n"
 msgstr ""
+"Salauksen purku-/salausvalitsimet:\n"
+"  -s, --password=SALASANA             salaa/pura salaus tällä salasanalla.\n"
 
 #: utils/recfix.c:208
 msgid "--password|-s must be used as an operation argument.\n"
-msgstr ""
+msgstr "--password|-s on käytettävä toiminta-argumentteina.\n"
 
 #: utils/recfix.c:214
 msgid "the specified operation does not require a password.\n"
-msgstr ""
+msgstr "määritelty toiminto ei vaadi salasanaa.\n"
 
 #: utils/recfix.c:219
-#, fuzzy
 msgid "please specify just one password.\n"
-msgstr "määritä vain yksi toiminto.\n"
+msgstr "määritä vain yksi salasana.\n"
 
 #: utils/recfix.c:230 utils/recfix.c:240 utils/recfix.c:251 utils/recfix.c:261
-#, fuzzy
 msgid "please specify just one operation.\n"
 msgstr "määritä vain yksi toiminto.\n"
 
 #: utils/recfix.c:424
 msgid "the database contains already encrypted fields\n"
-msgstr ""
+msgstr "tietokanta sisältää jo salattuja kenttiä\n"
 
 #: utils/recfix.c:425
 msgid "please use --force or --decrypt\n"
-msgstr ""
+msgstr "käytä valitsimia --force tai --decrypt\n"
 
 #: utils/recfix.c:488
 msgid "unknown operation in recfix: please report this as a bug.\n"
-msgstr ""
+msgstr "tuntematon toiminto kohteessa recfix: ilmoita tästä viasta.\n"
 
 #. TRANSLATORS: --help output, recfmt synopsis.
 #. no-wrap
@@ -987,15 +998,19 @@ msgid ""
 "  -s, --password=STR                  encrypt confidential fields with the "
 "given password.\n"
 msgstr ""
+"  -s, --password=MERKKIJONO           salaa luottamukselliset kentän "
+"annetulla salasanalla.\n"
 
 #: utils/recins.c:332 utils/recins.c:589
 msgid ""
 "the record set contains confidential fields but no password was provided\n"
 msgstr ""
+"tietuejoukko sisältää luottamuksellisia kenttiä, mutta salasanaa ei "
+"tarjottu\n"
 
 #: utils/recins.c:333 utils/recins.c:590
 msgid "the resulting record will have those fields unencrypted!\n"
-msgstr ""
+msgstr "tuloksena olevalla tietueella on nuo kentät salaamattomia!\n"
 
 #: utils/recins.c:429
 msgid "a -f should be followed by a -v\n"
@@ -1007,7 +1022,7 @@ msgstr "valitsimen -v pitäisi edeltää valitsinta -f\n"
 
 #: utils/recins.c:491 utils/recsel.c:198
 msgid "more than one password was specified\n"
-msgstr ""
+msgstr "on määritelty useampia kuin yksi salasana\n"
 
 #: utils/recins.c:504
 msgid "error while parsing the record provided by -r\n"
@@ -1038,7 +1053,6 @@ msgstr "Valitse ja tulosta rec-tietoja.\n"
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
 #: utils/recsel.c:117
-#, fuzzy
 msgid ""
 "  -d, --include-descriptors           print record descriptors along with "
 "the matched\n"
@@ -1052,6 +1066,8 @@ msgstr ""
 "tietueista.\n"
 "  -C, --collapse                      älä jaa tulosta tietueissa lohkoihin "
 "rivinvaihdoilla.\n"
+"  -S, --sort=KENTTÄ                   lajittele tuloste määritellyn kentän "
+"mukaan.\n"
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
@@ -1060,6 +1076,8 @@ msgid ""
 "  -s, --password=STR                  decrypt confidential fields with the "
 "given password.\n"
 msgstr ""
+"  -s, --password=MERKKIJONO           pura luottamuksellisten kenttien "
+"salaus annetulla salasanalla.\n"
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
@@ -1097,14 +1115,13 @@ msgstr ""
 #. TRANSLATORS: --help output, recsel special options.
 #. no-wrap
 #: utils/recsel.c:154
-#, fuzzy
 msgid ""
 "Special options:\n"
 "      --print-sexps                   print the data in sexps instead of rec "
 "format.\n"
 msgstr ""
 "Erikoisvalitsimet:\n"
-"  -S, --print-sexps                   tulosta tietoja sexps-muodossa eikä "
+"      --print-sexps                   tulosta tietoja sexps-muodossa eikä "
 "rec-muodossa.\n"
 
 #: utils/recsel.c:228

@@ -5,10 +5,10 @@
 # Benno Schulenberg <benno@vertaalt.nl>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU recutils 1.1.90\n"
+"Project-Id-Version: GNU recutils 1.3\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2011-10-31 22:54+0100\n"
-"PO-Revision-Date: 2011-02-03 22:04+0100\n"
+"POT-Creation-Date: 2011-11-02 20:45+0100\n"
+"PO-Revision-Date: 2011-02-19 12:05+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "Language: nl\n"
@@ -242,17 +242,17 @@ msgstr ""
 #: src/rec-int.c:156
 #, c-format
 msgid "%s: error: the number of records of type %s shall be %d.\n"
-msgstr ""
+msgstr "%s: fout: het aantal records van type %s moet %d zijn.\n"
 
 #: src/rec-int.c:170
 #, c-format
 msgid "%s: error: too many records of type %s. Maximum allowed are %d.\n"
-msgstr ""
+msgstr "%s: fout: te veel records van type %s; maximum aantal is %d.\n"
 
 #: src/rec-int.c:181
 #, c-format
 msgid "%s: error: too few records of type %s. Minimum allowed are %d.\n"
-msgstr ""
+msgstr "%s: fout: te weinig records van type %s; minimum aantal is %d.\n"
 
 #: src/rec-int.c:302
 #, c-format
@@ -315,19 +315,19 @@ msgstr "%s:%s: fout: ongeldig recordtype %s\n"
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr ""
-"%s:%s: fout: slechts één %%key-veld is toegestaan in recorddescriptor\n"
+"%s:%s: fout: slechts één %%key-veld is toegestaan in een recorddescriptor\n"
 
 #: src/rec-int.c:821
-#, fuzzy, c-format
+#, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
 msgstr ""
-"%s:%s: fout: slechts één %%key-veld is toegestaan in recorddescriptor\n"
+"%s:%s: fout: slechts één %%size-veld is toegestaan in een recorddescriptor\n"
 
 #: src/rec-int.c:833
 #, fuzzy, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
 msgstr ""
-"%s:%s: fout: slechts één %%key-veld is toegestaan in recorddescriptor\n"
+"%s:%s: fout: slechts één %%size-veld is toegestaan in een recorddescriptor\n"
 
 #: src/rec-int.c:859
 #, c-format
@@ -367,6 +367,8 @@ msgid ""
 "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= "
 "or <=.\n"
 msgstr ""
+"%s: %s: fout: de waarde voor %s moet een getal zijn,\n"
+"eventueel voorafgegaan door '>', '<', '>=' of '<='.\n"
 
 #: src/rec-int.c:1034
 #, fuzzy, c-format
@@ -488,10 +490,10 @@ msgstr ""
 "van regexp.\n"
 
 #: src/rec-utils.c:285
-#, fuzzy, c-format
+#, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
 msgstr ""
-"**interne programmafout**: rec_types: fout bij compileren van regexp.\n"
+"**interne programmafout**: rec_match: fout bij compileren van regexp.\n"
 
 #. TRANSLATORS: --help output, csv2rec synopsis.
 #. no-wrap
@@ -588,17 +590,17 @@ msgstr ""
 #: utils/mdb2rec.c:252 utils/mdb2rec.c:333
 #, c-format
 msgid "failed to normalise record type name %s\n"
-msgstr "kan recordtypenaam %s niet normaliseren\n"
+msgstr "kan recordtypenaam %s niet normaliseren.\n"
 
 #: utils/mdb2rec.c:260 utils/mdb2rec.c:272
 #, c-format
 msgid "failed to normalise field name %s\n"
-msgstr "kan veldnaam %s niet normaliseren\n"
+msgstr "kan veldnaam %s niet normaliseren.\n"
 
 #: utils/mdb2rec.c:354
 #, c-format
 msgid "failed to normalise the field name %s\n"
-msgstr "kan veldnaam %s niet normaliseren\n"
+msgstr "kan veldnaam %s niet normaliseren.\n"
 
 #: utils/mdb2rec.c:465 utils/recins.c:455 utils/recset.c:264
 #, c-format
@@ -612,11 +614,11 @@ msgstr "onvoldoende geheugen beschikbaar"
 #: utils/mdb2rec.c:505
 #, c-format
 msgid "could not open file %s\n"
-msgstr "kan bestand %s niet openen\n"
+msgstr "kan bestand %s niet openen.\n"
 
 #: utils/mdb2rec.c:512
 msgid "file does not appear to be an Access database\n"
-msgstr "bestand schijnt geen Access-databank te zijn\n"
+msgstr "bestand schijnt geen Access-databank te zijn.\n"
 
 #. TRANSLATORS: --help output, rec2csv synopsis.
 #. no-wrap
@@ -919,7 +921,7 @@ msgstr ""
 #: utils/recinf.c:259
 #, c-format
 msgid "error: cannot read file %s\n"
-msgstr "fout: kan bestand %s niet lezen\n"
+msgstr "fout: kan bestand %s niet lezen.\n"
 
 #. TRANSLATORS: --help output, recins synopsis.
 #. no-wrap
@@ -988,11 +990,11 @@ msgstr ""
 
 #: utils/recins.c:429
 msgid "a -f should be followed by a -v\n"
-msgstr "optie '-f' dient gevolgd te worden door optie '-v'\n"
+msgstr "optie '-f' dient gevolgd te worden door optie '-v'.\n"
 
 #: utils/recins.c:467
 msgid "a -v should be preceded by a -f\n"
-msgstr "optie '-v' dient voorafgegaan te worden door optie '-f'\n"
+msgstr "optie '-v' dient voorafgegaan te worden door optie '-f'.\n"
 
 #: utils/recins.c:491 utils/recsel.c:198
 msgid "more than one password was specified\n"
@@ -1000,12 +1002,12 @@ msgstr ""
 
 #: utils/recins.c:504
 msgid "error while parsing the record provided by -r\n"
-msgstr "fout tijdens ontleden van record gegeven met optie '-r'\n"
+msgstr "fout tijdens ontleden van record gegeven met optie '-r'.\n"
 
 #: utils/recins.c:539
 #, c-format
 msgid "please provide a value for the field %s\n"
-msgstr "u dient een waarde op te geven voor veld %s\n"
+msgstr "u dient een waarde op te geven voor veld %s.\n"
 
 #. TRANSLATORS: --help output, recsel synopsis.
 #. no-wrap
@@ -1464,9 +1466,6 @@ msgstr "hernoemen van bestand %s naar %s\n"
 
 #~ msgid "evaluating selection expression.\n"
 #~ msgstr "evalueren van selectie-expressie\n"
-
-#~ msgid "use --force to skip the integrity chech\n"
-#~ msgstr "gebruik optie '--force' op de integriteitscontrole over te slaan\n"
 
 #~ msgid "operation aborted due to integrity failures\n"
 #~ msgstr "bewerking is afgebroken wegens integriteitsproblemen.\n"
