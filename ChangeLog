@@ -1,3 +1,19 @@
+2011-11-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: endianess problem fixed in rec_encrypt/rec_decrypt.
+	* src/rec-utils.h: Include stdlib.h and declare rec_endian_swap.
+
+	* src/rec-utils.c (rec_endian_swap): New function.
+
+	* src/rec-crypt.c (rec_encrypt): Store the crc always in
+	little-endian.
+	(rec_decrypt): Restore the crc in little-endian.
+
+2011-11-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-crypt.c (rec_encrypt): Store the crc bytes in a way
+	independant of the endianess.
+
 2011-11-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	torture: portability problem with malloc.h fixed.

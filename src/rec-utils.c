@@ -381,4 +381,17 @@ rec_timespec_subtract (struct timespec *result,
   return (result->tv_sec < 0);
 }
 
+uint32_t
+rec_endian_swap (uint32_t number)
+{
+  uint32_t res;
+
+  res = (number >> 24)
+    | ((number << 8) & 0x00FF0000)
+    | ((number >> 8) & 0x0000FF00)
+    | (number << 24);
+
+  return res;
+}
+
 /* End of rec-utils.c */

@@ -29,6 +29,7 @@
 #include <config.h>
 
 #include <rec.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 enum rec_size_condition_e
@@ -74,6 +75,8 @@ bool rec_parse_regexp (const char **str, const char *re, char **result);
 int rec_timespec_subtract (struct timespec *result,
                            struct timespec *x,
                            struct timespec *y);
+
+uint32_t rec_endian_swap (uint32_t number);
 
 #endif /* rec-utils.h */
 

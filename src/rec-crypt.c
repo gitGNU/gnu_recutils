@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-10-07 00:59:30 jemarch"
+/* -*- mode: C -*- Time-stamp: "2011-11-02 20:37:12 jemarch"
  *
  *       File:         rec-crypt.c
  *       Date:         Fri Aug 26 19:50:51 2011
@@ -56,9 +56,16 @@ rec_encrypt (char   *in,
 
   /* Append four bytes to the input buffer, containing the CRC of its
      contents.  This will be used as a control token to determine
-     whether the correct key is used in decryption.  */
+     whether the correct key is used in decryption.
+  
+     We store the integer always in little-endian. */
   
   crc = crc32 (in, in_size);
+  
+#if defined WORDS_BIGENDIAN
+  crc = rec_endian_swap (crc);
+#endif
+
   real_in_size = in_size + 4;
   real_in = malloc (real_in_size + 4);
   memcpy (real_in, in, real_in_size);
@@ -120,6 +127,7 @@ rec_encrypt (char   *in,
   /* Encrypt the data.  */
   *out_size = real_in_size;
   *out = malloc (*out_size);
+
   if (gcry_cipher_encrypt (handler,
                            *out,
                            *out_size,
@@ -202,8 +210,12 @@ rec_decrypt (char   *in,
 
   if (strlen(*out) > 4)
     {
-      uint32_t crc;
+      uint32_t crc = 0;
+      
       memcpy (&crc, *out + strlen(*out) - 4, 4);
+#if defined WORDS_BIGENDIAN
+      crc = rec_endian_swap (crc);
+#endif
 
       if (crc32 (*out, strlen(*out) - 4) != crc)
         {
