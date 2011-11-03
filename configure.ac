@@ -18,7 +18,7 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([GNU recutils], [1.3.91], [bug-recutils@gnu.org])
+AC_INIT([GNU recutils], [1.4], [bug-recutils@gnu.org])
 
 dnl Must come before AM_INIT_AUTOMAKE
 AC_CONFIG_AUX_DIR([build-aux])

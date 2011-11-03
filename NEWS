@@ -7,7 +7,7 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 1.4 (???)
+ Version 1.4 (03 November 2011)
 * Support for encryption with the new %confidential special field.
 * Support for named types with the new %typedef special field.
 * Support for sorting with the new %sort special field.
@@ -17,7 +17,7 @@ See the manual for detailed information.
 * It is now possible to use double quotes for delimiting string
   literals in selection expressions, as well as single quotes.
   Unescapted newline characters are also supported.
-* The manual have been vastly improved.
+* The manual has been vastly improved.
 * recfix now supports several operations: check, sort, encrypt and
   decrypt.
 * recins now generates parseable locale independent dates when
