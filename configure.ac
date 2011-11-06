@@ -40,8 +40,10 @@ dnl files.
 
 : ${LEX='flex'}
 : ${LEXLIB='-lfl'}
+: ${LEX_OUTPUT_ROOT='lex.yy'}
 AC_ARG_VAR([LEX], [The flex implementation to use.])
 AC_ARG_VAR([LEXLIB], [Options for linking with the flex runtime library.])
+AC_ARG_VAR([LEX_OUTPUT_ROOT], [Base of the file name that the lexer generates.])
 
 gl_BISON
 

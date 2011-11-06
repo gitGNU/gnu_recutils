@@ -1,3 +1,9 @@
+2011-11-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	configure: generation of the lexer fixed.
+	* configure.ac: Define LEX_OUTPUT_ROOT so ylwrap can work
+	propertly when flex is installed.
+
 2011-11-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.4.
