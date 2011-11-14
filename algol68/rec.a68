@@ -1,0 +1,47 @@
+DECS rec CONTEXT VOID
+USE standard:
+{
+  Algol 68 bindings for the librec (GNU recutils) library.  This file
+  allows to use the librec library in Algol 68 programs compiled with
+  the ctrans compiler.
+
+  Copyright (C) 2011 Jose E. Marchesi
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see
+  <http://www.gnu.org/licenses/>.
+}
+
+{ Include the needed headers  }
+
+INT dummy = ALIEN "dummy" "#include ""config.h"""
+                          "#include <rec.h>";
+
+INT rec major version =
+   ALIEN "A68_REC_VERSION_MAJOR"
+         "#define A68_REC_VERSION_MAJOR REC_VERSION_MAJOR";
+INT rec minor version =
+   ALIEN "A68_REC_VERSION_MINOR"
+         "#define A68_REC_VERSION_MINOR REC_VERSION_MINOR";
+
+REF CSTR rec version string alien =
+   ALIEN "A68_REC_VERSION_STRING"
+         "#define A68_REC_VERSION_STRING REC_VERSION_STRING";
+PROC rec version string = STRING:
+   MAKERVC CSTRTORVC rec version string alien
+   
+KEEP
+
+   rec major version, rec minor version, rec version string
+
+FINISH

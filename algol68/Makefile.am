@@ -1,6 +1,6 @@
-# Top-level Makefile.am
+# Makefile.am for recutils/algol68
 
-# Copyright (C) 2009, 2010 Jose E. Marchesi
+# Copyright (C) 2011 Jose E. Marchesi
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,11 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = lib libcsv src utils doc po man torture etc
+lib_LIBRARIES = librec-a68.a
+librec_a68_a_SOURCES = rec.c
+BUILT_SOURCES = rec.c
+usrlibdir = $(libdir)
+usrlib_DATA = rec.m
 
-if BUILD_A68
-   SUBDIRS += algol68
-endif
+rec.c: rec.a68
+	$(CA68) -C -m librec-a68.a -d $(builddir) -M $(builddir) -I$(top_srcdir)/src -u AAAAGNU $<
+
+clean-local:
+	-rm -f $(builddir)/rec.[ocm]
 
 # End of Makefile.am

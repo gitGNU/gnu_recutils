@@ -125,6 +125,20 @@ AM_CONDITIONAL([COMPILE_MDB2REC],
                [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])
 AM_CONDITIONAL([REMOTE_DESCRIPTORS], [test "x$have_curl" = "xyes"])
 
+dnl Check for an Algol 68 compiler
+
+AC_ARG_ENABLE([algol68],
+              AS_HELP_STRING([--enable-algol68],
+                             [Build the bindings for Algol 68 (default is NO)]),
+              [algol68_enabled=$enableval], [algol68_enabled=no])
+
+if test "x$algol68_enabled" = "xyes"; then
+   AC_CHECK_PROGS([CA68], [ca68])
+fi
+
+AC_SUBST([CA68])
+AM_CONDITIONAL([BUILD_A68],[test -n $CA68 && test "x$algol68_enabled" = "xyes"])
+
 dnl Platform-based compilation options
 compile_w32_system=no
 case "${host}" in
@@ -158,7 +172,8 @@ AC_OUTPUT(Makefile
           torture/utils/Makefile
           torture/utils/config.sh
           man/Makefile
-          etc/Makefile)
+          etc/Makefile
+          algol68/Makefile)
 
 dnl Report warnings
 
