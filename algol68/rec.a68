@@ -38,7 +38,10 @@ REF CSTR rec version string alien =
    ALIEN "A68_REC_VERSION_STRING"
          "#define A68_REC_VERSION_STRING REC_VERSION_STRING";
 PROC rec version string = STRING:
-   MAKERVC CSTRTORVC rec version string alien
+   MAKERVC CSTRTORVC rec version string alien;
+
+PROC VOID rec init = ALIEN "rec_init()" "/**/",
+          rec fini = ALIEN "rec_fini()" "/**/"
    
 KEEP
 

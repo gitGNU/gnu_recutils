@@ -1,3 +1,9 @@
+2011-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-init and rec-fini defined in the algol68 binding.
+	* algol68/rec.a68 (rec init): New procedure.
+	(rec fini): Likewise.
+
 2011-11-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Initial work on the Algol 68 binding for librec.
