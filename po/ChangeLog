@@ -1,3 +1,8 @@
+2011-11-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	po: french translation added.
+	* fr.po: New file.
+
 2011-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* nl.po: Update for 1.4 fetched from translation project.
