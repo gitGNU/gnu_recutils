@@ -1,5 +1,9 @@
 2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* gnulib update, and module readline imported.
+
+2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: document the -q,--quick command line argument in the
 	utilities supporting it.
 	* doc/recutils.texi (recsel Invocation): Documentation for the

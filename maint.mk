@@ -625,6 +625,16 @@ sc_prohibit_stddef_without_use:
 	re='\<($(_stddef_syms_re))\>'					\
 	  $(_sc_header_without_use)
 
+_de1 = dirfd|(close|(fd)?open|read|rewind|seek|tell)dir(64)?(_r)?
+_de2 = (versionsort|struct dirent|getdirentries|alphasort|scandir(at)?)(64)?
+_de3 = MAXNAMLEN|DIR|ino_t|d_ino|d_fileno|d_namlen
+_dirent_syms_re = $(_de1)|$(_de2)|$(_de3)
+# Prohibit the inclusion of dirent.h without an actual use.
+sc_prohibit_dirent_without_use:
+	@h='dirent.h'							\
+	re='\<($(_dirent_syms_re))\>'					\
+	  $(_sc_header_without_use)
+
 # Prohibit the inclusion of verify.h without an actual use.
 sc_prohibit_verify_without_use:
 	@h='verify.h'							\
@@ -1193,9 +1203,9 @@ bootstrap-tools ?= autoconf,automake,gnulib
 # If it's not already specified, derive the GPG key ID from
 # the signed tag we've just applied to mark this release.
 gpg_key_ID ?= \
-  $$(git cat-file tag v$(VERSION) > .ann-sig \
-     && gpgv .ann-sig - < /dev/null 2>&1 \
-	  | sed -n '/.*key ID \([0-9A-F]*\)/s//\1/p'; rm -f .ann-sig)
+  $$(git cat-file tag v$(VERSION) \
+     | gpgv --status-fd 1 --keyring /dev/null - - 2>/dev/null \
+     | sed -n '/^\[GNUPG:\] ERRSIG /{s///;s/ .*//p;q}')
 
 translation_project_ ?= coordinator@translationproject.org
 
@@ -1428,7 +1438,7 @@ sc_tight_scope: tight-scope.mk
 
 tight-scope.mk: $(ME)
 	@rm -f $@ $@-t
-	@perl -ne '/^# TS-start/.../^# TS-end/ and print' $(ME) > $@-t
+	@perl -ne '/^# TS-start/.../^# TS-end/ and print' $(srcdir)/$(ME) > $@-t
 	@chmod a=r $@-t && mv $@-t $@
 
 ifeq (a,b)

@@ -73,7 +73,9 @@ AC_DEFUN([gl_EARLY],
   # Code from module frexpl-nolibm:
   # Code from module fstat:
   # Code from module gendocs:
+  # Code from module getdelim:
   # Code from module getdtablesize:
+  # Code from module getline:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
   # Code from module gettext:
@@ -131,6 +133,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module quotearg-simple:
   # Code from module raise:
   # Code from module rawmemchr:
+  # Code from module readline:
+  # Code from module realloc-posix:
   # Code from module regex:
   # Code from module regexprops-generic:
   # Code from module sched:
@@ -268,12 +272,24 @@ if test $REPLACE_FSTAT = 1; then
   gl_PREREQ_FSTAT
 fi
 gl_SYS_STAT_MODULE_INDICATOR([fstat])
+gl_FUNC_GETDELIM
+if test $HAVE_GETDELIM = 0 || test $REPLACE_GETDELIM = 1; then
+  AC_LIBOBJ([getdelim])
+  gl_PREREQ_GETDELIM
+fi
+gl_STDIO_MODULE_INDICATOR([getdelim])
 gl_FUNC_GETDTABLESIZE
 if test $HAVE_GETDTABLESIZE = 0; then
   AC_LIBOBJ([getdtablesize])
   gl_PREREQ_GETDTABLESIZE
 fi
 gl_UNISTD_MODULE_INDICATOR([getdtablesize])
+gl_FUNC_GETLINE
+if test $REPLACE_GETLINE = 1; then
+  AC_LIBOBJ([getline])
+  gl_PREREQ_GETLINE
+fi
+gl_STDIO_MODULE_INDICATOR([getline])
 gl_FUNC_GETOPT_GNU
 if test $REPLACE_GETOPT = 1; then
   AC_LIBOBJ([getopt])
@@ -467,6 +483,16 @@ if test $HAVE_RAWMEMCHR = 0; then
   gl_PREREQ_RAWMEMCHR
 fi
 gl_STRING_MODULE_INDICATOR([rawmemchr])
+gl_FUNC_READLINE
+if test "$gl_cv_lib_readline" = no; then
+  AC_LIBOBJ([readline])
+  gl_PREREQ_READLINE
+fi
+gl_FUNC_REALLOC_POSIX
+if test $REPLACE_REALLOC = 1; then
+  AC_LIBOBJ([realloc])
+fi
+gl_STDLIB_MODULE_INDICATOR([realloc-posix])
 gl_REGEX
 if test $ac_use_included_regex = yes; then
   AC_LIBOBJ([regex])
@@ -782,7 +808,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/frexp.c
   lib/frexpl.c
   lib/fstat.c
+  lib/getdelim.c
   lib/getdtablesize.c
+  lib/getline.c
   lib/getopt.c
   lib/getopt.in.h
   lib/getopt1.c
@@ -845,6 +873,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/raise.c
   lib/rawmemchr.c
   lib/rawmemchr.valgrind
+  lib/readline.c
+  lib/readline.h
+  lib/realloc.c
   lib/ref-add.sin
   lib/ref-del.sin
   lib/regcomp.c
@@ -949,7 +980,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/frexp.m4
   m4/frexpl.m4
   m4/fstat.m4
+  m4/getdelim.m4
   m4/getdtablesize.m4
+  m4/getline.m4
   m4/getopt.m4
   m4/gettext.m4
   m4/gettime.m4
@@ -1018,6 +1051,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/quotearg.m4
   m4/raise.m4
   m4/rawmemchr.m4
+  m4/readline.m4
+  m4/realloc.m4
   m4/regex.m4
   m4/sched_h.m4
   m4/setenv.m4
