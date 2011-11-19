@@ -697,6 +697,41 @@ bar"\""' -c" \
 '1
 '
 
+test_tool recsel-quick-simple ok \
+          recsel \
+          "-q value22" \
+          multiple-records \
+'field1: value21
+field2: value22
+field3: value23
+'
+
+test_tool recsel-quick-not-found ok \
+          recsel \
+          "-q notfound" \
+          multiple-records \
+''
+
+test_tool recsel-quick-and-sex xfail \
+          recsel \
+          "-q foo -e 'Bar = 10'" \
+          multiple-records
+
+test_tool recsel-sex-and-quick xfail \
+          recsel \
+          "-e 'Bar = 10' -q foo" \
+          multiple-records
+
+test_tool recsel-quick-and-num xfail \
+          recsel \
+          "-q foo -n 5" \
+          multiple-records
+
+test_tool recsel-num-and-quick xfail \
+          recsel \
+          "-n 5 -q foo" \
+          multiple-records
+
 #
 # Cleanup
 #

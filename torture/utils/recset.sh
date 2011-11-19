@@ -84,6 +84,20 @@ field2: field223
 field3: field23
 '
 
+test_declare_input_file multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
 #
 # Declare tests.
 #
@@ -388,6 +402,23 @@ test_tool recset-set-add-3 ok \
 field2: foo
 field3: value3
 field4: foo
+'
+
+test_tool recset-quick-simple ok \
+          recset \
+          '-q value22 -f field1 -s foo' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: foo
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
 '
 
 #

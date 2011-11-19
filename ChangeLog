@@ -1,5 +1,21 @@
 2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: tests for -q,--quick.
+	* torture/utils/recset.sh (multiple-records): New input file.
+	(recset-quick-simple): New test.
+
+	* torture/utils/recins.sh (recins-quick-simple): New test.
+
+	* torture/utils/recdel.sh (recdel-quick-simple): New test.
+
+	* torture/utils/recsel.sh (recsel-quick-simple): New test.
+	(recsel-quick-and-sex): Likewise.
+	(recsel-sex-and-quick): Likewise.
+	(recsel-num-and-quick): Likewise.
+	(recsel-quick-and-num): Likewise.
+
+2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recins: memory bug when several records get replaced fixed.
 	* utils/recins.c (recins_add_new_record): Insert copies of the new
 	record to insert, to cover cases where more than one record is

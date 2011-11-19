@@ -222,6 +222,19 @@ test_tool recdel-no-external ok \
 Id: bar
 '
 
+test_tool recdel-quick-simple ok \
+          recdel \
+          '-q value22' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value31
+field2: value32
+field3: value33
+'
+
 #
 # Cleanup
 #

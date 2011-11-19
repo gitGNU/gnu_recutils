@@ -362,6 +362,21 @@ myrange: 10
 myrange: 11
 foo: bar
 '
+
+test_tool recins-quick-simple ok \
+          recins \
+          '-q value22 -f foo -v bar' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+foo: bar
+
+field1: value31
+field2: value32
+field3: value33
+'
  
 #
 # Cleanup.
