@@ -1,5 +1,12 @@
 2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recins: memory bug when several records get replaced fixed.
+	* utils/recins.c (recins_add_new_record): Insert copies of the new
+	record to insert, to cover cases where more than one record is
+	replaced.
+
+2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: recset, recins, recdel and recsel adapted to support the
 	-q, --quick option.
 	* utils/recset.c (recset_process_actions): Honour

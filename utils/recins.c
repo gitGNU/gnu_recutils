@@ -580,25 +580,25 @@ recins_add_new_record (rec_db_t db)
           rec_record_destroy (recins_record);
 
 #if defined REC_CRYPT_SUPPORT
-      {
-        /* Encrypt the value of fields declared as confidential in
-           this record set.  */
-        
-        rec_fex_t confidential_fields =
-          rec_rset_confidential (rset);
-        if (!recins_password && (rec_fex_size (confidential_fields) > 0))
           {
-            recutl_warning (_("the record set contains confidential fields but no password was provided\n"));
-            recutl_warning (_("the resulting record will have those fields unencrypted!\n"));
-          }
-        else
-          {
-            if (!rec_encrypt_record (rset, record_to_insert, recins_password))
+            /* Encrypt the value of fields declared as confidential in
+               this record set.  */
+            
+            rec_fex_t confidential_fields =
+              rec_rset_confidential (rset);
+            if (!recins_password && (rec_fex_size (confidential_fields) > 0))
               {
-                recutl_fatal ("encrypting a record.  Please report this.\n");
+                recutl_warning (_("the record set contains confidential fields but no password was provided\n"));
+                recutl_warning (_("the resulting record will have those fields unencrypted!\n"));
+              }
+            else
+              {
+                if (!rec_encrypt_record (rset, record_to_insert, recins_password))
+                  {
+                    recutl_fatal ("encrypting a record.  Please report this.\n");
+                  }
               }
           }
-      }
 #endif
 
           rset_elem = rec_rset_first_record (rset);
@@ -624,13 +624,15 @@ recins_add_new_record (rec_db_t db)
                 }
               else
                 {
-                  new_rset_elem = rec_rset_elem_record_new (rset, record_to_insert);
+                  new_rset_elem = rec_rset_elem_record_new (rset, rec_record_dup (record_to_insert));
                   rec_rset_insert_after (rset, rset_elem, new_rset_elem);
                   rec_rset_remove (rset, rset_elem);
                   rset_elem = rec_rset_next_record (rset, new_rset_elem);
                 }
             }
         }
+
+      rec_record_destroy (record_to_insert);
     }
   else
     {
