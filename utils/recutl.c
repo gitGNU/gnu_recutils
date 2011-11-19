@@ -122,6 +122,7 @@ Record selection options:\n\
                                         expressions.\n\
   -t, --type=TYPE                     operate on records of the specified type only.\n\
   -e, --expression=EXPR               selection expression.\n\
+  -q, --quick=STR                     select records with fields containing a string.\n\
   -n, --number=NUM                    select an specific record.\n"),
          stdout);
 }

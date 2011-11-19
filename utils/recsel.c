@@ -47,6 +47,7 @@ bool       recsel_print_values = false;
 bool       recsel_print_row    = false;
 char      *recutl_sex_str      = NULL;
 rec_sex_t  recutl_sex          = NULL;
+char      *recutl_quick_str    = NULL;
 char      *recsel_fex_str      = NULL;
 rec_fex_t  recsel_fex          = NULL;
 char      *recutl_type         = NULL;
@@ -104,7 +105,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recsel synopsis.
      no-wrap */
   printf (_("\
-Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
+Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
 
   /* TRANSLATORS: --help output, recsel arguments.
      no-wrap */
@@ -282,7 +283,6 @@ recsel_parse_args (int argc,
         }
     }
 
-  
   /* Set the sorting criteria for the parser.  */
   recutl_sorting_parser (true, recutl_type, recutl_sort_by_field);
 }
@@ -310,7 +310,7 @@ recsel_process_data (rec_db_t db)
     }
 
   /* If the database contains more than one type of records and the
-     user did'nt specify the recutl_type then ask the user to clear
+     user did'nt specify the recutl_type then ask the user to clarify
      the request.  */
   if (!recutl_type && (rec_db_size (db) > 1))
     {
@@ -363,17 +363,30 @@ recsel_process_data (rec_db_t db)
           num_rec++;
 
           /* Shall we skip this record?  */
-          if (((recutl_num != -1) && (recutl_num != num_rec))
-              || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
-                                      && parse_status)))
+
+          if (recutl_quick_str)
             {
-              if (recutl_sex_str && (!parse_status))
+              if (!rec_record_contains_value (record,
+                                              recutl_quick_str,
+                                              recutl_insensitive))
                 {
-                  recutl_error (_("evaluating the selection expression.\n"));
-                  return false;
+                  continue;
                 }
+            }
+          else
+            {
+              if (((recutl_num != -1) && (recutl_num != num_rec))
+                  || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
+                                          && parse_status)))
+                {
+                  if (recutl_sex_str && (!parse_status))
+                    {
+                      recutl_error (_("evaluating the selection expression.\n"));
+                      return false;
+                    }
       
-              continue;
+                  continue;
+                }
             }
 
           /* Process this record.  */

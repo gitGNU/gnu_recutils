@@ -1,3 +1,42 @@
+2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	utils: recset, recins, recdel and recsel adapted to support the
+	-q, --quick option.
+	* utils/recset.c (recset_process_actions): Honour
+	recutl_quick_str.
+	(recset_process_ren): Likewise.
+
+	* utils/recins.c (recins_add_new_record): Honour recutl_quick_str.
+
+	* utils/recdel.c (recdel_delete_records): Honour recutl_quick_str.
+	(recdel_parse_args): Take into account recutl_quick_str when
+	deciding whether a request to delete all records.
+	(main): Likewise.
+
+	* src/rec-record.c (rec_record_contains_value): New function.
+
+	* utils/recutl.h (RECORD_SELECTION_SHORT_ARGS): Updated with q:.
+
+	* utils/recset.c: New global recutl_quick_str.
+
+	* utils/recdel.c: New global recutl_quick_str.
+	(recutl_print_help): Document the usae of -q, --quick.
+
+	* utils/recins.c: New global recutl_quick_str.
+	(recutl_print_help): Document the usage of -q, --quick.
+
+	* utils/recutl.c (recutl_print_help_record_selection): Document
+	the usage of -q, --quick.
+
+	* utils/recutl.h (RECORD_SELECTION_ARGS): QUICK_ARG added.
+	(RECORD_SELECTION_LONG_ARGS): Entry for QUICK_ARG.
+	(RECORD_SELECTION_ARGS_CASES): Likewise.
+
+	* utils/recsel.c (recsel_process_data): Improve grammar in
+	comment.
+	(recutl_print_help): Document the usage of -q, --quick.
+	(recutl_quick_str): New global variable.
+
 2011-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-init and rec-fini defined in the algol68 binding.

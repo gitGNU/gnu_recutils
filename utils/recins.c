@@ -50,6 +50,7 @@ void recins_parse_args (int argc, char **argv);
 char         *recutl_type      = NULL;
 rec_sex_t     recutl_sex       = NULL;
 char         *recutl_sex_str   = NULL;
+char         *recutl_quick_str = NULL;
 int           recutl_num       = -1;
 bool          recutl_insensitive = false;
 rec_record_t  recins_record    = NULL;
@@ -104,7 +105,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recins synopsis.
      no-wrap */
   printf (_("\
-Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"));
+Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recins short description.
      no-wrap */
@@ -565,7 +566,8 @@ recins_add_new_record (rec_db_t db)
   rec_record_t record_to_insert;
 
   if ((recutl_num != -1)
-      || (recutl_sex_str != NULL))
+      || (recutl_sex_str != NULL)
+      || (recutl_quick_str != NULL))
     {
       /* Replace matching records.  */
       rset = rec_db_get_rset_by_type (db, recutl_type);
@@ -607,6 +609,9 @@ recins_add_new_record (rec_db_t db)
 
               /* Shall we skip this record?  */
               if (((recutl_num != -1) && (recutl_num != num_rec))
+                  || (recutl_quick_str && !rec_record_contains_value (record,
+                                                                      recutl_quick_str,
+                                                                      recutl_insensitive))
                   || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
                                           && parse_status)))
                 {

@@ -60,6 +60,7 @@ static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t 
 
 char      *recutl_sex_str     = NULL;
 rec_sex_t  recutl_sex         = NULL;
+char      *recutl_quick_str   = NULL;
 char      *recutl_fex_str     = NULL;
 rec_fex_t  recutl_fex         = NULL;
 char      *recutl_type        = NULL;
@@ -378,11 +379,14 @@ recset_process_actions (rec_db_t db)
         {
           record = rec_rset_elem_record (rec_elem);
           
-          if (((recutl_num == -1) && !recutl_sex)
-              || (((recutl_num == -1) &&
-                  ((recutl_sex &&
-                    (rec_sex_eval (recutl_sex, record, &parse_status)))))
-                  || (recutl_num == numrec)))
+          if ((recutl_quick_str && rec_record_contains_value (record,
+                                                              recutl_quick_str,
+                                                              recutl_insensitive))
+              || (!recutl_quick_str && (((recutl_num == -1) && !recutl_sex)
+                                        || (((recutl_num == -1) &&
+                                             ((recutl_sex &&
+                                               (rec_sex_eval (recutl_sex, record, &parse_status)))))
+                                            || (recutl_num == numrec)))))
             {
               /* Process a copy of this record.  */
               switch (recset_action)
@@ -584,7 +588,7 @@ recset_process_ren (rec_rset_t rset,
      But make sure to do it just once.
   */
   if ((!recset_descriptor_renamed)
-      && (recutl_sex == NULL) && (recutl_num == -1))
+      && (recutl_sex == NULL) && (recutl_num == -1) && (recutl_quick_str == NULL))
     {
       rec_rset_rename_field (rset,
                              field_name,

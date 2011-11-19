@@ -61,17 +61,19 @@
 #define RECORD_SELECTION_ARGS                   \
   TYPE_ARG,                                     \
   EXPRESSION_ARG,                               \
+  QUICK_ARG,                                    \
   NUM_ARG,                                      \
   INSENSITIVE_ARG
 
 #define RECORD_SELECTION_LONG_ARGS                                     \
    {"type", required_argument, NULL, TYPE_ARG},                        \
    {"expression", required_argument, NULL, EXPRESSION_ARG},            \
+   {"quick", required_argument, NULL, QUICK_ARG},                      \
    {"num", required_argument, NULL, NUM_ARG},                          \
    {"case-insensitive", no_argument, NULL, INSENSITIVE_ARG}
 
 #define RECORD_SELECTION_SHORT_ARGS             \
-   "it:e:n:"
+   "it:e:n:q:"
 
 #define RECORD_SELECTION_ARGS_CASES                            \
     case TYPE_ARG:                                             \
@@ -92,6 +94,13 @@
           {                                                    \
              fprintf (stderr,                                  \
                       "%s: cannot specify -e and also -n.\n",  \
+                      program_name);                           \
+             exit (EXIT_FAILURE);                              \
+          }                                                    \
+        if (recutl_quick_str)                                  \
+          {                                                    \
+             fprintf (stderr,                                  \
+                      "%s: cannot specify -e and also -q.\n",  \
                       program_name);                           \
              exit (EXIT_FAILURE);                              \
           }                                                    \
@@ -127,6 +136,13 @@
                       program_name);                           \
              exit (EXIT_FAILURE);                              \
           }                                                    \
+        if (recutl_quick_str)                                  \
+          {                                                    \
+             fprintf (stderr,                                  \
+                      "%s: cannot specify -n and also -q.\n",  \
+                      program_name);                           \
+             exit (EXIT_FAILURE);                              \
+          }                                                    \
                                                                \
           str = xstrdup (optarg);                              \
           li = strtol (str, &end, 10);                         \
@@ -143,6 +159,27 @@
               exit (EXIT_FAILURE);                             \
             }                                                  \
           break;                                               \
+      }                                                        \
+      case QUICK_ARG:                                          \
+      case 'q':                                                \
+      {                                                        \
+         if (recutl_sex)                                       \
+          {                                                    \
+             fprintf (stderr,                                  \
+                      "%s: cannot specify -n and also -e.\n",  \
+                      program_name);                           \
+             exit (EXIT_FAILURE);                              \
+          }                                                    \
+        if (recutl_num != -1)                                  \
+          {                                                    \
+             fprintf (stderr,                                  \
+                      "%s: cannot specify -e and also -n.\n",  \
+                      program_name);                           \
+             exit (EXIT_FAILURE);                              \
+          }                                                    \
+                                                               \
+        recutl_quick_str = xstrdup (optarg);                   \
+        break;                                                 \
       }                                                        \
       case INSENSITIVE_ARG:                                    \
       case 'i':                                                \

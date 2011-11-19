@@ -46,6 +46,7 @@ void recdel_parse_args (int argc, char **argv);
 char *recutl_type = NULL;
 bool recdel_comment = false;
 rec_sex_t recutl_sex = NULL;
+char *recutl_quick_str = NULL;
 char *recutl_sex_str = NULL;
 int recutl_num = -1;
 bool recutl_insensitive = false;
@@ -86,7 +87,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recdel synopsis.
      no-wrap */
   printf (_("\
-Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n"));
+Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR] [FILE]\n"));
 
   /* TRANSLATORS: --help output, recdel short description.
      no-wrap */
@@ -182,11 +183,14 @@ recdel_delete_records (rec_db_t db)
         {
           record = rec_rset_elem_record (rec_elem);
           
-          if (((recutl_num == -1) && !recutl_sex)
-              || (((recutl_num == -1) &&
-                   (recutl_sex &&
-                    (rec_sex_eval (recutl_sex, record, &parse_status))))
-                  || (recutl_num == numrec)))
+          if ((recutl_quick_str && rec_record_contains_value (record,
+                                                              recutl_quick_str,
+                                                              recutl_insensitive))
+              || (!recutl_quick_str && (((recutl_num == -1) && !recutl_sex)
+                                        || (((recutl_num == -1) &&
+                                             (recutl_sex &&
+                                              (rec_sex_eval (recutl_sex, record, &parse_status))))
+                                            || (recutl_num == numrec)))))
             {
               /* Delete this record.  */
               if (recdel_comment)
@@ -267,7 +271,7 @@ recdel_parse_args (int argc,
         }
     }
   
-  if ((recutl_num == -1) && !recutl_sex_str && !recdel_force)
+  if ((recutl_num == -1) && !recutl_sex_str && !recutl_quick_str && !recdel_force)
     {
       recutl_error (_("ignoring a request to delete all records of type %s.\n"),
                     recutl_type ? recutl_type : "unknown");
@@ -311,7 +315,7 @@ main (int argc, char *argv[])
       recutl_fatal (_("cannot read file %s\n"), recdel_file);
     }
 
-  if (((recutl_num != -1) || recutl_sex) || recdel_force)
+  if (((recutl_num != -1) || recutl_sex || recutl_quick_str) || recdel_force)
     {
       recdel_delete_records (db);
     }

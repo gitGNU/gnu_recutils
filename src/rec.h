@@ -557,6 +557,10 @@ rec_comment_t rec_record_elem_comment (rec_record_elem_t elem);
 
 rec_comment_t rec_record_to_comment (rec_record_t record);
 
+/* Returns true if there is a field in RECORD whose value contains
+   STR.  Returns false otherwise.  */
+bool rec_record_contains_value (rec_record_t record, char *value, bool case_insensitive);
+
 /*
  * RECORD SETS
  *

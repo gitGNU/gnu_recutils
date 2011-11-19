@@ -826,6 +826,40 @@ rec_record_set_char_location (rec_record_t record,
   asprintf (&(record->char_location_str), "%zu", record->char_location);
 }
 
+bool
+rec_record_contains_value (rec_record_t record,
+                           char *str,
+                           bool case_insensitive)
+{
+  bool res = false;
+  rec_field_t field;
+  char *field_value, *occur;
+  size_t i;
+
+  for (i = 0; i < rec_record_num_fields (record); i++)
+    {
+      field = rec_record_elem_field (rec_record_get_field (record, i));
+      field_value = rec_field_value (field);
+
+      if (case_insensitive)
+        {
+          occur = strcasestr (field_value, str);
+        }
+      else
+        {
+          occur = strstr (field_value, str);
+        }
+
+      res = (occur != NULL);
+      if (res)
+        {
+          break;
+        }
+    }
+
+  return res;
+}
+
 /*
  * Private functions
  */
