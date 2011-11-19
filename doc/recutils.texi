@@ -2031,7 +2031,7 @@ part of records) based in some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [@var{option}]@dots{} [-n @var{num} | -e @var{record_expr}] [-c | (-p|-P|-R) @var{field_expr}] \
+recsel [@var{option}]@dots{} [-n @var{num} | -e @var{record_expr} | -q @var{str}] [-c | (-p|-P|-R) @var{field_expr}] \
        [@var{file}]@dots{}
 @end example
 
@@ -2074,6 +2074,10 @@ set.
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be taken into account to
 compute the output.
+@item -q @var{str}
+@itemx @w{@kbd{--quick}=@var{str}}
+Select records having a field whose value contains the substring
+@var{str}.
 @item -t TYPE
 @itemx @w{@kbd{--type}=@var{type}}
 Select records of a given type only.
@@ -2236,7 +2240,7 @@ from the standard input.
 from the standard input.  Synopsis:
 
 @example
-recins [@var{option}]@dots{} [t @var{type}] [-n @var{num} | -e @var{expr}] \
+recins [@var{option}]@dots{} [t @var{type}] [-n @var{num} | -e @var{expr} | -q @var{str}] \
        [(-f @var{str} -v @var{str}]|[-r @var{recdata})]@dots{} [@var{file}]
 @end example
 
@@ -2296,6 +2300,10 @@ set.
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).
 Matching records will get replaced.
+@item -q @var{str}
+@itemx @w{@kbd{--quick}=@var{str}}
+Remove records having a field whose value contains the substring
+@var{str}.
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.
@@ -2361,7 +2369,7 @@ read from the standard input.
 read from the standard input.  Synopsis:
 
 @example
-recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{num} | -e @var{expr}] [@var{file}]
+recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{num} | -e @var{expr} | -q @var{str}] [@var{file}]
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
@@ -2383,6 +2391,10 @@ set.
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be removed from the file.
+@item -q @var{str}
+@itemx @w{@kbd{--quick}=@var{str}}
+Remove records having a field whose value contains the substring
+@var{str}.
 @item -c
 @itemx @w{@kbd{--comment}}
 Comment the matching records out instead of removing them.
@@ -2449,6 +2461,10 @@ set.
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be removed from the file.
+@item -q @var{str}
+@itemx @w{@kbd{--quick}=@var{str}}
+Remove records having a field whose value contains the substring
+@var{str}.
 @end table
 
 Fields selection options:
