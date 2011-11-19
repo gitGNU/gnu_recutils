@@ -40,6 +40,7 @@
 #endif
 #include <progname.h>
 #include <sys/stat.h>
+#include <readline.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -452,6 +453,35 @@ recutl_sorting_parser (bool sort_p,
 {
   recutl_sort_p = sort_p;
   recutl_order_by_field = field_name;
+}
+
+bool
+recutl_yesno (char *prompt)
+{
+  bool res = false;
+  char *line = NULL;
+
+  while (1)
+    {
+      line = readline (prompt);
+      if (line)
+        {
+          if (strcmp (line, "yes") == 0)
+            {
+              res = true;
+              break;
+            }
+          else if (strcmp (line, "no") == 0)
+            {
+              res = false;
+              break;
+            }
+        }
+
+      printf ("Please answer 'yes' or 'no'.\n");
+    }           
+
+  return res;
 }
 
 /* End of recutl.c */

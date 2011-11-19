@@ -224,6 +224,8 @@ void recutl_sorting_parser (bool sort_p,
                             char *rset_name,
                             rec_field_name_t field_name);
 
+bool recutl_yesno (char *prompt);
+
 #endif /* recutl.h */
 
 /* End of recutl.h */

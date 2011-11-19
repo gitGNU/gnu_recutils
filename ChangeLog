@@ -1,5 +1,10 @@
 2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: new function recutl_yesno.
+	* utils/recutl.c (recutl_yesno): New function.
+
+2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* gnulib update, and module readline imported.
 
 2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
