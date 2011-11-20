@@ -273,14 +273,15 @@ rec_letter_p (char c)
           || ((c >= 'A') && (c <= 'Z')));
 }
 
-bool
-rec_match (const char *str,
-           const char *reg)
+static bool
+rec_match_int (const char *str,
+               const char *reg,
+               int flags)
 {
   bool ret;
   regex_t regexp;
 
-  if (regcomp (&regexp, reg, REG_EXTENDED) != 0)
+  if (regcomp (&regexp, reg, flags) != 0)
     {
       fprintf (stderr, _("internal error: rec_match: error compiling regexp.\n"));
       return false;
@@ -290,6 +291,20 @@ rec_match (const char *str,
   regfree (&regexp);
 
   return ret;
+}
+
+bool
+rec_match (const char *str,
+           const char *reg)
+{
+  return rec_match_int (str, reg, REG_EXTENDED);
+}
+
+bool
+rec_match_insensitive (const char *str,
+                       const char *reg)
+{
+  return rec_match_int (str, reg, REG_EXTENDED | REG_ICASE);
 }
 
 size_t

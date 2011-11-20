@@ -1,5 +1,41 @@
 2011-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: avoid duplication of regular expressions and generalize
+	the usage of the rec_match_* functions.
+	* src/rec-types.c (rec_type_check_int): Use rec_match instead of
+	rec_type_check_re.
+	(rec_type_check_field): Likewise.
+	(rec_type_check_bool): Likewise.
+	(rec_type_check_real): Likewise.
+	(rec_type_check_line): Likewise.
+	(rec_type_check_email): Likewise.
+	(rec_type_check_enum): Likewise.
+	(rec_type_check_re): Function deleted.
+
+	* src/rec-sex.c (rec_sex_eval_node): Use rec_match and
+	rec_match_insensitive.
+
+	* src/rec-utils.c (rec_match_int): New function.
+	(rec_match_insensitive): New function.
+
+	* src/rec-rset.c (rec_rset_type_field_p): Use
+	REC_FNAME_LIST_CS_RE.
+	(rec_rset_type_field_fex): Likewise.
+	(rec_rset_type_field_type): Likewise.
+
+	* src/rec-field-name.c (rec_field_name_part_str_p): Use rec_match
+	instead of regcomp/regexec.
+	(rec_field_name_str_p): Likewise.
+	* src/rec-int.c (rec_int_rec_type_p): Likewise.
+
+	* src/rec-fex.c (rec_fex_check): Use the REC_*_RE constants.
+
+	* src/rec-utils.h (REC_FNAME_LIST_CS_RE): New constant.
+	(REC_FNAME_LIST_RE): Likewise.
+	(REC_FNAME_LIST_SUB_RE): Likewise.
+
+2011-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: avoid duplication of error reporting code in rec-int.c.
 	* src/rec-int.c (ADD_ERROR): New macro.
 	(rec_int_check_rset): Use ADD_ERROR.

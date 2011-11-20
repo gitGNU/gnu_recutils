@@ -55,8 +55,8 @@
 #define REC_TYPE_EMAIL_NAME  "email"
 #define REC_TYPE_FIELD_NAME  "field"
 
-/* Regular expression denoting a blank character in a type
-   description.  */
+/* Regular expressions.  */
+
 #define REC_TYPE_BLANK_RE "[ \t\n]"
 #define REC_TYPE_NO_BLANK_RE "[^ \t\n]"
 #define REC_TYPE_BLANKS_RE REC_TYPE_BLANK_RE "+"
@@ -232,7 +232,6 @@ struct rec_type_reg_s
  * Forward declarations.
  */
 
-static bool rec_type_check_re (char *regexp_str, char *str);
 static enum rec_type_kind_e rec_type_parse_type_kind (char *str);
 
 static bool rec_type_check_int (rec_type_t type, char *str, rec_buf_t errors);
@@ -929,7 +928,7 @@ rec_type_check_int (rec_type_t type,
 {
   bool ret;
 
-  ret = rec_type_check_re (REC_TYPE_INT_VALUE_RE, str);
+  ret = rec_match (str, REC_TYPE_INT_VALUE_RE);
   if (!ret && errors)
     {
       rec_buf_puts (_("invalid integer."), errors);
@@ -945,7 +944,7 @@ rec_type_check_field (rec_type_t type,
 {
   bool ret;
 
-  ret = rec_type_check_re (REC_TYPE_FIELD_VALUE_RE, str);
+  ret = rec_match (str, REC_TYPE_FIELD_VALUE_RE);
   if (!ret && errors)
     {
       rec_buf_puts (_("invalid 'field' value."), errors);
@@ -961,7 +960,7 @@ rec_type_check_bool (rec_type_t type,
 {
   bool ret;
 
-  ret = rec_type_check_re (REC_TYPE_BOOL_VALUE_RE, str);
+  ret = rec_match (str, REC_TYPE_BOOL_VALUE_RE);
   if (!ret && errors)
     {
       rec_buf_puts (_("invalid 'bool' value."), errors);
@@ -1012,7 +1011,7 @@ rec_type_check_real (rec_type_t type,
 {
   bool ret;
 
-  ret = rec_type_check_re (REC_TYPE_REAL_VALUE_RE, str);
+  ret = rec_match (str, REC_TYPE_REAL_VALUE_RE);
   if (!ret && errors)
     {
       rec_buf_puts (_("invalid 'real' value."), errors);
@@ -1049,7 +1048,7 @@ rec_type_check_line (rec_type_t type,
 {
   bool ret;
 
-  ret = rec_type_check_re (REC_TYPE_LINE_VALUE_RE, str);
+  ret = rec_match (str, REC_TYPE_LINE_VALUE_RE);
   if (!ret && errors)
     {
       rec_buf_puts (_("invalid 'line' value."), errors);
@@ -1107,7 +1106,7 @@ rec_type_check_email (rec_type_t type,
 {
   bool ret;
 
-  ret = rec_type_check_re (REC_TYPE_EMAIL_VALUE_RE, str);
+  ret = rec_match (str, REC_TYPE_EMAIL_VALUE_RE);
   if (!ret && errors)
     {
       rec_buf_puts (_("invalid email."), errors);
@@ -1125,7 +1124,7 @@ rec_type_check_enum (rec_type_t type,
   const char *p, *b;
   char name[100];
 
-  if (!rec_type_check_re (REC_TYPE_ENUM_VALUE_RE, str))
+  if (!rec_match (str, REC_TYPE_ENUM_VALUE_RE))
     {
       return false;
     }

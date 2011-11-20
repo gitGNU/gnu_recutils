@@ -264,43 +264,13 @@ rec_field_name_ref_p (rec_field_name_t fname1,
 bool
 rec_field_name_str_p (const char *str)
 {
-  int ret;
-  regex_t regexp;
-
-  /* Compile the regexp.  */
-  if ((ret = regcomp (&regexp, "^" REC_FNAME_RE "$", REG_EXTENDED)) != 0)
-    {
-      fprintf (stderr, _("internal error: rec_field_name_str_p: error compiling regexp.\n"));
-      return false;
-    }
-
-  /* Check.  */
-  ret = regexec (&regexp, str, 0, NULL, 0);
-
-  regfree (&regexp);
-  return (ret == 0);
+  return rec_match (str, "^" REC_FNAME_RE "$");
 }
 
 bool
 rec_field_name_part_str_p (const char *str)
 {
-  int ret;
-  regex_t regexp;
-
-  /* Compile the regexp.  */
-  if ((ret = regcomp (&regexp,
-                      "^" REC_FNAME_PART_RE "$",
-                      REG_EXTENDED)) != 0)
-    {
-      fprintf (stderr, _("internal error: rec_field_name_part_str_p: error compiling regexp.\n"));
-      return false;
-    }
-
-  /* Check.  */
-  ret = regexec (&regexp, str, 0, NULL, 0);
-
-  regfree (&regexp);
-  return (ret == 0);
+  return rec_match (str, "^" REC_FNAME_PART_RE "$");
 }
 
 char *

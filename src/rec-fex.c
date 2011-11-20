@@ -147,38 +147,22 @@ rec_fex_check (char *str, enum rec_fex_kind_e kind)
   int ret;
   regex_t regexp;
   char *regexp_str;
-  static char *regexp_simple_str =
-    "^" /* Beginning of the string.  */
-    REC_FNAME_RE "([ \n\t]+" REC_FNAME_RE ")*"
-    "$" /* End of the string.  */
-    ;
-  static char *regexp_csv_str =
-    "^" /* Beginning of the string.  */
-    REC_FNAME_RE "(," REC_FNAME_RE ")*"
-    "$" /* End of the string.  */
-    ;
-#define REC_FNAME_SUB REC_FNAME_RE "(\\[[0-9]+(-[0-9]+)?\\])?"
-  static char *regexp_sub_str =
-    "^" /* Beginning of the string.  */
-    REC_FNAME_SUB "(," REC_FNAME_SUB ")*"
-    "$" /* End of the string.  */
-    ;
 
   switch (kind)
     {
     case REC_FEX_SIMPLE:
       {
-        regexp_str = regexp_simple_str;
+        regexp_str = "^" REC_FNAME_LIST_RE "$";
         break;
       }
     case REC_FEX_CSV:
       {
-        regexp_str = regexp_csv_str;
+        regexp_str = "^" REC_FNAME_LIST_CS_RE "$";
         break;
       }
     case REC_FEX_SUBSCRIPTS:
       {
-        regexp_str = regexp_sub_str;
+        regexp_str = "^" REC_FNAME_LIST_SUB_RE "$";
         break;
       }
     default:

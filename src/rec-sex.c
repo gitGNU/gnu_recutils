@@ -657,31 +657,18 @@ rec_sex_eval_node (rec_sex_t sex,
             && (child_val2.type == REC_SEX_VAL_STR))
           {
             /* String match.  */
-            regex_t regexp;
-            int flags;
+            res.type = REC_SEX_VAL_INT;
 
-            flags = REG_EXTENDED;
             if (rec_sex_parser_case_insensitive (sex->parser))
               {
-                flags |= REG_ICASE;
+                res.int_val =
+                  rec_match_insensitive (child_val1.str_val, child_val2.str_val);
               }
-
-            if (regcomp (&regexp,
-                         child_val2.str_val,
-                         flags) != 0)
+            else
               {
-                *status = false;
-                return res;
+                res.int_val =
+                  rec_match (child_val1.str_val, child_val2.str_val);
               }
-
-            res.type = REC_SEX_VAL_INT;
-            res.int_val = (regexec (&regexp,
-                                    child_val1.str_val,
-                                    0,
-                                    NULL,
-                                    0) == 0);
-
-            regfree (&regexp);
           }
         else
           {

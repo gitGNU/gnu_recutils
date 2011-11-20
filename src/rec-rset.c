@@ -1578,7 +1578,7 @@ rec_rset_type_field_p (const char *str)
 
   rec_skip_blanks (&p);
   if (!rec_parse_regexp (&p,
-                         "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                         "^" REC_FNAME_LIST_CS_RE,
                          NULL))
     {
       return false;
@@ -1601,7 +1601,7 @@ rec_rset_type_field_fex (const char *str)
   p = str;
 
   if (rec_parse_regexp (&p,
-                        "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
+                        "^" REC_FNAME_LIST_CS_RE,
                         &name))
     {
       fex = rec_fex_new (name, REC_FEX_CSV);
@@ -1622,7 +1622,7 @@ rec_rset_type_field_type (const char *str)
       p = str;
 
       rec_skip_blanks (&p);
-      rec_parse_regexp (&p, "^" REC_FNAME_RE "(," REC_FNAME_RE ")*", NULL);
+      rec_parse_regexp (&p, "^" REC_FNAME_LIST_CS_RE, NULL);
       rec_skip_blanks (&p);
 
       /* Return the rest of the string.  */

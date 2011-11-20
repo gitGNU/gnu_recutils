@@ -41,7 +41,7 @@ enum rec_size_condition_e
     SIZE_COND_GE
   };
 
-/* Non public constants used by several modules.  */
+/* Non public constants used by several modules. */
 
 #define REC_INT_SIZE_RE "^[ \t\n]*(>|<|>=|<=)?[ \t\n]*([0-9]+)[ \t\n]*$"
 
@@ -62,6 +62,7 @@ enum rec_size_condition_e rec_extract_size_condition (const char *str);
 
 /* Matching a string against a regexp.  */
 bool rec_match (const char *str, const char *regexp);
+bool rec_match_insensitive (const char *str, const char *regexp);
 
 /* Generic parsing routines.  */
 bool rec_blank_p (char c);

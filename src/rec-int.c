@@ -1139,28 +1139,16 @@ rec_int_merge_remote (rec_rset_t rset,
 static bool
 rec_int_rec_type_p (char *str)
 {
-  regex_t regexp;
-  bool ret;
-
-  if (regcomp (&regexp, "^[ \t]*"
-               REC_FNAME_PART_RE
-               "[ \n\t]*"
-               "("
-               "(" REC_URL_REGEXP ")"
-               "|"
-               "(" REC_FILE_REGEXP ")"
-               "[ \t]*)?"
-               "$",
-               REG_EXTENDED) != 0)
-    {
-      fprintf (stderr, _("internal error: rec_int_rec_type_p: error compiling regexp.\n"));
-      return false;
-    }
-
-  ret = (regexec (&regexp, str, 0, NULL, 0) == 0);
-  regfree (&regexp);
-
-  return ret;
+  return rec_match (str,
+                    "^[ \t]*"
+                    REC_FNAME_PART_RE
+                    "[ \n\t]*"
+                    "("
+                    "(" REC_URL_REGEXP ")"
+                    "|"
+                    "(" REC_FILE_REGEXP ")"
+                    "[ \t]*)?"
+                    "$");
 }
 
 /* End of rec-int.c */
