@@ -1,5 +1,19 @@
 2011-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: avoid duplication of error reporting code in rec-int.c.
+	* src/rec-int.c (ADD_ERROR): New macro.
+	(rec_int_check_rset): Use ADD_ERROR.
+	(rec_int_check_rset): Likewise.
+	(rec_int_check_record_mandatory): Likewise.
+	(rec_int_check_record_unique): Likewise.
+	(rec_int_check_record_prohibit): Likewise.
+	(rec_int_check_record_secrets): Likewise.
+	(rec_int_check_record_key): Likewise.
+	(rec_int_check_descriptor): Likewise.
+	(rec_int_merge_remote): Likewise.
+
+2011-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: avoid duplication of special field names in the codebase.
 	* src/rec-parser.c (rec_parse_rset): Use rec_std_field_name.
 

@@ -67,10 +67,20 @@ static int rec_int_check_record_secrets (rec_rset_t rset, rec_record_t record,
 static int rec_int_merge_remote (rec_rset_t rset, rec_buf_t errors);
 static bool rec_int_rec_type_p (char *str);
 
-/* The following macro is used by some functions to reduce
-   verbosity.  */
+/* The following macros are used by some functions in this file to
+   reduce verbosity.  */
 
 #define FNAME(id) rec_std_field_name ((id))
+
+#define ADD_ERROR(buf,str,...)                  \
+  do                                            \
+    {                                           \
+       char *tmp = NULL;                        \
+       asprintf (&tmp, (str), __VA_ARGS__);     \
+       rec_buf_puts (tmp, (buf));               \
+       free (tmp);                              \
+    }                                           \
+  while (0)
 
 /*
  * Public functions.
@@ -115,7 +125,6 @@ rec_int_check_rset (rec_db_t db,
   rec_record_t record;
   rec_record_t descriptor;
   size_t num_records, min_records, max_records;
-  char *tmp;
 
   res = 0;
 
@@ -157,13 +166,9 @@ rec_int_check_rset (rec_db_t db,
     {
       if (num_records != min_records)
         {
-          asprintf (&tmp,
-                    _("%s: error: the number of records of type %s shall be %d.\n"),
-                    rec_rset_source (rset),
-                    rec_rset_type (rset),
-                    min_records);
-          rec_buf_puts (tmp, errors);
-          free (tmp);
+          ADD_ERROR (errors,
+                     _("%s: error: the number of records of type %s shall be %d.\n"),
+                     rec_rset_source (rset), rec_rset_type (rset), min_records);
           res++;
         }
     }
@@ -171,24 +176,16 @@ rec_int_check_rset (rec_db_t db,
     {
       if (num_records > rec_rset_max_records (rset))
         {
-          asprintf (&tmp,
-                    _("%s: error: too many records of type %s. Maximum allowed are %d.\n"),
-                    rec_rset_source (rset),
-                    rec_rset_type (rset),
-                    rec_rset_max_records (rset));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
+          ADD_ERROR (errors,
+                     _("%s: error: too many records of type %s. Maximum allowed are %d.\n"),
+                     rec_rset_source (rset), rec_rset_type (rset), rec_rset_max_records (rset));
           res++;
         }
       if (num_records < rec_rset_min_records (rset))
         {
-          asprintf (&tmp,
-                    _("%s: error: too few records of type %s. Minimum allowed are %d.\n"),
-                    rec_rset_source (rset),
-                    rec_rset_type (rset),
-                    rec_rset_min_records (rset));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
+          ADD_ERROR (errors,
+                     _("%s: error: too few records of type %s. Minimum allowed are %d.\n"),
+                    rec_rset_source (rset), rec_rset_type (rset), rec_rset_min_records (rset));
           res++;
         }
     }
@@ -250,7 +247,6 @@ rec_int_check_field_type (rec_db_t db,
   rec_type_t referring_type;
   rec_type_t referred_type;
   char *errors_str;
-  char *tmp;
 
   res = true;
   rset_name = NULL;
@@ -303,14 +299,11 @@ rec_int_check_field_type (rec_db_t db,
           && (!rec_type_equal_p (referred_type, referring_type))
           && errors)
         {
-          /* Emit a warning.  */
-          asprintf (&tmp, _("%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"),
+          ADD_ERROR (errors,
+                     _("%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"),
                      rec_field_source (field), rec_field_location_str (field),
-                     rec_type_kind_str (referred_type),
-                     rec_type_kind_str (referring_type),
+                     rec_type_kind_str (referred_type), rec_type_kind_str (referring_type),
                      rset_name);
-          rec_buf_puts (tmp, errors);
-          free (tmp);
         }
 
       type = referring_type;
@@ -328,11 +321,10 @@ rec_int_check_field_type (rec_db_t db,
         {
           if (errors)
             {
-              asprintf (&tmp, "%s:%s: error: %s\n",
+              ADD_ERROR (errors,
+                         "%s:%s: error: %s\n",
                          rec_field_source (field), rec_field_location_str (field),
                          errors_str);
-              rec_buf_puts (tmp, errors);
-              free (tmp);
             }
           free (errors_str);
           res = false;
@@ -385,7 +377,6 @@ rec_int_check_record_mandatory (rec_rset_t rset,
   char *mandatory_field_str;
   rec_field_t field;
   size_t i, j, num_fields;
-  char *tmp;
   
   res = 0;
 
@@ -413,13 +404,11 @@ rec_int_check_record_mandatory (rec_rset_t rset,
               if (rec_record_get_num_fields_by_name (record, mandatory_field_name)
                   == 0)
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                              _("%s:%s: error: mandatory field '%s' not found in record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
                              mandatory_field_str);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
             }
@@ -441,7 +430,6 @@ rec_int_check_record_unique (rec_rset_t rset,
   char *unique_field_str;
   rec_field_t field;
   size_t i, j, num_fields;
-  char *tmp;
   
   res = 0;
 
@@ -469,13 +457,11 @@ rec_int_check_record_unique (rec_rset_t rset,
               if (rec_record_get_num_fields_by_name (record, unique_field_name)
                   > 1)
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                              _("%s:%s: error: field '%s' should be unique in this record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
                              unique_field_str);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
             }
@@ -497,7 +483,6 @@ rec_int_check_record_prohibit (rec_rset_t rset,
   char *prohibit_field_str;
   rec_field_t field;
   size_t i, j, num_fields;
-  char *tmp;
   
   res = 0;
 
@@ -525,13 +510,11 @@ rec_int_check_record_prohibit (rec_rset_t rset,
               if (rec_record_get_num_fields_by_name (record, prohibit_field_name)
                   > 0)
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                              _("%s:%s: error: prohibited field '%s' found in record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
                              prohibit_field_str);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
             }
@@ -551,7 +534,6 @@ rec_int_check_record_secrets (rec_rset_t rset,
   int res;
   rec_field_t field;
   rec_record_elem_t rec_elem;
-  char *tmp;
 
   res = 0;
 
@@ -569,12 +551,10 @@ rec_int_check_record_secrets (rec_rset_t rset,
                        REC_ENCRYPTED_PREFIX,
                        strlen (REC_ENCRYPTED_PREFIX)) != 0))
         {
-          asprintf (&tmp,
+          ADD_ERROR (errors,
                     _("%s:%s: error: confidential field is not encrypted\n"),
                     rec_record_source (record),
-                    rec_record_location_str (record));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
+                     rec_record_location_str (record));
           res++;
         }
     }
@@ -601,7 +581,6 @@ rec_int_check_record_key (rec_rset_t rset,
   bool duplicated_key;
   size_t i;
   size_t num_fields;
-  char *tmp;
   
   res = 0;
 
@@ -622,24 +601,20 @@ rec_int_check_record_key (rec_rset_t rset,
 
               if (num_fields == 0)
                 {
-                  asprintf (&tmp,
-                             _("%s:%s: error: key field '%s' not found in record\n"),
+                  ADD_ERROR (errors,
+                            _("%s:%s: error: key field '%s' not found in record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
                              rec_field_value (field));
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
               else if (num_fields > 1)
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                              _("%s:%s: error: multiple key fields '%s' in record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
                              rec_field_value (field));
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
               else  /* num_fields == 1 */
@@ -678,13 +653,11 @@ rec_int_check_record_key (rec_rset_t rset,
 
                   if (duplicated_key)
                     {
-                      asprintf (&tmp,
+                      ADD_ERROR (errors,
                                  _("%s:%s: error: duplicated key value in field '%s' in record\n"),
                                  rec_record_source (orig_record),
                                  rec_record_location_str (orig_record),
                                  rec_field_name_str (key));
-                      rec_buf_puts (tmp, errors);
-                      free (tmp);
                       res++;
                       break;
                     }
@@ -710,7 +683,6 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_name_t field_name;
   char *field_value;
   rec_fex_t fex;
-  char *tmp;
   rec_field_name_t auto_field_name;
   char *auto_field_name_str;
   size_t i;
@@ -731,71 +703,59 @@ rec_int_check_descriptor (rec_rset_t rset,
       */
       if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_REC)) == 0)
         {
-          asprintf (&tmp,
+          ADD_ERROR (errors,
                      _("%s:%s: error: missing %%rec field in record descriptor\n"),
                      rec_record_source (descriptor),
                      rec_record_location_str (descriptor));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
           res++;
         }
       else if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_REC)) > 1)
         {
-          asprintf (&tmp,
+          ADD_ERROR (errors,
                      _("%s:%s: error: too many %%rec fields in record descriptor\n"),
                      rec_record_source (descriptor),
                      rec_record_location_str (descriptor));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
           res++;
         }
 
       field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_REC), 0);
       if (!rec_int_rec_type_p (rec_field_value (field)))
         {
-          asprintf (&tmp,
+          ADD_ERROR (errors,
                      _("%s:%s: error: invalid record type %s\n"),
                      rec_field_source (field),
                      rec_field_location_str (field),
                      rec_field_value (field));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
           res++;
         }
 
       /* Only one 'key:' entry is allowed, if any.  */
       if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_KEY)) > 1)
         {
-          asprintf (&tmp,
+          ADD_ERROR (errors,
                      _("%s:%s: error: only one %%key field is allowed in a record descriptor\n"),
                      rec_record_source (descriptor),
                      rec_record_location_str (descriptor));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
           res++;
         }
 
       /* Only one 'size:' entry is allowed, if any.  */
       if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_SIZE)) > 1)
         {
-          asprintf (&tmp,
+          ADD_ERROR (errors,
                     _("%s:%s: error: only one %%size field is allowed in a record descriptor\n"),
                     rec_record_source (descriptor),
                     rec_record_location_str (descriptor));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
           res++;
         }
 
       /* Only one 'sort:' entry is allowed, if any.  */
       if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_SORT)) > 1)
         {
-          asprintf (&tmp,
+          ADD_ERROR (errors,
                     _("%s:%s: error: only one %%sort field is allowed in a record descriptor\n"),
                     rec_record_source (descriptor),
                     rec_record_location_str (descriptor));
-          rec_buf_puts (tmp, errors);
-          free (tmp);
           res++;
         }
 
@@ -816,13 +776,11 @@ rec_int_check_descriptor (rec_rset_t rset,
               if (!rec_parse_regexp (&p, "^" REC_FNAME_RE "(," REC_FNAME_RE ")*",
                                      NULL))
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                             _("%s:%s: error: expected a comma-separated list of fields \
 before the type specification\n"),
                             rec_field_source (field),
                             rec_field_location_str (field));
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
 
@@ -844,26 +802,22 @@ before the type specification\n"),
                       rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name);
                       if (!rec_type_reg_get (rec_rset_get_type_reg (rset), type_name))
                         {
-                          asprintf (&tmp,
+                          ADD_ERROR (errors,
                                     _("%s:%s: error: the referred type %s \
 does not exist\n"),
                                     rec_field_source (field),
                                     rec_field_location_str (field),
                                     type_name);
-                          rec_buf_puts (tmp, errors);
-                          free (tmp);
                           res++;
                         }
                     }
                   else
                     {
                       /* XXX: make rec_type_descr_p to report more details.  */
-                      asprintf (&tmp,
+                      ADD_ERROR (errors,
                                 _("%s:%s: error: invalid typedef specification\n"),
                                 rec_field_source (field),
                                 rec_field_location_str (field));
-                      rec_buf_puts (tmp, errors);
-                      free (tmp);
                       res++;
                     }
                 }
@@ -875,13 +829,11 @@ does not exist\n"),
               rec_skip_blanks (&p);
               if (!rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, NULL))
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                             _("%s:%s: error: expected a type name before the type \
 specification\n"),
                             rec_field_source (field),
                             rec_field_location_str (field));
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
               
@@ -903,26 +855,22 @@ specification\n"),
                       rec_parse_regexp (&p, "^" REC_TYPE_NAME_RE, &type_name);
                       if (!rec_type_reg_get (rec_rset_get_type_reg (rset), type_name))
                         {
-                          asprintf (&tmp,
+                          ADD_ERROR (errors,
                                     _("%s:%s: error: the referred type %s \
 does not exist\n"),
                                     rec_field_source (field),
                                     rec_field_location_str (field),
                                     type_name);
-                          rec_buf_puts (tmp, errors);
-                          free (tmp);
                           res++;
                         }
                     }
                   else
                     {
                       /* XXX: make rec_type_descr_p to report more details.  */
-                      asprintf (&tmp,
+                      ADD_ERROR (errors,
                                 _("%s:%s: error: invalid typedef specification\n"),
                                 rec_field_source (field),
                                 rec_field_location_str (field));
-                      rec_buf_puts (tmp, errors);
-                      free (tmp);
                       res++;
                     }
                 }
@@ -941,14 +889,12 @@ does not exist\n"),
                 }
               else
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                              _("%s:%s: error: value for %s[%d] is not a list of field names\n"),
                              rec_record_source (descriptor),
                              rec_record_location_str (descriptor),
                              rec_field_name_str (field),
                              rec_record_get_field_index_by_name (descriptor, field));
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
             }
@@ -959,13 +905,11 @@ does not exist\n"),
                               "[ \n\t]*" REC_FNAME_RE "[ \n\t]*"
                               "$"))
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                             _("%s:%s: error: value for %s shall be a field name.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
                             field_name_str);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++ ;
                 }
             }
@@ -973,13 +917,11 @@ does not exist\n"),
             {
               if (!rec_match (field_value, REC_INT_SIZE_RE))
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                             _("%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= or <=.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
                             field_name_str);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
             }
@@ -991,13 +933,11 @@ does not exist\n"),
                               "[ \n\t]*" REC_FNAME_RE "([ \n\t]+" REC_FNAME_RE ")*"
                               "[ \n\t]*$"))
                 {
-                  asprintf (&tmp,
+                  ADD_ERROR (errors,
                             _("%s:%s: error: value for %s shall be a list of field names.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
                             field_name_str);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
                   res++;
                 }
             }
@@ -1018,13 +958,11 @@ does not exist\n"),
                          || (rec_type_kind (type) == REC_TYPE_RANGE)
                          || (rec_type_kind (type) == REC_TYPE_DATE)))
                     {
-                      asprintf (&tmp,
+                      ADD_ERROR (errors,
                                 _("%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"),
                                 rec_record_source (descriptor),
                                 rec_record_location_str (descriptor),
                                 auto_field_name_str);
-                      rec_buf_puts (tmp, errors);
-                      free (tmp);
                       res++;
                     }
                 }
@@ -1055,7 +993,6 @@ rec_int_merge_remote (rec_rset_t rset,
   FILE *external_file;
   int tmpfile_des;
   char tmpfile_name[14];
-  char *tmp;
 
   res = 0;
 
@@ -1101,12 +1038,10 @@ rec_int_merge_remote (rec_rset_t rset,
               curl_easy_setopt (curl, CURLOPT_FAILONERROR, 1);
               if (curl_easy_perform (curl) != 0)
                 {
-                  /* Error.  */
-                  asprintf (&tmp, _("%s:%s: error: could not fetch remote descriptor from url %s.\n"),
-                            rec_field_source (rec_field), rec_field_location_str (rec_field),
-                            rec_url);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
+                  ADD_ERROR (errors,
+                             _("%s:%s: error: could not fetch remote descriptor from url %s.\n"),
+                             rec_field_source (rec_field), rec_field_location_str (rec_field),
+                             rec_url);
                   res++;
                   goto exit;
                 }
@@ -1122,11 +1057,10 @@ rec_int_merge_remote (rec_rset_t rset,
               external_file = fopen (rec_file, "r");
               if (!external_file)
                 {
-                  asprintf (&tmp, _("%s:%s: error: could not read external descriptor from file %s.\n"),
-                            rec_field_source (rec_field), rec_field_location_str (rec_field),
-                            rec_file);
-                  rec_buf_puts (tmp, errors);
-                  free (tmp);
+                  ADD_ERROR (errors,
+                             _("%s:%s: error: could not read external descriptor from file %s.\n"),
+                             rec_field_source (rec_field), rec_field_location_str (rec_field),
+                             rec_file);
                   res++;
                   goto exit;
                 }
@@ -1138,11 +1072,10 @@ rec_int_merge_remote (rec_rset_t rset,
           parser = rec_parser_new (external_file, rec_source);
           if (!rec_parse_db (parser, &remote_db))
             {
-              asprintf (&tmp, _("%s:%s: error: %s does not contain valid rec data.\n"),
-                        rec_field_source (rec_field), rec_field_location_str (rec_field),
-                        rec_source);
-              rec_buf_puts (tmp, errors);
-              free (tmp);
+              ADD_ERROR (errors,
+                         _("%s:%s: error: %s does not contain valid rec data.\n"),
+                         rec_field_source (rec_field), rec_field_location_str (rec_field),
+                         rec_source);
               res++;
               goto exit;
             }
@@ -1153,11 +1086,10 @@ rec_int_merge_remote (rec_rset_t rset,
           remote_rset = rec_db_get_rset_by_type (remote_db, rec_type);
           if (!remote_rset)
             {
-              asprintf (&tmp, _("%s:%s: error: %s does not contain information for type %s.\n"),
-                        rec_field_source (rec_field), rec_field_location_str (rec_field),
-                        rec_source, rec_type);
-              rec_buf_puts (tmp, errors);
-              free (tmp);
+              ADD_ERROR (errors,
+                         _("%s:%s: error: %s does not contain information for type %s.\n"),
+                         rec_field_source (rec_field), rec_field_location_str (rec_field),
+                         rec_source, rec_type);
               res++;
               goto exit;
             }
