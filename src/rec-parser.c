@@ -105,6 +105,15 @@ const char *rec_parser_error_strings[] =
   NULL /* Sentinel */
 };
 
+/* The following macro is used by some functions to reduce
+   verbosity.  */
+
+#define FNAME(id) rec_std_field_name ((id))
+
+/*
+ * Public functions.
+ */
+
 rec_parser_t
 rec_parser_new (FILE *in,
                 char *source)
@@ -457,26 +466,15 @@ rec_parse_rset (rec_parser_t parser,
   char c;
   rec_rset_t new;
   rec_record_t record;
-  rec_field_name_t rec_fname;
   rec_comment_t comment;
   size_t comments_added = 0;
 
   ret = false;
 
-  if ((rec_fname = rec_field_name_new ()) == NULL)
-    {
-      /* Out of memory */
-      parser->error = REC_PARSER_ENOMEM;
-      return false;
-    }
-  
-  rec_field_name_set (rec_fname, 0, "%rec");
-
   if ((new = rec_rset_new ()) == NULL)
     {
       /* Out of memory */
       parser->error = REC_PARSER_ENOMEM;
-      rec_field_name_destroy (rec_fname);
       return false;
     }
 
@@ -531,8 +529,7 @@ rec_parse_rset (rec_parser_t parser,
 
                  Otherwise, add the record to the current record
                  set. */
-              if (rec_record_field_p (record,
-                                      rec_fname))
+              if (rec_record_field_p (record, FNAME(REC_FIELD_REC)))
                 {
                   if ((rec_rset_num_records (new) == 0) &&
                       (!rec_rset_descriptor (new)))

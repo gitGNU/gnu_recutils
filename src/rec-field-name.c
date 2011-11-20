@@ -50,6 +50,34 @@ struct rec_field_name_s
   int size;
 };
 
+/* The following global variable contains field names which are either
+   standard, such as the special field names, or often used in the
+   library.
+   
+   Note that the array is indexed using the rec_std_field_e enumerated
+   values defined in rec.h, so the order is important.  */
+
+static struct rec_field_name_s fnames[] =
+  {
+    {{"%auto", NULL, NULL}, 1},
+    {{"%confidential", NULL, NULL}, 1},
+    {{"%key", NULL, NULL}, 1},
+    {{"%mandatory", NULL, NULL}, 1},
+    {{"%prohibit", NULL, NULL}, 1},
+    {{"%rec", NULL, NULL}, 1},
+    {{"%size", NULL, NULL}, 1},
+    {{"%sort", NULL, NULL}, 1},
+    {{"%type", NULL, NULL}, 1},
+    {{"%typedef", NULL, NULL}, 1},
+    {{"%unique", NULL, NULL}, 1}
+  };
+
+rec_field_name_t
+rec_std_field_name (enum rec_std_field_e std_field)
+{
+  return (fnames + std_field);
+}
+
 rec_field_name_t
 rec_field_name_new ()
 {

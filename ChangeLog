@@ -1,3 +1,28 @@
+2011-11-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: avoid duplication of special field names in the codebase.
+	* src/rec-parser.c (rec_parse_rset): Use rec_std_field_name.
+
+	* src/rec-int.c (rec_int_check_descriptor): Use rec_std_field_name.
+	(rec_int_merge_remote): Likewise.
+	(rec_int_check_record_mandatory): Likewise.
+	(rec_int_check_record_unique): Likewise.
+	(rec_int_check_record_prohibit): Likewise.
+	(rec_int_check_record_key): Likewise.
+
+	* src/rec-rset.c (rec_rset_rename_field): Use rec_std_field_name.
+	(rec_rset_set_type): Likewise.
+	(rec_rset_type): Likewise.
+	(rec_rset_url): Likewise.
+	(rec_rset_update_size_constraints): Likewise.
+	(rec_rset_update_field_props): Likewise.
+	(rec_rset_update_types): Likewise.
+
+	* src/rec-field-name.c (rec_std_field_name_s): New structure type.
+	(rec_std_field_name_s): Global containing the names for the
+	standard fields.
+	(rec_std_field_name): New function.
+
 2011-11-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: new function recutl_yesno.

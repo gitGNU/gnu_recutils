@@ -67,6 +67,11 @@ static int rec_int_check_record_secrets (rec_rset_t rset, rec_record_t record,
 static int rec_int_merge_remote (rec_rset_t rset, rec_buf_t errors);
 static bool rec_int_rec_type_p (char *str);
 
+/* The following macro is used by some functions to reduce
+   verbosity.  */
+
+#define FNAME(id) rec_std_field_name ((id))
+
 /*
  * Public functions.
  */
@@ -376,7 +381,6 @@ rec_int_check_record_mandatory (rec_rset_t rset,
   int res;
   rec_record_t descriptor;
   rec_fex_t mandatory_fex;
-  rec_field_name_t field_name;
   rec_field_name_t mandatory_field_name;
   char *mandatory_field_str;
   rec_field_t field;
@@ -388,11 +392,10 @@ rec_int_check_record_mandatory (rec_rset_t rset,
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      field_name = rec_parse_field_name_str ("%mandatory:");
-      num_fields = rec_record_get_num_fields_by_name (descriptor, field_name);
+      num_fields = rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_MANDATORY));
       for (i = 0; i < num_fields; i++)
         {
-          field = rec_record_get_field_by_name (descriptor, field_name, i);
+          field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_MANDATORY), i);
 
           /* Parse the field name from the value of %mandatory:  */
           mandatory_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
@@ -421,8 +424,6 @@ rec_int_check_record_mandatory (rec_rset_t rset,
                 }
             }
         }
-      
-      rec_field_name_destroy (field_name);
     }
 
   return res;
@@ -436,7 +437,6 @@ rec_int_check_record_unique (rec_rset_t rset,
   int res;
   rec_record_t descriptor;
   rec_fex_t unique_fex;
-  rec_field_name_t field_name;
   rec_field_name_t unique_field_name;
   char *unique_field_str;
   rec_field_t field;
@@ -448,11 +448,10 @@ rec_int_check_record_unique (rec_rset_t rset,
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      field_name = rec_parse_field_name_str ("%unique:");
-      num_fields = rec_record_get_num_fields_by_name (descriptor, field_name);
+      num_fields = rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_UNIQUE));
       for (i = 0; i < num_fields; i++)
         {
-          field = rec_record_get_field_by_name (descriptor, field_name, i);
+          field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_UNIQUE), i);
 
           /* Parse the field name from the value of %unique:  */
           unique_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
@@ -481,8 +480,6 @@ rec_int_check_record_unique (rec_rset_t rset,
                 }
             }
         }
-      
-      rec_field_name_destroy (field_name);
     }
 
   return res;
@@ -496,7 +493,6 @@ rec_int_check_record_prohibit (rec_rset_t rset,
   int res;
   rec_record_t descriptor;
   rec_fex_t prohibit_fex;
-  rec_field_name_t field_name;
   rec_field_name_t prohibit_field_name;
   char *prohibit_field_str;
   rec_field_t field;
@@ -508,11 +504,10 @@ rec_int_check_record_prohibit (rec_rset_t rset,
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      field_name = rec_parse_field_name_str ("%prohibit:");
-      num_fields = rec_record_get_num_fields_by_name (descriptor, field_name);
+      num_fields = rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_PROHIBIT));
       for (i = 0; i < num_fields; i++)
         {
-          field = rec_record_get_field_by_name (descriptor, field_name, i);
+          field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_PROHIBIT), i);
 
           /* Parse the field name from the value of %prohibit:  */
           prohibit_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
@@ -541,8 +536,6 @@ rec_int_check_record_prohibit (rec_rset_t rset,
                 }
             }
         }
-      
-      rec_field_name_destroy (field_name);
     }
 
   return res;
@@ -601,7 +594,6 @@ rec_int_check_record_key (rec_rset_t rset,
   rec_record_t descriptor;
   rec_record_t other_record;
   rec_rset_elem_t rset_elem;
-  rec_field_name_t field_name;
   rec_field_name_t key_field_name;
   rec_field_t field;
   rec_field_t key;
@@ -616,12 +608,11 @@ rec_int_check_record_key (rec_rset_t rset,
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      field_name = rec_parse_field_name_str ("%key:");
       for (i = 0; i < rec_record_get_num_fields_by_name (descriptor,
-                                                         field_name);
+                                                         FNAME(REC_FIELD_KEY));
            i++)
         {
-          field = rec_record_get_field_by_name (descriptor, field_name, i);
+          field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_KEY), i);
 
           /* Parse the field name from the value of %key:  */
           key_field_name = rec_parse_field_name_str (rec_field_value (field));
@@ -702,8 +693,6 @@ rec_int_check_record_key (rec_rset_t rset,
               rec_field_name_destroy (key_field_name);
             }
         }                                          
-      
-      rec_field_name_destroy (field_name);
     }
 
   return res;
@@ -719,19 +708,6 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_field_t field;
   char *field_name_str;
   rec_field_name_t field_name;
-  rec_field_name_t rec_fname;
-  rec_field_name_t key_fname;
-  rec_field_name_t type_fname;
-  rec_field_name_t typedef_fname;
-  rec_field_name_t mandatory_fname;
-  rec_field_name_t unique_fname;
-  rec_field_name_t prohibit_fname;
-  rec_field_name_t auto_fname;
-  rec_field_name_t size_fname;
-  rec_field_name_t sort_fname;
-#if defined REC_CRYPT_SUPPORT
-  rec_field_name_t confidential_fname;
-#endif
   char *field_value;
   rec_fex_t fex;
   char *tmp;
@@ -747,28 +723,13 @@ rec_int_check_descriptor (rec_rset_t rset,
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      /* Prepare fnames.  */
-      rec_fname = rec_parse_field_name_str ("%rec:");
-      key_fname = rec_parse_field_name_str ("%key:");
-      type_fname = rec_parse_field_name_str ("%type:");
-      typedef_fname = rec_parse_field_name_str ("%typedef:");
-      mandatory_fname = rec_parse_field_name_str ("%mandatory:");
-      unique_fname = rec_parse_field_name_str ("%unique:");
-      prohibit_fname = rec_parse_field_name_str ("%prohibit:");
-      auto_fname = rec_parse_field_name_str ("%auto:");
-      size_fname = rec_parse_field_name_str ("%size:");
-      sort_fname = rec_parse_field_name_str ("%sort:");
-#if defined REC_CRYPT_SUPPORT
-      confidential_fname = rec_parse_field_name_str ("%confidential:");
-#endif
-
       /* Check the type of the record set:
 
          1. There should be one (and only one) %rec: field in the
             record.
          2. The value of the %rec: field shall be well-formed.
       */
-      if (rec_record_get_num_fields_by_name (descriptor, rec_fname) == 0)
+      if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_REC)) == 0)
         {
           asprintf (&tmp,
                      _("%s:%s: error: missing %%rec field in record descriptor\n"),
@@ -778,7 +739,7 @@ rec_int_check_descriptor (rec_rset_t rset,
           free (tmp);
           res++;
         }
-      else if (rec_record_get_num_fields_by_name (descriptor, rec_fname) > 1)
+      else if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_REC)) > 1)
         {
           asprintf (&tmp,
                      _("%s:%s: error: too many %%rec fields in record descriptor\n"),
@@ -789,7 +750,7 @@ rec_int_check_descriptor (rec_rset_t rset,
           res++;
         }
 
-      field = rec_record_get_field_by_name (descriptor, rec_fname, 0);
+      field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_REC), 0);
       if (!rec_int_rec_type_p (rec_field_value (field)))
         {
           asprintf (&tmp,
@@ -803,7 +764,7 @@ rec_int_check_descriptor (rec_rset_t rset,
         }
 
       /* Only one 'key:' entry is allowed, if any.  */
-      if (rec_record_get_num_fields_by_name (descriptor, key_fname) > 1)
+      if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_KEY)) > 1)
         {
           asprintf (&tmp,
                      _("%s:%s: error: only one %%key field is allowed in a record descriptor\n"),
@@ -815,7 +776,7 @@ rec_int_check_descriptor (rec_rset_t rset,
         }
 
       /* Only one 'size:' entry is allowed, if any.  */
-      if (rec_record_get_num_fields_by_name (descriptor, size_fname) > 1)
+      if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_SIZE)) > 1)
         {
           asprintf (&tmp,
                     _("%s:%s: error: only one %%size field is allowed in a record descriptor\n"),
@@ -827,7 +788,7 @@ rec_int_check_descriptor (rec_rset_t rset,
         }
 
       /* Only one 'sort:' entry is allowed, if any.  */
-      if (rec_record_get_num_fields_by_name (descriptor, sort_fname) > 1)
+      if (rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_SORT)) > 1)
         {
           asprintf (&tmp,
                     _("%s:%s: error: only one %%sort field is allowed in a record descriptor\n"),
@@ -847,7 +808,7 @@ rec_int_check_descriptor (rec_rset_t rset,
           field_name_str = rec_field_name_str (field);
           field_value = rec_field_value (field);
 
-          if (rec_field_name_equal_p (field_name, type_fname))
+          if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPE)))
             {
               /* Check for the list of fields.  */
               p = field_value;
@@ -907,7 +868,7 @@ does not exist\n"),
                     }
                 }
             }
-          else if (rec_field_name_equal_p (field_name, typedef_fname))
+          else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPEDEF)))
             {
               /* Check for the type name.  */
               p = field_value;
@@ -966,10 +927,10 @@ does not exist\n"),
                     }
                 }
             }
-          else if (rec_field_name_equal_p (field_name, mandatory_fname)
-                   || rec_field_name_equal_p (field_name, unique_fname)
-                   || rec_field_name_equal_p (field_name, prohibit_fname)
-                   || rec_field_name_equal_p (field_name, auto_fname))
+          else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_MANDATORY))
+                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_UNIQUE))
+                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_PROHIBIT))
+                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_AUTO)))
             {
               /* Check that the value of this field is a parseable
                  list of field names.  */
@@ -991,7 +952,7 @@ does not exist\n"),
                   res++;
                 }
             }
-          else if (rec_field_name_equal_p (field_name, sort_fname))
+          else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SORT)))
             {
               if (!rec_match (field_value,
                               "^"
@@ -1008,7 +969,7 @@ does not exist\n"),
                   res++ ;
                 }
             }
-          else if (rec_field_name_equal_p (field_name, size_fname))
+          else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SIZE)))
             {
               if (!rec_match (field_value, REC_INT_SIZE_RE))
                 {
@@ -1023,7 +984,7 @@ does not exist\n"),
                 }
             }
 #if defined REC_CRYPT_SUPPORT
-          else if (rec_field_name_equal_p (field_name, confidential_fname))
+          else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_CONFIDENTIAL)))
             {
               if (!rec_match (field_value,
                               "^"
@@ -1042,7 +1003,7 @@ does not exist\n"),
             }
 #endif /* REC_CRYPT_SUPPORT */          
 
-          if ((rec_field_name_equal_p (field_name, auto_fname))
+          if ((rec_field_name_equal_p (field_name, FNAME(REC_FIELD_AUTO)))
               && (fex = rec_fex_new (field_value, REC_FEX_SIMPLE)))
             {
               /* Check that the auto incremented fields have not been
@@ -1069,21 +1030,6 @@ does not exist\n"),
                 }
             }
         }
-
-      /* Destroy names.  */
-      rec_field_name_destroy (rec_fname);
-      rec_field_name_destroy (key_fname);
-      rec_field_name_destroy (type_fname);
-      rec_field_name_destroy (typedef_fname);
-      rec_field_name_destroy (mandatory_fname);
-      rec_field_name_destroy (unique_fname);
-      rec_field_name_destroy (prohibit_fname);
-      rec_field_name_destroy (auto_fname);
-      rec_field_name_destroy (size_fname);
-      rec_field_name_destroy (sort_fname);
-#if defined REC_CRYPT_SUPPORT
-      rec_field_name_destroy (confidential_fname);
-#endif
     }
 
   return res;
@@ -1095,7 +1041,6 @@ rec_int_merge_remote (rec_rset_t rset,
 {
   int res;
   rec_parser_t parser;
-  rec_field_name_t rec_fname;
   rec_record_t descriptor;
   rec_db_t remote_db;
   rec_rset_t remote_rset;
@@ -1114,7 +1059,6 @@ rec_int_merge_remote (rec_rset_t rset,
 
   res = 0;
 
-  rec_fname = rec_parse_field_name_str ("%rec:");
   tmpfile_name[0] = '\0';
 
   /* If a remote descriptor is defined in the record descriptor of
@@ -1124,7 +1068,7 @@ rec_int_merge_remote (rec_rset_t rset,
   if (descriptor)
     {
       /* Check if there is an URL in the %rec: field.  */
-      rec_field = rec_record_get_field_by_name (descriptor, rec_fname, 0);
+      rec_field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_REC), 0);
 
       if (!rec_int_rec_type_p (rec_field_value (rec_field)))
         {
@@ -1231,7 +1175,7 @@ rec_int_merge_remote (rec_rset_t rset,
               
               /* Merge the descriptors, but take care to not add a
                  new %rec: field.  */
-              if (!rec_field_name_equal_p (rec_field_name (remote_field), rec_fname))
+              if (!rec_field_name_equal_p (rec_field_name (remote_field), FNAME(REC_FIELD_REC)))
                 {
                   rec_record_append_field (descriptor, rec_field_dup (remote_field));
                 }

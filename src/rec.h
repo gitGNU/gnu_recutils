@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,6 +185,34 @@ bool rec_field_name_str_p (const char *str);
 /* Normalise a field name part.  Any non alphanumeric character,
    including '_', '-' and '%', are transformed into '_'. */
 char *rec_field_name_part_normalise (const char *str);
+
+/*
+ * The following enumeration contains identifiers for the standard
+ * fields used by the library.
+ *
+ * Changes to this enumerated value will require some fixes in
+ * rec-field-name.c.
+ */
+
+enum rec_std_field_e
+{ 
+  REC_FIELD_AUTO = 0,
+  REC_FIELD_CONFIDENTIAL,
+  REC_FIELD_KEY,
+  REC_FIELD_MANDATORY,
+  REC_FIELD_PROHIBIT,
+  REC_FIELD_REC,
+  REC_FIELD_SIZE,
+  REC_FIELD_SORT,
+  REC_FIELD_TYPE,
+  REC_FIELD_TYPEDEF,
+  REC_FIELD_UNIQUE
+};
+
+/* Return the field name corresponding to a standard field, as defined
+   above.  */
+
+rec_field_name_t rec_std_field_name (enum rec_std_field_e std_field);
 
 /*
  * FIELD EXPRESSIONS

@@ -118,13 +118,6 @@ struct rec_rset_comment_s
 
 typedef struct rec_rset_comment_s *rec_rset_comment_t;
 
-/* Set of names for special fields */
-
-#define REC_NAME_REC "%rec"
-#define REC_NAME_KEY "%key"
-#define REC_NAME_MANDATORY "%mandatory"
-#define REC_NAME_UNIQUE "%unique:"
-
 /* Static functions implemented below.  */
 
 static void rec_rset_update_types (rec_rset_t rset);
@@ -148,6 +141,12 @@ static char *rec_rset_type_field_type (const char *str);
 static rec_rset_fprops_t rec_rset_get_props (rec_rset_t rset,
                                              rec_field_name_t fname,
                                              bool create_p);
+
+
+/* The following macro is used by some functions to reduce
+   verbosity.  */
+
+#define FNAME(id) rec_std_field_name ((id))
 
 /*
  * Public functions.
@@ -648,7 +647,6 @@ rec_rset_set_type (rec_rset_t rset,
                    char *type)
 {
   rec_field_t rec_field;
-  rec_field_name_t rec_field_name;
 
   if (!type)
     {
@@ -663,9 +661,8 @@ rec_rset_set_type (rec_rset_t rset,
       
     }
 
-  rec_field_name = rec_parse_field_name_str ("%rec:");
   rec_field = rec_record_get_field_by_name (rset->descriptor,
-                                            rec_field_name,
+                                            FNAME(REC_FIELD_REC),
                                             0);
 
   if (rec_field)
@@ -674,7 +671,7 @@ rec_rset_set_type (rec_rset_t rset,
     }
   else
     {
-      rec_field = rec_field_new (rec_field_name,
+      rec_field = rec_field_new (rec_field_name_dup (FNAME(REC_FIELD_REC)),
                                  type);
       rec_record_append_field (rset->descriptor, rec_field);
     }
@@ -685,14 +682,12 @@ rec_rset_type (rec_rset_t rset)
 {
   char *res;
   rec_field_t field;
-  rec_field_name_t field_name;
 
   res = NULL;
   if (rset->descriptor)
     {
-      field_name = rec_parse_field_name_str ("%rec:");
       field = rec_record_get_field_by_name (rset->descriptor,
-                                            field_name,
+                                            FNAME(REC_FIELD_REC),
                                             0);
       if (field)
         {
@@ -708,14 +703,12 @@ rec_rset_url (rec_rset_t rset)
 {
   char *res;
   rec_field_t field;
-  rec_field_name_t field_name;
 
   res = NULL;
   if (rset->descriptor)
     {
-      field_name = rec_parse_field_name_str ("%rec:");
       field = rec_record_get_field_by_name (rset->descriptor,
-                                            field_name,
+                                            FNAME(REC_FIELD_REC),
                                             0);
       if (field)
         {
@@ -748,26 +741,7 @@ rec_rset_rename_field (rec_rset_t rset,
   size_t result_size;
   rec_fex_elem_t fex_elem;
   rec_field_name_t fex_fname;
-  rec_field_name_t type_field_name;
-  rec_field_name_t key_field_name;
-  rec_field_name_t mandatory_field_name;
-  rec_field_name_t unique_field_name;
-  rec_field_name_t prohibit_field_name;
-  rec_field_name_t sort_field_name;
-#if defined REC_CRYPT_SUPPORT
-  rec_field_name_t confidential_field_name;
-#endif
 
-  type_field_name = rec_parse_field_name_str ("%type:");
-  key_field_name = rec_parse_field_name_str ("%key:");
-  mandatory_field_name = rec_parse_field_name_str ("%mandatory:");
-  unique_field_name = rec_parse_field_name_str ("%unique:");
-  prohibit_field_name = rec_parse_field_name_str ("%prohibit:");
-  sort_field_name = rec_parse_field_name_str ("%sort:");
-#if defined REC_CRYPT_SUPPORT
-  confidential_field_name = rec_parse_field_name_str ("%confidential:");
-#endif
-  
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
@@ -775,7 +749,7 @@ rec_rset_rename_field (rec_rset_t rset,
         {
           field = rec_record_elem_field (rec_record_get_field (descriptor, i));
           
-          if (rec_field_name_eql_p (rec_field_name (field), type_field_name))
+          if (rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_TYPE)))
             {
               /* Process a %type entry.  Invalid entries are
                  skipped.  */
@@ -814,14 +788,14 @@ rec_rset_rename_field (rec_rset_t rset,
                   rec_fex_destroy (fex);
                 }
             }
-          else if (rec_field_name_eql_p (rec_field_name (field), key_field_name)
-                   || rec_field_name_eql_p (rec_field_name (field), mandatory_field_name)
-                   || rec_field_name_eql_p (rec_field_name (field), unique_field_name)
-                   || rec_field_name_eql_p (rec_field_name (field), prohibit_field_name)
+          else if (rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_KEY))
+                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_MANDATORY))
+                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_UNIQUE))
+                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_PROHIBIT))
 #if defined REC_CRYPT_SUPPORT
-                   || rec_field_name_eql_p (rec_field_name (field), confidential_field_name)
+                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_CONFIDENTIAL))
 #endif
-                   || rec_field_name_eql_p (rec_field_name (field), sort_field_name))
+                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_SORT)))
             {
               /* Rename the field in the fex expression that is the
                  value of the field.  Skip invalid entries.  */
@@ -850,17 +824,6 @@ rec_rset_rename_field (rec_rset_t rset,
 
   /* Update the types registry.  */
   rec_rset_update_field_props (rset);
-
-  /* Cleanup.  */
-  rec_field_name_destroy (type_field_name);
-  rec_field_name_destroy (key_field_name);
-  rec_field_name_destroy (mandatory_field_name);
-  rec_field_name_destroy (unique_field_name);
-  rec_field_name_destroy (prohibit_field_name);
-  rec_field_name_destroy (sort_field_name);
-#if defined REC_CRYPT_SUPPORT
-  rec_field_name_destroy (confidential_field_name);
-#endif
 }
 
 rec_fex_t
@@ -1312,7 +1275,6 @@ static void
 rec_rset_update_size_constraints (rec_rset_t rset)
 {
   rec_field_t field;
-  rec_field_name_t size_fname;
   enum rec_size_condition_e condition;
   size_t size = 0;
 
@@ -1324,10 +1286,8 @@ rec_rset_update_size_constraints (rec_rset_t rset)
      new list.  */
   if (rset->descriptor)
     {
-      size_fname = rec_parse_field_name_str ("%size:");
-
       field = rec_record_get_field_by_name (rset->descriptor,
-                                            size_fname,
+                                            FNAME(REC_FIELD_SIZE),
                                             0);
 
       if (field && rec_match (rec_field_value (field), REC_INT_SIZE_RE))
@@ -1379,14 +1339,10 @@ rec_rset_update_field_props (rec_rset_t rset)
   rec_record_elem_t record_elem;
   rec_field_t field;
   rec_field_name_t field_name;
-  rec_field_name_t auto_fname;
   rec_field_name_t auto_field_name;
 #if defined REC_CRYPT_SUPPORT
   rec_field_name_t confidential_field_name;
-  rec_field_name_t confidential_fname;
 #endif
-  rec_field_name_t type_fname;
-  rec_field_name_t sort_fname;
   char *field_value;
   rec_fex_t fex;
   size_t i;
@@ -1411,13 +1367,6 @@ rec_rset_update_field_props (rec_rset_t rset)
      fields properties accordingly.  */
   if (rset->descriptor)
     {
-      auto_fname = rec_parse_field_name_str ("%auto:");
-      type_fname = rec_parse_field_name_str ("%type:");
-      sort_fname = rec_parse_field_name_str ("%sort:");
-#if defined REC_CRYPT_SUPPORT
-      confidential_fname = rec_parse_field_name_str ("%confidential:");
-#endif
-
       record_elem = rec_record_first_field (rset->descriptor);
       while (rec_record_elem_p (record_elem))
         {
@@ -1427,7 +1376,7 @@ rec_rset_update_field_props (rec_rset_t rset)
 
           /* Update field types.  Only valid %type: descriptors are
              considered.  Invalid descriptors are ignored.  */
-          if (rec_field_name_equal_p (field_name, type_fname)
+          if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPE))
               && rec_rset_type_field_p (field_value))
             {
               fex = rec_rset_type_field_fex (field_value);
@@ -1479,7 +1428,7 @@ rec_rset_update_field_props (rec_rset_t rset)
             }
 
           /* Update auto fields.  */
-          if (rec_field_name_equal_p (field_name, auto_fname))
+          if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_AUTO)))
             {
               /* %auto: fields containing incorrect data are
                   ignored.  */
@@ -1498,7 +1447,7 @@ rec_rset_update_field_props (rec_rset_t rset)
           /* Update sort fields.  Since only one field can be set as
              the sorting criteria, the last field takes
              precedence.  */
-          if (rec_field_name_equal_p (field_name, sort_fname))
+          if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SORT)))
             {
               /* Parse the field name in the field value.  Invalid
                  entries are just ignored.  */
@@ -1522,7 +1471,7 @@ rec_rset_update_field_props (rec_rset_t rset)
 
 #if defined REC_CRYPT_SUPPORT
           /* Update confidential fields.  */
-          if (rec_field_name_equal_p (field_name, confidential_fname))
+          if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_CONFIDENTIAL)))
             {
               /* Parse the field names in the field value.  Ignore
                  invalid entries.  */
@@ -1542,13 +1491,6 @@ rec_rset_update_field_props (rec_rset_t rset)
 
           record_elem = rec_record_next_field (rset->descriptor, record_elem);
         }
-
-      rec_field_name_destroy (auto_fname);
-      rec_field_name_destroy (type_fname);
-      rec_field_name_destroy (sort_fname);
-#if defined REC_CRYPT_SUPPORT
-      rec_field_name_destroy (confidential_fname);
-#endif
     } 
 }
 
@@ -1559,7 +1501,6 @@ rec_rset_update_types (rec_rset_t rset)
   rec_record_elem_t record_elem;
   rec_field_name_t field_name;
   char *field_value;
-  rec_field_name_t typedef_fname;
   const char *p, *q = NULL;
   rec_type_t type;
   char *type_name, *to_type = NULL;
@@ -1569,9 +1510,6 @@ rec_rset_update_types (rec_rset_t rset)
      types registry accordingly.  */
   if (rset->descriptor)
     {
-      /* Create some field names.  */
-      typedef_fname = rec_parse_field_name_str ("%typedef:");
-
       /* Purge the registry.  */
       rec_type_reg_destroy (rset->type_reg);
       rset->type_reg = rec_type_reg_new ();
@@ -1584,7 +1522,7 @@ rec_rset_update_types (rec_rset_t rset)
           field_name = rec_field_name (field);
           field_value = rec_field_value (field);
 
-          if (rec_field_name_equal_p (field_name, typedef_fname))
+          if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPEDEF)))
             {
               p = field_value;
               rec_skip_blanks (&p);
@@ -1628,8 +1566,6 @@ rec_rset_update_types (rec_rset_t rset)
           record_elem = rec_record_next_field (rset->descriptor,
                                                record_elem);
         }
-
-      rec_field_name_destroy (typedef_fname);
     }
 }
 
