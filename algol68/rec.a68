@@ -27,24 +27,64 @@ USE standard:
 INT dummy = ALIEN "dummy" "#include ""config.h"""
                           "#include <rec.h>";
 
+{ Constants.  }
+
 INT rec major version =
    ALIEN "A68_REC_VERSION_MAJOR"
-         "#define A68_REC_VERSION_MAJOR REC_VERSION_MAJOR";
+         "#define A68_REC_VERSION_MAJOR ((void*)REC_VERSION_MAJOR)";
 INT rec minor version =
    ALIEN "A68_REC_VERSION_MINOR"
-         "#define A68_REC_VERSION_MINOR REC_VERSION_MINOR";
+         "#define A68_REC_VERSION_MINOR ((void*)REC_VERSION_MINOR)";
 
 REF CSTR rec version string alien =
    ALIEN "A68_REC_VERSION_STRING"
-         "#define A68_REC_VERSION_STRING REC_VERSION_STRING";
+         "#define A68_REC_VERSION_STRING ((void*)REC_VERSION_STRING)";
 PROC rec version string = STRING:
    MAKERVC CSTRTORVC rec version string alien;
 
+{ Library initialization and finalization.  }
+
 PROC VOID rec init = ALIEN "rec_init()" "/**/",
-          rec fini = ALIEN "rec_fini()" "/**/"
+          rec fini = ALIEN "rec_fini()" "/**/";
    
+{ Flexible buffers.  }
+
+MODE RECBUF = CPTR;
+
+PROC(REF VECTOR[]CHAR, REF INT)RECBUF rec buf new =
+   ALIEN "A68_REC_BUF_NEW(data,size)"
+         "#define A68_REC_BUF_NEW(data,size) rec_buf_new(&A_VC_charptr(data), &A_INT_size_t(size))";
+
+PROC(RECBUF)VOID rec buf close =
+   ALIEN "A68_REC_BUF_CLOSE(buf)"
+         "#define A68_REC_BUF_CLOSE(buf) rec_buf_close(buf)";
+
+PROC(INT,RECBUF)INT rec buf putc =
+   ALIEN "A68_REC_BUF_PUTC(c,buf)"
+         "#define A68_REC_BUF_PUTC(c,buf) A_int_INT(rec_buf_putc(A_INT_int(c),(rec_buf_t)buf))";
+
+PROC(VECTOR[]CHAR,RECBUF)INT rec buf puts =
+   ALIEN "A68_REC_BUF_PUTS(s,buf)"
+         "#define A68_REC_BUF_PUTS(s,buf) A_int_INT(rec_buf_puts(A_VC_charptr(s),(rec_buf_t)buf))";
+
+PROC(RECBUF,INT)VOID rec buf rewind =
+   ALIEN "A68_REC_BUF_REWIND(buf,n)"
+         "#define A68_REC_BUF_REWIND(buf,n) rec_buf_rewind((rec_buf_t)buf, A_INT_int(n))"
+
+
 KEEP
 
-   rec major version, rec minor version, rec version string
+   { Constants.  }
+
+   rec major version, rec minor version, rec version string,
+
+   { Library initialization and finalization.  }
+
+   rec init, rec fini,
+
+   { Flexible buffers.  }
+
+   rec buf new, rec buf close, rec buf putc, rec buf puts,
+   rec buf rewind
 
 FINISH

@@ -1,3 +1,15 @@
+2011-11-23  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Wrappers for flexible buffers in the Algol68 frontend.
+	* algol68/rec.a68: Cast pointers to void* for values of mode CSTR.
+	Keep 'rec init' and 'rec fini'.
+	(MODE RECBUF): New mode.
+	(rec buf new): New procedure.
+	(rec buf close): New procedure.
+	(rec buf putc): New procedure.
+	(rec buf puts): New procedure.
+	(rec buf rewind): New procedure.
+
 2011-11-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: avoid duplication of regular expressions and generalize
