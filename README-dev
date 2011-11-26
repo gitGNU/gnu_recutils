@@ -32,27 +32,24 @@ There are some third party dependencies needed to build some of the
 utilities shipped in this distribution.  The configure script checks
 for the needed packages and drives the conditional compilation of the
 impacted utitilities.  The dependencies are:
-- The development files of the libuuid library are needed.  Version
-  2.17.2 works fine, but almost any version will do it.  In Debian and
-  derivatives you can just install the package uuid-dev.
-- The GNU Privacy Guard (gnupg) is required in order to support
-  encryption.  The following libraries are required: libgpg-error and
-  libgcrypt.  Any recent version of those libraries will work.  gnupg
-  can be obtained at http://gnupg.org.
 - The testing infrastructure uses the Check library.  At the moment
   the svn version of the library if needed.  The configure script will
   check if you have the right version.  libcheck can be obtained at
   http://sourceforge.net/projects/check/.
 
 The following dependencies are optional.  Missing them will result in
-a less capable library:
-- libcurl is required by the HTTP file system implementation.  Any
+a less capable software:
+- The GNU Privacy Guard (gnupg) is required in order to support
+  encryption.  The following libraries are required: libgpg-error and
+  libgcrypt.  Any recent version of those libraries will work.  gnupg
+  can be obtained at http://gnupg.org.
+- libcurl is required for supporting remote descriptors.  Any
   recent version must work.  The library can be obtained at
   http://curl.haxx.se/libcurl/.
-- The JBIG2 decoding filters require the libjbig2dec library.
-  jbig2dec can be obtained at http://jbig2dec.sourceforge.net/.
-- The DCT filters require the libjpeg library. libjpeg can be obtained
-  at http://libjpeg.sourceforge.net/.
+- The mdbtools are required for building the mdb2rec utility.
+  mdbtools can be obtained at http://mdbtools.sourceforge.net.
+- The algol68toc compiler is required for building the Algol68
+  bindings.
 
 Building
 --------

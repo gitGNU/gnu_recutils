@@ -1,3 +1,12 @@
+2011-11-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Distribution fixes.
+	* etc/Makefile.am (dist_lisp_DATA): Install and distribute
+	ob-rec.el.
+
+	* README-dev: Remove information incorrectly copied from the
+	libgnupdf README-dev file.
+
 2011-11-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Wrappers for flexible buffers in the Algol68 frontend.

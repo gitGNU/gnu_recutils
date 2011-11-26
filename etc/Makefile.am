@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-dist_lisp_DATA = rec-mode.el
+dist_lisp_DATA = rec-mode.el ob-rec.el
 
 etcdir=$(pkgdatadir)/etc
 dist_etc_DATA = FSD.rec
