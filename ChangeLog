@@ -1,5 +1,11 @@
 2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: use rec_match intead of regex functions.
+	* src/rec-fex.c (rec_fex_check): Use rec_match instead of
+	regcomp/regexec.
+
+2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	qa: syntax fixes.
 	* algol68/rec.a68: Trailing blanks removed.
 

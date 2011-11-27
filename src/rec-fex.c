@@ -27,7 +27,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <regex.h>
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
@@ -145,7 +144,6 @@ bool
 rec_fex_check (char *str, enum rec_fex_kind_e kind)
 {
   int ret;
-  regex_t regexp;
   char *regexp_str;
 
   switch (kind)
@@ -172,17 +170,7 @@ rec_fex_check (char *str, enum rec_fex_kind_e kind)
       }
     }
 
-  /* Compile the regexp.  */
-  if ((ret = regcomp (&regexp, regexp_str, REG_EXTENDED)) != 0)
-    {
-      fprintf (stderr, _("internal error: rec_resolver_check: error compiling regexp.\n"));
-      return false;
-    }
-
-  /* Check.  */
-  ret = regexec (&regexp, str, 0, NULL, 0);
-  
-  return (ret == 0);
+  return rec_match (str, regexp_str);
 }
 
 int
