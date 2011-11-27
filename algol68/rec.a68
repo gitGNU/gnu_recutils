@@ -46,7 +46,7 @@ PROC rec version string = STRING:
 
 PROC VOID rec init = ALIEN "rec_init()" "/**/",
           rec fini = ALIEN "rec_fini()" "/**/";
-   
+
 { Flexible buffers.  }
 
 MODE RECBUF = CPTR;

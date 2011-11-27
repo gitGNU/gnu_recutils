@@ -1,5 +1,12 @@
 2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	qa: syntax fixes.
+	* algol68/rec.a68: Trailing blanks removed.
+
+	* .x-sc_prohibit_xalloc_without_use: New file.
+
+2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils,librec: encrypted fields are now decrypted when using field
 	expressions in recsel.
 	* torture/utils/recsel.sh (confidential): New input file.

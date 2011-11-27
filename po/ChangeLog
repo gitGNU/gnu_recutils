@@ -1,3 +1,8 @@
+2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	qa: syntax fixes.
+	* fr.po: Trailing blanks removed.
+
 2011-11-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	po: french translation added.
