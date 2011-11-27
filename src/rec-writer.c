@@ -54,6 +54,16 @@ struct rec_writer_s
                         fields.  */
 };
 
+static void
+rec_writer_new_common (rec_writer_t writer)
+{
+  writer->file_out = NULL;
+  writer->buf_out = NULL;
+  writer->line = 1;
+  writer->eof = false;
+  writer->password = NULL;
+}
+
 rec_writer_t
 rec_writer_new (FILE *file_out)
 {
@@ -62,11 +72,8 @@ rec_writer_new (FILE *file_out)
   new = malloc (sizeof(struct rec_writer_s));
   if (new)
     {
+      rec_writer_new_common (new);
       new->file_out = file_out;
-      new->buf_out = NULL;
-      new->line = 1;
-      new->eof = false;
-      new->password = NULL;
     }
 
   return new;
@@ -80,10 +87,8 @@ rec_writer_new_str (char **str, size_t *str_size)
   new = malloc (sizeof(struct rec_writer_s));
   if (new)
     {
-      new->file_out = NULL;
+      rec_writer_new_common (new);
       new->buf_out = rec_buf_new (str, str_size);
-      new->line = 1;
-      new->eof = false;
     }
 
   return new;

@@ -1,3 +1,13 @@
+2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: initialize passwords in writers, and avoid code
+	replication.
+	* src/rec-writer.c (rec_writer_new_str): Initialize the password
+	field to NULL.
+	(rec_writer_new_common): New function.
+	(rec_writer_new): Use rec_writer_new_common.
+	(rec_writer_new_str): Likewise.
+
 2011-11-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Distribution fixes.
