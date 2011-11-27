@@ -1,5 +1,26 @@
 2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils,librec: encrypted fields are now decrypted when using field
+	expressions in recsel.
+	* torture/utils/recsel.sh (confidential): New input file.
+	(recsel-confidential): New test.
+	(recsel-confidential-fex): New test.
+	(recsel-confidential-fex-value): New test.
+	(recsel-confidential-num): New test.
+
+	* utils/recsel.c (recsel_process_data): Pass recsel_password to
+	recutl_eval_field_expression.
+
+	* utils/recutl.c (recutl_eval_field_expression): Get a new
+	argument, 'password'.
+	(recutl_eval_field_expression): Set the passed password, if any,
+	to decrypt confidential fields.
+
+	* src/rec-writer.c (rec_write_record_with_fex): Decrypt
+	confidential fields before printing them out.
+
+2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: initialize passwords in writers, and avoid code
 	replication.
 	* src/rec-writer.c (rec_writer_new_str): Initialize the password

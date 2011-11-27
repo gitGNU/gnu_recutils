@@ -405,7 +405,8 @@ recsel_process_data (rec_db_t db)
                                                          record,
                                                          recsel_write_mode,
                                                          recsel_print_values,
-                                                         recsel_print_row);
+                                                         recsel_print_row,
+                                                         recsel_password);
                 }
 
               /* Insert a newline?  */

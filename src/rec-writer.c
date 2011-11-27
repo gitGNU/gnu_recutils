@@ -507,6 +507,13 @@ rec_write_record_with_fex (rec_writer_t writer,
 
           written_fields++;
 
+#if defined REC_CRYPT_SUPPORT
+          if (writer->password)
+            {
+              rec_decrypt_field (field, writer->password);
+            }
+#endif /* REC_CRYPT_SUPPORT */
+
           if (print_values_p)
             {
               /* Write just the value of the field.  */

@@ -172,6 +172,14 @@ Role: Student
 Age: 15
 '
 
+test_declare_input_file confidential \
+'%rec: Account
+%confidential: Password
+
+User: foo
+Password: encrypted-MHyd3Dqz+iaViL8h1m18sA==
+'
+
 #
 # Declare tests
 #
@@ -731,6 +739,36 @@ test_tool recsel-num-and-quick xfail \
           recsel \
           "-n 5 -q foo" \
           multiple-records
+
+test_tool recsel-confidential ok \
+          recsel \
+          '-s secret' \
+          confidential \
+'User: foo
+Password: secret
+'
+
+test_tool recsel-confidential-fex ok \
+          recsel \
+          '-s secret -p Password' \
+          confidential \
+'Password: secret
+'
+
+test_tool recsel-confidential-fex-value ok \
+          recsel \
+          '-s secret -P Password' \
+          confidential \
+'secret
+'
+
+test_tool recsel-confidential-num ok \
+          recsel \
+          '-s secret -n 0' \
+          confidential \
+'User: foo
+Password: secret
+'
 
 #
 # Cleanup
