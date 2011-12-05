@@ -1,3 +1,19 @@
+2011-12-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: support for several numeration bases in rec_atoi.
+	* src/rec-utils.c (rec_parse_int): Likewise.
+
+	* src/rec-sex-lex.l (rec_sex_lex_extract_index): Likewise.
+
+	* src/rec-sex.c (ATOI_VAL): Likewise.
+	(rec_sex_op_real_p): Likewise.
+
+	* src/rec-rset.c (rec_rset_record_compare_fn): Pass the base
+	argument to rec_atoi.
+
+	* src/rec-utils.c (rec_atoi): Get a new argument with the base of
+	the number.
+
 2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: use rec_match intead of regex functions.

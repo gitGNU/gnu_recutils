@@ -35,7 +35,8 @@
 
 bool
 rec_atoi (const char *str,
-          int *number)
+          int *number,
+          int base)
 {
   bool res;
   long int li;
@@ -178,7 +179,7 @@ rec_parse_int (const char **str, int *num)
     }
   number[p - b] = '\0';
 
-  if (!rec_atoi (number, num))
+  if (!rec_atoi (number, num, 10))
     {
       ret = false;
     }
