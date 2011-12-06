@@ -1,3 +1,9 @@
+2011-12-06  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: allow tabs in blank lines between records.
+	* src/rec-parser.c (rec_parse_rset): Make the parser to ignore
+	tabs appearing between records.
+
 2011-12-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: support for several numeration bases in rec_atoi.

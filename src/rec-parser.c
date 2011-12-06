@@ -499,7 +499,7 @@ rec_parse_rset (rec_parser_t parser,
       c = (char) ci;
 
       /* Skip newline characters and blanks.  */
-      if ((c == '\n') || (c == ' '))
+      if ((c == '\n') || (c == ' ') || (c == '\t'))
         {
           continue;
         }
