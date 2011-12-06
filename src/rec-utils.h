@@ -48,7 +48,7 @@ enum rec_size_condition_e
 /* Parse an integer/real in the NULL-terminated string STR and store
    it at NUMBER.  Return true if the conversion was successful.  false
    otherwise. */
-bool rec_atoi (const char *str, int *number, int base);
+bool rec_atoi (const char *str, int *number);
 bool rec_atod (const char *str, double *number);
 
 /* Extract type and url from a %rec: field value.  */

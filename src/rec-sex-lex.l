@@ -98,7 +98,7 @@ STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
   int integer_value;
 
   yylval->node = rec_sex_ast_node_new ();
-  rec_atoi (yytext, &integer_value, 10);
+  rec_atoi (yytext, &integer_value);
   rec_sex_ast_node_set_int (yylval->node, integer_value);
 
   return REC_SEX_TOK_INT;    
@@ -235,7 +235,7 @@ rec_sex_lex_extract_index (char *str,
         }
       aux[aux_size] = 0;
 
-      if (!rec_atoi (aux, num, 10))
+      if (!rec_atoi (aux, num))
         {
           res = false;
         }

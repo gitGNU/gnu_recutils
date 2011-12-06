@@ -301,7 +301,7 @@ rec_sex_print_ast (rec_sex_t sex)
               }                                         \
             else                                        \
               {                                         \
-                if (!rec_atoi ((VAL).str_val, &(DEST), 10))     \
+                if (!rec_atoi ((VAL).str_val, &(DEST))) \
                 {                                       \
                   *status = false;                      \
                   return res;                           \
@@ -995,7 +995,7 @@ rec_sex_op_real_p (struct rec_sex_val_s op1,
 
   if ((op1.type == REC_SEX_VAL_INT)
       || ((op1.type == REC_SEX_VAL_STR)
-          && rec_atoi (op1.str_val, &integer, 10)))
+          && rec_atoi (op1.str_val, &integer)))
     {
       /* Operand 1 is an integer.  */
       switch (op2.type)
@@ -1013,7 +1013,7 @@ rec_sex_op_real_p (struct rec_sex_val_s op1,
         case REC_SEX_VAL_STR:
           {
             ret = (rec_atod (op2.str_val, &real)
-                   && (!rec_atoi (op2.str_val, &integer, 10)));
+                   && (!rec_atoi (op2.str_val, &integer)));
             break;
           }
         default:
@@ -1027,7 +1027,7 @@ rec_sex_op_real_p (struct rec_sex_val_s op1,
   if ((op1.type == REC_SEX_VAL_REAL)
       || ((op1.type == REC_SEX_VAL_STR)
           && rec_atod (op1.str_val, &real)
-          && (!rec_atoi (op1.str_val, &integer, 10))))
+          && (!rec_atoi (op1.str_val, &integer))))
     {
       /* Operand 1 is a real.  */
       switch (op2.type)

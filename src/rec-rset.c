@@ -1101,8 +1101,8 @@ rec_rset_record_compare_fn (void *data1,
         case REC_TYPE_INT:
         case REC_TYPE_RANGE:
           {
-            if (!rec_atoi (rec_field_value(field1), &int1, 10)
-                || !rec_atoi (rec_field_value(field2), &int2, 10))
+            if (!rec_atoi (rec_field_value(field1), &int1)
+                || !rec_atoi (rec_field_value(field2), &int2))
               {
                 goto lexi;
               }
