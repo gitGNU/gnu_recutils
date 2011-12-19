@@ -43,7 +43,11 @@ enum rec_size_condition_e
 
 /* Non public constants used by several modules. */
 
-#define REC_INT_SIZE_RE "^[ \t\n]*(>|<|>=|<=)?[ \t\n]*([0-9]+)[ \t\n]*$"
+#define REC_INT_RE "-?((0x[0-9a-fA-F]+)|[0-9]+)"
+#define REC_INT_SIZE_RE                         \
+  "^[ \t\n]*(>|<|>=|<=)?[ \t\n]*"               \
+  REC_INT_RE                                    \
+  "[ \t\n]*$"
 
 /* Parse an integer/real in the NULL-terminated string STR and store
    it at NUMBER.  Return true if the conversion was successful.  false

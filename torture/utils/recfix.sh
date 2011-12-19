@@ -37,6 +37,16 @@ test_declare_input_file type-int-valid \
 %type: Integer int
 
 Integer: 10
+
+Integer: 0x10
+
+Integer: 012
+
+Integer: 0xaaaa0000
+
+Integer: -0x10
+
+Integer: -0xFF
 ' 
 
 test_declare_input_file type-int-invalid \
@@ -44,6 +54,10 @@ test_declare_input_file type-int-invalid \
 %type: Integer int
 
 Integer: aaa
+
+Integer: 0x
+
+Integer: --0xF
 '
 
 test_declare_input_file type-real-valid \
@@ -139,6 +153,50 @@ bar: 2
 baz: 5
 '
 
+test_declare_input_file ranges-hex-ok \
+'%rec: Foo
+%type: bar range -0x10 0x10
+
+bar: -16
+
+bar: 0
+
+bar: 5
+
+bar: 0x10
+'
+
+test_declare_input_file ranges-hex-invalid \
+'%rec: Foo
+%type: bar range 0 0xFF
+
+bar: 0
+
+bar: 0x100
+'
+
+test_declare_input_file ranges-oct-ok \
+'%rec: Foo
+%type: bar range -010 010
+
+bar: -8
+
+bar: 0
+
+bar: 8
+'
+
+test_declare_input_file ranges-oct-invalid \
+'%rec: Foo
+%type: bar range -010 010
+
+bar: -8
+
+bar: 0
+
+bar: 9
+'
+
 test_declare_input_file ranges-xfail-1 \
 '%rec: Foo
 %type: bar range -10 10
@@ -205,6 +263,59 @@ bar: KEY1
 bar: KEY2
 
 bar: KEY3
+'
+
+test_declare_input_file type-size-valid \
+'%rec: foo
+%type: bar size 10
+
+bar:
+
+bar: xxx
+
+bar: 1 2 3
++ 4 55
+'
+
+test_declare_input_file type-size-valid-hex \
+'%rec: foo
+%type: bar size 0xa
+
+bar:
+
+bar: xxx
+
+bar: 1 2 3
++ 4 55
+'
+
+test_declare_input_file type-size-valid-oct \
+'%rec: foo
+%type: bar size 012
+
+bar:
+
+bar: xxx
+
+bar: 1 2 3
++ 4 55
+'
+
+test_declare_input_file type-size-invalid \
+'%rec: foo
+%type: bar size 2
+
+bar:
+
+bar: xxx
+
+bar: 1 2 3 \
++ 4 55
+'
+
+test_declare_input_file type-size-invalid-negative \
+'%rec: foo
+%type: bar size -2
 '
 
 test_declare_input_file prohibited-fields-ok \
@@ -282,6 +393,24 @@ foo: bar
 test_declare_input_file size-exact \
 '%rec: foo
 %size: 2
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-exact-hex \
+'%rec: foo
+%size: 0x2
+
+foo: bar
+
+bar: baz
+'
+
+test_declare_input_file size-exact-oct \
+'%rec: foo
+%size: 02
 
 foo: bar
 
@@ -726,8 +855,6 @@ Id: 2
 Secret: bar
 '
 
-
-
 #
 # Declare tests.
 #
@@ -793,6 +920,28 @@ test_tool recfix-ranges-ok ok \
           ranges-ok \
 ''
 
+test_tool recfix-range-hex-ok ok \
+          recfix \
+          '' \
+          ranges-hex-ok \
+''
+
+test_tool recfix-range-hex-xfail xfail \
+          recfix \
+          '' \
+          ranges-hex-invalid
+
+test_tool recfix-range-oct-ok ok \
+          recfix \
+          '' \
+          ranges-oct-ok \
+''
+
+test_tool recfix-range-oct-xfail xfail \
+          recfix \
+          '' \
+          ranges-oct-invalid
+
 test_tool recfix-ranges-xfail-1 xfail \
           recfix \
           '' \
@@ -829,6 +978,34 @@ test_tool recfix-enum-invalid-2 xfail \
           recfix \
           '' \
           enum-invalid-2
+
+test_tool recfix-type-size-valid ok \
+          recfix \
+          '' \
+          type-size-valid \
+''
+
+test_tool recfix-type-size-valid-hex ok \
+          recfix \
+          '' \
+          type-size-valid-hex \
+''
+
+test_tool recfix-type-size-valid-oct ok \
+          recfix \
+          '' \
+          type-size-valid-oct \
+''
+
+test_tool recfix-type-size-invalid xfail \
+          recfix \
+          '' \
+          type-size-invalid
+
+test_tool recfix-type-size-invalid-negative xfail \
+          recfix \
+          '' \
+          type-size-invalid-negative
 
 test_tool recfix-prohibited-fields-ok ok \
           recfix \
@@ -894,6 +1071,18 @@ test_tool recfix-size-exact ok \
           recfix \
           '' \
           size-exact \
+''
+
+test_tool recfix-size-exact-hex ok \
+          recfix \
+          '' \
+          size-exact-hex \
+''
+
+test_tool recfix-size-exact-oct ok \
+          recfix \
+          '' \
+          size-exact-oct \
 ''
 
 test_tool recfix-size-exact-invalid xfail \

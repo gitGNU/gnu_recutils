@@ -1,3 +1,57 @@
+2011-12-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: support for hexadecimal and octal numbers in type
+	descriptions, field values and %size entries.
+	* doc/recutils.texi (%size): Mention that hexadecimal and octal
+	numbers can be used in %size entries.
+
+	* src/rec-utils.h (REC_INT_SIZE_RE): Rewritten to allow hex and
+	octal constants.
+
+	* torture/utils/recfix.sh (size-exact-hex): New input file.
+	(size-exact-oct): Likewise.
+	(recfix-size-exact-hex): New test.
+	(recfix-size-exact-oct): Likewise.
+
+	* doc/recutils.texi (Escalar types): Document that hexadecimal and
+	octal numbers can be used to define ranges.
+	(String types): Ditto for 'size' types.
+
+	* src/rec-types.c (rec_type_parse_size): Make sure the user
+	specified type is not negative.
+
+	* torture/utils/recfix.sh (ranges-hex-invalid): New input file.
+	(recfix-range-hex-xfail): New test.
+	(ranges-oct-ok): New input file.
+	(ranges-oct-invalid): Likewise.
+	(recfix-range-oct-ok): New test.
+	(recfix-range-oct-xfail): Likewise.
+	(type-size-valid): New input file.
+	(type-size-valid-hex): Likewise.
+	(type-size-valid-oct): Likewise.
+	(type-size-invalid): Likewise.
+	(type-size-invalid-negative): Likewise.
+	(recfix-type-size-valid): New test.
+	(recfix-type-size-valid-hex): Likewise.
+	(recfix-type-size-valid-oct): Likewise.
+	(recfix-type-size-invalid): Likewise.
+	(recfix-type-size-invalid-negative): Likewise.
+
+	* src/rec-utils.c (rec_parse_int): Support hexadecimal numbers.
+
+	* src/rec-types.c (REC_TYPE_INT_RE): New constant.
+	(REC_TYPE_RANGE_DESCR_RE): Use REC_TYPE_INT_RE.
+	(REC_TYPE_SIZE_DESCR_RE): Likewise.
+
+	* torture/utils/recfix.sh (type-int-valid): Add integers in both
+	hexadecimal and octal formats.
+	(type-int-invalid): Likewise.
+	(ranges-hex-ok): New input file.
+	(recfix-ranges-hex-ok): New test.
+
+	* src/rec-types.c (REC_TYPE_INT_VALUE_RE): Allow letters a-f and
+	A-F in hexadecimal constants.
+
 2011-12-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,utils: initial support for hexadecimal and octal numbers.

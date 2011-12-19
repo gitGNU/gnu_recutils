@@ -925,6 +925,16 @@ case it is implicitly zero:
 @end example
 
 @noindent
+Hexadecimal and octal numbers can be used to specify the limits in a
+range.  This helps to define scalar types whose natural base is not
+ten, like for example:
+
+@example
+%typedef: Address_t range 0x0000 0xFFFF
+%typedef: Perms_t range 755
+@end example
+
+@noindent
 @dfn{Real} fields can be declared with the @code{real} type specifier.
 A wide range of real numbers can be represented this way, only limited
 by the underlying floating point representation.  For example:
@@ -977,6 +987,14 @@ we could declare the entries as:
 
 @example
 %typedef: Address_t size 25
+@end example
+
+@noindent
+Note that hexadecimal and octal integer constants can also be used to
+specify field sizes:
+
+@example
+%typedef: Address_t size 0x18
 @end example
 
 @noindent
@@ -1305,7 +1323,8 @@ records stored in a record set.  Its usage is:
 
 @noindent
 If no operator is specified then @var{number} is interpreted as the
-exact number of records of this type.  For example:
+exact number of records of this type.  The number can be any integer
+literal, including hexadecimal and octal constants.  For example:
 
 @example
 %rec: Day

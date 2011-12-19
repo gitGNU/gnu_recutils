@@ -164,18 +164,20 @@ rec_parse_int (const char **str, int *num)
   bool ret;
   const char *p, *b;
   char number[30];
-  bool first = true;
 
   ret = true;
   p = *str;
 
   b = p;
-  while (rec_digit_p (*p) || (first && (*p == '-')))
+  while (rec_digit_p (*p)
+         || ((p == b) && (*p == '-'))
+         || ((*p >= 'a') && (*p <= 'f'))
+         || ((*p >= 'A') && (*p <= 'F'))
+         || (*p == 'x')
+         || (*p == 'X'))
     {
       number[p - b] = *p;
       p++;
-
-      first = false;
     }
   number[p - b] = '\0';
 
