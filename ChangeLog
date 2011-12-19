@@ -16,6 +16,13 @@
 	* src/rec-utils.c (rec_atoi): Pass 'base' as 0 to strtol to
 	support numbers in hexadecimal and octal representation.
 
+2011-12-19  Jose E. Marchesi  <jco@terma.com>
+
+	utils: make recfix to exit with an error status if there is a
+	parse error.
+	* utils/recutl.c (recutl_parse_db_from_file): Return 'false' if a
+	syntax error is found by the parser.
+
 2011-12-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: allow tabs in blank lines between records.
