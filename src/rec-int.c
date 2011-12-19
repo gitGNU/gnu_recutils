@@ -815,7 +815,7 @@ does not exist\n"),
                     {
                       /* XXX: make rec_type_descr_p to report more details.  */
                       ADD_ERROR (errors,
-                                _("%s:%s: error: invalid typedef specification\n"),
+                                _("%s:%s: error: invalid type specification\n"),
                                 rec_field_source (field),
                                 rec_field_location_str (field));
                       res++;

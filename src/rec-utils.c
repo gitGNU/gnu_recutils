@@ -40,11 +40,11 @@ rec_atoi (const char *str,
   bool res;
   long int li;
   char *end;
-  int base = 10;
+  int base = 0;
 
   res = false;
- 
-  li = strtol (str, &end, 10);
+
+  li = strtol (str, &end, base);
   if ((*str != '\0') && (*end == '\0'))
     {
       /* The entire string is valid.  */

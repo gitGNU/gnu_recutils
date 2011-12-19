@@ -65,7 +65,7 @@
 
 /* Regular expressions denoting values.  */
 #define REC_TYPE_INT_VALUE_RE                   \
-  "^" REC_TYPE_ZBLANKS_RE "-?[0-9]+" REC_TYPE_ZBLANKS_RE "$"
+  "^" REC_TYPE_ZBLANKS_RE "-?(0x)?[0-9]+" REC_TYPE_ZBLANKS_RE "$"
 
 #define REC_TYPE_BOOL_VALUE_RE                  \
   "^" REC_TYPE_ZBLANKS_RE "(yes|no|true|false|0|1)" REC_TYPE_ZBLANKS_RE "$"
@@ -122,10 +122,10 @@
 #define REC_TYPE_RANGE_DESCR_RE                    \
   REC_TYPE_RANGE_NAME                              \
   REC_TYPE_BLANKS_RE                               \
-  "-?[0-9]+"                                       \
+  REC_TYPE_INT_VALUE_RE                            \
   "("                                              \
   REC_TYPE_ZBLANKS_RE                              \
-  "-?[0-9]+"                                       \
+  REC_TYPE_INT_VALUE_RE                            \
   ")?"
 
 /* real  */
@@ -136,7 +136,7 @@
 #define REC_TYPE_SIZE_DESCR_RE                     \
   REC_TYPE_SIZE_NAME                               \
   REC_TYPE_BLANKS_RE                               \
-  "[0-9]+"
+  REC_TYPE_INT_VALUE_RE
 
 /* line  */
 #define REC_TYPE_LINE_DESCR_RE                  \

@@ -895,14 +895,17 @@ declaration:
 
 @noindent
 Given that declaration, Fields of type @code{Id_t} must contain
-integers, that may be negative.  Valid examples are:
+integers, that may be negative.  Hexadecimal values can be written
+using the @code{0x} prefix, and octal values use an extra
+@code{0}. Valid examples are:
 
 @example
 %type: Id Id_t
 
 Id: 100
 Id: -23
-Id: 0020
+Id: -0xFF
+Id: 020
 @end example
 
 @noindent
