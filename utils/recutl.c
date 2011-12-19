@@ -227,6 +227,7 @@ recutl_parse_db_from_file (FILE *in,
     {
       /* Report parsing errors.  */
       rec_parser_perror (parser, "%s", file_name);
+      res = false;
     }
   
   return res;
@@ -321,7 +322,7 @@ recutl_read_db_from_file (char *file_name)
       in = fopen (file_name, "r");
       if (in == NULL)
         {
-          return NULL;
+           return NULL;
         }
     }
   else
