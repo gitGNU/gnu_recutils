@@ -1,3 +1,17 @@
+2011-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: support for hexadecimal and octal literals in selection
+	expressions.
+	* doc/recutils.texi (SEX Operands): Document the usage of
+	hexadecimal and octal literals in selection expressions.
+
+	* torture/utils/recsel.sh (recsel-sex-integer-equal-hex): New
+	test.
+	(recsel-sex-integer-equal-oct): Likewise.
+
+	* src/rec-sex-lex.l: Modified to recognize hexadecimal and octal
+	literals as integers.
+
 2011-12-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: support for hexadecimal and octal numbers in type

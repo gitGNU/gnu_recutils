@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
   return REC_SEX_TOK_REAL;
 }
 
-"-"?{DIGIT}+ {
+"-"?((0x[0-9a-fA-F]+)|{DIGIT}+) {
   /*
    * Create an integer node.
    */

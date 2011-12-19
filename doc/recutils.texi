@@ -1660,18 +1660,20 @@ parenthesized expressions.
 
 The supported numeric literals are integer numbers and real numbers.
 The usual sign character @samp{-} is used to denote negative values.
-Examples are:
+Integer values can be denoted in base 10, base 16 using the @code{0x}
+prefix, and base 8 using the @code{0} prefix.  Examples are:
 
 @example
 10000
 0
+0xFF
+-0xa
+012
+-07
 -1342
 .12
 -3.14
 @end example
-
-Additional zeroes in the left of the number are allowed, so both
-@samp{00} and @samp{0100} are legal integer literals.
 
 @subsubsection String Literals
 

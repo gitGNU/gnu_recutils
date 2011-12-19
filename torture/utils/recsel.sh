@@ -459,6 +459,20 @@ test_tool recsel-sex-integer-equal ok \
 'field1: 0
 '
 
+test_tool recsel-sex-integer-equal-hex ok \
+          recsel \
+          '-e "field1 = -0xa"' \
+          integer-fields \
+'field1: -10
+'
+
+test_tool recsel-sex-integer-equal-oct ok \
+          recsel \
+          '-e "field1 = -012"' \
+          integer-fields \
+'field1: -10
+'
+
 test_tool recsel-sex-integer-nonequal ok \
           recsel \
           '-e "field1 != 314"' \
