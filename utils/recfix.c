@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <xalloc.h>
+#include <getpass.h>
 #include <gettext.h>
 #define _(str) gettext (str)
 
@@ -282,13 +283,23 @@ recfix_parse_args (int argc,
 
 #if defined REC_CRYPT_SUPPORT
   /* The encrypt and decrypt operations require the user to specify a
+     password.  If no password was specified with -s and the program
+     is running in a terminal, prompt the user to provide the
      password.  */
 
   if (((recfix_op == RECFIX_OP_ENCRYPT)
        || (recfix_op == RECFIX_OP_DECRYPT))
       && (recfix_password == NULL))
     {
-      recutl_fatal ("please specify a password.\n");
+      if (recutl_interactive ())
+        {
+          recfix_password = getpass (_("Password: "));
+        }
+
+      if (!recfix_password || (strlen (recfix_password) == 0))
+        {
+          recutl_fatal ("please specify a password.\n");
+        }
     }
 #endif /* REC_CRYPT_SUPPORT */
 

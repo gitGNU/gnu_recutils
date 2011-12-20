@@ -2628,12 +2628,16 @@ there is an integrity failure the sorting is not performed.
 Note that this is a destructive operation.
 @itemx @w{@kbd{--encrypt}}
 Encrypt all the non encrypted fields in the database which are marked
-as confidential.  This operation requires a password.
+as confidential.  This operation requires a password.  If no password
+is specified with @option{-s} and the program is run in a terminal, a
+prompt is used to get the password from the user.
 
 Note that this is a destructive operation.
 @itemx @w{@kbd{--decrypt}}
 Decrypt all the encrypted fields in the database which are marked as
-confidential.  This operation requires a password.
+confidential.  This operation requires a password.  If no password is
+specified with @option{-s} and the program is run in a terminal, a
+prompt is used to get the password from the user.
 
 Note that this is a descructive operation.
 @end table

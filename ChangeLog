@@ -1,5 +1,14 @@
 2011-12-20  Jose E. Marchesi  <jco@terma.com>
 
+	recfix: interactive password prompt.
+	* doc/recutils.texi (recfix Invocation): Document the interactive
+	behaviour of recfix when it needs a password.
+
+	* utils/recfix.c (recfix_parse_args): Prompt for a password to the
+	user if needed, and ignore empty passwords.
+
+2011-12-20  Jose E. Marchesi  <jco@terma.com>
+
 	recins: avoid code duplication in encryption code.
 	* utils/recins.c (recins_encrypt_record): New function.
 	(recins_insert_record): Use recins_encrypt_record.
