@@ -1,5 +1,9 @@
 2011-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* gnulib module getpass-gnu imported.
+
+2011-12-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: support for hexadecimal and octal literals in selection
 	expressions.
 	* doc/recutils.texi (SEX Operands): Document the usage of

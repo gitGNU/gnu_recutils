@@ -27,7 +27,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --libtool --macro-prefix=gl --no-vc-files announce-gen array-list autobuild base64 closeout crc execute gendocs getopt-gnu gettext gettext-h gnupload list maintainer-makefile mkstemp parse-datetime progname readline regex regexprops-generic strsep tempname vasnprintf-posix vasprintf
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --libtool --macro-prefix=gl --no-vc-files announce-gen array-list autobuild base64 closeout crc execute gendocs getopt-gnu getpass-gnu gettext gettext-h gnupload list maintainer-makefile mkstemp parse-datetime progname readline regex regexprops-generic strsep tempname vasnprintf-posix vasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -41,6 +41,7 @@ gl_MODULES([
   execute
   gendocs
   getopt-gnu
+  getpass-gnu
   gettext
   gettext-h
   gnupload

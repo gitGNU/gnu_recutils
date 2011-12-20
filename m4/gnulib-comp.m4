@@ -71,6 +71,9 @@ AC_DEFUN([gl_EARLY],
   # Code from module fpucw:
   # Code from module frexp-nolibm:
   # Code from module frexpl-nolibm:
+  # Code from module fseek:
+  # Code from module fseeko:
+  AC_REQUIRE([AC_FUNC_FSEEKO])
   # Code from module fstat:
   # Code from module gendocs:
   # Code from module getdelim:
@@ -78,6 +81,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module getline:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
+  # Code from module getpass-gnu:
   # Code from module gettext:
   # Code from module gettext-h:
   # Code from module gettime:
@@ -96,6 +100,7 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_SYS_LARGEFILE])
   # Code from module list:
   # Code from module localcharset:
+  # Code from module lseek:
   # Code from module lstat:
   # Code from module maintainer-makefile:
   # Code from module malloc-gnu:
@@ -266,6 +271,16 @@ if test $HAVE_DECL_FREXPL = 0 || test $gl_func_frexpl_no_libm = no; then
   AC_LIBOBJ([frexpl])
 fi
 gl_MATH_MODULE_INDICATOR([frexpl])
+gl_FUNC_FSEEK
+if test $REPLACE_FSEEK = 1; then
+  AC_LIBOBJ([fseek])
+fi
+gl_STDIO_MODULE_INDICATOR([fseek])
+gl_FUNC_FSEEKO
+if test $HAVE_FSEEKO = 0 || test $REPLACE_FSEEKO = 1; then
+  AC_LIBOBJ([fseeko])
+fi
+gl_STDIO_MODULE_INDICATOR([fseeko])
 gl_FUNC_FSTAT
 if test $REPLACE_FSTAT = 1; then
   AC_LIBOBJ([fstat])
@@ -295,13 +310,24 @@ if test $REPLACE_GETOPT = 1; then
   AC_LIBOBJ([getopt])
   AC_LIBOBJ([getopt1])
   gl_PREREQ_GETOPT
+  dnl Arrange for unistd.h to include getopt.h.
+  GNULIB_GL_UNISTD_H_GETOPT=1
 fi
+AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
 gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
 gl_FUNC_GETOPT_POSIX
 if test $REPLACE_GETOPT = 1; then
   AC_LIBOBJ([getopt])
   AC_LIBOBJ([getopt1])
   gl_PREREQ_GETOPT
+  dnl Arrange for unistd.h to include getopt.h.
+  GNULIB_GL_UNISTD_H_GETOPT=1
+fi
+AC_SUBST([GNULIB_GL_UNISTD_H_GETOPT])
+gl_FUNC_GETPASS_GNU
+if test $REPLACE_GETPASS = 1; then
+  AC_LIBOBJ([getpass])
+  gl_PREREQ_GETPASS
 fi
 dnl you must add AM_GNU_GETTEXT([external]) or similar to configure.ac.
 AM_GNU_GETTEXT_VERSION([0.18.1])
@@ -343,8 +369,13 @@ fi
 gl_LANGINFO_H
 gl_LIST
 gl_LOCALCHARSET
-LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(top_builddir)/$gl_source_base\""
+LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(abs_top_builddir)/$gl_source_base\""
 AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
+gl_FUNC_LSEEK
+if test $REPLACE_LSEEK = 1; then
+  AC_LIBOBJ([lseek])
+fi
+gl_UNISTD_MODULE_INDICATOR([lseek])
 gl_FUNC_LSTAT
 if test $REPLACE_LSTAT = 1; then
   AC_LIBOBJ([lstat])
@@ -807,6 +838,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fpucw.h
   lib/frexp.c
   lib/frexpl.c
+  lib/fseek.c
+  lib/fseeko.c
   lib/fstat.c
   lib/getdelim.c
   lib/getdtablesize.c
@@ -815,6 +848,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getopt.in.h
   lib/getopt1.c
   lib/getopt_int.h
+  lib/getpass.c
+  lib/getpass.h
   lib/gettext.h
   lib/gettime.c
   lib/gettimeofday.c
@@ -834,6 +869,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/langinfo.in.h
   lib/localcharset.c
   lib/localcharset.h
+  lib/lseek.c
   lib/lstat.c
   lib/malloc.c
   lib/malloca.c
@@ -909,6 +945,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdbool.in.h
   lib/stddef.in.h
   lib/stdint.in.h
+  lib/stdio-impl.h
   lib/stdio.in.h
   lib/stdlib.in.h
   lib/strcasecmp.c
@@ -979,11 +1016,14 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fpieee.m4
   m4/frexp.m4
   m4/frexpl.m4
+  m4/fseek.m4
+  m4/fseeko.m4
   m4/fstat.m4
   m4/getdelim.m4
   m4/getdtablesize.m4
   m4/getline.m4
   m4/getopt.m4
+  m4/getpass.m4
   m4/gettext.m4
   m4/gettime.m4
   m4/gettimeofday.m4
@@ -1018,6 +1058,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/locale-zh.m4
   m4/lock.m4
   m4/longlong.m4
+  m4/lseek.m4
   m4/lstat.m4
   m4/malloc.m4
   m4/malloca.m4
