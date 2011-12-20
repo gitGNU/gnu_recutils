@@ -195,7 +195,7 @@ Summary: Implement %fsort.
 Category: librec
 CreatedAt: Sun Nov  7 20:26:41 CET 2010
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DISCARDED
 Description: The %fsort special field specifies the desired order of the fields
 + of records.  For example:
 + 
@@ -206,6 +206,11 @@ Description: The %fsort special field specifies the desired order of the fields
 + field used in records of type Employee shall be specified in the
 + %fsort field.  The desired position for non explicitly mentioned
 + fields is at the end of the record.
+Note: Tue Dec 20 17:23:43 CET 2011
++ Task resolved to 'DISCARDED'.
++ 
++ Probably not needed.
+ClosedAt: Tue Dec 20 17:23:43 CET 2011
 
 Id: 17
 Summary: Make tasktool to reuse ChangeLog entries with the same date.
@@ -251,12 +256,16 @@ Summary: Implement %sort.
 Category: librec
 CreatedAt: Mon Nov  8 12:57:20 CET 2010
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: Sorting of records in the described record set.  Usage:
 + 
 +    %sort: FIELD_NAME
 + 
 + Just a single field name is supported.
+Note: Tue Dec 20 17:18:22 CET 2011
++ Task resolved to 'DONE'.
++ 
+ClosedAt: Tue Dec 20 17:18:22 CET 2011
 
 Id: 21
 Summary: Support maximum width in output in recsel.
@@ -339,6 +348,9 @@ Description:
 +    $ ./tasktool hello 'Jose E. Marchesi' jemarch@gnu.org
 + 
 + Whatever.
+Note: Tue Dec 20 17:24:54 CET 2011
++ 
++ The configuration file must be ignored by the vcs.
 
 Id: 25
 Summary: Support for %size
@@ -370,7 +382,7 @@ Category: librec
 CreatedAt: Wed Dec  1 22:32:43 CET 2010
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: 
 + The librec codebase is full of places where some predefined field
 + name, such as '%rec' or '%type', is used.  In that case the following
@@ -391,6 +403,7 @@ Description:
 + 
 + A solution could be to make 'rec_init' to create a list of predefined
 + field names and 'rec_fini' to destroy them.
+ClosedAt: Tue Dec 20 17:19:58 CET 2011
 
 Id: 27
 Summary: tasktool list shall list assigned tasks by default.
@@ -520,7 +533,7 @@ Category: librec
 CreatedAt: Tue May 10 16:49:10 CEST 2011
 Originator: jemarch@gnu.org
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: The string literals supported in the selection expressions are not
 + supporting the escaping of characters, thus having to provide a real
 + newline character or tab character in order to have them included in
@@ -532,6 +545,7 @@ Description: The string literals supported in the selection expressions are not
 +   - \n   for newline.
 +   - \t   for tab.
 +   - \NNN for any ASCII character whose code is encoded in octal in NNN.
+ClosedAt: Tue Dec 20 17:20:15 CET 2011
 
 %rec: TasktoolControl
 %type: NextFreeId int
