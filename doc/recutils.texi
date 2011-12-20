@@ -2367,7 +2367,9 @@ recins -f Date -v `date` -f Entry -v "$HW_ADDR device connected" \
 database.  When the @option{-s|--password} command line option is
 specified in the command line any field declared as confidential in
 the record descriptor will get encrypted using the given passphrase.
-For example, the invocation:
+If the command is executed interactively and @option{-s} is not used
+then the user is asked to provide a password using the terminal.  For
+example, the invocation:
 
 @example
 $ recins -t Account -s mypassword -f Login -v foo -f Password -v secret accounts.rec

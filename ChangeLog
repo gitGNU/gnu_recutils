@@ -1,5 +1,15 @@
 2011-12-20  Jose E. Marchesi  <jco@terma.com>
 
+	utils: interactive password prompt in recins.
+	* doc/recutils.texi (recins Encryption): Document the interactive
+	behaviour of recins when it needs a password.
+
+	* utils/recins.c (recins_insert_record): Prompt for a password to
+	the user if needed, and ignore empty passwords.
+	(recins_add_new_record): Likewise.
+
+2011-12-20  Jose E. Marchesi  <jco@terma.com>
+
 	utils: interactive password prompt in recsel.
 	* utils/recsel.c (recsel_process_data): Use the provided password
 	only if it not the empty string.

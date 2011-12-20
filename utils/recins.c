@@ -32,6 +32,7 @@
 #include <gettext.h>
 #include <errno.h>
 #include <locale.h>
+#include <getpass.h>
 #include <time.h>
 #define _(str) gettext (str)
 #include <base64.h>
@@ -328,16 +329,20 @@ recins_insert_record (rec_db_t db,
         
         rec_fex_t confidential_fields =
           rec_rset_confidential (rset);
-        if (!recins_password && (rec_fex_size (confidential_fields) > 0))
+
+        if (rec_fex_size (confidential_fields) > 0)
           {
-            recutl_warning (_("the record set contains confidential fields but no password was provided\n"));
-            recutl_warning (_("the resulting record will have those fields unencrypted!\n"));
-          }
-        else
-          {
-            if (!rec_encrypt_record (rset, record_to_insert, recins_password))
+            if (!recins_password && recutl_interactive ())
               {
-                recutl_fatal ("encrypting a record.  Please report this.\n");
+                recins_password = getpass (_("Password: "));
+              }
+
+            if (recins_password && (strlen (recins_password) > 0))
+              {
+                if (!rec_encrypt_record (rset, record_to_insert, recins_password))
+                  {
+                    recutl_fatal ("encrypting a record.  Please report this.\n");
+                  }
               }
           }
       }
@@ -580,18 +585,21 @@ recins_add_new_record (rec_db_t db)
           rec_record_destroy (recins_record);
 
 #if defined REC_CRYPT_SUPPORT
+      {
+        /* Encrypt the value of fields declared as confidential in
+           this record set.  */
+        
+        rec_fex_t confidential_fields =
+          rec_rset_confidential (rset);
+
+        if (rec_fex_size (confidential_fields) > 0)
           {
-            /* Encrypt the value of fields declared as confidential in
-               this record set.  */
-            
-            rec_fex_t confidential_fields =
-              rec_rset_confidential (rset);
-            if (!recins_password && (rec_fex_size (confidential_fields) > 0))
+            if (!recins_password && recutl_interactive ())
               {
-                recutl_warning (_("the record set contains confidential fields but no password was provided\n"));
-                recutl_warning (_("the resulting record will have those fields unencrypted!\n"));
+                recins_password = getpass (_("Password: "));
               }
-            else
+
+            if (recins_password && (strlen (recins_password) > 0))
               {
                 if (!rec_encrypt_record (rset, record_to_insert, recins_password))
                   {
@@ -599,6 +607,7 @@ recins_add_new_record (rec_db_t db)
                   }
               }
           }
+      }
 #endif
 
           rset_elem = rec_rset_first_record (rset);
