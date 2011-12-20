@@ -1,5 +1,12 @@
 2011-12-20  Jose E. Marchesi  <jco@terma.com>
 
+	recins: avoid code duplication in encryption code.
+	* utils/recins.c (recins_encrypt_record): New function.
+	(recins_insert_record): Use recins_encrypt_record.
+	(recins_add_new_record): Likewise.
+
+2011-12-20  Jose E. Marchesi  <jco@terma.com>
+
 	utils: interactive password prompt in recins.
 	* doc/recutils.texi (recins Encryption): Document the interactive
 	behaviour of recins when it needs a password.

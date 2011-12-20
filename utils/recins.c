@@ -151,6 +151,36 @@ the data from standard input and writing the result to standard output.\n"), std
   recutl_print_help_footer ();
 }
 
+#if defined REC_CRYPT_SUPPORT
+
+void
+recins_encrypt_record (rec_rset_t rset,
+                       rec_record_t record)
+{
+  /* Encrypt the value of fields declared as confidential in this
+     record set.  */
+
+  rec_fex_t confidential_fields = rec_rset_confidential (rset);
+
+  if (rec_fex_size (confidential_fields) > 0)
+    {
+      if (!recins_password && recutl_interactive ())
+        {
+          recins_password = getpass (_("Password: "));
+        }
+      
+      if (recins_password && (strlen (recins_password) > 0))
+        {
+          if (!rec_encrypt_record (rset, record, recins_password))
+            {
+              recutl_fatal ("encrypting a record.  Please report this.\n");
+            }
+        }
+    }
+}
+
+#endif /* REC_CRYPT_SUPPORT */
+
 void
 recins_add_auto_field_int (rec_rset_t rset,
                            rec_field_name_t field_name,
@@ -323,29 +353,7 @@ recins_insert_record (rec_db_t db,
       rec_record_destroy (record);
 
 #if defined REC_CRYPT_SUPPORT
-      {
-        /* Encrypt the value of fields declared as confidential in
-           this record set.  */
-        
-        rec_fex_t confidential_fields =
-          rec_rset_confidential (rset);
-
-        if (rec_fex_size (confidential_fields) > 0)
-          {
-            if (!recins_password && recutl_interactive ())
-              {
-                recins_password = getpass (_("Password: "));
-              }
-
-            if (recins_password && (strlen (recins_password) > 0))
-              {
-                if (!rec_encrypt_record (rset, record_to_insert, recins_password))
-                  {
-                    recutl_fatal ("encrypting a record.  Please report this.\n");
-                  }
-              }
-          }
-      }
+      recins_encrypt_record (rset, record_to_insert);
 #endif
 
       new_elem = rec_rset_elem_record_new (rset, record_to_insert);
@@ -585,29 +593,7 @@ recins_add_new_record (rec_db_t db)
           rec_record_destroy (recins_record);
 
 #if defined REC_CRYPT_SUPPORT
-      {
-        /* Encrypt the value of fields declared as confidential in
-           this record set.  */
-        
-        rec_fex_t confidential_fields =
-          rec_rset_confidential (rset);
-
-        if (rec_fex_size (confidential_fields) > 0)
-          {
-            if (!recins_password && recutl_interactive ())
-              {
-                recins_password = getpass (_("Password: "));
-              }
-
-            if (recins_password && (strlen (recins_password) > 0))
-              {
-                if (!rec_encrypt_record (rset, record_to_insert, recins_password))
-                  {
-                    recutl_fatal ("encrypting a record.  Please report this.\n");
-                  }
-              }
-          }
-      }
+          recins_encrypt_record (rset, record_to_insert);
 #endif
 
           rset_elem = rec_rset_first_record (rset);
