@@ -1,3 +1,21 @@
+2011-12-20  Jose E. Marchesi  <jco@terma.com>
+
+	utils: interactive password prompt in recsel.
+	* utils/recsel.c (recsel_process_data): Use the provided password
+	only if it not the empty string.
+
+	* doc/recutils.texi (recsel Encryption): Document the interactive
+	behaviour of recsel when it needs a password.
+
+	* utils/recsel.c (recsel_process_data): Ask for a password if
+	recsel was called interactively, a password is needed and -s was
+	provided alone.
+	(GNU_longOptions): allow optional arguments to PASSWORD_ARG.
+
+	* utils/recutl.c: New global variable recutl_interactive_p.
+	(recutl_interactive): New function.
+	(recutl_init): Initialize recutl_interactive.
+
 2011-12-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* gnulib module getpass-gnu imported.

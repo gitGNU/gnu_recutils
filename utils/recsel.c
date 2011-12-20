@@ -31,6 +31,7 @@
 #include <xalloc.h>
 #include <gettext.h>
 #define _(str) gettext (str)
+#include <getpass.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -303,11 +304,48 @@ recsel_process_data (rec_db_t db)
   ret = true;
 
   writer = rec_writer_new (stdout);
-  if (recsel_password)
+
+#if defined REC_CRYPT_SUPPORT
+
+  /* Set the password in the writer.  If recsel was called
+     interactively and with an empty -s, was not used then prompt the
+     user for it.  Otherwise use the password specified in the command
+     line if any.  */
+
+  if (!recsel_password
+      && (recutl_type || (rec_db_size (db) == 1))
+      && recutl_interactive ())
+    {
+      rec_rset_t rset;
+      rec_fex_t confidential_fields;
+
+      if (recutl_type)
+        {
+          rset = rec_db_get_rset_by_type (db, recutl_type);
+        }
+      else
+        {
+          rset = rec_db_get_rset (db, 0);
+        }
+
+      confidential_fields = rec_rset_confidential (rset);
+      if (rec_fex_size (confidential_fields) > 0)
+        {
+          recsel_password = getpass (_("Password: "));
+        }
+
+      rec_fex_destroy (confidential_fields);
+    }
+
+  /* Note that the password must be at least one character long.  */
+
+  if (recsel_password && (strlen (recsel_password) > 0))
     {
       rec_writer_set_password (writer,
                                recsel_password);
     }
+
+#endif /* REC_CRYPT_SUPPORT */
 
   /* If the database contains more than one type of records and the
      user did'nt specify the recutl_type then ask the user to clarify

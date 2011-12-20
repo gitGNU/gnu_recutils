@@ -32,6 +32,7 @@
 #include <stdarg.h>
 #include <closeout.h>
 #include <xalloc.h>
+#include <unistd.h>
 #include <locale.h>
 #include <gettext.h>
 #define _(str) gettext (str)
@@ -45,9 +46,10 @@
 #include <rec.h>
 #include <recutl.h>
 
-bool             recutl_sort_p         = false;
-char             *recutl_order_rset    = NULL;
-rec_field_name_t recutl_order_by_field = NULL;
+bool              recutl_sort_p         = false;
+char             *recutl_order_rset     = NULL;
+rec_field_name_t  recutl_order_by_field = NULL;
+bool              recutl_interactive_p  = false;
 
 void recutl_print_help (void); /* Forward prototype.  */
 
@@ -75,6 +77,17 @@ recutl_init (char *util_name)
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
+
+  /* Detect whether the tool has been invoked interactively.  */
+  
+  recutl_interactive_p = isatty (fileno(stdin));
+  
+}
+
+bool
+recutl_interactive (void)
+{
+  return recutl_interactive_p;
 }
 
 void

@@ -2172,6 +2172,12 @@ decrypt them with the given password.  If the operation succeeds then
 the output will include the unencrypted data.  Otherwise the
 ASCII-encoded encrypted data will be emitted.
 
+If @command{recsel} is invoked interactively and no password is
+specified with @option{-s}, the user will be asked for a password in
+case one is needed. No echo of the password will appear in the screen.
+The provided password will be used to decrypt all confidential fields
+as if it was specified with @option{-s}.
+
 For example, consider the following database storing information about
 the user accounts of some online service.  Each entry stores a login,
 a full name, email and a password.  The password is declared as
@@ -2195,11 +2201,12 @@ Password: encrypted-XXXYYYZZZUUU
 
 @noindent
 If we use @command{recsel} to get a list of records of type
-@code{Account} without specifying a password, we would get the
-following output with the encrypted values:
+@code{Account} without specifying a password, or if the wrong password
+was specified in interactive mode, then we would get the following
+output with the encrypted values:
 
 @example
-$ recsel -t Account -p Login,Password accounts.rec
+$ cat accounts.rec | recsel -t Account -p Login,Password
 Login: foo
 Password: encrypted-AAABBBCCCDDD
 

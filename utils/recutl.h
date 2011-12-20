@@ -227,6 +227,8 @@ void recutl_sorting_parser (bool sort_p,
 
 bool recutl_yesno (char *prompt);
 
+bool recutl_interactive (void);
+
 #endif /* recutl.h */
 
 /* End of recutl.h */
