@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ int rec_mset_register_type (rec_mset_t mset,
 int rec_mset_count (rec_mset_t mset, int type);
 
 /* Getting and setting elements.  */
-rec_mset_elem_t rec_mset_get (rec_mset_t mset, int type, int position);
+rec_mset_elem_t rec_mset_get_at (rec_mset_t mset, int type, int position);
 
 bool rec_mset_remove_at  (rec_mset_t mset, int position);
 void rec_mset_insert_at  (rec_mset_t mset, rec_mset_elem_t elem, int position);

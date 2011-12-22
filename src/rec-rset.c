@@ -305,9 +305,9 @@ rec_rset_get_elem (rec_rset_t rset,
 {
   rec_rset_elem_t elem;
 
-  elem.mset_elem = rec_mset_get (rset->mset,
-                                 MSET_ANY,
-                                 position);
+  elem.mset_elem = rec_mset_get_at (rset->mset,
+                                    MSET_ANY,
+                                    position);
 
   return elem;
 }
@@ -318,9 +318,9 @@ rec_rset_get_record (rec_rset_t rset,
 {
   rec_rset_elem_t elem;
 
-  elem.mset_elem = rec_mset_get (rset->mset,
-                                 rset->record_type,
-                                 position);
+  elem.mset_elem = rec_mset_get_at (rset->mset,
+                                    rset->record_type,
+                                    position);
 
   return elem;
 }
@@ -331,9 +331,9 @@ rec_rset_get_comment (rec_rset_t rset,
 {
   rec_rset_elem_t elem;
 
-  elem.mset_elem = rec_mset_get (rset->mset,
-                                 rset->comment_type,
-                                 position);
+  elem.mset_elem = rec_mset_get_at (rset->mset,
+                                    rset->comment_type,
+                                    position);
 
   return elem;
 }

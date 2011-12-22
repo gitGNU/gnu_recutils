@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,9 +230,9 @@ rec_record_get_elem (rec_record_t record,
 {
   rec_record_elem_t elem;
 
-  elem.mset_elem = rec_mset_get (record->mset,
-                                 MSET_ANY,
-                                 position);
+  elem.mset_elem = rec_mset_get_at (record->mset,
+                                    MSET_ANY,
+                                    position);
 
   return elem;
 }
@@ -243,9 +243,9 @@ rec_record_get_field (rec_record_t record,
 {
   rec_record_elem_t elem;
 
-  elem.mset_elem = rec_mset_get (record->mset,
-                                 record->field_type,
-                                 position);
+  elem.mset_elem = rec_mset_get_at (record->mset,
+                                    record->field_type,
+                                    position);
 
   return elem;
 }
@@ -256,9 +256,9 @@ rec_record_get_comment (rec_record_t record,
 {
   rec_record_elem_t elem;
 
-  elem.mset_elem = rec_mset_get (record->mset,
-                                 record->comment_type,
-                                 position);
+  elem.mset_elem = rec_mset_get_at (record->mset,
+                                    record->comment_type,
+                                    position);
 
   return elem;
 }

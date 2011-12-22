@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,44 +212,61 @@ rec_mset_count (rec_mset_t mset,
 }
 
 rec_mset_elem_t
-rec_mset_get (rec_mset_t mset,
-              int type,
-              int position)
+rec_mset_get_at (rec_mset_t mset,
+                 int type,
+                 int position)
 {
-  gl_list_iterator_t iter;
-  gl_list_node_t node;
-  rec_mset_elem_t elem;
   rec_mset_elem_t result;
-  int count[MAX_NTYPES];
-  int i;
 
   if ((position < 0) || (position >= mset->count[type]))
     {
-      /* Invalid order.  */
+      /* Invalid position.  */
       return NULL;
     }
 
-  result = NULL;
-  for (i = 0; i < MAX_NTYPES; i++)
+  if (type == 0)
     {
-      count[i] = 0;
-    }
+      /* An element of any type was requested.  Simply call the gnulib
+         list get_at function, that will use the most efficient way to
+         retrieve the element.  */
 
-  iter = gl_list_iterator (mset->elem_list);
-  while (gl_list_iterator_next (&iter, (const void **) &elem, &node))
+      result = (rec_mset_elem_t) gl_list_get_at (mset->elem_list,
+                                                 position);
+
+    }
+  else
     {
-      if ((type == 0)
-          || ((type == elem->type) && (count[elem->type] == position)))
+      /* Iterate on the elements in the gnulib list until the
+         POSITIONth element of the specified type is found.  */
+
+      rec_mset_elem_t elem; 
+      gl_list_node_t node;
+      gl_list_iterator_t iter; 
+      int count[MAX_NTYPES];
+      int i = 0;
+
+      result = NULL;
+      for (i = 0; i < MAX_NTYPES; i++)
         {
-          result = elem;
-          break;
+          count[i] = 0;
         }
-      else
+      
+      iter = gl_list_iterator (mset->elem_list);
+      while (gl_list_iterator_next (&iter, (const void **) &elem, &node))
         {
-          count[elem->type]++;
-          if (elem->type != 0)
+          if ((type == 0)
+              || ((type == elem->type) && (count[elem->type] == position)))
             {
-              count[0]++;
+              result = elem;
+              break;
+            }
+          else
+            {
+              count[elem->type]++;
+              if (elem->type != 0)
+                {
+                  count[0]++;
+                }
             }
         }
     }
@@ -277,10 +294,8 @@ rec_mset_remove_at (rec_mset_t mset,
           position = mset->count[0] - 1;
         }
       
-      elem = rec_mset_get (mset, MSET_ANY, position);
-
-      if (gl_list_remove_at (mset->elem_list,
-                             position))
+      elem = (rec_mset_elem_t) gl_list_get_at (mset->elem_list, position);
+      if (gl_list_remove_at (mset->elem_list, position))
         {
           mset->count[0]--;
           mset->count[elem->type]--;
@@ -410,7 +425,7 @@ rec_mset_elem_t
 rec_mset_first (rec_mset_t mset,
                 int type)
 {
-  return rec_mset_get (mset, type, 0);
+  return rec_mset_get_at (mset, type, 0);
 }
 
 rec_mset_elem_t
