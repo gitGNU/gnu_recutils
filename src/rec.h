@@ -46,12 +46,212 @@ void rec_init (void);
 void rec_fini (void);
 
 /*
+ * HETEROGENEOUS ORDERED SETS (MULTI-SETS)
+ *
+ * Element types: A, B, C
+ *
+ *    type   value     next_A   next_B   next_C
+ *   +-----+----------+-------+--------+--------+
+ *   |     |          |       |        |        |
+ *   +-----+----------+-------+--------+--------+
+ *   .     .          .       .        .        .
+ *   |     |          |       |        |        |
+ *   +-----+----------+-------+--------+--------+
+ */
+
+/* Opaque data type representing a multi-set.  */
+
+typedef struct rec_mset_s *rec_mset_t;
+
+/* Opaque data type representing an element which is stored in the
+   multi-set.  */
+
+typedef struct rec_mset_elem_s *rec_mset_elem_t;
+
+/* Structure to hold iterators in the stack.  Note that it must have
+   the same structure than the gl_list_iterator_t structure in the
+   internal (and not distributed) gl_list.h.  This structure must be
+   keep up to date.  */
+
+struct rec_mset_iterator_t
+{
+  void *list;
+  size_t count;
+  void *p; void *q;
+  size_t i; size_t j;
+};
+
+/* Data types for the callbacks that can be registered in the
+   multi-set and will be triggered to some events.  */
+
+typedef void  (*rec_mset_disp_fn_t)    (void *data);
+typedef bool  (*rec_mset_equal_fn_t)   (void *data1, void *data2);
+typedef void *(*rec_mset_dup_fn_t)     (void *data);
+typedef int   (*rec_mset_compare_fn_t) (void *data1, void *data2, int type2);
+
+/* Constant defining the element type which means "any type".  */
+
+#define MSET_ANY 0
+
+/*************** Creating and destroying multi-sets *****************/
+
+/* Create a new, empty multi-set and return a reference to it to the
+   caller.  NULL is returned if there is no enough memory to complete
+   the operation.  */
+
+rec_mset_t rec_mset_new (void);
+
+/* Destroy a multi-set, freeing all used resources.  This disposes all
+   the memory used by the mset internals, but not the data elements
+   stored in the multi-set.  */
+
+void rec_mset_destroy (rec_mset_t mset);
+
+/* Create a copy of a multi-set and return a reference to it.  This
+   operation performs a deep copy using the user-provided callback to
+   duplicate the elements stored in the set.  NULL is returned if
+   there is no enough memory to complete the operation.  */
+
+rec_mset_t rec_mset_dup (rec_mset_t mset);
+
+/*************** Registering Types in a multi-set *****************/
+
+/* Return true if the multi-set has the specified TYPE registered.
+   Return false otherwise.  Note that this function always returns
+   true when TYPE is MSET_ANY.  */
+
+bool rec_mset_type_p (rec_mset_t mset, int type);
+
+/* Register a type in a multi-set.  NAME must be a NULL-terminated
+   string with a unique name that will identify the type.  The
+   provided callbacks will be called when needed.  This function
+   returns an integer value that will identify the newly created type.
+   The only assumption user code can make about this number is that it
+   cant equal MSET_ANY.  */
+
+int rec_mset_register_type (rec_mset_t            mset,
+                            char                 *name,
+                            rec_mset_disp_fn_t    disp_fn,
+                            rec_mset_equal_fn_t   equal_fn,
+                            rec_mset_dup_fn_t     dup_fn,
+                            rec_mset_compare_fn_t compare_fn);
+
+/* Return the number of elements of the given type stored in a
+   multi-set.  If TYPE is MSET_ANY then the total number of elements
+   stored in the set is returned, regardless their type.  If the
+   specified type does not exist in the multi-set then this function
+   returns 0.  */
+
+int rec_mset_count (rec_mset_t mset, int type);
+
+/*************** Getting, inserting and removing elements **********/
+
+/* Get an element stored at a specific position in a mset.  The
+   element returned occupies the POSITIONth position in the internal
+   list of elements of the specified type.  If there is no element
+   stored at POSITION this function returns NULL.  */
+
+rec_mset_elem_t rec_mset_get_at (rec_mset_t mset, int type, int position);
+
+/* Insert a new element at a specific position in a mset.  If POSITION
+   is 0 then the element is prepended.  If POSITION is equal or bigger
+   than the number of the existing elements with the same type in the
+   mset then the new element is appended.  */
+
+void rec_mset_insert_at (rec_mset_t mset, rec_mset_elem_t elem, int position);
+
+/* Insert a new element just after another element in a mset.  */
+
+void rec_mset_insert_after (rec_mset_t mset, rec_mset_elem_t elem, rec_mset_elem_t new_elem);
+
+/* Append a new element to a mset.  This is equivalent to call
+   rec_mset_insert_at specifying a position equal or bigger than the
+   number of the existing elements with the same type in the mset.  */
+
+void rec_mset_append (rec_mset_t mset, rec_mset_elem_t elem);
+
+/* Add a new element to a mset.  The position where the element is
+   inserted depends on the sorting criteria implemented by the
+   compare_fn callback for the element type.  */
+
+void rec_mset_add_sorted (rec_mset_t mset, rec_mset_elem_t elem);
+
+/* Remove the element occupying the specified position from a record
+   set.  This function returns true if the element was removed, and
+   false if there were no element stored at the specified
+   position.  */
+
+bool rec_mset_remove_at (rec_mset_t mset, int position);
+
+/* Remove an element from a multi-set.  This function returns the
+   element stored next to the deleted one.  */
+
+rec_mset_elem_t rec_mset_remove (rec_mset_t mset, rec_mset_elem_t elem);
+
+/* Search for an element storing the specified data in a mset and
+   return it.  NULL is returned in case no element in the record set
+   is storing DATA.  */
+
+rec_mset_elem_t rec_mset_search (rec_mset_t mset, void *data);
+
+/*************** Iterating on mset elements *************************/
+
+/* Return the first element of the given type stored in the mset.  If
+   no element of the given type exists in the mset then NULL is
+   returned.  */
+
+rec_mset_elem_t rec_mset_first (rec_mset_t mset, int type);
+
+/* Return the element of the given type stored next to the given
+   element in a mset.  If no such element exists then NULL is
+   returned.  */
+
+rec_mset_elem_t rec_mset_next (rec_mset_t mset, rec_mset_elem_t elem, int type);
+
+/*************** Managing mset elements ******************************/
+
+/* Create a new element to be stored in a given mset, of the givent
+   type, and return it.  NULL is returned if there is no enough memory
+   to perform the operation.  */
+
+rec_mset_elem_t rec_mset_elem_new (rec_mset_t mset, int type);
+
+/* Destroy the resources used by a mset element, freeing any used
+   memory.  The element reference becomes invalid after executing this
+   function.  */
+
+void rec_mset_elem_destroy (rec_mset_elem_t elem);
+
+/* Return the type of the given multi-set element.  Since every
+   element must be of some concrete type, the returned value cannot be
+   equal to MSET_ANY.  */
+
+int rec_mset_elem_type (rec_mset_elem_t elem);
+
+/* Return a void pointer pointing to the data stored in the given mset
+   element.  If no data was stored in the element then this function
+   returns NULL.  */
+
+void *rec_mset_elem_data (rec_mset_elem_t elem);
+
+/* Set the data stored in a multi-set element.  The memory pointed by
+   the previous value of the internal pointer is not freed or altered
+   in any other way by this operation.  */
+
+void rec_mset_elem_set_data (rec_mset_elem_t elem, void *data);
+
+/* Determine whether the values stored in two multi-set elements are
+   equal.  The comparison is performed using the user-provided
+   compare_fn callback.  */
+
+bool rec_mset_elem_equal_p (rec_mset_elem_t elem1, rec_mset_elem_t elem2);
+
+/*
  * FLEXIBLE BUFFERS
  *
  * A flexible buffer (rec_buf_t) is a buffer to which stream-like
  * operations can be applied.  Its size will grow as required.
  */
-
 
 typedef struct rec_buf_s *rec_buf_t;
 

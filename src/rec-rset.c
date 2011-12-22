@@ -30,7 +30,6 @@
 #include <string.h>
 #include <parse-datetime.h>
 
-#include <rec-mset.h>
 #include <rec.h>
 #include <rec-utils.h>
 

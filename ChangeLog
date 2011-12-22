@@ -1,5 +1,40 @@
 2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: move the stuff of rec-mset.h to rec.h and document the API.
+	* src/rec-record.c: Stop including rec-mset.h.
+	* src/rec-rset.c: Likewise.
+
+	* src/rec-mset.c: Include rec.h instead of rec-mset.h.
+
+	* src/Makefile.am (librec_la_SOURCES): rec-mset.h removed.
+
+	* src/rec-mset.h: File deleted.
+
+	* src/rec.h: Stuff from rec-mset.h moved there.
+	(rec_mset_new): New prototype, and documented.
+	(rec_mset_destroy): Likewise.
+	(rec_mset_dup): Likewise.
+	(rec_mset_type_p): Likewise.
+	(rec_mset_register_type): Likewise.
+	(rec_mset_get_at): Likewise.
+	(rec_mset_insert_at): Likewise.
+	(rec_mset_append): Likewise.
+	(rec_mset_add_sorted): Likewise.
+	(rec_mset_insert_after): Likewise.
+	(rec_mset_remove_at): Likewise.
+	(rec_mset_remove): Likewise.
+	(rec_mset_search): Likewise.
+	(rec_mset_first): Likewise.
+	(rec_mset_next): Likewise.
+	(rec_mset_elem_new): Likewise.
+	(rec_mset_elem_destroy): Likewise.
+	(rec_mset_elem_type): Likewise.
+	(rec_mset_elem_data): Likewise.
+	(rec_mset_elem_set_data): Likewise.
+	(rec_mset_elem_equal_p): Likewise.
+
+2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	mset: several optimizations.
 	* src/rec-rset.c (rec_rset_get_elem): Likewise.
 	(rec_rset_get_record): Likewise.

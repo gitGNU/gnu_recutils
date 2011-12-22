@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <rec-mset.h>
 #include <rec.h>
 #include <rec-utils.h>
 
