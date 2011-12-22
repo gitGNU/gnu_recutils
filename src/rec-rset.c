@@ -1363,10 +1363,11 @@ rec_rset_update_field_props (rec_rset_t rset)
       props = props->next;
     }
 
-  /* Scan the record descriptor for % directives, and update the
-     fields properties accordingly.  */
   if (rset->descriptor)
     {
+      /* Pass 1: scan the record descriptor for % directives, and update
+         the fields properties accordingly.  */
+
       record_elem = rec_record_first_field (rset->descriptor);
       while (rec_record_elem_p (record_elem))
         {
@@ -1491,7 +1492,23 @@ rec_rset_update_field_props (rec_rset_t rset)
 
           record_elem = rec_record_next_field (rset->descriptor, record_elem);
         }
-    } 
+    }
+
+  /* Pass 2: scan the fields having properties on the record set.  */
+
+  props = rset->field_props;
+  while (props)
+    {
+      /* Auto fields not having an explicit type are implicitly
+         typed as integers.  */
+      
+      if (props->auto_p && !props->type && !props->type_name)
+        {
+          props->type = rec_type_new ("int");
+        }
+      
+      props = props->next;
+    }
 }
 
 static void

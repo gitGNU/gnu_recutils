@@ -1215,6 +1215,7 @@ of the affected field:
 @itemize @minus
 @item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
 @item If it is a @code{date} then a field with the current date will be generated.
+@item If no explicit type is defined for an auto generated field it is assumed to be an integer.
 @item Auto generated fields with other types are not allowed.
 @end itemize
 

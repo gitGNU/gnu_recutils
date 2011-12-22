@@ -363,6 +363,12 @@ test_declare_input_file auto-notype \
 %auto: myint
 '
 
+test_declare_input_file auto-invalid-type \
+'%rec: foo
+%auto: key
+%type: key line
+'
+
 test_declare_input_file auto-nofex \
 '%rec: foo
 %auto: this%is#not%a^ fex
@@ -1036,10 +1042,16 @@ test_tool recfix-auto-date ok \
           auto-date \
 ''
 
-test_tool recfix-auto-notype xfail \
+test_tool recfix-auto-notype ok \
           recfix \
           '' \
-          auto-notype
+          auto-notype \
+''
+
+test_tool recfix-auto-invalid-type xfail \
+          recfix \
+          '' \
+          auto-invalid-type
 
 test_tool recfix-auto-nofex xfail \
           recfix \

@@ -1,3 +1,21 @@
+2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: auto fields not having an explicit type are now implicitly
+	typed as integers.
+	* doc/recutils.texi (%auto): Document that auto fields are
+	integers by default.
+
+	* torture/utils/recins.sh (auto-notype): New input file.
+	(recins-auto-notype): New test.
+
+	* torture/utils/recfix.sh (recfix-auto-notype): Adapted to new
+	semantics.
+	(auto-invalid-type): New input file.
+	(recfix-auto-invalid-type): New test.
+
+	* src/rec-rset.c (rec_rset_update_field_props): Auto fields not
+	having an explicit type are implicitly typed as integers.
+
 2011-12-20 Jose Marchesi <jco@wilhelm>
 
 	Tasktool operations.

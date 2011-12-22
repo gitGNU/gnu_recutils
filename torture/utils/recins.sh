@@ -106,6 +106,13 @@ myint: 10
 myrange: 0
 '
 
+test_declare_input_file auto-notype \
+'%rec: foo
+%auto: key
+
+key: 12
+'
+
 test_declare_input_file auto-fields-several \
 '%rec: foo
 %type: myint int
@@ -308,6 +315,19 @@ myrange: 0
 
 myint: 11
 myrange: 1
+foo: bar
+'
+
+test_tool recins-auto-notype ok \
+          recins \
+          '-t foo -f foo -v bar' \
+          auto-notype \
+'%rec: foo
+%auto: key
+
+key: 12
+
+key: 13
 foo: bar
 '
 
