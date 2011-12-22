@@ -312,18 +312,32 @@ void rec_buf_rewind (rec_buf_t buf, int n);
 
 typedef char *rec_comment_t;
 
-/* Creation and destruction of comments.  */
+/* Create a new comment and return it.  NULL is returned if there is
+   not enough memory to perform the operation.  */
 
 rec_comment_t rec_comment_new (char *text);
+
+/* Destroy a comment, freeing all used resources.  */
+
 void rec_comment_destroy (rec_comment_t comment);
+
+/* Make a copy of the passed comment and return it.  NULL is returned
+   if there is not enough memory to perform the operation.  */
 
 rec_comment_t rec_comment_dup (rec_comment_t comment);
 
-/* Getting/Setting properties.  */
+/* Return a string containing the text in the comment.  */
+
 char *rec_comment_text (rec_comment_t comment);
+
+/* Set the text of a comment.  Any previous text associated with the
+   comment is destroyed and its memory freed.  */
+
 void rec_comment_set_text (rec_comment_t *comment, char *text);
 
-/* Testing comments.  */
+/* Determine whether the texts stored in two given comments are
+   equal.  */
+
 bool rec_comment_equal_p (rec_comment_t comment1, rec_comment_t comment2);
 
 /* FIELD NAMES
