@@ -89,8 +89,13 @@ typedef bool  (*rec_mset_equal_fn_t)   (void *data1, void *data2);
 typedef void *(*rec_mset_dup_fn_t)     (void *data);
 typedef int   (*rec_mset_compare_fn_t) (void *data1, void *data2, int type2);
 
-/* Constant defining the element type which means "any type".  */
 
+/* Data type representing an element type in a multi-set.  This type
+   is assured to be a scalar and thus it is possible to use the
+   comparison operators, but otherwise its contents must be
+   opaque.  */
+
+typedef int rec_mset_type_t;
 #define MSET_ANY 0
 
 /*************** Creating and destroying multi-sets *****************/
@@ -120,7 +125,7 @@ rec_mset_t rec_mset_dup (rec_mset_t mset);
    Return false otherwise.  Note that this function always returns
    true when TYPE is MSET_ANY.  */
 
-bool rec_mset_type_p (rec_mset_t mset, int type);
+bool rec_mset_type_p (rec_mset_t mset, rec_mset_type_t type);
 
 /* Register a type in a multi-set.  NAME must be a NULL-terminated
    string with a unique name that will identify the type.  The
@@ -129,12 +134,12 @@ bool rec_mset_type_p (rec_mset_t mset, int type);
    The only assumption user code can make about this number is that it
    cant equal MSET_ANY.  */
 
-int rec_mset_register_type (rec_mset_t            mset,
-                            char                 *name,
-                            rec_mset_disp_fn_t    disp_fn,
-                            rec_mset_equal_fn_t   equal_fn,
-                            rec_mset_dup_fn_t     dup_fn,
-                            rec_mset_compare_fn_t compare_fn);
+rec_mset_type_t rec_mset_register_type (rec_mset_t            mset,
+                                        char                 *name,
+                                        rec_mset_disp_fn_t    disp_fn,
+                                        rec_mset_equal_fn_t   equal_fn,
+                                        rec_mset_dup_fn_t     dup_fn,
+                                        rec_mset_compare_fn_t compare_fn);
 
 /* Return the number of elements of the given type stored in a
    multi-set.  If TYPE is MSET_ANY then the total number of elements
@@ -142,7 +147,7 @@ int rec_mset_register_type (rec_mset_t            mset,
    specified type does not exist in the multi-set then this function
    returns 0.  */
 
-int rec_mset_count (rec_mset_t mset, int type);
+size_t rec_mset_count (rec_mset_t mset, rec_mset_type_t type);
 
 /*************** Getting, inserting and removing elements **********/
 
@@ -151,14 +156,14 @@ int rec_mset_count (rec_mset_t mset, int type);
    list of elements of the specified type.  If there is no element
    stored at POSITION this function returns NULL.  */
 
-rec_mset_elem_t rec_mset_get_at (rec_mset_t mset, int type, int position);
+rec_mset_elem_t rec_mset_get_at (rec_mset_t mset, rec_mset_type_t type, size_t position);
 
 /* Insert a new element at a specific position in a mset.  If POSITION
    is 0 then the element is prepended.  If POSITION is equal or bigger
    than the number of the existing elements with the same type in the
    mset then the new element is appended.  */
 
-void rec_mset_insert_at (rec_mset_t mset, rec_mset_elem_t elem, int position);
+void rec_mset_insert_at (rec_mset_t mset, rec_mset_elem_t elem, size_t position);
 
 /* Insert a new element just after another element in a mset.  */
 
@@ -181,7 +186,7 @@ void rec_mset_add_sorted (rec_mset_t mset, rec_mset_elem_t elem);
    false if there were no element stored at the specified
    position.  */
 
-bool rec_mset_remove_at (rec_mset_t mset, int position);
+bool rec_mset_remove_at (rec_mset_t mset, size_t position);
 
 /* Remove an element from a multi-set.  This function returns the
    element stored next to the deleted one.  */
@@ -200,13 +205,13 @@ rec_mset_elem_t rec_mset_search (rec_mset_t mset, void *data);
    no element of the given type exists in the mset then NULL is
    returned.  */
 
-rec_mset_elem_t rec_mset_first (rec_mset_t mset, int type);
+rec_mset_elem_t rec_mset_first (rec_mset_t mset, rec_mset_type_t type);
 
 /* Return the element of the given type stored next to the given
    element in a mset.  If no such element exists then NULL is
    returned.  */
 
-rec_mset_elem_t rec_mset_next (rec_mset_t mset, rec_mset_elem_t elem, int type);
+rec_mset_elem_t rec_mset_next (rec_mset_t mset, rec_mset_elem_t elem, rec_mset_type_t type);
 
 /*************** Managing mset elements ******************************/
 
@@ -214,7 +219,7 @@ rec_mset_elem_t rec_mset_next (rec_mset_t mset, rec_mset_elem_t elem, int type);
    type, and return it.  NULL is returned if there is no enough memory
    to perform the operation.  */
 
-rec_mset_elem_t rec_mset_elem_new (rec_mset_t mset, int type);
+rec_mset_elem_t rec_mset_elem_new (rec_mset_t mset, rec_mset_type_t type);
 
 /* Destroy the resources used by a mset element, freeing any used
    memory.  The element reference becomes invalid after executing this
@@ -226,7 +231,7 @@ void rec_mset_elem_destroy (rec_mset_elem_t elem);
    element must be of some concrete type, the returned value cannot be
    equal to MSET_ANY.  */
 
-int rec_mset_elem_type (rec_mset_elem_t elem);
+rec_mset_type_t rec_mset_elem_type (rec_mset_elem_t elem);
 
 /* Return a void pointer pointing to the data stored in the given mset
    element.  If no data was stored in the element then this function

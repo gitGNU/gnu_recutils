@@ -1,5 +1,24 @@
 2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	mset: use an explicit type for element types.
+	* src/rec-mset.c (struct rec_mset_elem_s): Use rec_mset_type_t.
+	(struct rec_mset_s): count is now of type size_t.
+	(rec_mset_get_at): Use new types.
+	(rec_mset_remove_at): Likewise.
+	(rec_mset_insert_at): Likewise.
+	(rec_mset_type_p): Likewise.
+	(rec_mset_register_type): Likewise.
+	(rec_mset_count): Likewise.
+	(rec_mset_get_at): Likewise.
+	(rec_mset_first): Likewise.
+	(rec_mset_next): Likewise.
+
+	* src/rec.h: Change mset functions using positions to use size_t
+	variables instead of ints.
+	(rec_mset_type_t): New data type.
+
+2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: move the stuff of rec-mset.h to rec.h and document the API.
 	* src/rec-record.c: Stop including rec-mset.h.
 	* src/rec-rset.c: Likewise.

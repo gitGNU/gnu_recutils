@@ -42,7 +42,7 @@
 
 struct rec_mset_elem_s
 {
-  int type;
+  rec_mset_type_t type;
   void *data;
 
   /* Containing set.  */
@@ -61,7 +61,7 @@ struct rec_mset_s
   rec_mset_compare_fn_t compare_fn[MAX_NTYPES];
 
   /* Statistics.  */
-  int count[MAX_NTYPES];
+  size_t count[MAX_NTYPES];
 
   gl_list_t elem_list;
 };
@@ -178,12 +178,12 @@ rec_mset_dup (rec_mset_t mset)
 
 bool
 rec_mset_type_p (rec_mset_t mset,
-                 int type)
+                 rec_mset_type_t type)
 {
   return type < mset->ntypes;
 }
 
-int
+rec_mset_type_t
 rec_mset_register_type (rec_mset_t mset,
                         char *name,
                         rec_mset_disp_fn_t disp_fn,
@@ -191,7 +191,7 @@ rec_mset_register_type (rec_mset_t mset,
                         rec_mset_dup_fn_t dup_fn,
                         rec_mset_compare_fn_t compare_fn)
 {
-  int new_type;
+  rec_mset_type_t new_type;
 
   new_type = mset->ntypes++;
   mset->count[new_type] = 0;
@@ -204,17 +204,17 @@ rec_mset_register_type (rec_mset_t mset,
   return new_type;
 }
 
-int
+size_t
 rec_mset_count (rec_mset_t mset,
-                int type)
+                rec_mset_type_t type)
 {
   return mset->count[type];
 }
 
 rec_mset_elem_t
 rec_mset_get_at (rec_mset_t mset,
-                 int type,
-                 int position)
+                 rec_mset_type_t type,
+                 size_t position)
 {
   rec_mset_elem_t result;
 
@@ -224,7 +224,7 @@ rec_mset_get_at (rec_mset_t mset,
       return NULL;
     }
 
-  if (type == 0)
+  if (type == MSET_ANY)
     {
       /* An element of any type was requested.  Simply call the gnulib
          list get_at function, that will use the most efficient way to
@@ -254,7 +254,7 @@ rec_mset_get_at (rec_mset_t mset,
       iter = gl_list_iterator (mset->elem_list);
       while (gl_list_iterator_next (&iter, (const void **) &elem, &node))
         {
-          if ((type == 0)
+          if ((type == MSET_ANY)
               || ((type == elem->type) && (count[elem->type] == position)))
             {
               result = elem;
@@ -263,7 +263,7 @@ rec_mset_get_at (rec_mset_t mset,
           else
             {
               count[elem->type]++;
-              if (elem->type != 0)
+              if (elem->type != MSET_ANY)
                 {
                   count[0]++;
                 }
@@ -276,7 +276,7 @@ rec_mset_get_at (rec_mset_t mset,
 
 bool
 rec_mset_remove_at (rec_mset_t mset,
-                    int position)
+                    size_t position)
 {
   rec_mset_elem_t elem;
   bool removed;
@@ -309,7 +309,7 @@ rec_mset_remove_at (rec_mset_t mset,
 void
 rec_mset_insert_at (rec_mset_t mset,
                     rec_mset_elem_t elem,
-                    int position)
+                    size_t position)
 {
   gl_list_node_t node;
 
@@ -335,7 +335,7 @@ rec_mset_insert_at (rec_mset_t mset,
   if (node != NULL)
     {
       mset->count[0]++;
-      if (elem->type != 0)
+      if (elem->type != MSET_ANY)
         {
           mset->count[elem->type]++;
         }
@@ -392,7 +392,7 @@ rec_mset_insert_after (rec_mset_t mset,
                             (void *) new_elem);
 
       mset->count[0]++;
-      if (new_elem->type != 0)
+      if (new_elem->type != MSET_ANY)
         {
           mset->count[new_elem->type]++;
         }
@@ -423,15 +423,15 @@ rec_mset_search (rec_mset_t mset,
 
 rec_mset_elem_t
 rec_mset_first (rec_mset_t mset,
-                int type)
+                rec_mset_type_t type)
 {
-  return rec_mset_get_at (mset, type, 0);
+  return rec_mset_get_at (mset, type, MSET_ANY);
 }
 
 rec_mset_elem_t
 rec_mset_next (rec_mset_t mset,
                rec_mset_elem_t elem,
-               int type)
+               rec_mset_type_t type)
 {
   rec_mset_elem_t result;
   rec_mset_elem_t next_elem;
@@ -451,7 +451,7 @@ rec_mset_next (rec_mset_t mset,
         {
           next_elem = (rec_mset_elem_t) gl_list_node_value (elem->mset->elem_list,
                                                             node);
-          if ((type == 0) || (next_elem->type == type))
+          if ((type == MSET_ANY) || (next_elem->type == type))
             {
               result = next_elem;
               break; 
@@ -464,7 +464,7 @@ rec_mset_next (rec_mset_t mset,
 
 rec_mset_elem_t
 rec_mset_elem_new (rec_mset_t mset,
-                   int type)
+                   rec_mset_type_t type)
 {
   rec_mset_elem_t new;
 
@@ -558,7 +558,7 @@ rec_mset_add_sorted (rec_mset_t mset,
                         rec_mset_elem_compare_fn,
                         (void *) elem);
   mset->count[0]++;
-  if (elem->type != 0)
+  if (elem->type != MSET_ANY)
     {
       mset->count[elem->type]++;
     }
