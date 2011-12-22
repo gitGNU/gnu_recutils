@@ -421,6 +421,81 @@ rec_mset_search (rec_mset_t mset,
   return result;
 }
 
+rec_mset_iterator_t
+rec_mset_iterator (rec_mset_t mset,
+                   rec_mset_type_t type)
+{
+  gl_list_iterator_t  list_iter;
+  rec_mset_iterator_t mset_iter;
+
+  /* Create a gl_list iterator and advance it until the first element
+     of the provided type.  */
+
+  list_iter = gl_list_iterator (mset->elem_list);  
+  if (type != MSET_ANY)
+    {
+      rec_mset_elem_t elem = NULL;
+
+      while (gl_list_iterator_next (&list_iter, (const void **) &elem, NULL)
+             && (elem->type != type));
+    }
+
+  /* Fill the mset iterator structure.  Note that the list_iter field
+     of the mset iterator must have the same size and structure than
+     the gl_list_iterator_t structure.  */
+
+  mset_iter.mset = mset;
+  memcpy (&mset_iter.list_iter, &list_iter, sizeof(gl_list_iterator_t));
+
+  return mset_iter;
+}
+
+bool
+rec_mset_iterator_next (rec_mset_iterator_t *iterator,
+                        rec_mset_type_t type,
+                        const void **data,
+                        rec_mset_elem_t *elem)
+{
+  bool found = true;
+  rec_mset_t mset = iterator->mset;
+  rec_mset_elem_t mset_elem;
+  gl_list_iterator_t list_iter;
+
+  /* Extract the list iterator from the multi-set iterator.  */
+
+  memcpy (&list_iter, &iterator->list_iter, sizeof(gl_list_iterator_t));
+
+  /* Advance the list iterator until an element of the proper type is
+     found.  */
+
+  while ((found = gl_list_iterator_next (&list_iter, (const void**) &mset_elem, NULL))
+         && ((type == 0) || (mset_elem->type == type)));
+
+  /* Update the multi-set iterator and set both DATA and ELEM.  */
+
+  memcpy (&iterator->list_iter, &list_iter, sizeof(gl_list_iterator_t));
+  *data = mset_elem->data;
+  if (elem)
+    {
+      *elem = mset_elem;
+    }
+
+  return found;
+}
+
+void
+rec_mset_iterator_free (rec_mset_iterator_t *iterator)
+{
+  gl_list_iterator_t list_iter;
+
+  /* Extract the list iterator, free it and copy it back to the mset
+     iterator.  */
+
+  memcpy (&list_iter, &iterator->list_iter, sizeof(gl_list_iterator_t));
+  gl_list_iterator_free (&list_iter);
+  memcpy (&iterator->list_iter, &list_iter, sizeof(gl_list_iterator_t));
+}
+
 rec_mset_elem_t
 rec_mset_first (rec_mset_t mset,
                 rec_mset_type_t type)

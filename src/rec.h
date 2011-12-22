@@ -68,18 +68,23 @@ typedef struct rec_mset_s *rec_mset_t;
 
 typedef struct rec_mset_elem_s *rec_mset_elem_t;
 
-/* Structure to hold iterators in the stack.  Note that it must have
-   the same structure than the gl_list_iterator_t structure in the
-   internal (and not distributed) gl_list.h.  This structure must be
-   keep up to date.  */
+/* Structure to hold iterators in the stack.  Note that the inner
+   structure must have the same structure than the gl_list_iterator_t
+   structure in the internal (and not distributed) gl_list.h.  This
+   structure must be keep up to date.  */
 
-struct rec_mset_iterator_t
+typedef struct
 {
-  void *list;
-  size_t count;
-  void *p; void *q;
-  size_t i; size_t j;
-};
+  rec_mset_t mset;
+
+  struct {
+    void *list;
+    size_t count;
+    void *p; void *q;
+    size_t i; size_t j;
+  } list_iter;
+} rec_mset_iterator_t;
+
 
 /* Data types for the callbacks that can be registered in the
    multi-set and will be triggered to some events.  */
@@ -201,6 +206,31 @@ rec_mset_elem_t rec_mset_search (rec_mset_t mset, void *data);
 
 /*************** Iterating on mset elements *************************/
 
+/* Create and return an iterator traversing the element in the
+   multi-set having the specified type.  The mset contents must not be
+   modified while the iterator is in use, except for replacing or
+   removing the last returned element.
+
+   Note that an iterator pointing to the end of the list is returned
+   if TYPE is not a registered type in the multi-set.  */
+
+rec_mset_iterator_t rec_mset_iterator (rec_mset_t mset, rec_mset_type_t type);
+
+/* Advance the iterator to the next element of the given type.  The
+   data stored by the next element is stored in *DATA and a reference
+   to the element in *ELEM if ELEM is non-NULL.  The function returns
+   true if there is a next element to which iterate to, and false
+   otherwise.  */
+
+bool rec_mset_iterator_next (rec_mset_iterator_t *iterator,
+                             rec_mset_type_t type,
+                             const void **data,
+                             rec_mset_elem_t *elem);
+
+/* Free an iterator.  */
+
+void rec_mset_iterator_free (rec_mset_iterator_t *iterator);
+                             
 /* Return the first element of the given type stored in the mset.  If
    no element of the given type exists in the mset then NULL is
    returned.  */

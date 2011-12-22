@@ -1,5 +1,16 @@
 2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	mset: implementation of iterators ala gl_lib.
+	* src/rec-mset.c (rec_mset_iterator): New function.
+	(rec_mset_iterator_next): Likewise.
+	(rec_mset_iterator_free): Likewise.
+
+	* src/rec.h: Prototypes for new functions related to iterators:
+	rec_mset_iterator, rec_mset_iterator_next and
+	rec_mset_iterator_free.
+
+2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	mset: use an explicit type for element types.
 	* src/rec-mset.c (struct rec_mset_elem_s): Use rec_mset_type_t.
 	(struct rec_mset_s): count is now of type size_t.
