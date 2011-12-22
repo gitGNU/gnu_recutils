@@ -2,7 +2,7 @@
 #
 # testutils.sh - Misc utilities for testing the GNU recutils.
 #
-# Copyright (C) 2010 Jose E. Marchesi.
+# Copyright (C) 2010, 2011 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -133,6 +133,7 @@ test_tool ()
         if test "$res" -eq "0"
         then
             echo "error (expected failure)"
+            res=1
         else
             echo $status
             

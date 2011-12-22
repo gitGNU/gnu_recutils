@@ -1,5 +1,11 @@
 2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: xfail tests failing are reported as failures.
+	* torture/utils/testutils.sh: Accumulate an error if an xfail test
+	does not fail.
+
+2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: auto fields not having an explicit type are now implicitly
 	typed as integers.
 	* doc/recutils.texi (%auto): Document that auto fields are
