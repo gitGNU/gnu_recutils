@@ -471,6 +471,7 @@ process_table (MdbCatalogEntry *entry)
           free (field_value);
         }
 
+      rec_record_set_container (record, rset);
       rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
     }
 

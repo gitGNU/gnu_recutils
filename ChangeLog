@@ -1,5 +1,12 @@
 2011-12-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: missing rec_record_set_container added.
+	* utils/mdb2rec.c (process_table): Set the rset container in the
+	record to insert.
+	* utils/recins.c (recins_insert_record): Likewise.
+
+2011-12-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec,utils: new mset iterators and API used in the codebase.
 	* utils/mdb2rec.c (process_table): Use rec_mset_append.
 

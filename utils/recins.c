@@ -389,6 +389,7 @@ recins_insert_record (rec_db_t db,
          to check for the type of the field in this case.  */
       rset = rec_rset_new ();
       rec_rset_set_type (rset, type);
+      rec_record_set_container (record, rset);
       rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
       
       if (type)
