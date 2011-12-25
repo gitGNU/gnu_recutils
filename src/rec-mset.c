@@ -324,11 +324,6 @@ rec_mset_remove_at (rec_mset_t mset,
       elem = rec_mset_search (mset, data);
       if (rec_mset_remove_elem (mset, elem))
         {
-          mset->count[type]--;
-          if (type != MSET_ANY)
-            {
-              mset->count[elem->type]--;
-            }
           removed = true;
         }
     }
@@ -404,7 +399,19 @@ bool
 rec_mset_remove_elem (rec_mset_t mset,
                       rec_mset_elem_t elem)
 {
+  rec_mset_type_t type = elem->type;
   bool res = gl_list_remove_node (mset->elem_list, elem->list_node);
+  if (res)
+    {
+      /* Update statistics.  */
+
+      mset->count[type]--;
+      if (type != MSET_ANY)
+        {
+          mset->count[MSET_ANY]--;
+        }
+    }
+  
   return res;
 }
 

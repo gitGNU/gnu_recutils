@@ -625,17 +625,12 @@ recins_add_new_record (rec_db_t db)
               else
                 {
                   rec_record_set_container (record_to_insert, rset);
-                  rec_mset_insert_after (rec_rset_mset (rset),
-                                         MSET_RECORD,
-                                         (void *) rec_record_dup (record_to_insert),
-                                         elem);
+                  rec_mset_elem_set_data (elem, (void *) record_to_insert);
                 }
             }
         }
 
       rec_mset_iterator_free (&iter);
-
-      rec_record_destroy (record_to_insert);
     }
   else
     {
