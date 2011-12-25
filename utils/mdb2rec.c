@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -336,7 +336,7 @@ process_table (MdbCatalogEntry *entry)
 
   record = rec_record_new ();
   field = rec_field_new_str ("%rec", field_name_str);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   free (field_name_str);
 
   /* Get the columns of the table.  */
@@ -414,7 +414,7 @@ process_table (MdbCatalogEntry *entry)
         {
           /* Insert a type field for this column.  */
           field = rec_field_new_str ("%type", type_value);
-          rec_record_append_field (record, field);
+          rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
         }
     }
 
@@ -465,13 +465,13 @@ process_table (MdbCatalogEntry *entry)
                   recutl_fatal (_("invalid field name %s.\n"), column_name);
                 }
 
-              rec_record_append_field (record, field);
+              rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
             }
 
           free (field_value);
         }
 
-      rec_rset_append_record (rset, record);
+      rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
     }
 
   mdb_free_tabledef (table);

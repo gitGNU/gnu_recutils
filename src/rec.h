@@ -75,14 +75,17 @@ typedef struct rec_mset_elem_s *rec_mset_elem_t;
 
 typedef struct
 {
-  rec_mset_t mset;
+  void *vtable;
+  void *list;
+  size_t count;
+  void *p; void *q;
+  size_t i; size_t j;
+} rec_mset_list_iter_t;
 
-  struct {
-    void *list;
-    size_t count;
-    void *p; void *q;
-    size_t i; size_t j;
-  } list_iter;
+typedef struct
+{
+  rec_mset_t mset;
+  rec_mset_list_iter_t list_iter;
 } rec_mset_iterator_t;
 
 
@@ -105,9 +108,9 @@ typedef int rec_mset_type_t;
 
 /*************** Creating and destroying multi-sets *****************/
 
-/* Create a new, empty multi-set and return a reference to it to the
-   caller.  NULL is returned if there is no enough memory to complete
-   the operation.  */
+/* Create a new empty multi-set and return a reference to it.  NULL is
+   returned if there is no enough memory to complete the
+   operation.  */
 
 rec_mset_t rec_mset_new (void);
 
@@ -156,47 +159,68 @@ size_t rec_mset_count (rec_mset_t mset, rec_mset_type_t type);
 
 /*************** Getting, inserting and removing elements **********/
 
-/* Get an element stored at a specific position in a mset.  The
-   element returned occupies the POSITIONth position in the internal
-   list of elements of the specified type.  If there is no element
-   stored at POSITION this function returns NULL.  */
+/* Get the data stored at a specific position in a mset.  The returned
+   data occupies the POSITIONth position in the internal list of
+   elements of the specified type.  If there is no element stored at
+   POSITION this function returns NULL.  */
 
-rec_mset_elem_t rec_mset_get_at (rec_mset_t mset, rec_mset_type_t type, size_t position);
+void *rec_mset_get_at (rec_mset_t      mset,
+                       rec_mset_type_t type,
+                       size_t          position);
 
-/* Insert a new element at a specific position in a mset.  If POSITION
-   is 0 then the element is prepended.  If POSITION is equal or bigger
-   than the number of the existing elements with the same type in the
-   mset then the new element is appended.  */
+/* Create a new element at a specific position in a mset, storing a
+   given data.  If POSITION is 0 then the element is prepended.  If
+   POSITION is equal or bigger than the number of the existing
+   elements with the same type in the mset then the new element is
+   appended.  The function returns the newly created element.  */
 
-void rec_mset_insert_at (rec_mset_t mset, rec_mset_elem_t elem, size_t position);
+rec_mset_elem_t rec_mset_insert_at (rec_mset_t       mset,
+                                    rec_mset_type_t  type,
+                                    void            *data,
+                                    size_t           position);
 
-/* Insert a new element just after another element in a mset.  */
+/* Insert some given data just after another element in a mset.  The
+   function returns the newly created element, or NULL if there was no
+   enough memory to perform the operation.  */
 
-void rec_mset_insert_after (rec_mset_t mset, rec_mset_elem_t elem, rec_mset_elem_t new_elem);
+rec_mset_elem_t rec_mset_insert_after (rec_mset_t       mset,
+                                       rec_mset_type_t  type,
+                                       void            *data,
+                                       rec_mset_elem_t  elem);
 
-/* Append a new element to a mset.  This is equivalent to call
+/* Append some given daata to a mset.  This is equivalent to call
    rec_mset_insert_at specifying a position equal or bigger than the
-   number of the existing elements with the same type in the mset.  */
+   number of the existing elements with the same type in the mset.
+   The function returns the newly created element, or NULL if there
+   was no enough memory to perform the operation.  */
 
-void rec_mset_append (rec_mset_t mset, rec_mset_elem_t elem);
+rec_mset_elem_t rec_mset_append (rec_mset_t       mset,
+                                 rec_mset_type_t  type,
+                                 void            *data);
 
-/* Add a new element to a mset.  The position where the element is
-   inserted depends on the sorting criteria implemented by the
-   compare_fn callback for the element type.  */
+/* Add some given data to a mset.  The position where the new element
+   is inserted depends on the sorting criteria implemented by the
+   compare_fn callback for the element type.  The function returns the
+   newly created element, or NULL if there was no enough memory to
+   perform the operation.  */
 
-void rec_mset_add_sorted (rec_mset_t mset, rec_mset_elem_t elem);
+rec_mset_elem_t rec_mset_add_sorted (rec_mset_t       mset,
+                                     rec_mset_type_t  type,
+                                     void            *data);
 
 /* Remove the element occupying the specified position from a record
    set.  This function returns true if the element was removed, and
    false if there were no element stored at the specified
    position.  */
 
-bool rec_mset_remove_at (rec_mset_t mset, size_t position);
+bool rec_mset_remove_at (rec_mset_t      mset,
+                         rec_mset_type_t type,
+                         size_t          position);
 
-/* Remove an element from a multi-set.  This function returns the
-   element stored next to the deleted one.  */
+/* Remove an element from the multi-set.  The function returns true if
+   the element was found in the list and removed.  */
 
-rec_mset_elem_t rec_mset_remove (rec_mset_t mset, rec_mset_elem_t elem);
+bool rec_mset_remove_elem (rec_mset_t mset, rec_mset_elem_t elem);
 
 /* Search for an element storing the specified data in a mset and
    return it.  NULL is returned in case no element in the record set
@@ -206,15 +230,12 @@ rec_mset_elem_t rec_mset_search (rec_mset_t mset, void *data);
 
 /*************** Iterating on mset elements *************************/
 
-/* Create and return an iterator traversing the element in the
-   multi-set having the specified type.  The mset contents must not be
-   modified while the iterator is in use, except for replacing or
-   removing the last returned element.
+/* Create and return an iterator traversing elements in the multi-set.
+   The mset contents must not be modified while the iterator is in
+   use, except for replacing or removing the last returned
+   element.  */
 
-   Note that an iterator pointing to the end of the list is returned
-   if TYPE is not a registered type in the multi-set.  */
-
-rec_mset_iterator_t rec_mset_iterator (rec_mset_t mset, rec_mset_type_t type);
+rec_mset_iterator_t rec_mset_iterator (rec_mset_t mset);
 
 /* Advance the iterator to the next element of the given type.  The
    data stored by the next element is stored in *DATA and a reference
@@ -231,37 +252,18 @@ bool rec_mset_iterator_next (rec_mset_iterator_t *iterator,
 
 void rec_mset_iterator_free (rec_mset_iterator_t *iterator);
                              
-/* Return the first element of the given type stored in the mset.  If
-   no element of the given type exists in the mset then NULL is
-   returned.  */
-
-rec_mset_elem_t rec_mset_first (rec_mset_t mset, rec_mset_type_t type);
-
-/* Return the element of the given type stored next to the given
-   element in a mset.  If no such element exists then NULL is
-   returned.  */
-
-rec_mset_elem_t rec_mset_next (rec_mset_t mset, rec_mset_elem_t elem, rec_mset_type_t type);
-
 /*************** Managing mset elements ******************************/
-
-/* Create a new element to be stored in a given mset, of the givent
-   type, and return it.  NULL is returned if there is no enough memory
-   to perform the operation.  */
-
-rec_mset_elem_t rec_mset_elem_new (rec_mset_t mset, rec_mset_type_t type);
-
-/* Destroy the resources used by a mset element, freeing any used
-   memory.  The element reference becomes invalid after executing this
-   function.  */
-
-void rec_mset_elem_destroy (rec_mset_elem_t elem);
 
 /* Return the type of the given multi-set element.  Since every
    element must be of some concrete type, the returned value cannot be
    equal to MSET_ANY.  */
 
 rec_mset_type_t rec_mset_elem_type (rec_mset_elem_t elem);
+
+/* Set the type of the given multi-set element.  This function is
+   useful to transform records into comments.  */
+
+void rec_mset_elem_set_type (rec_mset_elem_t elem, rec_mset_type_t type);
 
 /* Return a void pointer pointing to the data stored in the given mset
    element.  If no data was stored in the element then this function
@@ -280,6 +282,13 @@ void rec_mset_elem_set_data (rec_mset_elem_t elem, void *data);
    compare_fn callback.  */
 
 bool rec_mset_elem_equal_p (rec_mset_elem_t elem1, rec_mset_elem_t elem2);
+
+/************************* Debugging ********************************/
+
+/* Dump the contents of a multi-set to the terminal.  For debugging
+   purposes.  */
+
+void rec_mset_dump (rec_mset_t mset);
 
 /*
  * FLEXIBLE BUFFERS
@@ -729,121 +738,185 @@ rec_comment_t rec_field_to_comment (rec_field_t field);
  * comment blocks.
  */
 
+/* Opaque data type representing a record.  */
+
 typedef struct rec_record_s *rec_record_t;
 
-struct rec_record_elem_s
-{
-  struct rec_mset_elem_s *mset_elem;
-};
+/* Record mset types.  Note that the following constants are relying
+   on the fact the multi-sets assign consecutive type ids starting
+   with 1.  This is done this way for performance reasons, but it
+   means that this constants must be ajusted in case the order in
+   which the types are registered in rec_record_new changes.  */
 
-typedef struct rec_record_elem_s rec_record_elem_t;
+#define MSET_FIELD   1
+#define MSET_COMMENT 2
 
-/* General.  */
+/*************** Creating and destroying records *****************/
+
+/* Create a new empty record and return a reference to it.  NULL is
+   returned if there is no enough memory to perform the operation.  */
+
 rec_record_t rec_record_new (void);
+
+/* Destroy a record, freeing all user resources.  This disposes all
+   the memory used by the record internals, including any stored field
+   or comment.  */
+
 void rec_record_destroy (rec_record_t record);
+
+/* Create a copy of a record and return a reference to it.  This
+   operation performs a deep copy of the contained fields and
+   comments.  NULL is returned if there is no enough memory to perform
+   the operation.  */
 
 rec_record_t rec_record_dup (rec_record_t record);
 
-bool rec_record_subset_p (rec_record_t record1,
-                          rec_record_t record2);
+/******************** Comparing records  ***************************/
 
-bool rec_record_equal_p (rec_record_t record1,
-                         rec_record_t record2);
+/* Determine whether a given record is a subset of another record.  A
+   record 'A' is a subset of a record 'B' if and only if for every
+   field or comment contained in 'A' there is an equivalent field or
+   comment in 'B'.  The order of the elements is not relevant.  */
 
-/* Statistics.  */
+bool rec_record_subset_p (rec_record_t record1, rec_record_t record2);
 
-int rec_record_num_elems (rec_record_t record);
-int rec_record_num_fields (rec_record_t record);
-int rec_record_num_comments (rec_record_t record);
+/* Determine whether a given record is equal to another record.  A
+   record 'A' is equal to a record 'B' if the 'A' is a subset of 'B'
+   and 'B' is a subset of 'A'.  */
 
-/* Location properties.  */
+bool rec_record_equal_p (rec_record_t record1, rec_record_t record2);
+
+/************ Getting and Setting record properties ****************/
+
+/* Return the multi-set containing the elements stored by the given
+   record.  */
+
+rec_mset_t rec_record_mset (rec_record_t record);
+
+/* Return the number of elements stored in the given record, of any
+   type.  */
+
+size_t rec_record_num_elems (rec_record_t record);
+
+/* Return the number of fields stored in the given record.  */
+
+size_t rec_record_num_fields (rec_record_t record);
+
+/* Return the number of comments stored in the given record.  */
+
+size_t rec_record_num_comments (rec_record_t record);
+
+/* Return a string describing the source of the record.  The specific
+   meaning of the source depends on the user: it may be a file name,
+   or something else.  This function returns NULL for a record for
+   which a source was never set.  */
+
 char *rec_record_source (rec_record_t record);
+
+/* Set a string describing the source of the record.  Any previous
+   string associated to the record is destroyed and the memory it
+   occupies is freed.  */
+
 void rec_record_set_source (rec_record_t record, char *source);
 
+/* Return an integer representing the location of the record within
+   its source.  The specific meaning of the location depends on the
+   user: it may be a line number, or something else.  This function
+   returns 0 for records not having a defined source.  */
+
 size_t rec_record_location (rec_record_t record);
+
+/* Return the textual representation for the location of a record
+   within its source.  This function returns NULL for records not
+   having a defined source.  */
+
 char *rec_record_location_str (rec_record_t record);
+
+/* Set a number as the new location for the given record.  Any
+   previously stored location is forgotten.  */
+
 void rec_record_set_location (rec_record_t record, size_t location);
 
+/* Return an integer representing the char location of the record
+   within its source.  The specific meaning of the location depends on
+   the user, usually being the offset in bytes since the beginning of
+   a file or memory buffer.  This function returns 0 for records not
+   having a defined source.  */
+
 size_t rec_record_char_location (rec_record_t record);
+
+/* Return the textual representation for the char location of a record
+   within its source.  This function returns NULL for records not
+   having a defined source.  */
+
 char *rec_record_char_location_str (rec_record_t record);
+
+/* Set a number as the new char location for the given record.  Any
+   previously stored char location is forgotten.  */
+
 void rec_record_set_char_location (rec_record_t record, size_t char_location);
 
-/* Getting and setting elements.  */
 
-rec_record_elem_t rec_record_get_elem (rec_record_t record, int position);
-rec_record_elem_t rec_record_get_field (rec_record_t record, int position);
-rec_record_elem_t rec_record_get_comment (rec_record_t record, int position);
+/* Return the position occupied by the specified field in the
+   specified records, not considering comments.  */
 
-bool rec_record_remove_at (rec_record_t record, int position);
-void rec_record_insert_at (rec_record_t record, rec_record_elem_t elem, int position);
-void rec_record_append (rec_record_t record, rec_record_elem_t elem);
-void rec_record_append_field (rec_record_t record, rec_field_t field);
-void rec_record_append_comment (rec_record_t record, rec_comment_t comment);
+size_t rec_record_get_field_index (rec_record_t record, rec_field_t field);
 
-rec_record_elem_t rec_record_remove (rec_record_t record, rec_record_elem_t elem);
-rec_record_elem_t rec_record_remove_field (rec_record_t record, rec_record_elem_t elem);
-rec_record_elem_t rec_record_remove_comment (rec_record_t record, rec_record_elem_t elem);
-void rec_record_insert_after (rec_record_t record,
-                              rec_record_elem_t elem,
-                              rec_record_elem_t new_elem);
+/* Return the position occupied by the specified field in the
+   specified record among the fields having the same name.  Thus, if
+   the provided field is the first having its name in the record then
+   the function returns 0.  If it is the third then the function
+   returns 2.  */
 
-/* Searching.  */
-rec_record_elem_t rec_record_search_field (rec_record_t record,
-                                           rec_field_t field);
+size_t rec_record_get_field_index_by_name (rec_record_t record, rec_field_t field);
 
-int rec_record_get_field_index (rec_record_t record,
-                                rec_field_t field);
+/* Determine whether a record contains some field whose value is STR.
+   The string comparison can be either case-sensitive or
+   case-insensitive.  */
 
-/* Iterating.  */
-rec_record_elem_t rec_record_first (rec_record_t record);
-rec_record_elem_t rec_record_first_field (rec_record_t record);
-rec_record_elem_t rec_record_first_comment (rec_record_t record);
+bool rec_record_contains_value (rec_record_t record, char *value, bool case_insensitive);
 
-rec_record_elem_t rec_record_next (rec_record_t record, rec_record_elem_t elem);
-rec_record_elem_t rec_record_next_field (rec_record_t record, rec_record_elem_t elem);
-rec_record_elem_t rec_record_next_comment (rec_record_t record, rec_record_elem_t elem);
+/* Determine whether a given record contains a field named after a
+   given field name.  */
 
-/* By-name operations.  */
+bool rec_record_field_p (rec_record_t record, rec_field_name_t field_name);
 
-bool rec_record_field_p (rec_record_t record,
-                         rec_field_name_t field_name);
+/* Return the number of fields name after a given field name stored in
+   a record.  */
 
-int rec_record_get_num_fields_by_name (rec_record_t record,
-                                       rec_field_name_t field_name);
+size_t rec_record_get_num_fields_by_name (rec_record_t record,
+                                          rec_field_name_t field_name);
+
+/* Return the Nth field named after the given field name in a record.
+   This function returns NULL if there is no such a field.  */
 
 rec_field_t rec_record_get_field_by_name (rec_record_t record,
                                           rec_field_name_t field_name,
-                                          int n);
+                                          size_t n);
+
+/* Remove the Nth field named after the given field name in a
+   record.  */
 
 void rec_record_remove_field_by_name (rec_record_t record,
                                       rec_field_name_t field_name,
-                                      int index);
+                                      size_t n);
 
-int rec_record_get_field_index_by_name (rec_record_t record,
-                                        rec_field_t field);
-
-/* Elements.  */
-rec_record_elem_t rec_record_null_elem (void);
-
-rec_record_elem_t rec_record_elem_field_new (rec_record_t record,
-                                             rec_field_t field);
-rec_record_elem_t rec_record_elem_comment_new (rec_record_t record,
-                                               rec_comment_t comment);
-
-bool rec_record_elem_p (rec_record_elem_t elem);
-bool rec_record_elem_field_p (rec_record_t record, rec_record_elem_t elem);
-bool rec_record_elem_comment_p (rec_record_t record, rec_record_elem_t elem);
-
-rec_field_t rec_record_elem_field (rec_record_elem_t elem);
-rec_comment_t rec_record_elem_comment (rec_record_elem_t elem);
-
-/* Others...  */
+/* Get the textual representation of a record and make it a comment
+   variable.  This function returns NULL if there is no enough memory
+   to perform the operation.  */
 
 rec_comment_t rec_record_to_comment (rec_record_t record);
 
-/* Returns true if there is a field in RECORD whose value contains
-   STR.  Returns false otherwise.  */
-bool rec_record_contains_value (rec_record_t record, char *value, bool case_insensitive);
+/* Return the 'container pointer' of a record.  It is a pointer which
+   is used by the user of the record.  This function returns NULL if
+   no container pointer has been set in the record.  */
+
+void *rec_record_container (rec_record_t record);
+
+/* Set the 'container pointer' of a record, replacing any previous
+   value.  */
+
+void rec_record_set_container (rec_record_t record, void *container);
 
 /*
  * RECORD SETS
@@ -852,117 +925,186 @@ bool rec_record_contains_value (rec_record_t record, char *value, bool case_inse
  * maybe preceded by a record descriptor.
  */
 
+/* Opaque data type representing a record set.  */
+
 typedef struct rec_rset_s *rec_rset_t;
 
-struct rec_rset_elem_s
-{
-  struct rec_mset_elem_s *mset_elem;
-};
+/* Record set mset types.  MSET_COMMENT is defined above.  */
 
-typedef struct rec_rset_elem_s rec_rset_elem_t;
+#define MSET_RECORD 1
 
-/* General.  */
+/************ Creating and destroying record sets **************/
+
+/* Create a new empty record set and return a reference to it.  NULL
+   is returned if there is no enough memory to perform the
+   operation.  */
+
 rec_rset_t rec_rset_new (void);
+
+/* Destroy a record set, freeing all user resources.  This disposes
+   all the memory used by the record internals, including any stored
+   record or comment.  */
+
 void rec_rset_destroy (rec_rset_t rset);
+
+/* Create a copy of a record set and return a reference to it.  This
+   operation performs a deep copy of the contained records and
+   comments.  NULL is returned if there is no enough memory to perform
+   the operation.  */
 
 rec_rset_t rec_rset_dup (rec_rset_t rset);
 
-/* Statistics.  */
+/********* Getting and Setting record set properties *************/
 
-int rec_rset_num_elems (rec_rset_t rset);
-int rec_rset_num_records (rec_rset_t rset);
-int rec_rset_num_comments (rec_rset_t rset);
+/* Return the multi-set containing the elements stored by the given
+   record set.  */
 
-/* Getting and setting elements.  */
+rec_mset_t rec_rset_mset (rec_rset_t rset);
 
-rec_rset_elem_t rec_rset_null_elem (void);
+/* Return the number of elements stored in the given record set, of
+   any type.  */
 
-rec_rset_elem_t rec_rset_get_elem (rec_rset_t rset, int position);
-rec_rset_elem_t rec_rset_get_record (rec_rset_t rset, int position);
-rec_rset_elem_t rec_rset_get_comment (rec_rset_t rset, int position);
+size_t rec_rset_num_elems (rec_rset_t rset);
 
-bool rec_rset_remove_at (rec_rset_t rset, int position);
-void rec_rset_insert_at (rec_rset_t rset, rec_rset_elem_t elem, int position);
-void rec_rset_append (rec_rset_t rset, rec_rset_elem_t elem);
-void rec_rset_append_record (rec_rset_t rset, rec_record_t record);
-void rec_rset_append_comment (rec_rset_t rset, rec_comment_t comment);
+/* Return the number of records stored in the given record set.  */
 
-rec_rset_elem_t rec_rset_remove (rec_rset_t rset, rec_rset_elem_t elem);
-rec_rset_elem_t rec_rset_remove_record (rec_rset_t rset, rec_rset_elem_t elem);
-rec_rset_elem_t rec_rset_remove_comment (rec_rset_t rset, rec_rset_elem_t elem);
-void rec_rset_insert_after (rec_rset_t rset,
-                            rec_rset_elem_t elem,
-                            rec_rset_elem_t new_elem);
+size_t rec_rset_num_records (rec_rset_t rset);
 
-/* Iterating.  */
-rec_rset_elem_t rec_rset_first (rec_rset_t rset);
-rec_rset_elem_t rec_rset_first_record (rec_rset_t rset);
-rec_rset_elem_t rec_rset_first_comment (rec_rset_t rset);
+/* Return the number of comments stored in the given record set.  */
 
-rec_rset_elem_t rec_rset_next (rec_rset_t rset, rec_rset_elem_t elem);
-rec_rset_elem_t rec_rset_next_record (rec_rset_t rset, rec_rset_elem_t elem);
-rec_rset_elem_t rec_rset_next_comment (rec_rset_t rset, rec_rset_elem_t elem);
+size_t rec_rset_num_comments (rec_rset_t rset);
 
-/* Elements.  */
-rec_rset_elem_t rec_rset_elem_record_new (rec_rset_t rset, rec_record_t record);
-rec_rset_elem_t rec_rset_elem_comment_new (rec_rset_t rset, rec_comment_t comment);
+/***************** Record descriptor management ******************/
 
-bool rec_rset_elem_p (rec_rset_elem_t elem);
-bool rec_rset_elem_record_p (rec_rset_t rset, rec_rset_elem_t elem);
-bool rec_rset_elem_comment_p (rec_rset_t rset, rec_rset_elem_t elem);
-
-rec_record_t rec_rset_elem_record (rec_rset_elem_t elem);
-rec_comment_t rec_rset_elem_comment (rec_rset_elem_t elem);
-
-/* Record descriptor management.  */
+/* Return the record descriptor of a given record set.  NULL is
+   returned if the record set does not feature a record
+   descriptor.  */
 
 rec_record_t rec_rset_descriptor (rec_rset_t rset);
+
+/* Set a new record descriptor for a given record set.  If there was
+   previously a record descriptor in the rset then it is destroyed.
+   This function performs all the requires updates to the semantics
+   associated with record sets, such as the type registry, size
+   constraints, etc.  If RECORD is NULL then the record set wont
+   feature a record descriptor.  */
+
 void rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record);
+
+/* Return the relative position of the descriptor with respect the
+   first element in the record set.  For example, if there are two
+   comments before the record descriptor in the record set then this
+   function returns 3.  */
+
 size_t rec_rset_descriptor_pos (rec_rset_t rset);
+
+/* Set the relative position of the descriptor with respect the first
+   element in the record set.  See the documentation for
+   rec_rset_descriptor_pos for details.  */
+
 void rec_rset_set_descriptor_pos (rec_rset_t rset, size_t position);
 
-char *rec_rset_type (rec_rset_t rset);
+/* Return the URL associated with a record set (external descriptor).
+   NULL is returned if the record set does not feature a record
+   descriptor, or if the record set is not featuring an external
+   descriptor.  */
+
 char *rec_rset_url  (rec_rset_t rset);
+
+/* Return the type name of a record set.  NULL is returned if the
+   record set does not feature a record descriptor.  */
+
+char *rec_rset_type (rec_rset_t rset);
+
+/* Set the type name of a record set.  If there was not a record
+   descriptor in the rset then it is created with a single %rec field.
+   In case there was an existing descriptor in the rset then it is
+   updated to reflect the new name.  */
+
 void rec_rset_set_type (rec_rset_t rset, char *type);
 
-/* Type registry.  */
+/************ Management of the type registry ***********************/
+
+/* Return the type registry of a record set.  Note that the registry
+   will be empty for a newly created rset.  */
+
 rec_type_reg_t rec_rset_get_type_reg (rec_rset_t rset);
 
-/* Types.  */
+/* Return the declared type for fields named after the provided field
+   name in a record set.  NULL is returned if no such a type is
+   found.  */
+
 rec_type_t rec_rset_get_field_type (rec_rset_t rset,
                                     rec_field_name_t field_name);
 
-/* Others.  */
+/********************** Size constraints ****************************/
 
-/* Rename a field in the record descriptor.  Field names are not
-   modified in the records themselves.  Note that the comparisons of
-   the field names are EQL.  */
+/* Return the minimum number of records allowed for a rset in its
+   record descriptor.  This is 0 for record sets for which no size
+   constraints have been defined.  */
+
+size_t rec_rset_min_records (rec_rset_t rset);
+
+/* Return the maximum number of records allowed for a rset in its
+   record descriptor.  This is SIZE_MAX for record sets for which no
+   size constraints have been defined.  */
+
+size_t rec_rset_max_records (rec_rset_t rset);
+
+/********************** Other functionality *************************/
+
+/* Rename a field in a record descriptor.  Field names are not
+   modified in the records themselves, but only in the record
+   descriptor.  Note that the comparisons of the field names are
+   EQL.  */
+
 void rec_rset_rename_field (rec_rset_t rset,
                             rec_field_name_t field_name,
                             rec_field_name_t new_field_name);
 
-/* Get a fex with the auto-incremented fields in this record set.  */
+/* Return a fex with the names of all the fields defined as
+   auto-incremented fields in a record set.  */
+
 rec_fex_t rec_rset_auto (rec_rset_t rset);
 
-/* Get a fex with the confidential fields in this record set.  */
+/* Return a fex with the names of all the fields defined as
+   confidential fields in a record set.  */
+
 rec_fex_t rec_rset_confidential (rec_rset_t rset);
 
-/* Determine whether fields having a given name are confidential.  */
+/* Determine whether a given field name corresponds to a confidential
+   field in a record set.  */
+
 bool rec_rset_field_confidential_p (rec_rset_t rset, rec_field_name_t field_name);
 
-/* Get the size constraints of the rset.  */
-size_t rec_rset_min_records (rec_rset_t rset);
-size_t rec_rset_max_records (rec_rset_t rset);
+/* Return a string describing the source of the record set.  The
+   specific meaning of the source depends on the user: it may be a
+   file name, or something else.  This function returns NULL for a
+   record set for which a source was never set.  */
 
-/* Locations.  */
 char *rec_rset_source (rec_rset_t rset);
 
-/* Ordered attribute.  */
+/* Set the 'ordered' attribute of a record set, meaning that the
+   entries of the rset are supposed to be sorted using some sorting
+   criteria, such as the presence of a %sort entry in its record
+   descriptor.  */
+
 void rec_rset_set_ordered (rec_rset_t rset, bool sorted_p);
+
+/* Determine whether a record set is sorted.  Record sets are not
+   sorted by default.  */
+
 bool rec_rset_ordered (rec_rset_t rset);
 
-/* Order_by field.  */
+/* Set a field name that will be used as the sorting criteria for a
+   record set.  The field name will take precedence to any other way
+   to define the sorting criteria, such as the %sort special field in
+   the record descriptor.  */
+
 void rec_rset_set_order_by_field (rec_rset_t rset, rec_field_name_t field_name);
+
+/* Return the field name that is used to sort a record set.  */
+
 rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
 
 /*

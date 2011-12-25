@@ -397,7 +397,7 @@ rec_parse_record (rec_parser_t parser,
   if (rec_parse_field (parser, &field))
     {
       /* Add the field to the record */
-      rec_record_append_field (new, field);
+      rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field);
     }
   else
     {
@@ -417,7 +417,7 @@ rec_parse_record (rec_parser_t parser,
           if (rec_parse_comment (parser, &comment))
             {
               /* Add the comment to the record.  */
-              rec_record_append_comment (new, comment);
+              rec_mset_append (rec_record_mset (new), MSET_COMMENT, (void *) comment);
             }
         }
       else if (c == '\n')
@@ -432,7 +432,7 @@ rec_parse_record (rec_parser_t parser,
           if (rec_parse_field (parser, &field))
             {
               /* Add the field to the record */
-              rec_record_append_field (new, field);
+              rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field);
             }
           else
             {
@@ -510,7 +510,7 @@ rec_parse_rset (rec_parser_t parser,
           rec_parse_comment (parser, &comment);
 
           /* Add the comment to the record set.  */
-          rec_rset_append_comment (new, comment);
+          rec_mset_append (rec_rset_mset (new), MSET_COMMENT, (void *) comment);
 
           comments_added++;
         }
@@ -557,7 +557,8 @@ rec_parse_rset (rec_parser_t parser,
                 }
               else
                 {
-                  rec_rset_append_record (new, record);
+                  rec_record_set_container (record, new);
+                  rec_mset_append (rec_rset_mset (new), MSET_RECORD, (void *) record);
                 }
             }
           else

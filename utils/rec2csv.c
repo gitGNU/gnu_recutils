@@ -161,7 +161,7 @@ static void
 rec2csv_generate_csv (rec_rset_t rset,
                       rec_fex_t fex)
 {
-  rec_rset_elem_t rset_elem;
+  rec_mset_iterator_t iter;
   rec_fex_elem_t fex_elem;
   rec_record_t record;
   rec_field_t field;
@@ -208,11 +208,10 @@ rec2csv_generate_csv (rec_rset_t rset,
   putc ('\n', stdout);
 
   /* Generate the data rows.  */
-  rset_elem = rec_rset_null_elem ();
-  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
-    {
-      record = rec_rset_elem_record (rset_elem);
 
+  iter = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
+    {
       for (i = 0; i < rec_fex_size (fex); i++)
         {
           if (i != 0)
@@ -234,29 +233,28 @@ rec2csv_generate_csv (rec_rset_t rset,
 
       putc ('\n', stdout);
     }
+
+  rec_mset_iterator_free (&iter);
 }
 
 static rec_fex_t
 rec2csv_determine_fields (rec_rset_t rset)
 {
   rec_fex_t fields;
-  rec_rset_elem_t rset_elem;
+  rec_mset_iterator_t iter_rset;
+  rec_mset_iterator_t iter_record;
   rec_record_t record;
-  rec_record_elem_t rec_elem;
   rec_field_t field;
   int field_index;
   
   fields = rec_fex_new (NULL, REC_FEX_SIMPLE);
 
-  rset_elem = rec_rset_null_elem ();
-  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
+  iter_rset = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter_rset, MSET_RECORD, (const void **) &record, NULL))
     {
-      record = rec_rset_elem_record (rset_elem);
-
-      rec_elem = rec_record_null_elem ();
-      while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+      iter_record = rec_mset_iterator (rec_record_mset (record));
+      while (rec_mset_iterator_next (&iter_record, MSET_FIELD, (const void **) &field, NULL))
         {
-          field = rec_record_elem_field (rec_elem);
           field_index = rec_record_get_field_index_by_name (record, field);
           
           if (!rec_fex_member_p (fields,
@@ -268,7 +266,11 @@ rec2csv_determine_fields (rec_rset_t rset)
                               field_index, field_index);
             }
         }
+
+      rec_mset_iterator_free (&iter_record);
     }
+
+  rec_mset_iterator_free (&iter_rset);
 
   return fields;
 }

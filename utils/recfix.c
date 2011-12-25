@@ -403,8 +403,9 @@ recfix_do_crypt ()
 
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
-      rec_rset_elem_t elem_rset;
+      rec_mset_iterator_t iter;
       rec_fex_t confidential_fields;
+      rec_record_t record;
       rec_rset_t rset =
         rec_db_get_rset (db, n_rset);
 
@@ -418,12 +419,9 @@ recfix_do_crypt ()
 
       /* Process every record of the record set.  */
 
-      elem_rset = rec_rset_first_record (rset);
-      while (rec_rset_elem_p (elem_rset))
+      iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
         {
-          rec_record_t record =
-            rec_rset_elem_record (elem_rset);
-
           if (recfix_op == RECFIX_OP_ENCRYPT)
             {
               /* Encrypt any unencrypted confidential field in this
@@ -443,9 +441,9 @@ recfix_do_crypt ()
 
               rec_decrypt_record (rset, record, recfix_password);
             }
-
-          elem_rset = rec_rset_next_record (rset, elem_rset);
         }
+
+      rec_mset_iterator_free (&iter);
     }
 
   /* Write the modified database back to the file.  */

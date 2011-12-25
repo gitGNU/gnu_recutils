@@ -1,3 +1,98 @@
+2011-12-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec,utils: new mset iterators and API used in the codebase.
+	* utils/mdb2rec.c (process_table): Use rec_mset_append.
+
+	* utils/rec2csv.c (rec2csv_generate_csv): Use iterators.
+	(rec2csv_determine_fields): Likewise.
+
+	* utils/csv2rec.c (field_cb): Use rec_mset_append.
+	(record_cb): Likewise.
+
+	* utils/recfix.c (recfix_do_crypt): Use iterators.
+	* utils/recfmt.c (recfmt_process_db): Likewise.
+
+	* utils/recset.c (recset_process_actions): Use iterators.
+	(recset_process_add): Use rec_mset_append.
+	(recset_process_set): Likewise.
+
+	* src/rec-mset.c (rec_mset_elem_destroy): Don't invoke the
+	disposal callback, since that is executed as part of
+	gl_list_remove_node.
+	(rec_mset_elem_set_type): New function.
+	(rec_mset_iterator_next): Update the list_node field of the mset
+	elements retrieved by iterating the list.
+
+	* utils/recins.c (recins_add_auto_field_int): Use iterators and
+	new mset API.
+	(recins_add_auto_field_date): Likewise.
+	(recins_insert_record): Likewise.
+	(recins_parse_args): Likewise.
+	(recins_add_new_record): Likewise.
+
+	* src/rec-parser.c (rec_parse_rset): Set the container for new
+	records.
+
+	* src/rec-record.c (rec_record_s): New field 'container' to hold a
+	pointer managed by the user of the record.
+	(rec_record_new): Initialize the container pointer.
+	(rec_record_dup): Copy the container pointer.
+	(rec_record_container): New function.
+	(rec_record_set_container): New function.
+
+	* utils/recsel.c (recsel_process_data): Use iterators.
+
+	* src/rec-parser.c (rec_parse_rset): Use mset functions.
+	(rec_parse_record): Likewise.
+
+	* src/rec-sex.c (rec_sex_eval): Use iterators.
+
+	* src/rec-int.c (rec_int_check_rset): Use iterators.
+	(rec_int_check_record_types): Likewise.
+	(rec_int_check_record_secrets): Likewise.
+	(rec_int_check_record_key): Likewise.
+	(rec_int_check_descriptor): Likewise.
+	(rec_int_merge_remote): Likewise.
+
+	* src/rec-writer.c (rec_write_record_with_rset): Use iterators.
+	(rec_write_rset): Likewise.
+
+	* src/rec-rset.c (rec_rset_num_elems): Return a size_t type.
+	(rec_rset_num_records): Likewise.
+	(rec_rset_num_comments): Likewise.
+	(rec_rset_mset): New function.
+	(rec_rset_update_field_props): Use iterators.
+	(rec_rset_update_types): Likewise.
+
+	* src/rec-record.c (rec_record_get_num_fields_by_name): Use
+	iterators.
+	(rec_record_get_field_by_name): Likewise.
+
+	* src/rec-mset.c (rec_mset_search): Use iterators.
+
+	* src/rec-record.c (rec_record_get_field_index): Use iterators.
+	(rec_record_get_field_index_by_name): Likewise.
+	(rec_record_contains_value): Likewise.
+	(rec_record_get_field): Function removed.
+	(rec_record_get_comment): Likewise.
+	(rec_record_remove_at): Likewise.
+
+	* src/rec-mset.c (rec_mset_iter_gl2mset): New function.
+	(rec_mset_iter_mset2gl): Likewise.
+	(rec_mset_iterator_next): Use gl2mset and mset2gl instead of
+	memcpy.
+
+	* src/rec-rset.c (rec_rset_rename_field): Use iterators.
+
+	* src/rec-record.c (rec_record_new): Note about MSET_FIELD and
+	MSET_COMMENT added.
+	(rec_record_subset_p): Rewritten to use mset iterators.
+	(rec_record_mset): New function.
+	(rec_record_get_elem): Function removed.
+
+	* src/rec.h (MSET_FIELD): New constant.
+	(MSET_COMMENT): Likewise.
+
 2011-12-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/rec.h: Comments API properly documented.

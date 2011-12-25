@@ -135,8 +135,8 @@ recdel_delete_records (rec_db_t db)
   rec_record_t record;
   rec_comment_t comment;
   bool parse_status = true;
-  rec_rset_elem_t rec_elem;
-  rec_rset_elem_t new_elem;
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
 
   if (!rec_db_type_p (db, recutl_type))
     {
@@ -178,11 +178,10 @@ recdel_delete_records (rec_db_t db)
 
       /* Process this record set.  */
       numrec = 0;
-      rec_elem = rec_rset_first_record (rset);
-      while (rec_rset_elem_p (rec_elem))
+
+      iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, &elem))
         {
-          record = rec_rset_elem_record (rec_elem);
-          
           if ((recutl_quick_str && rec_record_contains_value (record,
                                                               recutl_quick_str,
                                                               recutl_insensitive))
@@ -192,20 +191,23 @@ recdel_delete_records (rec_db_t db)
                                               (rec_sex_eval (recutl_sex, record, &parse_status))))
                                             || (recutl_num == numrec)))))
             {
-              /* Delete this record.  */
               if (recdel_comment)
                 {
-                  comment = rec_record_to_comment (record);
-                  new_elem = rec_rset_elem_comment_new (rset, comment);
-                  rec_rset_insert_after (rset, rec_elem, new_elem);
-                }
+                  /* Replace the records with a comment in the current
+                     element.  */
 
-              rec_elem = rec_rset_remove_record (rset, rec_elem);
-            }
-          else
-            {
-              /* Process the next record. */
-              rec_elem = rec_rset_next_record (rset, rec_elem);
+                  comment = rec_record_to_comment (record);
+                  rec_record_destroy (record);
+                  rec_mset_elem_set_data (elem, (void *) comment);
+                  rec_mset_elem_set_type (elem, MSET_COMMENT);
+                }
+              else
+                {
+                  /* Remove the record from the list and dispose
+                     it.  */
+
+                  rec_mset_remove_elem (rec_rset_mset (rset), elem);
+                }
             }
           
           if (!parse_status)
@@ -215,6 +217,8 @@ recdel_delete_records (rec_db_t db)
           
           numrec++;
         }
+
+      rec_mset_iterator_free (&iter);
     }
 
   /* Integrity check.  */

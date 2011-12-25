@@ -121,7 +121,7 @@ rec_int_check_rset (rec_db_t db,
                     rec_buf_t errors)
 {
   int res;
-  rec_rset_elem_t rset_elem;
+  rec_mset_iterator_t iter;
   rec_record_t record;
   rec_record_t descriptor;
   size_t num_records, min_records, max_records;
@@ -190,16 +190,16 @@ rec_int_check_rset (rec_db_t db,
         }
     }
   
-  rset_elem = rec_rset_null_elem ();
-  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
+  iter = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
     {
-      record = rec_rset_elem_record (rset_elem);
-
       res += rec_int_check_record (db,
                                    rset,
                                    record, record,
                                    errors);
     }
+
+  rec_mset_iterator_free (&iter);
 
   if (remote_descriptor_p)
     {
@@ -345,22 +345,22 @@ rec_int_check_record_types (rec_db_t db,
                             rec_buf_t errors)
 {
   int res;
-  rec_record_elem_t rec_elem;
   rec_field_t field;
+  rec_mset_iterator_t iter;
 
   res = 0;
 
-  rec_elem = rec_record_null_elem ();
-  while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+  iter = rec_mset_iterator (rec_record_mset (record));
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
     {
-      field = rec_record_elem_field (rec_elem);
-
       /* Check for the type.  */
       if (!rec_int_check_field_type (db, rset, field, errors))
         {
           res++;
         }
     }
+
+  rec_mset_iterator_free (&iter);
 
   return res;
 }
@@ -533,15 +533,13 @@ rec_int_check_record_secrets (rec_rset_t rset,
 {
   int res;
   rec_field_t field;
-  rec_record_elem_t rec_elem;
+  rec_mset_iterator_t iter;
 
   res = 0;
 
-  rec_elem = rec_record_null_elem ();
-  while (rec_record_elem_p (rec_elem = rec_record_next_field (record, rec_elem)))
+  iter = rec_mset_iterator (rec_record_mset (record));
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, NULL))
     {
-      field = rec_record_elem_field (rec_elem);
-
       /* If the field is confidential it must be encrypted.  Encrypted
          field values can be recognized by the "encrypted-"
          prefix.  */
@@ -559,6 +557,8 @@ rec_int_check_record_secrets (rec_rset_t rset,
         }
     }
 
+  rec_mset_iterator_free (&iter);
+
   return res;
 }
 
@@ -573,7 +573,7 @@ rec_int_check_record_key (rec_rset_t rset,
   int res;
   rec_record_t descriptor;
   rec_record_t other_record;
-  rec_rset_elem_t rset_elem;
+  rec_mset_iterator_t iter;
   rec_field_name_t key_field_name;
   rec_field_t field;
   rec_field_t key;
@@ -626,11 +626,9 @@ rec_int_check_record_key (rec_rset_t rset,
                                                       0);
                   duplicated_key = false;
                   
-                  rset_elem = rec_rset_null_elem ();
-                  while (rec_rset_elem_p (rset_elem = rec_rset_next_record (rset, rset_elem)))
+                  iter = rec_mset_iterator (rec_rset_mset (rset));
+                  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &other_record, NULL))
                     {
-                      other_record = rec_rset_elem_record (rset_elem);
-
                       if (other_record != orig_record)
                         {
                           /* XXX: Only the first key field is considered.  */
@@ -650,6 +648,8 @@ rec_int_check_record_key (rec_rset_t rset,
                             }
                         }
                     }
+
+                  rec_mset_iterator_free (&iter);
 
                   if (duplicated_key)
                     {
@@ -677,7 +677,7 @@ rec_int_check_descriptor (rec_rset_t rset,
 {
   int res;
   rec_record_t descriptor;
-  rec_record_elem_t rec_elem;
+  rec_mset_iterator_t iter;
   rec_field_t field;
   char *field_name_str;
   rec_field_name_t field_name;
@@ -760,10 +760,10 @@ rec_int_check_descriptor (rec_rset_t rset,
         }
 
       /* Iterate on fields.  */
-      rec_elem = rec_record_null_elem ();
-      while (rec_record_elem_p (rec_elem = rec_record_next_field (descriptor, rec_elem)))
+
+      iter = rec_mset_iterator (rec_record_mset (descriptor));
+      while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, NULL))
         {
-          field = rec_record_elem_field (rec_elem);
           field_name = rec_field_name (field);
           field_name_str = rec_field_name_str (field);
           field_value = rec_field_value (field);
@@ -968,6 +968,8 @@ does not exist\n"),
                 }
             }
         }
+
+      rec_mset_iterator_free (&iter);
     }
 
   return res;
@@ -983,7 +985,7 @@ rec_int_merge_remote (rec_rset_t rset,
   rec_db_t remote_db;
   rec_rset_t remote_rset;
   rec_field_t remote_field;
-  rec_record_elem_t rec_elem;
+  rec_mset_iterator_t iter;
   rec_record_t remote_descriptor;
   rec_field_t rec_field;
   char *rec_type;
@@ -1100,19 +1102,19 @@ rec_int_merge_remote (rec_rset_t rset,
               goto exit;
             }
           
-          rec_elem = rec_record_first_field (remote_descriptor);
-          while (rec_record_elem_p (rec_elem))
+          iter = rec_mset_iterator (rec_record_mset (remote_descriptor));
+          while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &remote_field, NULL))
             {
-              remote_field = rec_record_elem_field (rec_elem);
-              
-              /* Merge the descriptors, but take care to not add a
-                 new %rec: field.  */
+              /* Merge the descriptors, but take care to not add a new
+                 %rec: field.  */
+
               if (!rec_field_name_equal_p (rec_field_name (remote_field), FNAME(REC_FIELD_REC)))
                 {
-                  rec_record_append_field (descriptor, rec_field_dup (remote_field));
+                  rec_mset_append (rec_record_mset (descriptor), MSET_FIELD, (void *) rec_field_dup (remote_field));
                 }
-              rec_elem = rec_record_next_field (remote_descriptor, rec_elem);
             }
+
+          rec_mset_iterator_free (&iter);
           
           /* Update the record descriptor (triggering the creation
              of a new type registry).  */

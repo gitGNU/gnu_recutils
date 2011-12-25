@@ -299,7 +299,7 @@ recsel_process_data (rec_db_t db)
   rec_writer_t writer;
   bool parse_status;
   bool wrote_descriptor;
-  rec_rset_elem_t elem_rset;
+  rec_mset_iterator_t iter;
 
   ret = true;
 
@@ -393,11 +393,11 @@ recsel_process_data (rec_db_t db)
         }
           
       /*  Process this record set.  */
+
       num_rec = -1;
-      elem_rset = rec_rset_null_elem ();
-      while (rec_rset_elem_p (elem_rset = rec_rset_next_record (rset, elem_rset)))
+      iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
         {
-          record = rec_rset_elem_record (elem_rset);
           num_rec++;
 
           /* Shall we skip this record?  */
@@ -484,6 +484,8 @@ recsel_process_data (rec_db_t db)
               written++;
             }
         }
+
+      rec_mset_iterator_free (&iter);
     }
 
   if (recsel_count)

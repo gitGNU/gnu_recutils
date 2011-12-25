@@ -36,6 +36,10 @@
 
 struct rec_record_s
 {
+  /* Container pointer.  The semantics of this pointer depends on the
+     user.  */
+  void *container;
+
   /* type ids for the elements stored in the mset.  */
   int field_type;
   int comment_type;
@@ -60,7 +64,6 @@ static void rec_record_comment_disp_fn (void *data);
 static bool rec_record_comment_equal_fn (void *data1, void *data2);
 static void *rec_record_comment_dup_fn (void *data);
 
-
 /*
  * Public functions.
  */
@@ -74,18 +77,28 @@ rec_record_new (void)
 
   if (record)
     {
-      /* Localization is unused by default.  */
+      /* The container pointer is initially NULL, until the client
+         uses it for something else.  */
+      record->container = NULL;
+
+      /* Localization information is not used until the user
+         explicitly sets it.  */
+
       record->source = NULL;
       record->location = 0;
       record->location_str = NULL;
       record->char_location = 0;
       record->char_location_str = NULL;
 
-      /* Create the mset.  */
+      /* Create the multi-set that will hold the elements of the
+         record.  Note that the order in which the types are
+         registered is significative.  If you change the order please
+         update the MSET_FIELD and MSET_COMMENT constants in
+         rec.h.  */
+
       record->mset = rec_mset_new ();
       if (record->mset)
         {
-          /* Register the types.  */
           record->field_type = rec_mset_register_type (record->mset,
                                                        "field",
                                                        rec_record_field_disp_fn,
@@ -102,7 +115,8 @@ rec_record_new (void)
         }
       else
         {
-          /* Error.  */
+          /* Out of memory.  Report it by returning NULL.  */
+
           free (record);
           record = NULL;
         }
@@ -153,6 +167,8 @@ rec_record_dup (rec_record_t record)
         {
           new->char_location_str = strdup (record->char_location_str);
         }
+
+      new->container = record->container;
     }
 
   return new;
@@ -164,18 +180,23 @@ rec_record_subset_p (rec_record_t record1,
 {
   bool result;
   bool elem_found;
+  rec_mset_iterator_t iter1;
   rec_mset_elem_t elem1;
-  rec_mset_elem_t elem2;
+  const void *data;
 
   result = true;
 
-  elem1 = NULL;
-  while ((elem1 = rec_mset_next (record1->mset, elem1, MSET_ANY)))
-    {
-      elem_found = false;
+  /* Iterate on the elements stored in record1.  For each element,
+     verify that an equal element is also stored in record2.  */
 
-      elem2 = NULL;
-      while ((elem2 = rec_mset_next (record2->mset, elem2, MSET_ANY)))
+  iter1 = rec_mset_iterator (record1->mset);
+  while (rec_mset_iterator_next (&iter1, MSET_ANY, &data, &elem1))
+    {
+      bool elem_found = false;
+      rec_mset_elem_t elem2;
+      rec_mset_iterator_t iter2 = rec_mset_iterator (record2->mset);
+
+      while (rec_mset_iterator_next (&iter2, MSET_ANY, &data, &elem2))
         {
           if (rec_mset_elem_equal_p (elem1, elem2))
             {
@@ -189,8 +210,13 @@ rec_record_subset_p (rec_record_t record1,
           result = false;
           break;
         }
+
+      rec_mset_iterator_free (&iter2);
+      
     }
 
+  rec_mset_iterator_free (&iter1);
+  
   return result;
 }
 
@@ -202,185 +228,42 @@ rec_record_equal_p (rec_record_t record1,
           (rec_record_subset_p (record2, record1)));
 }
 
-int
+rec_mset_t
+rec_record_mset (rec_record_t record)
+{
+  return record->mset;
+}
+
+size_t
 rec_record_num_elems (rec_record_t record)
 {
-  return rec_mset_count (record->mset,
-                         MSET_ANY);
+  return rec_mset_count (record->mset, MSET_ANY);
 }
 
-int
+size_t
 rec_record_num_fields (rec_record_t record)
 {
-  return rec_mset_count (record->mset,
-                         record->field_type);
+  return rec_mset_count (record->mset, record->field_type);
 }
 
-int
+size_t
 rec_record_num_comments (rec_record_t record)
 {
-  return rec_mset_count (record->mset,
-                         record->comment_type);
+  return rec_mset_count (record->mset, record->comment_type);
 }
 
-rec_record_elem_t
-rec_record_get_elem (rec_record_t record,
-                     int position)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_get_at (record->mset,
-                                    MSET_ANY,
-                                    position);
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_get_field (rec_record_t record,
-                      int position)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_get_at (record->mset,
-                                    record->field_type,
-                                    position);
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_get_comment (rec_record_t record,
-                        int position)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_get_at (record->mset,
-                                    record->comment_type,
-                                    position);
-
-  return elem;
-}
-
-bool
-rec_record_remove_at (rec_record_t record,
-                      int position)
-{
-  return rec_mset_remove_at (record->mset, position);
-}
-
-void
-rec_record_insert_at (rec_record_t record,
-                      rec_record_elem_t elem,
-                      int position)
-{
-  rec_mset_insert_at (record->mset,
-                      elem.mset_elem,
-                      position);
-}
-
-void
-rec_record_append (rec_record_t record,
-                   rec_record_elem_t elem)
-{
-  rec_mset_append (record->mset, elem.mset_elem);
-}
-
-void
-rec_record_append_field (rec_record_t record,
-                         rec_field_t field)
-{
-  rec_record_elem_t elem;
-
-  elem = rec_record_elem_field_new (record, field);
-  rec_mset_append (record->mset, elem.mset_elem);
-}
-
-void
-rec_record_append_comment (rec_record_t record,
-                           rec_comment_t comment)
-{
-  rec_record_elem_t elem;
-
-  elem = rec_record_elem_comment_new (record, comment);
-  rec_mset_append (record->mset,
-                   elem.mset_elem);
-}
-
-rec_record_elem_t
-rec_record_remove (rec_record_t record,
-                   rec_record_elem_t elem)
-{
-  elem.mset_elem = rec_mset_remove (record->mset,
-                                    elem.mset_elem);
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_remove_field (rec_record_t record,
-                         rec_record_elem_t elem)
-{
-  elem.mset_elem = rec_mset_remove (record->mset,
-                                    elem.mset_elem);
-  if (rec_record_elem_p (elem)
-      && !rec_record_elem_field_p (record, elem))
-    {
-      elem = rec_record_next_field (record, elem);
-    }
-  
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_remove_comment (rec_record_t record,
-                           rec_record_elem_t elem)
-{
-  elem.mset_elem = rec_mset_remove (record->mset,
-                                    elem.mset_elem);
-  if (rec_record_elem_p (elem)
-      && !rec_record_elem_comment_p (record, elem))
-    {
-      elem = rec_record_next_comment (record, elem);
-    }
-  
-  return elem;
-}
-
-void
-rec_record_insert_after (rec_record_t record,
-                         rec_record_elem_t elem,
-                         rec_record_elem_t new_elem)
-{
-  rec_mset_insert_after (record->mset,
-                         elem.mset_elem,
-                         new_elem.mset_elem);
-}
-
-rec_record_elem_t
-rec_record_search_field (rec_record_t record,
-                         rec_field_t field)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_search (record->mset,
-                                    (void *) field);
-
-  return elem;
-}
-
-int
+size_t
 rec_record_get_field_index (rec_record_t record,
                             rec_field_t field)
 {
-  int i, res;
-  rec_field_t record_field;
-  
-  res = 0;
-  for (i = 0; i < rec_record_num_fields (record); i++)
+  size_t res = 0;
+  rec_mset_iterator_t iter;
+  rec_field_t list_field;
+
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &list_field, NULL))
     {
-      record_field = rec_record_elem_field (rec_record_get_field (record, i));
-      
-      if (field == record_field)
+      if (field == list_field)
         {
           break;
         }
@@ -388,101 +271,9 @@ rec_record_get_field_index (rec_record_t record,
       res++;
     }
 
+  rec_mset_iterator_free (&iter);
+
   return res;
-}
-
-rec_record_elem_t
-rec_record_search_field_name (rec_record_t record,
-                              rec_field_name_t field_name,
-                              int n)
-{
-  rec_record_elem_t elem;
-  rec_field_t field;
-  int found;
-
-  found = 0;
-  elem.mset_elem = NULL;
-  while ((elem.mset_elem =
-          rec_mset_next (record->mset, elem.mset_elem, record->field_type)))
-    {
-      field = (rec_field_t) rec_mset_elem_data (elem.mset_elem);
-      if (rec_field_name_equal_p (field_name,
-                                  rec_field_name (field)))
-        {
-          found++;
-          if (found == n)
-            {
-              /* This is the Nth field with the given field name.  */
-              break;
-            }
-        }
-    }
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_first (rec_record_t record)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_first (record->mset, MSET_ANY);
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_first_field (rec_record_t record)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_first (record->mset,
-                                   record->field_type);
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_first_comment (rec_record_t record)
-{
-  rec_record_elem_t elem;
-  
-  elem.mset_elem = rec_mset_first (record->mset,
-                                   record->comment_type);
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_next (rec_record_t record,
-                 rec_record_elem_t elem)
-{
-  elem.mset_elem = rec_mset_next (record->mset,
-                                  elem.mset_elem,
-                                  MSET_ANY);
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_next_field (rec_record_t record,
-                       rec_record_elem_t elem)
-{
-  elem.mset_elem = rec_mset_next (record->mset,
-                                  elem.mset_elem,
-                                  record->field_type);
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_next_comment (rec_record_t record,
-                         rec_record_elem_t elem)
-{
-  elem.mset_elem = rec_mset_next (record->mset,
-                                  elem.mset_elem,
-                                  record->comment_type);
-
-  return elem;
 }
 
 bool
@@ -492,26 +283,24 @@ rec_record_field_p (rec_record_t record,
   return (rec_record_get_num_fields_by_name (record, field_name) > 0);
 }
 
-int
+size_t
 rec_record_get_num_fields_by_name (rec_record_t record,
                                    rec_field_name_t field_name)
 {
-  rec_mset_elem_t elem;
-  int num_fields;
+  rec_mset_iterator_t iter;
   rec_field_t field;
+  int num_fields = 0;
 
-  num_fields = 0;
-
-  elem = NULL;
-  while ((elem = rec_mset_next (record->mset, elem, record->field_type)))
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
     {
-      field = (rec_field_t) rec_mset_elem_data (elem);
-      if (rec_field_name_equal_p (rec_field_name (field),
-                                  field_name))
+      if (rec_field_name_equal_p (rec_field_name (field), field_name))
         {
           num_fields++;
         }
     }
+
+  rec_mset_iterator_free (&iter);
 
   return num_fields;
 }
@@ -519,21 +308,17 @@ rec_record_get_num_fields_by_name (rec_record_t record,
 rec_field_t
 rec_record_get_field_by_name (rec_record_t record,
                               rec_field_name_t field_name,
-                              int n)
+                              size_t n)
 {
-  rec_mset_elem_t elem;
-  int num_fields;
-  rec_field_t field;
-  rec_field_t result;
+  size_t num_fields = 0;
+  rec_field_t field  = NULL;
+  rec_field_t result = NULL;
+  rec_mset_iterator_t iter;
 
-  num_fields = 0;
-  field = NULL;
-  elem = NULL;
-  result = NULL;
-
-  while ((elem = rec_mset_next (record->mset, elem, record->field_type)))
+  
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
     {
-      field = (rec_field_t) rec_mset_elem_data (elem);
       if (rec_field_name_equal_p (rec_field_name (field), field_name))
         {
           if (n == num_fields)
@@ -546,132 +331,65 @@ rec_record_get_field_by_name (rec_record_t record,
         }
     }
 
+  rec_mset_iterator_free (&iter);
+
   return result;
 }
 
 void
 rec_record_remove_field_by_name (rec_record_t record,
                                  rec_field_name_t field_name,
-                                 int index)
+                                 size_t n)
 {
-  rec_record_elem_t elem;
   rec_field_t field;
-  int num_fields;
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
+  int num_fields = 0;
 
-  num_fields = 0;
-  elem = rec_record_first_field (record);
-  while (rec_record_elem_p (elem))
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, &elem))
     {
-      field = rec_record_elem_field (elem);
       if (rec_field_name_equal_p (rec_field_name (field),
                                   field_name))
           
         {
-          if ((index == -1) || (index == num_fields))
+          if ((n == -1) || (n == num_fields))
             {
-              elem = rec_record_remove_field (record, elem);
+              rec_mset_remove_elem (record->mset, elem);
             }
 
           num_fields++;
         }
-      else
-        {
-          elem = rec_record_next_field (record, elem);
-        }
     }
+
+  rec_mset_iterator_free (&iter);
 }
 
-int
+size_t
 rec_record_get_field_index_by_name (rec_record_t record,
                                     rec_field_t field)
 {
-  int i, res;
-  rec_field_t record_field;
+  size_t res = 0;
+  rec_mset_iterator_t iter;
+  rec_field_t list_field;
 
-  res = 0;
-  for (i = 0; i < rec_record_num_fields (record); i++)
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &list_field, NULL))
     {
-      record_field = rec_record_elem_field (rec_record_get_field (record, i));
-
-      if (field == record_field)
+      if (field == list_field)
         {
           break;
         }
 
-      if (rec_field_equal_p (field, record_field))
+      if (rec_field_equal_p (field, list_field))
         {
           res++;
         }
     }
 
+  rec_mset_iterator_free (&iter);
+
   return res;
-}
-
-rec_record_elem_t
-rec_record_null_elem (void)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = NULL;
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_elem_field_new (rec_record_t record,
-                           rec_field_t field)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_elem_new (record->mset, record->field_type);
-  rec_mset_elem_set_data (elem.mset_elem, (void *) field);
-
-  return elem;
-}
-
-rec_record_elem_t
-rec_record_elem_comment_new (rec_record_t record,
-                             rec_comment_t comment)
-{
-  rec_record_elem_t elem;
-
-  elem.mset_elem = rec_mset_elem_new (record->mset, record->comment_type);
-  rec_mset_elem_set_data (elem.mset_elem, (void *) comment);
-
-  return elem;
-}
-
-bool
-rec_record_elem_p (rec_record_elem_t elem)
-{
-  return (elem.mset_elem != NULL);
-}
-
-bool
-rec_record_elem_field_p (rec_record_t record,
-                         rec_record_elem_t elem)
-{
-  return (rec_mset_elem_type (elem.mset_elem) == record->field_type);
-}
-
-bool
-rec_record_elem_comment_p (rec_record_t record,
-                           rec_record_elem_t elem)
-{
-  return (rec_mset_elem_type (elem.mset_elem)
-          == record->comment_type);
-}
-
-rec_field_t
-rec_record_elem_field (rec_record_elem_t elem)
-{
-  return (rec_field_t) rec_mset_elem_data (elem.mset_elem);
-}
-
-rec_comment_t
-rec_record_elem_comment (rec_record_elem_t elem)
-{
-  return (rec_comment_t) rec_mset_elem_data (elem.mset_elem);
 }
 
 rec_comment_t
@@ -681,28 +399,31 @@ rec_record_to_comment (rec_record_t record)
   rec_comment_t res;
   char *comment_str;
   size_t comment_str_size;
-  rec_record_elem_t elem;
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
+  const void *data;
 
   buf = rec_buf_new (&comment_str, &comment_str_size);
 
-  elem = rec_record_null_elem ();
-  while (rec_record_elem_p (elem = rec_record_next (record, elem)))
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_ANY, &data, &elem))
     {
-      if (rec_record_elem_field_p (record, elem))
+      if (rec_mset_elem_type (elem) == MSET_FIELD)
         {
-          /* Field.  */
-          rec_buf_puts (rec_write_field_str (rec_record_elem_field (elem),
+          rec_buf_puts (rec_write_field_str ((rec_field_t) data,
                                              REC_WRITER_NORMAL),
                         buf);
         }
       else
         {
           /* Comment.  */
-          rec_buf_puts (rec_write_comment_str (rec_comment_text (rec_record_elem_comment (elem)),
+          rec_buf_puts (rec_write_comment_str (rec_comment_text ((rec_comment_t) data),
                                                REC_WRITER_NORMAL),
                         buf);
         }
     }
+
+  rec_mset_iterator_free (&iter);
 
   rec_buf_close (buf);
 
@@ -821,7 +542,6 @@ rec_record_set_char_location (rec_record_t record,
       record->char_location_str = NULL;
     }
   
-  
   asprintf (&(record->char_location_str), "%zu", record->char_location);
 }
 
@@ -831,13 +551,13 @@ rec_record_contains_value (rec_record_t record,
                            bool case_insensitive)
 {
   bool res = false;
+  rec_mset_iterator_t iter;
   rec_field_t field;
   char *field_value, *occur;
-  size_t i;
 
-  for (i = 0; i < rec_record_num_fields (record); i++)
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
     {
-      field = rec_record_elem_field (rec_record_get_field (record, i));
       field_value = rec_field_value (field);
 
       if (case_insensitive)
@@ -856,7 +576,21 @@ rec_record_contains_value (rec_record_t record,
         }
     }
 
+  rec_mset_iterator_free (&iter);
+
   return res;
+}
+
+void *
+rec_record_container (rec_record_t record)
+{
+  return record->container;
+}
+
+void
+rec_record_set_container (rec_record_t record, void *container)
+{
+  record->container = container;
 }
 
 /*

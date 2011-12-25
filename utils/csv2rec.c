@@ -259,7 +259,7 @@ field_cb (void *s, size_t len, void *data)
             }
           rec_field_name_set (field_name, 0, ctx->field_names[ctx->num_fields]);
           field = rec_field_new (field_name, str);
-          rec_record_append_field (ctx->record, field);
+          rec_mset_append (rec_record_mset (ctx->record), MSET_FIELD, (void *) field);
         }
 
       ctx->num_fields++;
@@ -306,7 +306,7 @@ record_cb (int c, void *data)
         }
       
       /* Add the current record to the record set.  */
-      rec_rset_append_record (ctx->rset, ctx->record);
+      rec_mset_append (rec_rset_mset (ctx->rset), MSET_RECORD, (void *) ctx->record);
       ctx->record = NULL;
       
       /* Reset the field counter.  */

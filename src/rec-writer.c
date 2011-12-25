@@ -397,7 +397,9 @@ rec_write_record_with_rset (rec_writer_t writer,
   bool ret;
   rec_field_t field;
   rec_comment_t comment;
-  rec_record_elem_t elem;
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
+  char *data;
 
   ret = true;
 
@@ -417,14 +419,13 @@ rec_write_record_with_rset (rec_writer_t writer,
         }
     }
 
-
-  elem = rec_record_null_elem ();
-  while (rec_record_elem_p (elem = rec_record_next (record, elem)))
+  iter = rec_mset_iterator (rec_record_mset (record));
+  while (rec_mset_iterator_next (&iter, MSET_ANY, (const void **) &data, &elem))
     {
-      if (rec_record_elem_field_p (record, elem))
+      if (rec_mset_elem_type (elem) == MSET_FIELD)
         {
           /* Write a field.  */
-          field = rec_record_elem_field (elem);
+          field = (rec_field_t) data;
           if (!rec_write_field_with_rset (writer,
                                           rset,
                                           field,
@@ -437,7 +438,7 @@ rec_write_record_with_rset (rec_writer_t writer,
       else
         {
           /* Write a comment.  */
-          comment = rec_record_elem_comment (elem);
+          comment = (rec_comment_t) data;
           if (!rec_write_comment (writer, comment, mode))
             {
               ret = false;
@@ -445,6 +446,8 @@ rec_write_record_with_rset (rec_writer_t writer,
             }
         }
     }
+
+  rec_mset_iterator_free (&iter);
 
   if (mode == REC_WRITER_SEXP)
     {
@@ -556,10 +559,12 @@ rec_write_rset (rec_writer_t writer,
   bool ret;
   rec_record_t descriptor;
   bool wrote_descriptor;
-  rec_rset_elem_t elem;
   size_t position;
   size_t descriptor_pos;
-
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
+  void *data;
+  
   ret = true;
   wrote_descriptor = false;
   position = 0;
@@ -576,8 +581,8 @@ rec_write_rset (rec_writer_t writer,
       return true;
     }
 
-  elem = rec_rset_null_elem ();
-  while (rec_rset_elem_p (elem = rec_rset_next (rset, elem)))
+  iter = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter, MSET_ANY, (const void **) &data, &elem))
     {
       if (position != 0)
         {
@@ -608,16 +613,16 @@ rec_write_rset (rec_writer_t writer,
             }
         }
       
-      if (rec_rset_elem_record_p (rset, elem))
+      if (rec_mset_elem_type (elem) == MSET_RECORD)
         {
           ret = rec_write_record (writer,
-                                  rec_rset_elem_record (elem),
+                                  (rec_record_t) data,
                                   REC_WRITER_NORMAL);
         }
       else
         {
           ret = rec_write_comment (writer,
-                                   rec_rset_elem_comment (elem),
+                                   (rec_comment_t) data,
                                    REC_WRITER_NORMAL);
         }
       
@@ -628,6 +633,8 @@ rec_write_rset (rec_writer_t writer,
       
       position++;
     }
+
+  rec_mset_iterator_free (&iter);
 
   /* Special case:
    *

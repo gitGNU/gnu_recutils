@@ -186,24 +186,21 @@ recins_add_auto_field_int (rec_rset_t rset,
                            rec_field_name_t field_name,
                            rec_record_t record)
 {
-  rec_rset_elem_t rset_elem;
+  rec_mset_iterator_t iter;
   rec_record_t rec;
   rec_field_t field;
   size_t num_fields, i;
   int auto_value, field_value;
   char *end;
   char *auto_value_str;
-  rec_record_elem_t rec_elem;
 
   /* Find the auto value.  */
 
   auto_value = 0;
 
-  rset_elem = rec_rset_first_record (rset);
-  while (rec_rset_elem_p (rset_elem))
+  iter = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &rec, NULL))
     {
-      rec = rec_rset_elem_record (rset_elem);
-
       num_fields = rec_record_get_num_fields_by_name (rec, field_name);
       for (i = 0; i < num_fields; i++)
         {
@@ -221,16 +218,16 @@ recins_add_auto_field_int (rec_rset_t rset,
                 }
             }
         }
-
-      rset_elem = rec_rset_next_record (rset, rset_elem);
     }
+
+  rec_mset_iterator_free (&iter);
        
-  /* Insert the auto field.  */
+  /* Create and insert the auto field.  */
+
   asprintf (&auto_value_str, "%d", auto_value);
   field = rec_field_new (rec_field_name_dup (field_name),
                          auto_value_str);
-  rec_elem = rec_record_elem_field_new (record, field);
-  rec_record_insert_at (record, rec_elem, 0);
+  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) field, 0);
   free (auto_value_str);
 }
 
@@ -240,7 +237,6 @@ recins_add_auto_field_date (rec_rset_t rset,
                             rec_record_t record)
 {
   rec_field_t auto_field;
-  rec_record_elem_t rec_elem;
   time_t t;
   char outstr[200];
   struct tm *tmp;
@@ -256,8 +252,7 @@ recins_add_auto_field_date (rec_rset_t rset,
 
   auto_field = rec_field_new (rec_field_name_dup (field_name),
                               outstr);
-  rec_elem = rec_record_elem_field_new (record, auto_field);
-  rec_record_insert_at (record, rec_elem, 0);
+  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) auto_field, 0);
 }
 
 rec_record_t
@@ -334,7 +329,6 @@ recins_insert_record (rec_db_t db,
 {
   bool res;
   rec_rset_t rset;
-  rec_rset_elem_t last_elem, new_elem;
   rec_record_t record_to_insert;
 
   if (!record || (rec_record_num_fields (record) == 0))
@@ -356,7 +350,8 @@ recins_insert_record (rec_db_t db,
       recins_encrypt_record (rset, record_to_insert);
 #endif
 
-      new_elem = rec_rset_elem_record_new (rset, record_to_insert);
+      /* Set the container in the new record.  */
+      rec_record_set_container (record_to_insert, rset);
 
       if (rec_rset_num_records (rset) == 0)
         {
@@ -365,15 +360,27 @@ recins_insert_record (rec_db_t db,
 
              XXX: move this logic into an 'rec_rset_prepend_record' function.
           */
-          rec_rset_insert_at (rset, new_elem, rec_rset_descriptor_pos (rset));
+
+          rec_mset_insert_at (rec_rset_mset (rset),
+                              MSET_RECORD,
+                              (void *) record_to_insert,
+                              rec_rset_descriptor_pos (rset));
         }
       else
         {
           /* Insert the new record after the last record in the
              set.  */
-          last_elem = rec_rset_get_record (rset,
-                                           rec_rset_num_records (rset) - 1);
-          rec_rset_insert_after (rset, last_elem, new_elem);
+
+          rec_mset_t mset = rec_rset_mset (rset);
+          rec_record_t last_record =
+            (rec_record_t) rec_mset_get_at (mset,
+                                            MSET_RECORD,
+                                            rec_rset_num_records (rset) - 1);
+
+          rec_mset_insert_after (mset,
+                                 MSET_RECORD,
+                                 (void *) record_to_insert,
+                                 rec_mset_search (mset, (void *) last_record));
         }
     }
   else
@@ -382,7 +389,7 @@ recins_insert_record (rec_db_t db,
          to check for the type of the field in this case.  */
       rset = rec_rset_new ();
       rec_rset_set_type (rset, type);
-      rec_rset_append_record (rset, record);
+      rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
       
       if (type)
         {
@@ -408,7 +415,6 @@ void recins_parse_args (int argc,
   rec_field_name_t field_name;
   char *field_name_str;
   rec_record_t provided_record;
-  rec_record_elem_t rec_elem;
 
   field = NULL;
   field_name_str = NULL;
@@ -482,7 +488,7 @@ void recins_parse_args (int argc,
               }
 
             rec_field_set_value (field, optarg);
-            rec_record_append_field (recins_record, field);
+            rec_mset_append (rec_record_mset (recins_record), MSET_FIELD, (void *) field);
 
             field = NULL;
             break;
@@ -522,14 +528,14 @@ void recins_parse_args (int argc,
               {
                 /* Append the fields in provided_record into
                    recins_record.  */
-                rec_elem = rec_record_first_field (provided_record);
-                while (rec_record_elem_p (rec_elem))
+                
+                rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (provided_record));
+                while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
                   {
-                    field = rec_record_elem_field (rec_elem);
-                    rec_record_append_field (recins_record, rec_field_dup (field));
+                    rec_mset_append (rec_record_mset (recins_record), MSET_FIELD, (void *) rec_field_dup (field));
                     field = NULL;
-                    rec_elem = rec_record_next_field (provided_record, rec_elem);
                   }
+                rec_mset_iterator_free (&iter);
 
                 rec_record_destroy (provided_record);
                 provided_record = NULL;
@@ -572,8 +578,8 @@ recins_add_new_record (rec_db_t db)
 {
   rec_rset_t rset;
   rec_record_t record;
-  rec_rset_elem_t rset_elem;
-  rec_rset_elem_t new_rset_elem;
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
   size_t num_rec;
   bool parse_status;
   rec_record_t record_to_insert;
@@ -596,11 +602,10 @@ recins_add_new_record (rec_db_t db)
           recins_encrypt_record (rset, record_to_insert);
 #endif
 
-          rset_elem = rec_rset_first_record (rset);
-          while (rec_rset_elem_p (rset_elem))
+          iter = rec_mset_iterator (rec_rset_mset (rset));
+          while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, &elem))
             {
               num_rec++;
-              record = rec_rset_elem_record (rset_elem);
 
               /* Shall we skip this record?  */
               if (((recutl_num != -1) && (recutl_num != num_rec))
@@ -615,17 +620,19 @@ recins_add_new_record (rec_db_t db)
                       recutl_error (_("evaluating the selection expression.\n"));
                       exit (EXIT_FAILURE);
                     }
-                  rset_elem = rec_rset_next_record (rset, rset_elem);
                 }
               else
                 {
-                  new_rset_elem = rec_rset_elem_record_new (rset, rec_record_dup (record_to_insert));
-                  rec_rset_insert_after (rset, rset_elem, new_rset_elem);
-                  rec_rset_remove (rset, rset_elem);
-                  rset_elem = rec_rset_next_record (rset, new_rset_elem);
+                  rec_record_set_container (record_to_insert, rset);
+                  rec_mset_insert_after (rec_rset_mset (rset),
+                                         MSET_RECORD,
+                                         (void *) rec_record_dup (record_to_insert),
+                                         elem);
                 }
             }
         }
+
+      rec_mset_iterator_free (&iter);
 
       rec_record_destroy (record_to_insert);
     }

@@ -254,10 +254,11 @@ void
 recfmt_process_db (rec_db_t db, char *template)
 {
   int rset_size;
-  size_t n_rset, n_rec;
+  size_t n_rset;
   rec_rset_t rset;
-  rec_record_t rec;
+  rec_record_t record;
   char *result;
+  rec_mset_iterator_t iter;
 
   /* Iterate on all the record sets.  */
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
@@ -266,18 +267,20 @@ recfmt_process_db (rec_db_t db, char *template)
       rset_size = rec_rset_num_records (rset);
 
       /* Iterate on all the records.  */
-      for (n_rec = 0; n_rec < rset_size; n_rec++)
-        {
-          rec = rec_rset_elem_record (rec_rset_get_record (rset, n_rec));
 
+      iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
+        {
           /* Apply the template to this record.  */
-          result = recfmt_apply_template (rec, template);
+          result = recfmt_apply_template (record, template);
           if (result && (*result != '\0'))
             {
               puts (result);
               free (result);
             }
         }
+
+      rec_mset_iterator_free (&iter);
     }
 }
 

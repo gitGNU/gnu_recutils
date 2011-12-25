@@ -93,30 +93,6 @@ struct rec_rset_s
   rec_mset_t mset;
 };
 
-/* The 'record_type' in the mset contains a list of pointers to
-   rec_rset_record_s structures, instead of pointers to rec_record_t.
-   This is done in this way to allow the callbacks to access to
-   properties of the containing record set by using the 'rset'
-   field.  */
-
-struct rec_rset_record_s
-{
-  rec_rset_t   rset;
-  rec_record_t record;
-};
-
-typedef struct rec_rset_record_s *rec_rset_record_t;
-
-/* Same for comment_type and rec_rset_comment_s.  */
-
-struct rec_rset_comment_s
-{
-  rec_rset_t rset;
-  rec_comment_t comment;
-};
-
-typedef struct rec_rset_comment_s *rec_rset_comment_t;
-
 /* Static functions implemented below.  */
 
 static void rec_rset_update_types (rec_rset_t rset);
@@ -179,7 +155,9 @@ rec_rset_new (void)
           rset->order_by_field = NULL;
           rset->ordered_p = false;
 
-          /* register the types.  */
+          /* register the types.  See rec.h for the definition of
+             MSET_COMMENT and MSET_RECORD.  */
+
           rset->record_type = rec_mset_register_type (rset->mset,
                                                       "record",
                                                       rec_rset_record_disp_fn,
@@ -267,343 +245,28 @@ rec_rset_dup (rec_rset_t rset)
   return new;
 }
 
-int
+rec_mset_t
+rec_rset_mset (rec_rset_t rset)
+{
+  return rset->mset;
+}
+
+size_t
 rec_rset_num_elems (rec_rset_t rset)
 {
-  return rec_mset_count (rset->mset,
-                         MSET_ANY);
+  return rec_mset_count (rset->mset, MSET_ANY);
 }
 
-int
+size_t
 rec_rset_num_records (rec_rset_t rset)
 {
-  return rec_mset_count (rset->mset,
-                         rset->record_type);
+  return rec_mset_count (rset->mset, rset->record_type);
 }
 
-int
+size_t
 rec_rset_num_comments (rec_rset_t rset)
 {
-  return rec_mset_count (rset->mset,
-                         rset->comment_type);
-}
-
-rec_rset_elem_t
-rec_rset_null_elem (void)
-{
-  rec_rset_elem_t elem;
-
-  elem.mset_elem = NULL;
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_get_elem (rec_rset_t rset,
-                   int position)
-{
-  rec_rset_elem_t elem;
-
-  elem.mset_elem = rec_mset_get_at (rset->mset,
-                                    MSET_ANY,
-                                    position);
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_get_record (rec_rset_t rset,
-                     int position)
-{
-  rec_rset_elem_t elem;
-
-  elem.mset_elem = rec_mset_get_at (rset->mset,
-                                    rset->record_type,
-                                    position);
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_get_comment (rec_rset_t rset,
-                      int position)
-{
-  rec_rset_elem_t elem;
-
-  elem.mset_elem = rec_mset_get_at (rset->mset,
-                                    rset->comment_type,
-                                    position);
-
-  return elem;
-}
-
-bool
-rec_rset_remove_at (rec_rset_t rset,
-                    int position)
-{
-  return rec_mset_remove_at (rset->mset, position);
-}
-
-void
-rec_rset_insert_at (rec_rset_t rset,
-                    rec_rset_elem_t elem,
-                    int position)
-{
-  if (rset->ordered_p
-      && rset->order_by_field
-      && rec_rset_elem_record_p (rset, elem))
-    {
-      /* Don't insert the record at the requested position: use a
-         sorting criteria instead.  */
-      rec_mset_add_sorted (rset->mset, elem.mset_elem);
-    }
-  else
-    {
-      /* Insert at the requested position.  */
-      rec_mset_insert_at (rset->mset,
-                          elem.mset_elem,
-                          position);
-    }
-}
-
-void
-rec_rset_append (rec_rset_t rset,
-                 rec_rset_elem_t elem)
-{
-  if (rset->ordered_p
-      && rset->order_by_field
-      && rec_rset_elem_record_p (rset, elem))
-    {
-      /* Don't append the record: use a sorting criteria instead.  */
-      rec_mset_add_sorted (rset->mset, elem.mset_elem);
-    }
-  else
-    {
-      rec_mset_append (rset->mset, elem.mset_elem);
-    }
-}
-
-void
-rec_rset_append_record (rec_rset_t rset,
-                        rec_record_t record)
-{
-  rec_rset_elem_t elem;
-  
-  elem = rec_rset_elem_record_new (rset, record);
-
-  if (rset->ordered_p && rset->order_by_field)
-    {
-      rec_mset_add_sorted (rset->mset, elem.mset_elem);
-    }
-  else
-    {
-      rec_mset_append (rset->mset, elem.mset_elem);
-    }
-}
-
-void
-rec_rset_append_comment (rec_rset_t rset,
-                         rec_comment_t comment)
-{
-  rec_rset_elem_t elem;
-
-  elem = rec_rset_elem_comment_new (rset, comment);
-  rec_mset_append (rset->mset, elem.mset_elem);
-}
-
-rec_rset_elem_t
-rec_rset_remove (rec_rset_t rset,
-                 rec_rset_elem_t elem)
-{
-  elem.mset_elem = rec_mset_remove (rset->mset, elem.mset_elem);
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_remove_record (rec_rset_t rset,
-                        rec_rset_elem_t elem)
-{
-  elem = rec_rset_remove (rset, elem);
-  if (rec_rset_elem_p (elem)
-      && !rec_rset_elem_record_p (rset, elem))
-    {
-      elem = rec_rset_next_record (rset, elem);
-    }
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_remove_comment (rec_rset_t rset,
-                         rec_rset_elem_t elem)
-{
-  elem = rec_rset_remove (rset, elem);
-  if (rec_rset_elem_p (elem)
-      && !rec_rset_elem_comment_p (rset, elem))
-    {
-      elem = rec_rset_next_comment (rset, elem);
-    }
-
-  return elem;
-}
-
-void
-rec_rset_insert_after (rec_rset_t rset,
-                       rec_rset_elem_t elem,
-                       rec_rset_elem_t new_elem)
-{
-  if (rset->ordered_p
-      && rset->order_by_field
-      && rec_rset_elem_record_p (rset, new_elem))
-    {
-      /* Don't insert the record at the specified location: use a
-         sorting criteria instead.  */
-      rec_mset_add_sorted (rset->mset, new_elem.mset_elem);
-    }
-  else
-    {
-      rec_mset_insert_after (rset->mset,
-                             elem.mset_elem,
-                             new_elem.mset_elem);
-    }
-}
-
-rec_rset_elem_t
-rec_rset_first (rec_rset_t rset)
-{
-  rec_rset_elem_t elem;
-
-  elem.mset_elem = rec_mset_first (rset->mset, MSET_ANY);
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_first_record (rec_rset_t rset)
-{
-  rec_rset_elem_t elem;
-
-  elem.mset_elem = rec_mset_first (rset->mset, rset->record_type);
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_first_comment (rec_rset_t rset)
-{
-  rec_rset_elem_t elem;
-
-  elem.mset_elem = rec_mset_first (rset->mset, rset->comment_type);
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_next (rec_rset_t rset,
-               rec_rset_elem_t elem)
-{
-  elem.mset_elem = rec_mset_next (rset->mset,
-                                  elem.mset_elem,
-                                  MSET_ANY);
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_next_record (rec_rset_t rset,
-                      rec_rset_elem_t elem)
-{
-  elem.mset_elem = rec_mset_next (rset->mset,
-                                  elem.mset_elem,
-                                  rset->record_type);
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_next_comment (rec_rset_t rset,
-                       rec_rset_elem_t elem)
-{
-  elem.mset_elem = rec_mset_next (rset->mset,
-                                  elem.mset_elem,
-                                  rset->comment_type);
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_elem_record_new (rec_rset_t rset,
-                          rec_record_t record)
-{
-  rec_rset_elem_t elem;
-  rec_rset_record_t rset_record = NULL;
-
-  /* Create the rset_record to insert in the mset.  */
-
-  rset_record = malloc (sizeof (struct rec_rset_record_s));
-  rset_record->rset = rset;
-  rset_record->record = record;
-
-  /* Insert it in the mset.  */
-
-  elem.mset_elem = rec_mset_elem_new (rset->mset, rset->record_type);
-  rec_mset_elem_set_data (elem.mset_elem, (void *) rset_record);
-
-  return elem;
-}
-
-rec_rset_elem_t
-rec_rset_elem_comment_new (rec_rset_t rset,
-                           rec_comment_t comment)
-{
-  rec_rset_elem_t elem;
-  rec_rset_comment_t rset_comment = NULL;
-
-  /* Create the rset_comment to insert in the mset.  */
-
-  rset_comment = malloc (sizeof (struct rec_rset_comment_s));
-  rset_comment->rset = rset;
-  rset_comment->comment = comment;
-
-  /* Insert it in the mset.  */
-
-  elem.mset_elem = rec_mset_elem_new (rset->mset, rset->comment_type);
-  rec_mset_elem_set_data (elem.mset_elem, (void *) rset_comment);
-  
-  return elem;
-}
-
-bool
-rec_rset_elem_p (rec_rset_elem_t elem)
-{
-  return (elem.mset_elem != NULL);
-}
-
-bool
-rec_rset_elem_record_p (rec_rset_t rset,
-                        rec_rset_elem_t elem)
-{
-  return (rec_mset_elem_type (elem.mset_elem) == rset->record_type);
-}
-
-bool
-rec_rset_elem_comment_p (rec_rset_t rset,
-                         rec_rset_elem_t elem)
-{
-  return (rec_mset_elem_type (elem.mset_elem) == rset->comment_type);
-}
-
-rec_record_t
-rec_rset_elem_record (rec_rset_elem_t elem)
-{
-  rec_rset_record_t rset_record =
-    (rec_rset_record_t) rec_mset_elem_data (elem.mset_elem);
-  return rset_record->record;
-}
-
-rec_comment_t
-rec_rset_elem_comment (rec_rset_elem_t elem)
-{
-  rec_rset_comment_t rset_comment =
-    (rec_rset_comment_t) rec_mset_elem_data (elem.mset_elem);
-  return rset_comment->comment;
+  return rec_mset_count (rset->mset, rset->comment_type);
 }
 
 rec_record_t
@@ -672,7 +335,7 @@ rec_rset_set_type (rec_rset_t rset,
     {
       rec_field = rec_field_new (rec_field_name_dup (FNAME(REC_FIELD_REC)),
                                  type);
-      rec_record_append_field (rset->descriptor, rec_field);
+      rec_mset_append (rec_record_mset (rset->descriptor), MSET_FIELD, (void *) rec_field);
     }
 }
 
@@ -744,10 +407,13 @@ rec_rset_rename_field (rec_rset_t rset,
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      for (i = 0; i < rec_record_num_fields (descriptor); i++)
+      rec_mset_t descriptor_mset = rec_record_mset (descriptor);
+      rec_mset_iterator_t iter = rec_mset_iterator (descriptor_mset);
+      rec_mset_elem_t elem;
+      rec_field_t field;
+
+      while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
         {
-          field = rec_record_elem_field (rec_record_get_field (descriptor, i));
-          
           if (rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_TYPE)))
             {
               /* Process a %type entry.  Invalid entries are
@@ -817,8 +483,10 @@ rec_rset_rename_field (rec_rset_t rset,
                   rec_field_set_value (field, fex_str);
                   free (fex_str);
                 }
-            }
+            }          
         }
+
+      rec_mset_iterator_free (&iter);
     }
 
   /* Update the types registry.  */
@@ -939,11 +607,14 @@ char *
 rec_rset_source (rec_rset_t rset)
 {
   rec_record_t record;
+
+  /* The source of the record set is considered to be the source of
+     its first record: either the descriptor or some other record.  */
   
   record = rec_rset_descriptor (rset);
   if (!record)
     {
-      record = rec_rset_elem_record (rec_rset_get_record (rset, 0));
+      record = (rec_record_t) rec_mset_get_at (rset->mset, MSET_RECORD, 0);
     }
 
   return rec_record_source (record);
@@ -980,7 +651,6 @@ rec_rset_order_by_field (rec_rset_t rset)
   return rset->order_by_field;
 }
 
-
 /*
  * Private functions
  */
@@ -988,10 +658,8 @@ rec_rset_order_by_field (rec_rset_t rset)
 static void
 rec_rset_record_disp_fn (void *data)
 {
-  rec_rset_record_t rset_record = (rec_rset_record_t) data;
-
-  rec_record_destroy (rset_record->record);
-  free (rset_record);
+  rec_record_t record = (rec_record_t) data;
+  rec_record_destroy (record);
 }
 
 static bool
@@ -1006,12 +674,8 @@ rec_rset_record_equal_fn (void *data1,
 static void *
 rec_rset_record_dup_fn (void *data)
 {
-  rec_rset_record_t rset_record = (rec_rset_record_t) data;
-  rec_rset_record_t new = NULL;
-
-  new = malloc (sizeof (struct rec_rset_record_s));
-  new->rset = rset_record->rset;
-  new->record = rec_record_dup (rset_record->record);
+  rec_record_t record = (rec_record_t) data;
+  rec_record_t new = rec_record_dup (record);
 
   return (void *) new;
 }
@@ -1022,8 +686,6 @@ rec_rset_record_compare_fn (void *data1,
                             int type2)
 {
   rec_rset_t rset                  = NULL;
-  rec_rset_record_t rset_record_1  = NULL; 
-  rec_rset_record_t rset_record_2  = NULL;
   rec_field_name_t order_by_field  = NULL;
   rec_record_t record1             = NULL;
   rec_record_t record2             = NULL;
@@ -1064,15 +726,13 @@ rec_rset_record_compare_fn (void *data1,
   */
 
   /* Get the records and the containing rset.  */
-  rset_record_1 = (rec_rset_record_t) data1;
-  rset_record_2 = (rec_rset_record_t) data2;
-  record1 = rset_record_1->record;
-  record2 = rset_record_2->record;
-  rset = rset_record_1->rset;
+  record1 = (rec_record_t) data1;
+  record2 = (rec_record_t) data2;
+  rset = (rec_rset_t) rec_record_container (record1);
 
   /* Get the order by field and check if it is present in both
      registers.  */
-  order_by_field = rset_record_1->rset->order_by_field;
+  order_by_field = rset->order_by_field;
   field1 = rec_record_get_field_by_name (record1, order_by_field, 0);
   field2 = rec_record_get_field_by_name (record2, order_by_field, 0);
   
@@ -1232,10 +892,8 @@ rec_rset_record_compare_fn (void *data1,
 static void
 rec_rset_comment_disp_fn (void *data)
 {
-  rec_rset_comment_t rset_comment = (rec_rset_comment_t) data;
-
-  rec_comment_destroy (rset_comment->comment);
-  free (rset_comment);
+  rec_comment_t comment = (rec_comment_t) data;
+  rec_comment_destroy (comment);
 }
 
 static bool
@@ -1250,13 +908,8 @@ rec_rset_comment_equal_fn (void *data1,
 static void *
 rec_rset_comment_dup_fn (void *data)
 {
-  rec_rset_comment_t rset_comment = (rec_rset_comment_t) data;
-  rec_rset_comment_t new = NULL;
-
-  new = malloc (sizeof (struct rec_rset_comment_s));
-  new->rset = rset_comment->rset;
-  new->comment = rec_comment_dup (rset_comment->comment);
-
+  rec_comment_t comment = (rec_comment_t) data;
+  rec_comment_t new = rec_comment_dup (comment);
   return (void *) new;
 }
 
@@ -1335,17 +988,10 @@ static void
 rec_rset_update_field_props (rec_rset_t rset)
 {
   rec_rset_fprops_t props = NULL;
-  rec_record_elem_t record_elem;
-  rec_field_t field;
-  rec_field_name_t field_name;
   rec_field_name_t auto_field_name;
 #if defined REC_CRYPT_SUPPORT
   rec_field_name_t confidential_field_name;
 #endif
-  char *field_value;
-  rec_fex_t fex;
-  size_t i;
-  rec_type_t type;
   char *type_name = NULL;
 
   /* Reset the field properties.  */
@@ -1367,23 +1013,29 @@ rec_rset_update_field_props (rec_rset_t rset)
       /* Pass 1: scan the record descriptor for % directives, and update
          the fields properties accordingly.  */
 
-      record_elem = rec_record_first_field (rset->descriptor);
-      while (rec_record_elem_p (record_elem))
+      rec_field_t field;
+      rec_mset_iterator_t iter;
+
+      iter = rec_mset_iterator (rec_record_mset (rset->descriptor));
+      while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, NULL))
         {
-          field = rec_record_elem_field (record_elem);
-          field_name = rec_field_name (field);
-          field_value = rec_field_value (field);
+          rec_field_name_t field_name = rec_field_name (field);
+          char *field_value = rec_field_value (field);
 
           /* Update field types.  Only valid %type: descriptors are
              considered.  Invalid descriptors are ignored.  */
+
           if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPE))
               && rec_rset_type_field_p (field_value))
             {
-              fex = rec_rset_type_field_fex (field_value);
+              size_t i;
+              rec_fex_t fex = rec_rset_type_field_fex (field_value);
+
               for (i = 0; i < rec_fex_size (fex); i++)
                 {
                   char *field_type = rec_rset_type_field_type (field_value);
-                  type = rec_type_new (field_type);
+                  rec_type_t type = rec_type_new (field_type);
+
                   if (!type)
                     {
                       /* Set field_type as a field property.  Note
@@ -1432,9 +1084,12 @@ rec_rset_update_field_props (rec_rset_t rset)
             {
               /* %auto: fields containing incorrect data are
                   ignored.  */
-              fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+
+              rec_fex_t fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
               if (fex)
                 {
+                  size_t i;
+
                   for (i = 0; i < rec_fex_size (fex); i++)
                     {
                       auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
@@ -1475,9 +1130,12 @@ rec_rset_update_field_props (rec_rset_t rset)
             {
               /* Parse the field names in the field value.  Ignore
                  invalid entries.  */
-              fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+
+              rec_fex_t fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
               if (fex)
                 {
+                  size_t i;
+
                   for (i = 0; i < rec_fex_size (fex); i++)
                     {
                       confidential_field_name =
@@ -1489,8 +1147,9 @@ rec_rset_update_field_props (rec_rset_t rset)
             }
 #endif /* REC_CRYPT_SUPPORT */
 
-          record_elem = rec_record_next_field (rset->descriptor, record_elem);
         }
+
+      rec_mset_iterator_free (&iter);
     }
 
   /* Pass 2: scan the fields having properties on the record set.  */
@@ -1514,9 +1173,7 @@ static void
 rec_rset_update_types (rec_rset_t rset)
 {
   rec_field_t field;
-  rec_record_elem_t record_elem;
-  rec_field_name_t field_name;
-  char *field_value;
+  rec_mset_iterator_t iter;
   const char *p, *q = NULL;
   rec_type_t type;
   char *type_name, *to_type = NULL;
@@ -1527,16 +1184,17 @@ rec_rset_update_types (rec_rset_t rset)
   if (rset->descriptor)
     {
       /* Purge the registry.  */
+
       rec_type_reg_destroy (rset->type_reg);
       rset->type_reg = rec_type_reg_new ();
 
       /* Iterate on the fields of the descriptor.  */
-      record_elem = rec_record_first_field (rset->descriptor);
-      while (rec_record_elem_p (record_elem))
+
+      iter = rec_mset_iterator (rec_record_mset (rset->descriptor));
+      while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
         {
-          field = rec_record_elem_field (record_elem);
-          field_name = rec_field_name (field);
-          field_value = rec_field_value (field);
+          rec_field_name_t field_name = rec_field_name (field);
+          char *field_value = rec_field_value (field);
 
           if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPEDEF)))
             {
@@ -1578,10 +1236,9 @@ rec_rset_update_types (rec_rset_t rset)
                   free (type_name);
                 }
             }
-
-          record_elem = rec_record_next_field (rset->descriptor,
-                                               record_elem);
         }
+
+      rec_mset_iterator_free (&iter);
     }
 }
 
@@ -1691,6 +1348,5 @@ rec_rset_get_props (rec_rset_t rset,
 
   return props;
 }
-
 
 /* End of rec-rset.c */

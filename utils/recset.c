@@ -332,7 +332,7 @@ recset_process_actions (rec_db_t db)
   rec_rset_t rset;
   rec_record_t record;
   bool parse_status = true;
-  rec_rset_elem_t rec_elem;
+  rec_mset_iterator_t iter;
   rec_buf_t errors_buf;
   char *errors_str;
   size_t errors_str_size;
@@ -374,11 +374,9 @@ recset_process_actions (rec_db_t db)
       /* Process this record set.  */
       numrec = 0;
 
-      rec_elem = rec_rset_first_record (rset);
-      while (rec_rset_elem_p (rec_elem))
+      iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
         {
-          record = rec_rset_elem_record (rec_elem);
-          
           if ((recutl_quick_str && rec_record_contains_value (record,
                                                               recutl_quick_str,
                                                               recutl_insensitive))
@@ -420,9 +418,6 @@ recset_process_actions (rec_db_t db)
                 }
             }
           
-          /* Process the next record.  */
-          rec_elem = rec_rset_next_record (rset, rec_elem);
-
           if (!parse_status)
             {
               recutl_fatal (_("invalid selection expression.\n"));
@@ -430,6 +425,8 @@ recset_process_actions (rec_db_t db)
           
           numrec++;
         }
+
+      rec_mset_iterator_free (&iter);
 
       /* Check for integrity in the modified rset.  */
       if (!recset_force)
@@ -471,8 +468,7 @@ recset_process_add (rec_rset_t rset,
       field_name = rec_fex_elem_field_name (fex_elem);
       field = rec_field_new (rec_field_name_dup (field_name), recset_value);
 
-      /* XXX: sort the record afterwards.  */
-      rec_record_append_field (record, field);
+      rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
     }
 }
 
@@ -528,7 +524,7 @@ recset_process_set (rec_rset_t rset,
         {
           /* Add a field with this name and value.  */
           field = rec_field_new (field_name, recset_value);
-          rec_record_append_field (record, field);
+          rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
         }
     }
 }
@@ -610,8 +606,8 @@ recset_process_del (rec_rset_t rset,
   rec_field_t field;
   rec_field_name_t field_name;
   rec_comment_t comment;
-  rec_record_elem_t comment_elem;
-  rec_record_elem_t field_elem;
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
 
   /* Initialize the deletion mask.  */
   deletion_mask = xmalloc (sizeof (bool) * rec_record_num_fields (record));
@@ -656,27 +652,33 @@ recset_process_del (rec_rset_t rset,
                     
   /* Delete the marked fields.  */
   i = 0;
-  field_elem = rec_record_first_field (record);
-  while (rec_record_elem_p (field_elem))
+
+  iter = rec_mset_iterator (rec_record_mset (record));
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, &elem))
     {
       if (deletion_mask[i])
         {
           if (recset_action == RECSET_ACT_COMMENT)
             {
-              comment = rec_field_to_comment (rec_record_elem_field (field_elem));
-              comment_elem = rec_record_elem_comment_new (record, comment);
-              rec_record_insert_after (record, field_elem, comment_elem);
-            }
+              /* Turn the field into a comment.  */
 
-          field_elem = rec_record_remove_field (record, field_elem);
-        }
-      else
-        {
-          field_elem = rec_record_next_field (record, field_elem);
+              comment = rec_field_to_comment (field);
+              rec_field_destroy (field);
+              rec_mset_elem_set_data (elem, (void *) comment);
+              rec_mset_elem_set_type (elem, MSET_COMMENT);
+            }
+          else
+            {
+              /* Remove the field from the list and dispose it.  */
+              
+              rec_mset_remove_elem (rec_record_mset (record), elem);
+            }
         }
 
       i++;
     }
+
+  rec_mset_iterator_free (&iter);
 }
 
 int
