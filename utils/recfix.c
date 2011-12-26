@@ -360,17 +360,24 @@ recfix_do_check ()
 static int
 recfix_do_sort ()
 {
-  rec_db_t db;
+  rec_db_t db     = NULL;
+  size_t n_rset   = 0;
+  rec_rset_t rset = NULL;
 
-  /* Read the database from the specified file using a sorting parser,
-     and check its integrity.  If it is ok, write it back to the
-     file.  */
+  /* Read the database from the specified file.  */
 
-  recutl_sorting_parser (true, NULL, NULL);
   db = recutl_read_db_from_file (recfix_file);
   if (!db)
     {
       return EXIT_FAILURE;
+    }
+
+  /* Sort all the record sets contained in the database.  */
+
+  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
+    {
+      rset = rec_db_get_rset (db, n_rset);
+      rec_rset_sort (rset, NULL);
     }
   
   if (!recfix_check_database (db))

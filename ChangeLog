@@ -1,3 +1,49 @@
+2011-12-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec,utils: new sorting mechanism on top of the new mset
+	implementation.
+	* torture/utils/rec2csv.sh (sort): New input file.
+	(rec2csv-sort): New test.
+	(rec2csv-sort-field): Likewise.
+
+	* src/rec-rset.c (rec_rset_record_compare_fn): Incorrect results
+	were being calculated if a non-existing field was given to -S.
+
+	* torture/utils/recsel.sh (sort): New input file.
+	(recsel-sort): New test.
+	(recsel-sort-field): Likewise.
+	(recsel-sort-field-nonexist): Likewise.
+
+	* utils/recfix.c (recfix_do_sort): Rewritten to use rec_rset_sort.
+	* utils/rec2csv.c (rec2csv_process_data): Likewise.
+	* utils/recsel.c (recsel_process_data): Likewise.
+
+	* src/rec-rset.c (struct rec_rset_s): Field ordered removed.
+	(rec_rset_set_ordered): Function removed.
+	(rec_rset_ordered): Function removed.
+
+	* utils/rec2csv.c (rec2csv_parse_args): Likewise.
+
+	* utils/recfmt.c (main): Likewise.
+
+	* utils/recfix.c (recfix_do_sort): Likewise.
+
+	* utils/recsel.c (recsel_parse_args): Don't use a sorting parser.
+
+	* utils/recutl.c (recutl_sorting_parser): Function removed.
+
+	* src/rec-parser.c (struct rec_parser_s): Fiels related with
+	sorting removed.
+	(rec_parse_rset): Don't sort.
+	(rec_parser_set_ordered): Function removed.
+	(rec_parser_ordered): Likewise.
+	(rec_parser_sort_rset): Likewise.
+
+	* src/rec-record.c (rec_record_dup): Pass sorted=false to
+	rec_mset_dup.
+
+	* src/rec-mset.c (rec_mset_dup): Take a new parameter 'sort'.
+
 2011-12-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	mset,recins: fix some problems on the removal of elements.

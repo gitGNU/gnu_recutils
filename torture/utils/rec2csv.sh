@@ -108,6 +108,21 @@ a: a_bar
 b: b_bar
 '
 
+test_declare_input_file sort \
+'%rec: Sorted
+%sort: foo
+%type: bar int
+
+foo: b
+bar: 100
+
+foo: a
+bar: 50
+
+foo: c
+bar: 0
+'
+
 #
 # Declare tests.
 #
@@ -200,6 +215,26 @@ test_tool rec2csv-nonexistant-type ok \
           '-t jorl' \
           several-types \
 ''
+
+test_tool rec2csv-sort ok \
+          rec2csv \
+          '' \
+          sort \
+'"foo","bar"
+"a","50"
+"b","100"
+"c","0"
+'
+
+test_tool rec2csv-sort-field ok \
+          rec2csv \
+          '-S bar' \
+          sort \
+'"foo","bar"
+"c","0"
+"a","50"
+"b","100"
+'
 
 #
 # Cleanup

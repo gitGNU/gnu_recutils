@@ -79,9 +79,8 @@ struct rec_rset_s
   /* Type registry.  */
   rec_type_reg_t type_reg;
 
-  /* Field to order by.  */
+  /* Field to order by specified in the record descriptor.  */
   rec_field_name_t order_by_field;
-  bool ordered_p;
 
   /* Size constraints.  */
   size_t min_size;
@@ -116,7 +115,6 @@ static char *rec_rset_type_field_type (const char *str);
 static rec_rset_fprops_t rec_rset_get_props (rec_rset_t rset,
                                              rec_field_name_t fname,
                                              bool create_p);
-
 
 /* The following macro is used by some functions to reduce
    verbosity.  */
@@ -153,7 +151,6 @@ rec_rset_new (void)
 
           /* No order by field, initially.  */
           rset->order_by_field = NULL;
-          rset->ordered_p = false;
 
           /* register the types.  See rec.h for the definition of
              MSET_COMMENT and MSET_RECORD.  */
@@ -220,14 +217,14 @@ rec_rset_destroy (rec_rset_t rset)
 rec_rset_t
 rec_rset_dup (rec_rset_t rset)
 {
-  rec_rset_t new;
+  rec_rset_t new = NULL;
 
   new = malloc (sizeof (struct rec_rset_s));
   if (new)
     {
       new->record_type = rset->record_type;
       new->comment_type = rset->comment_type;
-      new->mset = rec_mset_dup (rset->mset);
+      new->mset = NULL;
       new->min_size = rset->min_size;
       new->max_size = rset->max_size;
       /* XXX: make copies of the following structures.  */
@@ -239,9 +236,10 @@ rec_rset_dup (rec_rset_t rset)
           new->order_by_field =
             rec_field_name_dup (rset->order_by_field);
         }
-      new->ordered_p = rset->ordered_p;
     }
 
+  new->mset = rec_mset_dup (rset->mset, false);
+  
   return new;
 }
 
@@ -620,18 +618,6 @@ rec_rset_source (rec_rset_t rset)
   return rec_record_source (record);
 }
 
-void
-rec_rset_set_ordered (rec_rset_t rset,
-                      bool ordered_p)
-{
-  rset->ordered_p = ordered_p;
-}
-
-bool
-rec_rset_ordered (rec_rset_t rset)
-{
-  return rset->ordered_p;
-}
 
 void
 rec_rset_set_order_by_field (rec_rset_t rset,
@@ -649,6 +635,33 @@ rec_field_name_t
 rec_rset_order_by_field (rec_rset_t rset)
 {
   return rset->order_by_field;
+}
+
+void
+rec_rset_sort (rec_rset_t rset,
+               rec_field_name_t sort_by)
+{
+  rec_mset_t old_mset;
+
+  if (sort_by)
+    {
+      rec_rset_set_order_by_field (rset, sort_by);
+    }
+
+  if (rset->order_by_field)
+    {
+      /* Duplicate the multi-set indicating that the elements must be
+         sorted.  */
+
+      old_mset = rset->mset;
+      rset->mset = rec_mset_dup (rset->mset, true); 
+      rec_mset_destroy (old_mset);
+
+      /* Update field properties, in case order_by_field was changed
+         above.  */
+  
+      rec_rset_update_field_props (rset);
+    }
 }
 
 /*
@@ -747,7 +760,7 @@ rec_rset_record_compare_fn (void *data1,
     }
   else if (!field1 && !field2)
     {
-      return 0; /* field1 == field2 */
+      return -1; /* field1 < field2 */
     }
 
   /* Discriminate by field type.  */

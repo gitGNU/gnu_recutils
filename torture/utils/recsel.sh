@@ -180,6 +180,21 @@ User: foo
 Password: encrypted-MHyd3Dqz+iaViL8h1m18sA==
 '
 
+test_declare_input_file sort \
+'%rec: Sorted
+%sort: Id
+%type: Id int
+
+Id: 100
+Key: foo
+
+Id: 20
+Key: bar
+
+Id: -2
+Key: baz
+'
+
 #
 # Declare tests
 #
@@ -782,6 +797,48 @@ test_tool recsel-confidential-num ok \
           confidential \
 'User: foo
 Password: secret
+'
+
+test_tool recsel-sort ok \
+          recsel \
+          '' \
+          sort \
+'Id: -2
+Key: baz
+
+Id: 20
+Key: bar
+
+Id: 100
+Key: foo
+'
+
+test_tool recsel-sort-field ok \
+          recsel \
+          '-S Key' \
+          sort \
+'Id: 20
+Key: bar
+
+Id: -2
+Key: baz
+
+Id: 100
+Key: foo
+'
+
+test_tool recsel-sort-field-nonexist ok \
+          recsel \
+          '-S doesnotexist' \
+          sort \
+'Id: 100
+Key: foo
+
+Id: 20
+Key: bar
+
+Id: -2
+Key: baz
 '
 
 #

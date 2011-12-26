@@ -143,7 +143,7 @@ rec_mset_destroy (rec_mset_t mset)
 }
 
 rec_mset_t
-rec_mset_dup (rec_mset_t mset)
+rec_mset_dup (rec_mset_t mset, bool sorted)
 {
   rec_mset_t new;
   rec_mset_elem_t elem;
@@ -175,17 +175,28 @@ rec_mset_dup (rec_mset_t mset)
       iter = gl_list_iterator (mset->elem_list);
       while (gl_list_iterator_next (&iter, (const void **) &elem, NULL))
         {
-          new_elem = rec_mset_append (new, elem->type, NULL);
+          void *data = NULL;
 
           /* Set the data.  */
           if (new->dup_fn[elem->type])
             {
-              rec_mset_elem_set_data (new_elem,
-                                      (new->dup_fn[elem->type]) (elem->data));
+              data = (new->dup_fn[elem->type]) (elem->data);
             }
           else
             {
-              rec_mset_elem_set_data (new_elem, elem->data);
+              data = elem->data;
+            }
+
+          /* Add or append the new data into a new element, depending
+             whether this is a sorted mset or not.  */
+
+          if (sorted)
+            {
+              new_elem = rec_mset_add_sorted (new, elem->type, data);
+            }
+          else
+            {
+              new_elem = rec_mset_append (new, elem->type, data);
             }
         }
 

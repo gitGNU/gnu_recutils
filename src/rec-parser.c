@@ -85,10 +85,6 @@ struct rec_parser_s
   size_t line; /* Current line number. */
   size_t character; /* Current offset from the beginning of the file,
                        in characters.  */
-
-  bool ordered_p;   /* Sort the stuff while parsing.  */
-  char *order_rset; /* NULL => Sort all record sets.  */
-  rec_field_name_t order_by_field;
 };
 
 const char *rec_parser_error_strings[] =
@@ -161,12 +157,6 @@ rec_parser_new_str (char *buffer,
 void
 rec_parser_destroy (rec_parser_t parser)
 {
-  if (parser->order_by_field)
-    {
-      rec_field_name_destroy (parser->order_by_field);
-    } 
-
-  free (parser->order_rset);
   free (parser->source);
   free (parser);
 }
@@ -478,21 +468,9 @@ rec_parse_rset (rec_parser_t parser,
       return false;
     }
 
-  /* Set the ordered attribute of the rset to the desired value.  */
-  rec_rset_set_ordered (new, parser->ordered_p);
-
   /* Set the descriptor for this record set.  */
   rec_rset_set_descriptor (new, parser->prev_descriptor);
   parser->prev_descriptor = NULL;
-
-  /* Change the sorting criteria if requested.  */
-  if (parser->order_by_field
-      && (!parser->order_rset
-          || (strcmp (parser->order_rset,
-                      rec_rset_type (new)) == 0)))
-    {
-      rec_rset_set_order_by_field (new, parser->order_by_field);
-    }
 
   while ((ci = rec_parser_getc (parser)) != EOF)
     {
@@ -538,15 +516,6 @@ rec_parse_rset (rec_parser_t parser,
                          input stream is a descriptor. */
                       rec_rset_set_descriptor (new, record);
                       rec_rset_set_descriptor_pos (new, comments_added);
-
-                      /* Change the sorting criteria if requested.  */
-                      if (parser->order_by_field
-                          && (!parser->order_rset
-                              || (strcmp (parser->order_rset,
-                                          rec_rset_type (new)) == 0)))
-                        {
-                          rec_rset_set_order_by_field (new, parser->order_by_field);
-                        }
                     }
                   else
                     {
@@ -699,41 +668,6 @@ rec_parse_record_str (char *str)
     }
 
   return record;
-}
-
-void
-rec_parser_set_ordered (rec_parser_t parser,
-                        bool ordered_p)
-{
-  parser->ordered_p = ordered_p;
-}
-
-bool
-rec_parser_ordered (rec_parser_t parser)
-{
-  return parser->ordered_p;
-}
-
-void
-rec_parser_sort_rset (rec_parser_t parser,
-                      char *rset_name,
-                      rec_field_name_t field_name)
-{
-  if (field_name)
-    {
-      if (parser->order_by_field)
-        {
-          rec_field_name_destroy (parser->order_by_field);
-        }
-      free (parser->order_rset);
-
-      parser->order_by_field = rec_field_name_dup (field_name);
-      
-      if (rset_name)
-        {
-          parser->order_rset = strdup (rset_name);
-        }
-    }
 }
 
 /*
@@ -1278,9 +1212,6 @@ rec_parser_init_common (rec_parser_t parser,
   parser->character = 0;
   parser->prev_descriptor = NULL;
   parser->p = parser->in_buffer;
-  parser->ordered_p = false;
-  parser->order_by_field = NULL;
-  parser->order_rset = NULL;
 
   return true;
 }

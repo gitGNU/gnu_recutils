@@ -215,8 +215,6 @@ recutl_parse_db_from_file (FILE *in,
   res = true;
 
   parser = rec_parser_new (in, file_name);
-  rec_parser_set_ordered (parser, recutl_sort_p);
-  rec_parser_sort_rset (parser, recutl_order_rset, recutl_order_by_field);
   while (rec_parse_rset (parser, &rset))
     {
       char *rset_type;
@@ -465,15 +463,6 @@ recutl_check_integrity (rec_db_t db,
 
       recutl_fatal (_("use --force to skip the integrity check.\n"));
     }
-}
-
-void
-recutl_sorting_parser (bool sort_p,
-                       char *rset_name,
-                       rec_field_name_t field_name)
-{
-  recutl_sort_p = sort_p;
-  recutl_order_by_field = field_name;
 }
 
 bool

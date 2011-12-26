@@ -283,9 +283,6 @@ recsel_parse_args (int argc,
 
         }
     }
-
-  /* Set the sorting criteria for the parser.  */
-  recutl_sorting_parser (true, recutl_type, recutl_sort_by_field);
 }
 
 bool
@@ -392,7 +389,9 @@ recsel_process_data (rec_db_t db)
           continue;
         }
           
-      /*  Process this record set.  */
+      /* Process this record set.  */
+
+      rec_rset_sort (rset, recutl_sort_by_field);
 
       num_rec = -1;
       iter = rec_mset_iterator (rec_rset_mset (rset));

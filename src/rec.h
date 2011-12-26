@@ -122,10 +122,12 @@ void rec_mset_destroy (rec_mset_t mset);
 
 /* Create a copy of a multi-set and return a reference to it.  This
    operation performs a deep copy using the user-provided callback to
-   duplicate the elements stored in the set.  NULL is returned if
-   there is no enough memory to complete the operation.  */
+   duplicate the elements stored in the set.  If SORTED is true then
+   the new rset will be sorted using whatever criteria implemented by
+   the compare callbacks.  NULL is returned if there is no enough
+   memory to complete the operation.  */
 
-rec_mset_t rec_mset_dup (rec_mset_t mset);
+rec_mset_t rec_mset_dup (rec_mset_t mset, bool sorted);
 
 /*************** Registering Types in a multi-set *****************/
 
@@ -1084,18 +1086,6 @@ bool rec_rset_field_confidential_p (rec_rset_t rset, rec_field_name_t field_name
 
 char *rec_rset_source (rec_rset_t rset);
 
-/* Set the 'ordered' attribute of a record set, meaning that the
-   entries of the rset are supposed to be sorted using some sorting
-   criteria, such as the presence of a %sort entry in its record
-   descriptor.  */
-
-void rec_rset_set_ordered (rec_rset_t rset, bool sorted_p);
-
-/* Determine whether a record set is sorted.  Record sets are not
-   sorted by default.  */
-
-bool rec_rset_ordered (rec_rset_t rset);
-
 /* Set a field name that will be used as the sorting criteria for a
    record set.  The field name will take precedence to any other way
    to define the sorting criteria, such as the %sort special field in
@@ -1106,6 +1096,14 @@ void rec_rset_set_order_by_field (rec_rset_t rset, rec_field_name_t field_name);
 /* Return the field name that is used to sort a record set.  */
 
 rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
+
+/* Sort a record set.  The SORT_BY parameter is a field name that, if
+   non NULL, will be used as the sorting criteria.  If no SORT_BY
+   field is specified then whatever sorting criteria specified in the
+   record set is used.  If no sorting criteria exists then the
+   function is a no-op.  */
+
+void rec_rset_sort (rec_rset_t rset, rec_field_name_t sort_by);
 
 /*
  * DATABASES
@@ -1243,13 +1241,6 @@ bool rec_parser_error (rec_parser_t parser);
 
 /* Reset the error status and EOF of a parser. */
 void rec_parser_reset (rec_parser_t parser);
-
-/* Parser properties.  */
-void rec_parser_set_ordered (rec_parser_t parser, bool ordered_p);
-bool rec_parser_ordered (rec_parser_t parser);
-void rec_parser_sort_rset (rec_parser_t parser,
-                           char *rset_name,
-                           rec_field_name_t field_name);
 
 /* Print a message with details on the last parser error.
  *

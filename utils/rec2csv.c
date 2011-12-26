@@ -150,11 +150,6 @@ rec2csv_parse_args (int argc,
           }
         }
     }
-
-  /* Set the sorting criteria for the parser.  */
-  recutl_sorting_parser (true,
-                         rec2csv_record_type,
-                         rec2csv_sort_by_field);
 }
 
 static void
@@ -297,6 +292,8 @@ rec2csv_process_data (rec_db_t db)
                   (rec_db_size (db) == 1))))
         {
           /* Process this record set.  */
+
+          rec_rset_sort (rset, rec2csv_sort_by_field);
 
           /* Build the fields that will appear in the row. */
           row_fields = rec2csv_determine_fields (rset);

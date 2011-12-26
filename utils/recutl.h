@@ -221,10 +221,6 @@ void recutl_check_integrity (rec_db_t db,
                              bool verbose_p,
                              bool external_p);
 
-void recutl_sorting_parser (bool sort_p,
-                            char *rset_name,
-                            rec_field_name_t field_name);
-
 bool recutl_yesno (char *prompt);
 
 bool recutl_interactive (void);
