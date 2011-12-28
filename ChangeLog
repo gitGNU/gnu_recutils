@@ -1,5 +1,21 @@
 2011-12-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: system tests for csv2rec.
+	* torture/utils/csv2rec.sh: New file.
+	(simple-table): New input file.
+	(csv2rec-simple-table): New test.
+	(simple-table-quotes): New input file.
+	(csv2rec-simple-table-quotes): New test.
+	(empty-columns): New input file.
+	(csv2rec-empty-columns): New test.
+	(csv2rec-empty-columns-omit): Likewise.
+	(multi-line): New input file.
+	(csv2rec-multi-line): New test.
+
+	* torture/utils/Makefile.am (TESTS): csv2rec.sh added.
+
+2011-12-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/rec.h: Documentation for the rec_int_check_* functions.
 
 2011-12-26  Jose E. Marchesi  <jemarch@gnu.org>

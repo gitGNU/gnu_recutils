@@ -22,7 +22,8 @@ TESTS = recinf.sh \
         recset.sh \
         recfix.sh \
         recfmt.sh \
-        rec2csv.sh
+        rec2csv.sh \
+        csv2rec.sh
 EXTRA_DIST = $(TESTS) testutils.sh
 TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) builddir=$(builddir) \
                     PATH=$(srcdir)$(PATH_SEPARATOR)$(top_builddir)/utils$(PATH_SEPARATOR)$$PATH
