@@ -227,14 +227,14 @@ rec_write_field_with_rset (rec_writer_t writer,
       return false;
     }
   
-  if (!rec_writer_putc (writer, ' '))
-    {
-      return false;
-    }
-  
   /* Write the field value */
   if (mode == REC_WRITER_SEXP)
     {
+      if (!rec_writer_putc (writer, ' '))
+        {
+          return false;
+        }
+  
       if (!rec_writer_putc (writer, '"'))
         {
           return false;
@@ -249,6 +249,15 @@ rec_write_field_with_rset (rec_writer_t writer,
 #endif /* REC_CRYPT_SUPPORT */
 
   fvalue = rec_field_value (field);
+
+  if (strlen (fvalue) > 0)
+    {
+      if (!rec_writer_putc (writer, ' '))
+        {
+          return false;
+        }
+    }
+
   for (pos = 0; pos < strlen (fvalue); pos++)
     {
       if (fvalue[pos] == '\n')

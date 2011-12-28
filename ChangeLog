@@ -1,5 +1,16 @@
 2011-12-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	writer: don't write a blank after the field name if the field
+	value is empty.
+	* torture/utils/recsel.sh (empty-field-values): New input file.
+	(recsel-empty-field-values): New test.
+
+	* src/rec-writer.c (rec_write_field_with_rset): Print a blank
+	after the field name only if the field value is not the empty
+	string.
+
+2011-12-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: system tests for csv2rec.
 	* torture/utils/csv2rec.sh: New file.
 	(simple-table): New input file.

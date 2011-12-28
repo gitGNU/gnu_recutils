@@ -195,6 +195,13 @@ Id: -2
 Key: baz
 '
 
+test_declare_input_file empty-field-values \
+'a: a1
+b:
+c: 
+d: d1
+'
+
 #
 # Declare tests
 #
@@ -839,6 +846,16 @@ Key: bar
 
 Id: -2
 Key: baz
+'
+
+test_tool recsel-empty-field-values ok \
+          recsel \
+          '' \
+          empty-field-values \
+'a: a1
+b:
+c:
+d: d1
 '
 
 #
