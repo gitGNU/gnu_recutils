@@ -1178,21 +1178,39 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
  *
  */
 
+/* Check the integrity of all the record sets stored in a given
+   database.  This function returns the number of errors found.
+   Descriptive messages about the errors are appended to ERRORS.  */
+
 int rec_int_check_db (rec_db_t db,
                       bool check_descriptors_p,
                       bool remote_descriptors_p,
                       rec_buf_t errors);
+
+/* Check the integrity of a given record set.  This function returns
+   the number of errors found.  Descriptive messages about the errors
+   are appended to ERRORS.  */
 
 int rec_int_check_rset (rec_db_t db,
                         rec_rset_t rset,
                         bool check_descriptor_p,
                         bool remote_descriptor_p,
                         rec_buf_t errors);
+
+/* Check the integrity of a database provided ORIG_REC is replaced by
+   REC.  This function returns the number of errors found.
+   Descriptive messages about the errors are appended to ERRORS.  */
+
 int rec_int_check_record (rec_db_t db,
                           rec_rset_t rset,
                           rec_record_t orig_rec,
                           rec_record_t rec,
                           rec_buf_t errors);
+
+/* Check the type of a given field.  This function returns the number
+   of errors found.  Descriptive messages about the errors are
+   appended to ERRORS.  */
+
 bool rec_int_check_field_type (rec_db_t db,
                                rec_rset_t rset,
                                rec_field_t field,

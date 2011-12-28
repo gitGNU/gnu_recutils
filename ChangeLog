@@ -1,3 +1,7 @@
+2011-12-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec.h: Documentation for the rec_int_check_* functions.
+
 2011-12-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec,utils: new sorting mechanism on top of the new mset
