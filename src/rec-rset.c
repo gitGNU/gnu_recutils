@@ -238,7 +238,7 @@ rec_rset_dup (rec_rset_t rset)
         }
     }
 
-  new->mset = rec_mset_dup (rset->mset, false);
+  new->mset = rec_mset_dup (rset->mset);
   
   return new;
 }
@@ -641,8 +641,6 @@ void
 rec_rset_sort (rec_rset_t rset,
                rec_field_name_t sort_by)
 {
-  rec_mset_t old_mset;
-
   if (sort_by)
     {
       rec_rset_set_order_by_field (rset, sort_by);
@@ -653,9 +651,7 @@ rec_rset_sort (rec_rset_t rset,
       /* Duplicate the multi-set indicating that the elements must be
          sorted.  */
 
-      old_mset = rset->mset;
-      rset->mset = rec_mset_dup (rset->mset, true); 
-      rec_mset_destroy (old_mset);
+      rec_mset_sort (rset->mset);
 
       /* Update field properties, in case order_by_field was changed
          above.  */

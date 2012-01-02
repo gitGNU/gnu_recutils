@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ rec_mset_destroy (rec_mset_t mset)
 }
 
 rec_mset_t
-rec_mset_dup (rec_mset_t mset, bool sorted)
+rec_mset_dup (rec_mset_t mset)
 {
   rec_mset_t new;
   rec_mset_elem_t elem;
@@ -187,23 +187,61 @@ rec_mset_dup (rec_mset_t mset, bool sorted)
               data = elem->data;
             }
 
-          /* Add or append the new data into a new element, depending
-             whether this is a sorted mset or not.  */
+          /* Append the new data into a new element.  */
 
-          if (sorted)
-            {
-              new_elem = rec_mset_add_sorted (new, elem->type, data);
-            }
-          else
-            {
-              new_elem = rec_mset_append (new, elem->type, data);
-            }
+          new_elem = rec_mset_append (new, elem->type, data);
         }
 
       gl_list_iterator_free (&iter);
     }
 
   return new;
+}
+
+void
+rec_mset_sort (rec_mset_t mset)
+{
+  rec_mset_elem_t elem;
+  rec_mset_elem_t new_elem;
+  gl_list_iterator_t iter;
+  gl_list_t list;
+
+  /* Save a reference to the old gnulib list and create a new, empty
+     one.  */
+
+  list = mset->elem_list;
+  mset->elem_list = gl_list_nx_create_empty (GL_ARRAY_LIST,
+                                             rec_mset_elem_equal_fn,
+                                             NULL,
+                                             rec_mset_elem_dispose_fn,
+                                             true);
+
+  /* Iterate on the old list getting the data of the elements and
+     inserting it into the new sorted gl_list.  */
+
+  iter = gl_list_iterator (list);
+  while (gl_list_iterator_next (&iter, (const void **) &elem, NULL))
+    {
+      /* Create a new node list with the proper data and insert it
+         into the list using whatever sorting criteria is implemented
+         by compare_fn.  */
+
+      new_elem = rec_mset_add_sorted (mset, elem->type, elem->data);
+
+      /* We don't want the memory used by the element to be disposed
+         when the old list gets destroyed.  The generic element
+         disposal function always checks if the data is NULL before
+         invoking the corresponding disp_fn callback.  */
+
+      elem->data = NULL;
+    }
+  gl_list_iterator_free (&iter);
+
+  /* Destroy the memory used by the old list, but removing the
+     dispose_fn callbacks first for the proper types in order to avoid
+     the disposal of the elements!.  */
+
+  gl_list_free (list);
 }
 
 bool

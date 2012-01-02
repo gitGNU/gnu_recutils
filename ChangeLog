@@ -1,3 +1,17 @@
+2012-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: improved sort support.
+	* src/rec-record.c (rec_record_dup): Don't pass a 'sorted'
+	argument to rec_mset_dup.
+	* src/rec-rset.c (rec_rset_dup): Likewise.
+	(rec_rset_sort): Use rec_mset_sort.
+
+	* src/rec-mset.c (rec_mset_sort): New function.
+	(rec_mset_dup): Don't sort.
+
+	* src/rec.h: New prototype for rec_mset_sort, and rec_mset_dup
+	modified to not get the 'sorted' argument.
+
 2011-12-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	writer: don't write a blank after the field name if the field
@@ -4703,7 +4717,7 @@
 
 	* Begin of the change log.
 
-Copyright 2009, 2010, 2011 Jose E. Marchesi
+Copyright 2009, 2010, 2011, 2012 Jose E. Marchesi
 
 Copying and distribution of this file, with or without modification, are
 permitted in any medium without royalty provided the copyright notice

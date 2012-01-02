@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,12 +122,10 @@ void rec_mset_destroy (rec_mset_t mset);
 
 /* Create a copy of a multi-set and return a reference to it.  This
    operation performs a deep copy using the user-provided callback to
-   duplicate the elements stored in the set.  If SORTED is true then
-   the new rset will be sorted using whatever criteria implemented by
-   the compare callbacks.  NULL is returned if there is no enough
-   memory to complete the operation.  */
+   duplicate the elements stored in the set.  NULL is returned if
+   there is no enough memory to complete the operation.  */
 
-rec_mset_t rec_mset_dup (rec_mset_t mset, bool sorted);
+rec_mset_t rec_mset_dup (rec_mset_t mset);
 
 /*************** Registering Types in a multi-set *****************/
 
@@ -284,6 +282,14 @@ void rec_mset_elem_set_data (rec_mset_elem_t elem, void *data);
    compare_fn callback.  */
 
 bool rec_mset_elem_equal_p (rec_mset_elem_t elem1, rec_mset_elem_t elem2);
+
+/************** Sorting, grouping and other operations **************/
+
+/* Sort a given multi-set using the compare_fn callbacks provided by
+   the user when defining the types of the elements stored.  This is a
+   destructive operation.  */
+
+void rec_mset_sort (rec_mset_t mset);
 
 /************************* Debugging ********************************/
 

@@ -145,7 +145,7 @@ rec_record_dup (rec_record_t record)
     {
       new->field_type = record->field_type;
       new->comment_type = record->comment_type;
-      new->mset = rec_mset_dup (record->mset, false);
+      new->mset = rec_mset_dup (record->mset);
 
       new->source = NULL;
       if (record->source)
