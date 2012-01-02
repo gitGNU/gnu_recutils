@@ -1,5 +1,11 @@
 2012-01-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	mset: disposal callback is now actually used.  Memory leak fixed.
+	* src/rec-mset.c (rec_mset_elem_destroy): Dispose the data stored
+	in elements upon removal.
+
+2012-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec: improved sort support.
 	* src/rec-record.c (rec_record_dup): Don't pass a 'sorted'
 	argument to rec_mset_dup.
