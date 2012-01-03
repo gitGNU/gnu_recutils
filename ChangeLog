@@ -1,3 +1,10 @@
+2012-01-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	librec: Initial implementation of the rec_record_uniq function.
+	* src/rec-record.c (rec_record_uniq): New function.
+
+	* src/rec.h: Prototype for rec_record_uniq.
+
 2012-01-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	mset: disposal callback is now actually used.  Memory leak fixed.

@@ -909,12 +909,6 @@ void rec_record_remove_field_by_name (rec_record_t record,
                                       rec_field_name_t field_name,
                                       size_t n);
 
-/* Get the textual representation of a record and make it a comment
-   variable.  This function returns NULL if there is no enough memory
-   to perform the operation.  */
-
-rec_comment_t rec_record_to_comment (rec_record_t record);
-
 /* Return the 'container pointer' of a record.  It is a pointer which
    is used by the user of the record.  This function returns NULL if
    no container pointer has been set in the record.  */
@@ -925,6 +919,19 @@ void *rec_record_container (rec_record_t record);
    value.  */
 
 void rec_record_set_container (rec_record_t record, void *container);
+
+/********************* Transformations in records *******************/
+
+/* Get the textual representation of a record and make it a comment
+   variable.  This function returns NULL if there is no enough memory
+   to perform the operation.  */
+
+rec_comment_t rec_record_to_comment (rec_record_t record);
+
+/* Remove duplicated fields in a given record.  Fields are compared by
+   field name and value.  */
+
+void rec_record_uniq (rec_record_t record);
 
 /*
  * RECORD SETS

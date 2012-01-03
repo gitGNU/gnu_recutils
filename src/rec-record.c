@@ -593,6 +593,76 @@ rec_record_set_container (rec_record_t record, void *container)
   record->container = container;
 }
 
+void
+rec_record_uniq (rec_record_t record)
+{
+  rec_mset_iterator_t iter1, iter2;
+  rec_mset_elem_t elem1, elem2;
+  rec_field_t field1, field2;
+  bool *to_remove;
+  size_t num_fields, i, j;
+
+  /* Create a map of the fields to remove and initialize all the
+     entries to false.  */
+
+  num_fields = rec_record_num_fields (record);
+  to_remove = malloc (sizeof(bool) * num_fields);
+  memset (to_remove, false, num_fields);
+
+  /* Iterate on the fields of the record an mark the fields that will
+     be removed in the removal mask.  */
+
+  i = 0;
+  iter1 = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter1, MSET_FIELD, (const void **) &field1, NULL))
+    {
+      if (!to_remove[i])
+        {
+          /* Mark any other occurrence of this field having the same
+             value for removal. */
+
+          j = 0;
+          iter2 = rec_mset_iterator (record->mset);
+          while (rec_mset_iterator_next (&iter2, MSET_FIELD, (const void **) &field2, NULL))
+            {
+              if ((j != i)
+                  && rec_field_name_eql_p (rec_field_name (field1),
+                                           rec_field_name (field2))
+                  && (strcmp (rec_field_value (field1), rec_field_value (field2)) == 0))
+                {
+                  to_remove[j] = true;
+                }
+              
+              j++;
+            }
+
+          rec_mset_iterator_free (&iter2);
+        }
+
+      i++;
+    }
+  rec_mset_iterator_free (&iter1);
+
+
+  /* Remove the fields marked for removal.  */
+
+  i = 0;
+  iter1 = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter1, MSET_FIELD, (const void **) &field1, &elem1))
+    {
+      if (to_remove[i])
+        {
+          rec_mset_remove_elem (record->mset, elem1);
+        }
+
+      i++;
+    }
+
+  /* Cleanup.  */
+
+  free (to_remove);
+}
+
 /*
  * Private functions
  */
