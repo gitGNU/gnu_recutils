@@ -1,3 +1,25 @@
+2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: tests for the new indexes system.
+	* utils/recins.c (recins_add_new_record): Dup the record to
+	insert, since it could be used to replace more than one record.
+
+	* torture/utils/recins.sh (recins-replace-range): New test.
+	(recins-replace-several-indexes): Likewise.
+
+	* torture/utils/recset.sh (recset-set-field-in-range): New test.
+	(recset-set-field-in-several-indexes): Likewise.
+
+	* torture/utils/recsel.sh (recsel-index-toobig): New test.
+	(recsel-index-range-1): Likewise.
+	(recsel-index-range-2): Likewise.
+	(recsel-index-range-3): Likewise.
+	(recsel-index-several): Likewise.
+	(recsel-index-invalid-1): Likewise.
+	(recsel-index-invalid-2): Likewise.
+	(recsel-index-invalid-3): Likewise.
+	(recsel-index-invalid-4): Likewise.
+
 2012-01-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: support for lists of indexes including ranges.

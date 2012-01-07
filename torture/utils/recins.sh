@@ -2,7 +2,7 @@
 #
 # recins.sh - System tests for recins.
 #
-# Copyright (C) 2010 Jose E. Marchesi.
+# Copyright (C) 2010, 2011, 2012 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -238,6 +238,32 @@ afield1: replaced
 field1: value31
 field2: value32
 field3: value33
+'
+
+test_tool recins-replace-range ok \
+          recins \
+          '-n 1-2 -f afield1 -v "replaced"' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+afield1: replaced
+
+afield1: replaced
+'
+
+test_tool recins-replace-several-indexes ok \
+          recins \
+          '-n 0,2 -f afield1 -v "replaced"' \
+          multiple-records \
+'afield1: replaced
+
+field1: value21
+field2: value22
+field3: value23
+
+afield1: replaced
 '
 
 test_tool recins-replace-sex ok \

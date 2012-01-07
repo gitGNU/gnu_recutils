@@ -2,7 +2,7 @@
 #
 # recset.sh - System tests for recset.
 #
-# Copyright (C) 2010 Jose E. Marchesi.
+# Copyright (C) 2010, 2012 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -421,6 +421,40 @@ field2: value32
 field3: value33
 '
 
+test_tool recset-set-field-in-range ok \
+          recset \
+          '-n 0-1 -f field2 -s XXX' \
+          multiple-records \
+'field1: value11
+field2: XXX
+field3: value13
+
+field1: value21
+field2: XXX
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recset-set-field-in-several-indexes ok \
+          recset \
+          '-n 0,2 -f field2 -s XXX' \
+          multiple-records \
+'field1: value11
+field2: XXX
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: XXX
+field3: value33
+'
+ 
 #
 # Cleanup.
 #

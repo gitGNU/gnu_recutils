@@ -416,7 +416,7 @@ field2: value222
 
 # Print records identified by its position into the record set.
 
-test_tool recsel-index ok \
+test_tool recsel-index-first ok \
           recsel \
           '-n 0' \
           multiple-records \
@@ -425,7 +425,7 @@ field2: value12
 field3: value13
 '
 
-test_tool recsel-index ok \
+test_tool recsel-index-second ok \
           recsel \
           '-n 1' \
           multiple-records \
@@ -433,6 +433,88 @@ test_tool recsel-index ok \
 field2: value22
 field3: value23
 '
+
+test_tool recsel-index-toobig ok \
+          recsel \
+          '-n 100' \
+          multiple-records \
+''
+
+test_tool recsel-index-several ok \
+          recsel \
+          '-n 0,2' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recsel-index-range-1 ok \
+          recsel \
+          '-n 0-1' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+'
+
+test_tool recsel-index-range-2 ok \
+          recsel \
+          '-n 1-2' \
+          multiple-records \
+'field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recsel-index-range-3 ok \
+          recsel \
+          '-n 0,1-2' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recsel-index-invalid-1 xfail \
+          recsel \
+          '-n 0,' \
+          multiple-records
+
+test_tool recsel-index-invalid-2 xfail \
+          recsel \
+          '-n ,0' \
+          multiple-records
+
+test_tool recsel-index-invalid-3 xfail \
+          recsel \
+          '-n 0,1,2-' \
+          multiple-records
+
+test_tool recsel-index-invalid-4 xfail \
+          recsel \
+          '-n 0,1,,2' \
+          multiple-records
 
 # Print records of several types.
 

@@ -486,7 +486,7 @@ recins_add_new_record (rec_db_t db)
               else
                 {
                   rec_record_set_container (recins_record, rset);
-                  rec_mset_elem_set_data (elem, (void *) recins_record);
+                  rec_mset_elem_set_data (elem, (void *) rec_record_dup (recins_record));
                 }
             }
         }
