@@ -2,7 +2,7 @@
 #
 # recfix.sh - System tests for recfix.
 #
-# Copyright (C) 2010, 2011 Jose E. Marchesi.
+# Copyright (C) 2010, 2011, 2012 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -861,6 +861,19 @@ Id: 2
 Secret: bar
 '
 
+test_declare_input_file missing-auto-fields \
+'%rec: Item
+%auto: Id
+
+Id: 0
+Title: foo
+
+Id: 1
+Title: baz
+
+Title: bar
+'
+
 #
 # Declare tests.
 #
@@ -1531,6 +1544,23 @@ Bool: yes
 
 Id: 5
 Bool: 1
+'
+
+test_tool recfix-missing-auto-fields ok \
+          recfix \
+          "--auto" \
+          missing-auto-fields \
+'%rec: Item
+%auto: Id
+
+Id: 0
+Title: foo
+
+Id: 1
+Title: baz
+
+Id: 2
+Title: bar
 '
 
 #

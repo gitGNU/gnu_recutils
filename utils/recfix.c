@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010,2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ static int recfix_do_sort (void);
 #if defined REC_CRYPT_SUPPORT
 static int recfix_do_crypt (void);
 #endif
+static int recfix_do_auto (void);
 
 /*
  * Data types.
@@ -60,7 +61,8 @@ enum recfix_op
   RECFIX_OP_ENCRYPT,
   RECFIX_OP_DECRYPT,
 #endif
-  RECFIX_OP_SORT
+  RECFIX_OP_SORT,
+  RECFIX_OP_AUTO
 };
 
 /*
@@ -88,7 +90,8 @@ enum
   OP_ENCRYPT_ARG,
   OP_DECRYPT_ARG,
 #endif
-  OP_CHECK_ARG
+  OP_CHECK_ARG,
+  OP_AUTO_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -103,6 +106,7 @@ static const struct option GNU_longOptions[] =
     {"encrypt", no_argument, NULL, OP_ENCRYPT_ARG},
     {"decrypt", no_argument, NULL, OP_DECRYPT_ARG},
 #endif
+    {"auto", no_argument, NULL, OP_AUTO_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -137,7 +141,8 @@ Check and fix rec files.\n"),
   fputs (_("\
 Operations:\n\
       --check                         check integrity of the specified file.  Default.\n\
-      --sort                          sort the records in the specified file.\n"),
+      --sort                          sort the records in the specified file.\n\
+      --auto                          insert auto-generated fields in records missing them.\n"),
          stdout);
 
 #if defined REC_CRYPT_SUPPORT
@@ -242,6 +247,16 @@ recfix_parse_args (int argc,
               }
 
             recfix_op = RECFIX_OP_SORT;
+            break;
+          }
+        case OP_AUTO_ARG:
+          {
+            if (recfix_op != RECFIX_OP_INVALID)
+              {
+                recutl_fatal (_("please specify just one operation.\n"));
+              }
+
+            recfix_op = RECFIX_OP_AUTO;
             break;
           }
 #if defined REC_CRYPT_SUPPORT
@@ -462,6 +477,47 @@ recfix_do_crypt ()
 
 #endif /* REC_CRYPT_SUPPORT */
 
+static int
+recfix_do_auto ()
+{
+  rec_db_t db    = NULL;
+  size_t n_rset  = 0;
+
+  /* Read the database from the especified file.  */
+
+  db = recutl_read_db_from_file (recfix_file);
+  if (!db)
+    {
+      return EXIT_FAILURE;
+    }
+
+  /* Add auto fields to any record in the database not having it, in
+     record sets featuring auto fields.  */
+
+  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
+    {
+      rec_mset_iterator_t iter;
+      rec_record_t record;
+      rec_rset_t rset = rec_db_get_rset (db, n_rset);
+
+      iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
+        {
+          rec_rset_add_auto_fields (rset, record);
+        }
+
+      rec_mset_iterator_free (&iter);
+    }
+
+  if (!recfix_check_database (db))
+    {
+      return EXIT_FAILURE;
+    }
+
+  recutl_write_db_to_file (db, recfix_file);
+  return EXIT_SUCCESS;
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -486,6 +542,11 @@ main (int argc, char *argv[])
     case RECFIX_OP_SORT:
       {
         res = recfix_do_sort ();
+        break;
+      }
+    case RECFIX_OP_AUTO:
+      {
+        res = recfix_do_auto ();
         break;
       }
 #if defined REC_CRYPT_SUPPORT

@@ -31,9 +31,9 @@
 #include <xalloc.h>
 #include <gettext.h>
 #include <errno.h>
+#include <time.h>
 #include <locale.h>
 #include <getpass.h>
-#include <time.h>
 #define _(str) gettext (str)
 #include <base64.h>
 

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <errno.h>
+#include <locale.h>
 #include <string.h>
 #include <parse-datetime.h>
 
@@ -115,6 +117,13 @@ static char *rec_rset_type_field_type (const char *str);
 static rec_rset_fprops_t rec_rset_get_props (rec_rset_t rset,
                                              rec_field_name_t fname,
                                              bool create_p);
+
+static void rec_rset_add_auto_field_int (rec_rset_t rset,
+                                         rec_field_name_t field_name,
+                                         rec_record_t record);
+static void rec_rset_add_auto_field_date (rec_rset_t rset,
+                                          rec_field_name_t field_name,
+                                          rec_record_t record);
 
 /* The following macro is used by some functions to reduce
    verbosity.  */
@@ -657,6 +666,59 @@ rec_rset_sort (rec_rset_t rset,
          above.  */
   
       rec_rset_update_field_props (rset);
+    }
+}
+
+void
+rec_rset_add_auto_fields (rec_rset_t rset,
+                          rec_record_t record)
+{
+  rec_fex_t auto_fields;
+  rec_type_t type;
+  size_t i;
+
+  if (auto_fields = rec_rset_auto (rset))
+    {
+      size_t num_auto_fields = rec_fex_size (auto_fields);
+
+      for (i = 0; i < num_auto_fields; i++)
+        {
+          rec_field_name_t auto_field_name =
+            rec_fex_elem_field_name (rec_fex_get (auto_fields, i));
+
+          if (!rec_record_field_p (record, auto_field_name))
+            {
+              /* The auto field is not already present in record, so
+                 add one automatically.  Depending on its type the
+                 value is calculated differently.  If the record does
+                 not have a type, or the type is incorrect, ignore
+                 it.  */
+              
+              type = rec_rset_get_field_type (rset, auto_field_name);
+              if (type)
+                {
+                  switch (rec_type_kind (type))
+                    {
+                    case REC_TYPE_INT:
+                    case REC_TYPE_RANGE:
+                      {
+                        rec_rset_add_auto_field_int (rset, auto_field_name, record);
+                        break;
+                      }
+                    case REC_TYPE_DATE:
+                      {
+                        rec_rset_add_auto_field_date (rset, auto_field_name, record);
+                        break;
+                      }
+                    default:
+                      {
+                        /* Do nothing for other types.  */
+                        break;
+                      }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1356,6 +1418,80 @@ rec_rset_get_props (rec_rset_t rset,
     }
 
   return props;
+}
+
+static void
+rec_rset_add_auto_field_int (rec_rset_t rset,
+                             rec_field_name_t field_name,
+                             rec_record_t record)
+{
+  rec_mset_iterator_t iter;
+  rec_record_t rec;
+  rec_field_t field;
+  size_t num_fields, i;
+  int auto_value, field_value;
+  char *end;
+  char *auto_value_str;
+
+  /* Find the auto value.  */
+
+  auto_value = 0;
+
+  iter = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &rec, NULL))
+    {
+      num_fields = rec_record_get_num_fields_by_name (rec, field_name);
+      for (i = 0; i < num_fields; i++)
+        {
+          field = rec_record_get_field_by_name (rec, field_name, i);
+          
+          /* Ignore fields that can't be converted to integer
+             values.  */
+          errno = 0;
+          field_value = strtol (rec_field_value (field), &end, 10);
+          if ((errno == 0) && (*end == '\0'))
+            {
+              if (auto_value <= field_value)
+                {
+                  auto_value = field_value + 1;
+                }
+            }
+        }
+    }
+
+  rec_mset_iterator_free (&iter);
+       
+  /* Create and insert the auto field.  */
+
+  asprintf (&auto_value_str, "%d", auto_value);
+  field = rec_field_new (rec_field_name_dup (field_name),
+                         auto_value_str);
+  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) field, 0);
+  free (auto_value_str);
+}
+
+static void
+rec_rset_add_auto_field_date (rec_rset_t rset,
+                              rec_field_name_t field_name,
+                              rec_record_t record)
+{
+  rec_field_t auto_field;
+  time_t t;
+  char outstr[200];
+  struct tm *tmp;
+
+  t = time (NULL);
+  tmp = localtime (&t);
+
+  setlocale (LC_TIME, "C"); /* We want english dates that can be
+                                 parsed with parse_datetime */
+  strftime (outstr, sizeof(outstr), "%a, %d %b %Y %T %z", tmp);
+  setlocale (LC_TIME, ""); /* And restore the locale from the
+                              environment. */
+
+  auto_field = rec_field_new (rec_field_name_dup (field_name),
+                              outstr);
+  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) auto_field, 0);
 }
 
 /* End of rec-rset.c */

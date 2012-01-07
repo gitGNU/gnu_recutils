@@ -1118,6 +1118,15 @@ rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
 
 void rec_rset_sort (rec_rset_t rset, rec_field_name_t sort_by);
 
+/* Add missing auto fields defined in a record set to a given record.
+   The record could not be stored in the record set used to determine
+   which auto fields to add.  This function is a no-operation if the
+   given record set is not defining any auto field, or if the passed
+   record already contains all fields marked as auto in the record
+   set.  */
+
+void rec_rset_add_auto_fields (rec_rset_t rset, rec_record_t record);
+
 /*
  * DATABASES
  *

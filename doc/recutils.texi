@@ -2646,6 +2646,11 @@ specified with @option{-s} and the program is run in a terminal, a
 prompt is used to get the password from the user.
 
 Note that this is a descructive operation.
+@itemx @w{@kbd{--auto}}
+Insert auto-generated fields as appropriate in the records which are
+missing them.
+
+Note that this is a destructive operation.
 @end table
 
 Some operations make use of certain specific options, which are
@@ -2682,6 +2687,15 @@ password:
 
 @example
 $ recfix --encrypt -s "passphrase" secrets.rec
+@end example
+
+@noindent
+Generate @code{Id} entries in a stockage database in records missing
+them.  The record descriptor of the @code{Item} record set must be
+defining @code{Id} as an auto-generated field:
+
+@example
+$ recfix --auto stockage.rec
 @end example
 
 @node recfmt
