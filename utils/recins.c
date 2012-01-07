@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,6 @@ char         *recutl_type      = NULL;
 rec_sex_t     recutl_sex       = NULL;
 char         *recutl_sex_str   = NULL;
 char         *recutl_quick_str = NULL;
-int           recutl_num       = -1;
 bool          recutl_insensitive = false;
 rec_record_t  recins_record    = NULL;
 char         *recins_file      = NULL;
@@ -445,7 +444,7 @@ recins_add_new_record (rec_db_t db)
   size_t num_rec;
   bool parse_status;
 
-  if ((recutl_num != -1)
+  if ((recutl_num_indexes() != 0)
       || (recutl_sex_str != NULL)
       || (recutl_quick_str != NULL))
     {
@@ -471,7 +470,7 @@ recins_add_new_record (rec_db_t db)
               num_rec++;
 
               /* Shall we skip this record  */
-              if (((recutl_num != -1) && (recutl_num != num_rec))
+              if (((recutl_num_indexes() != 0) && (!recutl_index_p (num_rec)))
                   || (recutl_quick_str && !rec_record_contains_value (record,
                                                                       recutl_quick_str,
                                                                       recutl_insensitive))

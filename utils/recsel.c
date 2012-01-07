@@ -56,7 +56,6 @@ bool       recsel_collapse     = false;
 bool       recsel_count        = false;
 bool       recutl_insensitive  = false;
 bool       recsel_descriptors  = false;
-size_t     recutl_num          = -1;
 rec_field_name_t recutl_sort_by_field = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 char      *recsel_password     = NULL;
@@ -422,7 +421,7 @@ recsel_process_data (rec_db_t db)
             }
           else
             {
-              if (((recutl_num != -1) && (recutl_num != num_rec))
+              if (((recutl_num_indexes() != 0) && (!recutl_index_p (num_rec)))
                   || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
                                           && parse_status)))
                 {

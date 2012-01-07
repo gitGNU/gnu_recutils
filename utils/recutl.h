@@ -90,13 +90,11 @@
     case EXPRESSION_ARG:                                       \
     case 'e':                                                  \
       {                                                        \
-        if (recutl_num != -1)                                  \
+        if (recutl_num_indexes() != 0)                         \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -e and also -n.\n",  \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+            recutl_fatal (_("cannot specify -e and also -n\n"));\
           }                                                    \
+                                                               \
         if (recutl_quick_str)                                  \
           {                                                    \
              fprintf (stderr,                                  \
@@ -136,28 +134,25 @@
                       program_name);                           \
              exit (EXIT_FAILURE);                              \
           }                                                    \
+                                                               \
         if (recutl_quick_str)                                  \
           {                                                    \
              fprintf (stderr,                                  \
-                      "%s: cannot specify -n and also -q.\n",  \
+                      "%s: cannot specify -n and also -q\n",   \
                       program_name);                           \
              exit (EXIT_FAILURE);                              \
           }                                                    \
                                                                \
-          str = xstrdup (optarg);                              \
-          li = strtol (str, &end, 10);                         \
-          if ((*str != '\0') && (*end == '\0'))                \
-            {                                                  \
-              /* Valid number.  */                             \
-              recutl_num = (int) li;                           \
-            }                                                  \
-          else                                                 \
-            {                                                  \
-              fprintf (stderr,                                 \
-                       "%s: invalid number '%s' in -n.\n",     \
-                       program_name, str);                     \
-              exit (EXIT_FAILURE);                             \
-            }                                                  \
+        if (recutl_num_indexes() != 0)                         \
+          {                                                    \
+             recutl_fatal ("please specify just one -n\n");    \
+          }                                                    \
+                                                               \
+        if (!recutl_index_list_parse (optarg))                 \
+          {                                                    \
+            recutl_fatal (_("invalid list of indexes in -n\n")); \
+          }                                                    \
+                                                               \
           break;                                               \
       }                                                        \
       case QUICK_ARG:                                          \
@@ -170,12 +165,9 @@
                       program_name);                           \
              exit (EXIT_FAILURE);                              \
           }                                                    \
-        if (recutl_num != -1)                                  \
+        if (recutl_num_indexes() != 0)                         \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -e and also -n.\n",  \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+            recutl_fatal (_("cannot specify -e and also -n")); \
           }                                                    \
                                                                \
         recutl_quick_str = xstrdup (optarg);                   \
@@ -224,6 +216,22 @@ void recutl_check_integrity (rec_db_t db,
 bool recutl_yesno (char *prompt);
 
 bool recutl_interactive (void);
+
+/* Parse a list of indexes from the given string and set the internal
+   recutl_indexes accordingly.  Return true if a list was found in the
+   string.  Return false otherwise.  */
+
+bool recutl_index_list_parse (const char *str);
+
+/* Return the number of indexes in the internal recutl_indexes data
+   structure.  */
+
+size_t recutl_num_indexes (void);
+
+/* Return whether an index is stored in the internal recutl_indexes
+   data structure.  */
+
+bool recutl_index_p (size_t index);
 
 #endif /* recutl.h */
 

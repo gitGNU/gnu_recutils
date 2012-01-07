@@ -1,5 +1,36 @@
 2012-01-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: support for lists of indexes including ranges.
+	* utils/recset.c (recutl_num): Global variable removed.
+	(recset_process_actions): Use the new indexes system.
+	(recset_process_ren): Likewise.
+
+	* utils/recins.c (recutl_num): Global variable removed.
+	(recins_add_new_record): Use the new indexes system.
+
+	* utils/recdel.c (recutl_num): Global variable removed.
+	(recdel_delete_records): Use new indexes system.
+	(recdel_parse_args): Likewise.
+	(main): Likewise.
+
+	* utils/recsel.c (recsel_process_data): Use new indexes system.
+
+	* utils/recutl.h (RECORD_SELECTION_ARGS_CASES): Use
+	recutl_index_list_parse to handle -n.
+
+	* utils/recutl.c (recutl_num_indexes): New function.
+	(recutl_index_p): New function.
+
+	* utils/recsel.c (recutl_num): Global variable deleted.
+
+	* utils/recutl.c (INDEX_LIST_ENTRY_RE): New constant.
+	(INDEX_LIST_RE): Likewise.
+	(recutl_index_list_parse): New function.
+
+	* utils/recutl.h (recutl_index_list_s): New structure.
+
+2012-01-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recins: implement the auto fields using the rec_rset facilities.
 	* utils/recins.c (recins_add_auto_field_int): Function deleted.
 	(recins_add_auto_field_date): Likewise.

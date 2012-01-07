@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,6 @@ int        recset_action      = RECSET_ACT_NONE;
 char      *recset_value       = NULL;
 rec_field_name_t recset_new_field_name = NULL;
 bool       recutl_insensitive = false;
-long       recutl_num         = -1;
 char      *recset_file        = NULL;
 bool       recset_force       = false;
 bool       recset_verbose     = false;
@@ -380,11 +379,11 @@ recset_process_actions (rec_db_t db)
           if ((recutl_quick_str && rec_record_contains_value (record,
                                                               recutl_quick_str,
                                                               recutl_insensitive))
-              || (!recutl_quick_str && (((recutl_num == -1) && !recutl_sex)
-                                        || (((recutl_num == -1) &&
+              || (!recutl_quick_str && (((recutl_num_indexes() == 0) && !recutl_sex)
+                                        || (((recutl_num_indexes() == 0) &&
                                              ((recutl_sex &&
                                                (rec_sex_eval (recutl_sex, record, &parse_status)))))
-                                            || (recutl_num == numrec)))))
+                                            || (recutl_index_p (numrec))))))
             {
               /* Process a copy of this record.  */
               switch (recset_action)
@@ -584,7 +583,7 @@ recset_process_ren (rec_rset_t rset,
      But make sure to do it just once.
   */
   if ((!recset_descriptor_renamed)
-      && (recutl_sex == NULL) && (recutl_num == -1) && (recutl_quick_str == NULL))
+      && (recutl_sex == NULL) && (recutl_num_indexes() == 0) && (recutl_quick_str == NULL))
     {
       rec_rset_rename_field (rset,
                              field_name,

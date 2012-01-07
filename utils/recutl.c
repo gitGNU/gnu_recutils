@@ -42,14 +42,31 @@
 #include <progname.h>
 #include <sys/stat.h>
 #include <readline.h>
+#include <regex.h>
 
 #include <rec.h>
 #include <recutl.h>
+
+#define MAX_INDEXES 20
+
+struct recutl_index_list_s
+{
+  size_t size;
+  struct
+  {
+    size_t min;
+    size_t max;
+    bool max_used;
+  } indexes[MAX_INDEXES];
+};
+
+typedef struct recutl_index_list_s recutl_index_list_t;
 
 bool              recutl_sort_p         = false;
 char             *recutl_order_rset     = NULL;
 rec_field_name_t  recutl_order_by_field = NULL;
 bool              recutl_interactive_p  = false;
+recutl_index_list_t recutl_indexes;
 
 void recutl_print_help (void); /* Forward prototype.  */
 
@@ -81,7 +98,10 @@ recutl_init (char *util_name)
   /* Detect whether the tool has been invoked interactively.  */
   
   recutl_interactive_p = isatty (fileno(stdin));
+
+  /* Initially there are no indexes.  */
   
+  recutl_indexes.size = 0;
 }
 
 bool
@@ -491,6 +511,118 @@ recutl_yesno (char *prompt)
       printf ("Please answer 'yes' or 'no'.\n");
     }           
 
+  return res;
+}
+
+#define INDEX_LIST_ENTRY_RE "[0-9]+(-[0-9]+)?"
+#define INDEX_LIST_RE "(" INDEX_LIST_ENTRY_RE ",)*" INDEX_LIST_ENTRY_RE
+
+bool
+recutl_index_list_parse (const char *str)
+{
+  regex_t regexp;
+  bool res = true;
+  const char *p, *q;
+  long int number;
+  char *end;
+
+  /* Initialize the list structure.  */
+
+  recutl_indexes.size = 0;
+  
+  /* Make sure the string is valid.  The code below relies on this
+     fact.  */
+
+  if (regcomp (&regexp, "^" INDEX_LIST_RE "$", REG_EXTENDED) != 0)
+    {
+      recutl_fatal (_("internal error: recutl_index_list_parse: error compiling regexp.\n"));
+      return false;
+    }
+
+  if (regexec (&regexp, str, 0, NULL, 0) != 0)
+    {
+      regfree (&regexp);
+      return false;
+    }
+
+  regfree (&regexp);
+
+  /* Parse the string. */
+
+  p = str;
+  while (true)
+    {
+      /* Get the 'min' part of the entry.  */
+
+      number = strtol (p, &end, 10);
+      recutl_indexes.indexes[recutl_indexes.size].min = (size_t) number;
+      p = end;
+
+      /* Get the 'max' part of the entry, if any.  */
+      
+      if (*p == '-')
+        {
+          p++;
+          number = strtol (p, &end, 10);
+          recutl_indexes.indexes[recutl_indexes.size].max = (size_t) number;
+          p = end;
+
+          recutl_indexes.indexes[recutl_indexes.size].max_used = true;
+        }
+      else
+        {
+          recutl_indexes.indexes[recutl_indexes.size].max_used = false;
+        }
+
+      recutl_indexes.size++;
+
+      /* Exit or pass the separator.  */
+
+      if (*p == '\0')
+        {
+          break;
+        }
+      else
+        {
+          p++;
+        }
+    }
+
+  return res;
+}
+
+size_t
+recutl_num_indexes (void)
+{
+  return recutl_indexes.size;
+}
+
+bool
+recutl_index_p (size_t index)
+{
+  bool res = false;
+  size_t i;
+
+  for (i = 0; i < recutl_indexes.size; i++)
+    {
+      size_t min = recutl_indexes.indexes[i].min;
+
+      if (recutl_indexes.indexes[i].max_used)
+        {
+          size_t max = recutl_indexes.indexes[i].max;
+          res = ((index >= min) && (index <= max));
+        }
+      else
+        {
+          res = (index == min);
+        }
+
+      if (res)
+        {
+          break;
+        }
+    }
+  
   return res;
 }
 
