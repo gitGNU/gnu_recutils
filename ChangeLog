@@ -1,3 +1,21 @@
+2012-01-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recsel: Support for --uniq|-U.
+	* torture/utils/recsel.sh (duplicated-fields): New input file.
+	(recsel-uniq): New test.
+	(recsel-uniq-long): New test.
+
+	* doc/recutils.texi (recsel Invocation): Documentation for
+	--uniq|-U.
+
+	* utils/recsel.c (GNU_longOptions): New command line argument
+	--uniq|-U.
+	(recutl_print_help): Documentation for --uniq|-U.
+	(recsel_parse_args): Handle --uniq|-U.
+	(recsel_uniq): New global.
+	(recsel_process_data): Remove duplicated fields in the processed
+	records if requested by the user with --uniq|-U.
+
 2012-01-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: Initial implementation of the rec_record_uniq function.

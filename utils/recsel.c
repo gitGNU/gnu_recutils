@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ size_t     recutl_num          = -1;
 rec_field_name_t recutl_sort_by_field = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 char      *recsel_password     = NULL;
+bool       recsel_uniq         = false;
 
 /*
  * Command line options management.
@@ -77,7 +78,8 @@ enum
   DESCRIPTOR_ARG,
   PRINT_SEXPS_ARG,
   SORT_ARG,
-  PASSWORD_ARG
+  PASSWORD_ARG,
+  UNIQ_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -93,6 +95,7 @@ static const struct option GNU_longOptions[] =
     {"print-sexps", no_argument, NULL, PRINT_SEXPS_ARG},
     {"sort", required_argument, NULL, SORT_ARG},
     {"password", required_argument, NULL, PASSWORD_ARG},
+    {"uniq", no_argument, NULL, UNIQ_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -120,7 +123,8 @@ Select and print rec data.\n"), stdout);
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
-  -S, --sort=FIELD                    sort the output by the specified field.\n"),
+  -S, --sort=FIELD                    sort the output by the specified field.\n\
+  -U, --uniq                          remove duplicated fields in the output records.\n"),
          stdout);
 
 #if defined REC_CRYPT_SUPPORT
@@ -172,7 +176,7 @@ recsel_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "S:Cdcp:P:R:s:",
+                             "S:Cdcp:P:R:s:U",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -190,6 +194,12 @@ recsel_parse_args (int argc,
         case PRINT_SEXPS_ARG:
           {
             recsel_write_mode = REC_WRITER_SEXP;
+            break;
+          }
+        case UNIQ_ARG:
+        case 'U':
+          {
+            recsel_uniq = true;
             break;
           }
         case PASSWORD_ARG:
@@ -435,6 +445,14 @@ recsel_process_data (rec_db_t db)
           else
             {
               char *output = NULL;
+
+              /* Remove duplicated fields in the record if requested
+                 by the user.  */
+
+              if (recsel_uniq)
+                {
+                  rec_record_uniq (record);
+                }
 
               if (recsel_fex_str)
                 {

@@ -2,7 +2,7 @@
 #
 # recsel.sh - System tests for recsel.
 #
-# Copyright (C) 2010 Jose E. Marchesi.
+# Copyright (C) 2010, 2011, 2012 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -200,6 +200,24 @@ test_declare_input_file empty-field-values \
 b:
 c: 
 d: d1
+'
+
+test_declare_input_file duplicated-fields \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value21
+field1: value21
+
+field1: value31
+field2:
+field2:
+field3: value33
+
+field1: foo
+field1: foo
 '
 
 #
@@ -856,6 +874,42 @@ test_tool recsel-empty-field-values ok \
 b:
 c:
 d: d1
+'
+
+test_tool recsel-uniq ok \
+          recsel \
+          '-U' \
+          duplicated-fields \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value21
+
+field1: value31
+field2:
+field3: value33
+
+field1: foo
+'
+
+test_tool recsel-uniq-long ok \
+          recsel \
+          '--uniq' \
+          duplicated-fields \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value21
+
+field1: value31
+field2:
+field3: value33
+
+field1: foo
 '
 
 #

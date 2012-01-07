@@ -2085,6 +2085,11 @@ Try to decrypt confidential fields with the given password.
 Sort the output by @var{field}.  This option has precedence to
 whatever sorting criteria is specified in the corresponding record
 descriptor with @code{%sort}.
+@item -U
+@itemx @w{@kbd{--uniq}}
+Remove duplicated fields in the output records.  Fields are
+duplicated if there are more than one featuring the same field name
+and the same value.
 @end table
 
 The @dfn{selection options} are used to select a subset of
