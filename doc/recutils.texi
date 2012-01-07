@@ -2056,7 +2056,7 @@ part of records) based in some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [@var{option}]@dots{} [-n @var{num} | -e @var{record_expr} | -q @var{str}] [-c | (-p|-P|-R) @var{field_expr}] \
+recsel [@var{option}]@dots{} [-n @var{indexes} | -e @var{record_expr} | -q @var{str}] [-c | (-p|-P|-R) @var{field_expr}] \
        [@var{file}]@dots{}
 @end example
 
@@ -2096,9 +2096,12 @@ The @dfn{selection options} are used to select a subset of
 the records in the input.
 
 @table @samp
-@item -n @var{num}
-Match the record occupying the @var{num}th position in its record
-set.
+@item -n @var{indexes}
+Match the records occupying the given positions in its record set.
+@var{indexes} must be a comma-separated list of numbers or ranges, the
+ranges being two numbers separated with dashes.  For example, the
+following list denotes the first, the third, the fourth and all
+records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
@@ -2277,7 +2280,7 @@ from the standard input.
 from the standard input.  Synopsis:
 
 @example
-recins [@var{option}]@dots{} [t @var{type}] [-n @var{num} | -e @var{expr} | -q @var{str}] \
+recins [@var{option}]@dots{} [t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str}] \
        [(-f @var{str} -v @var{str}]|[-r @var{recdata})]@dots{} [@var{file}]
 @end example
 
@@ -2330,9 +2333,12 @@ the provided record.  The selection arguments are summarized in the
 next table.
 
 @table @samp
-@item -n @var{num}
-Match the record occupying the @var{num}th position in its record
-set.
+@item -n @var{indexes}
+Match the records occupying the given positions in its record set.
+@var{indexes} must be a comma-separated list of numbers or ranges, the
+ranges being two numbers separated with dashes.  For example, the
+following list denotes the first, the third, the fourth and all
+records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).
@@ -2408,7 +2414,7 @@ read from the standard input.
 read from the standard input.  Synopsis:
 
 @example
-recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{num} | -e @var{expr} | -q @var{str}] [@var{file}]
+recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str}] [@var{file}]
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
@@ -2423,9 +2429,12 @@ Options}) the program accepts the following options.
 @itemx @w{@kbd{--type}=@var{expr}}
 Remove records of the given type.  If this parameter is not specified
 then records of any type will be removed.
-@item -n @var{num}
-Remove the record occupying the @var{num}th position in its record
-set.
+@item -n @var{indexes}
+Match the records occupying the given positions in its record set.
+@var{indexes} must be a comma-separated list of numbers or ranges, the
+ranges being two numbers separated with dashes.  For example, the
+following list denotes the first, the third, the fourth and all
+records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
@@ -2493,9 +2502,12 @@ Make strings case-insensitive in selection expressions.
 @itemx @w{@kbd{--type}=@var{expr}}
 Operate on the records of the given type.  If this parameter is not
 specified then records of any type will be removed.
-@item -n @var{num}
-Remove the record occupying the @var{num}th position in its record
-set.
+@item -n @var{indexes}
+Remove the records occupying the given positions in its record set.
+@var{indexes} must be a comma-separated list of numbers or ranges, the
+ranges being two numbers separated with dashes.  For example, the
+following list denotes the first, the third, the fourth and all
+records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only

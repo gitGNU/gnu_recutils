@@ -1,5 +1,16 @@
 2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: documentation for the new indexes system.
+	* utils/recsel.c (recutl_print_help): Documentation updated.
+	* utils/recutl.c (recutl_print_help_record_selection): Likewise.
+
+	* doc/recutils.texi (recsel Invocation): Update description of -n.
+	(recins Invocation): Likewise.
+	(recdel Invocation): Likewise.
+	(recset Invocation): Likewise.
+
+2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: tests for the new indexes system.
 	* utils/recins.c (recins_add_new_record): Dup the record to
 	insert, since it could be used to replace more than one record.
