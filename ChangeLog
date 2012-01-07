@@ -1,5 +1,15 @@
 2012-01-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recins: implement the auto fields using the rec_rset facilities.
+	* utils/recins.c (recins_add_auto_field_int): Function deleted.
+	(recins_add_auto_field_date): Likewise.
+	(recins_add_auto_fields): Likewise.
+	(recins_insert_record): Use rec_rset_add_auto_fields instead of
+	recins_add_auto_fields.
+	(recins_insert_record): Likewise.
+
+2012-01-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recfix: New operation --auto.
 	* torture/utils/recfix.sh (missing-auto-fields): New input file.
 	(recfix-missing-auto-fields): New test.

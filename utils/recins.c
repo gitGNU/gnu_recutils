@@ -181,147 +181,6 @@ recins_encrypt_record (rec_rset_t rset,
 
 #endif /* REC_CRYPT_SUPPORT */
 
-void
-recins_add_auto_field_int (rec_rset_t rset,
-                           rec_field_name_t field_name,
-                           rec_record_t record)
-{
-  rec_mset_iterator_t iter;
-  rec_record_t rec;
-  rec_field_t field;
-  size_t num_fields, i;
-  int auto_value, field_value;
-  char *end;
-  char *auto_value_str;
-
-  /* Find the auto value.  */
-
-  auto_value = 0;
-
-  iter = rec_mset_iterator (rec_rset_mset (rset));
-  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &rec, NULL))
-    {
-      num_fields = rec_record_get_num_fields_by_name (rec, field_name);
-      for (i = 0; i < num_fields; i++)
-        {
-          field = rec_record_get_field_by_name (rec, field_name, i);
-          
-          /* Ignore fields that can't be converted to integer
-             values.  */
-          errno = 0;
-          field_value = strtol (rec_field_value (field), &end, 10);
-          if ((errno == 0) && (*end == '\0'))
-            {
-              if (auto_value <= field_value)
-                {
-                  auto_value = field_value + 1;
-                }
-            }
-        }
-    }
-
-  rec_mset_iterator_free (&iter);
-       
-  /* Create and insert the auto field.  */
-
-  asprintf (&auto_value_str, "%d", auto_value);
-  field = rec_field_new (rec_field_name_dup (field_name),
-                         auto_value_str);
-  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) field, 0);
-  free (auto_value_str);
-}
-
-void
-recins_add_auto_field_date (rec_rset_t rset,
-                            rec_field_name_t field_name,
-                            rec_record_t record)
-{
-  rec_field_t auto_field;
-  time_t t;
-  char outstr[200];
-  struct tm *tmp;
-
-  t = time (NULL);
-  tmp = localtime (&t);
-
-  setlocale (LC_TIME, "C"); /* We want english dates that can be
-                                 parsed with parse_datetime */
-  strftime (outstr, sizeof(outstr), "%a, %d %b %Y %T %z", tmp);
-  setlocale (LC_TIME, ""); /* And restore the locale from the
-                              environment. */
-
-  auto_field = rec_field_new (rec_field_name_dup (field_name),
-                              outstr);
-  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) auto_field, 0);
-}
-
-rec_record_t
-recins_add_auto_fields (rec_rset_t rset,
-                        rec_record_t record)
-{
-  rec_record_t res = NULL;
-  rec_field_name_t auto_field_name;
-  rec_fex_t auto_fields;
-  rec_type_t type;
-  int i;
-
-  res = rec_record_dup (record);
-
-  if (!recins_auto)
-    {
-      return res;
-    }
-
-  if (rset)
-    {
-      if ((auto_fields = rec_rset_auto (rset)))
-        {
-          for (i = 0; i < rec_fex_size (auto_fields); i++)
-            {
-              auto_field_name = rec_fex_elem_field_name (rec_fex_get (auto_fields, i));
-              
-              if (!rec_record_field_p (record, auto_field_name))
-                {
-                  /* The auto field is not already present in record, so add
-                     one automatically.  Depending on its type the value is
-                     calculated differently. If the record does not have a
-                     type, or the type is incorrect, ignore it.  */
-                  
-                  type = rec_rset_get_field_type (rset, auto_field_name);
-                  if (type)
-                    {
-                      switch (rec_type_kind (type))
-                        {
-                        case REC_TYPE_INT:
-                        case REC_TYPE_RANGE:
-                          {
-                            recins_add_auto_field_int (rset,
-                                                       auto_field_name,
-                                                       res);
-                            break;
-                          }
-                        case REC_TYPE_DATE:
-                          {
-                            recins_add_auto_field_date (rset,
-                                                        auto_field_name,
-                                                        res);
-                            break;
-                          }
-                        default:
-                          {
-                            /* Do nothing for other types.  */
-                            break;
-                          }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-  return res;
-}
-
 bool
 recins_insert_record (rec_db_t db,
                       char *type,
@@ -329,7 +188,6 @@ recins_insert_record (rec_db_t db,
 {
   bool res;
   rec_rset_t rset;
-  rec_record_t record_to_insert;
 
   if (!record || (rec_record_num_fields (record) == 0))
     {
@@ -342,16 +200,19 @@ recins_insert_record (rec_db_t db,
   rset = rec_db_get_rset_by_type (db, type);
   if (rset)
     {
-      /* Add auto-set fields required by this record set.  */
-      record_to_insert = recins_add_auto_fields (rset, record);
-      rec_record_destroy (record);
+
+      if (recins_auto)
+        {
+          /* Add auto-set fields required by this record set.  */
+          rec_rset_add_auto_fields (rset, record);
+        }
 
 #if defined REC_CRYPT_SUPPORT
-      recins_encrypt_record (rset, record_to_insert);
+      recins_encrypt_record (rset, record);
 #endif
 
       /* Set the container in the new record.  */
-      rec_record_set_container (record_to_insert, rset);
+      rec_record_set_container (record, rset);
 
       if (rec_rset_num_records (rset) == 0)
         {
@@ -363,7 +224,7 @@ recins_insert_record (rec_db_t db,
 
           rec_mset_insert_at (rec_rset_mset (rset),
                               MSET_RECORD,
-                              (void *) record_to_insert,
+                              (void *) record,
                               rec_rset_descriptor_pos (rset));
         }
       else
@@ -379,7 +240,7 @@ recins_insert_record (rec_db_t db,
 
           rec_mset_insert_after (mset,
                                  MSET_RECORD,
-                                 (void *) record_to_insert,
+                                 (void *) record,
                                  rec_mset_search (mset, (void *) last_record));
         }
     }
@@ -583,7 +444,6 @@ recins_add_new_record (rec_db_t db)
   rec_mset_elem_t elem;
   size_t num_rec;
   bool parse_status;
-  rec_record_t record_to_insert;
 
   if ((recutl_num != -1)
       || (recutl_sex_str != NULL)
@@ -595,12 +455,14 @@ recins_add_new_record (rec_db_t db)
         {
           num_rec = -1;
      
-          /* Add auto-set fields required by this record set.  */
-          record_to_insert = recins_add_auto_fields (rset, recins_record);
-          rec_record_destroy (recins_record);
+          if (recins_auto)
+            {
+              /* Add auto-set fields required by this record set.  */
+              rec_rset_add_auto_fields (rset, recins_record);
+            }
 
 #if defined REC_CRYPT_SUPPORT
-          recins_encrypt_record (rset, record_to_insert);
+          recins_encrypt_record (rset, recins_record);
 #endif
 
           iter = rec_mset_iterator (rec_rset_mset (rset));
@@ -608,7 +470,7 @@ recins_add_new_record (rec_db_t db)
             {
               num_rec++;
 
-              /* Shall we skip this record?  */
+              /* Shall we skip this record  */
               if (((recutl_num != -1) && (recutl_num != num_rec))
                   || (recutl_quick_str && !rec_record_contains_value (record,
                                                                       recutl_quick_str,
@@ -624,8 +486,8 @@ recins_add_new_record (rec_db_t db)
                 }
               else
                 {
-                  rec_record_set_container (record_to_insert, rset);
-                  rec_mset_elem_set_data (elem, (void *) record_to_insert);
+                  rec_record_set_container (recins_record, rset);
+                  rec_mset_elem_set_data (elem, (void *) recins_record);
                 }
             }
         }
