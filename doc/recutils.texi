@@ -10,7 +10,7 @@
 This manual is for GNU recutils (version @value{VERSION},
 @value{UPDATED}).
 
-Copyright @copyright{} 2009, 2010, 2011 Jose E. Marchesi
+Copyright @copyright{} 2009, 2010, 2011, 2012 Jose E. Marchesi
 
 Copyright @copyright{} 1994-2011 Free Software Foundation, Inc.
 

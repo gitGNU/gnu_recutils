@@ -1,5 +1,11 @@
 2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Copyright years update.
+	* utils/recutl.c (recutl_print_version): Copyright updated.
+	* doc/recutils.texi: Likewise.
+
+2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: documentation for the new indexes system.
 	* utils/recsel.c (recutl_print_help): Documentation updated.
 	* utils/recutl.c (recutl_print_help_record_selection): Likewise.
