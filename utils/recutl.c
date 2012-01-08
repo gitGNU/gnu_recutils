@@ -49,15 +49,17 @@
 
 #define MAX_INDEXES 20
 
+struct recutl_index_s
+{
+  size_t min;
+  size_t max;
+  bool max_used;
+};
+
 struct recutl_index_list_s
 {
   size_t size;
-  struct
-  {
-    size_t min;
-    size_t max;
-    bool max_used;
-  } indexes[MAX_INDEXES];
+  struct recutl_index_s *indexes;
 };
 
 typedef struct recutl_index_list_s recutl_index_list_t;
@@ -526,9 +528,11 @@ recutl_index_list_parse (const char *str)
   long int number;
   char *end;
 
-  /* Initialize the list structure.  */
+  /* Initialize the list structure.   An pessimistic estimation of the
+     number of indexes encoded in the string is used.  */
 
   recutl_indexes.size = 0;
+  recutl_indexes.indexes = xmalloc (sizeof (struct recutl_index_s) * strlen (str));
   
   /* Make sure the string is valid.  The code below relies on this
      fact.  */

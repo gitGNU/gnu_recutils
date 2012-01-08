@@ -1,5 +1,11 @@
 2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	recutl: remove an arbitrary limit in the number of indexes.
+	* utils/recutl.c (recutl_index_s): New structure.
+	(recutl_index_list_parse): Allocate the indexes list dynamically.
+
+2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Copyright years update.
 	* utils/recutl.c (recutl_print_version): Copyright updated.
 	* doc/recutils.texi: Likewise.
