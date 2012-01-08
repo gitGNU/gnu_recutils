@@ -1,5 +1,65 @@
 2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: support for the selection of random records in recsel,
+	recins, recdel and recset.
+	* torture/utils/recset.sh (recset-random-all): New test.
+	(recset-random-one): Likewise.
+
+	* torture/utils/recdel.sh (recdel-random-all): New test.
+	(recdel-random-all-force): Likewise.
+
+	* torture/utils/recins.sh (one-record): New input file.
+	(recins-random-all): New test.
+	(recins-random-one): Likewise.
+
+	* torture/utils/recsel.sh (recsel-random-all): New test.
+	(recsel-random-one): Likewise.
+	(recsel-num-and-random): Likewise.
+	(recsel-sex-and-random): Likewise.
+	(recsel-quick-and-random): Likewise.
+
+	* doc/recutils.texi (recsel Invocation): --random|-m documented.
+	(recins Invocation): Likewise.
+	(recdel Invocation): Likewise.
+	(recset Invocation): Likewise.
+
+	* utils/recset.c (recutl_random): New global.
+	(recset_process_actions): Manage random records.
+
+	* utils/recdel.c (recutl_random): New global.
+	(recdel_delete_records): Manage random records.
+	(recutl_print_help): Document --random|-r.
+
+	* utils/recins.c (recutl_random): New global.
+	(recins_add_new_record): Manage random records.
+
+	* doc/recutils.texi (recins Invocation): Likewise.
+
+	* utils/recsel.c (recsel_process_data): Manage random indexes.
+
+	* utils/recutl.c (recutl_reset_indexes): New function.
+
+	* utils/recsel.c (recutl_print_help): Synopsis updated with -r.
+
+	* utils/recutl.h (RECORD_SELECTION_ARGS): RANDOM_ARG added.
+	(RECORD_SELECTION_LONG_ARGS): Entry for random.
+	(RECORD_SELECTION_SHORT_ARGS): Likewise.
+
+	* utils/recsel.c (recutl_random): New global.
+
+	* utils/recutl.h (RECORD_SELECTION_ARGS_CASES): Manage
+	--random|-r.
+
+	* utils/recutl.c (recutl_index_add_random): New function.
+	(recutl_print_help_record_selection): Documentation for
+	--random|-r.
+	(recutl_random): New global variable.
+
+	* utils/recutl.h (recutl_index_add_random): New function
+	prototype.
+
+2012-01-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recutl: remove an arbitrary limit in the number of indexes.
 	* utils/recutl.c (recutl_index_s): New structure.
 	(recutl_index_list_parse): Allocate the indexes list dynamically.

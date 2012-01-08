@@ -454,6 +454,32 @@ field1: value31
 field2: XXX
 field3: value33
 '
+
+test_tool recset-random-all ok \
+          recset \
+          '-m 0 -f field2 -s XXX' \
+          multiple-records \
+'field1: value11
+field2: XXX
+field3: value13
+
+field1: value21
+field2: XXX
+field3: value23
+
+field1: value31
+field2: XXX
+field3: value33
+'
+
+test_tool recset-random-one ok \
+          recset \
+          '-m 1 -f field2 -s XXX' \
+          one-record \
+'field1: value1
+field2: XXX
+field3: value3
+'
  
 #
 # Cleanup.

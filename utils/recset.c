@@ -71,8 +71,9 @@ bool       recutl_insensitive = false;
 char      *recset_file        = NULL;
 bool       recset_force       = false;
 bool       recset_verbose     = false;
-bool       recset_external      = true;
+bool       recset_external    = true;
 bool       recset_descriptor_renamed = false;
+size_t     recutl_random      = 0;
 
 /*
  * Command line options management
@@ -373,6 +374,15 @@ recset_process_actions (rec_db_t db)
       /* Process this record set.  */
       numrec = 0;
 
+      /* If the user requested to process random records, calculate
+         them now for this record set.  */
+
+      if (recutl_random > 0)
+        {
+          recutl_reset_indexes ();
+          recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
+        }
+
       iter = rec_mset_iterator (rec_rset_mset (rset));
       while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
         {
@@ -583,7 +593,7 @@ recset_process_ren (rec_rset_t rset,
      But make sure to do it just once.
   */
   if ((!recset_descriptor_renamed)
-      && (recutl_sex == NULL) && (recutl_num_indexes() == 0) && (recutl_quick_str == NULL))
+      && (recutl_sex == NULL) && (recutl_num_indexes() == 0) && (recutl_random == 0) && (recutl_quick_str == NULL))
     {
       rec_rset_rename_field (rset,
                              field_name,

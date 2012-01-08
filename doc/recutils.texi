@@ -2056,7 +2056,7 @@ part of records) based in some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [@var{option}]@dots{} [-n @var{indexes} | -e @var{record_expr} | -q @var{str}] [-c | (-p|-P|-R) @var{field_expr}] \
+recsel [@var{option}]@dots{} [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] [-c | (-p|-P|-R) @var{field_expr}] \
        [@var{file}]@dots{}
 @end example
 
@@ -2111,6 +2111,10 @@ compute the output.
 @itemx @w{@kbd{--quick}=@var{str}}
 Select records having a field whose value contains the substring
 @var{str}.
+@item -m @var{num}
+@itemx @w{@kbd{--random}=@var{num}}
+Select @var{num} random records.  If @var{num} is zero then select all
+the records. 
 @item -t TYPE
 @itemx @w{@kbd{--type}=@var{type}}
 Select records of a given type only.
@@ -2280,7 +2284,7 @@ from the standard input.
 from the standard input.  Synopsis:
 
 @example
-recins [@var{option}]@dots{} [t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str}] \
+recins [@var{option}]@dots{} [t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str} | -m @var{num}] \
        [(-f @var{str} -v @var{str}]|[-r @var{recdata})]@dots{} [@var{file}]
 @end example
 
@@ -2347,6 +2351,10 @@ Matching records will get replaced.
 @itemx @w{@kbd{--quick}=@var{str}}
 Remove records having a field whose value contains the substring
 @var{str}.
+@item -m @var{num}
+@itemx @w{@kbd{--random}=@var{num}}
+Select @var{num} random records.  If @var{num} is zero then all
+records are selected, i.e. no replace mode is activated.
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.
@@ -2414,7 +2422,7 @@ read from the standard input.
 read from the standard input.  Synopsis:
 
 @example
-recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str}] [@var{file}]
+recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str} | -m @var{num}] [@var{file}]
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
@@ -2443,6 +2451,10 @@ the records matched by the expression will be removed from the file.
 @itemx @w{@kbd{--quick}=@var{str}}
 Remove records having a field whose value contains the substring
 @var{str}.
+@item -m @var{num}
+@itemx @w{@kbd{--random}=@var{num}}
+Remove @var{num} random records.  If @var{num} is zero then remove all
+the records.
 @item -c
 @itemx @w{@kbd{--comment}}
 Comment the matching records out instead of removing them.
@@ -2503,19 +2515,23 @@ Make strings case-insensitive in selection expressions.
 Operate on the records of the given type.  If this parameter is not
 specified then records of any type will be removed.
 @item -n @var{indexes}
-Remove the records occupying the given positions in its record set.
-@var{indexes} must be a comma-separated list of numbers or ranges, the
-ranges being two numbers separated with dashes.  For example, the
-following list denotes the first, the third, the fourth and all
-records up to the tenth: @code{-n 0,2,4-9}.
+Operate on the records occupying the given positions in its record
+set.  @var{indexes} must be a comma-separated list of numbers or
+ranges, the ranges being two numbers separated with dashes.  For
+example, the following list denotes the first, the third, the fourth
+and all records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
-the records matched by the expression will be removed from the file.
+the records matched by the expression will be processed.
 @item -q @var{str}
 @itemx @w{@kbd{--quick}=@var{str}}
-Remove records having a field whose value contains the substring
+Operate on records having a field whose value contains the substring
 @var{str}.
+@item -m @var{num}
+@itemx @w{@kbd{--random}=@var{num}}
+Operate on @var{num} random records.  If @var{num} is zero then
+operate on all the records.
 @end table
 
 Fields selection options:

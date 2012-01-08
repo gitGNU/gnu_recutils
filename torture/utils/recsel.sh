@@ -876,6 +876,21 @@ test_tool recsel-num-and-quick xfail \
           "-n 5 -q foo" \
           multiple-records
 
+test_tool recsel-num-and-random xfail \
+          recsel \
+          "-n 5 -m 2" \
+          multiple-records
+
+test_tool recsel-sex-and-random xfail \
+          recsel \
+          "-e 'field1 = 10' -m 2" \
+          multiple-records
+
+test_tool recsel-quick-and-random xfail \
+          recsel \
+          "-q foo -m 1" \
+          multiple-records
+
 test_tool recsel-confidential ok \
           recsel \
           '-s secret' \
@@ -992,6 +1007,32 @@ field2:
 field3: value33
 
 field1: foo
+'
+
+test_tool recsel-random-all ok \
+          recsel \
+          '-m 0' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recsel-random-one ok \
+          recsel \
+          '-m 1' \
+          one-record \
+'field1: value1
+field2: value2
+field3: value3
 '
 
 #

@@ -32,6 +32,12 @@ test_init "recins"
 test_declare_input_file empty-file \
 ''
 
+test_declare_input_file one-record \
+'field1: value11
+field2: value12
+field3: value13
+'
+
 test_declare_input_file multiple-records \
 'field1: value11
 field2: value12
@@ -422,6 +428,32 @@ foo: bar
 field1: value31
 field2: value32
 field3: value33
+'
+
+test_tool recins-random-all ok \
+          recins \
+          '-m 0 -f foo -v bar' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+
+foo: bar
+'
+
+test_tool recins-random-one ok \
+          recins \
+          '-m 1 -f foo -v bar' \
+          one-record \
+'foo: bar
 '
  
 #

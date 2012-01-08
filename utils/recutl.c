@@ -64,6 +64,10 @@ struct recutl_index_list_s
 
 typedef struct recutl_index_list_s recutl_index_list_t;
 
+/*
+ * Global variables.
+ */
+
 bool              recutl_sort_p         = false;
 char             *recutl_order_rset     = NULL;
 rec_field_name_t  recutl_order_by_field = NULL;
@@ -159,7 +163,8 @@ Record selection options:\n\
   -t, --type=TYPE                     operate on records of the specified type only.\n\
   -e, --expression=EXPR               selection expression.\n\
   -q, --quick=STR                     select records with fields containing a string.\n\
-  -n, --number=NUM,...                select an specific record, with ranges.\n"),
+  -n, --number=NUM,...                select specific records by position, with ranges.\n\
+  -R, --random=NUM                    select a given number of random records.\n"),
          stdout);
 }
 
@@ -628,6 +633,36 @@ recutl_index_p (size_t index)
     }
   
   return res;
+}
+
+void
+recutl_index_add_random (size_t num, size_t limit)
+{
+  size_t i;
+
+  /* Initialize the list structure.  */
+
+  recutl_indexes.size = num;
+  recutl_indexes.indexes = xmalloc (sizeof (struct recutl_index_s) * num);
+
+  /* Insert the random indexes.  */
+
+  srandom (time(NULL));
+  for (i = 0; i < num; i++)
+    {
+      size_t random_value = random () % limit;
+
+      recutl_indexes.indexes[i].min = random_value;
+      recutl_indexes.indexes[i].max = 0;
+      recutl_indexes.indexes[i].max_used = false;
+    }
+}
+
+void
+recutl_reset_indexes (void)
+{
+  free (recutl_indexes.indexes);
+  recutl_indexes.size = 0;
 }
 
 /* End of recutl.c */

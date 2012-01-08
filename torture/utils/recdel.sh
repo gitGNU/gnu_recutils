@@ -235,6 +235,17 @@ field2: value32
 field3: value33
 '
 
+test_tool recdel-random-all xfail \
+          recdel \
+          '-m 0' \
+          multiple-records
+
+test_tool recdel-random-all-force ok \
+          recdel \
+          '-m 0 --force' \
+          multiple-records \
+''
+
 #
 # Cleanup
 #

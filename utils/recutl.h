@@ -63,17 +63,19 @@
   EXPRESSION_ARG,                               \
   QUICK_ARG,                                    \
   NUM_ARG,                                      \
-  INSENSITIVE_ARG
+  INSENSITIVE_ARG,                              \
+  RANDOM_ARG
 
 #define RECORD_SELECTION_LONG_ARGS                                     \
    {"type", required_argument, NULL, TYPE_ARG},                        \
    {"expression", required_argument, NULL, EXPRESSION_ARG},            \
    {"quick", required_argument, NULL, QUICK_ARG},                      \
    {"num", required_argument, NULL, NUM_ARG},                          \
-   {"case-insensitive", no_argument, NULL, INSENSITIVE_ARG}
+   {"case-insensitive", no_argument, NULL, INSENSITIVE_ARG},           \
+   {"random", required_argument, NULL, RANDOM_ARG}
 
 #define RECORD_SELECTION_SHORT_ARGS             \
-   "it:e:n:q:"
+   "it:e:n:q:m:"
 
 #define RECORD_SELECTION_ARGS_CASES                            \
     case TYPE_ARG:                                             \
@@ -155,6 +157,51 @@
                                                                \
           break;                                               \
       }                                                        \
+      case RANDOM_ARG:                                         \
+      case 'm':                                                \
+      {                                                        \
+        if (recutl_sex)                                        \
+          {                                                    \
+             fprintf (stderr,                                  \
+                      "%s: cannot specify -m and also -e.\n",  \
+                      program_name);                           \
+             exit (EXIT_FAILURE);                              \
+          }                                                    \
+                                                               \
+        if (recutl_quick_str)                                  \
+          {                                                    \
+             fprintf (stderr,                                  \
+                      "%s: cannot specify -m and also -q\n",   \
+                      program_name);                           \
+             exit (EXIT_FAILURE);                              \
+          }                                                    \
+                                                               \
+        if (recutl_num_indexes() != 0)                         \
+          {                                                    \
+             fprintf (stderr,                                  \
+                      "%s: cannot specify -m and also -n\n",   \
+                      program_name);                           \
+             exit (EXIT_FAILURE);                              \
+          }                                                    \
+                                                               \
+        if (recutl_random)                                     \
+          {                                                    \
+             recutl_fatal ("please specify just one -m\n");    \
+          }                                                    \
+                                                               \
+        {                                                      \
+          char *end;                                           \
+          long int li = strtol (optarg, &end, 0);              \
+          if (*end != '\0')                                    \
+            {                                                  \
+              recutl_fatal ("invalid number in -m\n");         \
+            }                                                  \
+                                                               \
+          recutl_random = li;                                  \
+        }                                                      \
+                                                               \
+        break;                                                 \
+      }                                                        \
       case QUICK_ARG:                                          \
       case 'q':                                                \
       {                                                        \
@@ -223,6 +270,11 @@ bool recutl_interactive (void);
 
 bool recutl_index_list_parse (const char *str);
 
+/* Add a given number of random indexes to the indexes list.  The
+   generated random numbers are in the range 0..LIMIT.  */
+
+void recutl_index_add_random (size_t num, size_t limit);
+
 /* Return the number of indexes in the internal recutl_indexes data
    structure.  */
 
@@ -232,6 +284,10 @@ size_t recutl_num_indexes (void);
    data structure.  */
 
 bool recutl_index_p (size_t index);
+
+/* Reset the list of indexes to be empty.  */
+
+void recutl_reset_indexes (void);
 
 #endif /* recutl.h */
 

@@ -60,6 +60,7 @@ rec_field_name_t recutl_sort_by_field = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 char      *recsel_password     = NULL;
 bool       recsel_uniq         = false;
+size_t     recutl_random       = 0;
 
 /*
  * Command line options management.
@@ -108,7 +109,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recsel synopsis.
      no-wrap */
   printf (_("\
-Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
+Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
 
   /* TRANSLATORS: --help output, recsel arguments.
      no-wrap */
@@ -399,6 +400,15 @@ recsel_process_data (rec_db_t db)
         }
           
       /* Process this record set.  */
+
+      /* If the user requested to print random records, calculate them
+         now for this record set.  */
+
+      if (recutl_random > 0)
+        {
+          recutl_reset_indexes ();
+          recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
+        }
 
       rec_rset_sort (rset, recutl_sort_by_field);
 

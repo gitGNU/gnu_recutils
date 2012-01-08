@@ -52,6 +52,7 @@ bool recutl_insensitive = false;
 bool recdel_force = false;
 bool recdel_verbose = false;
 bool recdel_external = true;
+size_t recutl_random = 0;
 char *recdel_file = NULL;  /* File from where to delete the
                               records.  */
 
@@ -86,7 +87,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recdel synopsis.
      no-wrap */
   printf (_("\
-Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR] [FILE]\n"));
+Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [FILE]\n"));
 
   /* TRANSLATORS: --help output, recdel short description.
      no-wrap */
@@ -177,6 +178,15 @@ recdel_delete_records (rec_db_t db)
 
       /* Process this record set.  */
       numrec = 0;
+
+      /* If the user requested to delete random records, calculate
+         them now for this record set.  */
+
+      if (recutl_random > 0)
+        {
+          recutl_reset_indexes ();
+          recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
+        }
 
       iter = rec_mset_iterator (rec_rset_mset (rset));
       while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, &elem))
@@ -274,7 +284,7 @@ recdel_parse_args (int argc,
         }
     }
   
-  if ((recutl_num_indexes() == 0) && !recutl_sex_str && !recutl_quick_str && !recdel_force)
+  if ((recutl_num_indexes() == 0) && !recutl_sex_str && !recutl_quick_str && !recdel_force && (recutl_random == 0))
     {
       recutl_error (_("ignoring a request to delete all records of type %s.\n"),
                     recutl_type ? recutl_type : "unknown");
@@ -318,7 +328,7 @@ main (int argc, char *argv[])
       recutl_fatal (_("cannot read file %s\n"), recdel_file);
     }
 
-  if (((recutl_num_indexes() != 0) || recutl_sex || recutl_quick_str) || recdel_force)
+  if (((recutl_num_indexes() != 0) || recutl_sex || recutl_quick_str) || recdel_force || (recutl_random > 0))
     {
       recdel_delete_records (db);
     }

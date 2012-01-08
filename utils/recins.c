@@ -60,6 +60,7 @@ bool          recins_verbose   = false;
 bool          recins_external  = true;
 bool          recins_auto      = true;
 char         *recins_password  = NULL;
+size_t        recutl_random    = 0;
 
 /*
  * Command line options management
@@ -105,7 +106,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recins synopsis.
      no-wrap */
   printf (_("\
-Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"));
+Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f STR -v STR]|[-R RECDATA)]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recins short description.
      no-wrap */
@@ -446,13 +447,24 @@ recins_add_new_record (rec_db_t db)
 
   if ((recutl_num_indexes() != 0)
       || (recutl_sex_str != NULL)
-      || (recutl_quick_str != NULL))
+      || (recutl_quick_str != NULL)
+      || (recutl_random > 0))
     {
       /* Replace matching records.  */
       rset = rec_db_get_rset_by_type (db, recutl_type);
       if (rset)
         {
           num_rec = -1;
+
+
+          /* If the user requested to replace random records,
+             calculate them now for this record set.  */
+
+          if (recutl_random > 0)
+            {
+              recutl_reset_indexes ();
+              recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
+            }
      
           if (recins_auto)
             {
