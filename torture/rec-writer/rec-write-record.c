@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,13 +50,13 @@ START_TEST(rec_write_record_nominal)
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("foo1"), "value1");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field);
   comment = rec_comment_new ("comment");
   fail_if (comment == NULL);
-  rec_record_append_comment (record, comment);
+  rec_mset_append (rec_record_mset(record), MSET_COMMENT, (void *) comment);
   field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field);
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_record (writer, record, REC_WRITER_NORMAL));
   rec_record_destroy (record);
@@ -86,13 +86,13 @@ START_TEST(rec_write_record_sexp)
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("foo1"), "value1");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field);
   comment = rec_comment_new ("comment");
   fail_if (comment == NULL);
-  rec_record_append_comment (record, comment);
+  rec_mset_append (rec_record_mset(record), MSET_COMMENT, (void *) comment);
   field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field);
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_record (writer, record, REC_WRITER_SEXP));
   rec_record_destroy (record);

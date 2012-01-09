@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ START_TEST(rec_parse_record_str_nominal)
   fail_if (record == NULL);
   fname = rec_parse_field_name_str ("foo");
   fail_if (fname == NULL);
-  field = rec_record_elem_field (rec_record_get_field (record, 0));
+  field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
   fail_if (!rec_field_name_eql_p (fname,
                                   rec_field_name (field)));

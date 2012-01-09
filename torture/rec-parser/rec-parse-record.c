@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ START_TEST(rec_parse_record_nominal)
   parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_record (parser, &record));
-  field = rec_record_elem_field (rec_record_get_field (record, 0));
+  field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
   fail_if (!rec_field_name_eql_p (fname,
                                   rec_field_name (field)));
@@ -62,13 +62,13 @@ START_TEST(rec_parse_record_nominal)
   parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_record (parser, &record));
-  field = rec_record_elem_field (rec_record_get_field (record, 0));
+  field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
   fail_if (!rec_field_name_eql_p (fname,
                                   rec_field_name (field)));
   rec_field_name_destroy (fname);
   fname = rec_parse_field_name_str ("foo2");
-  field = rec_record_elem_field (rec_record_get_field (record, 1));
+  field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 1);
   fail_if (strcmp (rec_field_value (field), "bar2") != 0);
   fail_if (!rec_field_name_eql_p (fname,
                                   rec_field_name (field)));
@@ -80,19 +80,19 @@ START_TEST(rec_parse_record_nominal)
   parser = rec_parser_new_str (str, "dummy");
   fail_if (parser == NULL);
   fail_if (!rec_parse_record (parser, &record));
-  field = rec_record_elem_field (rec_record_get_field (record, 0));
+  field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
   fail_if (!rec_field_name_eql_p (fname,
                                   rec_field_name (field)));
   rec_field_name_destroy (fname);
   fname = rec_parse_field_name_str ("foo2");
-  field = rec_record_elem_field (rec_record_get_field (record, 1));
+  field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 1);
   fail_if (strcmp (rec_field_value (field), "") != 0);
   fail_if (!rec_field_name_eql_p (fname,
                                   rec_field_name (field)));
   rec_field_name_destroy (fname);
   fname = rec_parse_field_name_str ("foo3");
-  field = rec_record_elem_field (rec_record_get_field (record, 2));
+  field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 2);
   fail_if (strcmp (rec_field_value (field), "bar3") != 0);
   fail_if (!rec_field_name_eql_p (fname,
                                   rec_field_name (field)));

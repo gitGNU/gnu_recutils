@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,21 +53,21 @@ START_TEST(rec_write_rset_nominal)
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("foo1"), "value1");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
-  rec_rset_append_record (rset, record);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
+  rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
 
   record = rec_record_new ();
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("bar1"), "value1");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("bar2"), "value2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
-  rec_rset_append_record (rset, record);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
+  rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
   
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_rset (writer, rset));

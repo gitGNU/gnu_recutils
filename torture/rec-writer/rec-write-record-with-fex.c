@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,16 +59,16 @@ START_TEST(rec_write_record_with_fex_nominal)
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
 
   /*
    * Test several field expressions.
@@ -165,16 +165,16 @@ START_TEST(rec_write_record_with_fex_values)
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
 
   /*
    * Test several field expressions.
@@ -271,16 +271,16 @@ START_TEST(rec_write_record_with_fex_row)
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
   field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
   fail_if (field == NULL);
-  rec_record_append_field (record, field);
+  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
 
   /*
    * Test several field expressions.

@@ -1,5 +1,16 @@
 2012-01-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: adapt unit tests to the new librec api.
+	* torture/rec-parser/rec-parse-record.c: Adapted to the new librec
+	API.
+	* torture/rec-writer/rec-write-db.c: Likewise.
+	* torture/rec-writer/rec-write-record-with-fex.c: Likewise.
+	* torture/rec-writer/rec-write-rset.c: Likewise.
+	* torture/rec-writer/rec-write-record.c: Likewise.
+	* torture/rec-parser/rec-parse-record-str.c: Likewise.
+
+2012-01-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	algol68: dist problem fixed.
 	* algol68/Makefile.am (nodist_librec_a68_a_SOURCES): Don't
 	distribute the generated C files from the algol68 sources.
