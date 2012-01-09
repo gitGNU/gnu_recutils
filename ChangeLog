@@ -1,5 +1,28 @@
 2012-01-09  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: rec_mset_append gets an extra argument indicating the
+	type of element for counting.
+	* src/rec-mset.c (rec_mset_append): Get an argument elem_type.
+	(rec_mset_dup): Use new rec_mset_append.
+
+	* src/rec.h: New argument elem_type to rec_mset_append.
+
+	* utils/recset.c (recset_process_add): Likewise.
+	(recset_process_set): Likewise.
+	* utils/recins.c (recins_insert_record): Likewise.
+	(recins_parse_args): Likewise.
+	* utils/mdb2rec.c (process_table): Likewise.
+	(process_table): Likewise.
+	* utils/csv2rec.c (field_cb): Likewise.
+	(record_cb): Likewise.
+	* src/rec-int.c (rec_int_merge_remote): Likewise.
+	* src/rec-parser.c (rec_parse_record): Likewise.
+	(rec_parse_record): Likewise.
+	(rec_parse_record): Likewise.
+	* src/rec-rset.c (rec_rset_set_type): Likewise.
+
+2012-01-09  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: adapt unit tests to the new librec api.
 	* torture/rec-parser/rec-parse-record.c: Adapted to the new librec
 	API.

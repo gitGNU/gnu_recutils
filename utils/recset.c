@@ -477,7 +477,7 @@ recset_process_add (rec_rset_t rset,
       field_name = rec_fex_elem_field_name (fex_elem);
       field = rec_field_new (rec_field_name_dup (field_name), recset_value);
 
-      rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
+      rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY);
     }
 }
 
@@ -533,7 +533,7 @@ recset_process_set (rec_rset_t rset,
         {
           /* Add a field with this name and value.  */
           field = rec_field_new (field_name, recset_value);
-          rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
+          rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY);
         }
     }
 }

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ field_cb (void *s, size_t len, void *data)
             }
           rec_field_name_set (field_name, 0, ctx->field_names[ctx->num_fields]);
           field = rec_field_new (field_name, str);
-          rec_mset_append (rec_record_mset (ctx->record), MSET_FIELD, (void *) field);
+          rec_mset_append (rec_record_mset (ctx->record), MSET_FIELD, (void *) field, MSET_ANY);
         }
 
       ctx->num_fields++;
@@ -306,7 +306,7 @@ record_cb (int c, void *data)
         }
       
       /* Add the current record to the record set.  */
-      rec_mset_append (rec_rset_mset (ctx->rset), MSET_RECORD, (void *) ctx->record);
+      rec_mset_append (rec_rset_mset (ctx->rset), MSET_RECORD, (void *) ctx->record, MSET_ANY);
       ctx->record = NULL;
       
       /* Reset the field counter.  */

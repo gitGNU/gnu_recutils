@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,7 +387,7 @@ rec_parse_record (rec_parser_t parser,
   if (rec_parse_field (parser, &field))
     {
       /* Add the field to the record */
-      rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field);
+      rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field, MSET_ANY);
     }
   else
     {
@@ -407,7 +407,7 @@ rec_parse_record (rec_parser_t parser,
           if (rec_parse_comment (parser, &comment))
             {
               /* Add the comment to the record.  */
-              rec_mset_append (rec_record_mset (new), MSET_COMMENT, (void *) comment);
+              rec_mset_append (rec_record_mset (new), MSET_COMMENT, (void *) comment, MSET_ANY);
             }
         }
       else if (c == '\n')
@@ -422,7 +422,7 @@ rec_parse_record (rec_parser_t parser,
           if (rec_parse_field (parser, &field))
             {
               /* Add the field to the record */
-              rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field);
+              rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field, MSET_ANY);
             }
           else
             {
@@ -488,7 +488,7 @@ rec_parse_rset (rec_parser_t parser,
           rec_parse_comment (parser, &comment);
 
           /* Add the comment to the record set.  */
-          rec_mset_append (rec_rset_mset (new), MSET_COMMENT, (void *) comment);
+          rec_mset_append (rec_rset_mset (new), MSET_COMMENT, (void *) comment, MSET_ANY);
 
           comments_added++;
         }
@@ -527,7 +527,7 @@ rec_parse_rset (rec_parser_t parser,
               else
                 {
                   rec_record_set_container (record, new);
-                  rec_mset_append (rec_rset_mset (new), MSET_RECORD, (void *) record);
+                  rec_mset_append (rec_rset_mset (new), MSET_RECORD, (void *) record, MSET_ANY);
                 }
             }
           else

@@ -90,13 +90,13 @@ START_TEST(rec_mset_dup_nonempty)
   elem1 = malloc (sizeof (struct type1_t));
   fail_if (elem1 == NULL);
   elem1->i = 1;
-  e1 = rec_mset_append (mset1, type, (void *) elem1);
+  e1 = rec_mset_append (mset1, type, (void *) elem1, MSET_ANY);
   fail_if (e1 == NULL);
 
   elem2 = malloc (sizeof (struct type1_t));
   fail_if (elem2 == NULL);
   elem2->i = 2;
-  e2 = rec_mset_append (mset1, type, (void *) elem2);
+  e2 = rec_mset_append (mset1, type, (void *) elem2, MSET_ANY);
   fail_if (e2 == NULL);
 
   /* Make a copy of the mset.  */

@@ -53,21 +53,21 @@ START_TEST(rec_write_rset_nominal)
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("foo1"), "value1");
   fail_if (field == NULL);
-  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
+  fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
   field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
   fail_if (field == NULL);
-  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
-  rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
+  fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
+  fail_if (rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record, MSET_ANY) == NULL);
 
   record = rec_record_new ();
   fail_if (record == NULL);
   field = rec_field_new (rec_parse_field_name_str ("bar1"), "value1");
   fail_if (field == NULL);
-  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
+  fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
   field = rec_field_new (rec_parse_field_name_str ("bar2"), "value2");
   fail_if (field == NULL);
-  rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field);
-  rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
+  fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
+  fail_if (rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record, MSET_ANY) == NULL);
   
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_rset (writer, rset));

@@ -233,7 +233,7 @@ rec_sex_eval (rec_sex_t sex,
               rec_record_remove_field_by_name (wrec,
                                                rec_field_name (field),
                                                -1); /* Delete all.  */
-              rec_mset_append (rec_record_mset (wrec), MSET_FIELD, (void *) rec_field_dup (wfield));
+              rec_mset_append (rec_record_mset (wrec), MSET_FIELD, (void *) rec_field_dup (wfield), MSET_ANY);
 
               EXEC_AST(wrec);
 

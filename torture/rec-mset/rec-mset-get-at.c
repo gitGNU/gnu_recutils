@@ -62,9 +62,8 @@ END_TEST
 START_TEST(rec_mset_get_at_existing)
 {
   int type;
-  struct type1_t *elem1;
+  struct type1_t *elem1, *elem1aux;
   rec_mset_elem_t e1;
-  rec_mset_elem_t e1aux;
   rec_mset_t mset;
 
   /* Create a mset, register a type and insert two elements of that
@@ -80,13 +79,13 @@ START_TEST(rec_mset_get_at_existing)
   elem1 = malloc (sizeof (struct type1_t));
   fail_if (elem1 == NULL);
   elem1->i = 1;
-  e1 = rec_mset_append (mset, type, (void *) elem1);
+  e1 = rec_mset_append (mset, type, (void *) elem1, MSET_ANY);
   fail_if (e1 == NULL);
 
   /* Get the element and compare.  */
-  e1aux = rec_mset_get_at (mset, type, 0);
-  fail_if (e1aux == NULL);
-  fail_if (e1aux != e1);
+  elem1aux = rec_mset_get_at (mset, type, 0);
+  fail_if (elem1aux == NULL);
+  fail_if (elem1aux != elem1);
 
   rec_mset_destroy (mset);
 }
@@ -105,9 +104,8 @@ END_TEST
 START_TEST(rec_mset_get_at_any)
 {
   int type;
-  struct type1_t *elem1;
+  struct type1_t *elem1, *elem1aux;
   rec_mset_elem_t e1;
-  rec_mset_elem_t e1aux;
   rec_mset_t mset;
 
   /* Create a mset, register a type and insert two elements of that
@@ -123,13 +121,13 @@ START_TEST(rec_mset_get_at_any)
   elem1 = malloc (sizeof (struct type1_t));
   fail_if (elem1 == NULL);
   elem1->i = 1;
-  e1 = rec_mset_append (mset, type, (void *) elem1);
+  e1 = rec_mset_append (mset, type, (void *) elem1, MSET_ANY);
   fail_if (e1 == NULL);
 
   /* Get the element and compare.  */
-  e1aux = rec_mset_get_at (mset, MSET_ANY, 0);
-  fail_if (e1aux == NULL);
-  fail_if (e1aux != e1);
+  elem1aux = rec_mset_get_at (mset, MSET_ANY, 0);
+  fail_if (elem1aux == NULL);
+  fail_if (elem1aux != elem1);
 
   rec_mset_destroy (mset);
 }
@@ -165,7 +163,7 @@ START_TEST(rec_mset_get_at_invalid)
   elem1 = malloc (sizeof (struct type1_t));
   fail_if (elem1 == NULL);
   elem1->i = 1;
-  e1 = rec_mset_append (mset, type, (void *) elem1);
+  e1 = rec_mset_append (mset, type, (void *) elem1, MSET_ANY);
   fail_if (e1 == NULL);
 
   /* Try to get invalid elements.  */

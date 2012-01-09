@@ -342,7 +342,7 @@ rec_rset_set_type (rec_rset_t rset,
     {
       rec_field = rec_field_new (rec_field_name_dup (FNAME(REC_FIELD_REC)),
                                  type);
-      rec_mset_append (rec_record_mset (rset->descriptor), MSET_FIELD, (void *) rec_field);
+      rec_mset_append (rec_record_mset (rset->descriptor), MSET_FIELD, (void *) rec_field, MSET_FIELD);
     }
 }
 

@@ -190,13 +190,14 @@ rec_mset_elem_t rec_mset_insert_after (rec_mset_t       mset,
 
 /* Append some given daata to a mset.  This is equivalent to call
    rec_mset_insert_at specifying a position equal or bigger than the
-   number of the existing elements with the same type in the mset.
-   The function returns the newly created element, or NULL if there
-   was no enough memory to perform the operation.  */
+   number of the existing elements with type TYPE in the mset.  The
+   function returns the newly created element, or NULL if there was no
+   enough memory to perform the operation.  */
 
 rec_mset_elem_t rec_mset_append (rec_mset_t       mset,
-                                 rec_mset_type_t  type,
-                                 void            *data);
+                                 rec_mset_type_t  elem_type,
+                                 void            *data,
+                                 rec_mset_type_t  type);
 
 /* Add some given data to a mset.  The position where the new element
    is inserted depends on the sorting criteria implemented by the

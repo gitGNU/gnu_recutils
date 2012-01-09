@@ -251,7 +251,7 @@ recins_insert_record (rec_db_t db,
       rset = rec_rset_new ();
       rec_rset_set_type (rset, type);
       rec_record_set_container (record, rset);
-      rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record);
+      rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record, MSET_ANY);
       
       if (type)
         {
@@ -350,7 +350,7 @@ void recins_parse_args (int argc,
               }
 
             rec_field_set_value (field, optarg);
-            rec_mset_append (rec_record_mset (recins_record), MSET_FIELD, (void *) field);
+            rec_mset_append (rec_record_mset (recins_record), MSET_FIELD, (void *) field, MSET_ANY);
 
             field = NULL;
             break;
@@ -394,7 +394,7 @@ void recins_parse_args (int argc,
                 rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (provided_record));
                 while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
                   {
-                    rec_mset_append (rec_record_mset (recins_record), MSET_FIELD, (void *) rec_field_dup (field));
+                    rec_mset_append (rec_record_mset (recins_record), MSET_FIELD, (void *) rec_field_dup (field), MSET_ANY);
                     field = NULL;
                   }
                 rec_mset_iterator_free (&iter);

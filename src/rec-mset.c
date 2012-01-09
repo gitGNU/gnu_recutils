@@ -189,7 +189,7 @@ rec_mset_dup (rec_mset_t mset)
 
           /* Append the new data into a new element.  */
 
-          new_elem = rec_mset_append (new, elem->type, data);
+          new_elem = rec_mset_append (new, elem->type, data, MSET_ANY);
         }
 
       gl_list_iterator_free (&iter);
@@ -435,11 +435,12 @@ rec_mset_insert_at (rec_mset_t mset,
 
 rec_mset_elem_t
 rec_mset_append (rec_mset_t mset,
-                 rec_mset_type_t type,
-                 void *data)
+                 rec_mset_type_t elem_type,
+                 void *data,
+                 rec_mset_type_t type)
 {
   return rec_mset_insert_at (mset,
-                             type,
+                             elem_type,
                              data,
                              rec_mset_count (mset, type));
 }

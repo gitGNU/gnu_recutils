@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1110,7 +1110,7 @@ rec_int_merge_remote (rec_rset_t rset,
 
               if (!rec_field_name_equal_p (rec_field_name (remote_field), FNAME(REC_FIELD_REC)))
                 {
-                  rec_mset_append (rec_record_mset (descriptor), MSET_FIELD, (void *) rec_field_dup (remote_field));
+                  rec_mset_append (rec_record_mset (descriptor), MSET_FIELD, (void *) rec_field_dup (remote_field), MSET_ANY);
                 }
             }
 
