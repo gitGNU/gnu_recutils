@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include <string.h>
 #include <check.h>
 
-#include <rec-mset.h>
+#include <rec.h>
 #include <rec-mset/elem-types.h>
 
 /*-
@@ -90,18 +90,14 @@ START_TEST(rec_mset_dup_nonempty)
   elem1 = malloc (sizeof (struct type1_t));
   fail_if (elem1 == NULL);
   elem1->i = 1;
-  e1 = rec_mset_elem_new (mset1, type);
+  e1 = rec_mset_append (mset1, type, (void *) elem1);
   fail_if (e1 == NULL);
-  rec_mset_elem_set_data (e1, (void *) elem1);
-  rec_mset_append (mset1, e1);
 
   elem2 = malloc (sizeof (struct type1_t));
   fail_if (elem2 == NULL);
   elem2->i = 2;
-  e2 = rec_mset_elem_new (mset1, type);
+  e2 = rec_mset_append (mset1, type, (void *) elem2);
   fail_if (e2 == NULL);
-  rec_mset_elem_set_data (e2, (void *) elem2);
-  rec_mset_append (mset1, e2);
 
   /* Make a copy of the mset.  */
   mset2 = rec_mset_dup (mset1);

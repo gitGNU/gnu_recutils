@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ extern TCase *test_rec_mset_dup (void);
 extern TCase *test_rec_mset_type_p (void);
 extern TCase *test_rec_mset_register_type (void);
 extern TCase *test_rec_mset_count (void);
-extern TCase *test_rec_mset_get (void);
+extern TCase *test_rec_mset_get_at (void);
 
 Suite *
 tsuite_rec_mset ()
@@ -44,7 +44,7 @@ tsuite_rec_mset ()
   suite_add_tcase (s, test_rec_mset_type_p ());
   suite_add_tcase (s, test_rec_mset_register_type ());
   suite_add_tcase (s, test_rec_mset_count ());
-  suite_add_tcase (s, test_rec_mset_get ());
+  suite_add_tcase (s, test_rec_mset_get_at ());
 
   return s;
 }

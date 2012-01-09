@@ -1,7 +1,7 @@
 # torture/ Makefile.am
 # GNU rec library
 
-# Copyright (C) 2009, 2010, 2011 Jose E. Marchesi
+# Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ REC_MSET_TSUITE = rec-mset/elem-types.h \
                   rec-mset/rec-mset-type-p.c \
                   rec-mset/rec-mset-register-type.c \
                   rec-mset/rec-mset-count.c \
-                  rec-mset/rec-mset-get.c \
+                  rec-mset/rec-mset-get-at.c \
                   rec-mset/tsuite-rec-mset.c
 
 REC_COMMENT_TSUITE = rec-comment/rec-comment-new.c \
