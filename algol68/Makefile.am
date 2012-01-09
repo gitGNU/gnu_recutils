@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 lib_LIBRARIES = librec-a68.a
-librec_a68_a_SOURCES = rec.c
+nodist_librec_a68_a_SOURCES = rec.c
 BUILT_SOURCES = rec.c
 usrlibdir = $(libdir)
 usrlib_DATA = rec.m

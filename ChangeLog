@@ -1,3 +1,9 @@
+2012-01-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	algol68: dist problem fixed.
+	* algol68/Makefile.am (nodist_librec_a68_a_SOURCES): Don't
+	distribute the generated C files from the algol68 sources.
+
 2012-01-09  Jose E. Marchesi  <jco@terma.com>
 
 	torture: get some unit tests up to date.
