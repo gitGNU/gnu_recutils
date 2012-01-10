@@ -125,9 +125,6 @@
       case NUM_ARG:                                            \
       case 'n':                                                \
       {                                                        \
-         long int li;                                          \
-         char *end;                                            \
-         char *str;                                            \
                                                                \
          if (recutl_sex)                                       \
           {                                                    \

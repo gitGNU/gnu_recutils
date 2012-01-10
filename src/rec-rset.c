@@ -399,8 +399,7 @@ rec_rset_rename_field (rec_rset_t rset,
                        rec_field_name_t field_name,
                        rec_field_name_t new_field_name)
 {
-  size_t i, j;
-  rec_field_t field;
+  size_t j;
   rec_record_t descriptor;
   rec_fex_t fex;
   char *fex_str;
@@ -416,7 +415,6 @@ rec_rset_rename_field (rec_rset_t rset,
     {
       rec_mset_t descriptor_mset = rec_record_mset (descriptor);
       rec_mset_iterator_t iter = rec_mset_iterator (descriptor_mset);
-      rec_mset_elem_t elem;
       rec_field_t field;
 
       while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
@@ -677,7 +675,7 @@ rec_rset_add_auto_fields (rec_rset_t rset,
   rec_type_t type;
   size_t i;
 
-  if (auto_fields = rec_rset_auto (rset))
+  if ((auto_fields = rec_rset_auto (rset)))
     {
       size_t num_auto_fields = rec_fex_size (auto_fields);
 

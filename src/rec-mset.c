@@ -558,7 +558,6 @@ rec_mset_iterator_next (rec_mset_iterator_t *iterator,
                         rec_mset_elem_t *elem)
 {
   bool found = true;
-  rec_mset_t mset = iterator->mset;
   rec_mset_elem_t mset_elem;
   gl_list_iterator_t list_iter;
   gl_list_node_t list_node;

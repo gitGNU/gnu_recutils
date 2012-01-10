@@ -143,7 +143,6 @@ rec_fex_destroy (rec_fex_t fex)
 bool
 rec_fex_check (char *str, enum rec_fex_kind_e kind)
 {
-  int ret;
   char *regexp_str;
 
   switch (kind)

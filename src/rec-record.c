@@ -179,7 +179,6 @@ rec_record_subset_p (rec_record_t record1,
                      rec_record_t record2)
 {
   bool result;
-  bool elem_found;
   rec_mset_iterator_t iter1;
   rec_mset_elem_t elem1;
   const void *data;
@@ -597,7 +596,7 @@ void
 rec_record_uniq (rec_record_t record)
 {
   rec_mset_iterator_t iter1, iter2;
-  rec_mset_elem_t elem1, elem2;
+  rec_mset_elem_t elem1;
   rec_field_t field1, field2;
   bool *to_remove;
   size_t num_fields, i, j;

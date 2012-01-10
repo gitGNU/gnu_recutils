@@ -993,7 +993,6 @@ rec_int_merge_remote (rec_rset_t rset,
   char *rec_file = NULL;
   char *rec_source = NULL;
   FILE *external_file;
-  int tmpfile_des;
   char tmpfile_name[14];
 
   res = 0;

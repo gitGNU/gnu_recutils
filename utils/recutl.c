@@ -529,7 +529,7 @@ recutl_index_list_parse (const char *str)
 {
   regex_t regexp;
   bool res = true;
-  const char *p, *q;
+  const char *p;
   long int number;
   char *end;
 

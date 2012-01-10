@@ -845,27 +845,6 @@ rec_type_max (rec_type_t type)
  * Private functions.
  */
 
-static bool
-rec_type_check_re (char *regexp_str,
-                   char *str)
-{
-  int status;
-  regex_t regexp;
-
-  /* Compile the regexp.  */
-  if ((status = regcomp (&regexp, regexp_str, REG_EXTENDED)) != 0)
-    {
-      fprintf (stderr, _("internal error: rec-types: error compiling regexp.\n"));
-      printf("YYY: %s\n", regexp_str);
-      return false;
-    }
-
-  /* Check.  */
-  status = regexec (&regexp, str, 0, NULL, 0);
-
-  return (status == 0);
-}
-
 static enum rec_type_kind_e
 rec_type_parse_type_kind (char *str)
 {
