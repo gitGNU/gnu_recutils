@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: recutils 1.4\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-10 13:22+0100\n"
+"POT-Creation-Date: 2012-01-10 13:59+0100\n"
 "PO-Revision-Date: 2011-11-11 20:15+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -371,22 +371,22 @@ msgstr ""
 "%s:%s: fout: automatisch opgehoogd veld '%s' moet een geheel getal, bereik "
 "of datum zijn\n"
 
-#: src/rec-int.c:1043
+#: src/rec-int.c:1044
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr "%s:%s: fout: kan descriptor op afstand niet laden vanaf URL %s.\n"
 
-#: src/rec-int.c:1062
+#: src/rec-int.c:1063
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr "%s:%s: fout: kan externe descriptor niet laden uit bestand %s.\n"
 
-#: src/rec-int.c:1077
+#: src/rec-int.c:1078
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: fout: %s bevat geen geldige rec-gegevens.\n"
 
-#: src/rec-int.c:1091
+#: src/rec-int.c:1092
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: fout: %s bevat geen informatie voor type %s.\n"

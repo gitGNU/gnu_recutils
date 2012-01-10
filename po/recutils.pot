@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU recutils 1.4.90\n"
+"Project-Id-Version: GNU recutils 1.4.91\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-10 13:22+0100\n"
+"POT-Creation-Date: 2012-01-10 13:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -355,22 +355,22 @@ msgid ""
 "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
 msgstr ""
 
-#: src/rec-int.c:1043
+#: src/rec-int.c:1044
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr ""
 
-#: src/rec-int.c:1062
+#: src/rec-int.c:1063
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr ""
 
-#: src/rec-int.c:1077
+#: src/rec-int.c:1078
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr ""
 
-#: src/rec-int.c:1091
+#: src/rec-int.c:1092
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr ""
