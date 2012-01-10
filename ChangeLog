@@ -1,5 +1,11 @@
 2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec: compilation problem in remote descriptors support fixed.
+	* src/rec-int.c (rec_int_merge_remote): Missing variable
+	tmpfile_des added.
+
+2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Preparation for 1.4.90.
 	* NEWS: Entry for 1.5.
 

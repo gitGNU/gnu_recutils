@@ -1023,6 +1023,7 @@ rec_int_merge_remote (rec_rset_t rset,
             {
 #if defined REMOTE_DESCRIPTORS
               CURL *curl;
+              int tmpfile_des;
 
               /* Fetch the remote descriptor.  */
               curl = curl_easy_init ();
