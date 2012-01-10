@@ -1,5 +1,10 @@
 2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* strcasestr gnulib module imported.
+	* gnulib update.
+
+2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec,utils: handle the return values of asprintf and fread.
 	* utils/recutl.c (recutl_read_file): Handle fread errors.
 

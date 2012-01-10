@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2011 Free Software Foundation, Inc.
+# Copyright (C) 2002-2012 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module base64:
   # Code from module btowc:
   # Code from module c-ctype:
+  # Code from module c-strcase:
+  # Code from module c-strcaseeq:
   # Code from module clock-time:
   # Code from module cloexec:
   # Code from module close-stream:
@@ -162,6 +164,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module stdio:
   # Code from module stdlib:
   # Code from module strcase:
+  # Code from module strcasestr:
+  # Code from module strcasestr-simple:
   # Code from module strchrnul:
   # Code from module streq:
   # Code from module strerror:
@@ -454,8 +458,8 @@ fi
 gl_FCNTL_MODULE_INDICATOR([open])
 gl_PARSE_DATETIME
 gl_PATHMAX
-gl_POSIX_SPAWN
-if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN = 1; then
+gl_FUNC_POSIX_SPAWN_FILE_ACTIONS_ADDOPEN
+if test $HAVE_POSIX_SPAWN = 0 || test $REPLACE_POSIX_SPAWN_FILE_ACTIONS_ADDOPEN = 1; then
   AC_LIBOBJ([spawn_faction_addopen])
 fi
 gl_SPAWN_MODULE_INDICATOR([posix_spawn_file_actions_addopen])
@@ -578,6 +582,17 @@ if test $HAVE_STRNCASECMP = 0; then
   AC_LIBOBJ([strncasecmp])
   gl_PREREQ_STRNCASECMP
 fi
+gl_FUNC_STRCASESTR
+if test $HAVE_STRCASESTR = 0 || test $REPLACE_STRCASESTR = 1; then
+  AC_LIBOBJ([strcasestr])
+  gl_PREREQ_STRCASESTR
+fi
+gl_FUNC_STRCASESTR_SIMPLE
+if test $HAVE_STRCASESTR = 0 || test $REPLACE_STRCASESTR = 1; then
+  AC_LIBOBJ([strcasestr])
+  gl_PREREQ_STRCASESTR
+fi
+gl_STRING_MODULE_INDICATOR([strcasestr])
 gl_FUNC_STRCHRNUL
 if test $HAVE_STRCHRNUL = 0 || test $REPLACE_STRCHRNUL = 1; then
   AC_LIBOBJ([strchrnul])
@@ -808,6 +823,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/btowc.c
   lib/c-ctype.c
   lib/c-ctype.h
+  lib/c-strcase.h
+  lib/c-strcasecmp.c
+  lib/c-strcaseeq.h
+  lib/c-strncasecmp.c
   lib/cloexec.c
   lib/cloexec.h
   lib/close-stream.c
@@ -948,7 +967,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdio-impl.h
   lib/stdio.in.h
   lib/stdlib.in.h
+  lib/str-two-way.h
   lib/strcasecmp.c
+  lib/strcasestr.c
   lib/strchrnul.c
   lib/strchrnul.valgrind
   lib/streq.h
@@ -1113,6 +1134,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stdio_h.m4
   m4/stdlib_h.m4
   m4/strcase.m4
+  m4/strcasestr.m4
   m4/strchrnul.m4
   m4/strerror.m4
   m4/string_h.m4

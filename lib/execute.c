@@ -1,5 +1,5 @@
 /* Creation of autonomous subprocesses.
-   Copyright (C) 2001-2004, 2006-2011 Free Software Foundation, Inc.
+   Copyright (C) 2001-2004, 2006-2012 Free Software Foundation, Inc.
    Written by Bruno Haible <haible@clisp.cons.org>, 2001.
 
    This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@
 
 #if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
 
-/* Native Woe32 API.  */
+/* Native Windows API.  */
 # include <process.h>
 # include "w32spawn.h"
 
@@ -106,7 +106,7 @@ execute (const char *progname,
 {
 #if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
 
-  /* Native Woe32 API.  */
+  /* Native Windows API.  */
   int orig_stdin;
   int orig_stdout;
   int orig_stderr;
