@@ -72,14 +72,16 @@ static bool rec_int_rec_type_p (char *str);
 
 #define FNAME(id) rec_std_field_name ((id))
 
-#define ADD_ERROR(buf,str,...)                  \
-  do                                            \
-    {                                           \
-       char *tmp = NULL;                        \
-       asprintf (&tmp, (str), __VA_ARGS__);     \
-       rec_buf_puts (tmp, (buf));               \
-       free (tmp);                              \
-    }                                           \
+#define ADD_ERROR(buf,str,...)                          \
+  do                                                    \
+    {                                                   \
+      char *tmp = NULL;                                 \
+      if (asprintf (&tmp, (str), __VA_ARGS__) != -1)    \
+        {                                               \
+          rec_buf_puts (tmp, (buf));                    \
+          free (tmp);                                   \
+        }                                               \
+    }                                                   \
   while (0)
 
 /*

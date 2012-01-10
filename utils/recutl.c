@@ -457,7 +457,11 @@ recutl_read_file (char *file_name)
 
       /* Read the contents of the file into file_name.  */
       result = xmalloc (file_size + 1);
-      fread (result, file_size, 1, in);
+      if (fread (result, file_size, 1, in) == 0)
+        {
+          recutl_fatal (_("reading file %s"), file_name);
+        }
+
       fclose (in);
       result[file_size] = '\0';
     }

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010,  2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -974,10 +974,12 @@ rec_type_check_range (rec_type_t type,
          && (num <= type->data.range[1]));
   if (!ret && errors)
     {
-      asprintf (&tmp, _("expected an integer between %d and %d."),
-                 type->data.range[0], type->data.range[1]);
-      rec_buf_puts (tmp, errors);
-      free (tmp);
+      if (asprintf (&tmp, _("expected an integer between %d and %d."),
+                    type->data.range[0], type->data.range[1]) != -1)
+        {
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+        }
     }
   
   return ret;
@@ -1010,11 +1012,13 @@ rec_type_check_size (rec_type_t type,
   ret = (strlen (str) <= type->data.max_size);
   if (!ret && errors)
     {
-      asprintf (&tmp,
-                 _("value too large.  Expected a size <= %zu."),
-                 type->data.max_size);
-      rec_buf_puts (tmp, errors);
-      free (tmp);
+      if (asprintf (&tmp,
+                    _("value too large.  Expected a size <= %zu."),
+                    type->data.max_size) != -1)
+        {
+          rec_buf_puts (tmp, errors);
+          free (tmp);
+        }
     }
   
   return (strlen (str) <= type->data.max_size);

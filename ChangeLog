@@ -1,5 +1,19 @@
 2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec,utils: handle the return values of asprintf and fread.
+	* utils/recutl.c (recutl_read_file): Handle fread errors.
+
+	* src/rec-int.c (ADD_ERROR): Don't ignore the value returned by
+	asprintf.
+	* utils/rec2csv.c (rec2csv_generate_csv): Likewise.
+	* src/rec-types.c (rec_type_check_range): Likewise.
+	(rec_type_check_size): Likewise.
+	* src/rec-rset.c (rec_rset_add_auto_field_int): Likewise.
+	* src/rec-parser.c (rec_parser_perror): Likewise.
+	* src/rec-fex.c (rec_fex_str): Likewise.
+
+2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Preparation for 1.4.91.
 	* configure.ac: Version number changed to 1.4.91.
 

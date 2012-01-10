@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -314,15 +314,19 @@ rec_fex_str (rec_fex_t fex,
                   rec_buf_putc ('[', buf);
                   if (fex->elems[i]->min != -1)
                     {
-                      asprintf (&tmp, "%d", fex->elems[i]->min);
-                      rec_buf_puts (tmp, buf);
-                      free (tmp);
+                      if (asprintf (&tmp, "%d", fex->elems[i]->min) != -1)
+                        {
+                          rec_buf_puts (tmp, buf);
+                          free (tmp);
+                        }
                     }
                   if (fex->elems[i]->max != -1)
                     {
-                      asprintf (&tmp, "-%d", fex->elems[i]->max);
-                      rec_buf_puts (tmp, buf);
-                      free (tmp);
+                      if (asprintf (&tmp, "-%d", fex->elems[i]->max) != -1)
+                        {
+                          rec_buf_puts (tmp, buf);
+                          free (tmp);
+                        }
                     }
 
                   rec_buf_putc (']', buf);

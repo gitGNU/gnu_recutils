@@ -1461,11 +1461,13 @@ rec_rset_add_auto_field_int (rec_rset_t rset,
        
   /* Create and insert the auto field.  */
 
-  asprintf (&auto_value_str, "%d", auto_value);
-  field = rec_field_new (rec_field_name_dup (field_name),
-                         auto_value_str);
-  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) field, 0);
-  free (auto_value_str);
+  if (asprintf (&auto_value_str, "%d", auto_value) != -1)
+    {
+      field = rec_field_new (rec_field_name_dup (field_name),
+                             auto_value_str);
+      rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) field, 0);
+      free (auto_value_str);
+    }
 }
 
 static void

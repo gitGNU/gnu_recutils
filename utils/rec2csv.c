@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2011 Jose E. Marchesi */
+/* Copyright (C) 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,13 +186,19 @@ rec2csv_generate_csv (rec_rset_t rset,
 
       if (rec_fex_elem_min (fex_elem) != 0)
         {
-          asprintf (&tmp, "%s_%d",
-                    field_name_str,
-                    rec_fex_elem_min (fex_elem) + 1);
+          if (asprintf (&tmp, "%s_%d",
+                        field_name_str,
+                        rec_fex_elem_min (fex_elem) + 1) == -1)
+            {
+              recutl_fatal (_("out of memory"));
+            }
         }
       else
         {
-          asprintf (&tmp, "%s", field_name_str);
+          if (asprintf (&tmp, "%s", field_name_str) == -1)
+            {
+              recutl_fatal (_("out of memory"));
+            }
         }
 
       csv_fwrite (stdout, tmp, strlen(tmp));

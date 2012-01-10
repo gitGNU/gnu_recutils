@@ -185,9 +185,11 @@ rec_parser_perror (rec_parser_t parser,
   vfprintf (stderr, fmt, ap);
   fputs (": ", stderr);
   number_str = malloc(10);
-  asprintf (&number_str, "%zu", parser->line);
-  fputs (number_str, stderr);
-  free (number_str);
+  if (asprintf (&number_str, "%zu", parser->line) != -1)
+    {
+      fputs (number_str, stderr);
+      free (number_str);
+    }
   fputs (": error: ", stderr);
   fputs (gettext (rec_parser_error_strings[parser->error]), stderr);
   fputc ('\n', stderr);
