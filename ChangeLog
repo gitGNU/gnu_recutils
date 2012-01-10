@@ -1,3 +1,13 @@
+2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Unit tests fixes.
+	* src/rec-writer.c (rec_write_field_with_rset): Don't write the
+	blank character before field values if printin sexps.
+
+	* torture/rec-field/rec-field-to-comment.c
+	(rec_field_to_comment_nominal): Adjusted to the new behaviour of
+	the writer with fields having empty values.
+
 2012-01-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	librec: rec_mset_append gets an extra argument indicating the

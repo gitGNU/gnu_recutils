@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,7 +250,7 @@ rec_write_field_with_rset (rec_writer_t writer,
 
   fvalue = rec_field_value (field);
 
-  if (strlen (fvalue) > 0)
+  if ((strlen (fvalue) > 0) && (mode != REC_WRITER_SEXP))
     {
       if (!rec_writer_putc (writer, ' '))
         {

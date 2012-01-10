@@ -43,7 +43,7 @@ START_TEST(rec_field_to_comment_nominal)
   field = rec_field_new_str ("foo", "");
   fail_if (field == NULL);
   comment = rec_field_to_comment (field);
-  fail_if (strcmp (rec_comment_text (comment), "foo: ") != 0);
+  fail_if (strcmp (rec_comment_text (comment), "foo:") != 0);
   rec_comment_destroy (comment);
   rec_field_destroy (field);
 
