@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.3.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-10 13:59+0100\n"
+"POT-Creation-Date: 2012-01-10 18:31+0100\n"
 "PO-Revision-Date: 2011-11-01 21:38+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -209,99 +209,99 @@ msgstr "%s-underprocess fick ödesdiger signal %d"
 msgid "memory exhausted"
 msgstr "minnet slut"
 
-#: src/rec-fex.c:373
+#: src/rec-fex.c:377
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
 msgstr "internt fel: REC_FEX_MAX_ELEMS överskreds.  Rapportera gärna detta.\n"
 
-#: src/rec-int.c:170
+#: src/rec-int.c:172
 #, fuzzy, c-format
 msgid "%s: error: the number of records of type %s shall be %zd.\n"
 msgstr "%s: fel: antalet poster av typ %s skall vara %d.\n"
 
-#: src/rec-int.c:180
+#: src/rec-int.c:182
 #, fuzzy, c-format
 msgid "%s: error: too many records of type %s. Maximum allowed are %zd.\n"
 msgstr "%s: fel: för många poster av typ %s.  Maximalt tillåtet är %d.\n"
 
-#: src/rec-int.c:187
+#: src/rec-int.c:189
 #, fuzzy, c-format
 msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
 msgstr "%s: fel: för få poster av typ %s.  Minimalt tillåtet är %d.\n"
 
-#: src/rec-int.c:303
+#: src/rec-int.c:305
 #, c-format
 msgid ""
 "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
 msgstr ""
 "%s:%s: varning: typen %s kolliderar med den refererad typen %s i rset %s.\n"
 
-#: src/rec-int.c:408
+#: src/rec-int.c:410
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr "%s:%s: fel: obligatoriskt fält ”%s” hittades inte i posten\n"
 
-#: src/rec-int.c:461
+#: src/rec-int.c:463
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
 msgstr "%s:%s: fel: fält ”%s” skall vara unikt i denna post\n"
 
-#: src/rec-int.c:514
+#: src/rec-int.c:516
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr "%s:%s: fel: förbjudet fält ”%s” finns i posten\n"
 
-#: src/rec-int.c:553
+#: src/rec-int.c:555
 #, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
 msgstr "%s:%s: fel: konfidentiellt fält är inte krypterat\n"
 
-#: src/rec-int.c:605
+#: src/rec-int.c:607
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr "%s:%s: fel: nyckelfältet ”%s” finns inte i posten\n"
 
-#: src/rec-int.c:614
+#: src/rec-int.c:616
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr "%s:%s: fel: flera nyckelfält ”%s” i posten\n"
 
-#: src/rec-int.c:657
+#: src/rec-int.c:659
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr "%s:%s: fel: dupliceras nyckelvärde fält ”%s” i posten\n"
 
-#: src/rec-int.c:707
+#: src/rec-int.c:709
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr "%s:%s: fel: saknat %%rec-fält i postens deskriptor\n"
 
-#: src/rec-int.c:715
+#: src/rec-int.c:717
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr "%s:%s: fel: för många %%rec-fält i postens deskriptor\n"
 
-#: src/rec-int.c:725
+#: src/rec-int.c:727
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr "%s:%s: fel: ogiltig posttyp %s\n"
 
-#: src/rec-int.c:736
+#: src/rec-int.c:738
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr "%s:%s: fel: endast ett %%key-fält är tillåtet i en postdeskriptor\n"
 
-#: src/rec-int.c:746
+#: src/rec-int.c:748
 #, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
 msgstr "%s:%s: fel: endast ett %%size-fält är tillåtet i en postdeskriptor\n"
 
-#: src/rec-int.c:756
+#: src/rec-int.c:758
 #, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
 msgstr "%s:%s: fel: endast ett %%sort-fält är tillåtet i en postdeskriptor\n"
 
-#: src/rec-int.c:780
+#: src/rec-int.c:782
 #, c-format
 msgid ""
 "%s:%s: error: expected a comma-separated list of fields before the type "
@@ -310,37 +310,37 @@ msgstr ""
 "%s:%s: fel: en kommaseparerad lista med fält förväntades före "
 "typspecifikationen\n"
 
-#: src/rec-int.c:806 src/rec-int.c:859
+#: src/rec-int.c:808 src/rec-int.c:861
 #, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
 msgstr "%s:%s: fel: den refererade typen %s finns inte\n"
 
-#: src/rec-int.c:818
+#: src/rec-int.c:820
 #, fuzzy, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr "%s:%s: fel: ogiltig typedef-specifikation\n"
 
-#: src/rec-int.c:833
+#: src/rec-int.c:835
 #, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
 msgstr "%s:%s: fel: ett typnamn förväntades före typspecifikationen\n"
 
-#: src/rec-int.c:871
+#: src/rec-int.c:873
 #, c-format
 msgid "%s:%s: error: invalid typedef specification\n"
 msgstr "%s:%s: fel: ogiltig typedef-specifikation\n"
 
-#: src/rec-int.c:893
+#: src/rec-int.c:895
 #, fuzzy, c-format
 msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
 msgstr "%s:%s: fel: värdet för %s[%d] är inte en lista med fältnamn\n"
 
-#: src/rec-int.c:909
+#: src/rec-int.c:911
 #, c-format
 msgid "%s:%s: error: value for %s shall be a field name.\n"
 msgstr "%s:%s: fel: värdet för %s skall vara ett fältnamn.\n"
 
-#: src/rec-int.c:921
+#: src/rec-int.c:923
 #, c-format
 msgid ""
 "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= "
@@ -349,12 +349,12 @@ msgstr ""
 "%s:%s: fel: värdet på %s skall vara ett tal eventuellt föregått av >, <, >= "
 "eller <=.\n"
 
-#: src/rec-int.c:937
+#: src/rec-int.c:939
 #, c-format
 msgid "%s:%s: error: value for %s shall be a list of field names.\n"
 msgstr "%s:%s: fel: värdet för %s skall vara en lista med fältnamn.\n"
 
-#: src/rec-int.c:962
+#: src/rec-int.c:964
 #, c-format
 msgid ""
 "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
@@ -362,22 +362,22 @@ msgstr ""
 "%s:%s: fel: automatökat fält ”%s” skall vara av typen heltal, intervall "
 "eller datum\n"
 
-#: src/rec-int.c:1044
+#: src/rec-int.c:1046
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr "%s:%s: fel: kunde inte hämta fjärrbeskrivaren från url:en %s.\n"
 
-#: src/rec-int.c:1063
+#: src/rec-int.c:1065
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr "%s:%s: vel: kan inte läsa extern beskrivare från filen %s.\n"
 
-#: src/rec-int.c:1078
+#: src/rec-int.c:1080
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: fel: %s innehåller inte någon giltig rec-data.\n"
 
-#: src/rec-int.c:1092
+#: src/rec-int.c:1094
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: fel: %s innehåller inte information för typen %s.\n"
@@ -412,32 +412,32 @@ msgstr "ogiltigt ”range”-värde."
 msgid "expected an integer between %d and %d."
 msgstr "ett heltal mellan %d och %d förväntades."
 
-#: src/rec-types.c:996
+#: src/rec-types.c:998
 msgid "invalid 'real' value."
 msgstr "ogiltigt ”real”-värde."
 
-#: src/rec-types.c:1014
+#: src/rec-types.c:1016
 #, c-format
 msgid "value too large.  Expected a size <= %zu."
 msgstr "för stort värde.  En storlek ≤ %zu förväntades."
 
-#: src/rec-types.c:1033
+#: src/rec-types.c:1037
 msgid "invalid 'line' value."
 msgstr "ogiltigt ”line”-värde."
 
-#: src/rec-types.c:1052
+#: src/rec-types.c:1056
 msgid "value does not match the regexp."
 msgstr "värdet stämmer inte med reguljäruttryck."
 
-#: src/rec-types.c:1075
+#: src/rec-types.c:1079
 msgid "invalid date."
 msgstr "ogiltigt datum."
 
-#: src/rec-types.c:1091
+#: src/rec-types.c:1095
 msgid "invalid email."
 msgstr "ogiltig e-post."
 
-#: src/rec-types.c:1145
+#: src/rec-types.c:1149
 msgid "invalid enum value."
 msgstr "ogiltigt enum-värde."
 
@@ -577,7 +577,7 @@ msgstr "misslyckades att normalisera fältnamnet %s\n"
 msgid "invalid field name %s.\n"
 msgstr "ogiltigt fältnamn %s.\n"
 
-#: utils/mdb2rec.c:496
+#: utils/mdb2rec.c:496 utils/rec2csv.c:193 utils/rec2csv.c:200
 msgid "out of memory"
 msgstr "slut på minne"
 
@@ -1195,15 +1195,15 @@ msgid ""
 "the rename operation requires just one field with an optional subscript.\n"
 msgstr "åtgärden namnbyte tar endast ett fält med en eventuellt index.\n"
 
-#: utils/recset.c:449 utils/recutl.c:483
+#: utils/recset.c:449 utils/recutl.c:487
 msgid "operation aborted due to integrity failures.\n"
 msgstr "åtgärden avbruten på grund av integritetfel.\n"
 
-#: utils/recset.c:450 utils/recutl.c:484
+#: utils/recset.c:450 utils/recutl.c:488
 msgid "use --verbose to get a detailed report.\n"
 msgstr "använd --verbose för att få en detaljerad rapport.\n"
 
-#: utils/recset.c:457 utils/recutl.c:491
+#: utils/recset.c:457 utils/recutl.c:495
 msgid "use --force to skip the integrity check.\n"
 msgstr "använd --force för att hoppa över integritetskontrollen.\n"
 
@@ -1321,7 +1321,12 @@ msgstr "det går inte att skapa ett unikt namn.\n"
 msgid "renaming file %s to %s\n"
 msgstr "döper om filen %s till %s\n"
 
-#: utils/recutl.c:547
+#: utils/recutl.c:462
+#, fuzzy, c-format
+msgid "reading file %s"
+msgstr "döper om filen %s till %s\n"
+
+#: utils/recutl.c:551
 #, fuzzy
 msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
 msgstr ""

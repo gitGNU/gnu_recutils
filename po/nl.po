@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: recutils 1.4\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-10 13:59+0100\n"
+"POT-Creation-Date: 2012-01-10 18:31+0100\n"
 "PO-Revision-Date: 2011-11-11 20:15+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -213,104 +213,104 @@ msgstr "subproces %s ontving het fatale signaal %d"
 msgid "memory exhausted"
 msgstr "onvoldoende geheugen beschikbaar"
 
-#: src/rec-fex.c:373
+#: src/rec-fex.c:377
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
 msgstr ""
 "**interne programmafout**: REC_FEX_MAX_ELEMS is overschreden.\n"
 "Rapporteer dit alstublieft aan de maker.\n"
 
-#: src/rec-int.c:170
+#: src/rec-int.c:172
 #, fuzzy, c-format
 msgid "%s: error: the number of records of type %s shall be %zd.\n"
 msgstr "%s: fout: het aantal records van type %s moet %d zijn.\n"
 
-#: src/rec-int.c:180
+#: src/rec-int.c:182
 #, fuzzy, c-format
 msgid "%s: error: too many records of type %s. Maximum allowed are %zd.\n"
 msgstr "%s: fout: te veel records van type %s; maximum aantal is %d.\n"
 
-#: src/rec-int.c:187
+#: src/rec-int.c:189
 #, fuzzy, c-format
 msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
 msgstr "%s: fout: te weinig records van type %s; minimum aantal is %d.\n"
 
-#: src/rec-int.c:303
+#: src/rec-int.c:305
 #, c-format
 msgid ""
 "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
 msgstr ""
 "%s:%s: waarschuwing: type %s botst met gerefereerd type %s in rset %s.\n"
 
-#: src/rec-int.c:408
+#: src/rec-int.c:410
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr "%s:%s: fout: verplicht veld '%s' niet gevonden in record\n"
 
-#: src/rec-int.c:461
+#: src/rec-int.c:463
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
 msgstr "%s:%s: fout: veld '%s' moet uniek zijn in dit record\n"
 
-#: src/rec-int.c:514
+#: src/rec-int.c:516
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr "%s:%s: fout: verboden veld '%s' gevonden in record\n"
 
-#: src/rec-int.c:553
+#: src/rec-int.c:555
 #, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
 msgstr "%s:%s: fout: vertrouwelijk veld is niet versleuteld\n"
 
-#: src/rec-int.c:605
+#: src/rec-int.c:607
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr "%s:%s: fout: sleutelveld '%s' niet gevonden in record\n"
 
-#: src/rec-int.c:614
+#: src/rec-int.c:616
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr "%s:%s: fout: meerdere sleutelvelden '%s' in record\n"
 
-#: src/rec-int.c:657
+#: src/rec-int.c:659
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr "%s:%s: fout: duplicaat sleutel in veld '%s' in record\n"
 
-#: src/rec-int.c:707
+#: src/rec-int.c:709
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr "%s:%s: fout: ontbrekend %%rec-veld in recorddescriptor\n"
 
-#: src/rec-int.c:715
+#: src/rec-int.c:717
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr "%s:%s: fout: te veel %%rec-velden in recorddescriptor\n"
 
-#: src/rec-int.c:725
+#: src/rec-int.c:727
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr "%s:%s: fout: ongeldig recordtype %s\n"
 
-#: src/rec-int.c:736
+#: src/rec-int.c:738
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr ""
 "%s:%s: fout: slechts één %%key-veld is toegestaan in een recorddescriptor\n"
 
-#: src/rec-int.c:746
+#: src/rec-int.c:748
 #, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
 msgstr ""
 "%s:%s: fout: slechts één %%size-veld is toegestaan in een recorddescriptor\n"
 
-#: src/rec-int.c:756
+#: src/rec-int.c:758
 #, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
 msgstr ""
 "%s:%s: fout: slechts één %%sort-veld is toegestaan in een recorddescriptor\n"
 
-#: src/rec-int.c:780
+#: src/rec-int.c:782
 #, c-format
 msgid ""
 "%s:%s: error: expected a comma-separated list of fields before the type "
@@ -319,37 +319,37 @@ msgstr ""
 "%s:%s: fout: er werd een kommagescheiden lijst van velden verwacht vóór de "
 "typespecificatie\n"
 
-#: src/rec-int.c:806 src/rec-int.c:859
+#: src/rec-int.c:808 src/rec-int.c:861
 #, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
 msgstr "%s:%s: fout: genoemd type %s bestaat niet\n"
 
-#: src/rec-int.c:818
+#: src/rec-int.c:820
 #, fuzzy, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr "%s:%s: fout: ongeldige 'typedef'-specificatie\n"
 
-#: src/rec-int.c:833
+#: src/rec-int.c:835
 #, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
 msgstr "%s:%s: fout: er wordt een typenaam verwacht vóór de typespecificatie\n"
 
-#: src/rec-int.c:871
+#: src/rec-int.c:873
 #, c-format
 msgid "%s:%s: error: invalid typedef specification\n"
 msgstr "%s:%s: fout: ongeldige 'typedef'-specificatie\n"
 
-#: src/rec-int.c:893
+#: src/rec-int.c:895
 #, fuzzy, c-format
 msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
 msgstr "%s:%s: fout: waarde van %s[%d] is geen lijst van veldnamen\n"
 
-#: src/rec-int.c:909
+#: src/rec-int.c:911
 #, c-format
 msgid "%s:%s: error: value for %s shall be a field name.\n"
 msgstr "%s:%s: fout: waarde van %s moet een veldnaam zijn\n"
 
-#: src/rec-int.c:921
+#: src/rec-int.c:923
 #, c-format
 msgid ""
 "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= "
@@ -358,12 +358,12 @@ msgstr ""
 "%s: %s: fout: de waarde voor %s moet een getal zijn,\n"
 "eventueel voorafgegaan door '>', '<', '>=' of '<='.\n"
 
-#: src/rec-int.c:937
+#: src/rec-int.c:939
 #, c-format
 msgid "%s:%s: error: value for %s shall be a list of field names.\n"
 msgstr "%s:%s: fout: waarde van %s moet een lijst van veldnamen zijn\n"
 
-#: src/rec-int.c:962
+#: src/rec-int.c:964
 #, c-format
 msgid ""
 "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
@@ -371,22 +371,22 @@ msgstr ""
 "%s:%s: fout: automatisch opgehoogd veld '%s' moet een geheel getal, bereik "
 "of datum zijn\n"
 
-#: src/rec-int.c:1044
+#: src/rec-int.c:1046
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr "%s:%s: fout: kan descriptor op afstand niet laden vanaf URL %s.\n"
 
-#: src/rec-int.c:1063
+#: src/rec-int.c:1065
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr "%s:%s: fout: kan externe descriptor niet laden uit bestand %s.\n"
 
-#: src/rec-int.c:1078
+#: src/rec-int.c:1080
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: fout: %s bevat geen geldige rec-gegevens.\n"
 
-#: src/rec-int.c:1092
+#: src/rec-int.c:1094
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: fout: %s bevat geen informatie voor type %s.\n"
@@ -421,32 +421,32 @@ msgstr "ongeldige waarde voor 'range'."
 msgid "expected an integer between %d and %d."
 msgstr "verwachtte een geheel getal tussen %d en %d."
 
-#: src/rec-types.c:996
+#: src/rec-types.c:998
 msgid "invalid 'real' value."
 msgstr "ongeldige waarde voor 'real'."
 
-#: src/rec-types.c:1014
+#: src/rec-types.c:1016
 #, c-format
 msgid "value too large.  Expected a size <= %zu."
 msgstr "waarde is te groot.  Verwachtte een grootte <= %zu."
 
-#: src/rec-types.c:1033
+#: src/rec-types.c:1037
 msgid "invalid 'line' value."
 msgstr "ongeldige waarde voor 'line'."
 
-#: src/rec-types.c:1052
+#: src/rec-types.c:1056
 msgid "value does not match the regexp."
 msgstr "waarde komt niet overeen met reguliere expressie."
 
-#: src/rec-types.c:1075
+#: src/rec-types.c:1079
 msgid "invalid date."
 msgstr "ongeldige datum."
 
-#: src/rec-types.c:1091
+#: src/rec-types.c:1095
 msgid "invalid email."
 msgstr "ongeldig e-mailadres."
 
-#: src/rec-types.c:1145
+#: src/rec-types.c:1149
 msgid "invalid enum value."
 msgstr "ongeldige opsommingswaarde."
 
@@ -582,7 +582,7 @@ msgstr "kan veldnaam %s niet normaliseren.\n"
 msgid "invalid field name %s.\n"
 msgstr "ongeldige veldnaam %s.\n"
 
-#: utils/mdb2rec.c:496
+#: utils/mdb2rec.c:496 utils/rec2csv.c:193 utils/rec2csv.c:200
 msgid "out of memory"
 msgstr "onvoldoende geheugen beschikbaar"
 
@@ -1186,15 +1186,15 @@ msgid ""
 "the rename operation requires just one field with an optional subscript.\n"
 msgstr "hernoemen vereist slechts één veld met een optionele index.\n"
 
-#: utils/recset.c:449 utils/recutl.c:483
+#: utils/recset.c:449 utils/recutl.c:487
 msgid "operation aborted due to integrity failures.\n"
 msgstr "bewerking is afgebroken wegens integriteitsproblemen.\n"
 
-#: utils/recset.c:450 utils/recutl.c:484
+#: utils/recset.c:450 utils/recutl.c:488
 msgid "use --verbose to get a detailed report.\n"
 msgstr "gebruik optie '--verbose' voor een gedetailleerd rapport.\n"
 
-#: utils/recset.c:457 utils/recutl.c:491
+#: utils/recset.c:457 utils/recutl.c:495
 msgid "use --force to skip the integrity check.\n"
 msgstr "gebruik optie '--force' op de integriteitscontrole over te slaan.\n"
 
@@ -1315,7 +1315,12 @@ msgstr "kan geen unieke naam aanmaken.\n"
 msgid "renaming file %s to %s\n"
 msgstr "hernoemen van bestand %s naar %s\n"
 
-#: utils/recutl.c:547
+#: utils/recutl.c:462
+#, fuzzy, c-format
+msgid "reading file %s"
+msgstr "hernoemen van bestand %s naar %s\n"
+
+#: utils/recutl.c:551
 #, fuzzy
 msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
 msgstr ""
