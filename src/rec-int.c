@@ -167,7 +167,7 @@ rec_int_check_rset (rec_db_t db,
       if (num_records != min_records)
         {
           ADD_ERROR (errors,
-                     _("%s: error: the number of records of type %s shall be %d.\n"),
+                     _("%s: error: the number of records of type %s shall be %zd.\n"),
                      rec_rset_source (rset), rec_rset_type (rset), min_records);
           res++;
         }
@@ -177,14 +177,14 @@ rec_int_check_rset (rec_db_t db,
       if (num_records > rec_rset_max_records (rset))
         {
           ADD_ERROR (errors,
-                     _("%s: error: too many records of type %s. Maximum allowed are %d.\n"),
+                     _("%s: error: too many records of type %s. Maximum allowed are %zd.\n"),
                      rec_rset_source (rset), rec_rset_type (rset), rec_rset_max_records (rset));
           res++;
         }
       if (num_records < rec_rset_min_records (rset))
         {
           ADD_ERROR (errors,
-                     _("%s: error: too few records of type %s. Minimum allowed are %d.\n"),
+                     _("%s: error: too few records of type %s. Minimum allowed are %zd.\n"),
                     rec_rset_source (rset), rec_rset_type (rset), rec_rset_min_records (rset));
           res++;
         }
@@ -890,7 +890,7 @@ does not exist\n"),
               else
                 {
                   ADD_ERROR (errors,
-                             _("%s:%s: error: value for %s[%d] is not a list of field names\n"),
+                             _("%s:%s: error: value for %s[%zd] is not a list of field names\n"),
                              rec_record_source (descriptor),
                              rec_record_location_str (descriptor),
                              rec_field_name_str (field),

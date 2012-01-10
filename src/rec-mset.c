@@ -147,7 +147,6 @@ rec_mset_dup (rec_mset_t mset)
 {
   rec_mset_t new;
   rec_mset_elem_t elem;
-  rec_mset_elem_t new_elem;
   gl_list_iterator_t iter;
   int i;
   
@@ -189,7 +188,7 @@ rec_mset_dup (rec_mset_t mset)
 
           /* Append the new data into a new element.  */
 
-          new_elem = rec_mset_append (new, elem->type, data, MSET_ANY);
+          rec_mset_append (new, elem->type, data, MSET_ANY);
         }
 
       gl_list_iterator_free (&iter);
@@ -202,7 +201,6 @@ void
 rec_mset_sort (rec_mset_t mset)
 {
   rec_mset_elem_t elem;
-  rec_mset_elem_t new_elem;
   gl_list_iterator_t iter;
   gl_list_t list;
 
@@ -226,7 +224,7 @@ rec_mset_sort (rec_mset_t mset)
          into the list using whatever sorting criteria is implemented
          by compare_fn.  */
 
-      new_elem = rec_mset_add_sorted (mset, elem->type, elem->data);
+      rec_mset_add_sorted (mset, elem->type, elem->data);
 
       /* We don't want the memory used by the element to be disposed
          when the old list gets destroyed.  The generic element
@@ -651,7 +649,7 @@ rec_mset_dump (rec_mset_t mset)
   for (i = 0; i < mset->ntypes; i++)
     {
       printf("  type %d:\n", i);
-      printf("    count:     %d\n", mset->count[i]);
+      printf("    count:     %zd\n", mset->count[i]);
       printf("    disp_fn:   %p\n", mset->disp_fn[i]);
       printf("    equal_fn:  %p\n", mset->equal_fn[i]);
       printf("    dup_fn:    %p\n", mset->dup_fn[i]);

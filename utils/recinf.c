@@ -171,7 +171,7 @@ print_info_file (FILE *in,
                 {
                   if (!recinf_names_only)
                     {
-                      fprintf (stdout, "%d ", rec_rset_num_records (rset));
+                      fprintf (stdout, "%zd ", rec_rset_num_records (rset));
                     }
                   fprintf (stdout, "%s\n", rec_rset_type (rset));
                 }
@@ -179,7 +179,7 @@ print_info_file (FILE *in,
                 {
                   if (!recinf_names_only)
                     {
-                      printf ("%d\n", rec_rset_num_records (rset));
+                      printf ("%zd\n", rec_rset_num_records (rset));
                     }
                 }
             }          

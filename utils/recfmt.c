@@ -253,7 +253,6 @@ recfmt_apply_template (rec_record_t record,
 void
 recfmt_process_db (rec_db_t db, char *template)
 {
-  int rset_size;
   size_t n_rset;
   rec_rset_t rset;
   rec_record_t record;
@@ -264,7 +263,6 @@ recfmt_process_db (rec_db_t db, char *template)
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-      rset_size = rec_rset_num_records (rset);
 
       /* Iterate on all the records.  */
 
