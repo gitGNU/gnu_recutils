@@ -1,5 +1,17 @@
 2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.4.90.
+	* NEWS: Entry for 1.5.
+
+	* configure.ac: Version number changed to 1.4.90.
+	* po/de.po: Updated.
+	* po/fi.po: Likewise.
+	* po/nl.po: Likewise.
+	* po/recutils.pot: Likewise.
+	* po/sv.po: Likewise.
+
+2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Warning fixes.
 	* utils/recfmt.c (recfmt_process_db): Useless variable rset_size
 	removed.

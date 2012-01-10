@@ -1,11 +1,33 @@
 This NEWS file records noteworthy changes, very tersely.
 See the manual for detailed information.
 
-  Copyright 2010, 2011 Jose E. Marchesi.
+  Copyright 2010, 2011, 2012 Jose E. Marchesi.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
+
+ Version 1.5 (???)
+* The utilities will now ask interactively for a password if it was
+  not provided with the -s command line option.  This avoids having
+  your passwords saved in some shell history file!
+* Support for octal and hexadecimal numbers has been added.  They can
+  be used in both the records and selection expressions.
+* It is now possible to select a given number of random records in
+  many of the utilities using the -m command line option.
+* The -n option now accepts a list of indexes, supporting ranges.
+* The new -U (uniq) option for recsel removes duplicated fields in the
+  output records.
+* The new -q option allows to quickly search for the desired record
+  without having to provide a complete selection expression.
+* Auto generated fields are now considered integers by default.  This
+  avoids repetitive patterns involving %auto and %type.
+* recfix now exits with an error status if there is a parse error in
+  some input file.
+* Tab characters are now allowed in blank lines betwwen records.
+* The usage of the internal data structures has been improved,
+  resulting in a much faster operation.
+* Many, many, many bug fixes :D
 
  Version 1.4 (03 November 2011)
 * Support for encryption with the new %confidential special field.
