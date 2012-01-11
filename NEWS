@@ -22,9 +22,11 @@ See the manual for detailed information.
   without having to provide a complete selection expression.
 * Auto generated fields are now considered integers by default.  This
   avoids repetitive patterns involving %auto and %type.
+* Tab characters are now allowed in blank lines betwwen records.
+* The API in rec.h is now better documented with comments, and
+  improved.
 * recfix now exits with an error status if there is a parse error in
   some input file.
-* Tab characters are now allowed in blank lines betwwen records.
 * The usage of the internal data structures has been _vastly_
   improved, resulting in a much faster operation.
 * Internal cleanup and code factorization.
