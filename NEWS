@@ -9,8 +9,8 @@ See the manual for detailed information.
 
  Version 1.5 (???)
 * The utilities will now ask interactively for a password if it was
-  not provided with the -s command line option.  This avoids having
-  your passwords saved in some shell history file!
+  not provided with the -s command line option.  This avoids security
+  problems related to shell history files.
 * Support for octal and hexadecimal numbers has been added.  They can
   be used in both the records and selection expressions.
 * It is now possible to select a given number of random records in
@@ -25,8 +25,9 @@ See the manual for detailed information.
 * recfix now exits with an error status if there is a parse error in
   some input file.
 * Tab characters are now allowed in blank lines betwwen records.
-* The usage of the internal data structures has been improved,
-  resulting in a much faster operation.
+* The usage of the internal data structures has been _vastly_
+  improved, resulting in a much faster operation.
+* Internal cleanup and code factorization.
 * Many, many, many bug fixes :D
 
  Version 1.4 (03 November 2011)
@@ -68,7 +69,7 @@ See the manual for detailed information.
 * The flavor of regular expressions accepted in both selection
   expressions and type descriptions is now documented in the user
   manual.
-* Translations for German, Finnish, Swedish and Ducht.
+* Translations for German, Finnish, Swedish and Dutch.
 * recdel now performs an integrity check before to complete the
   deletion.
 * The utilities no longer "expand" the contents of remote descriptors
