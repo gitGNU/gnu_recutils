@@ -224,6 +224,12 @@
           break;                                               \
       }
 
+#if defined REC_CRYPT_SUPPORT
+#  define ENCRYPTION_SHORT_ARGS "s:"
+#else
+#  define ENCRYPTION_SHORT_ARGS ""
+#endif
+
 /*
  * Function prototypes.
  */

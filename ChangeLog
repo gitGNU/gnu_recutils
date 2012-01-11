@@ -1,5 +1,16 @@
 2012-01-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: accept -s|--password only if compiled with encryption
+	support.
+	* utils/recutl.h: Define ENCRYPTION_SHORT_ARGS.
+
+	* utils/recins.c (recins_parse_args): Likewise.
+
+	* utils/recsel.c (recsel_parse_args): Process -s|--password only
+	if compiled with encryption support.
+
+2012-01-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* gnulib modules fprintf-posix, vasprintf-posix and printf-posix
 	imported.
 

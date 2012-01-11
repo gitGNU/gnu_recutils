@@ -78,7 +78,9 @@ enum
   DESCRIPTOR_ARG,
   PRINT_SEXPS_ARG,
   SORT_ARG,
+#if defined REC_CRYPT_SUPPORT
   PASSWORD_ARG,
+#endif
   UNIQ_ARG
 };
 
@@ -94,7 +96,9 @@ static const struct option GNU_longOptions[] =
     {"include-descriptors", no_argument, NULL, DESCRIPTOR_ARG},
     {"print-sexps", no_argument, NULL, PRINT_SEXPS_ARG},
     {"sort", required_argument, NULL, SORT_ARG},
+#if defined REC_CRYPT_SUPPORT
     {"password", required_argument, NULL, PASSWORD_ARG},
+#endif
     {"uniq", no_argument, NULL, UNIQ_ARG},
     {NULL, 0, NULL, 0}
   };
@@ -176,7 +180,8 @@ recsel_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "S:Cdcp:P:R:s:U",
+                             ENCRYPTION_SHORT_ARGS
+                             "S:Cdcp:P:R:U",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -202,6 +207,7 @@ recsel_parse_args (int argc,
             recsel_uniq = true;
             break;
           }
+#if defined REC_CRYPT_SUPPORT
         case PASSWORD_ARG:
         case 's':
           {
@@ -213,6 +219,7 @@ recsel_parse_args (int argc,
             recsel_password = xstrdup (optarg);
             break;
           }
+#endif
         case SORT_ARG:
         case 'S':
           {

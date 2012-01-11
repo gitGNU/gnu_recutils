@@ -76,8 +76,10 @@ enum
   VERBOSE_ARG,
   NO_EXTERNAL_ARG,
   RECORD_ARG,
-  NO_AUTO_ARG,
-  PASSWORD_ARG
+#if defined REC_CRYPT_SUPPORT
+  PASSWORD_ARG,
+#endif
+  NO_AUTO_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -92,7 +94,9 @@ static const struct option GNU_longOptions[] =
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
     {"record", required_argument, NULL, RECORD_ARG},
     {"no-auto", no_argument, NULL, NO_AUTO_ARG},
+#if defined REC_CRYPT_SUPPORT
     {"password", required_argument, NULL, PASSWORD_ARG},
+#endif
     {NULL, 0, NULL, 0}
   };
 
@@ -284,7 +288,8 @@ void recins_parse_args (int argc,
   while ((ret = getopt_long (argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
-                             "f:v:r:s:",
+                             ENCRYPTION_SHORT_ARGS
+                             "f:v:r:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -365,6 +370,7 @@ void recins_parse_args (int argc,
             recins_auto = false;
             break;
           }
+#if defined REC_CRYPT_SUPPORT
         case PASSWORD_ARG:
         case 's':
           {
@@ -376,6 +382,7 @@ void recins_parse_args (int argc,
             recins_password = xstrdup (optarg);
             break;
           }
+#endif
         case RECORD_ARG:
         case 'r':
           {

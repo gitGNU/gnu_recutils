@@ -83,10 +83,10 @@ enum
 {
   COMMON_ARGS,
   NO_EXTERNAL_ARG,
-  PASSWORD_ARG,
   FORCE_ARG,
   OP_SORT_ARG,
 #if defined REC_CRYPT_SUPPORT
+  PASSWORD_ARG,
   OP_ENCRYPT_ARG,
   OP_DECRYPT_ARG,
 #endif
@@ -99,10 +99,10 @@ static const struct option GNU_longOptions[] =
     COMMON_LONG_ARGS,
     {"no-external", no_argument, NULL, NO_EXTERNAL_ARG},
     {"force", no_argument, NULL, FORCE_ARG},
-    {"password", required_argument, NULL, PASSWORD_ARG},
     {"check", no_argument, NULL, OP_CHECK_ARG},
     {"sort", no_argument, NULL, OP_SORT_ARG},
 #if defined REC_CRYPT_SUPPORT
+    {"password", required_argument, NULL, PASSWORD_ARG},
     {"encrypt", no_argument, NULL, OP_ENCRYPT_ARG},
     {"decrypt", no_argument, NULL, OP_DECRYPT_ARG},
 #endif
@@ -183,11 +183,7 @@ recfix_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-#if defined REC_CRYPT_SUPPORT
-                             "s:",
-#else
-                             "",
-#endif
+                             ENCRYPTION_SHORT_ARGS,
                              GNU_longOptions,
                              NULL)) != -1)
     {
