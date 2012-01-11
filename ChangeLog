@@ -1,3 +1,8 @@
+2012-01-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* gnulib modules fprintf-posix, vasprintf-posix and printf-posix
+	imported.
+
 2012-01-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* strcasestr gnulib module imported.

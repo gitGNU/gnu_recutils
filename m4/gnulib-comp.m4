@@ -70,12 +70,14 @@ AC_DEFUN([gl_EARLY],
   # Code from module fpending:
   # Code from module fpieee:
   AC_REQUIRE([gl_FP_IEEE])
+  # Code from module fprintf-posix:
   # Code from module fpucw:
   # Code from module frexp-nolibm:
   # Code from module frexpl-nolibm:
   # Code from module fseek:
   # Code from module fseeko:
   AC_REQUIRE([AC_FUNC_FSEEKO])
+  # Code from module fseterr:
   # Code from module fstat:
   # Code from module gendocs:
   # Code from module getdelim:
@@ -134,6 +136,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module posix_spawnp:
   # Code from module printf-frexp:
   # Code from module printf-frexpl:
+  # Code from module printf-posix:
   # Code from module printf-safe:
   # Code from module progname:
   # Code from module quotearg:
@@ -187,8 +190,10 @@ AC_DEFUN([gl_EARLY],
   # Code from module vasnprintf:
   # Code from module vasnprintf-posix:
   # Code from module vasprintf:
+  # Code from module vasprintf-posix:
   # Code from module vc-list-files:
   # Code from module verify:
+  # Code from module vfprintf-posix:
   # Code from module wait-process:
   # Code from module waitpid:
   # Code from module wchar:
@@ -265,6 +270,8 @@ if test $ac_cv_func___fpending = no; then
   AC_LIBOBJ([fpending])
   gl_PREREQ_FPENDING
 fi
+gl_FUNC_FPRINTF_POSIX
+gl_STDIO_MODULE_INDICATOR([fprintf-posix])
 gl_FUNC_FREXP_NO_LIBM
 if test $gl_func_frexp_no_libm != yes; then
   AC_LIBOBJ([frexp])
@@ -502,6 +509,8 @@ fi
 gl_SPAWN_MODULE_INDICATOR([posix_spawnp])
 gl_FUNC_PRINTF_FREXP
 gl_FUNC_PRINTF_FREXPL
+gl_FUNC_PRINTF_POSIX
+gl_STDIO_MODULE_INDICATOR([printf-posix])
 m4_divert_text([INIT_PREPARE], [gl_printf_safe=yes])
 AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
 AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
@@ -650,6 +659,9 @@ gl_STDIO_MODULE_INDICATOR([vasprintf])
 m4_ifdef([AM_XGETTEXT_OPTION],
   [AM_][XGETTEXT_OPTION([--flag=asprintf:2:c-format])
    AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
+gl_FUNC_VASPRINTF_POSIX
+gl_FUNC_VFPRINTF_POSIX
+gl_STDIO_MODULE_INDICATOR([vfprintf-posix])
 gl_WAIT_PROCESS
 gl_FUNC_WAITPID
 if test $HAVE_WAITPID = 0; then
@@ -854,11 +866,14 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/float.in.h
   lib/fpending.c
   lib/fpending.h
+  lib/fprintf.c
   lib/fpucw.h
   lib/frexp.c
   lib/frexpl.c
   lib/fseek.c
   lib/fseeko.c
+  lib/fseterr.c
+  lib/fseterr.h
   lib/fstat.c
   lib/getdelim.c
   lib/getdtablesize.c
@@ -921,6 +936,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-frexpl.h
   lib/printf-parse.c
   lib/printf-parse.h
+  lib/printf.c
   lib/progname.c
   lib/progname.h
   lib/quotearg.c
@@ -995,6 +1011,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/verify.h
+  lib/vfprintf.c
   lib/w32spawn.h
   lib/wait-process.c
   lib/wait-process.h
@@ -1009,6 +1026,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xsize.h
   m4/00gnulib.m4
   m4/alloca.m4
+  m4/asm-underscore.m4
   m4/autobuild.m4
   m4/base64.m4
   m4/bison.m4
@@ -1035,6 +1053,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/float_h.m4
   m4/fpending.m4
   m4/fpieee.m4
+  m4/fprintf-posix.m4
   m4/frexp.m4
   m4/frexpl.m4
   m4/fseek.m4
@@ -1107,6 +1126,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/posix_spawn.m4
   m4/printf-frexp.m4
   m4/printf-frexpl.m4
+  m4/printf-posix-rpl.m4
   m4/printf-posix.m4
   m4/printf.m4
   m4/progtest.m4
@@ -1155,7 +1175,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/unistd_h.m4
   m4/vasnprintf-posix.m4
   m4/vasnprintf.m4
+  m4/vasprintf-posix.m4
   m4/vasprintf.m4
+  m4/vfprintf-posix.m4
   m4/visibility.m4
   m4/wait-process.m4
   m4/waitpid.m4
