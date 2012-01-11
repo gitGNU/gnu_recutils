@@ -1,5 +1,10 @@
 2012-01-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.4.92.
+	* configure.ac: Version number changed to 1.4.92.
+
+2012-01-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: don't run encryption related tests if crypt support was
 	not compiled into the library.
 	* torture/utils/recsel.sh: Run encryption related tests only if

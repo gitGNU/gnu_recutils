@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.3.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-10 18:31+0100\n"
+"POT-Creation-Date: 2012-01-11 21:55+0100\n"
 "PO-Revision-Date: 2011-10-31 00:28+0300\n"
 "Last-Translator: Jorma Karvonen <karvonen.jorma@gmail.com>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "write error"
 msgstr "kirjoitusvirhe"
 
-#: lib/error.c:187
+#: lib/error.c:188
 msgid "Unknown system error"
 msgstr "Tuntematon järjestelmävirhe"
 
@@ -89,28 +89,30 @@ msgstr "%s: valitsin ’-W %s’ vaatii argumentin\n"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
-#.
 #. The message catalog should translate "`" to a left
 #. quotation mark suitable for the locale, and similarly for
-#. "'".  If the catalog has no translation,
-#. locale_quoting_style quotes `like this', and
-#. clocale_quoting_style quotes "like this".
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
 #.
-#. For example, an American English Unicode locale should
-#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
-#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
-#. MARK).  A British English Unicode locale should instead
-#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK)
-#. and U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:278
+#: lib/quotearg.c:311
 msgid "`"
 msgstr "”"
 
-#: lib/quotearg.c:279
+#: lib/quotearg.c:312
 msgid "'"
 msgstr "”"
 
@@ -577,7 +579,7 @@ msgstr "kenttänimen %s normalisointi epäonnistui\n"
 msgid "failed to normalise the field name %s\n"
 msgstr "kenttänimen %s normalisointi epäonnistui\n"
 
-#: utils/mdb2rec.c:465 utils/recins.c:337 utils/recset.c:265
+#: utils/mdb2rec.c:465 utils/recins.c:342 utils/recset.c:265
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "virheellinen kenttänimi %s.\n"
@@ -626,11 +628,11 @@ msgstr ""
 "  -S, --sort=KENTTÄ                   lajittele tuloste määritellyn kentän "
 "mukaan.\n"
 
-#: utils/rec2csv.c:135 utils/recsel.c:221
+#: utils/rec2csv.c:135 utils/recsel.c:228
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr "vain yksi kenttä voidaan määritellä lajittelukriteerinä.\n"
 
-#: utils/rec2csv.c:142 utils/recsel.c:228
+#: utils/rec2csv.c:142 utils/recsel.c:235
 msgid "invalid field name in -S.\n"
 msgstr "virheellinen kenttänimi valitsimelle -S.\n"
 
@@ -685,7 +687,7 @@ msgstr ""
 #. no-wrap
 #. TRANSLATORS: --help output, notes on recins.
 #. no-wrap
-#: utils/recdel.c:119 utils/recfix.c:169 utils/recins.c:146
+#: utils/recdel.c:119 utils/recfix.c:169 utils/recins.c:150
 msgid ""
 "If no FILE is specified then the command acts like a filter, getting\n"
 "the data from standard input and writing the result to standard output.\n"
@@ -699,7 +701,7 @@ msgstr ""
 msgid "no records of type %s found.\n"
 msgstr "%s-tyyppisiä tietueita ei löytynyt.\n"
 
-#: utils/recdel.c:224 utils/recins.c:494 utils/recsel.c:440
+#: utils/recdel.c:224 utils/recins.c:501 utils/recsel.c:447
 msgid "evaluating the selection expression.\n"
 msgstr "arvioidaan valintalauseketta.\n"
 
@@ -792,36 +794,36 @@ msgstr ""
 "Salauksen purku-/salausvalitsimet:\n"
 "  -s, --password=SALASANA             salaa/pura salaus tällä salasanalla.\n"
 
-#: utils/recfix.c:214
+#: utils/recfix.c:210
 msgid "--password|-s must be used as an operation argument.\n"
 msgstr "--password|-s on käytettävä toiminta-argumentteina.\n"
 
-#: utils/recfix.c:220
+#: utils/recfix.c:216
 msgid "the specified operation does not require a password.\n"
 msgstr "määritelty toiminto ei vaadi salasanaa.\n"
 
-#: utils/recfix.c:225
+#: utils/recfix.c:221
 msgid "please specify just one password.\n"
 msgstr "määritä vain yksi salasana.\n"
 
-#: utils/recfix.c:236 utils/recfix.c:246 utils/recfix.c:256 utils/recfix.c:267
-#: utils/recfix.c:277
+#: utils/recfix.c:232 utils/recfix.c:242 utils/recfix.c:252 utils/recfix.c:263
+#: utils/recfix.c:273
 msgid "please specify just one operation.\n"
 msgstr "määritä vain yksi toiminto.\n"
 
-#: utils/recfix.c:311 utils/recins.c:169 utils/recsel.c:341
+#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:348
 msgid "Password: "
 msgstr ""
 
-#: utils/recfix.c:455
+#: utils/recfix.c:451
 msgid "the database contains already encrypted fields\n"
 msgstr "tietokanta sisältää jo salattuja kenttiä\n"
 
-#: utils/recfix.c:456
+#: utils/recfix.c:452
 msgid "please use --force or --decrypt\n"
 msgstr "käytä valitsimia --force tai --decrypt\n"
 
-#: utils/recfix.c:565
+#: utils/recfix.c:561
 msgid "unknown operation in recfix: please report this as a bug.\n"
 msgstr "tuntematon toiminto kohteessa recfix: ilmoita tästä viasta.\n"
 
@@ -923,7 +925,7 @@ msgstr "virhe: ei voida lukea tiedostoa %s\n"
 
 #. TRANSLATORS: --help output, recins synopsis.
 #. no-wrap
-#: utils/recins.c:108
+#: utils/recins.c:112
 #, fuzzy, c-format
 msgid ""
 "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f "
@@ -934,13 +936,13 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recins short description.
 #. no-wrap
-#: utils/recins.c:113
+#: utils/recins.c:117
 msgid "Insert new records in a rec database.\n"
 msgstr "Lisää uusia tietueita rec-tietokantaan.\n"
 
 #. TRANSLATORS: --help output, recins arguments.
 #. no-wrap
-#: utils/recins.c:119
+#: utils/recins.c:123
 msgid ""
 "  -f, --field=STR                     field name; should be followed by a -"
 "v.\n"
@@ -974,7 +976,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recins.c:133
+#: utils/recins.c:137
 msgid ""
 "  -s, --password=STR                  encrypt confidential fields with the "
 "given password.\n"
@@ -982,30 +984,30 @@ msgstr ""
 "  -s, --password=MERKKIJONO           salaa luottamukselliset kentän "
 "annetulla salasanalla.\n"
 
-#: utils/recins.c:311
+#: utils/recins.c:316
 msgid "a -f should be followed by a -v\n"
 msgstr "valitsimen -f pitäisi seurata valitsinta -v\n"
 
-#: utils/recins.c:349
+#: utils/recins.c:354
 msgid "a -v should be preceded by a -f\n"
 msgstr "valitsimen -v pitäisi edeltää valitsinta -f\n"
 
-#: utils/recins.c:373 utils/recsel.c:210
+#: utils/recins.c:379 utils/recsel.c:216
 msgid "more than one password was specified\n"
 msgstr "on määritelty useampia kuin yksi salasana\n"
 
-#: utils/recins.c:386
+#: utils/recins.c:393
 msgid "error while parsing the record provided by -r\n"
 msgstr "virhe jäsennettäessä valitsimen -r tarjoamaa tietuetta\n"
 
-#: utils/recins.c:421
+#: utils/recins.c:428
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "tarjoa arvo kentälle %s\n"
 
 #. TRANSLATORS: --help output, recsel synopsis.
 #. no-wrap
-#: utils/recsel.c:111
+#: utils/recsel.c:115
 #, fuzzy, c-format
 msgid ""
 "Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | "
@@ -1016,13 +1018,13 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:116
+#: utils/recsel.c:120
 msgid "Select and print rec data.\n"
 msgstr "Valitse ja tulosta rec-tietoja.\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:122
+#: utils/recsel.c:126
 #, fuzzy
 msgid ""
 "  -d, --include-descriptors           print record descriptors along with "
@@ -1044,7 +1046,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recsel.c:133
+#: utils/recsel.c:137
 msgid ""
 "  -s, --password=STR                  decrypt confidential fields with the "
 "given password.\n"
@@ -1054,7 +1056,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
-#: utils/recsel.c:146
+#: utils/recsel.c:150
 msgid ""
 "Output options:\n"
 "  -p, --print=FIELDS                  comma-separated list of fields to "
@@ -1087,7 +1089,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel special options.
 #. no-wrap
-#: utils/recsel.c:160
+#: utils/recsel.c:164
 msgid ""
 "Special options:\n"
 "      --print-sexps                   print the data in sexps instead of rec "
@@ -1097,19 +1099,19 @@ msgstr ""
 "      --print-sexps                   tulosta tietoja sexps-muodossa eikä "
 "rec-muodossa.\n"
 
-#: utils/recsel.c:240
+#: utils/recsel.c:247
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr "ei voida määritellä sekä valitsimia -[pPR] että myös valitsinta -c.\n"
 
-#: utils/recsel.c:266
+#: utils/recsel.c:273
 msgid "internal error creating the field expression.\n"
 msgstr "sisäinen virhe luotaessa kenttälauseketta.\n"
 
-#: utils/recsel.c:282
+#: utils/recsel.c:289
 msgid "cannot specify -c and also -p.\n"
 msgstr "ei voida määritellä valitsinta -c ja myös valitsinta -p.\n"
 
-#: utils/recsel.c:362
+#: utils/recsel.c:369
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr ""
 "löydettiin useita tietuetyyppejä.  Käytä valitsinta -t määrittämään yksi.\n"
