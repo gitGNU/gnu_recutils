@@ -23,6 +23,7 @@
 
 : ${srcdir=.}
 : ${builddir=.}
+: ${crypt_support=yes}
 
 . $builddir/config.sh
 . $srcdir/testutils.sh
@@ -1256,7 +1257,7 @@ test_tool recfix-sortcheck-invalid-field-name xfail \
           '' \
           sortcheck-invalid-field-name
 
-if test "$CRYPT_SUPPORT" = "yes"; then
+if test "x$crypt_support" = "yes"; then
 
 test_tool recfix-confidential ok \
           recfix \
@@ -1404,7 +1405,7 @@ joo: encrypted-By/F2HBy1wiim1fUWMVKRg==
 fo: ja
 '
 
-fi # CRYPT_SUPPORT
+fi # crypt_support
 
 test_tool recfix-sort-several-fields-invalid xfail \
           recfix \

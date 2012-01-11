@@ -1,6 +1,6 @@
 # Makefile for torture/utils.
 #
-# Copyright (C) 2010 Jose E. Marchesi.
+# Copyright (C) 2010, 2011, 2012 Jose E. Marchesi.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ TESTS = recinf.sh \
         rec2csv.sh \
         csv2rec.sh
 EXTRA_DIST = $(TESTS) testutils.sh
-TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) builddir=$(builddir) \
+TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) builddir=$(builddir) crypt_support=$(crypt_support) \
                     PATH=$(srcdir)$(PATH_SEPARATOR)$(top_builddir)/utils$(PATH_SEPARATOR)$$PATH
 
 # End of Makefile.am

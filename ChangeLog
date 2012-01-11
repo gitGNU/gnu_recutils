@@ -1,5 +1,16 @@
 2012-01-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: don't run encryption related tests if crypt support was
+	not compiled into the library.
+	* torture/utils/recsel.sh: Run encryption related tests only if
+	crypt_support is "yes".
+	It defaults to "yes".
+
+	* torture/utils/Makefile.am (TESTS_ENVIRONMENT): Pass
+	crypt_support to the test scripts.
+
+2012-01-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: accept -s|--password only if compiled with encryption
 	support.
 	* utils/recutl.h: Define ENCRYPTION_SHORT_ARGS.

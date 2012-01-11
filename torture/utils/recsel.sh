@@ -22,6 +22,8 @@
 #
 
 : ${srcdir=.}
+: ${crypt_support=yes}
+
 . $srcdir/testutils.sh
 test_init "recsel"
 
@@ -891,10 +893,12 @@ test_tool recsel-quick-and-random xfail \
           "-q foo -m 1" \
           multiple-records
 
-test_tool recsel-confidential ok \
-          recsel \
-          '-s secret' \
-          confidential \
+if test "x$crypt_support" = "xyes"; then
+
+    test_tool recsel-confidential ok \
+              recsel \
+              '-s secret' \
+              confidential \
 'User: foo
 Password: secret
 '
@@ -920,6 +924,8 @@ test_tool recsel-confidential-num ok \
 'User: foo
 Password: secret
 '
+
+fi # crypt_support
 
 test_tool recsel-sort ok \
           recsel \
