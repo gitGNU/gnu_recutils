@@ -1,5 +1,10 @@
 2012-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.4.93.
+	* configure.ac: Version number changed to 1.4.93.
+
+2012-01-12  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Portability issues with random and variadic macros fixed.
 	* utils/recutl.c (recutl_index_add_random): Use random_r and
 	srandom_r instead of random and srandom.
