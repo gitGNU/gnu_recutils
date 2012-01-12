@@ -1209,7 +1209,7 @@ rec_parser_init_common (rec_parser_t parser,
     }
 
   parser->eof = false;
-  parser->error = false;
+  parser->error = REC_PARSER_NOERROR;
   parser->line = 1;
   parser->character = 0;
   parser->prev_descriptor = NULL;

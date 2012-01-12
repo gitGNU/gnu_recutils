@@ -1,3 +1,9 @@
+2012-01-12  Jose E. Marchesi  <jco@terma.com>
+
+	librec: enumeration mixing in rec-parser fixed.
+	* src/rec-parser.c (rec_parser_init_common): Reset parser->error
+	to REC_PARSER_NOERROR.
+
 2012-01-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.4.93.
