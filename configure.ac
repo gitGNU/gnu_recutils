@@ -33,6 +33,7 @@ gl_EARLY
 
 AC_PROG_LIBTOOL
 AC_PROG_CC
+AC_PROG_CC_C99
 AM_PROG_CC_C_O
 
 dnl Both lex and yacc are required to generate the lexer/parser source

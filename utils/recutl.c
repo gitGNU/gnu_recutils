@@ -643,6 +643,8 @@ void
 recutl_index_add_random (size_t num, size_t limit)
 {
   size_t i;
+  char random_state[128];
+  struct random_data random_data;
 
   /* Initialize the list structure.  */
 
@@ -651,10 +653,29 @@ recutl_index_add_random (size_t num, size_t limit)
 
   /* Insert the random indexes.  */
 
-  srandom (time(NULL));
+  memset (&random_data, 0, sizeof (random_data));
+  initstate_r (time(NULL), (char *) &random_state, 128, &random_data);
   for (i = 0; i < num; i++)
     {
-      size_t random_value = random () % limit;
+      int32_t random_value = 0;
+
+      random_r (&random_data, &random_value); /* Can't fail.  */
+      random_value = random_value % limit;
+
+      if (recutl_index_p (random_value))
+        {
+          /* Pick the first available number.  */
+
+          size_t i;
+          for (i = 0; i < limit; i++)
+            {
+              if (!recutl_index_p (i))
+                {
+                  random_value = i;
+                  break;
+                }
+            }
+        }
 
       recutl_indexes.indexes[i].min = random_value;
       recutl_indexes.indexes[i].max = 0;

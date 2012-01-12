@@ -142,6 +142,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module quotearg:
   # Code from module quotearg-simple:
   # Code from module raise:
+  # Code from module random_r:
   # Code from module rawmemchr:
   # Code from module readline:
   # Code from module realloc-posix:
@@ -521,6 +522,12 @@ if test $HAVE_RAISE = 0 || test $REPLACE_RAISE = 1; then
   gl_PREREQ_RAISE
 fi
 gl_SIGNAL_MODULE_INDICATOR([raise])
+gl_FUNC_RANDOM_R
+if test $HAVE_RANDOM_R = 0; then
+  AC_LIBOBJ([random_r])
+  gl_PREREQ_RANDOM_R
+fi
+gl_STDLIB_MODULE_INDICATOR([random_r])
 gl_FUNC_RAWMEMCHR
 if test $HAVE_RAWMEMCHR = 0; then
   AC_LIBOBJ([rawmemchr])
@@ -942,6 +949,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/quotearg.c
   lib/quotearg.h
   lib/raise.c
+  lib/random_r.c
   lib/rawmemchr.c
   lib/rawmemchr.valgrind
   lib/readline.c
@@ -1132,6 +1140,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/progtest.m4
   m4/quotearg.m4
   m4/raise.m4
+  m4/random_r.m4
   m4/rawmemchr.m4
   m4/readline.m4
   m4/realloc.m4
