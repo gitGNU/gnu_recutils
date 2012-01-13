@@ -44,6 +44,7 @@
 #include <readline.h>
 #include <regex.h>
 #include <stdint.h>
+#include <time.h>
 
 #include <rec.h>
 #include <recutl.h>

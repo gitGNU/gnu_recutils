@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.3.90\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-12 18:06+0100\n"
+"POT-Creation-Date: 2012-01-13 12:00+0100\n"
 "PO-Revision-Date: 2011-11-01 21:38+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -514,7 +514,7 @@ msgid "not enough headers"
 msgstr "inte tillräckligt med huvuden"
 
 #: utils/csv2rec.c:344 utils/recdel.c:328 utils/recset.c:706
-#: utils/recutl.c:292
+#: utils/recutl.c:294
 #, c-format
 msgid "cannot read file %s\n"
 msgstr "kan inte läsa filen %s\n"
@@ -1197,15 +1197,15 @@ msgid ""
 "the rename operation requires just one field with an optional subscript.\n"
 msgstr "åtgärden namnbyte tar endast ett fält med en eventuellt index.\n"
 
-#: utils/recset.c:449 utils/recutl.c:487
+#: utils/recset.c:449 utils/recutl.c:489
 msgid "operation aborted due to integrity failures.\n"
 msgstr "åtgärden avbruten på grund av integritetfel.\n"
 
-#: utils/recset.c:450 utils/recutl.c:488
+#: utils/recset.c:450 utils/recutl.c:490
 msgid "use --verbose to get a detailed report.\n"
 msgstr "använd --verbose för att få en detaljerad rapport.\n"
 
-#: utils/recset.c:457 utils/recutl.c:495
+#: utils/recset.c:457 utils/recutl.c:497
 msgid "use --force to skip the integrity check.\n"
 msgstr "använd --force för att hoppa över integritetskontrollen.\n"
 
@@ -1214,36 +1214,36 @@ msgstr "använd --force för att hoppa över integritetskontrollen.\n"
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: utils/recutl.c:127
+#: utils/recutl.c:129
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr ""
 "Rapportera fel till: %s\n"
 "Rapportera kommentarer på översättningen till <tp-sv@listor.tp-sv.se>.\n"
 
-#: utils/recutl.c:130
+#: utils/recutl.c:132
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr "Rapportera %s-fel till: %s\n"
 
-#: utils/recutl.c:134
+#: utils/recutl.c:136
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr "%s hemsida: <%s>\n"
 
-#: utils/recutl.c:136
+#: utils/recutl.c:138
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
 msgstr "%s hemsida: <http://www.gnu.org/software/recutils/>\n"
 
-#: utils/recutl.c:139
+#: utils/recutl.c:141
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr ""
 "Allmän hjälp med att använda GNU-program: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
-#: utils/recutl.c:148
+#: utils/recutl.c:150
 msgid ""
 "      --help                          print a help message and exit.\n"
 "      --version                       show version and exit.\n"
@@ -1253,7 +1253,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
-#: utils/recutl.c:159
+#: utils/recutl.c:161
 #, fuzzy
 msgid ""
 "Record selection options:\n"
@@ -1278,7 +1278,7 @@ msgstr ""
 "  -e, --expression=UTTR               urvalsuttryck.\n"
 "  -n, --number=NUM                    välj en angiven post.\n"
 
-#: utils/recutl.c:184
+#: utils/recutl.c:186
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
@@ -1293,7 +1293,7 @@ msgstr ""
 "Detta är fri programvara: du har rätt att ändra och vidaredistribuera den.\n"
 "Det finns INGEN GARANTI, så långt som lagen tillåter.\n"
 
-#: utils/recutl.c:190
+#: utils/recutl.c:192
 msgid ""
 "\n"
 "Written by Jose E. Marchesi."
@@ -1301,34 +1301,34 @@ msgstr ""
 "\n"
 "Skrivet av Jose E. Marchesi."
 
-#: utils/recutl.c:202 utils/recutl.c:216
+#: utils/recutl.c:204 utils/recutl.c:218
 msgid ": error: "
 msgstr ": fel: "
 
-#: utils/recutl.c:228
+#: utils/recutl.c:230
 msgid ": warning: "
 msgstr ": varning: "
 
-#: utils/recutl.c:252
+#: utils/recutl.c:254
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr "duplicerad postmängd ”%s” från %s.\n"
 
-#: utils/recutl.c:410
+#: utils/recutl.c:412
 msgid "cannot create a unique name.\n"
 msgstr "det går inte att skapa ett unikt namn.\n"
 
-#: utils/recutl.c:431
+#: utils/recutl.c:433
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr "döper om filen %s till %s\n"
 
-#: utils/recutl.c:462
+#: utils/recutl.c:464
 #, fuzzy, c-format
 msgid "reading file %s"
 msgstr "döper om filen %s till %s\n"
 
-#: utils/recutl.c:551
+#: utils/recutl.c:553
 #, fuzzy
 msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
 msgstr ""

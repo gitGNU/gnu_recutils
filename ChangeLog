@@ -1,5 +1,14 @@
 2012-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	Preparation for 1.5.
+	* utils/recutl.c: Include time.h.
+
+	* NEWS: Date updated in the 1.5 entry.
+
+	* configure.ac: Version number changed to 1.5.
+
+2012-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture,utils: make the tests run properly in CRLF systems, and
 	missing header included in recutl.c.
 	* utils/recutl.c: Include stdint.h, since int32_t is used in the

@@ -7,7 +7,7 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 1.5 (???)
+ Version 1.5 (13 January 2012)
 * The utilities will now ask interactively for a password if it was
   not provided with the -s command line option.  This avoids security
   problems related to shell history files.
@@ -18,10 +18,11 @@ See the manual for detailed information.
 * The -n option now accepts a list of indexes, supporting ranges.
 * The new -U (uniq) option for recsel removes duplicated fields in the
   output records.
-* The new -q option allows to quickly search for the desired record
-  without having to provide a complete selection expression.
+* The new -q (quick) option allows to quickly search for the desired
+  record without having to provide a complete selection expression.
 * Auto generated fields are now considered integers by default.  This
-  avoids repetitive patterns involving %auto and %type.
+  avoids repetitive patterns in record descriptors involving %auto and
+  %type.
 * Tab characters are now allowed in blank lines betwwen records.
 * The API in rec.h is now better documented with comments, and
   improved.
