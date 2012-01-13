@@ -43,6 +43,7 @@
 #include <sys/stat.h>
 #include <readline.h>
 #include <regex.h>
+#include <stdint.h>
 
 #include <rec.h>
 #include <recutl.h>

@@ -2,7 +2,7 @@
 #
 # testutils.sh - Misc utilities for testing the GNU recutils.
 #
-# Copyright (C) 2010, 2011 Jose E. Marchesi.
+# Copyright (C) 2010, 2011, 2012 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -99,6 +99,7 @@ test_tool ()
     ok_file="$1.ok"
     output_file="$1.out"
     error_file="$1.err"
+    postprocessed_output_file="$1.put"
     expected=$6
 
     test_tmpfiles="$test_tmpfiles $output_file $ok_file"
@@ -114,17 +115,18 @@ test_tool ()
             printf "%s (see %s)\n" "error" "$error_file"
         else
             # Check for the result in output_file.
+            LC_ALL=C tr -d '\r' < $output_file > $postprocessed_output_file
             printf "%s" "$expected" > $ok_file
-            cmp $ok_file $output_file > /dev/null 2>&1
+            cmp $ok_file $postprocessed_output_file > /dev/null 2>&1
             res=$?
             if test "$res" -eq "0"
             then
                 echo $status
             else
                 printf "%s (see %s)\n" "fail" "$1.diff"
-                diff $ok_file $output_file > $1.diff
+                diff $ok_file $postprocessed_output_file > $1.diff
             fi
-            rm $error_file
+            rm $error_file $postprocessed_output_file
         fi
     fi
 

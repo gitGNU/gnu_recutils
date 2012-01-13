@@ -1,5 +1,17 @@
 2012-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture,utils: make the tests run properly in CRLF systems, and
+	missing header included in recutl.c.
+	* utils/recutl.c: Include stdint.h, since int32_t is used in the
+	file.
+
+	* torture/utils/testutils.sh: Post-process the output of the tools
+	to remove CR characters.  This avoid the tests to fail when
+	running in MSDOS or Windows systems.  Problem reported and patch
+	sent by Bruno Haible.
+
+2012-01-13  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* gnulib update.
 
 2012-01-12  Jose E. Marchesi  <jco@terma.com>
