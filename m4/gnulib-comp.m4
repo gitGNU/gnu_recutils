@@ -523,7 +523,7 @@ if test $HAVE_RAISE = 0 || test $REPLACE_RAISE = 1; then
 fi
 gl_SIGNAL_MODULE_INDICATOR([raise])
 gl_FUNC_RANDOM_R
-if test $HAVE_RANDOM_R = 0; then
+if test $HAVE_RANDOM_R = 0 || test $REPLACE_RANDOM_R = 1; then
   AC_LIBOBJ([random_r])
   gl_PREREQ_RANDOM_R
 fi
