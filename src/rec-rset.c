@@ -937,7 +937,10 @@ rec_rset_record_compare_fn (void *data1,
               }
             else
               {
-                type_comparison = 0;
+                /* Result is -1 instead of 0 in order to maintain the
+                   relative order between equal records.  */
+
+                type_comparison = -1;
               }
 
             break;
@@ -960,7 +963,10 @@ rec_rset_record_compare_fn (void *data1,
               }
             else
               {
-                type_comparison = 0;
+                /* Result is -1 instead of 0 in order to maintain the
+                   relative order between equal records.  */
+
+                type_comparison = -1;
               }
 
             break;
@@ -980,7 +986,10 @@ rec_rset_record_compare_fn (void *data1,
               }
             else if (bool1 == bool2)
               {
-                type_comparison = 0;
+                /* Result is -1 instead of 0 in order to maintain the
+                   relative order between equal records.  */
+
+                type_comparison = -1;
               }
             else
               {
@@ -1006,7 +1015,11 @@ rec_rset_record_compare_fn (void *data1,
                     && (op1.tv_nsec == op2.tv_nsec))
                   {
                     /* op1 == op2 */
-                    type_comparison = 0;
+
+                    /* Result is -1 instead of 0 in order to maintain the
+                       relative order between equal records.  */
+                    
+                    type_comparison = -1;
                   }
                 else if (rec_timespec_subtract (&diff, &op1, &op2))
                   {
@@ -1034,6 +1047,15 @@ rec_rset_record_compare_fn (void *data1,
             type_comparison =
               strcmp (rec_field_value (field1),
                       rec_field_value (field2)); /* 3.2.2.  */
+
+            if (type_comparison == 0)
+              {
+                /* Result is -1 instead of 0 in order to maintain the
+                   relative order between equal records.  */
+
+                type_comparison = -1;
+              }
+
             break;
           }
         }
@@ -1045,6 +1067,14 @@ rec_rset_record_compare_fn (void *data1,
       type_comparison =
         strcmp (rec_field_value (field1),
                 rec_field_value (field2)); /* 3.2.2.  */
+
+      if (type_comparison == 0)
+        {
+          /* Result is -1 instead of 0 in order to maintain the
+             relative order between equal records.  */
+
+          type_comparison = -1;
+        }
     }
 
   return type_comparison;

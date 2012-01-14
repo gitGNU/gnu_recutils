@@ -1,5 +1,27 @@
 2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	librec,torture: record sorting criteria adjusted to keep the
+	relative positions of 'equal' records.
+	* torture/utils/recfix.sh (Bool): Fix expected result to expect
+	the sorting algorithm to keep the relative order of equal fields.
+	(unsorted-int-with-equals): New input file.
+	(unsorted-range-with-equals): Likewise.
+	(unsorted-real-with-equals): Likewise.
+	(unsorted-lex-with-equals): Likewise.
+	(unsorted-date-with-equals): Likewise.
+	(recfix-sort-ints-with-equals): New test.
+	(recfix-sort-ranges-with-equals): Likewise.
+	(recfix-sort-reals-with-equals): Likewise.
+	(recfix-sort-lex-with-equals): Likewise.
+	(recfix-sort-dates-with-equals): Likewise.
+
+	* src/rec-rset.c (rec_rset_record_compare_fn): Keep the relative
+	order of 'equal' fields when sorting.  This implies a penalty in
+	performance, but makes the sorting algorithm to show a more
+	predictable behaviour, especially when using for record grouping.
+
+2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	recsel,librec: implementation of the group-by operation.
 	* src/rec-rset.c (rec_rset_group): New function.
 	(rec_rset_merge_records): New function.

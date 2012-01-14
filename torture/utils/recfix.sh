@@ -664,6 +664,27 @@ Id: 3
 Name: B Field
 '
 
+test_declare_input_file unsorted-int-with-equals \
+'%rec: foo
+%type: Id int
+%sort: Id
+
+Id: 4
+Name: A Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+
+Id: 3
+Name: B Field
+
+Id: 2
+Name: Cbis Field
+'
+
 test_declare_input_file unsorted-range \
 '%rec: foo
 %type: Id range 0 10
@@ -680,6 +701,27 @@ Name: D Field
 
 Id: 3
 Name: B Field
+'
+
+test_declare_input_file unsorted-range-with-equals \
+'%rec: foo
+%type: Id range 0 10
+%sort: Id
+
+Id: 4
+Name: A Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+
+Id: 3
+Name: B Field
+
+Id: 2
+Name: Cbis Field
 '
 
 test_declare_input_file unsorted-real \
@@ -700,6 +742,27 @@ Id: 3.2
 Name: B Field
 '
 
+test_declare_input_file unsorted-real-with-equals \
+'%rec: foo
+%type: Id real
+%sort: Id
+
+Id: 4.2
+Name: A Field
+
+Id: 2.2
+Name: C Field
+
+Id: 1.2
+Name: D Field
+
+Id: 3.2
+Name: B Field
+
+Id: 4.2
+Name: Abis Field
+'
+
 test_declare_input_file unsorted-lex \
 '%rec: foo
 %sort: Name
@@ -715,6 +778,26 @@ Name: D Field
 
 Id: 3
 Name: B Field
+'
+
+test_declare_input_file unsorted-lex-with-equals \
+'%rec: foo
+%sort: Name
+
+Id: 4
+Name: A Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+
+Id: 3
+Name: B Field
+
+Id: 1
+Name: Dbis Field
 '
 
 test_declare_input_file unsorted-bool \
@@ -754,6 +837,30 @@ Date: 23 October 1972
 
 Id: 5
 Date: 26 May 1984
+
+Id: 2
+Date: 23 September 1972
+
+Id: 4
+Date: 1 April 1999
+'
+
+test_declare_input_file unsorted-date-with-equals \
+'%rec: foo
+%type: Date date
+%sort: Date
+
+Id: 1
+Date: 24 September 1972
+
+Id: 3
+Date: 23 October 1972
+
+Id: 5
+Date: 26 May 1984
+
+Id: 6
+Date: 23 October 1972
 
 Id: 2
 Date: 23 September 1972
@@ -1433,6 +1540,30 @@ Id: 4
 Name: A Field
 '
 
+test_tool recfix-sort-ints-with-equals ok \
+          recfix \
+          '--sort' \
+          unsorted-int-with-equals \
+'%rec: foo
+%type: Id int
+%sort: Id
+
+Id: 1
+Name: D Field
+
+Id: 2
+Name: C Field
+
+Id: 2
+Name: Cbis Field
+
+Id: 3
+Name: B Field
+
+Id: 4
+Name: A Field
+'
+
 test_tool recfix-sort-ranges ok \
           recfix \
           '--sort' \
@@ -1454,6 +1585,29 @@ Id: 4
 Name: A Field
 '
 
+test_tool recfix-sort-ranges-with-equals ok \
+          recfix \
+          '--sort' \
+          unsorted-range-with-equals \
+'%rec: foo
+%type: Id range 0 10
+%sort: Id
+
+Id: 1
+Name: D Field
+
+Id: 2
+Name: C Field
+
+Id: 2
+Name: Cbis Field
+
+Id: 3
+Name: B Field
+
+Id: 4
+Name: A Field
+'
 
 test_tool recfix-sort-reals ok \
           recfix \
@@ -1476,6 +1630,30 @@ Id: 4.2
 Name: A Field
 '
 
+test_tool recfix-sort-reals-with-equals ok \
+          recfix \
+          '--sort' \
+          unsorted-real-with-equals \
+'%rec: foo
+%type: Id real
+%sort: Id
+
+Id: 1.2
+Name: D Field
+
+Id: 2.2
+Name: C Field
+
+Id: 3.2
+Name: B Field
+
+Id: 4.2
+Name: A Field
+
+Id: 4.2
+Name: Abis Field
+'
+
 test_tool recfix-sort-lex ok \
           recfix \
           '--sort' \
@@ -1494,6 +1672,29 @@ Name: C Field
 
 Id: 1
 Name: D Field
+'
+
+test_tool recfix-sort-lex-with-equals ok \
+          recfix \
+          '--sort' \
+          unsorted-lex-with-equals \
+'%rec: foo
+%sort: Name
+
+Id: 4
+Name: A Field
+
+Id: 3
+Name: B Field
+
+Id: 2
+Name: C Field
+
+Id: 1
+Name: D Field
+
+Id: 1
+Name: Dbis Field
 '
 
 test_tool recfix-sort-dates ok \
@@ -1520,6 +1721,33 @@ Id: 4
 Date: 1 April 1999
 '
 
+test_tool recfix-sort-dates-with-equals ok \
+          recfix \
+          '--sort' \
+          unsorted-date-with-equals \
+'%rec: foo
+%type: Date date
+%sort: Date
+
+Id: 2
+Date: 23 September 1972
+
+Id: 1
+Date: 24 September 1972
+
+Id: 3
+Date: 23 October 1972
+
+Id: 6
+Date: 23 October 1972
+
+Id: 5
+Date: 26 May 1984
+
+Id: 4
+Date: 1 April 1999
+'
+
 test_tool recfix-sort-booleans ok \
           recfix \
           '--sort' \
@@ -1528,23 +1756,23 @@ test_tool recfix-sort-booleans ok \
 %type: Bool bool
 %sort: Bool
 
+Id: 1
+Bool: 0
+
 Id: 3
 Bool: no
 
 Id: 2
 Bool: false
 
-Id: 1
-Bool: 0
+Id: 5
+Bool: 1
 
 Id: 6
 Bool: true
 
 Id: 4
 Bool: yes
-
-Id: 5
-Bool: 1
 '
 
 test_tool recfix-missing-auto-fields ok \
