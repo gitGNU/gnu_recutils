@@ -735,9 +735,9 @@ rec_rset_group (rec_rset_t rset,
                     }
                 }
             }
-          
-          num_record++;
         }
+
+      num_record++;
     }
   rec_mset_iterator_free (&iter);
 

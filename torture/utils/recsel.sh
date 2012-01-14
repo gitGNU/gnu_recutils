@@ -222,6 +222,39 @@ field1: foo
 field1: foo
 '
 
+test_declare_input_file group-records \
+'id: 3
+pos: 1
+
+id: 1
+pos: 2
+
+id: 1
+pos: 3
+
+id: 2
+pos: 4
+
+id: 3
+pos: 5
+'
+
+test_declare_input_file group-records-missing \
+'id: 3
+pos: 1
+
+id: 1
+pos: 2
+
+pos: 3
+
+id: 2
+pos: 4
+
+id: 3
+pos: 5
+'
+
 #
 # Declare tests
 #
@@ -1039,6 +1072,88 @@ test_tool recsel-random-one ok \
 'field1: value1
 field2: value2
 field3: value3
+'
+
+test_tool recsel-group-records ok \
+          recsel \
+          '-G id' \
+          group-records \
+'id: 1
+pos: 2
+pos: 3
+
+id: 2
+pos: 4
+
+id: 3
+pos: 1
+pos: 5
+'
+
+test_tool recsel-group-records-sort ok \
+          recsel \
+          '-G pos' \
+          group-records \
+'id: 3
+pos: 1
+
+id: 1
+pos: 2
+
+id: 1
+pos: 3
+
+id: 2
+pos: 4
+
+id: 3
+pos: 5
+'
+
+test_tool recsel-group-records-non-existing-field ok \
+          recsel \
+          '-G doesnotexist' \
+          group-records \
+'id: 3
+pos: 1
+
+id: 1
+pos: 2
+
+id: 1
+pos: 3
+
+id: 2
+pos: 4
+
+id: 3
+pos: 5
+'
+
+test_tool recsel-group-one-record ok \
+          recsel \
+          '-G field3' \
+          one-record \
+'field1: value1
+field2: value2
+field3: value3
+'
+
+test_tool recsel-group-records-missing ok \
+          recsel \
+          '-G id' \
+          group-records-missing \
+'pos: 3
+
+id: 1
+pos: 2
+
+id: 2
+pos: 4
+
+id: 3
+pos: 1
+pos: 5
 '
 
 #

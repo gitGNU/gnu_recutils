@@ -1,5 +1,15 @@
 2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: tests for the group-by operation.
+	* torture/utils/recsel.sh (group-records): New input file.
+	(recsel-group-records): New test.
+	(recsel-group-records-sort): Likewise.
+	(recsel-group-records-non-existing-field): Likewise.
+	(recsel-group-one-record): Likewise.
+	(recsel-group-records-missing): Likewise.
+
+2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	librec,torture: record sorting criteria adjusted to keep the
 	relative positions of 'equal' records.
 	* torture/utils/recfix.sh (Bool): Fix expected result to expect
