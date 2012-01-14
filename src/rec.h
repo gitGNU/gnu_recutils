@@ -1119,6 +1119,14 @@ rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
 
 void rec_rset_sort (rec_rset_t rset, rec_field_name_t sort_by);
 
+/* Group the records of a record set by a given field GROUP_BY.  The
+   given record set must be sorted by GROUP_BY.  Note that this
+   function uses the first field with the given name found in a
+   record, ignoring any subsequent field.  It is up to the user to
+   provide the right records in order to get the desired results.  */
+
+void rec_rset_group (rec_rset_t rset, rec_field_name_t group_by);
+
 /* Add missing auto fields defined in a record set to a given record.
    The record could not be stored in the record set used to determine
    which auto fields to add.  This function is a no-operation if the

@@ -125,6 +125,10 @@ static void rec_rset_add_auto_field_date (rec_rset_t rset,
                                           rec_field_name_t field_name,
                                           rec_record_t record);
 
+static void rec_rset_merge_records (rec_record_t to_record,
+                                    rec_record_t from_record,
+                                    rec_field_t  group_field);
+
 /* The following macro is used by some functions to reduce
    verbosity.  */
 
@@ -665,6 +669,94 @@ rec_rset_sort (rec_rset_t rset,
   
       rec_rset_update_field_props (rset);
     }
+}
+
+void
+rec_rset_group (rec_rset_t rset,
+                rec_field_name_t group_by)
+{
+  rec_mset_iterator_t iter;
+  rec_record_t record;
+  rec_mset_elem_t elem;
+  size_t map_size;
+  bool *deletion_map;
+  size_t num_record;
+
+  /* Create and initialize the deletion map.  */
+
+  map_size = sizeof(bool) * rec_rset_num_records (rset);
+  deletion_map = malloc (map_size);
+  memset (deletion_map, false, map_size);
+
+  /* Iterate on the records of RSET, grouping records and marking the
+     grouped records for deletion.  */
+
+  num_record = 0;
+  iter = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **)&record, NULL))
+    {
+      if (!deletion_map[num_record])
+        {
+          rec_field_t group_by_field = rec_record_get_field_by_name (record,
+                                                                     group_by,
+                                                                     0);
+          if (group_by_field)
+            {
+              size_t num_record_2 = num_record;
+              rec_mset_iterator_t iter2 = iter;
+              rec_record_t record2;
+
+              while (rec_mset_iterator_next (&iter2, MSET_RECORD, (const void**)&record2, NULL))
+                {
+                  rec_field_t group_by_field2 = rec_record_get_field_by_name (record2,
+                                                                              group_by,
+                                                                              0);
+
+                  num_record_2++;
+
+                  if (!group_by_field2
+                      || (strcmp (rec_field_value (group_by_field),
+                                  rec_field_value (group_by_field2)) != 0))
+                    {
+                      break;
+                    }
+                  else
+                    {
+                      /* Insert all the elements of record2 into
+                         record, but not group_by_field.  */
+
+                      rec_rset_merge_records (record,
+                                              record2,
+                                              group_by_field);
+
+                      /* Mark record2 for removal.  */
+                      
+                      deletion_map[num_record_2] = true;
+                    }
+                }
+            }
+          
+          num_record++;
+        }
+    }
+  rec_mset_iterator_free (&iter);
+
+  /* Delete the records marked for deletion.  */
+
+  num_record = 0;
+  iter = rec_mset_iterator (rec_rset_mset (rset));
+  while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, &elem))
+    {
+      if (deletion_map[num_record])
+        {
+          rec_mset_remove_elem (rec_rset_mset (rset), elem);
+        }
+
+      num_record++;
+    }
+  rec_mset_iterator_free (&iter);
+
+  free (deletion_map);
 }
 
 void
@@ -1492,6 +1584,46 @@ rec_rset_add_auto_field_date (rec_rset_t rset,
   auto_field = rec_field_new (rec_field_name_dup (field_name),
                               outstr);
   rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) auto_field, 0);
+}
+
+static void
+rec_rset_merge_records (rec_record_t to_record,
+                        rec_record_t from_record,
+                        rec_field_t group_field)
+{
+  rec_mset_elem_t elem;
+  void *data;
+  rec_mset_iterator_t iter;
+
+  iter = rec_mset_iterator (rec_record_mset (from_record));
+  while (rec_mset_iterator_next (&iter, MSET_ANY, (const void**) &data, &elem))
+    {
+      if (rec_mset_elem_type (elem) == MSET_FIELD)
+        {
+          rec_field_t field = (rec_field_t) data;
+
+          if (rec_field_name_eql_p (rec_field_name (group_field),
+                                    rec_field_name (field))
+              && (strcmp (rec_field_value (group_field), rec_field_value (field)) == 0))
+            {
+              continue;
+            }
+
+          rec_mset_append (rec_record_mset (to_record),
+                           MSET_FIELD,
+                           (void *) rec_field_dup (field),
+                           MSET_ANY);
+        }
+      else
+        {
+          rec_comment_t comment = (rec_comment_t) data;
+          rec_mset_append (rec_record_mset (to_record),
+                           MSET_COMMENT,
+                           (void *) rec_comment_dup (comment),
+                           MSET_ANY);
+        }
+    }
+  rec_mset_iterator_free (&iter);
 }
 
 /* End of rec-rset.c */

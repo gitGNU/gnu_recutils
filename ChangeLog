@@ -1,3 +1,19 @@
+2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recsel,librec: implementation of the group-by operation.
+	* src/rec-rset.c (rec_rset_group): New function.
+	(rec_rset_merge_records): New function.
+
+	* utils/recsel.c (recsel_process_data): Invoke rec_rset_group_by
+	if a group-by field was specified in the command line.
+
+	* src/rec.h: Prototype for rec_rset_group.
+
+	* utils/recsel.c (recsel_group_by_field): New global.
+	(GNU_longOptions): New option --group-by.
+	(recutl_print_help): Documentation for -G|--group-by.
+	(recsel_parse_args): Manage -G|--group-by.
+
 2012-01-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.5.

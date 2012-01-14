@@ -61,6 +61,7 @@ rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 char      *recsel_password     = NULL;
 bool       recsel_uniq         = false;
 size_t     recutl_random       = 0;
+rec_field_name_t recsel_group_by_field = NULL;
 
 /*
  * Command line options management.
@@ -81,7 +82,8 @@ enum
 #if defined REC_CRYPT_SUPPORT
   PASSWORD_ARG,
 #endif
-  UNIQ_ARG
+  UNIQ_ARG,
+  GROUP_BY_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -100,6 +102,7 @@ static const struct option GNU_longOptions[] =
     {"password", required_argument, NULL, PASSWORD_ARG},
 #endif
     {"uniq", no_argument, NULL, UNIQ_ARG},
+    {"group-by", required_argument, NULL, GROUP_BY_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -128,6 +131,7 @@ Select and print rec data.\n"), stdout);
                                         records.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
   -S, --sort=FIELD                    sort the output by the specified field.\n\
+  -G, --group-by=FIELD                group records by the specified field.\n\
   -U, --uniq                          remove duplicated fields in the output records.\n"),
          stdout);
 
@@ -181,7 +185,7 @@ recsel_parse_args (int argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
                              ENCRYPTION_SHORT_ARGS
-                             "S:Cdcp:P:R:U",
+                             "S:Cdcp:P:R:UG:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -233,6 +237,24 @@ recsel_parse_args (int argc,
             if (!recutl_sort_by_field)
               {
                 recutl_fatal (_("invalid field name in -S.\n"));
+              }
+
+            break;
+          }
+        case GROUP_BY_ARG:
+        case 'G':
+          {
+            if (recsel_group_by_field)
+              {
+                recutl_fatal (_("only one field can be specified as a grouping criteria.\n"));
+              }
+
+            /* Parse the field name.  */
+
+            recsel_group_by_field = rec_parse_field_name_str (optarg);
+            if (!recsel_group_by_field)
+              {
+                recutl_fatal (_("invalid field name in -G.\n"));
               }
 
             break;
@@ -415,6 +437,12 @@ recsel_process_data (rec_db_t db)
         {
           recutl_reset_indexes ();
           recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
+        }
+
+      if (recsel_group_by_field)
+        {
+          rec_rset_sort  (rset, recsel_group_by_field);
+          rec_rset_group (rset, recsel_group_by_field);
         }
 
       rec_rset_sort (rset, recutl_sort_by_field);
