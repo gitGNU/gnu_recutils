@@ -1,5 +1,11 @@
 2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: documentation of -G,--group-by.
+	* doc/recutils.texi (recsel Invocation): Documentation of
+	-G|--group-by.
+
+2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: tests for the group-by operation.
 	* torture/utils/recsel.sh (group-records): New input file.
 	(recsel-group-records): New test.
