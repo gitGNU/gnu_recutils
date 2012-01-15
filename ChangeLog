@@ -1,3 +1,9 @@
+2012-01-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	recsel: print an error if an invalid fex is passed to -p,-P or -R.
+	* utils/recsel.c (recsel_parse_args): Print an error message if an
+	invalid fex is passed to -p, -P or -R.
+
 2012-01-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: documentation of -G,--group-by.

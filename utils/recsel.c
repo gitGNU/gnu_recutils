@@ -284,7 +284,7 @@ recsel_parse_args (int argc,
 
             if (!rec_fex_check (recsel_fex_str, REC_FEX_SUBSCRIPTS))
               {
-                exit (EXIT_FAILURE);
+                recutl_fatal (_("invalid list of fields in -%c\n"), c);
               }
 
             /* Create the field expresion.  */
