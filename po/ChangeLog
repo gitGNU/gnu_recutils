@@ -1,3 +1,11 @@
+2012-01-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	po: some translations for 1.5 updated.
+	* de.po: Updated for 1.5.
+	* uk.po: Likewise.
+	* nl.po: Likewise.
+	* fi.po: Likewise.
+
 2011-11-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	qa: syntax fixes.
