@@ -1,3 +1,12 @@
+2012-01-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,utils: fixes of typos in message strings.
+	* src/rec-int.c (rec_int_check_rset): Use 'shall' instead of
+	'should' in text messages.
+	(rec_int_check_descriptor): Likewise.
+
+	* utils/recins.c (recutl_print_help): Typos in help strings fixed.
+
 2012-01-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	recsel: print an error if an invalid fex is passed to -p,-P or -R.

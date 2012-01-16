@@ -169,7 +169,7 @@ rec_int_check_rset (rec_db_t db,
       if (num_records != min_records)
         {
           ADD_ERROR (errors,
-                     _("%s: error: the number of records of type %s shall be %zd.\n"),
+                     _("%s: error: the number of records of type %s should be %zd.\n"),
                      rec_rset_source (rset), rec_rset_type (rset), min_records);
           res++;
         }
@@ -908,7 +908,7 @@ does not exist\n"),
                               "$"))
                 {
                   ADD_ERROR (errors,
-                            _("%s:%s: error: value for %s shall be a field name.\n"),
+                            _("%s:%s: error: value for %s should be a field name.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
                             field_name_str);
@@ -920,7 +920,7 @@ does not exist\n"),
               if (!rec_match (field_value, REC_INT_SIZE_RE))
                 {
                   ADD_ERROR (errors,
-                            _("%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= or <=.\n"),
+                            _("%s:%s: error: value for %s should be a number optionally preceded by >, <, >= or <=.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
                             field_name_str);
@@ -936,7 +936,7 @@ does not exist\n"),
                               "[ \n\t]*$"))
                 {
                   ADD_ERROR (errors,
-                            _("%s:%s: error: value for %s shall be a list of field names.\n"),
+                            _("%s:%s: error: value for %s should be a list of field names.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
                             field_name_str);
@@ -961,7 +961,7 @@ does not exist\n"),
                          || (rec_type_kind (type) == REC_TYPE_DATE)))
                     {
                       ADD_ERROR (errors,
-                                _("%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"),
+                                _("%s:%s: error: auto-incremented field %s should be of type int, range or date\n"),
                                 rec_record_source (descriptor),
                                 rec_record_location_str (descriptor),
                                 auto_field_name_str);
