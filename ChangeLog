@@ -1,3 +1,21 @@
+2012-01-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	doc: make the texinfo documentation easier to find.
+	* man/Makefile.am (rec2csv.1): Use the 'recutils' manual instead
+	of the name of the utilities.
+	(csv2rec.1): Likewise.
+	(mdb2rec.1): Likewise.
+	(recdel.1): Likewise.
+	(recfix.1): Likewise.
+	(recinf.1): Likewise.
+	(recins.1): Likewise.
+	(recsel.1): Likewise.
+	(recset.1): Likewise.
+	(recfmt.1): Likewise.
+
+	* doc/recutils.texi: Entries for the individual utilities in the
+	info index.
+
 2012-01-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,utils: fixes of typos in message strings.

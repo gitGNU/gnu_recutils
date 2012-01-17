@@ -29,6 +29,19 @@ Documentation License''.
 * recutils: (recutils). The GNU Recutils manual.
 @end direntry
 
+@dircategory Individual utilities
+@direntry
+* recinf: (recutils)recinf.                    Get info about recfiles.
+* recsel: (recutils)recsel.                    Read records.
+* recins: (recutils)recins.                    Insert records.
+* recdel: (recutils)recdel.                    Delete records.
+* recset: (recutils)recset.                    Manage fields.
+* recfix: (recutils)recfix.                    Fix recfiles.
+* csv2rec: (recutils)csv2rec.                  CSV to recfiles.
+* rec2csv: (recutils)rec2csv.                  Recfiles to CSV.
+* mdb2rec: (recutils)mdb2rec.                  MDB to recfiles.
+@end direntry
+
 @titlepage
 @title GNU recutils
 @subtitle for version @value{VERSION}, @value{UPDATED}
