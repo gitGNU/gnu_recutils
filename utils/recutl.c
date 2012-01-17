@@ -163,7 +163,7 @@ Record selection options:\n\
   -i, --case-insensitive              make strings case-insensitive in selection\n\
                                         expressions.\n\
   -t, --type=TYPE                     operate on records of the specified type only.\n\
-  -e, --expression=EXPR               selection expression.\n\
+  -e, --expression=RECORD_EXPR        selection expression.\n\
   -q, --quick=STR                     select records with fields containing a string.\n\
   -n, --number=NUM,...                select specific records by position, with ranges.\n\
   -R, --random=NUM                    select a given number of random records.\n"),

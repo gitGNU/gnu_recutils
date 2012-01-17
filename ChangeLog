@@ -1,5 +1,15 @@
 2012-01-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	doc: use same optarg names in --help outputs and the manual.
+	* doc/recutils.texi (recsel Invocation): Use same optarg names
+	than in the synopsis used in --help.
+	(recins Invocation): Likewise.
+	(recdel Invocation): Likewise.
+	(recset Invocation): Likewise.
+	* utils/recutl.c (recutl_print_help_record_selection): Likewise.
+
+2012-01-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	doc: make the texinfo documentation easier to find.
 	* man/Makefile.am (rec2csv.1): Use the 'recutils' manual instead
 	of the name of the utilities.

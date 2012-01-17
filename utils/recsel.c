@@ -116,7 +116,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recsel synopsis.
      no-wrap */
   printf (_("\
-Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
+Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q STR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
 
   /* TRANSLATORS: --help output, recsel arguments.
      no-wrap */

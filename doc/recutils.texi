@@ -2120,7 +2120,7 @@ Match the records occupying the given positions in its record set.
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
 records up to the tenth: @code{-n 0,2,4-9}.
-@item -e @var{expr}
+@item -e @var{record_expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be taken into account to
@@ -2302,7 +2302,7 @@ from the standard input.
 from the standard input.  Synopsis:
 
 @example
-recins [@var{option}]@dots{} [t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str} | -m @var{num}] \
+recins [@var{option}]@dots{} [t @var{type}] [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] \
        [(-f @var{str} -v @var{str}]|[-r @var{recdata})]@dots{} [@var{file}]
 @end example
 
@@ -2361,7 +2361,7 @@ Match the records occupying the given positions in its record set.
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
 records up to the tenth: @code{-n 0,2,4-9}.
-@item -e @var{expr}
+@item -e @var{record_expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).
 Matching records will get replaced.
@@ -2440,7 +2440,7 @@ read from the standard input.
 read from the standard input.  Synopsis:
 
 @example
-recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{indexes} | -e @var{expr} | -q @var{str} | -m @var{num}] [@var{file}]
+recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] [@var{file}]
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
@@ -2461,7 +2461,7 @@ Match the records occupying the given positions in its record set.
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
 records up to the tenth: @code{-n 0,2,4-9}.
-@item -e @var{expr}
+@item -e @var{record_expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be removed from the file.
@@ -2538,7 +2538,7 @@ set.  @var{indexes} must be a comma-separated list of numbers or
 ranges, the ranges being two numbers separated with dashes.  For
 example, the following list denotes the first, the third, the fourth
 and all records up to the tenth: @code{-n 0,2,4-9}.
-@item -e @var{expr}
+@item -e @var{record_expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be processed.

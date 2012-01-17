@@ -110,7 +110,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recins synopsis.
      no-wrap */
   printf (_("\
-Usage: recins [OPTION]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f NAME -v STR) | -R RECDATA]... [FILE]\n"));
+Usage: recins [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m NUM] [(-f NAME -v STR) | -R RECDATA]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recins short description.
      no-wrap */

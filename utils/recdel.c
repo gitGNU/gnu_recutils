@@ -87,7 +87,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recdel synopsis.
      no-wrap */
   printf (_("\
-Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [FILE]\n"));
+Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m NUM] [FILE]\n"));
 
   /* TRANSLATORS: --help output, recdel short description.
      no-wrap */
