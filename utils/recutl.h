@@ -99,10 +99,7 @@
                                                                \
         if (recutl_quick_str)                                  \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -e and also -q.\n",  \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+            recutl_fatal (_("cannot specify -e and also -q\n"));\
           }                                                    \
                                                                \
          recutl_sex_str = xstrdup (optarg);                    \
@@ -113,10 +110,7 @@
             recutl_sex = rec_sex_new (recutl_insensitive);     \
             if (!rec_sex_compile (recutl_sex, recutl_sex_str)) \
              {                                                 \
-                fprintf (stderr,                               \
-                         "%s: error: invalid selection expression.\n",\
-                         program_name);                        \
-                exit (EXIT_FAILURE);                           \
+               recutl_fatal(_("invalid selection expression\n"));       \
              }                                                 \
           }                                                    \
                                                                \
@@ -128,18 +122,12 @@
                                                                \
          if (recutl_sex)                                       \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -n and also -e.\n",  \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+             recutl_fatal(_("cannot specify -n and also -e\n"));\
           }                                                    \
                                                                \
         if (recutl_quick_str)                                  \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -n and also -q\n",   \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+             recutl_fatal(_("cannot specify -n and also -q\n"));\
           }                                                    \
                                                                \
         if (recutl_num_indexes() != 0)                         \
@@ -159,26 +147,17 @@
       {                                                        \
         if (recutl_sex)                                        \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -m and also -e.\n",  \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+             recutl_fatal (_("cannot specify -m and also -e\n"));\
           }                                                    \
                                                                \
         if (recutl_quick_str)                                  \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -m and also -q\n",   \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+             recutl_fatal (_("cannot specify -m and also -q\n"));\
           }                                                    \
                                                                \
         if (recutl_num_indexes() != 0)                         \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -m and also -n\n",   \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+             recutl_fatal (_("cannot specify -m and also -n\n"));\
           }                                                    \
                                                                \
         if (recutl_random)                                     \
@@ -204,14 +183,11 @@
       {                                                        \
          if (recutl_sex)                                       \
           {                                                    \
-             fprintf (stderr,                                  \
-                      "%s: cannot specify -n and also -e.\n",  \
-                      program_name);                           \
-             exit (EXIT_FAILURE);                              \
+             recutl_fatal (_("cannot specify -e and also -n\n"));\
           }                                                    \
         if (recutl_num_indexes() != 0)                         \
           {                                                    \
-            recutl_fatal (_("cannot specify -e and also -n")); \
+            recutl_fatal (_("cannot specify -e and also -n\n"));\
           }                                                    \
                                                                \
         recutl_quick_str = xstrdup (optarg);                   \
