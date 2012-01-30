@@ -1,16 +1,16 @@
 # Translation of recutils to French.
-# Copyright (C) 2011 Free Software Foundation, Inc.
+# Copyright (C) 2012 Free Software Foundation, Inc.
 # This file is distributed under the same license as the recutils package.
-# Frédéric Marchal <fmarchal@perso.be>, 2011.
 # Je ne désire pas continuer cette traduction. Quiconque voudrait continuer
 # la traduction est le bienvenu.
 #
+# Frédéric Marchal <fmarchal@perso.be>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU recutils 1.4\n"
+"Project-Id-Version: GNU recutils 1.5\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2011-11-03 18:34+0100\n"
-"PO-Revision-Date: 2011-11-16 21:22+0100\n"
+"POT-Creation-Date: 2012-01-13 12:00+0100\n"
+"PO-Revision-Date: 2012-01-30 20:16+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "write error"
 msgstr "Erreur d'écriture"
 
-#: lib/error.c:187
+#: lib/error.c:188
 msgid "Unknown system error"
 msgstr "Erreur système inconnue"
 
@@ -91,28 +91,30 @@ msgstr "%s: l'option « -W %s » exige un argument\n"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
-#.
 #. The message catalog should translate "`" to a left
 #. quotation mark suitable for the locale, and similarly for
-#. "'".  If the catalog has no translation,
-#. locale_quoting_style quotes `like this', and
-#. clocale_quoting_style quotes "like this".
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
 #.
-#. For example, an American English Unicode locale should
-#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
-#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
-#. MARK).  A British English Unicode locale should instead
-#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK)
-#. and U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:271
+#: lib/quotearg.c:311
 msgid "`"
 msgstr "« "
 
-#: lib/quotearg.c:272
+#: lib/quotearg.c:312
 msgid "'"
 msgstr " »"
 
@@ -212,252 +214,232 @@ msgstr "le sous-processus %s a reçu le signal fatal %d"
 msgid "memory exhausted"
 msgstr "mémoire épuisée"
 
-#: src/rec-fex.c:194
-#, c-format
-msgid "internal error: rec_resolver_check: error compiling regexp.\n"
-msgstr "erreur interne: rec_resolver_check: erreur lors de la compilation de la regexp.\n"
-
-#: src/rec-fex.c:402
+#: src/rec-fex.c:377
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
 msgstr "erreur interne: REC_FEX_MAX_ELEMS dépassé. Merci de rapporter ceci.\n"
 
-#: src/rec-field-name.c:245
+#: src/rec-int.c:172
 #, c-format
-msgid "internal error: rec_field_name_str_p: error compiling regexp.\n"
-msgstr "erreur interne: rec_field_name_str_p: erreur à la compilation de la regexp.\n"
+msgid "%s: error: the number of records of type %s shall be %zd.\n"
+msgstr "%s: erreur: le nombre d'enregistrements de type %s sera %zd.\n"
 
-#: src/rec-field-name.c:267
+#: src/rec-int.c:182
 #, c-format
-msgid "internal error: rec_field_name_part_str_p: error compiling regexp.\n"
-msgstr "erreur interne: rec_field_name_part_str_p: erreur à la compilation de la regexp.\n"
+msgid "%s: error: too many records of type %s. Maximum allowed are %zd.\n"
+msgstr "%s: erreur: trop d'enregistrements de type %s. Le maximum permis est %zd.\n"
 
-#: src/rec-int.c:156
+#: src/rec-int.c:189
 #, c-format
-msgid "%s: error: the number of records of type %s shall be %d.\n"
-msgstr "%s: erreur: le nombre d'enregistrements de type %s sera %d.\n"
+msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
+msgstr "%s: erreur: trop peu d'enregistrements de type %s. Le minimum permis est %zd.\n"
 
-#: src/rec-int.c:170
-#, c-format
-msgid "%s: error: too many records of type %s. Maximum allowed are %d.\n"
-msgstr "%s: erreur: trop d'enregistrements de type %s. Le maximum permis est %d.\n"
-
-#: src/rec-int.c:181
-#, c-format
-msgid "%s: error: too few records of type %s. Minimum allowed are %d.\n"
-msgstr "%s: erreur: trop peu d'enregistrements de type %s. Le minimum permis est %d.\n"
-
-#: src/rec-int.c:302
+#: src/rec-int.c:305
 #, c-format
 msgid "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
 msgstr "%s:%s: attention: le type %s entre en collision avec le type référé %s dans le rset %s.\n"
 
-#: src/rec-int.c:414
+#: src/rec-int.c:410
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr "%s:%s: erreur: champ obligatoire « %s » pas trouvé dans l'enregistrement\n"
 
-#: src/rec-int.c:474
+#: src/rec-int.c:463
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
 msgstr "%s:%s: erreur: le champ « %s » devrait être unique dans cet enregistrement\n"
 
-#: src/rec-int.c:534
+#: src/rec-int.c:516
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr "%s:%s erreur: champ prohibé « %s » rencontré dans l'enregistrement\n"
 
-#: src/rec-int.c:580
+#: src/rec-int.c:555
 #, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
 msgstr "%s:%s: erreur: le champ confidentiel n'est pas chiffré\n"
 
-#: src/rec-int.c:635
+#: src/rec-int.c:607
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr "%s:%s: erreur: le champ clé « %s » n'est pas trouvé dans l'enregistrement\n"
 
-#: src/rec-int.c:646
+#: src/rec-int.c:616
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr "%s:%s: erreur: plusieurs champs clé « %s » dans l'enregistrement\n"
 
-#: src/rec-int.c:691
+#: src/rec-int.c:659
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr "%s:%s: erreur: valeur de clé en double dans le champ « %s » de l'enregistrement\n"
 
-#: src/rec-int.c:774
+#: src/rec-int.c:709
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr "%s:%s: erreur: champ %%rec manquant dans le descripteur de l'enregistrement\n"
 
-#: src/rec-int.c:784
+#: src/rec-int.c:717
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr "%s:%s: erreur: trop de champs %%rec dans le descripteur d'enregistrement\n"
 
-#: src/rec-int.c:796
+#: src/rec-int.c:727
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr "%s:%s: erreur: type d'enregistrement %s invalide\n"
 
-#: src/rec-int.c:809
+#: src/rec-int.c:738
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr "%s:%s: erreur: un seul champ %%key permis dans le descripteur d'enregistrement\n"
 
-#: src/rec-int.c:821
+#: src/rec-int.c:748
 #, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
 msgstr "%s:%s: erreur: un seul champ %%size permis dans le descripteur d'enregistrement\n"
 
-#: src/rec-int.c:833
+#: src/rec-int.c:758
 #, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
 msgstr "%s:%s: erreur: un seul champ %%sort permis dans le descripteur d'enregistrement\n"
 
-#: src/rec-int.c:859
+#: src/rec-int.c:782
 #, c-format
 msgid "%s:%s: error: expected a comma-separated list of fields before the type specification\n"
 msgstr "%s:%s: erreur: une liste de champs délimités par des virgules est attendue devant la spécification de type\n"
 
-#: src/rec-int.c:887 src/rec-int.c:946
+#: src/rec-int.c:808 src/rec-int.c:861
 #, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
 msgstr "%s:%s: erreur: le type référé %s n'existe pas\n"
 
-#: src/rec-int.c:901 src/rec-int.c:960
+#: src/rec-int.c:820
 #, c-format
-msgid "%s:%s: error: invalid typedef specification\n"
-msgstr "%s:%s: erreur: spécification typedef invalide\n"
+msgid "%s:%s: error: invalid type specification\n"
+msgstr "%s:%s: erreur: spécification type invalide\n"
 
-#: src/rec-int.c:918
+#: src/rec-int.c:835
 #, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
 msgstr "%s:%s: erreur: un nom de type est attendu avant la spécification du type\n"
 
-#: src/rec-int.c:984
+#: src/rec-int.c:873
 #, c-format
-msgid "%s:%s: error: value for %s[%d] is not a list of field names\n"
-msgstr "%s:%s: erreur: la valeur de %s[%d] n'est pas une liste de noms de champs\n"
+msgid "%s:%s: error: invalid typedef specification\n"
+msgstr "%s:%s: erreur: spécification typedef invalide\n"
 
-#: src/rec-int.c:1002
+#: src/rec-int.c:895
+#, c-format
+msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
+msgstr "%s:%s: erreur: la valeur de %s[%zd] n'est pas une liste de noms de champs\n"
+
+#: src/rec-int.c:911
 #, c-format
 msgid "%s:%s: error: value for %s shall be a field name.\n"
 msgstr "%s:%s: erreur: la valeur de %s sera un nom de champ.\n"
 
-#: src/rec-int.c:1016
+#: src/rec-int.c:923
 #, c-format
 msgid "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= or <=.\n"
 msgstr "%s:%s: erreur: la valeur pour %s sera un nombre facultatif précédé de >, <, >= ou <=.\n"
 
-#: src/rec-int.c:1034
+#: src/rec-int.c:939
 #, c-format
 msgid "%s:%s: error: value for %s shall be a list of field names.\n"
 msgstr "%s:%s: erreur: la valeur de %s sera une liste de noms de champs.\n"
 
-#: src/rec-int.c:1061
+#: src/rec-int.c:964
 #, c-format
 msgid "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
 msgstr "%s:%s: erreur: le champ auto-incrémenté %s sera de type entier, plage ou date\n"
 
-#: src/rec-int.c:1161
+#: src/rec-int.c:1046
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr "%s:%s: erreur: le descripteur distant n'a pas pu être récupéré depuis l'URL %s.\n"
 
-#: src/rec-int.c:1181
+#: src/rec-int.c:1065
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr "%s:%s: erreur: le descripteur externe n'a pas pu être lu depuis le fichier %s.\n"
 
-#: src/rec-int.c:1197
+#: src/rec-int.c:1080
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: erreur: %s ne contient aucune donnée d'enregistrement valable.\n"
 
-#: src/rec-int.c:1212
+#: src/rec-int.c:1094
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: erreur: %s ne contient aucune information pour le type %s.\n"
 
-#: src/rec-int.c:1280
-#, c-format
-msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
-msgstr "erreur interne: rec_int_rec_type_p: erreur à la compilation de la regexp.\n"
-
-#: src/rec-types.c:394
+#: src/rec-types.c:393
 #, c-format
 msgid "internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() in rec_type_new().\n"
 msgstr "erreur interne: rec-types: REC_TYPE_NONE reçu de rec_type_parse_type_kind() dans rec_type_new().\n"
 
-#: src/rec-types.c:859
-#, c-format
-msgid "internal error: rec-types: error compiling regexp.\n"
-msgstr "erreur interne: rec-types: erreur à la compilation de la regexp.\n"
-
-#: src/rec-types.c:935
+#: src/rec-types.c:913
 msgid "invalid integer."
 msgstr "entier invalide."
 
-#: src/rec-types.c:951
+#: src/rec-types.c:929
 msgid "invalid 'field' value."
 msgstr "valeur « field » invalide."
 
-#: src/rec-types.c:967
+#: src/rec-types.c:945
 msgid "invalid 'bool' value."
 msgstr "valeur « bool » invalide."
 
-#: src/rec-types.c:990
+#: src/rec-types.c:968
 msgid "invalid 'range' value."
 msgstr "valeur « range » invalide."
 
-#: src/rec-types.c:999
+#: src/rec-types.c:977
 #, c-format
 msgid "expected an integer between %d and %d."
 msgstr "entier entre %d et %d attendu."
 
-#: src/rec-types.c:1018
+#: src/rec-types.c:998
 msgid "invalid 'real' value."
 msgstr "valeur « real » invalide."
 
-#: src/rec-types.c:1036
+#: src/rec-types.c:1016
 #, c-format
 msgid "value too large.  Expected a size <= %zu."
 msgstr "valeur trop grande. Taille attendue <= %zu."
 
-#: src/rec-types.c:1055
+#: src/rec-types.c:1037
 msgid "invalid 'line' value."
 msgstr "valeur « ligne » attendue."
 
-#: src/rec-types.c:1074
+#: src/rec-types.c:1056
 msgid "value does not match the regexp."
 msgstr "valeur ne correspond pas à l'expression régulière."
 
-#: src/rec-types.c:1097
+#: src/rec-types.c:1079
 msgid "invalid date."
 msgstr "date invalide."
 
-#: src/rec-types.c:1113
+#: src/rec-types.c:1095
 msgid "invalid email."
 msgstr "email invalide."
 
-#: src/rec-types.c:1167
+#: src/rec-types.c:1149
 msgid "invalid enum value."
 msgstr "valeur énumérée invalide."
 
-#: src/rec-utils.c:86
+#: src/rec-utils.c:87
 #, c-format
 msgid "internal error: rec_int_rec_extract_file: error compiling regexp.\n"
 msgstr "erreur interne: rec_int_rec_extract_file: erreur à la compilation de la regexp.\n"
 
-#: src/rec-utils.c:114 src/rec-utils.c:142
+#: src/rec-utils.c:115 src/rec-utils.c:143
 #, c-format
 msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
 msgstr "erreur interne: rec_int_rec_extract_url: erreur à la compilation de la regexp.\n"
 
-#: src/rec-utils.c:285
+#: src/rec-utils.c:289
 #, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
 msgstr "erreur interne: rec_match: erreur à la compilation de la regexp.\n"
@@ -508,8 +490,8 @@ msgstr "à cours de mémoire\n"
 msgid "not enough headers"
 msgstr "pas assez d'en-têtes"
 
-#: utils/csv2rec.c:344 utils/recdel.c:311 utils/recset.c:691
-#: utils/recutl.c:251
+#: utils/csv2rec.c:344 utils/recdel.c:328 utils/recset.c:706
+#: utils/recutl.c:294
 #, c-format
 msgid "cannot read file %s\n"
 msgstr "impossible de lire le fichier %s\n"
@@ -567,21 +549,21 @@ msgstr "erreur lors de la normalisation du nom du champ %s\n"
 msgid "failed to normalise the field name %s\n"
 msgstr "erreur lors de la normalisation du nom du champ %s\n"
 
-#: utils/mdb2rec.c:465 utils/recins.c:455 utils/recset.c:264
+#: utils/mdb2rec.c:465 utils/recins.c:342 utils/recset.c:265
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "nom de champ %s invalide.\n"
 
-#: utils/mdb2rec.c:495
+#: utils/mdb2rec.c:496 utils/rec2csv.c:193 utils/rec2csv.c:200
 msgid "out of memory"
 msgstr "à cours de mémoire"
 
-#: utils/mdb2rec.c:505
+#: utils/mdb2rec.c:506
 #, c-format
 msgid "could not open file %s\n"
 msgstr "le fichier %s n'a pas pu être ouvert\n"
 
-#: utils/mdb2rec.c:512
+#: utils/mdb2rec.c:513
 msgid "file does not appear to be an Access database\n"
 msgstr "le fichier ne semble pas être une base de données Access\n"
 
@@ -610,30 +592,30 @@ msgstr ""
 "                                        par défaut est utilisé si ce paramètre est omis\n"
 "  -S, --sort=CHAMP                    trier la sortie selon le champ spécifié.\n"
 
-#: utils/rec2csv.c:135 utils/recsel.c:209
+#: utils/rec2csv.c:135 utils/recsel.c:228
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr "un seul champ peut servir de critère de tri.\n"
 
-#: utils/rec2csv.c:142 utils/recsel.c:216
+#: utils/rec2csv.c:142 utils/recsel.c:235
 msgid "invalid field name in -S.\n"
 msgstr "nom de champ invalide dans -S.\n"
 
 #. TRANSLATORS: --help output, recdel synopsis.
 #. no-wrap
-#: utils/recdel.c:88
+#: utils/recdel.c:89
 #, c-format
-msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FILE]\n"
-msgstr "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR] [FICHIER]\n"
+msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [FILE]\n"
+msgstr "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q CHAÎNE | -m NUM] [FICHIER]\n"
 
 #. TRANSLATORS: --help output, recdel short description.
 #. no-wrap
-#: utils/recdel.c:93
+#: utils/recdel.c:94
 msgid "Remove (or comment out) records from a rec file.\n"
 msgstr "Supprime (ou met en commentaire) les enregistrements du fichier enrg.\n"
 
 #. TRANSLATORS: --help output, recdel arguments.
 #. no-wrap
-#: utils/recdel.c:100
+#: utils/recdel.c:101
 msgid ""
 "  -c, --comment                       comment out the matching records instead of\n"
 "                                        deleting them.\n"
@@ -657,7 +639,7 @@ msgstr ""
 #. no-wrap
 #. TRANSLATORS: --help output, notes on recins.
 #. no-wrap
-#: utils/recdel.c:118 utils/recfix.c:163 utils/recins.c:144
+#: utils/recdel.c:119 utils/recfix.c:169 utils/recins.c:150
 msgid ""
 "If no FILE is specified then the command acts like a filter, getting\n"
 "the data from standard input and writing the result to standard output.\n"
@@ -665,44 +647,44 @@ msgstr ""
 "Si aucun FICHIER n'est spécifié alors la commande agit comme un filtre récupérant les\n"
 "données depuis l'entrée standard et écrivant le résultat sur la sortie standard.\n"
 
-#: utils/recdel.c:142
+#: utils/recdel.c:143
 #, c-format
 msgid "no records of type %s found.\n"
 msgstr "aucun enregistrement de type %s trouvé.\n"
 
-#: utils/recdel.c:209 utils/recins.c:615 utils/recsel.c:372
+#: utils/recdel.c:224 utils/recins.c:501 utils/recsel.c:447
 msgid "evaluating the selection expression.\n"
 msgstr "évaluation de l'expression sélectionnée.\n"
 
-#: utils/recdel.c:272
+#: utils/recdel.c:289
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr "ignore la demande de supprimer tous les enregistrements de type %s.\n"
 
-#: utils/recdel.c:274
+#: utils/recdel.c:291
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr "utilisez --force si vous voulez réellement continuer ou alors utilisez -n ou -e.\n"
 
-#: utils/recdel.c:282 utils/recset.c:424
+#: utils/recdel.c:299 utils/recset.c:432
 msgid "invalid selection expression.\n"
 msgstr "expression de sélection invalide.\n"
 
 #. TRANSLATORS: --help output, recfix synopsis.
 #. no-wrap
-#: utils/recfix.c:113
+#: utils/recfix.c:118
 #, c-format
 msgid "Usage: recfix [OPTION]... [OPERATION] [OP_OPTION]... [FILE]\n"
 msgstr "Usage: recfix [OPTION]... [OPÉRATION] [OP_OPTION]... [FICHIER]\n"
 
 #. TRANSLATORS: --help output, recfix short description.
 #. no-wrap
-#: utils/recfix.c:118
+#: utils/recfix.c:123
 msgid "Check and fix rec files.\n"
 msgstr "Vérifie et corrige les fichiers enrg.\n"
 
 #. TRANSLATORS: --help output, recfix global arguments.
 #. no-wrap
-#: utils/recfix.c:125
+#: utils/recfix.c:130
 msgid ""
 "  -t, --type=TYPE                     process only records of the given type.\n"
 "      --no-external                   don't use external descriptors.\n"
@@ -714,19 +696,21 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recfix operations.
 #. no-wrap
-#: utils/recfix.c:136
+#: utils/recfix.c:141
 msgid ""
 "Operations:\n"
 "      --check                         check integrity of the specified file.  Default.\n"
 "      --sort                          sort the records in the specified file.\n"
+"      --auto                          insert auto-generated fields in records missing them.\n"
 msgstr ""
 "Opérations:\n"
 "      --check                         vérifie l'intégrité du fichier spécifié. Défaut.\n"
 "      --sort                          trier les enregistrements dans le fichier spécifié.\n"
+"      --auto                          insérer des champs auto-générés dans les enregistrements où ils manquent.\n"
 
 #. TRANSLATORS: --help output, recfix operations related with encryption.
 #. no-wrap
-#: utils/recfix.c:145
+#: utils/recfix.c:151
 msgid ""
 "      --encrypt                       encrypt confidential fields in the specified file.\n"
 "      --decrypt                       decrypt confidential fields in the specified file.\n"
@@ -737,7 +721,7 @@ msgstr ""
 #. TRANSLATORS: --help output, recfix encryption and decryption
 #. options.
 #. no-wrap
-#: utils/recfix.c:154
+#: utils/recfix.c:160
 msgid ""
 "De/Encryption options:\n"
 "  -s, --password=PASSWORD             encrypt/decrypt with this password.\n"
@@ -745,31 +729,36 @@ msgstr ""
 "Options de dé/chiffrement:\n"
 "  -s, --password=MOT_DE_PASSE         chiffre/déchiffre avec ce mot de passe.\n"
 
-#: utils/recfix.c:208
+#: utils/recfix.c:210
 msgid "--password|-s must be used as an operation argument.\n"
 msgstr "--password|-s doit être utilisé comme un argument d'opération.\n"
 
-#: utils/recfix.c:214
+#: utils/recfix.c:216
 msgid "the specified operation does not require a password.\n"
 msgstr "l'opération spécifiée n'a pas besoin de mot de passe.\n"
 
-#: utils/recfix.c:219
+#: utils/recfix.c:221
 msgid "please specify just one password.\n"
 msgstr "veuillez n'indiquer qu'un seul mot de passe.\n"
 
-#: utils/recfix.c:230 utils/recfix.c:240 utils/recfix.c:251 utils/recfix.c:261
+#: utils/recfix.c:232 utils/recfix.c:242 utils/recfix.c:252 utils/recfix.c:263
+#: utils/recfix.c:273
 msgid "please specify just one operation.\n"
 msgstr "veuillez n'indiquer qu'une seule opération\n"
 
-#: utils/recfix.c:424
+#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:348
+msgid "Password: "
+msgstr "Mot de passe: "
+
+#: utils/recfix.c:451
 msgid "the database contains already encrypted fields\n"
 msgstr "la base de données contient déjà des champs chiffrés\n"
 
-#: utils/recfix.c:425
+#: utils/recfix.c:452
 msgid "please use --force or --decrypt\n"
 msgstr "veuillez utiliser --force ou --decrypt\n"
 
-#: utils/recfix.c:488
+#: utils/recfix.c:561
 msgid "unknown operation in recfix: please report this as a bug.\n"
 msgstr "opération inconnue dans recfix: veuillez rapporter ceci comme un bug.\n"
 
@@ -859,20 +848,20 @@ msgstr "erreur: impossible de lire le fichier %s\n"
 
 #. TRANSLATORS: --help output, recins synopsis.
 #. no-wrap
-#: utils/recins.c:106
+#: utils/recins.c:112
 #, c-format
-msgid "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f STR -v STR]|[-r RECDATA)]... [FILE]\n"
-msgstr "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR] [(-f CHAÎNE -v CHAÎNE]|[-r RECDATA)]... [FICHIER]\n"
+msgid "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f STR -v STR]|[-R RECDATA)]... [FILE]\n"
+msgstr "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q CHAÎne | -m NUM] [(-f CHAÎNE -v CHAÎNE]|[-r RECDATA)]... [FICHIER]\n"
 
 #. TRANSLATORS: --help output, recins short description.
 #. no-wrap
-#: utils/recins.c:111
+#: utils/recins.c:117
 msgid "Insert new records in a rec database.\n"
 msgstr "Insérer les nouveaux enregistrements dans une base de données d'enregistrements.\n"
 
 #. TRANSLATORS: --help output, recins arguments.
 #. no-wrap
-#: utils/recins.c:117
+#: utils/recins.c:123
 msgid ""
 "  -f, --field=STR                     field name; should be followed by a -v.\n"
 "  -v, --value=STR                     field value; should be preceded by an -f.\n"
@@ -896,75 +885,69 @@ msgstr ""
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recins.c:131
+#: utils/recins.c:137
 msgid "  -s, --password=STR                  encrypt confidential fields with the given password.\n"
 msgstr "  -s, --password=CHAÎNE               chiffrer les champs confidentiels avec ce mot de passe.\n"
 
-#: utils/recins.c:332 utils/recins.c:589
-msgid "the record set contains confidential fields but no password was provided\n"
-msgstr "l'ensemble d'enregistrements contient des champs confidentiels mais aucun mot de passe n'a été fourni\n"
-
-#: utils/recins.c:333 utils/recins.c:590
-msgid "the resulting record will have those fields unencrypted!\n"
-msgstr "l'enregistrement résultant contiendra ces champs non chiffrés !\n"
-
-#: utils/recins.c:429
+#: utils/recins.c:316
 msgid "a -f should be followed by a -v\n"
 msgstr "un -f devrait être suivi par un -v\n"
 
-#: utils/recins.c:467
+#: utils/recins.c:354
 msgid "a -v should be preceded by a -f\n"
 msgstr "un -v devrait être précédé par un -f\n"
 
-#: utils/recins.c:491 utils/recsel.c:198
+#: utils/recins.c:379 utils/recsel.c:216
 msgid "more than one password was specified\n"
 msgstr "plus d'un mot de passe a été spécifié\n"
 
-#: utils/recins.c:504
+#: utils/recins.c:393
 msgid "error while parsing the record provided by -r\n"
 msgstr "erreur lors de l'analyse de l'enregistrement fourni par -r\n"
 
-#: utils/recins.c:539
+#: utils/recins.c:428
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "veuillez fournir une valeur pour le champ %s\n"
 
 #. TRANSLATORS: --help output, recsel synopsis.
 #. no-wrap
-#: utils/recsel.c:106
+#: utils/recsel.c:115
 #, c-format
-msgid "Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
-msgstr "Usage: recsel [OPTION]... [-t TYPE] [-n NUM | -e EXPR_ENRG] [-c | (-p|-P) EXPR_CHAMP] [FICHIER]...\n"
+msgid "Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
+msgstr "Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e EXPR_ENRG | -q EXPR | -m NUM] [-c | (-p|-P) EXPR_CHAMP] [FICHIER]...\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:111
+#: utils/recsel.c:120
 msgid "Select and print rec data.\n"
 msgstr "Sélectionne et affiche les données de l'enregistrement.\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:117
+#: utils/recsel.c:126
 msgid ""
 "  -d, --include-descriptors           print record descriptors along with the matched\n"
 "                                        records.\n"
 "  -C, --collapse                      do not section the result in records with newlines.\n"
 "  -S, --sort=FIELD                    sort the output by the specified field.\n"
+"  -U, --uniq                          remove duplicated fields in the output records.\n"
 msgstr ""
 "  -d, --include-descriptors           afficher les descripteurs d'enregistrements ainsi que les enregistrements\n"
 "                                        correspondants.\n"
 "  -C, --collapse                      ne pas séparer les résultats des enregistrements avec des sauts de lignes.\n"
 "  -S, --sort=CHAMP                    trier la sortie selon le champ spécifié.\n"
+"  -U, --uniq                          supprimer les champs dupliqués dans les enregistrements de sortie.\n"
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recsel.c:127
+#: utils/recsel.c:137
 msgid "  -s, --password=STR                  decrypt confidential fields with the given password.\n"
 msgstr "  -s, --password=CHAÎNE               déchiffrer les champs confidentiels avec ce mot de passe.\n"
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
-#: utils/recsel.c:140
+#: utils/recsel.c:150
 msgid ""
 "Output options:\n"
 "  -p, --print=FIELDS                  comma-separated list of fields to print for each\n"
@@ -987,7 +970,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel special options.
 #. no-wrap
-#: utils/recsel.c:154
+#: utils/recsel.c:164
 msgid ""
 "Special options:\n"
 "      --print-sexps                   print the data in sexps instead of rec format.\n"
@@ -995,38 +978,38 @@ msgstr ""
 "Options spéciales:\n"
 "      --print-sexps                   afficher les données en sexps au lieu du format enrg.\n"
 
-#: utils/recsel.c:228
+#: utils/recsel.c:247
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr "vous ne pouvez pas spécifier -[pPR] en même temps que -c.\n"
 
-#: utils/recsel.c:254
+#: utils/recsel.c:273
 msgid "internal error creating the field expression.\n"
 msgstr "erreur interne lors de la création de l'expression de champ.\n"
 
-#: utils/recsel.c:270
+#: utils/recsel.c:289
 msgid "cannot specify -c and also -p.\n"
 msgstr "vous ne pouvez pas spécifier -c en même temps que -p.\n"
 
-#: utils/recsel.c:317
+#: utils/recsel.c:369
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr "plusieurs types d'enregistrements trouvés. Veuillez utiliser -t pour en spécifier un.\n"
 
 #. TRANSLATORS: --help output, recset synopsis.
 #. no-wrap
-#: utils/recset.c:124
+#: utils/recset.c:125
 #, c-format
 msgid "Usage: recset [OPTION]... [FILE]...\n"
 msgstr "Usage: recset [OPTION]... [FICHIER]...\n"
 
 #. TRANSLATORS: --help output, recset short description.
 #. no-wrap
-#: utils/recset.c:129
+#: utils/recset.c:130
 msgid "Alter or delete fields in records.\n"
 msgstr "Altérer ou éditer les champs dans les enregistrements.\n"
 
 #. TRANSLATORS: --help output, recset options.
 #. no-wrap
-#: utils/recset.c:135
+#: utils/recset.c:136
 msgid ""
 "      --no-external                   don't use external descriptors.\n"
 "      --force                         alter the records even if violating record\n"
@@ -1038,7 +1021,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset field selection options.
 #. no-wrap
-#: utils/recset.c:148
+#: utils/recset.c:149
 msgid ""
 "Field selection options:\n"
 "  -f, --fields=FIELDS                 comma-separated list of field names with optional\n"
@@ -1050,7 +1033,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset actions.
 #. no-wrap
-#: utils/recset.c:156
+#: utils/recset.c:157
 msgid ""
 "Actions:\n"
 "  -s, --set=VALUE                     change the value of the selected fields.\n"
@@ -1074,35 +1057,35 @@ msgstr ""
 "  -d, --delete                        effacer les champs sélectionnés.\n"
 "  -c, --comment                       mettre en commentaire les champs sélectionnés.\n"
 
-#: utils/recset.c:179
+#: utils/recset.c:180
 msgid "please specify some field with -f.\n"
 msgstr "veuillez spécifier des champs avec -f.\n"
 
-#: utils/recset.c:184
+#: utils/recset.c:185
 msgid "please specify just one action.\n"
 msgstr "veuillez ne spécifier qu'une seule action.\n"
 
-#: utils/recset.c:224
+#: utils/recset.c:225
 msgid "invalid field expression in -f.\n"
 msgstr "expression de champ invalide dans -f.\n"
 
-#: utils/recset.c:232
+#: utils/recset.c:233
 msgid "creating the field expression.\n"
 msgstr "création de l'expression de champ.\n"
 
-#: utils/recset.c:254
+#: utils/recset.c:255
 msgid "the rename operation requires just one field with an optional subscript.\n"
 msgstr "l'opération de renommage requiert un seul champ avec un indice optionnel.\n"
 
-#: utils/recset.c:439 utils/recutl.c:435
+#: utils/recset.c:449 utils/recutl.c:489
 msgid "operation aborted due to integrity failures.\n"
 msgstr "opération annulée à cause d'erreurs d'intégrité.\n"
 
-#: utils/recset.c:440 utils/recutl.c:436
+#: utils/recset.c:450 utils/recutl.c:490
 msgid "use --verbose to get a detailed report.\n"
 msgstr "utilisez --verbose pour obtenir un rapport détaillé.\n"
 
-#: utils/recset.c:447 utils/recutl.c:443
+#: utils/recset.c:457 utils/recutl.c:497
 msgid "use --force to skip the integrity check.\n"
 msgstr "utilisez --force pour ignorer la validation d'intégrité.\n"
 
@@ -1111,35 +1094,35 @@ msgstr "utilisez --force pour ignorer la validation d'intégrité.\n"
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: utils/recutl.c:87
+#: utils/recutl.c:129
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr ""
 "Signalez les bugs à: %s\n"
 "Signalez les erreurs de traduction à: traduc@traduc.org\n"
 
-#: utils/recutl.c:90
+#: utils/recutl.c:132
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr "Rapportez les bugs de %s à: %s\n"
 
-#: utils/recutl.c:94
+#: utils/recutl.c:136
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr "Page d'accueil de %s: <%s>\n"
 
-#: utils/recutl.c:96
+#: utils/recutl.c:138
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
 msgstr "Page d'accueil de %s: <http://www.gnu.org/software/recutils/>\n"
 
-#: utils/recutl.c:99
+#: utils/recutl.c:141
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr "Aide générale sur l'utilisation des logiciels GNU: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
-#: utils/recutl.c:108
+#: utils/recutl.c:150
 msgid ""
 "      --help                          print a help message and exit.\n"
 "      --version                       show version and exit.\n"
@@ -1149,23 +1132,27 @@ msgstr ""
 
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
-#: utils/recutl.c:119
+#: utils/recutl.c:161
 msgid ""
 "Record selection options:\n"
 "  -i, --case-insensitive              make strings case-insensitive in selection\n"
 "                                        expressions.\n"
 "  -t, --type=TYPE                     operate on records of the specified type only.\n"
 "  -e, --expression=EXPR               selection expression.\n"
-"  -n, --number=NUM                    select an specific record.\n"
+"  -q, --quick=STR                     select records with fields containing a string.\n"
+"  -n, --number=NUM,...                select specific records by position, with ranges.\n"
+"  -R, --random=NUM                    select a given number of random records.\n"
 msgstr ""
-"Option de sélection des enregistrements:\n"
+"Options de sélection des enregistrements:\n"
 "  -i, --case-insensitive              rendre les chaînes insensibles à la casse dans les expressions\n"
 "                                        de sélection.\n"
 "  -t, --type=TYPE                     agir uniquement sur les enregistrements du type sélectionné.\n"
 "  -e, --expression=EXPR               expression de sélection.\n"
-"  -n, --number=NUM                    sélectionner l'enregistrement spécifié.\n"
+"  -q, --quick=CHAÎNE                  sélectionner les enregistrements avec des champs contenant une chaîne.\n"
+"  -n, --number=NUM...                 sélectionner les enregistrements spécifiés par position (plage permise).\n"
+"  -R, --random=NUM                    sélectionner un nombre aléatoire d'enregistrements.\n"
 
-#: utils/recutl.c:142
+#: utils/recutl.c:186
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
@@ -1178,7 +1165,7 @@ msgstr ""
 "Ceci est un logiciel libre: vous êtes libre de le changer et de le redistribuer.\n"
 "Il n'y a PAS de GARANTIE, dans les limites permises par la loi.\n"
 
-#: utils/recutl.c:148
+#: utils/recutl.c:192
 msgid ""
 "\n"
 "Written by Jose E. Marchesi."
@@ -1186,24 +1173,51 @@ msgstr ""
 "\n"
 "Écrit par Jose E. Marchesi."
 
-#: utils/recutl.c:160 utils/recutl.c:174
+#: utils/recutl.c:204 utils/recutl.c:218
 msgid ": error: "
 msgstr ": erreur: "
 
-#: utils/recutl.c:186
+#: utils/recutl.c:230
 msgid ": warning: "
 msgstr ": avertissement: "
 
-#: utils/recutl.c:212
+#: utils/recutl.c:254
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr "ensemble d'enregistrement « %s » en double dans %s.\n"
 
-#: utils/recutl.c:362
+#: utils/recutl.c:412
 msgid "cannot create a unique name.\n"
 msgstr "impossible de créer un nom unique.\n"
 
-#: utils/recutl.c:383
+#: utils/recutl.c:433
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr "renomme le fichier %s en %s\n"
+
+#: utils/recutl.c:464
+#, c-format
+msgid "reading file %s"
+msgstr "lecture du fichier %s"
+
+#: utils/recutl.c:553
+msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
+msgstr "erreur interne: recutl_index_list_parse: erreur à la compilation de la regexp.\n"
+
+#~ msgid "internal error: rec_resolver_check: error compiling regexp.\n"
+#~ msgstr "erreur interne: rec_resolver_check: erreur lors de la compilation de la regexp.\n"
+
+#~ msgid "internal error: rec_field_name_part_str_p: error compiling regexp.\n"
+#~ msgstr "erreur interne: rec_field_name_part_str_p: erreur à la compilation de la regexp.\n"
+
+#~ msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
+#~ msgstr "erreur interne: rec_int_rec_type_p: erreur à la compilation de la regexp.\n"
+
+#~ msgid "internal error: rec-types: error compiling regexp.\n"
+#~ msgstr "erreur interne: rec-types: erreur à la compilation de la regexp.\n"
+
+#~ msgid "the record set contains confidential fields but no password was provided\n"
+#~ msgstr "l'ensemble d'enregistrements contient des champs confidentiels mais aucun mot de passe n'a été fourni\n"
+
+#~ msgid "the resulting record will have those fields unencrypted!\n"
+#~ msgstr "l'enregistrement résultant contiendra ces champs non chiffrés !\n"
