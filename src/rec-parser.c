@@ -330,6 +330,8 @@ rec_parse_field (rec_parser_t parser,
         {
           new = rec_field_new (field_name,
                                field_value);
+	  if (new == NULL)
+	    return false;
 
           rec_field_set_source (new, parser->source);
           rec_field_set_location (new, location);

@@ -1,3 +1,11 @@
+2012-02-20  Giuseppe Scrivano  <giuseppe@southpole.se> (tiny change)
+
+	src,utils: fail gracefully on allocation errors.
+	* src/rec-parser.c (rec_parse_field): Return an error if `new' was
+	not allocated correctly.
+	* utils/recsel.c (main): Fail gracefully if `db' was not allocated
+	correctly.
+
 2012-01-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: error reporting must always use recutl_fatal or

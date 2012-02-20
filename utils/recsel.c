@@ -577,6 +577,7 @@ main (int argc, char *argv[])
   if (!db)
     {
       res = 1;
+      return res;
     }
 
   /* Process the data.  */
