@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ struct rec_record_s
 
 /* Static functions implemented below.  */
 
+static void rec_record_init (rec_record_t record);
 static void rec_record_field_disp_fn (void *data);
 static bool rec_record_field_equal_fn (void *data1, void *data2);
 static void *rec_record_field_dup_fn (void *data);
@@ -77,6 +78,8 @@ rec_record_new (void)
 
   if (record)
     {
+      rec_record_init (record);
+
       /* The container pointer is initially NULL, until the client
          uses it for something else.  */
       record->container = NULL;
@@ -115,9 +118,9 @@ rec_record_new (void)
         }
       else
         {
-          /* Out of memory.  Report it by returning NULL.  */
+          /* Out of memory.  */
 
-          free (record);
+          rec_record_destroy (record);
           record = NULL;
         }
     }
@@ -128,11 +131,14 @@ rec_record_new (void)
 void
 rec_record_destroy (rec_record_t record)
 {
-  free (record->source);
-  free (record->location_str);
-  free (record->char_location_str);
-  rec_mset_destroy (record->mset);
-  free (record);
+  if (record)
+    {
+      free (record->source);
+      free (record->location_str);
+      free (record->char_location_str);
+      rec_mset_destroy (record->mset);
+      free (record);
+    }
 }
 
 rec_record_t
@@ -143,14 +149,26 @@ rec_record_dup (rec_record_t record)
   new = malloc (sizeof (struct rec_record_s));
   if (new)
     {
+      rec_record_init (new);
+
       new->field_type = record->field_type;
       new->comment_type = record->comment_type;
       new->mset = rec_mset_dup (record->mset);
+      if (!new->mset)
+        {
+          rec_record_destroy (new);
+          return NULL;
+        }
 
       new->source = NULL;
       if (record->source)
         {
           new->source = strdup (record->source);
+          if (!new->source)
+            {
+              rec_record_destroy (new);
+              return NULL;
+            }
         }
 
       new->location = record->location;
@@ -160,12 +178,22 @@ rec_record_dup (rec_record_t record)
       if (record->location_str)
         {
           new->location_str = strdup (record->location_str);
+          if (!new->location_str)
+            {
+              rec_record_destroy (new);
+              return NULL;
+            }
         }
 
       new->char_location_str = NULL;
       if (record->char_location_str)
         {
           new->char_location_str = strdup (record->char_location_str);
+          if (!new->char_location_str)
+            {
+              rec_record_destroy (new);
+              return NULL;
+            }
         }
 
       new->container = record->container;
@@ -665,6 +693,16 @@ rec_record_uniq (rec_record_t record)
 /*
  * Private functions
  */
+
+static void
+rec_record_init (rec_record_t record)
+{
+  /* Initialize the record structure so it can be safely passed to
+     rec_record_destroy even if its contents are not completely
+     initialized with real values.  */
+  
+  memset (record, 0 /* NULL */, sizeof (struct rec_record_s));
+}
 
 static void
 rec_record_field_disp_fn (void *data)

@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2011-11-02 20:37:12 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-02-21 20:45:00 jemarch"
  *
  *       File:         rec-crypt.c
  *       Date:         Fri Aug 26 19:50:51 2011
@@ -285,6 +285,10 @@ rec_encrypt_field (rec_field_t field,
   char *aux;
 
   field_value = strdup (rec_field_value (field));
+  if (!field_value)
+    {
+      return false;
+    }
 
   /* Make sure the field is not already encrypted.  */
   if ((strlen (rec_field_value (field)) >= strlen (REC_ENCRYPTED_PREFIX))

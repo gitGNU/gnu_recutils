@@ -164,6 +164,11 @@ rec_field_name_set (rec_field_name_t fname,
       if (str)
         {
           fname->parts[index] = strdup (str);
+          if (!fname->parts[index])
+            {
+              return false;
+            }
+
           fname->size = index + 1;
         }
     }

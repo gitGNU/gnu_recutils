@@ -96,6 +96,8 @@ struct rec_rset_s
 
 /* Static functions implemented below.  */
 
+static void rec_rset_init (rec_rset_t rset);
+
 static void rec_rset_update_types (rec_rset_t rset);
 static void rec_rset_update_field_props (rec_rset_t rset);
 static void rec_rset_update_size_constraints (rec_rset_t rset);
@@ -118,16 +120,16 @@ static rec_rset_fprops_t rec_rset_get_props (rec_rset_t rset,
                                              rec_field_name_t fname,
                                              bool create_p);
 
-static void rec_rset_add_auto_field_int (rec_rset_t rset,
+static bool rec_rset_add_auto_field_int (rec_rset_t rset,
                                          rec_field_name_t field_name,
                                          rec_record_t record);
-static void rec_rset_add_auto_field_date (rec_rset_t rset,
+static bool rec_rset_add_auto_field_date (rec_rset_t rset,
                                           rec_field_name_t field_name,
                                           rec_record_t record);
 
-static void rec_rset_merge_records (rec_record_t to_record,
-                                    rec_record_t from_record,
-                                    rec_field_t  group_field);
+static rec_record_t rec_rset_merge_records (rec_record_t to_record,
+                                            rec_record_t from_record,
+                                            rec_field_t  group_field);
 
 /* The following macro is used by some functions to reduce
    verbosity.  */
@@ -146,6 +148,8 @@ rec_rset_new (void)
   rset = malloc (sizeof (struct rec_rset_s));
   if (rset)
     {
+      rec_rset_init (rset);
+
       /* Create the mset.  */
       rset->mset = rec_mset_new ();
       if (rset->mset)
@@ -158,6 +162,12 @@ rec_rset_new (void)
 
           /* Create an empty type registry.  */
           rset->type_reg = rec_type_reg_new ();
+          if (!rset->type_reg)
+            {
+              /* Out of memory.  */
+              rec_rset_destroy (rset);
+              return NULL;
+            }
 
           /* No field properties, initially.  */
           rset->field_props = NULL;
@@ -183,8 +193,9 @@ rec_rset_new (void)
         }
       else
         {
-          /* Error.  */
-          free (rset);
+          /* Out of memory.  */
+
+          rec_rset_destroy (rset);
           rset = NULL;
         }
     }
@@ -197,34 +208,33 @@ rec_rset_destroy (rec_rset_t rset)
 {
   rec_rset_fprops_t props, aux = NULL;
 
-  if (rset->descriptor)
+  if (rset)
     {
       rec_record_destroy (rset->descriptor);
-    }
-
-  rec_type_reg_destroy (rset->type_reg);
-
-  props = rset->field_props;
-  while (props)
-    {
-      aux = props;
-
-      if (aux->type)
+      rec_type_reg_destroy (rset->type_reg);
+      
+      props = rset->field_props;
+      while (props)
         {
-          rec_type_destroy (aux->type);
+          aux = props;
+          
+          if (aux->type)
+            {
+              rec_type_destroy (aux->type);
+            }
+          free (aux->type_name);
+          props = props->next;
+          free (aux);
         }
-      free (aux->type_name);
-      props = props->next;
-      free (aux);
+      
+      if (rset->order_by_field)
+        {
+          rec_field_name_destroy (rset->order_by_field);
+        }
+      
+      rec_mset_destroy (rset->mset);
+      free (rset);
     }
-
-  if (rset->order_by_field)
-    {
-      rec_field_name_destroy (rset->order_by_field);
-    }
-
-  rec_mset_destroy (rset->mset);
-  free (rset);
 }
 
 rec_rset_t
@@ -235,6 +245,8 @@ rec_rset_dup (rec_rset_t rset)
   new = malloc (sizeof (struct rec_rset_s));
   if (new)
     {
+      rec_rset_init (new);
+
       new->record_type = rset->record_type;
       new->comment_type = rset->comment_type;
       new->mset = NULL;
@@ -248,10 +260,23 @@ rec_rset_dup (rec_rset_t rset)
         {
           new->order_by_field =
             rec_field_name_dup (rset->order_by_field);
+
+          if (!new->order_by_field)
+            {
+              /* Out of memory.  */
+              rec_rset_destroy (new);
+              return NULL;
+            }
         }
     }
 
   new->mset = rec_mset_dup (rset->mset);
+  if (!new->mset)
+    {
+      /* Out of memory.  */
+      rec_rset_destroy (new);
+      return NULL;
+    }
   
   return new;
 }
@@ -648,7 +673,7 @@ rec_rset_order_by_field (rec_rset_t rset)
   return rset->order_by_field;
 }
 
-void
+rec_rset_t
 rec_rset_sort (rec_rset_t rset,
                rec_field_name_t sort_by)
 {
@@ -662,16 +687,22 @@ rec_rset_sort (rec_rset_t rset,
       /* Duplicate the multi-set indicating that the elements must be
          sorted.  */
 
-      rec_mset_sort (rset->mset);
+      if (!rec_mset_sort (rset->mset))
+        {
+          /* Out of memory.  */
+          return NULL;
+        }
 
       /* Update field properties, in case order_by_field was changed
          above.  */
   
       rec_rset_update_field_props (rset);
     }
+
+  return rset;
 }
 
-void
+rec_rset_t
 rec_rset_group (rec_rset_t rset,
                 rec_field_name_t group_by)
 {
@@ -686,6 +717,12 @@ rec_rset_group (rec_rset_t rset,
 
   map_size = sizeof(bool) * rec_rset_num_records (rset);
   deletion_map = malloc (map_size);
+  if (!deletion_map)
+    {
+      /* Out of memory.  */
+      return NULL;
+    }
+
   memset (deletion_map, false, map_size);
 
   /* Iterate on the records of RSET, grouping records and marking the
@@ -725,9 +762,13 @@ rec_rset_group (rec_rset_t rset,
                       /* Insert all the elements of record2 into
                          record, but not group_by_field.  */
 
-                      rec_rset_merge_records (record,
-                                              record2,
-                                              group_by_field);
+                      if (!rec_rset_merge_records (record,
+                                                   record2,
+                                                   group_by_field))
+                        {
+                          /* Out of memory.  */
+                          return NULL;
+                        }
 
                       /* Mark record2 for removal.  */
                       
@@ -757,9 +798,11 @@ rec_rset_group (rec_rset_t rset,
   rec_mset_iterator_free (&iter);
 
   free (deletion_map);
+
+  return rset;
 }
 
-void
+rec_rset_t
 rec_rset_add_auto_fields (rec_rset_t rset,
                           rec_record_t record)
 {
@@ -792,12 +835,22 @@ rec_rset_add_auto_fields (rec_rset_t rset,
                     case REC_TYPE_INT:
                     case REC_TYPE_RANGE:
                       {
-                        rec_rset_add_auto_field_int (rset, auto_field_name, record);
+                        if (!rec_rset_add_auto_field_int (rset, auto_field_name, record))
+                          {
+                            /* Out of memory.  */
+                            return NULL;
+                          }
+
                         break;
                       }
                     case REC_TYPE_DATE:
                       {
-                        rec_rset_add_auto_field_date (rset, auto_field_name, record);
+                        if (!rec_rset_add_auto_field_date (rset, auto_field_name, record))
+                          {
+                            /* Out of memory.  */
+                            return NULL;
+                          }
+
                         break;
                       }
                     default:
@@ -810,11 +863,23 @@ rec_rset_add_auto_fields (rec_rset_t rset,
             }
         }
     }
+
+  return rset;
 }
 
 /*
  * Private functions
  */
+
+static void
+rec_rset_init (rec_rset_t rset)
+{
+  /* Initialize the rset structure so it can be safely passed to
+     rec_rset_destroy even if its contents are not completely
+     initialized with real values.  */
+
+  memset (rset, 0 /* NULL */, sizeof (struct rec_rset_s));
+}
 
 static void
 rec_rset_record_disp_fn (void *data)
@@ -1540,7 +1605,7 @@ rec_rset_get_props (rec_rset_t rset,
   return props;
 }
 
-static void
+static bool
 rec_rset_add_auto_field_int (rec_rset_t rset,
                              rec_field_name_t field_name,
                              rec_record_t record)
@@ -1587,12 +1652,27 @@ rec_rset_add_auto_field_int (rec_rset_t rset,
     {
       field = rec_field_new (rec_field_name_dup (field_name),
                              auto_value_str);
-      rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) field, 0);
+      if (!field)
+        {
+          /* Out of memory.  */
+          free (auto_value_str);
+          return false;
+        }
+
+      if (!rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) field, 0))
+        {
+          /* Out of memory.  */
+          free (auto_value_str);
+          return false;
+        }
+
       free (auto_value_str);
     }
+
+  return true;
 }
 
-static void
+static bool
 rec_rset_add_auto_field_date (rec_rset_t rset,
                               rec_field_name_t field_name,
                               rec_record_t record)
@@ -1613,10 +1693,22 @@ rec_rset_add_auto_field_date (rec_rset_t rset,
 
   auto_field = rec_field_new (rec_field_name_dup (field_name),
                               outstr);
-  rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) auto_field, 0);
+  if (!auto_field)
+    {
+      /* Out of memory.  */
+      return false;
+    }
+
+  if (!rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) auto_field, 0))
+    {
+      /* Out of memory.  */
+      return false;
+    }
+
+  return true;
 }
 
-static void
+static rec_record_t
 rec_rset_merge_records (rec_record_t to_record,
                         rec_record_t from_record,
                         rec_field_t group_field)
@@ -1639,10 +1731,14 @@ rec_rset_merge_records (rec_record_t to_record,
               continue;
             }
 
-          rec_mset_append (rec_record_mset (to_record),
-                           MSET_FIELD,
-                           (void *) rec_field_dup (field),
-                           MSET_ANY);
+          if (!rec_mset_append (rec_record_mset (to_record),
+                                MSET_FIELD,
+                                (void *) rec_field_dup (field),
+                                MSET_ANY))
+            {
+              /* Out of memory.  */
+              return NULL;
+            }
         }
       else
         {
@@ -1654,6 +1750,8 @@ rec_rset_merge_records (rec_record_t to_record,
         }
     }
   rec_mset_iterator_free (&iter);
+
+  return to_record;
 }
 
 /* End of rec-rset.c */

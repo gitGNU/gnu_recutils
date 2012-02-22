@@ -388,7 +388,10 @@ recfix_do_sort ()
   for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
     {
       rset = rec_db_get_rset (db, n_rset);
-      rec_rset_sort (rset, NULL);
+      if (!rec_rset_sort (rset, NULL))
+        {
+          recutl_fatal ("out of memory\n");
+        }
     }
   
   if (!recfix_check_database (db))
@@ -499,7 +502,10 @@ recfix_do_auto ()
       iter = rec_mset_iterator (rec_rset_mset (rset));
       while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
         {
-          rec_rset_add_auto_fields (rset, record);
+          if (!rec_rset_add_auto_fields (rset, record))
+            {
+              recutl_fatal ("out of memory\n");
+            }
         }
 
       rec_mset_iterator_free (&iter);

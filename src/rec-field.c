@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,7 +252,10 @@ rec_field_set_location (rec_field_t field,
     }
 
   field->location_str = malloc (30);
-  asprintf (&(field->location_str), "%zu", field->location);
+  if (field->location_str)
+    {
+      asprintf (&(field->location_str), "%zu", field->location);
+    }
 }
 
 char *

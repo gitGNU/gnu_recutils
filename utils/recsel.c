@@ -441,11 +441,21 @@ recsel_process_data (rec_db_t db)
 
       if (recsel_group_by_field)
         {
-          rec_rset_sort  (rset, recsel_group_by_field);
-          rec_rset_group (rset, recsel_group_by_field);
+          if (!rec_rset_sort  (rset, recsel_group_by_field))
+            {
+              recutl_fatal ("out of memory\n");
+            }
+
+          if (!rec_rset_group (rset, recsel_group_by_field))
+            {
+              recutl_fatal ("out of memory\n");
+            }
         }
 
-      rec_rset_sort (rset, recutl_sort_by_field);
+      if (!rec_rset_sort (rset, recutl_sort_by_field))
+        {
+          recutl_fatal ("out of memory\n");
+        }
 
       num_rec = -1;
       iter = rec_mset_iterator (rec_rset_mset (rset));

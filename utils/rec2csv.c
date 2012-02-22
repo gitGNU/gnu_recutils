@@ -299,7 +299,10 @@ rec2csv_process_data (rec_db_t db)
         {
           /* Process this record set.  */
 
-          rec_rset_sort (rset, rec2csv_sort_by_field);
+          if (!rec_rset_sort (rset, rec2csv_sort_by_field))
+            {
+              recutl_fatal ("out of memory\n");
+            }
 
           /* Build the fields that will appear in the row. */
           row_fields = rec2csv_determine_fields (rset);

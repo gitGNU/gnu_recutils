@@ -69,8 +69,11 @@ struct rec_mset_s
 };
 
 /*
- * Forward rdelcarations of static functions.
+ * Forward declarations of static functions.
  */
+
+static void rec_mset_init (rec_mset_t mset);
+static void rec_mset_elem_init (rec_mset_elem_t elem);
 
 static bool rec_mset_elem_equal_fn (const void *e1,
                                     const void *e2);
@@ -107,6 +110,8 @@ rec_mset_new (void)
   new = malloc (sizeof (struct rec_mset_s));
   if (new)
     {
+      rec_mset_init (new);
+
       new->ntypes = 1;
 
       for (i = 0; i < MAX_NTYPES; i++)
@@ -128,7 +133,7 @@ rec_mset_new (void)
       if (new->elem_list == NULL)
         {
           /* Out of memory.  */
-          free (new);
+          rec_mset_destroy (new);
           new = NULL;
         }
     }
@@ -139,7 +144,10 @@ rec_mset_new (void)
 void
 rec_mset_destroy (rec_mset_t mset)
 {
-  gl_list_free (mset->elem_list);
+  if (mset)
+    {
+      gl_list_free (mset->elem_list);
+    }
 }
 
 rec_mset_t
@@ -162,6 +170,12 @@ rec_mset_dup (rec_mset_t mset)
           if (new->name[i])
             {
               new->name[i] = strdup (mset->name[i]);
+              if (!new->name[i])
+                {
+                  /* Out of memory.  */
+                  rec_mset_destroy (new);
+                  return NULL;
+                }
             }
           new->disp_fn[i] = mset->disp_fn[i];
           new->equal_fn[i] = mset->equal_fn[i];
@@ -180,6 +194,12 @@ rec_mset_dup (rec_mset_t mset)
           if (new->dup_fn[elem->type])
             {
               data = (new->dup_fn[elem->type]) (elem->data);
+              if (!data)
+                {
+                  /* Out of memory.  */
+                  rec_mset_destroy (new);
+                  return NULL;
+                }
             }
           else
             {
@@ -197,7 +217,7 @@ rec_mset_dup (rec_mset_t mset)
   return new;
 }
 
-void
+rec_mset_t
 rec_mset_sort (rec_mset_t mset)
 {
   rec_mset_elem_t elem;
@@ -213,6 +233,11 @@ rec_mset_sort (rec_mset_t mset)
                                              NULL,
                                              rec_mset_elem_dispose_fn,
                                              true);
+  if (!mset->elem_list)
+    {
+      /* Out of memory.  */
+      return NULL;
+    }
 
   /* Iterate on the old list getting the data of the elements and
      inserting it into the new sorted gl_list.  */
@@ -224,7 +249,15 @@ rec_mset_sort (rec_mset_t mset)
          into the list using whatever sorting criteria is implemented
          by compare_fn.  */
 
-      rec_mset_add_sorted (mset, elem->type, elem->data);
+      if (!rec_mset_add_sorted (mset, elem->type, elem->data))
+        {
+          /* Out of memory.  Delete the new list and restore the old
+             one.  */
+
+          gl_list_free (mset->elem_list);
+          mset->elem_list = list;
+          return NULL;
+        }
 
       /* We don't want the memory used by the element to be disposed
          when the old list gets destroyed.  The generic element
@@ -240,6 +273,8 @@ rec_mset_sort (rec_mset_t mset)
      the disposal of the elements!.  */
 
   gl_list_free (list);
+
+  return mset;
 }
 
 bool
@@ -417,7 +452,12 @@ rec_mset_insert_at (rec_mset_t mset,
                                 (void *) elem);
     }
 
-  if (node != NULL)
+  if (node == NULL)
+    {
+      rec_mset_elem_destroy (elem);
+      elem = NULL;
+    }
+  else
     {
       elem->list_node = node;
 
@@ -491,6 +531,13 @@ rec_mset_insert_after (rec_mset_t mset,
       node = gl_list_nx_add_after (mset->elem_list,
                                    node,
                                    (void *) new_elem);
+      if (!node)
+        {
+          /* Out of memory.  */
+          rec_mset_elem_destroy (new_elem);
+          return NULL;
+        }
+
       new_elem->list_node = node;
 
       mset->count[0]++;
@@ -502,6 +549,13 @@ rec_mset_insert_after (rec_mset_t mset,
   else
     {
       node = gl_list_nx_add_last (mset->elem_list, (void *) elem);
+      if (!node)
+        {
+          /* Out of memory.  */
+          rec_mset_elem_destroy (new_elem);
+          return NULL;
+        }
+
       new_elem->list_node = node;
     }
 
@@ -689,6 +743,12 @@ rec_mset_add_sorted (rec_mset_t mset,
   node = gl_sortedlist_nx_add (mset->elem_list,
                                rec_mset_elem_compare_fn,
                                (void *) elem);
+  if (!node)
+    {
+      rec_mset_elem_destroy (elem);
+      return NULL;
+    }
+
   elem->list_node = node;
 
   mset->count[0]++;
@@ -703,6 +763,26 @@ rec_mset_add_sorted (rec_mset_t mset,
 /*
  * Private functions.
  */
+
+static void
+rec_mset_init (rec_mset_t mset)
+{
+  /* Initialize the mset structure so it can be safely passed to
+     rec_mset_destroy even if its contents are not completely
+     initialized with real values.  */
+
+  memset (mset, 0 /* NULL */, sizeof (struct rec_mset_s));
+}
+
+static void
+rec_mset_elem_init (rec_mset_elem_t elem)
+{
+  /* Initialize the mset_elem structure so it can be safely passed to
+     rec_mset_elem_destroy even if its contents are not completely
+     initialized with real values.  */
+
+  memset (elem, 0 /* NULL */, sizeof (struct rec_mset_elem_s));
+}
 
 static bool
 rec_mset_elem_equal_fn (const void *e1,
@@ -813,16 +893,19 @@ rec_mset_elem_new (rec_mset_t mset,
 static void
 rec_mset_elem_destroy (rec_mset_elem_t elem)
 {
-  /* Dispose the data stored in the element if a disposal callback
-     function was configured by the user.  The callback is never
-     invoked if the stored data is NULL.  */
-
-  if (elem->data && elem->mset->disp_fn[elem->type])
+  if (elem)
     {
-      elem->mset->disp_fn[elem->type] (elem->data);
+      /* Dispose the data stored in the element if a disposal callback
+         function was configured by the user.  The callback is never
+         invoked if the stored data is NULL.  */
+      
+      if (elem->data && elem->mset->disp_fn[elem->type])
+        {
+          elem->mset->disp_fn[elem->type] (elem->data);
+        }
+      
+      free (elem);
     }
-
-  free (elem);
 }
 
 /* End of rec-mset.c */

@@ -1,3 +1,66 @@
+2012-02-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,utils: handle out-of-memory conditions.
+	* src/rec-rset.c (rec_rset_add_auto_field_date): Return a boolean
+	indicating whether there was enough memory to complete the
+	operation.
+	(rec_rset_add_auto_field_int): Likewise.
+	(rec_rset_add_auto_fields): Return a copy of the record set or
+	NULL in an out-of-memory condition.
+	(rec_rset_sort): Return a copy of the record set, or NULL in an
+	out-of-memory condition.
+
+	* utils/recsel.c (recsel_process_data): Emit an out of error
+	message when appropriate.
+	* utils/recins.c (recins_insert_record): Likewise.
+	(recins_add_new_record): Likewise.
+	* utils/recfix.c (recfix_do_auto): Likewise.
+	(recfix_do_sort): Likewise.
+	* utils/rec2csv.c (rec2csv_process_data): Likewise.
+
+	* src/rec-rset.c (rec_rset_init): New function.
+	(rec_rset_new): Use rec_rset_init and rec_rset_destroy in
+	out-of-memory conditions.
+	(rec_rset_destroy): Be a no-operation if NULL is passed.
+	(rec_rset_destroy): Also assume that other ADT destructors behave
+	the same.
+	(rec_rset_dup): Use rec_rset_init and rec_rset_destroy in
+	out-of-memory conditions.
+	(rec_rset_group): Return a copy of RSET or NULL if out of memory.
+	(rec_rset_merge_records): Return a copy of TO_RECORD, or NULL if
+	out of memory.
+
+	* src/rec-mset.c (rec_mset_destroy): Be a no-op if the passed
+	pointer is NULL.
+	(rec_mset_init): New function.
+	(rec_mset_new): Call to rec_mset_init and rec_mset_destroy if
+	in an end-of-memory condition.
+	(rec_mset_dup): Likewise.
+	(rec_mset_sort): API changed to return false if there is not
+	enough memory to perform the operation, leaving the original mset
+	untoched.
+	(rec_mset_insert_at): Call rec_mset_elem_destroy when out of memory.
+	(rec_mset_elem_init): New function.
+	(rec_mset_insert_after): Call rec_mset_elem_destroy when out of
+	memory.
+	(rec_mset_add_sorted): Likewise.
+	(rec_mset_elem_destroy): Be a no-operation if called with NULL.
+
+	* src/rec-record.c (rec_record_dup): Use rec_record_init and
+	rec_record_destroy in out-of-memory conditions.
+	(rec_record_init): New function.
+	(rec_record_new): Use rec_record_init.
+	(rec_record_destroy): Be a no-op if the passed pointer is NULL.
+
+	* src/rec-field-name.c (rec_field_name_set): Return false if
+	strdup returns NULL.
+
+	* src/rec-crypt.c (rec_encrypt_field): Return false if strdup
+	returns NULL.
+
+	* src/rec-field.c (rec_field_set_location): Avoid a segmentation
+	fault if malloc returns NULL.
+
 2012-02-20  Giuseppe Scrivano  <giuseppe@southpole.se> (tiny change)
 
 	src,utils: fail gracefully on allocation errors.

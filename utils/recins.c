@@ -208,7 +208,10 @@ recins_insert_record (rec_db_t db,
       if (recins_auto)
         {
           /* Add auto-set fields required by this record set.  */
-          rec_rset_add_auto_fields (rset, record);
+          if (!rec_rset_add_auto_fields (rset, record))
+            {
+              recutl_fatal ("out of memory\n");
+            }
         }
 
 #if defined REC_CRYPT_SUPPORT
@@ -476,7 +479,10 @@ recins_add_new_record (rec_db_t db)
           if (recins_auto)
             {
               /* Add auto-set fields required by this record set.  */
-              rec_rset_add_auto_fields (rset, recins_record);
+              if (!rec_rset_add_auto_fields (rset, recins_record))
+                {
+                  recutl_fatal ("out of memory\n");
+                }
             }
 
 #if defined REC_CRYPT_SUPPORT

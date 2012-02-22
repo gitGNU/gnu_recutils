@@ -172,7 +172,8 @@ void *rec_mset_get_at (rec_mset_t      mset,
    given data.  If POSITION is 0 then the element is prepended.  If
    POSITION is equal or bigger than the number of the existing
    elements with the same type in the mset then the new element is
-   appended.  The function returns the newly created element.  */
+   appended.  The function returns the newly created element, or NULL
+   if there is not enough memory to perform the operation.  */
 
 rec_mset_elem_t rec_mset_insert_at (rec_mset_t       mset,
                                     rec_mset_type_t  type,
@@ -288,9 +289,11 @@ bool rec_mset_elem_equal_p (rec_mset_elem_t elem1, rec_mset_elem_t elem2);
 
 /* Sort a given multi-set using the compare_fn callbacks provided by
    the user when defining the types of the elements stored.  This is a
-   destructive operation.  */
+   destructive operation.  Returns a copy of the mset argument if the
+   operation suceeded, NULL if there is not enough memory to perform
+   the operation.  */
 
-void rec_mset_sort (rec_mset_t mset);
+rec_mset_t rec_mset_sort (rec_mset_t mset);
 
 /************************* Debugging ********************************/
 
@@ -661,7 +664,9 @@ bool rec_type_check (rec_type_t type, char *str, char **error_str);
 
 typedef struct rec_type_reg_s *rec_type_reg_t;
 
-/* Create an empty type registry.  */
+/* Create and return an empty type registry.  NULL is returned if
+   there is not enough memory to perform the operation.  */
+
 rec_type_reg_t rec_type_reg_new (void);
 
 /* Destroy a type registry, freeing resources.  */
@@ -1115,26 +1120,30 @@ rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
    non NULL, will be used as the sorting criteria.  If no SORT_BY
    field is specified then whatever sorting criteria specified in the
    record set is used.  If no sorting criteria exists then the
-   function is a no-op.  */
+   function is a no-op.  The function returns a copy of RSET or NULL
+   if there is not enough memory to perform the operation.  */
 
-void rec_rset_sort (rec_rset_t rset, rec_field_name_t sort_by);
+rec_rset_t rec_rset_sort (rec_rset_t rset, rec_field_name_t sort_by);
 
 /* Group the records of a record set by a given field GROUP_BY.  The
    given record set must be sorted by GROUP_BY.  Note that this
    function uses the first field with the given name found in a
    record, ignoring any subsequent field.  It is up to the user to
-   provide the right records in order to get the desired results.  */
+   provide the right records in order to get the desired results.  The
+   function returns a copy of RSET or NULL if there was not enough
+   memory to perform the operation.  */
 
-void rec_rset_group (rec_rset_t rset, rec_field_name_t group_by);
+rec_rset_t rec_rset_group (rec_rset_t rset, rec_field_name_t group_by);
 
 /* Add missing auto fields defined in a record set to a given record.
    The record could not be stored in the record set used to determine
    which auto fields to add.  This function is a no-operation if the
    given record set is not defining any auto field, or if the passed
    record already contains all fields marked as auto in the record
-   set.  */
+   set.  The function returns a copy of RSET or NULL if there was not
+   enough memory to perform the operation.  */
 
-void rec_rset_add_auto_fields (rec_rset_t rset, rec_record_t record);
+rec_rset_t rec_rset_add_auto_fields (rec_rset_t rset, rec_record_t record);
 
 /*
  * DATABASES
