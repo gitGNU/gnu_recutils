@@ -689,60 +689,128 @@ rec_type_t rec_type_reg_get (rec_type_reg_t reg, const char *type_name);
 /*
  * FIELDS
  *
- * A field is a name-value pair.
+ * A field is an association between a label and a value.
  */
+
+/* Opaque data type representing a field.  */
 
 typedef struct rec_field_s *rec_field_t;
 
-/* Return a newly created field.  In the case of an error NULL is
-   returned.  */
+/*************** Creating and destroying fields *****************/
+
+/* Create a new field and return a reference to it.  NULL is returned
+   if there is no enough memory to perform the operation.  */
+
 rec_field_t rec_field_new (const rec_field_name_t name,
                            const char *value);
 
-/* Parse a field name from a string and return it.  If the string does
-   not contain a valid field name then return NULL.  */
+/* Parse a field name from a string and return it.  NULL is returned
+   if the string does not contain a valid field name or if there is
+   not enough memory to perform the operation.  */
+
 rec_field_t rec_field_new_str (const char *name,
                                const char *value);
 
-/* Destroy a field, freeing any occupied memory. */
+/* Destroy a field freeing all used resources.  This disposes all the
+   memory used by the field internals.  */
+
 void rec_field_destroy (rec_field_t field);
 
-/* Return a pointer to the string containing the field name. */
-rec_field_name_t rec_field_name (rec_field_t field);
-char *rec_field_name_str (rec_field_t field);
+/* Create a copy of a field and return a reference to it.  This
+   operation performs a deep copy of the contents of the field.  NULL
+   is returned if there is no enough memory to perform the
+   operation.  */
 
-/* Set the name of a field to a given string. */
-void rec_field_set_name (rec_field_t field, rec_field_name_t fname);
-
-/* Return a pointer to the string containing the value of the
-   field. */
-char *rec_field_value (rec_field_t field);
-
-/* Set the value of a given field to the given string. */
-void rec_field_set_value (rec_field_t field, const char *value);
-
-/* Return a copy of a given field. If there is not enough memory to
-   perform the copy then NULL is returned. */
 rec_field_t rec_field_dup (rec_field_t field);
+
+/******************** Comparing fields  ****************************/
 
 /* Determine wether two given fields are equal (i.e. they have equal
    names and equal values). */
-bool rec_field_equal_p (rec_field_t field1,
-                        rec_field_t field2);
 
-/* Location properties.  */
+bool rec_field_equal_p (rec_field_t field1, rec_field_t field2);
+
+/************ Getting and Setting field properties *****************/
+
+/* Return the name of a field.  */
+
+rec_field_name_t rec_field_name (rec_field_t field);
+
+/* Return a NULL terminated string containing the name of a
+   field. This can't return an empty string.  */
+
+char *rec_field_name_str (rec_field_t field);
+
+/* Set the name of a field.  */
+
+void rec_field_set_name (rec_field_t field, rec_field_name_t fname);
+
+/* Return a NULL terminated string containing the value of a field,
+   i.e. the string stored in the field.  The returned string may be
+   empty if the field has no value, but never NULL.  */
+
+char *rec_field_value (rec_field_t field);
+
+/* Set the value of a given field to the given string. */
+
+void rec_field_set_value (rec_field_t field, const char *value);
+
+/* Return a string describing the source of the field.  The specific
+   meaning of the source depends on the user: it may be a file name,
+   or something else.  This function returns NULL for a field for
+   which a source was never set.  */
+
 char *rec_field_source (rec_field_t field);
+
+/* Set a string describing the source of the field.  Any previous
+   string associated to the field is destroyed and the memory it
+   occupies is freed.  */
+
 void rec_field_set_source (rec_field_t field, char *source);
 
+/* Return an integer representing the location of the field within its
+   source.  The specific meaning of the location depends on the user:
+   it may be a line number, or something else.  This function returns
+   0 for fields not having a defined source.  */
+
 size_t rec_field_location (rec_field_t field);
+
+/* Return the textual representation for the location of a field
+   within its source.  This function returns NULL for fields not
+   having a defined source.  */
+
 char *rec_field_location_str (rec_field_t field);
+
+/* Set a number as the new location for the given field.  Any
+   previously stored location is forgotten.  */
+
 void rec_field_set_location (rec_field_t field, size_t location);
 
+/* Return an integer representing the char location of the field
+   within its source.  The specific meaning of the location depends on
+   the user, usually being the offset in bytes since the beginning of
+   a file or memory buffer.  This function returns 0 for fields not
+   having a defined source.  */
+
 size_t rec_field_char_location (rec_field_t field);
+
+/* Return the textual representation for the char location of a field
+   within its source.  This function returns NULL for fields not
+   having a defined source.  */
+
 char *rec_field_char_location_str (rec_field_t field);
+
+/* Set a number as the new char location for the given field.  Any
+   previously stored char location is forgotten.  */
+
 void rec_field_set_char_location (rec_field_t field, size_t location);
 
-/* Others.. */
+/********************* Transformations in fields ********************/
+
+/* Get the textual representation of a field and make it a comment
+   variable.  This function returns NULL if there is no enough memory
+   to perform the operation.  */
+
 rec_comment_t rec_field_to_comment (rec_field_t field);
 
 /*
@@ -772,7 +840,7 @@ typedef struct rec_record_s *rec_record_t;
 
 rec_record_t rec_record_new (void);
 
-/* Destroy a record, freeing all user resources.  This disposes all
+/* Destroy a record, freeing all used resources.  This disposes all
    the memory used by the record internals, including any stored field
    or comment.  */
 

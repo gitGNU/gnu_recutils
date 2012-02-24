@@ -1,3 +1,9 @@
+2012-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: documentation improvements in the public header.
+	* src/rec.h: Improve the documentation of the functions related
+	with the rec_field ADT.
+
 2012-02-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,utils: handle out-of-memory conditions.
