@@ -84,7 +84,6 @@ Special Fields
 * %confidential::       Storing confidential information.
 
 Advanced Topics and Reference
-* Compound Field Names:: Referencing record instances.
 * Date input formats::  Textual date representations that can be used
                           in Rec files.
 * Regular Expressions:: Flavor of regexps supported in recfiles.
@@ -1455,102 +1454,6 @@ The GNU recutils fully support encypted fields.  See the documentation
 for @code{recsel}, @code{recins} and @code{recfix} for details on how
 to operate on files containing confidential fields.
 
-@node Compound Field Names
-@chapter Compound Field Names
-
-@cartouche
-@strong{Please note that the features described in this chapter are very
-likely to change in the near future.  It is thus recommended to not
-rely on them in your own databases.}
-@end cartouche
-
-It is possible to make a reference to a record (or set of records) of
-a certain type by using a @dfn{compound field name}.  A compound field
-is composed by three components separated by double colon characters
-(@code{:}):
-
-@example
-TYPE:FIELD[:ROLE]:
-@end example
-
-The first component is a record type, usually defined somewhere else
-(@pxref{Record Descriptors}). The second component is the name of a
-field.  Finally, an optional third component is the role played by the
-referenced field in the referencing record.
-
-The simplest kind of reference is one without an explicit role.  It is
-used when only one association between records of different types is
-desired.  Consider for example:
-
-@example
-%rec: Maintainer
-
-Name: Jose E. Marchesi
-Package:Name: recutils
-@end example
-
-In the previous example it is pretty clear which role is played by the
-referenced package in the @code{Maintainer} record: it is the package
-maintained by the maintainer.  But sometimes the role is not that
-identifiable.  Consider for example the following record:
-
-@example
-%rec: Bug
-
-Id: 203
-Title: recsel crashes with files bigger than 2gb
-Hacker:Name: Smitha Johnson
-@end example
-
-Seems to be a bug report.  But, what is the relationship between
-Smitha Johnson and the bug? Is she the reporter?  Or perhaps she is
-the hacker that is working to fix it?  Is she the hacker that closed
-the bug?  We can clarify the role of Smitha by using the third part of
-the compound field: her role.
-
-@example
-Id: 203
-Title: recsel crashes with files bigger than 2gb
-Hacker:Name:Reporter: Smitha Johnson
-@end example
-
-So now the situation is clear: Smitha is the reporter.
-
-It is possible to make references to different instances of the same
-record type by using roles.  Supposing that we want to record who is
-the assignee of the bug report, we can introduce the new role
-@code{Assignee}:
-
-@example
-Id: 203
-Title: recsel crashes with files bigger than 2gb
-Hacker:Name:Reporter: Smitha Johnson
-Hacker:Name:Assignee: Juan Valdes 
-@end example
-
-Note that, like in the case of regular fields, there can be several
-compound fields with the same name and the same implicit role in a
-record, like in:
-
-@example
-%rec: Maintainer
-
-Name: Jose E. Marchesi
-Package:Name: GNU PDF
-Package:Name: GNU Ferret
-Package:Name: GNU rec
-@end example
-
-Same applies to several compound fields with explicit roles:
-
-@example
-%rec: Package
-
-Name: GNU foo
-Hacker:Name:Maintainer: Elvis 'The King' Presley
-Hacker:Name:Maintainer: Michael 'The other King' Jackson
-@end example
-
 @include parse-datetime.texi
 
 @node Regular Expressions
@@ -1718,13 +1621,12 @@ are escaped with a backslash, like in:
 The value of a field value can be included in a selection expression
 by writing its name.  The field name is replaced by a string
 containing the field value, covering any possibility with records with
-more than one field featuring that name.  The last colon character
-(@code{:}) of the field name is optional.  Examples:
+more than one field featuring that name.  Examples:
 
 @example
 Name
-Email:
-Hacker:Name:OpenedBy
+Email
+long_field_name
 @end example
 
 It is possible to use the role part of a field if it is not empty.
@@ -1868,10 +1770,6 @@ expr1 ? expr2 : expr3
 If @code{expr1} evaluates to true (i.e.@: it is an integer or the string
 representation of an integer and its value is not zero) then the
 operator yields @code{expr2}.  Otherwise it yields @code{expr3}.
-
-Note that there should be always at least one blank character between
-@code{expr2} and the colon (@code{:}) if @code{expr2} is a field name.
-This is because field names can optionally end with a colon.
 
 @node SEX Evaluation
 @subsection Evaluation of Selection Expressions
@@ -3149,34 +3047,6 @@ ContactName: Jose E. Marchesi
 
 @dots{}
 @end example
-
-The list of orders is a bit more interesting, since it shows how
-@command{mdb2rec} manages the relationships between tables in the
-@file{mdb} file.
-
-@example
-$ mdb2rec sales.mdb Orders
-%rec: Orders
-%type: OrderID int
-%type: CustomerID size 10
-%type: ProductID int
-%type: OrderDate date
-
-OrderID: 10248
-Customers:CustomerID: FBFOU
-Products:ProductID: 1
-OrderDate: 2010-08-01T12:30:01
-
-@dots{}
-@end example
-
-Both CustomerID and ProductID are compound fields reflecting
-references to the record sets Customers and Products.
-
-Note that @command{mdb2rec} always uses the default role when the name
-of the column in the referring table is the same than the name of the
-column in the referred table.  This is to avoid redundant compound
-field names like Customers:CustomerID:CustomerID:.
 
 If no table is specified in the invocation to @command{mdb2rec} all
 the tables in the file are processed, with the exception of the system

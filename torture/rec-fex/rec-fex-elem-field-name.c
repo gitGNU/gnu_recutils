@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,21 +40,19 @@ START_TEST(rec_fex_elem_field_name_nominal)
 {
   rec_fex_t fex;
   rec_fex_elem_t elem;
-  rec_field_name_t fname_bar;
+  const char *fname_bar;
 
-  fname_bar = rec_parse_field_name_str ("bar");
-  fail_if (fname_bar == NULL);
+  fname_bar = "bar";
 
   fex = rec_fex_new ("foo bar baz", REC_FEX_SIMPLE);
   fail_if (fex == NULL);
   
   elem = rec_fex_get (fex, 1);
   fail_if (elem == NULL);
-  fail_if (!rec_field_name_eql_p (rec_fex_elem_field_name (elem),
-                                  fname_bar));
+  fail_if (!rec_field_name_equal_p (rec_fex_elem_field_name (elem),
+                                    fname_bar));
 
   rec_fex_destroy (fex);
-  rec_field_name_destroy (fname_bar);
 }
 END_TEST
 

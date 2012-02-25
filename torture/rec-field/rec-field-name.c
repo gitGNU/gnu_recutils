@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,17 +42,14 @@
 START_TEST(rec_field_name_empty)
 {
   rec_field_t field;
-  rec_field_name_t fname;
+  const char *fname;
   
-  fname = rec_field_name_new ();
-  rec_field_name_set (fname, 0, "");
-
+  fname = "";
   field = rec_field_new (fname, "");
   fail_if(field == NULL);
 
   fname = rec_field_name (field);
-  fail_if(strcmp (rec_field_name_get (fname, 0), "")
-          != 0);
+  fail_if(strcmp (fname, "") != 0);
 
   rec_field_destroy (field);
 }
@@ -71,16 +68,14 @@ END_TEST
 START_TEST(rec_field_name_nonempty)
 {
   rec_field_t field;
-  rec_field_name_t fname;
+  const char *fname;
   
-  fname = rec_field_name_new ();
-  rec_field_name_set (fname, 0, "foo");
+  fname = "foo";
   field = rec_field_new (fname, "");
   fail_if(field == NULL);
 
   fname = rec_field_name (field);
-  fail_if(strcmp (rec_field_name_get (fname, 0), "foo")
-          != 0);
+  fail_if(strcmp (fname, "foo") != 0);
 
   rec_field_destroy (field);
 }

@@ -33,15 +33,19 @@
 
 /* Field Data Structure.
  *
- * A field is a name-value pair.
+ * A field is an association between a label and a value.
  */
+
 struct rec_field_s
 {
-  rec_field_name_t name;
-  char *value; /* NULL-terminated string containing the text value of
-                  the field. */
+  /* The name and the value of a field are UTF-8 encoded strings.
+     Thus, we use NULL-terminated strings to store them.  */
+
+  char *name;
+  char *value;
 
   /* Localization.  */
+
   char *source;
   size_t location;
   char *location_str;
@@ -49,55 +53,45 @@ struct rec_field_s
   char *char_location_str;
 };
 
-rec_field_name_t
+/* Static functions defined below.  */
+
+static void rec_field_init (rec_field_t field);
+
+/*
+ * Public functions.
+ */
+
+const char *
 rec_field_name (rec_field_t field)
 {
   return field->name;
 }
 
-char *
-rec_field_name_str (rec_field_t field)
+bool
+rec_field_set_name (rec_field_t field, const char *name)
 {
-  return rec_write_field_name_str (rec_field_name (field),
-                                   REC_WRITER_NORMAL);
+  free (field->name);
+  field->name = strdup (name);
+  return (field->name != NULL);
 }
 
-void
-rec_field_set_name (rec_field_t field,
-                    rec_field_name_t fname)
-{
-  if (field->name != NULL)
-    {
-      /* Release previously used memory */
-      rec_field_name_destroy (field->name);
-      field->name = NULL;
-    }
-
-  field->name = fname;
-}
-
-char *
+const char *
 rec_field_value (rec_field_t field)
 {
   return field->value;
 }
 
-void
+bool
 rec_field_set_value (rec_field_t field,
                      const char *value)
 {
-  if (field->value != NULL)
-    {
-      /* Release previously used memory */
-      free (field->value);
-      field->value = NULL;
-    }
-
+  free (field->value);
   field->value = strdup (value);
+  return (field->value != NULL);
 }
 
 rec_field_t
-rec_field_new (rec_field_name_t name,
+rec_field_new (const char *name,
                const char *value)
 {
   rec_field_t field;
@@ -106,38 +100,23 @@ rec_field_new (rec_field_name_t name,
 
   if (field != NULL)
     {
-      field->name = NULL;
-      field->value = NULL;
+      rec_field_init (field);
 
-      rec_field_set_name (field, name);
-      rec_field_set_value (field, value);
+      if (!rec_field_set_name (field, name))
+        {
+          /* Out of memory.  */
+          rec_field_destroy (field);
+          return NULL;
+        }
 
-      /* Localization is unused by default.  */
-      field->source = NULL;
-      field->location = 0;
-      field->location_str = NULL;
-      field->char_location = 0;
-      field->char_location_str = NULL;
+      if (!rec_field_set_value (field, value))
+        {
+          /* Out of memory.  */
+          rec_field_destroy (field);
+          return NULL;
+        }
     }
   
-  return field;
-}
-
-rec_field_t
-rec_field_new_str (const char *name,
-                   const char *value)
-{
-  rec_field_t field;
-  rec_field_name_t field_name;
-  
-  field = NULL;
-
-  field_name = rec_parse_field_name_str ((char *) name);
-  if (field_name)
-    {
-      field = rec_field_new (field_name, value);
-    }
-
   return field;
 }
 
@@ -146,26 +125,45 @@ rec_field_dup (rec_field_t field)
 {
   rec_field_t new_field;
 
-  new_field = rec_field_new (rec_field_name_dup (rec_field_name (field)),
+  new_field = rec_field_new (rec_field_name (field),
                              rec_field_value (field));
-
-
-  new_field->location = field->location;
-  new_field->char_location = field->char_location;
-
-  if (field->source)
+  if (new_field)
     {
-      new_field->source = strdup (field->source);
-    }
+      new_field->location = field->location;
+      new_field->char_location = field->char_location;
 
-  if (field->location_str)
-    {
-      new_field->location_str = strdup (field->location_str);
-    }
+      if (field->source)
+        {
+          new_field->source = strdup (field->source);
+          if (!new_field->source)
+            {
+              /* Out of memory.  */
+              rec_field_destroy (new_field);
+              return NULL;
+            }
+        }
 
-  if (field->char_location_str)
-    {
-      new_field->char_location_str = strdup (field->char_location_str);
+      if (field->location_str)
+        {
+          new_field->location_str = strdup (field->location_str);
+          if (!new_field->location_str)
+            {
+              /* Out of memory.  */
+              rec_field_destroy (new_field);
+              return NULL;
+            }
+        }
+
+      if (field->char_location_str)
+        {
+          new_field->char_location_str = strdup (field->char_location_str);
+          if (!new_field->char_location_str)
+            {
+              /* Out of memory.  */
+              rec_field_destroy (new_field);
+              return NULL;
+            }
+        }
     }
 
   return new_field;
@@ -175,22 +173,20 @@ bool
 rec_field_equal_p (rec_field_t field1,
                    rec_field_t field2)
 {
-  return (rec_field_name_equal_p (field1->name,
-                                  field2->name));
+  return (strcmp (field1->name, field2->name) == 0);
 }
 
 void
 rec_field_destroy (rec_field_t field)
 {
-  if (field->name)
+  if (field)
     {
-      rec_field_name_destroy (field->name);
+      free (field->name);
+      free (field->source);
+      free (field->location_str);
+      free (field->char_location_str);
+      free (field);
     }
-
-  free (field->source);
-  free (field->location_str);
-  free (field->char_location_str);
-  free (field);
 }
 
 rec_comment_t
@@ -201,8 +197,14 @@ rec_field_to_comment (rec_field_t field)
   
   comment_str = rec_write_field_str (field,
                                      REC_WRITER_NORMAL);
+  if (!comment_str)
+    {
+      return NULL;
+    }
 
-  /* Remove a trailing newline.  */
+  /* If the last character of the comment string is a newline, remove
+     it.  */
+
   if (comment_str[strlen (comment_str) - 1] == '\n')
     {
       comment_str[strlen (comment_str) - 1] = '\0';
@@ -214,23 +216,19 @@ rec_field_to_comment (rec_field_t field)
   return res;
 }
 
-char *
+const char *
 rec_field_source (rec_field_t field)
 {
   return field->source;
 }
 
-void
+bool
 rec_field_set_source (rec_field_t field,
-                      char *source)
+                      const char *source)
 {
-  if (field->source)
-    {
-      free (field->source);
-      field->source = NULL;
-    }
-
+  free (field->source);
   field->source = strdup (source);
+  return (field->source != NULL);
 }
 
 size_t
@@ -239,26 +237,17 @@ rec_field_location (rec_field_t field)
   return field->location;
 }
 
-void
+bool
 rec_field_set_location (rec_field_t field,
                         size_t location)
 {
   field->location = location;
-
-  if (field->location_str)
-    {
-      free (field->location_str);
-      field->location_str = NULL;
-    }
-
-  field->location_str = malloc (30);
-  if (field->location_str)
-    {
-      asprintf (&(field->location_str), "%zu", field->location);
-    }
+  free (field->location_str);
+  return (asprintf (&(field->location_str), "%zu", field->location)
+          != -1);
 }
 
-char *
+const char *
 rec_field_location_str (rec_field_t field)
 {
   char *res;
@@ -281,22 +270,17 @@ rec_field_char_location (rec_field_t field)
   return field->char_location;
 }
 
-void
+bool
 rec_field_set_char_location (rec_field_t field,
                              size_t location)
 {
   field->char_location = location;
-
-  if (field->char_location_str)
-    {
-      free (field->char_location_str);
-      field->char_location_str = NULL;
-    }
-
-  asprintf (&(field->char_location_str), "%zu", field->char_location);
+  free (field->char_location_str);
+  return (asprintf (&(field->char_location_str), "%zu", field->char_location)
+          != -1);
 }
 
-char *
+const char *
 rec_field_char_location_str (rec_field_t field)
 {
   char *res;
@@ -311,6 +295,20 @@ rec_field_char_location_str (rec_field_t field)
     }
   
   return res;
+}
+
+/*
+ * Private functions.
+ */
+
+static void
+rec_field_init (rec_field_t field)
+{
+  /* Initialize the field structure so it can be safely passed to
+     rec_field_destroy even if its contents are not completely
+     initialized with real values.  */
+
+  memset (field, 0 /* NULL */, sizeof (struct rec_field_s));
 }
 
 /* End of rec-field.c */

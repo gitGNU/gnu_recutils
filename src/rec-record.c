@@ -38,20 +38,24 @@ struct rec_record_s
 {
   /* Container pointer.  The semantics of this pointer depends on the
      user.  */
+
   void *container;
 
   /* type ids for the elements stored in the mset.  */
+
   int field_type;
   int comment_type;
 
   /* Localization.  */
+
   char *source;
   size_t location;
   char *location_str;
   size_t char_location;
   char *char_location_str;
 
-  /* The mset.  */
+  /* The internal multi-set storing the data.  */
+
   rec_mset_t mset;
 };
 
@@ -305,14 +309,14 @@ rec_record_get_field_index (rec_record_t record,
 
 bool
 rec_record_field_p (rec_record_t record,
-                    rec_field_name_t field_name)
+                    const char *field_name)
 {
   return (rec_record_get_num_fields_by_name (record, field_name) > 0);
 }
 
 size_t
 rec_record_get_num_fields_by_name (rec_record_t record,
-                                   rec_field_name_t field_name)
+                                   const char *field_name)
 {
   rec_mset_iterator_t iter;
   rec_field_t field;
@@ -326,7 +330,6 @@ rec_record_get_num_fields_by_name (rec_record_t record,
           num_fields++;
         }
     }
-
   rec_mset_iterator_free (&iter);
 
   return num_fields;
@@ -334,7 +337,7 @@ rec_record_get_num_fields_by_name (rec_record_t record,
 
 rec_field_t
 rec_record_get_field_by_name (rec_record_t record,
-                              rec_field_name_t field_name,
+                              const char *field_name,
                               size_t n)
 {
   size_t num_fields = 0;
@@ -357,7 +360,6 @@ rec_record_get_field_by_name (rec_record_t record,
           num_fields++;
         }
     }
-
   rec_mset_iterator_free (&iter);
 
   return result;
@@ -365,7 +367,7 @@ rec_record_get_field_by_name (rec_record_t record,
 
 void
 rec_record_remove_field_by_name (rec_record_t record,
-                                 rec_field_name_t field_name,
+                                 const char *field_name,
                                  size_t n)
 {
   rec_field_t field;
@@ -376,9 +378,7 @@ rec_record_remove_field_by_name (rec_record_t record,
   iter = rec_mset_iterator (record->mset);
   while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, &elem))
     {
-      if (rec_field_name_equal_p (rec_field_name (field),
-                                  field_name))
-          
+      if (rec_field_name_equal_p (rec_field_name (field), field_name))
         {
           if ((n == -1) || (n == num_fields))
             {
@@ -388,7 +388,6 @@ rec_record_remove_field_by_name (rec_record_t record,
           num_fields++;
         }
     }
-
   rec_mset_iterator_free (&iter);
 }
 
@@ -580,7 +579,8 @@ rec_record_contains_value (rec_record_t record,
   bool res = false;
   rec_mset_iterator_t iter;
   rec_field_t field;
-  char *field_value, *occur;
+  const char *field_value;
+  char *occur;
 
   iter = rec_mset_iterator (record->mset);
   while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
@@ -653,16 +653,14 @@ rec_record_uniq (rec_record_t record)
           while (rec_mset_iterator_next (&iter2, MSET_FIELD, (const void **) &field2, NULL))
             {
               if ((j != i)
-                  && rec_field_name_eql_p (rec_field_name (field1),
-                                           rec_field_name (field2))
-                  && (strcmp (rec_field_value (field1), rec_field_value (field2)) == 0))
+                  && rec_field_name_equal_p (rec_field_name (field1), rec_field_name (field2))
+                  && rec_field_name_equal_p (rec_field_value (field1), rec_field_value (field2)))
                 {
                   to_remove[j] = true;
                 }
               
               j++;
             }
-
           rec_mset_iterator_free (&iter2);
         }
 

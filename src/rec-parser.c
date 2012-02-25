@@ -41,16 +41,15 @@
 static int rec_parser_getc (rec_parser_t parser);
 static int rec_parser_ungetc (rec_parser_t parser, int ci);
 
-static bool rec_expect (rec_parser_t parser, char *str);
+static bool rec_expect (rec_parser_t parser, const char *str);
 
-static bool rec_parse_field_name_part (rec_parser_t parser, char **str);
 static bool rec_parse_field_value (rec_parser_t parser, char **str);
 
 static bool rec_parse_comment (rec_parser_t parser, rec_comment_t *comment);
 
 static bool rec_parser_digit_p (char c);
 static bool rec_parser_letter_p (char c);
-static bool rec_parser_init_common (rec_parser_t parser, char *source);
+static bool rec_parser_init_common (rec_parser_t parser, const char *source);
 
 /*
  * Parser Data Structure
@@ -71,10 +70,10 @@ enum rec_parser_error_e
 
 struct rec_parser_s
 {
-  FILE *in_file;     /* File stream used by the parser.  */
-  char *in_buffer;   /* Buffer used by the parser.  */
-  char *p;           /* Pointer to the next unreaded character in
-                        in_buffer */
+  FILE *in_file;          /* File stream used by the parser.  */
+  const char *in_buffer;  /* Buffer used by the parser.  */
+  const char *p;          /* Pointer to the next unreaded character in
+                             in_buffer */
   char *source;
   
   rec_record_t prev_descriptor;
@@ -112,7 +111,7 @@ const char *rec_parser_error_strings[] =
 
 rec_parser_t
 rec_parser_new (FILE *in,
-                char *source)
+                const char *source)
 {
   rec_parser_t parser;
 
@@ -133,8 +132,8 @@ rec_parser_new (FILE *in,
 }
 
 rec_parser_t
-rec_parser_new_str (char *buffer,
-                    char *source)
+rec_parser_new_str (const char *buffer,
+                    const char *source)
 {
   rec_parser_t parser;
 
@@ -157,8 +156,11 @@ rec_parser_new_str (char *buffer,
 void
 rec_parser_destroy (rec_parser_t parser)
 {
-  free (parser->source);
-  free (parser);
+  if (parser)
+    {
+      free (parser->source);
+      free (parser);
+    }
 }
 
 bool
@@ -175,7 +177,7 @@ rec_parser_error (rec_parser_t parser)
 
 void
 rec_parser_perror (rec_parser_t parser,
-                   char *fmt,
+                   const char *fmt,
                    ...)
 {
   va_list ap;
@@ -184,7 +186,7 @@ rec_parser_perror (rec_parser_t parser,
   va_start (ap, fmt);
   vfprintf (stderr, fmt, ap);
   fputs (": ", stderr);
-  number_str = malloc(10);
+  number_str = malloc(30);
   if (asprintf (&number_str, "%zu", parser->line) != -1)
     {
       fputs (number_str, stderr);
@@ -199,12 +201,13 @@ rec_parser_perror (rec_parser_t parser,
 
 bool
 rec_parse_field_name (rec_parser_t parser,
-                      rec_field_name_t *fname)
+                      char **fname)
 {
-  bool ret;
-  char *name_part;
+  bool ret = true;
   int ci;
+  size_t str_size;
   char c;
+  rec_buf_t buf;
 
   /* Sanity check */
   if (rec_parser_eof (parser)
@@ -213,78 +216,131 @@ rec_parse_field_name (rec_parser_t parser,
       return false;
     }
 
-  *fname = rec_field_name_new ();
-  if (*fname == NULL)
+  buf = rec_buf_new (fname, &str_size);
+  if (!buf)
     {
-      /* End of memory */
+      /* Out of memory */
       parser->error = REC_PARSER_ENOMEM;
       return false;
     }
 
-  ret = false;
-  while (rec_parse_field_name_part (parser, &name_part))
-    {
-      if ((parser->eof)
-          || (parser->error > 0))
-        {
-          break;
-        }
+  /* The syntax of a field name is described by the following regexp:
+   *
+   * [a-zA-Z%][a-zA-Z0-9_]*:
+   */
 
-      /* Add this name part to the name */
-      if (!rec_field_name_set (*fname,
-                               rec_field_name_size (*fname),
-                               name_part))
+  /* [a-zA-Z%] */
+  ci = rec_parser_getc (parser);
+  if (ci == EOF)
+    {
+      ret = false;
+    }
+  else
+    {
+      c = (char) ci;
+
+      if ((rec_parser_letter_p (c))
+          || (c == '%'))
         {
-          /* Too much parts */
-          parser->error = REC_PARSER_ETOOMUCHNAMEPARTS;
+          if (rec_buf_putc (c, buf) == EOF)
+            {
+              /* Out of memory */
+              parser->error = REC_PARSER_ENOMEM;
+              return false;
+            }
         }
       else
         {
-          ret = true;
-
-          /* Field names ends with:
-           *
-           * - A blank character or
-           * - A newline or
-           * - The end of the file
-           *
-           * Note that if the field name ends with a newline it is
-           * pushed back to the input stream, since (unlike a blank
-           * character) it will be part of the field value.
-           */
-          ci = rec_parser_getc (parser);
-          if (ci != EOF)
-            {
-              c = (char) ci;
-              if (c == ' ')
-                {
-                  parser->error = REC_PARSER_NOERROR;
-                  break;
-                }
-              else if (c == '\n')
-                {
-                  parser->error = REC_PARSER_NOERROR;
-                  rec_parser_ungetc (parser, c);
-                  break;
-                }
-              else
-                {
-                  rec_parser_ungetc (parser, c);
-                }
-            }
-          else
-            {
-              break;
-            }
+          /* Parse error */
+          parser->error = REC_PARSER_EFNAME;
+          ret = false;
         }
     }
 
-  if (!ret)
+  /* [a-zA-Z0-9_]* */
+  if (ret)
     {
-      /* Free used memory */
-      rec_field_name_destroy (*fname);
+      while ((ci = rec_parser_getc (parser)) != EOF)
+        {
+          c = (char) ci;
+
+          if (rec_parser_letter_p (c)
+              || rec_parser_digit_p (c)
+              || (c == '-')
+              || (c == '_'))
+            {
+              if (rec_buf_putc (c, buf) == EOF)
+                {
+                  /* Out of memory */
+                  parser->error = REC_PARSER_ENOMEM;
+                  return false;
+                }
+              if (parser->error > 0)
+                {
+                  /* error was set by ADD_TO_STR */
+                  break;
+                }
+            }
+          else if (c == ':')
+            {
+              /* End of token.  Consume the ':' and report success */
+              break;
+            }
+          else
+            {
+              /* Parse error */
+              parser->error = REC_PARSER_EFNAME;
+              ret = false;
+              break;
+            }
+        }
+
+      if (parser->eof)
+        {
+          parser->error = REC_PARSER_EFNAME;
+          ret = false;
+        }
     }
 
+  rec_buf_close (buf);
+
+  if (!ret)
+    {
+      free (*fname);
+    }
+  else
+    {
+      /* Field names ends with:
+       *
+       * - A blank character or
+       * - A newline or
+       * - The end of the file
+       *
+       * Note that if the field name ends with a newline it is
+       * pushed back to the input stream, since (unlike a blank
+       * character) it will be part of the field value.
+       */
+
+      ci = rec_parser_getc (parser);
+      if (ci != EOF)
+        {
+          c = (char) ci;
+          if (c == ' ')
+            {
+              parser->error = REC_PARSER_NOERROR;
+            }
+          else if (c == '\n')
+            {
+              parser->error = REC_PARSER_NOERROR;
+              rec_parser_ungetc (parser, c);
+            }
+          else
+            {
+              rec_parser_ungetc (parser, c);
+            }
+        }
+    }
+  
   return ret;
 }
 
@@ -302,7 +358,7 @@ rec_parse_field (rec_parser_t parser,
 {
   bool ret;
   rec_field_t new;
-  rec_field_name_t field_name;
+  char *field_name;
   char *field_value;
   size_t location;
   size_t char_location;
@@ -340,7 +396,7 @@ rec_parse_field (rec_parser_t parser,
         }
       else
         {
-          rec_field_name_destroy (field_name);
+          free (field_name);
         }
     }
 
@@ -602,11 +658,11 @@ rec_parse_db (rec_parser_t parser,
   return ret;
 }
 
-rec_field_name_t
-rec_parse_field_name_str (char *str)
+char *
+rec_parse_field_name_str (const char *str)
 {
   rec_parser_t parser;
-  rec_field_name_t field_name;
+  char *field_name = NULL;
   char *str2;
   size_t str_size;
 
@@ -630,8 +686,6 @@ rec_parse_field_name_str (char *str)
       str2[str_size + 1] = '\0';
     }
   
-  field_name = NULL;
-
   parser = rec_parser_new_str (str2, "dummy");
   if (!rec_parse_field_name (parser, &field_name))
     {
@@ -641,21 +695,18 @@ rec_parse_field_name_str (char *str)
   if (!rec_parser_eof (parser))
     {
       /* There is additional stuff after the field name.  */
-      if (field_name)
-        {
-          rec_field_name_destroy (field_name);
-        }
+      free (field_name);
       field_name = NULL;
     }
 
   rec_parser_destroy (parser);
   free (str2);
-  
+
   return field_name;
 }
 
 rec_record_t
-rec_parse_record_str (char *str)
+rec_parse_record_str (const char *str)
 {
   rec_parser_t parser;
   rec_record_t record;
@@ -792,7 +843,7 @@ rec_parser_letter_p (char c)
 
 static bool
 rec_expect (rec_parser_t parser,
-            char *str)
+            const char *str)
 {
   size_t str_size;
   size_t counter;
@@ -829,113 +880,6 @@ rec_expect (rec_parser_t parser,
     }
 
   return found;
-}
-
-static bool
-rec_parse_field_name_part (rec_parser_t parser,
-                           char **str)
-{
-  bool ret;
-  int ci;
-  size_t str_size;
-  char c;
-  rec_buf_t buf;
-
-  ret = true;
-  buf = rec_buf_new (str, &str_size);
-  if (!buf)
-    {
-      /* Out of memory */
-      parser->error = REC_PARSER_ENOMEM;
-      return false;
-    }
-
-  /* The syntax of a field name is described by the following regexp:
-   *
-   * [a-zA-Z%][a-zA-Z0-9_]*
-   */
-
-  /* [a-zA-Z%] */
-  ci = rec_parser_getc (parser);
-  if (ci == EOF)
-    {
-      ret = false;
-    }
-  else
-    {
-      c = (char) ci;
-
-      if ((rec_parser_letter_p (c))
-          || (c == '%'))
-        {
-          if (rec_buf_putc (c, buf) == EOF)
-            {
-              /* Out of memory */
-              parser->error = REC_PARSER_ENOMEM;
-              return false;
-            }
-        }
-      else
-        {
-          /* Parse error */
-          parser->error = REC_PARSER_EFNAME;
-          ret = false;
-        }
-    }
-
-  /* [a-zA-Z0-9_]* */
-  if (ret)
-    {
-      while ((ci = rec_parser_getc (parser)) != EOF)
-        {
-          c = (char) ci;
-
-          if (rec_parser_letter_p (c)
-              || rec_parser_digit_p (c)
-              || (c == '-')
-              || (c == '_'))
-            {
-              if (rec_buf_putc (c, buf) == EOF)
-                {
-                  /* Out of memory */
-                  parser->error = REC_PARSER_ENOMEM;
-                  return false;
-                }
-              if (parser->error > 0)
-                {
-                  /* error was set by ADD_TO_STR */
-                  break;
-                }
-            }
-          else if (c == ':')
-            {
-              /* End of token.  Consume the ':' and report success */
-              break;
-            }
-          else
-            {
-              /* Parse error */
-              parser->error = REC_PARSER_EFNAME;
-              ret = false;
-              break;
-            }
-        }
-
-      if (parser->eof)
-        {
-          parser->error = REC_PARSER_EFNAME;
-          ret = false;
-        }
-    }
-
-  rec_buf_close (buf);
-
-  if (!ret)
-    {
-      free (*str);
-    }
-
-  return ret;
 }
 
 static bool
@@ -1195,7 +1139,7 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
 
 static bool
 rec_parser_init_common (rec_parser_t parser,
-                        char *source)
+                        const char *source)
 {
   if (source)
     {

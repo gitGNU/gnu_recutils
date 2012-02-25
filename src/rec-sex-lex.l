@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,7 @@ NEWLINE            \n
 BLANK              [ \t\n]
 DIGIT              [0-9]
 LETTER             [a-zA-Z]
-FIELD_NAME_PART    {LETTER}[a-zA-Z0-9_]+":"?
-FIELD_NAME         ({FIELD_NAME_PART})+
+FIELD_NAME         {LETTER}[a-zA-Z0-9_]+
 STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
 
 /* Please do not touch this comment' */
@@ -131,29 +130,15 @@ STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
   int res;
   char *match;
   char *name;
-  char *name_str;
   int index = -1;
 
   match = strdup (yytext);
   rec_sex_lex_extract_index (match, &index);
   name = rec_sex_lex_extract_name (match);
 
-  /* Make sure the field name finish with ':'.  */
-  name_str = malloc (strlen(name) + 2);
-  strncpy (name_str, name, strlen(name));
-  if (yytext[strlen(name) - 1] != ':')
-    {
-      name_str[strlen(name)] = ':';
-      name_str[strlen(name) + 1] = 0;
-    }
-  else
-    {
-      name_str[strlen(name)] = 0;
-    }
-
   /* Create a name node.  */
   yylval->node = rec_sex_ast_node_new ();
-  rec_sex_ast_node_set_name (yylval->node, name_str);
+  rec_sex_ast_node_set_name (yylval->node, name);
   rec_sex_ast_node_set_index (yylval->node, index);
   res = REC_SEX_TOK_NAM;
 

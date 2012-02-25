@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-02-21 20:45:00 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-02-25 15:55:25 jemarch"
  *
  *       File:         rec-crypt.c
  *       Date:         Fri Aug 26 19:50:51 2011
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2011 Jose E. Marchesi */
+/* Copyright (C) 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@
 bool
 rec_encrypt (char   *in,
              size_t  in_size,
-             char   *password,
+             const char   *password,
              char  **out,
              size_t *out_size)
 {
@@ -147,7 +147,7 @@ rec_encrypt (char   *in,
 bool
 rec_decrypt (char   *in,
              size_t  in_size,
-             char   *password,
+             const char   *password,
              char  **out,
              size_t *out_size)
 {
@@ -238,11 +238,11 @@ rec_decrypt (char   *in,
 bool
 rec_encrypt_record (rec_rset_t rset,
                     rec_record_t record,
-                    char *password)
+                    const char *password)
 {
   rec_field_t field;
   bool res;
-  rec_field_name_t field_name;
+  const char *field_name;
   rec_fex_t confidential_fields;
   size_t i, k, num_fields;
 
@@ -276,7 +276,7 @@ rec_encrypt_record (rec_rset_t rset,
 
 bool
 rec_encrypt_field (rec_field_t field,
-                   char *password)
+                   const char *password)
 {
   char *field_value;
   char *field_value_encrypted;
@@ -344,9 +344,9 @@ rec_encrypt_field (rec_field_t field,
 
 bool
 rec_decrypt_field (rec_field_t field,
-                   char *password)
+                   const char *password)
 {
-  char *field_value;
+  const char *field_value;
   char *base64_decoded;
   size_t base64_decoded_size;
   char *decrypted_value;
@@ -396,12 +396,12 @@ rec_decrypt_field (rec_field_t field,
 bool
 rec_decrypt_record (rec_rset_t rset,
                     rec_record_t record,
-                    char *password)
+                    const char *password)
 {
   bool res = true;
   size_t i, num_fields, k;
   rec_field_t field;
-  rec_field_name_t field_name;
+  const char *field_name;
   rec_fex_t confidential_fields;
 
   if (rset)

@@ -41,7 +41,7 @@ struct rec_fex_elem_s
 {
   char *str;
 
-  rec_field_name_t field_name;
+  char *field_name;
   int max;
   int min;
 };
@@ -59,16 +59,18 @@ struct rec_fex_s
  * Static function declarations.
  */
 
-static bool rec_fex_parse_str_simple (rec_fex_t new, char *str, char *sep);
-static bool rec_fex_parse_str_subscripts (rec_fex_t new, char *str);
-static bool rec_fex_parse_elem (rec_fex_elem_t elem, char *str);
+static void rec_fex_init (rec_fex_t fex);
+
+static bool rec_fex_parse_str_simple     (rec_fex_t new,       const char *str, const char *sep);
+static bool rec_fex_parse_str_subscripts (rec_fex_t new,       const char *str);
+static bool rec_fex_parse_elem           (rec_fex_elem_t elem, const char *str);
 
 /*
  * Public functions.
  */
 
 rec_fex_t
-rec_fex_new (char *str,
+rec_fex_new (const char *str,
              enum rec_fex_kind_e kind)
 {
   rec_fex_t new;
@@ -77,7 +79,8 @@ rec_fex_new (char *str,
   new = malloc (sizeof (struct rec_fex_s));
   if (new)
     {
-      /* Initially the FEX is empty.  */
+      rec_fex_init (new);
+
       new->num_elems = 0;
       new->str = NULL;
       for (i = 0; i < REC_FEX_MAX_ELEMS; i++)
@@ -87,31 +90,35 @@ rec_fex_new (char *str,
 
       if (str != NULL)
         {
-          /* Parse the string.  */
+          /* Parse the string, using the proper parsing routine
+             depending on the kind of field expression requested by
+             the user.  */
+
           if (kind == REC_FEX_SUBSCRIPTS)
             {
               if (!rec_fex_parse_str_subscripts (new, str))
                 {
+                  /* Out of memory or parse error.  */
                   free (new);
-                  new = NULL;
+                  return NULL;
                 }
             }
           else if (kind == REC_FEX_SIMPLE)
             {
-              /* Simple FEX.  */
               if (!rec_fex_parse_str_simple (new, str, " \t\n"))
                 {
+                  /* Out of memory or parse error.  */
                   free (new);
-                  new = NULL;
+                  return NULL;
                 }
             }
           else /* REC_FEX_CSV */
             {
-              /* Simple FEX with fields separated by commas.  */
               if (!rec_fex_parse_str_simple (new, str, ","))
                 {
+                  /* Out of memory or parse error.  */
                   free (new);
-                  new = NULL;
+                  return NULL;
                 }
             }
         }
@@ -125,23 +132,22 @@ rec_fex_destroy (rec_fex_t fex)
 {
   int i;
   
-  for (i = 0; i < fex->num_elems; i++)
+  if (fex)
     {
-      if (fex->elems[i]->field_name)
+      for (i = 0; i < fex->num_elems; i++)
         {
-          rec_field_name_destroy (fex->elems[i]->field_name);
+          free (fex->elems[i]->field_name);
+          free (fex->elems[i]->str);
+          free (fex->elems[i]);
         }
-
-      free (fex->elems[i]->str);
-      free (fex->elems[i]);
+      
+      free (fex->str);
+      free (fex);
     }
-
-  free (fex->str);
-  free (fex);
 }
 
 bool
-rec_fex_check (char *str, enum rec_fex_kind_e kind)
+rec_fex_check (const char *str, enum rec_fex_kind_e kind)
 {
   char *regexp_str;
 
@@ -172,7 +178,7 @@ rec_fex_check (char *str, enum rec_fex_kind_e kind)
   return rec_match (str, regexp_str);
 }
 
-int
+size_t
 rec_fex_size (rec_fex_t fex)
 {
   return fex->num_elems;
@@ -180,7 +186,7 @@ rec_fex_size (rec_fex_t fex)
 
 rec_fex_elem_t
 rec_fex_get (rec_fex_t fex,
-             int position)
+             size_t position)
 {
   if ((position < 0) || (position >= fex->num_elems))
     {
@@ -190,29 +196,19 @@ rec_fex_get (rec_fex_t fex,
   return fex->elems[position];
 }
 
-rec_field_name_t
+const char *
 rec_fex_elem_field_name (rec_fex_elem_t elem)
 {
   return elem->field_name;
 }
 
-void
+bool
 rec_fex_elem_set_field_name (rec_fex_elem_t elem,
-                             rec_field_name_t fname)
+                             const char *fname)
 {
-  if (elem->field_name)
-    {
-      rec_field_name_destroy (elem->field_name);
-      elem->field_name = NULL;
-    }
-
-  elem->field_name = rec_field_name_dup (fname);
-}
-
-char *
-rec_fex_elem_field_name_str (rec_fex_elem_t elem)
-{
-  return elem->str;
+  free (elem->field_name);
+  elem->field_name = strdup (fname);
+  return (elem->field_name != NULL);
 }
 
 int
@@ -272,13 +268,14 @@ rec_fex_str (rec_fex_t fex,
   size_t result_size;
   rec_buf_t buf;
   size_t i;
-  char *field_str;
   char *tmp;
 
   result = NULL;
   buf = rec_buf_new (&result, &result_size);
   if (buf)
     {
+      char *field_str = NULL;
+
       for (i = 0; i < fex->num_elems; i++)
         {
           if (i != 0)
@@ -293,16 +290,14 @@ rec_fex_str (rec_fex_t fex,
                 }
             }
           
-          field_str = rec_write_field_name_str (fex->elems[i]->field_name,
-                                                REC_WRITER_NORMAL);
-
-          /* People usually don't write the final ':' in fexes, so
-             remove it.  */
-          if (field_str[strlen(field_str) - 1] == ':')
+          field_str = strdup (fex->elems[i]->field_name);
+          if (!field_str)
             {
-              field_str[strlen(field_str) - 1] = '\0';
+              rec_buf_close (buf);
+              free (result);
+              return NULL;
             }
-          
+
           rec_buf_puts (field_str, buf);
           free (field_str);
 
@@ -342,7 +337,7 @@ rec_fex_str (rec_fex_t fex,
 
 bool
 rec_fex_member_p (rec_fex_t fex,
-                  rec_field_name_t fname,
+                  const char *fname,
                   int min,
                   int max)
 {
@@ -364,9 +359,9 @@ rec_fex_member_p (rec_fex_t fex,
   return res;
 }
 
-void
+rec_fex_elem_t
 rec_fex_append (rec_fex_t fex,
-                rec_field_name_t fname,
+                const char *fname,
                 int min,
                 int max)
 {
@@ -375,32 +370,58 @@ rec_fex_append (rec_fex_t fex,
   if (fex->num_elems >= REC_FEX_MAX_ELEMS)
     {
       fprintf (stderr, _("internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"));
-      return;
+      return NULL;
     }
 
   new_elem = malloc (sizeof (struct rec_fex_elem_s));
   if (new_elem)
     {
-      new_elem->field_name = rec_field_name_dup (fname);
-      new_elem->str = rec_write_field_name_str (fname, REC_WRITER_NORMAL);
+      new_elem->field_name = strdup (fname);
+      if (!new_elem->field_name)
+        {
+          /* Out of memory.  */
+          free (new_elem);
+          return NULL;
+        }
+
+      new_elem->str = strdup (fname);
+      if (!new_elem->str)
+        {
+          /* Out of memory.  */
+          free (new_elem->field_name);
+          free (new_elem);
+          return NULL;
+        }
+
       new_elem->min = min;
       new_elem->max = max;
       fex->elems[fex->num_elems++] = new_elem;
     }
+
+  return new_elem;
 }
 
 /*
  * Private functions.
  */
 
+static void
+rec_fex_init (rec_fex_t fex)
+{
+  /* Initialize the field expression structure so it can be safely
+     passed to rec_fex_destroy even if its contents are not completely
+     initialized with real values.  */
+
+  memset (fex, 0 /* NULL */, sizeof (struct rec_fex_s));
+}
+
 static bool
 rec_fex_parse_str_simple (rec_fex_t new,
-                          char *str,
-                          char *sep)
+                          const char *str,
+                          const char *sep)
 {
   bool res;
   rec_fex_elem_t elem;
-  rec_field_name_t field_name;
   char *fex_str;
   char *elem_str;
   size_t i;
@@ -423,11 +444,12 @@ rec_fex_parse_str_simple (rec_fex_t new,
     {
       if (strlen (elem_str) > 0)
         {
-          if ((field_name = rec_parse_field_name_str (elem_str))
+          if (rec_field_name_p (elem_str)
               && (elem = malloc (sizeof (struct rec_fex_elem_s))))
             {
               /* Add an element to the FEX.  */
-              elem->field_name = field_name;
+
+              elem->field_name = strdup (elem_str);
               elem->str = strdup (elem_str);
               elem->min = -1;
               elem->max = -1;
@@ -457,7 +479,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
       /* Destroy parsed elements.  */
       for (i = 0; i < new->num_elems; i++)
         {
-          rec_field_name_destroy (new->elems[i]->field_name);
+          free (new->elems[i]->field_name);
           free (new->elems[i]->str);
           free (new->elems[i]);
         }
@@ -468,7 +490,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
 
 static bool
 rec_fex_parse_str_subscripts (rec_fex_t new,
-                              char *str)
+                              const char *str)
 {
   bool res;
   char *elem_str;
@@ -521,7 +543,7 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
 
 static bool
 rec_fex_parse_elem (rec_fex_elem_t elem,
-                    char *str)
+                    const char *str)
 {
   bool ret;
   const char *p;
@@ -537,6 +559,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
 
 
   /* Get the field name.  */
+
   if (!rec_parse_regexp (&p,
                          "^" REC_FNAME_RE,
                          &(elem->str)))
@@ -544,7 +567,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
       /* Parse error.  */
       return false;
     }
-  elem->field_name = rec_parse_field_name_str (elem->str);
+  elem->field_name = strdup (elem->str);
 
   /* Get the subscripts if they are present.  */
   if (*p == '[')
@@ -555,7 +578,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
         {
           /* Parse error.  */
           free (elem->str);
-          rec_field_name_destroy (elem->field_name);
+          free (elem->field_name);
           return false;
         }
 
@@ -567,7 +590,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
             {
               /* Parse error.  */
               free (elem->str);
-              rec_field_name_destroy (elem->field_name);
+              free (elem->field_name);
               return false;
             }
         }
@@ -576,7 +599,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
         {
           /* Parse error.  */
           free (elem->str);
-          rec_field_name_destroy (elem->field_name);
+          free (elem->field_name);
           return false;
         }
       p++; /* Skip the ]  */
@@ -585,7 +608,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
   if (*p != '\0')
     {
       free (elem->str);
-      rec_field_name_destroy (elem->field_name);
+      free (elem->field_name);
       return false;
     }
 

@@ -44,7 +44,7 @@ START_TEST(rec_write_field_nominal)
   char *str;
   size_t str_size;
 
-  field = rec_field_new (rec_parse_field_name_str ("foo"), "value");
+  field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field (writer, field, REC_WRITER_NORMAL));
@@ -68,13 +68,13 @@ START_TEST(rec_write_field_sexp)
   char *str;
   size_t str_size;
 
-  field = rec_field_new (rec_parse_field_name_str ("foo"), "value");
+  field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field (writer, field, REC_WRITER_SEXP));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "(field  (\"foo\") \"value\")\n") != 0);
+  fail_if (strcmp (str, "(field  \"foo\" \"value\")\n") != 0);
   free (str);
 }
 END_TEST

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,11 +46,11 @@ bool rec_sex_parser_case_insensitive (rec_sex_parser_t parser);
 void rec_sex_parser_set_case_insensitive (rec_sex_parser_t parser,
                                           bool case_insensitive);
 void rec_sex_parser_set_in (rec_sex_parser_t parser,
-                              char *str);
+                            const char *str);
 int rec_sex_parser_getc (rec_sex_parser_t parser);
 rec_sex_ast_t rec_sex_parser_ast (rec_sex_parser_t parser);
 void rec_sex_parser_set_ast (rec_sex_parser_t parser, rec_sex_ast_t ast);
-bool rec_sex_parser_run (rec_sex_parser_t parser, char *expr);
+bool rec_sex_parser_run (rec_sex_parser_t parser, const char *expr);
 void *rec_sex_parser_scanner (rec_sex_parser_t parser);
 
 void rec_sex_parser_print_ast (rec_sex_parser_t parser);

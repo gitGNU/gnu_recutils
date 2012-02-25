@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ rec_sex_parser_set_case_insensitive (rec_sex_parser_t parser,
 
 void
 rec_sex_parser_set_in (rec_sex_parser_t parser,
-                       char *str)
+                       const char *str)
 {
   if (parser->in)
     {
@@ -144,7 +144,7 @@ rec_sex_parser_getc (rec_sex_parser_t parser)
 
 bool
 rec_sex_parser_run (rec_sex_parser_t parser,
-                    char *expr)
+                    const char *expr)
 {
   int res;
 

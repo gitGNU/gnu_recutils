@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,16 +38,13 @@
 START_TEST(rec_fex_sort_nominal)
 {
   rec_fex_t fex;
-  rec_field_name_t fname_aaa;
-  rec_field_name_t fname_bbb;
-  rec_field_name_t fname_ccc;
+  const char *fname_aaa;
+  const char *fname_bbb;
+  const char *fname_ccc;
 
-  fname_aaa = rec_parse_field_name_str ("aaa");
-  fail_if (fname_aaa == NULL);
-  fname_bbb = rec_parse_field_name_str ("bbb");
-  fail_if (fname_bbb == NULL);
-  fname_ccc = rec_parse_field_name_str ("ccc");
-  fail_if (fname_ccc == NULL);
+  fname_aaa = "aaa";
+  fname_bbb = "bbb";
+  fname_ccc = "ccc";
 
   fex = rec_fex_new ("ccc[2],aaa[0],bbb[1]", REC_FEX_SUBSCRIPTS);
   fail_if (fex == NULL);
@@ -55,17 +52,14 @@ START_TEST(rec_fex_sort_nominal)
 
   rec_fex_sort (fex);
 
-  fail_if (!rec_field_name_eql_p (rec_fex_elem_field_name (rec_fex_get (fex, 0)),
-                                  fname_aaa));
-  fail_if (!rec_field_name_eql_p (rec_fex_elem_field_name (rec_fex_get (fex, 1)),
-                                  fname_bbb));
-  fail_if (!rec_field_name_eql_p (rec_fex_elem_field_name (rec_fex_get (fex, 2)),
-                                  fname_ccc));
+  fail_if (!rec_field_name_equal_p (rec_fex_elem_field_name (rec_fex_get (fex, 0)),
+                                    fname_aaa));
+  fail_if (!rec_field_name_equal_p (rec_fex_elem_field_name (rec_fex_get (fex, 1)),
+                                    fname_bbb));
+  fail_if (!rec_field_name_equal_p (rec_fex_elem_field_name (rec_fex_get (fex, 2)),
+                                    fname_ccc));
 
   rec_fex_destroy (fex);
-  rec_field_name_destroy (fname_aaa);
-  rec_field_name_destroy (fname_bbb);
-  rec_field_name_destroy (fname_ccc);
 }
 END_TEST
 

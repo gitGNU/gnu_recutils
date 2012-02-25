@@ -72,7 +72,7 @@ typedef struct recutl_index_list_s recutl_index_list_t;
 
 bool              recutl_sort_p         = false;
 char             *recutl_order_rset     = NULL;
-rec_field_name_t  recutl_order_by_field = NULL;
+char             *recutl_order_by_field = NULL;
 bool              recutl_interactive_p  = false;
 recutl_index_list_t recutl_indexes;
 

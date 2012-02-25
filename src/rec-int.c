@@ -65,7 +65,7 @@ static int rec_int_check_record_secrets (rec_rset_t rset, rec_record_t record,
 #endif
 
 static int rec_int_merge_remote (rec_rset_t rset, rec_buf_t errors);
-static bool rec_int_rec_type_p (char *str);
+static bool rec_int_rec_type_p (const char *str);
 
 /* The following macros are used by some functions in this file to
    reduce verbosity.  */
@@ -241,79 +241,21 @@ rec_int_check_field_type (rec_db_t db,
                           rec_field_t field,
                           rec_buf_t errors)
 {
-  bool res;
-  rec_field_name_t field_name;
-  const char *rset_name;
-  rec_rset_t referred_rset;
+  bool res = true;
+  const char *field_name = NULL;
+  const char *rset_name  = NULL;
   rec_type_t type;
-  rec_type_t referring_type;
-  rec_type_t referred_type;
   char *errors_str;
 
   res = true;
   rset_name = NULL;
-  referred_rset = NULL;
-  referred_type = NULL;
-  referring_type = NULL;
 
   field_name = rec_field_name (field);
 
-  /* Get the proper type to check 'field' with.  The algorithm differs
-     depending on the kind of field:
-     
-     - For normal fields, we check with the type from the type
-       registry of 'rset', if any.
+  /* Get the proper type to check 'field' with, checking with the type
+     from the type registry of 'rset', if any.  */
 
-     - For compound fields (reference), we check with the type from
-       the type registry of the referenced rset, if such an rset is
-       found.
-
-     Note that if a type declaration in the referring rset exist for
-     the field and a conflict arises then the type descriptor in the
-     referred record takes precedence and a warning is emitted.  (XXX:
-     maybe a configurable error?).
-
-  */
-
-  /* Get the referred type, if any.  */
-  if (rec_field_name_size (field_name) > 1)
-    {
-      rset_name = rec_field_name_get (field_name, 0);
-      if (rset_name)
-        {
-          referred_rset = rec_db_get_rset_by_type (db, rset_name);
-        }
-
-      if (referred_rset)
-        {
-          referred_type = rec_rset_get_field_type (referred_rset,
-                                                   rec_field_name (field));
-        }
-    }
-
-  /* Get the referring type, if any.  */
-  referring_type = rec_rset_get_field_type (rset, rec_field_name (field));
-
-  /* The referring type takes precedence.  */
-  if (referring_type)
-    {
-      if (referred_type
-          && (!rec_type_equal_p (referred_type, referring_type))
-          && errors)
-        {
-          ADD_ERROR (errors,
-                     _("%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"),
-                     rec_field_source (field), rec_field_location_str (field),
-                     rec_type_kind_str (referred_type), rec_type_kind_str (referring_type),
-                     rset_name);
-        }
-
-      type = referring_type;
-    }
-  else
-    {
-      type = referred_type;
-    }
+  type = rec_rset_get_field_type (rset, rec_field_name (field));
 
   /* Check the field with the type.  */
 
@@ -375,8 +317,7 @@ rec_int_check_record_mandatory (rec_rset_t rset,
   int res;
   rec_record_t descriptor;
   rec_fex_t mandatory_fex;
-  rec_field_name_t mandatory_field_name;
-  char *mandatory_field_str;
+  const char *mandatory_field_name;
   rec_field_t field;
   size_t i, j, num_fields;
   
@@ -401,7 +342,6 @@ rec_int_check_record_mandatory (rec_rset_t rset,
           for (j = 0; j < rec_fex_size (mandatory_fex); j++)
             {
               mandatory_field_name = rec_fex_elem_field_name (rec_fex_get (mandatory_fex, j));
-              mandatory_field_str = rec_fex_elem_field_name_str (rec_fex_get (mandatory_fex, j));
 
               if (rec_record_get_num_fields_by_name (record, mandatory_field_name)
                   == 0)
@@ -410,7 +350,7 @@ rec_int_check_record_mandatory (rec_rset_t rset,
                              _("%s:%s: error: mandatory field '%s' not found in record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
-                             mandatory_field_str);
+                             mandatory_field_name);
                   res++;
                 }
             }
@@ -428,8 +368,7 @@ rec_int_check_record_unique (rec_rset_t rset,
   int res;
   rec_record_t descriptor;
   rec_fex_t unique_fex;
-  rec_field_name_t unique_field_name;
-  char *unique_field_str;
+  const char *unique_field_name;
   rec_field_t field;
   size_t i, j, num_fields;
   
@@ -454,7 +393,6 @@ rec_int_check_record_unique (rec_rset_t rset,
           for (j = 0; j < rec_fex_size (unique_fex); j++)
             {
               unique_field_name = rec_fex_elem_field_name (rec_fex_get (unique_fex, j));
-              unique_field_str = rec_fex_elem_field_name_str (rec_fex_get (unique_fex, j));
 
               if (rec_record_get_num_fields_by_name (record, unique_field_name)
                   > 1)
@@ -463,7 +401,7 @@ rec_int_check_record_unique (rec_rset_t rset,
                              _("%s:%s: error: field '%s' should be unique in this record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
-                             unique_field_str);
+                             unique_field_name);
                   res++;
                 }
             }
@@ -481,8 +419,7 @@ rec_int_check_record_prohibit (rec_rset_t rset,
   int res;
   rec_record_t descriptor;
   rec_fex_t prohibit_fex;
-  rec_field_name_t prohibit_field_name;
-  char *prohibit_field_str;
+  const char *prohibit_field_name;
   rec_field_t field;
   size_t i, j, num_fields;
   
@@ -507,7 +444,6 @@ rec_int_check_record_prohibit (rec_rset_t rset,
           for (j = 0; j < rec_fex_size (prohibit_fex); j++)
             {
               prohibit_field_name = rec_fex_elem_field_name (rec_fex_get (prohibit_fex, j));
-              prohibit_field_str = rec_fex_elem_field_name_str (rec_fex_get (prohibit_fex, j));
 
               if (rec_record_get_num_fields_by_name (record, prohibit_field_name)
                   > 0)
@@ -516,7 +452,7 @@ rec_int_check_record_prohibit (rec_rset_t rset,
                              _("%s:%s: error: prohibited field '%s' found in record\n"),
                              rec_record_source (record),
                              rec_record_location_str (record),
-                             prohibit_field_str);
+                             prohibit_field_name);
                   res++;
                 }
             }
@@ -576,7 +512,7 @@ rec_int_check_record_key (rec_rset_t rset,
   rec_record_t descriptor;
   rec_record_t other_record;
   rec_mset_iterator_t iter;
-  rec_field_name_t key_field_name;
+  char *key_field_name;
   rec_field_t field;
   rec_field_t key;
   rec_field_t other_key;
@@ -659,13 +595,13 @@ rec_int_check_record_key (rec_rset_t rset,
                                  _("%s:%s: error: duplicated key value in field '%s' in record\n"),
                                  rec_record_source (orig_record),
                                  rec_record_location_str (orig_record),
-                                 rec_field_name_str (key));
+                                 rec_field_name (key));
                       res++;
                       break;
                     }
                 }
 
-              rec_field_name_destroy (key_field_name);
+              free (key_field_name);
             }
         }                                          
     }
@@ -681,12 +617,10 @@ rec_int_check_descriptor (rec_rset_t rset,
   rec_record_t descriptor;
   rec_mset_iterator_t iter;
   rec_field_t field;
-  char *field_name_str;
-  rec_field_name_t field_name;
-  char *field_value;
+  const char *field_name;
+  const char *field_value;
   rec_fex_t fex;
-  rec_field_name_t auto_field_name;
-  char *auto_field_name_str;
+  const char *auto_field_name;
   size_t i;
   rec_type_t type;
   char *type_name = NULL;
@@ -767,7 +701,6 @@ rec_int_check_descriptor (rec_rset_t rset,
       while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, NULL))
         {
           field_name = rec_field_name (field);
-          field_name_str = rec_field_name_str (field);
           field_value = rec_field_value (field);
 
           if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPE)))
@@ -895,7 +828,7 @@ does not exist\n"),
                              _("%s:%s: error: value for %s[%zd] is not a list of field names\n"),
                              rec_record_source (descriptor),
                              rec_record_location_str (descriptor),
-                             rec_field_name_str (field),
+                             rec_field_name (field),
                              rec_record_get_field_index_by_name (descriptor, field));
                   res++;
                 }
@@ -911,7 +844,7 @@ does not exist\n"),
                             _("%s:%s: error: value for %s should be a field name.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
-                            field_name_str);
+                            field_name);
                   res++ ;
                 }
             }
@@ -923,7 +856,7 @@ does not exist\n"),
                             _("%s:%s: error: value for %s should be a number optionally preceded by >, <, >= or <=.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
-                            field_name_str);
+                            field_name);
                   res++;
                 }
             }
@@ -939,7 +872,7 @@ does not exist\n"),
                             _("%s:%s: error: value for %s should be a list of field names.\n"),
                             rec_field_source (field),
                             rec_field_location_str (field),
-                            field_name_str);
+                            field_name);
                   res++;
                 }
             }
@@ -953,7 +886,6 @@ does not exist\n"),
               for (i = 0; i < rec_fex_size (fex); i++)
                 {
                   auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
-                  auto_field_name_str = rec_fex_elem_field_name_str (rec_fex_get (fex, i));
                   type = rec_rset_get_field_type (rset, auto_field_name);
                   if ((!type) ||
                       ! ((rec_type_kind (type) == REC_TYPE_INT)
@@ -964,7 +896,7 @@ does not exist\n"),
                                 _("%s:%s: error: auto-incremented field %s should be of type int, range or date\n"),
                                 rec_record_source (descriptor),
                                 rec_record_location_str (descriptor),
-                                auto_field_name_str);
+                                auto_field_name);
                       res++;
                     }
                 }
@@ -1141,11 +1073,11 @@ rec_int_merge_remote (rec_rset_t rset,
 }
 
 static bool
-rec_int_rec_type_p (char *str)
+rec_int_rec_type_p (const char *str)
 {
   return rec_match (str,
                     "^[ \t]*"
-                    REC_FNAME_PART_RE
+                    REC_FNAME_RE
                     "[ \n\t]*"
                     "("
                     "(" REC_URL_REGEXP ")"

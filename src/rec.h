@@ -363,98 +363,17 @@ bool rec_comment_equal_p (rec_comment_t comment1, rec_comment_t comment2);
 
 /* FIELD NAMES
  *
- * A field name is a list of name-parts:
- *
- *   namepart1:namepart2: ...
- *
- * Each name-part is finished by a colon (:) character.
  */
 
-typedef struct rec_field_name_s *rec_field_name_t;
+/******************* Regexps for field names *******************/
 
-/* Regexps for field names and field name parts.  */
-#define REC_FNAME_PART_RE "[a-zA-Z%][a-zA-Z0-9_-]*"
-#define REC_FNAME_RE                                                  \
-  REC_FNAME_PART_RE "(" ":" REC_FNAME_PART_RE ")*:?"
+#define REC_FNAME_RE "[a-zA-Z%][a-zA-Z0-9_-]*"
 
 #define REC_TYPE_NAME_RE "[a-zA-Z][a-zA-Z0-9_-]*"
 #define REC_URL_REGEXP "(file|http|ftp|https)://[^ \t]+"
 #define REC_FILE_REGEXP "(/?[^/ \t\n]+)+"
 
-/* Creating a field name.
- *
- * In the case of an error NULL is returned.
- */
-rec_field_name_t rec_field_name_new ();
-
-/* Destroy a field name.  */
-void rec_field_name_destroy (rec_field_name_t fname);
-
-/* Get a copy of a field name.  */
-rec_field_name_t rec_field_name_dup (rec_field_name_t fname);
-
-/* Comparing field names.
- *
- * The library supports three different notions of equality for field
- * names:
- *
- * - Two given field names are EQL if and only if they contain the
- *   same number of name parts, they are identical and they appear in
- *   the same order.  The following names are thus eql:
- *
- *         A:B:C:  .EQL.  A:B:C:
- *
- * - Two given field names are EQUAL if and only if their name parts
- *   with the biggest index are identical.  The following names are
- *   thus equal:
- *
- *         A:B:C:  .EQUAL. X:Y:C:  .EQUAL. C:
- *
- * - A given field name NAME2 is a reference of a field name NAME1 if
- *   and only if size(NAME2) > 1 and NAME1[size(NAME1)-1] == NAME2[1].
- *   Thus, the following is true:
- *
- *         A:B: is a reference to B: and to X:Y:B:.
- *
- * The following functions implement those criterias.
- */
-
-bool rec_field_name_eql_p (rec_field_name_t fname1,
-                           rec_field_name_t fname2);
-
-bool rec_field_name_equal_p (rec_field_name_t fname1,
-                             rec_field_name_t fname2);
-
-bool rec_field_name_ref_p (rec_field_name_t fname1,
-                           rec_field_name_t fname2);
-
-/* Get the size of a field name measured in number of parts.  */
-int rec_field_name_size (rec_field_name_t fname);
-
-/* Set a part in a field name.
- *
- * If INDEX is out of bounds then 'false' is returned.
- */
-bool rec_field_name_set (rec_field_name_t fname,
-                         int index,
-                         const char *str);
-
-/* Get a part of a field name.
- *
- * If INDEX is out of bounds then NULL is returned.
- */
-const char *rec_field_name_get (rec_field_name_t fname,
-                                int index);
-
-/* Check if a given string conforms a valid field name.  See the
-   regular expressions REC_FNAME_RE and REC_FNAME_PART_RE above for
-   the definition of a well conformed field name.  */
-bool rec_field_name_part_str_p (const char *str);
-bool rec_field_name_str_p (const char *str);
-
-/* Normalise a field name part.  Any non alphanumeric character,
-   including '_', '-' and '%', are transformed into '_'. */
-char *rec_field_name_part_normalise (const char *str);
+/******************* Field data types **************************/
 
 /*
  * The following enumeration contains identifiers for the standard
@@ -479,30 +398,38 @@ enum rec_std_field_e
   REC_FIELD_UNIQUE
 };
 
+/******************* Field name utilities **********************/
+
+/* Determine whether two given strings contain the same field name.
+   Note that this function does not check wheter the strings actually
+   contain valid field names.  */
+
+bool rec_field_name_equal_p (const char *name1, const char *name2);
+
+/* Determine whether a given string is a correct field name.  */
+
+bool rec_field_name_p (const char *str);
+
+/* Normalise a field name.  Any non alphanumeric character, including
+   '_', '-' and '%', are transformed into '_'.  This function returns
+   NULL if there is not enough memory to perform the operation.  */
+
+char *rec_field_name_normalise (const char *str);
+
 /* Return the field name corresponding to a standard field, as defined
    above.  */
 
-rec_field_name_t rec_std_field_name (enum rec_std_field_e std_field);
+const char *rec_std_field_name (enum rec_std_field_e std_field);
 
 /*
  * FIELD EXPRESSIONS
  *
  * A Field expression is composed by a sequence of "elements".  Each
- * element makes a reference to one or more fields in a record with a
- * given name:
- *
- *  - Name:  Field name.
- *  - Range: [min..max]
- *  - Prefix: One-character prefix.
- *
- * FEXs can be parsed from strings following this syntax:
- *
- *      ELEM_DESCRIPTOR1,...,ELEM_DESCRIPTORn
- *
- * Where each element descriptor is:
- *
- *      /?FIELD_NAME([N(..N)?])?
+ * element makes a reference to one or more fields in a record.
  */
+
+/* Opaque data types for field expressions and the elements stored in
+   them.  */
 
 typedef struct rec_fex_s *rec_fex_t;
 typedef struct rec_fex_elem_s *rec_fex_elem_t;
@@ -521,47 +448,82 @@ enum rec_fex_kind_e
 #define REC_FNAME_SUB_RE      REC_FNAME_RE "(\\[[0-9]+(-[0-9]+)?\\])?"
 #define REC_FNAME_LIST_SUB_RE REC_FNAME_SUB_RE "(," REC_FNAME_SUB_RE ")*"
 
-/* Create a field expression structure from a string.  A fex kind
-   shall be specified in KIND.  If STR does not contain a valid FEX of
-   the given kind then NULL is returned.  If STR is NULL then an empty
-   fex is returned.  */
-rec_fex_t rec_fex_new (char *str,
-                       enum rec_fex_kind_e kind);
+/*********** Creating and destroying field expressions ************/
 
-/* Destroy a field expression structure freeing any used resource. */
+/* Parse and create a field expression, and return it.  A fex kind
+   shall be specified in KIND.  If STR does not contain a valid FEX of
+   the given kind then NULL is returned.  If there is not enough
+   memory to perform the operation then NULL is returned.  If STR is
+   NULL then an empty fex is returned.  */
+
+rec_fex_t rec_fex_new (const char *str, enum rec_fex_kind_e kind);
+
+/* Destroy a field expression, freeing any used resource. */
+
 void rec_fex_destroy (rec_fex_t fex);
+
+/********* Getting and setting field expression properties **********/
+
+/* Get the number of elements stored in a field expression.  */
+
+size_t rec_fex_size (rec_fex_t fex);
+
+/* Check whether a given field (or set of fields) identified by their
+   name and indexes, are contained in a fex.  */
+
+bool rec_fex_member_p (rec_fex_t fex, const char *fname, int min, int max);
+
+/* Get the element of a field expression occupying the given position.
+   If the position is invalid then NULL is returned.  */
+
+rec_fex_elem_t rec_fex_get (rec_fex_t fex, size_t position);
+
+/* Append an element at the end of the fex and return it.  This
+   function returns NULL if there is not enough memory to perform the
+   operation.  */
+
+rec_fex_elem_t rec_fex_append (rec_fex_t fex, const char *fname,
+                               int min, int max);
+
+/**************** Accessing field expression elements **************/
+
+/* Return the name of the field(s) referred by a given fex
+   element.  */
+
+const char *rec_fex_elem_field_name (rec_fex_elem_t elem);
+
+/* Set the name of the field(s) referred by a given fex element.  This
+   function returns 'false' if there is not enough memory to perform
+   the operation.  */
+
+bool rec_fex_elem_set_field_name (rec_fex_elem_t elem, const char *fname);
+
+/* Get the 'min' index associated with the field(s) referred by a
+   given fex element.  */
+
+int rec_fex_elem_min (rec_fex_elem_t elem);
+
+/* Get the 'max' index associated with the field(s) referred by a
+   given fex element.  Note that if the index is unused (the element
+   refers to just one field) then -1 is returned.  */
+
+int rec_fex_elem_max (rec_fex_elem_t elem);
+
+/*********** Miscellaneous field expressions functions ************/
 
 /* Check whether a given string STR contains a proper fex description
    of type KIND.  */
-bool rec_fex_check (char *str, enum rec_fex_kind_e kind);
 
-/* Sort the elements of a fex regarding its 'min' attribute.  */
+bool rec_fex_check (const char *str, enum rec_fex_kind_e kind);
+
+/* Sort the elements of a fex using the 'min' index of the elements as
+   the sorting criteria.  */
+
 void rec_fex_sort (rec_fex_t fex);
 
-/* Get the number of elements in a field expression.  */
-int rec_fex_size (rec_fex_t fex);
+/* Get the written form of a field expression.  This function returns
+   NULL if there is not enough memory to perform the operation.  */
 
-/* Get the element of a field expression in the given position.  If
-   the position is invalid then NULL is returned.  */
-rec_fex_elem_t rec_fex_get (rec_fex_t fex, int position);
-
-/* Append an element at the end of the fex.  */
-void rec_fex_append (rec_fex_t fex,
-                     rec_field_name_t fname,
-                     int min,
-                     int max);
-
-/* Check whether a given field is contained in a fex.  */
-bool rec_fex_member_p (rec_fex_t fex, rec_field_name_t fname, int min, int max);
-
-/* Get the properties of a field expression element.  */
-rec_field_name_t rec_fex_elem_field_name (rec_fex_elem_t elem);
-void rec_fex_elem_set_field_name (rec_fex_elem_t elem, rec_field_name_t fname);
-char *rec_fex_elem_field_name_str (rec_fex_elem_t elem);
-int rec_fex_elem_min (rec_fex_elem_t elem);
-int rec_fex_elem_max (rec_fex_elem_t elem);
-
-/* Get the written form of a field expression.  */
 char *rec_fex_str (rec_fex_t fex, enum rec_fex_kind_e kind);
 
 /*
@@ -653,7 +615,8 @@ bool rec_type_equal_p (rec_type_t type1, rec_type_t type2);
 
 /* Check the contents of a string against a type.  In case some error
    arises, return it in ERROR_STR if it is not NULL.  */
-bool rec_type_check (rec_type_t type, char *str, char **error_str);
+
+bool rec_type_check (rec_type_t type, const char *str, char **error_str);
 
 /*
  * TYPE REGISTRIES.
@@ -701,15 +664,7 @@ typedef struct rec_field_s *rec_field_t;
 /* Create a new field and return a reference to it.  NULL is returned
    if there is no enough memory to perform the operation.  */
 
-rec_field_t rec_field_new (const rec_field_name_t name,
-                           const char *value);
-
-/* Parse a field name from a string and return it.  NULL is returned
-   if the string does not contain a valid field name or if there is
-   not enough memory to perform the operation.  */
-
-rec_field_t rec_field_new_str (const char *name,
-                               const char *value);
+rec_field_t rec_field_new (const char *name, const char *value);
 
 /* Destroy a field freeing all used resources.  This disposes all the
    memory used by the field internals.  */
@@ -726,47 +681,48 @@ rec_field_t rec_field_dup (rec_field_t field);
 /******************** Comparing fields  ****************************/
 
 /* Determine wether two given fields are equal (i.e. they have equal
-   names and equal values). */
+   names but possibly different values).  */
 
 bool rec_field_equal_p (rec_field_t field1, rec_field_t field2);
 
 /************ Getting and Setting field properties *****************/
 
-/* Return the name of a field.  */
+/* Return a NULL terminated string containing the name of a field.
+   Note that this function can't return the empty string for a
+   properly initialized field.  */
 
-rec_field_name_t rec_field_name (rec_field_t field);
+const char *rec_field_name (rec_field_t field);
 
-/* Return a NULL terminated string containing the name of a
-   field. This can't return an empty string.  */
+/* Set the name of a field.  This function returns 'false' if there is
+   not enough memory to perform the operation.  */
 
-char *rec_field_name_str (rec_field_t field);
-
-/* Set the name of a field.  */
-
-void rec_field_set_name (rec_field_t field, rec_field_name_t fname);
+bool rec_field_set_name (rec_field_t field, const char *name);
 
 /* Return a NULL terminated string containing the value of a field,
    i.e. the string stored in the field.  The returned string may be
    empty if the field has no value, but never NULL.  */
 
-char *rec_field_value (rec_field_t field);
+const char *rec_field_value (rec_field_t field);
 
-/* Set the value of a given field to the given string. */
+/* Set the value of a given field to the given string.  This function
+   returns 'false' if there is not enough memory to perform the
+   operation.  */
 
-void rec_field_set_value (rec_field_t field, const char *value);
+bool rec_field_set_value (rec_field_t field, const char *value);
 
 /* Return a string describing the source of the field.  The specific
    meaning of the source depends on the user: it may be a file name,
    or something else.  This function returns NULL for a field for
    which a source was never set.  */
 
-char *rec_field_source (rec_field_t field);
+const char *rec_field_source (rec_field_t field);
 
 /* Set a string describing the source of the field.  Any previous
    string associated to the field is destroyed and the memory it
-   occupies is freed.  */
+   occupies is freed.  This function returns 'false' if there is not
+   enough memory to perform the operation.  */
 
-void rec_field_set_source (rec_field_t field, char *source);
+bool rec_field_set_source (rec_field_t field, const char *source);
 
 /* Return an integer representing the location of the field within its
    source.  The specific meaning of the location depends on the user:
@@ -779,12 +735,13 @@ size_t rec_field_location (rec_field_t field);
    within its source.  This function returns NULL for fields not
    having a defined source.  */
 
-char *rec_field_location_str (rec_field_t field);
+const char *rec_field_location_str (rec_field_t field);
 
 /* Set a number as the new location for the given field.  Any
-   previously stored location is forgotten.  */
+   previously stored location is forgotten.  This function returns
+   'false' if there is not enough memory to perform the operation.  */
 
-void rec_field_set_location (rec_field_t field, size_t location);
+bool rec_field_set_location (rec_field_t field, size_t location);
 
 /* Return an integer representing the char location of the field
    within its source.  The specific meaning of the location depends on
@@ -798,12 +755,14 @@ size_t rec_field_char_location (rec_field_t field);
    within its source.  This function returns NULL for fields not
    having a defined source.  */
 
-char *rec_field_char_location_str (rec_field_t field);
+const char *rec_field_char_location_str (rec_field_t field);
 
 /* Set a number as the new char location for the given field.  Any
-   previously stored char location is forgotten.  */
+   previously stored char location is forgotten.  This function
+   returns 'false' if there is not enough memory to perform the
+   operation.  */
 
-void rec_field_set_char_location (rec_field_t field, size_t location);
+bool rec_field_set_char_location (rec_field_t field, size_t location);
 
 /********************* Transformations in fields ********************/
 
@@ -961,26 +920,26 @@ bool rec_record_contains_value (rec_record_t record, char *value, bool case_inse
 /* Determine whether a given record contains a field named after a
    given field name.  */
 
-bool rec_record_field_p (rec_record_t record, rec_field_name_t field_name);
+bool rec_record_field_p (rec_record_t record, const char *field_name);
 
 /* Return the number of fields name after a given field name stored in
    a record.  */
 
 size_t rec_record_get_num_fields_by_name (rec_record_t record,
-                                          rec_field_name_t field_name);
+                                          const char *field_name);
 
 /* Return the Nth field named after the given field name in a record.
    This function returns NULL if there is no such a field.  */
 
 rec_field_t rec_record_get_field_by_name (rec_record_t record,
-                                          rec_field_name_t field_name,
+                                          const char *field_name,
                                           size_t n);
 
 /* Remove the Nth field named after the given field name in a
    record.  */
 
 void rec_record_remove_field_by_name (rec_record_t record,
-                                      rec_field_name_t field_name,
+                                      const char *field_name,
                                       size_t n);
 
 /* Return the 'container pointer' of a record.  It is a pointer which
@@ -1124,7 +1083,7 @@ rec_type_reg_t rec_rset_get_type_reg (rec_rset_t rset);
    found.  */
 
 rec_type_t rec_rset_get_field_type (rec_rset_t rset,
-                                    rec_field_name_t field_name);
+                                    const char *field_name);
 
 /********************** Size constraints ****************************/
 
@@ -1148,8 +1107,8 @@ size_t rec_rset_max_records (rec_rset_t rset);
    EQL.  */
 
 void rec_rset_rename_field (rec_rset_t rset,
-                            rec_field_name_t field_name,
-                            rec_field_name_t new_field_name);
+                            const char *field_name,
+                            const char *new_field_name);
 
 /* Return a fex with the names of all the fields defined as
    auto-incremented fields in a record set.  */
@@ -1164,7 +1123,7 @@ rec_fex_t rec_rset_confidential (rec_rset_t rset);
 /* Determine whether a given field name corresponds to a confidential
    field in a record set.  */
 
-bool rec_rset_field_confidential_p (rec_rset_t rset, rec_field_name_t field_name);
+bool rec_rset_field_confidential_p (rec_rset_t rset, const char *field_name);
 
 /* Return a string describing the source of the record set.  The
    specific meaning of the source depends on the user: it may be a
@@ -1176,13 +1135,14 @@ char *rec_rset_source (rec_rset_t rset);
 /* Set a field name that will be used as the sorting criteria for a
    record set.  The field name will take precedence to any other way
    to define the sorting criteria, such as the %sort special field in
-   the record descriptor.  */
+   the record descriptor.  This function returns 'false' if there is
+   not enough memory to perform the operation.  */
 
-void rec_rset_set_order_by_field (rec_rset_t rset, rec_field_name_t field_name);
+bool rec_rset_set_order_by_field (rec_rset_t rset, const char *field_name);
 
 /* Return the field name that is used to sort a record set.  */
 
-rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
+const char *rec_rset_order_by_field (rec_rset_t rset);
 
 /* Sort a record set.  The SORT_BY parameter is a field name that, if
    non NULL, will be used as the sorting criteria.  If no SORT_BY
@@ -1191,7 +1151,7 @@ rec_field_name_t rec_rset_order_by_field (rec_rset_t rset);
    function is a no-op.  The function returns a copy of RSET or NULL
    if there is not enough memory to perform the operation.  */
 
-rec_rset_t rec_rset_sort (rec_rset_t rset, rec_field_name_t sort_by);
+rec_rset_t rec_rset_sort (rec_rset_t rset, const char *sort_by);
 
 /* Group the records of a record set by a given field GROUP_BY.  The
    given record set must be sorted by GROUP_BY.  Note that this
@@ -1201,7 +1161,7 @@ rec_rset_t rec_rset_sort (rec_rset_t rset, rec_field_name_t sort_by);
    function returns a copy of RSET or NULL if there was not enough
    memory to perform the operation.  */
 
-rec_rset_t rec_rset_group (rec_rset_t rset, rec_field_name_t group_by);
+rec_rset_t rec_rset_group (rec_rset_t rset, const char *group_by);
 
 /* Add missing auto fields defined in a record set to a given record.
    The record could not be stored in the record set used to determine
@@ -1328,175 +1288,354 @@ bool rec_int_check_field_type (rec_db_t db,
  * PARSER
  *
  * The rec parser provides functions to parse field, records and
- * entire record sets from a file stream.
+ * entire record sets from a file stream or a memory buffer.
  */
+
+/* Opaque data type representing a parser.  */
 
 typedef struct rec_parser_s *rec_parser_t;
 
-/* Create a parser associated with a given file stream.
-   If not enough memory, return NULL. */
-rec_parser_t rec_parser_new (FILE *in, char *source);
+/**************** Creating and destroying parsers ******************/
 
-/* Create a parser associated with a given buffer.
-   If not enough memory, return NULL.  */
-rec_parser_t rec_parser_new_str (char *buffer, char *source);
+/* Create a parser associated with a given file stream that will be
+   used as the source for the tokens.  If not enough memory, return
+   NULL. */
 
-/* Destroy a parser.
- *
- * Note that this call is not closing the associated file stream.
- */
+rec_parser_t rec_parser_new (FILE *in, const char *source);
+
+/* Create a parser associated with a given buffer that will be used as
+   the source for the tokens.  If not enough memory, return NULL.  */
+
+rec_parser_t rec_parser_new_str (const char *buffer, const char *source);
+
+/* Destroy a parser, freeing all used resources.  Note that this call
+   is not closing the associated file stream or the associated memory
+   buffer.  */
+
 void rec_parser_destroy (rec_parser_t parser);
 
-/* Parsing routines.
- *
- * If a parse error (or EOF) occurs, the following functions return
- * NULL.
- */
+/*********************** Parsing routines **************************/
 
-rec_field_name_t rec_parse_field_name_str (char *str);
-bool rec_parse_field_name (rec_parser_t parser, rec_field_name_t *fname);
+/* Parse a field name and return it in FNAME.  This function returns
+   'false' and the value in FNAME is undefined if a parse error is
+   found.  */
+
+bool rec_parse_field_name (rec_parser_t parser, char **fname);
+
+/* Parse a field name from a string and return it.  This function
+   returns NULL if a parse error is found.  */
+
+char *rec_parse_field_name_str (const char *str);
+
+/* Parse a field and return it in FIELD.  This function returns
+   'false' and the value in FIELD is undefined if a parse error is
+   found.  */
+
 bool rec_parse_field (rec_parser_t parser, rec_field_t *field);
+
+/* Parse a record and return it in RECORD.  This function returns
+   'false' and the value in RECORD is undefined if a parse error is
+   found.  */
+
 bool rec_parse_record (rec_parser_t parser, rec_record_t *record);
-rec_record_t rec_parse_record_str (char *str);
+
+/* Parse a record from a string and return it.  This function builds
+   up an ephimeral parser internally in order to do the parsing.  This
+   function returns NULL if a parse error is found.  */
+
+rec_record_t rec_parse_record_str (const char *str);
+
+/* Parse a record set and return it in RSET.  This function returns
+   'false' and the value in RSET is undefined if a parse error is
+   found.  */
+
 bool rec_parse_rset (rec_parser_t parser, rec_rset_t *rset);
+
+/* Parse a database and return it in DB.  This function returns
+   'false' and the value in DB is undefined if a parse error is
+   found.  */
+
 bool rec_parse_db (rec_parser_t parser, rec_db_t *db);
 
-/* Getting information about the parser */
+/************ Getting and Setting properties of parsers *************/
+
+/* Determine whether a given parser is in an EOF (end of file)
+   state.  */
+
 bool rec_parser_eof (rec_parser_t parser);
+
+/* Determine whether a given parser is in an error state.  If the
+   parser is in an error state then rec_parser_perror can be used to
+   get a string describing the error.  */
+
 bool rec_parser_error (rec_parser_t parser);
 
 /* Reset the error status and EOF of a parser. */
+
 void rec_parser_reset (rec_parser_t parser);
 
-/* Print a message with details on the last parser error.
- *
- * This function produces a message on the standard error output,
+/* Print a message with details on the last parser error.  This
+ * function produces a message on the standard error output,
  * describing the last error encountered while parsing.  First, if FMT
  * is not NULL, it is printed along with any remaining argument.  Then
  * a colon and a space are printed, and finally an error message
  * describing what went wrong.
  */
-void rec_parser_perror (rec_parser_t parser, char *fmt, ...);
+
+void rec_parser_perror (rec_parser_t parser, const char *fmt, ...);
 
 /*
  * WRITER
  *
- * Writing routines.
+ * The rec writer provides functions to generate the written form of
+ * rec objects such as fields and records.
  */
+
+/* Opaque data type representing a rec writer.  */
 
 typedef struct rec_writer_s *rec_writer_t;
 
-/* Create a writer associated with a given file stream.  If not enough
-   memory, return NULL. */
-rec_writer_t rec_writer_new (FILE *out);
-
-/* Set the password to use when writing encrypted fields.  */
-void rec_writer_set_password (rec_writer_t writer, char *password);
-
-/* Create a writer associated with a given string.  If not enough
-   memory, return NULL.  */
-rec_writer_t rec_writer_new_str (char **str, size_t *str_size);
-
-/* Destroy a writer.
- *
- * Note that this call is not closing the associated file stream.
- */
-void rec_writer_destroy (rec_writer_t writer);
-
-/* Writing routines.
- *
- * If EOF occurs, the following functions return NULL.
- */
+/* Enumerated value identifying the operation modes of the writers.
+   The operation mode defines what kind of output the writer will
+   generate.  */
 
 enum rec_writer_mode_e
 {
-  REC_WRITER_NORMAL,
-  REC_WRITER_SEXP
+  REC_WRITER_NORMAL,  /* Generate output in rec format.  */
+  REC_WRITER_SEXP     /* Generate output in sexps.  */
 };
 
 typedef enum rec_writer_mode_e rec_writer_mode_t;
 
+/**************** Creating and destroying writers ******************/
+
+/* Create a writer associated with a given file stream.  If not enough
+   memory, return NULL. */
+
+rec_writer_t rec_writer_new (FILE *out);
+
+/* Create a writer associated with a given string.  If not enough
+   memory, return NULL.  */
+
+rec_writer_t rec_writer_new_str (char **str, size_t *str_size);
+
+/* Destroy a writer, freeing any used resources.  Note that this call
+   is not closing the associated file stream, nor free the associated
+   string.  */
+
+void rec_writer_destroy (rec_writer_t writer);
+
+/************ Getting and setting writer properties ***************/
+
+/* Set the password to use when writing encrypted fields.  If NULL is
+   passed then the encrypted fields are not encrypted.  This is the
+   default state of a writer.  This function returns NULL if there is
+   not enough memory to perform the operation.  */
+
+bool rec_writer_set_password (rec_writer_t writer, const char *password);
+
+/************** Getting the properties of a writer ****************/
+
+/* Determine whether a given writer is in an EOF (end-of-file)
+   state.  */
+
+bool rec_writer_eof (rec_writer_t writer);
+
+/********************** Writing routines **************************/
+
+/* Write a comment in the given writer.  This function returns 'false'
+   if there was an EOF condition.  */
+
 bool rec_write_comment (rec_writer_t writer, rec_comment_t comment, rec_writer_mode_t mode);
-bool rec_write_field_name (rec_writer_t writer, rec_field_name_t field_name, rec_writer_mode_t mode);
+
+/* Write a field name in the given writer.  This function returns
+   'false' if there was an EOF condition.  */
+
+bool rec_write_field_name (rec_writer_t writer, const char *field_name, rec_writer_mode_t mode);
+
+/* Write a field in the given writer.  This function returns 'false'
+   if there was an EOF condition.  */
+
 bool rec_write_field (rec_writer_t writer, rec_field_t field, rec_writer_mode_t mode);
+
+/* Write a field in the given writer caring about keeping any
+   restriction (such as that the field value must be encrypted) from
+   the given record set.  This function returns 'false' if there was
+   an EOF condition.  */
+
 bool rec_write_field_with_rset (rec_writer_t writer, rec_rset_t rset, rec_field_t field,
                                 rec_writer_mode_t mode);
+
+/* Write a record in the given writer.  This function returns 'false'
+   if there was an EOF condition.  */
+
 bool rec_write_record (rec_writer_t writer, rec_record_t record, rec_writer_mode_t mode);
+
+/* Write a record in the given writer caring about keeping any
+   restriction (such as that the fields in the record must be
+   encrypted) from the given record set.  This function returns
+   'false' if there was an EOF condition.  */
+
 bool rec_write_record_with_rset (rec_writer_t writer, rec_rset_t rset, rec_record_t record,
                                  rec_writer_mode_t mode);
+
+/* Write a subset of a record to the given writer.  The subset is
+   determined by a field expression.  This function returns 'false' if
+   there was an EOF condition.  */
+
 bool rec_write_record_with_fex (rec_writer_t writer, rec_record_t record, rec_fex_t fex,
                                 rec_writer_mode_t mode,
                                 bool print_values_p, bool print_in_a_row_p);
+
+/* Write a record set to the given writer.  This function returns
+   'false' if there was an EOF condition.  */
+
 bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
+
+/* Write a database to the given writer.  This function returns
+   'false' if there was an EOF condition.  */
+
 bool rec_write_db (rec_writer_t writer, rec_db_t db);
 
-char *rec_write_field_name_str (rec_field_name_t field_name, rec_writer_mode_t mode);
-char *rec_write_field_str (rec_field_t field, rec_writer_mode_t mode);
-char *rec_write_comment_str (rec_comment_t comment, rec_writer_mode_t mode);
+/* Create a string with the written representation of a field name and
+   return it.  This function returns NULL if there is not enough
+   memory to perform the operation.  */
 
-/* Getting information about the writer */
-bool rec_writer_eof (rec_writer_t writer);
+char *rec_write_field_name_str (const char *field_name, rec_writer_mode_t mode);
+
+/* Create a string with the written representation of a field and
+   return it.  This function returns NULL if there is not enough
+   memory to perform the operation.  */
+
+char *rec_write_field_str (rec_field_t field, rec_writer_mode_t mode);
+
+/* Create a string with the written representation of a comment and
+   return it.  This function returns NULL if there is not enough
+   memory to perform the operation.  */
+
+char *rec_write_comment_str (rec_comment_t comment, rec_writer_mode_t mode);
 
 /*
  * SELECTION EXPRESSIONS
  *
- * A selection expression is a written boolean expression that can be
- * applied on a record.
+ * A selection expression is an expression that can be applied to a
+ * record.  The result of the evaluation is a boolean value indicating
+ * whether the record matches the expression.
+ *
+ * The abbreviated term to refer to a selection expression is 'a sex'.
+ * The plural form is 'sexes'.
  */
+
+/* Opaque data type representing a selection expression.  */
 
 typedef struct rec_sex_s *rec_sex_t;
 
+/**************** Creating and destroying sexes ******************/
+
 /* Create a new selection expression and return it.  If there is not
    enough memory to create the sex, then return NULL.  */
+
 rec_sex_t rec_sex_new (bool case_insensitive);
 
-/* Destroy a sex.  */
+/* Destroy a sex, freeing any used resources.  */
+
 void rec_sex_destroy (rec_sex_t sex);
 
-/* Compile a sex.  If there is a parse error return false.  */
-bool rec_sex_compile (rec_sex_t sex, char *expr);
+/**************** Compiling and applying sexes ******************/
 
-/* Apply a sex expression to a record, setting RESULT in accordance.  */
+/* Compile a sex.  Sexes must be compiled before being used.  If there
+   is a parse error return false.  */
+
+bool rec_sex_compile (rec_sex_t sex, const char *expr);
+
+/* Apply a sex expression to a record, setting STATUS in accordance:
+   'true' if the record matched the sex, 'false' otherwise.  The
+   function returns the same value that is stored in STATUS.  */
+
 bool rec_sex_eval (rec_sex_t sex, rec_record_t record, bool *status);
 
-/* Apply a sex expression and get the result as a string.  */
+/* Apply a sex expression and get the result as an allocated
+   string.  */
+
 char *rec_sex_eval_str (rec_sex_t sex, rec_record_t record);
+
+/**************** Miscellaneous sexes functions ******************/
+
+/* Print the abstract syntax tree of a compiled sex.  This function is
+   intended to be used for debugging purposes.  */
 
 void rec_sex_print_ast (rec_sex_t sex);
 
-/*
- * Encryption routines.
- */
 
 #if defined REC_CRYPT_SUPPORT
 
+/*
+ * ENCRYPTION
+ *
+ * The following routines encrypt and decrypt fields in rec data.
+ */
+
+/* Prefix used in the encrypted and ASCII encoded field values, which
+   is used to recognize encrypted values.  */
+
 #define REC_ENCRYPTED_PREFIX "encrypted-"
 
-bool rec_encrypt (char *in,
-                  size_t in_size,
-                  char *password,
-                  char **out,
-                  size_t *out_size);
+/**************** Encryption routines *******************************/
 
-bool rec_decrypt (char *in,
-                  size_t in_size,
-                  char *password,
-                  char **out,
-                  size_t *out_size);
+/* Encrypt a given buffer and place the encrypted data in an allocated
+   output buffer.  This function returns 'false' if there was an error
+   while performing the encryption, such as an incorrect password or
+   an out-of-memory condition.  */
 
-bool rec_encrypt_field (rec_field_t field,
-                        char *password);
+bool rec_encrypt (char *in, size_t in_size, const char *password,
+                  char **out, size_t *out_size);
 
-bool rec_encrypt_record (rec_rset_t rset,
-                         rec_record_t record,
-                         char *password);
 
-bool rec_decrypt_field (rec_field_t field,
-                        char *password);
+/* Encrypt and ASCII-encode the value of a field used the provided
+   password.  The REC_ENCRYPTED_PREFIX is prepended to the result.
+   This function returns 'false' if there was an error while
+   performing the encryption, such as an incorrect password or an
+   out-of-memory condition.  */
 
-bool rec_decrypt_record (rec_rset_t rset,
-                         rec_record_t record,
-                         char *password);
+bool rec_encrypt_field (rec_field_t field, const char *password);
+
+/* Encrypt and ASCII-encode the fields of a record marked as
+   "confidential" in a given record set, using the provided password.
+   The REC_ENCRYPTED_PREFIX is prepended to the result.  This function
+   returns 'false' if there was an error while performing the
+   encryption, such as an incorrect password or an out-of-memory
+   condition.  */
+
+bool rec_encrypt_record (rec_rset_t rset, rec_record_t record,
+                           const char *password);
+
+/**************** Decryption routines *******************************/
+
+/* Decrypt a given buffer and place the decrypted data in an allocated
+   output buffer.  This function returns 'false' if there was an error
+   while performing the decryption, such as an incorrect password or
+   an out-of-memory condition.  */
+
+bool rec_decrypt (char *in, size_t in_size, const char *password,
+                  char **out, size_t *out_size);
+
+/* Decrypt the value of a field used the provided password.  This
+   function returns 'false' if there was an error while perfoming the
+   decryption, such as an incorrect password or an out-of-memory
+   condition.  Note that this function uses the REC_ENCRYPTED_PREFIX
+   in order to determine whether a field is already encrypted.  */
+
+bool rec_decrypt_field (rec_field_t field, const char *password);
+
+/* Decrypt the encrypted fields of a record marked as "confidential"
+   in a given record set, using the provided password.  This function
+   returns 'false' if there was an error while performing the
+   decryption, such as an incorrect password or an out-of-memory
+   condition.  Note that this function uses the REC_ENCRYPTED_PREFIX
+   in order to determine whether a field is already encrypted.  */
+
+bool rec_decrypt_record (rec_rset_t rset, rec_record_t record,
+                         const char *password);
 
 #endif /* REC_CRYPT_SUPPORT */
 

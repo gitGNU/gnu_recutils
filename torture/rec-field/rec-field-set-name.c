@@ -42,22 +42,17 @@
 START_TEST(rec_field_set_name_empty)
 {
   rec_field_t field;
-  rec_field_name_t field_name;
-  rec_field_name_t field_name_2;
+  const char *field_name;
+  const char *field_name_2;
   
-  field_name = rec_field_name_new ();
-  rec_field_name_set (field_name, 0, "");
-
+  field_name = "";
   field = rec_field_new (field_name, "");
   fail_if(field == NULL);
-
-  field_name_2 = rec_field_name_new ();
-  rec_field_name_set (field_name_2, 0, "");
-
+  field_name_2 = "";
   rec_field_set_name (field, field_name_2);
+
   field_name_2 = rec_field_name (field);
-  fail_if(strcmp (rec_field_name_get (field_name_2, 0), "")
-          != 0);
+  fail_if(strcmp (field_name_2, "") != 0);
 }
 END_TEST
 
@@ -74,22 +69,18 @@ END_TEST
 START_TEST(rec_field_set_name_nonempty)
 {
   rec_field_t field;
-  rec_field_name_t field_name;
-  rec_field_name_t field_name_2;
+  const char *field_name;
+  const char *field_name_2;
   
-  field_name = rec_field_name_new ();
-  rec_field_name_set (field_name, 0, "");
-
+  field_name = "";
   field = rec_field_new (field_name, "");
   fail_if(field == NULL);
-
-  field_name_2 = rec_field_name_new ();
-  rec_field_name_set (field_name_2, 0, "foo");
+  field_name_2 = "foo";
 
   rec_field_set_name (field, field_name_2);
+
   field_name_2 = rec_field_name (field);
-  fail_if(strcmp (rec_field_name_get (field_name_2, 0), "foo")
-          != 0);
+  fail_if(strcmp (field_name_2, "foo") != 0);
 }
 END_TEST
 

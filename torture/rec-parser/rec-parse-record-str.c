@@ -40,7 +40,7 @@ START_TEST(rec_parse_record_str_nominal)
 {
   rec_record_t record;
   rec_field_t field;
-  rec_field_name_t fname;
+  char *fname;
 
   record = rec_parse_record_str ("foo: bar");
   fail_if (record == NULL);
@@ -48,9 +48,8 @@ START_TEST(rec_parse_record_str_nominal)
   fail_if (fname == NULL);
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
-  fail_if (!rec_field_name_eql_p (fname,
-                                  rec_field_name (field)));
-  rec_field_name_destroy (fname);
+  fail_if (!rec_field_name_equal_p (fname,
+                                    rec_field_name (field)));
   rec_record_destroy (record);
 }
 END_TEST

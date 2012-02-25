@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,17 +40,17 @@ START_TEST(rec_field_name_part_normalise_nominal)
 {
   char *normalised;
 
-  normalised = rec_field_name_part_normalise ("abc");
+  normalised = rec_field_name_normalise ("abc");
   fail_if (normalised == NULL);
   fail_if (strcmp (normalised, "abc") != 0);
   free (normalised);
   
-  normalised = rec_field_name_part_normalise ("a#c d");
+  normalised = rec_field_name_normalise ("a#c d");
   fail_if (normalised == NULL);
   fail_if (strcmp (normalised, "a_c_d") != 0);
   free (normalised);
 
-  normalised = rec_field_name_part_normalise ("a-b%c_d");
+  normalised = rec_field_name_normalise ("a-b%c_d");
   fail_if (normalised != NULL);
   free (normalised);
 }

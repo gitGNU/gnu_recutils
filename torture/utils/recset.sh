@@ -349,21 +349,21 @@ field3: field23
 
 test_tool recset-rename-all-key ok \
           recset \
-          '--force -t Type1 -f field1 -r foo:bar:baz' \
+          '--force -t Type1 -f field1 -r newkey' \
           renames-multiple \
 '%rec: Type1
-%key: foo:bar:baz
+%key: newkey
 %type: field2 line
 %mandatory: field2
 %sort: field2
 
-foo:bar:baz: field11
+newkey: field11
 field2: field121
 field2: field122
 field2: field123
 field3: field13
 
-foo:bar:baz: field21
+newkey: field21
 field2: field221
 field2: field222
 field2: field223

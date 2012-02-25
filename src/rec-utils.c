@@ -138,7 +138,8 @@ rec_extract_type (const char *str)
   char *rec_type = NULL;
   size_t rec_type_length = 0;
 
-  if (regcomp (&regexp, REC_FNAME_PART_RE, REG_EXTENDED) != 0)
+  /* TODO: use a REC_TYPE_NAME_RE  */
+  if (regcomp (&regexp, REC_FNAME_RE, REG_EXTENDED) != 0)
     {
       fprintf (stderr, _("internal error: rec_int_rec_extract_url: error compiling regexp.\n"));
       return NULL;

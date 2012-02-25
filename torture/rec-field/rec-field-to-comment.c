@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,21 +40,21 @@ START_TEST(rec_field_to_comment_nominal)
   rec_field_t field;
   rec_comment_t comment;
 
-  field = rec_field_new_str ("foo", "");
+  field = rec_field_new ("foo", "");
   fail_if (field == NULL);
   comment = rec_field_to_comment (field);
   fail_if (strcmp (rec_comment_text (comment), "foo:") != 0);
   rec_comment_destroy (comment);
   rec_field_destroy (field);
 
-  field = rec_field_new_str ("foo", "value");
+  field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   comment = rec_field_to_comment (field);
   fail_if (strcmp (rec_comment_text (comment), "foo: value") != 0);
   rec_comment_destroy (comment);
   rec_field_destroy (field);
 
-  field = rec_field_new_str ("foo", "line1\nline2");
+  field = rec_field_new ("foo", "line1\nline2");
   fail_if (field == NULL);
   comment = rec_field_to_comment (field);
   fail_if (strcmp (rec_comment_text (comment), "foo: line1\n+ line2") != 0);

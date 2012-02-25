@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +37,10 @@
  */
 START_TEST(rec_field_new_nominal)
 {
-  rec_field_name_t fname;
+  const char *fname;
   rec_field_t field;
 
-  fname = rec_parse_field_name_str ("foo:bar:baz");
-  fail_if (fname == NULL);
-
+  fname = "foo";
   field = rec_field_new (fname, "value");
   fail_if (field == NULL);
 

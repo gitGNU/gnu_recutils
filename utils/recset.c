@@ -66,7 +66,7 @@ rec_fex_t  recutl_fex         = NULL;
 char      *recutl_type        = NULL;
 int        recset_action      = RECSET_ACT_NONE;
 char      *recset_value       = NULL;
-rec_field_name_t recset_new_field_name = NULL;
+char      *recset_new_field_name = NULL;
 bool       recutl_insensitive = false;
 char      *recset_file        = NULL;
 bool       recset_force       = false;
@@ -259,8 +259,8 @@ recset_parse_args (int argc,
             recset_value = xstrdup (optarg);
 
             /* Validate the new name.  */
-            recset_new_field_name = rec_parse_field_name_str (recset_value);
-            if (!recset_new_field_name)
+            recset_new_field_name = recset_value;
+            if (!rec_field_name_p (recset_new_field_name))
               {
                 recutl_fatal (_("invalid field name %s.\n"), recset_value);
               }
@@ -466,7 +466,7 @@ recset_process_add (rec_rset_t rset,
                     rec_fex_t fex)
 {
   rec_field_t field;
-  rec_field_name_t field_name;
+  const char *field_name;
   rec_fex_elem_t fex_elem;
   size_t i;
 
@@ -475,7 +475,7 @@ recset_process_add (rec_rset_t rset,
     {
       fex_elem = rec_fex_get (fex, i);
       field_name = rec_fex_elem_field_name (fex_elem);
-      field = rec_field_new (rec_field_name_dup (field_name), recset_value);
+      field = rec_field_new (field_name, recset_value);
 
       rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY);
     }
@@ -491,7 +491,7 @@ recset_process_set (rec_rset_t rset,
   size_t num_fields;
   rec_fex_elem_t fex_elem;
   rec_field_t field;
-  rec_field_name_t field_name;
+  const char *field_name;
 
   for (i = 0; i < rec_fex_size (recutl_fex); i++)
     {
@@ -547,7 +547,7 @@ recset_process_ren (rec_rset_t rset,
   size_t num_fields;
   rec_fex_elem_t fex_elem;
   rec_field_t field;
-  rec_field_name_t field_name;
+  const char *field_name;
 
   /* Rename the selected fields.  The size of the FEX is guaranteed to
      be 1 at this point.  */ 
@@ -581,7 +581,7 @@ recset_process_ren (rec_rset_t rset,
                                                 j - renamed);
           if (field)
             {
-              rec_field_set_name (field, rec_field_name_dup (recset_new_field_name));
+              rec_field_set_name (field, recset_new_field_name);
               renamed++;
             }
         }
@@ -613,7 +613,7 @@ recset_process_del (rec_rset_t rset,
   bool *deletion_mask;
   rec_fex_elem_t fex_elem;
   rec_field_t field;
-  rec_field_name_t field_name;
+  const char *field_name;
   rec_comment_t comment;
   rec_mset_iterator_t iter;
   rec_mset_elem_t elem;

@@ -35,22 +35,6 @@
 #include <rec-utils.h>
 #include <rec.h>
 
-/* Field name Data Structure
- *
- * A field name is an ordered set of strings.
- */
-
- /* parts[0] => Type
-    parts[1] => Name
-    parts[2] => Role */
-#define NAME_MAX_PARTS 3
-
-struct rec_field_name_s
-{
-  char *parts[NAME_MAX_PARTS];
-  int size;
-};
-
 /* The following global variable contains field names which are either
    standard, such as the special field names, or often used in the
    library.
@@ -58,229 +42,35 @@ struct rec_field_name_s
    Note that the array is indexed using the rec_std_field_e enumerated
    values defined in rec.h, so the order is important.  */
 
-static struct rec_field_name_s fnames[] =
-  {
-    {{"%auto", NULL, NULL}, 1},
-    {{"%confidential", NULL, NULL}, 1},
-    {{"%key", NULL, NULL}, 1},
-    {{"%mandatory", NULL, NULL}, 1},
-    {{"%prohibit", NULL, NULL}, 1},
-    {{"%rec", NULL, NULL}, 1},
-    {{"%size", NULL, NULL}, 1},
-    {{"%sort", NULL, NULL}, 1},
-    {{"%type", NULL, NULL}, 1},
-    {{"%typedef", NULL, NULL}, 1},
-    {{"%unique", NULL, NULL}, 1}
+static const char *fnames[] =
+  { 
+    "%auto",
+    "%confidential",
+    "%key",
+    "%mandatory",
+    "%prohibit",
+    "%rec",
+    "%size",
+    "%sort",
+    "%type",
+    "%typedef",
+    "%unique"
   };
 
-rec_field_name_t
+const char *
 rec_std_field_name (enum rec_std_field_e std_field)
 {
-  return (fnames + std_field);
-}
-
-rec_field_name_t
-rec_field_name_new ()
-{
-  int i;
-  rec_field_name_t new;
-
-  new = malloc (sizeof (struct rec_field_name_s));
-
-  if (new)
-    {
-      new->size = 0;
-      for (i = 0; i < NAME_MAX_PARTS; i++)
-        {
-          new->parts[i] = NULL;
-        }
-    }
-
-  return new;
-}
-
-void
-rec_field_name_destroy (rec_field_name_t fname)
-{
-  int i;
-
-  for (i = 0;
-       i < fname->size;
-       i++)
-    {
-      free (fname->parts[i]);
-    }
-      
-  free (fname);
-}
-
-int
-rec_field_name_size (rec_field_name_t fname)
-{
-  return fname->size;
-}
-
-const char *
-rec_field_name_get (rec_field_name_t fname,
-                    int index)
-{
-  const char *ret;
-
-  if ((index < 0)
-      || (index >= fname->size))
-    {
-      ret = NULL;
-    }
-  else
-    {
-      ret = fname->parts[index];
-    }
-
-  return ret;
+  return *(fnames + std_field);
 }
 
 bool
-rec_field_name_set (rec_field_name_t fname,
-                    int index,
-                    const char *str)
-{
-  bool ret;
-
-  ret = true;
-
-  if ((index < 0) 
-      || (index >= NAME_MAX_PARTS))
-    {
-      ret = false;
-    }
-  else
-    {
-      if (fname->parts[index])
-        {
-          free (fname->parts[index]);
-          fname->parts[index] = NULL;
-        }
-      
-      if (str)
-        {
-          fname->parts[index] = strdup (str);
-          if (!fname->parts[index])
-            {
-              return false;
-            }
-
-          fname->size = index + 1;
-        }
-    }
-
-  return ret;
-}
-
-rec_field_name_t
-rec_field_name_dup (rec_field_name_t fname)
-{
-  rec_field_name_t new;
-  int i;
-
-  new = rec_field_name_new ();
-  if (new)
-    {
-      for (i = 0; i < rec_field_name_size (fname); i++)
-        {
-          /* Note that 'i' cannot overflow in the following call */
-          rec_field_name_set (new,
-                              i,
-                              rec_field_name_get (fname, i));
-        }
-    }
-
-  return new;
-}
-
-bool
-rec_field_name_eql_p (rec_field_name_t fname1,
-                      rec_field_name_t fname2)
-{
-  int i;
-  bool ret;
-
-  ret = true;
-
-  if (rec_field_name_size (fname1) 
-      == rec_field_name_size (fname2))
-    {
-      for (i = 0; i < rec_field_name_size (fname1); i++)
-        {
-          if (strcmp (rec_field_name_get (fname1, i),
-                      rec_field_name_get (fname2, i)) != 0)
-            {
-              ret = false;
-              break;
-            }
-        }
-    }
-  else
-    {
-      ret = false;
-    }
-
-  return ret;
-}
-
-bool
-rec_field_name_equal_p (rec_field_name_t fname1,
-                        rec_field_name_t fname2)
-{
-  char *role1;
-  char *role2;
-
-  if ((rec_field_name_size (fname1) == 0)
-      && (rec_field_name_size (fname2) == 0))
-    {
-      return true;
-    }
-
-  role1 = fname1->parts [rec_field_name_size (fname1) - 1];
-  role2 = fname2->parts [rec_field_name_size (fname2) - 1];
-
-  return (strcmp (role1, role2) == 0);
-}
-
-bool
-rec_field_name_ref_p (rec_field_name_t fname1,
-                      rec_field_name_t fname2)
-{
-  char *role1;
-  char *role2;
-  bool ret;
-
-  ret = false;
-
-  if (rec_field_name_size (fname2) > 1)
-    {
-      role1 = fname1->parts [rec_field_name_size (fname1) - 1];
-      role2 = fname2->parts [1];
-
-      ret = (strcmp (role1, role2) == 0);
-    }
-
-  return ret;
-}
-
-bool
-rec_field_name_str_p (const char *str)
+rec_field_name_p (const char *str)
 {
   return rec_match (str, "^" REC_FNAME_RE "$");
 }
 
-bool
-rec_field_name_part_str_p (const char *str)
-{
-  return rec_match (str, "^" REC_FNAME_PART_RE "$");
-}
-
 char *
-rec_field_name_part_normalise (const char *str)
+rec_field_name_normalise (const char *str)
 {
   char *normalised_name;
   int i;
@@ -303,15 +93,26 @@ rec_field_name_part_normalise (const char *str)
         }
     }
 
-  /* Check that the normalisation leaded to a proper field name
-     part.  */
-  if (!rec_field_name_part_str_p (normalised_name))
+  /* Check that the normalisation produced a proper field name.  */
+
+  if (normalised_name)
     {
-      free (normalised_name);
-      normalised_name = NULL;
+      if (!rec_field_name_p (normalised_name))
+        {
+          free (normalised_name);
+          normalised_name = NULL;
+        }
     }
 
   return normalised_name;
+}
+
+bool
+rec_field_name_equal_p (const char *name1,
+                        const char *name2)
+{
+  /* TODO: 'foo' and 'foo:' denote the same field name.  */
+  return (strcmp (name1, name2) == 0);
 }
 
 /* End of rec-field-name.c */

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,19 +39,10 @@
  */
 START_TEST(rec_field_name_equal_p_empty)
 {
-  rec_field_name_t fname1;
-  rec_field_name_t fname2;
-
-  fname1 = rec_field_name_new ();
-  fail_if (fname1 == NULL);
-
-  fname2 = rec_field_name_new ();
-  fail_if (fname2 == NULL);
+  const char *fname1 = "";
+  const char *fname2 = "";
 
   fail_if (!rec_field_name_equal_p (fname1, fname2));
-
-  rec_field_name_destroy (fname1);
-  rec_field_name_destroy (fname2);
 }
 END_TEST
 
@@ -64,35 +55,13 @@ END_TEST
  */
 START_TEST(rec_field_name_equal_p_nonempty)
 {
-  rec_field_name_t fname1;
-  rec_field_name_t fname2;
-  rec_field_name_t fname3;
-
-  fname1 = rec_field_name_new ();
-  fail_if (fname1 == NULL);
-  fail_if (!rec_field_name_set (fname1, 0, "a"));
-  fail_if (!rec_field_name_set (fname1, 1, "b"));
-  fail_if (!rec_field_name_set (fname1, 2, "c"));
-
-  fname2 = rec_field_name_new ();
-  fail_if (fname1 == NULL);
-  fail_if (!rec_field_name_set (fname2, 0, "x"));
-  fail_if (!rec_field_name_set (fname2, 1, "y"));
-  fail_if (!rec_field_name_set (fname2, 2, "c"));
-
-  fname3 = rec_field_name_new ();
-  fail_if (fname1 == NULL);
-  fail_if (!rec_field_name_set (fname3, 0, "a"));
-  fail_if (!rec_field_name_set (fname3, 1, "b"));
-  fail_if (!rec_field_name_set (fname3, 2, "z"));
+  const char *fname1 = "a";
+  const char *fname2 = "a";
+  const char *fname3 = "c";
 
   fail_if (!rec_field_name_equal_p (fname1, fname1));
   fail_if (!rec_field_name_equal_p (fname1, fname2));
   fail_if (rec_field_name_equal_p (fname1, fname3));
-
-  rec_field_name_destroy (fname1);
-  rec_field_name_destroy (fname2);
-  rec_field_name_destroy (fname3);
 }
 END_TEST
 

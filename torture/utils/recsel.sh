@@ -128,26 +128,6 @@ field2: value22
 field3: value23
 '
 
-test_declare_input_file compound-names \
-'%rec: Hacker
-
-Name: John Smith
-Email: john@smith.net
-
-Name: Jose E. Marchesi
-Email: jemarch@gnu.org
-
-%rec: Task
-
-Id: 1
-Summary: This is task 1
-Hacker:OpenedBy: John Smith
-
-Id: 2
-Summary: This is task 2
-Hacker:OpenedBy: Jose E. Marchesi
-'
-
 test_declare_input_file dates \
 'Date: Tue Nov 30 12:00:00 CET 2002
 
@@ -591,24 +571,6 @@ field3: value33
 
 # Selection expressions.
 
-test_tool recsel-sex-field-names ok \
-          recsel \
-          '-t Task -e "OpenedBy = '\''John Smith'\''"' \
-          compound-names \
-'Id: 1
-Summary: This is task 1
-Hacker:OpenedBy: John Smith
-'
-
-test_tool recsel-sex-field-names-2 ok \
-          recsel \
-          '-t Task -e "Hacker:OpenedBy: = '\''Jose E. Marchesi'\''"' \
-          compound-names \
-'Id: 2
-Summary: This is task 2
-Hacker:OpenedBy: Jose E. Marchesi
-'
-
 test_tool recsel-sex-integer-equal ok \
           recsel \
           '-e "field1 = 0"' \
@@ -801,9 +763,11 @@ field2: value122
 
 test_tool recsel-sex-match ok \
           recsel \
-          '-t Hacker -p Name -e "Email ~ '\''\\.org'\''"' \
-          compound-names \
-'Name: Jose E. Marchesi
+          '-p Name -e "Name ~ '\''Tom'\''"' \
+          academy \
+'Name: Tom Johnson
+
+Name: Tommy Junior
 '
 
 test_tool recsel-sex-date-sametime ok \

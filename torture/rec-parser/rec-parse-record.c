@@ -41,7 +41,7 @@ START_TEST(rec_parse_record_nominal)
   rec_parser_t parser;
   rec_record_t record;
   rec_field_t field;
-  rec_field_name_t fname;
+  char *fname;
   char *str;
 
   str = "foo: bar";
@@ -51,9 +51,8 @@ START_TEST(rec_parse_record_nominal)
   fail_if (!rec_parse_record (parser, &record));
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
-  fail_if (!rec_field_name_eql_p (fname,
+  fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
-  rec_field_name_destroy (fname);
   rec_record_destroy (record);
   rec_parser_destroy (parser);
 
@@ -64,13 +63,12 @@ START_TEST(rec_parse_record_nominal)
   fail_if (!rec_parse_record (parser, &record));
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
-  fail_if (!rec_field_name_eql_p (fname,
+  fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
-  rec_field_name_destroy (fname);
   fname = rec_parse_field_name_str ("foo2");
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 1);
   fail_if (strcmp (rec_field_value (field), "bar2") != 0);
-  fail_if (!rec_field_name_eql_p (fname,
+  fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
   rec_record_destroy (record);
   rec_parser_destroy (parser);
@@ -82,21 +80,18 @@ START_TEST(rec_parse_record_nominal)
   fail_if (!rec_parse_record (parser, &record));
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 0);
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
-  fail_if (!rec_field_name_eql_p (fname,
+  fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
-  rec_field_name_destroy (fname);
   fname = rec_parse_field_name_str ("foo2");
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 1);
   fail_if (strcmp (rec_field_value (field), "") != 0);
-  fail_if (!rec_field_name_eql_p (fname,
+  fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
-  rec_field_name_destroy (fname);
   fname = rec_parse_field_name_str ("foo3");
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 2);
   fail_if (strcmp (rec_field_value (field), "bar3") != 0);
-  fail_if (!rec_field_name_eql_p (fname,
+  fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
-  rec_field_name_destroy (fname);
   rec_record_destroy (record);
   rec_parser_destroy (parser);
 }

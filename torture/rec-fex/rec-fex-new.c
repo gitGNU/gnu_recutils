@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,70 +39,36 @@
 START_TEST(rec_fex_new_single)
 {
   rec_fex_t fex;
-  rec_field_name_t fname_foo;
-  rec_field_name_t fname_foobar;
-  rec_field_name_t fname_foobarbaz;
+  const char *fname_foo;
+  const char *fname_foobar;
+  const char *fname_foobarbaz;
 
   fex = rec_fex_new (NULL, REC_FEX_SIMPLE);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 0);
   rec_fex_destroy (fex);
 
-  fname_foo = rec_parse_field_name_str ("foo");
-  fail_if (fname_foo == NULL);
-  fname_foobar = rec_parse_field_name_str ("foo:bar:");
-  fail_if (fname_foobar == NULL);
-  fname_foobarbaz = rec_parse_field_name_str ("foo:bar:baz");
-  fail_if (fname_foobarbaz == NULL);
+  fname_foo = "foo";
+  fname_foobar = "foobar";
+  fname_foobarbaz = "foobarbaz";
 
   fex = rec_fex_new ("foo", REC_FEX_SIMPLE);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 1);
-  fail_if (!rec_field_name_eql_p (fname_foo,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
+  fail_if (!rec_field_name_equal_p (fname_foo,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 0))));
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
   rec_fex_destroy (fex);
 
-  fex = rec_fex_new ("foo:", REC_FEX_CSV);
+  fex = rec_fex_new ("foobarbaz", REC_FEX_SIMPLE);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 1);
-  fail_if (!rec_field_name_eql_p (fname_foo,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
+  fail_if (!rec_field_name_equal_p (fname_foobarbaz,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 0))));
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
   rec_fex_destroy (fex);
-
-  fex = rec_fex_new ("foo:bar:", REC_FEX_SUBSCRIPTS);
-  fail_if (fex == NULL);
-  fail_if (rec_fex_size (fex) != 1);
-  fail_if (!rec_field_name_eql_p (fname_foobar,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
-  rec_fex_destroy (fex);
-
-  fex = rec_fex_new ("foo:bar:baz", REC_FEX_SIMPLE);
-  fail_if (fex == NULL);
-  fail_if (rec_fex_size (fex) != 1);
-  fail_if (!rec_field_name_eql_p (fname_foobarbaz,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
-  rec_fex_destroy (fex);
-
-  fex = rec_fex_new ("foo:bar:baz:", REC_FEX_CSV);
-  fail_if (fex == NULL);
-  fail_if (rec_fex_size (fex) != 1);
-  fail_if (!rec_field_name_eql_p (fname_foobarbaz,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
-  rec_fex_destroy (fex);
-
-  rec_field_name_destroy (fname_foo);
-  rec_field_name_destroy (fname_foobar);
-  rec_field_name_destroy (fname_foobarbaz);
 }
 END_TEST
 
@@ -115,25 +81,52 @@ END_TEST
 START_TEST(rec_fex_new_simple)
 {
   rec_fex_t fex;
-  rec_field_name_t fname_foo;
-  rec_field_name_t fname_foobar;
-  rec_field_name_t fname_foobarbaz;
+  const char *fname_foo;
+  const char *fname_foobar;
+  const char *fname_foobarbaz;
 
-  fname_foo = rec_parse_field_name_str ("foo");
-  fail_if (fname_foo == NULL);
-  fname_foobar = rec_parse_field_name_str ("foo:bar:");
-  fail_if (fname_foobar == NULL);
-  fname_foobarbaz = rec_parse_field_name_str ("foo:bar:baz");
-  fail_if (fname_foobarbaz == NULL);
+  fname_foo = "foo";
+  fname_foobar = "foobar";
+  fname_foobarbaz = "foobarbaz";
 
-  fex = rec_fex_new ("foo foo:bar foo:bar:baz", REC_FEX_SIMPLE);
+  fex = rec_fex_new ("foo foobar foobarbaz", REC_FEX_SIMPLE);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 3);
-  fail_if (!rec_field_name_eql_p (fname_foo,
+  fail_if (!rec_field_name_equal_p (fname_foo,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 0))));
+  fail_if (!rec_field_name_equal_p (fname_foobar,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 1))));
+  fail_if (!rec_field_name_equal_p (fname_foobarbaz,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 2))));
+  fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
+  fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
+  fail_if (rec_fex_elem_min (rec_fex_get (fex, 1)) != -1);
+  fail_if (rec_fex_elem_max (rec_fex_get (fex, 1)) != -1);
+  fail_if (rec_fex_elem_min (rec_fex_get (fex, 2)) != -1);
+  fail_if (rec_fex_elem_max (rec_fex_get (fex, 2)) != -1);
+  rec_fex_destroy (fex);
+
+  fex = rec_fex_new ("\tfoo foobar\n ", REC_FEX_SIMPLE);
+  fail_if (fex == NULL);
+  fail_if (rec_fex_size (fex) != 2);
+  fail_if (!rec_field_name_equal_p (fname_foo,
                                   rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (!rec_field_name_eql_p (fname_foobar,
+  fail_if (!rec_field_name_equal_p (fname_foobar,
                                   rec_fex_elem_field_name (rec_fex_get (fex, 1))));
-  fail_if (!rec_field_name_eql_p (fname_foobarbaz,
+  fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
+  fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
+  fail_if (rec_fex_elem_min (rec_fex_get (fex, 1)) != -1);
+  fail_if (rec_fex_elem_max (rec_fex_get (fex, 1)) != -1);
+  rec_fex_destroy (fex);
+
+  fex = rec_fex_new ("foo\nfoobar\nfoobarbaz", REC_FEX_SIMPLE);
+  fail_if (fex == NULL);
+  fail_if (rec_fex_size (fex) != 3);
+  fail_if (!rec_field_name_equal_p (fname_foo,
+                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
+  fail_if (!rec_field_name_equal_p (fname_foobar,
+                                  rec_fex_elem_field_name (rec_fex_get (fex, 1))));
+  fail_if (!rec_field_name_equal_p (fname_foobarbaz,
                                   rec_fex_elem_field_name (rec_fex_get (fex, 2))));
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
@@ -143,42 +136,12 @@ START_TEST(rec_fex_new_simple)
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 2)) != -1);
   rec_fex_destroy (fex);
 
-  fex = rec_fex_new ("\tfoo foo:bar\n ", REC_FEX_SIMPLE);
+  fex = rec_fex_new ("\n\t        foo\nfoobarbaz\n", REC_FEX_SIMPLE);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 2);
-  fail_if (!rec_field_name_eql_p (fname_foo,
+  fail_if (!rec_field_name_equal_p (fname_foo,
                                   rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (!rec_field_name_eql_p (fname_foobar,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 1))));
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 1)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 1)) != -1);
-  rec_fex_destroy (fex);
-
-  fex = rec_fex_new ("foo\nfoo:bar\nfoo:bar:baz", REC_FEX_SIMPLE);
-  fail_if (fex == NULL);
-  fail_if (rec_fex_size (fex) != 3);
-  fail_if (!rec_field_name_eql_p (fname_foo,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (!rec_field_name_eql_p (fname_foobar,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 1))));
-  fail_if (!rec_field_name_eql_p (fname_foobarbaz,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 2))));
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 1)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 1)) != -1);
-  fail_if (rec_fex_elem_min (rec_fex_get (fex, 2)) != -1);
-  fail_if (rec_fex_elem_max (rec_fex_get (fex, 2)) != -1);
-  rec_fex_destroy (fex);
-
-  fex = rec_fex_new ("\n\t        foo:\nfoo:bar:baz:\n", REC_FEX_SIMPLE);
-  fail_if (fex == NULL);
-  fail_if (rec_fex_size (fex) != 2);
-  fail_if (!rec_field_name_eql_p (fname_foo,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (!rec_field_name_eql_p (fname_foobarbaz,
+  fail_if (!rec_field_name_equal_p (fname_foobarbaz,
                                   rec_fex_elem_field_name (rec_fex_get (fex, 1))));
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
@@ -198,7 +161,7 @@ START_TEST(rec_fex_new_csv)
 {
   rec_fex_t fex;
 
-  fex = rec_fex_new ("foo:", REC_FEX_CSV);
+  fex = rec_fex_new ("foo", REC_FEX_CSV);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 1);
   rec_fex_destroy (fex);
@@ -224,23 +187,19 @@ END_TEST
 START_TEST(rec_fex_new_subscripts)
 {
   rec_fex_t fex;
-  rec_field_name_t fname_foo;
-  rec_field_name_t fname_foobar;
-  rec_field_name_t fname_foobarbaz;
+  const char *fname_foo;
+  const char *fname_foobar;
+  const char *fname_foobarbaz;
 
-  fname_foo = rec_parse_field_name_str ("foo");
-  fail_if (fname_foo == NULL);
-  fname_foobar = rec_parse_field_name_str ("foo:bar:");
-  fail_if (fname_foobar == NULL);
-  fname_foobarbaz = rec_parse_field_name_str ("foo:bar:baz");
-  fail_if (fname_foobarbaz == NULL);
-  
+  fname_foo = "foo";
+  fname_foobar = "foobar";
+  fname_foobarbaz = "foobarbaz";
 
   fex = rec_fex_new ("foo", REC_FEX_SUBSCRIPTS);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 1);
-  fail_if (!rec_field_name_eql_p (fname_foo,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
+  fail_if (!rec_field_name_equal_p (fname_foo,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 0))));
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != -1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
   rec_fex_destroy (fex);
@@ -248,31 +207,27 @@ START_TEST(rec_fex_new_subscripts)
   fex = rec_fex_new ("foo[1]", REC_FEX_SUBSCRIPTS);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 1);
-  fail_if (!rec_field_name_eql_p (fname_foo,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
+  fail_if (!rec_field_name_equal_p (fname_foo,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 0))));
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != 1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
   rec_fex_destroy (fex);
 
-  fex = rec_fex_new ("foo[1],foo:bar[0-23],foo:bar:baz:", REC_FEX_SUBSCRIPTS);
+  fex = rec_fex_new ("foo[1],foobar[0-23],foobarbaz", REC_FEX_SUBSCRIPTS);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 3);
-  fail_if (!rec_field_name_eql_p (fname_foo,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 0))));
-  fail_if (!rec_field_name_eql_p (fname_foobar,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 1))));
-  fail_if (!rec_field_name_eql_p (fname_foobarbaz,
-                                  rec_fex_elem_field_name (rec_fex_get (fex, 2))));
+  fail_if (!rec_field_name_equal_p (fname_foo,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 0))));
+  fail_if (!rec_field_name_equal_p (fname_foobar,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 1))));
+  fail_if (!rec_field_name_equal_p (fname_foobarbaz,
+                                    rec_fex_elem_field_name (rec_fex_get (fex, 2))));
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 0)) != 1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 0)) != -1);
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 1)) != 0);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 1)) != 23);
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 2)) != -1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 2)) != -1);
-
-  rec_field_name_destroy (fname_foo);
-  rec_field_name_destroy (fname_foobar);
-  rec_field_name_destroy (fname_foobarbaz);
 }
 END_TEST
 
@@ -294,6 +249,9 @@ START_TEST(rec_fex_new_invalid)
   fail_if (fex != NULL);
 
   fex = rec_fex_new ("foo&", REC_FEX_SIMPLE);
+  fail_if (fex != NULL);
+
+  fex = rec_fex_new ("foo foo:bar", REC_FEX_SIMPLE);
   fail_if (fex != NULL);
 
   fex = rec_fex_new ("foo,bar,!,baz", REC_FEX_CSV);

@@ -82,7 +82,7 @@
     case 't':                                                  \
       {                                                        \
         recutl_type = xstrdup (optarg);                        \
-        if (!rec_field_name_part_str_p (recutl_type))          \
+        if (!rec_field_name_p (recutl_type))                   \
           {                                                    \
              recutl_fatal ("invalid record type %s\n",         \
                            recutl_type);                       \

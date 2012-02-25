@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ START_TEST(rec_fex_size_nominal)
   fail_if (rec_fex_size (fex) != 2);
   rec_fex_destroy (fex);
 
-  fex = rec_fex_new ("foo,bar,baz:foo", REC_FEX_CSV);
+  fex = rec_fex_new ("foo,bar,baz", REC_FEX_CSV);
   fail_if (fex == NULL);
   fail_if (rec_fex_size (fex) != 3);
   rec_fex_destroy (fex);

@@ -280,13 +280,9 @@ void recins_parse_args (int argc,
 {
   int ret;
   char c;
-  rec_field_t field;
-  rec_field_name_t field_name;
-  char *field_name_str;
+  rec_field_t field = NULL;
+  char *field_name = NULL;
   rec_record_t provided_record;
-
-  field = NULL;
-  field_name_str = NULL;
 
   while ((ret = getopt_long (argc,
                              argv,
@@ -327,26 +323,12 @@ void recins_parse_args (int argc,
                 rec_record_set_location (recins_record, 0);
               }
 
-            /* Make sure that the field name ends with a colon ':'.  */
-            field_name_str = xmalloc (strlen (optarg) + 2);
-            field_name_str = strncpy (field_name_str, optarg, strlen (optarg));
-            if (field_name_str[strlen (optarg) - 1] != ':')
-              {
-                field_name_str[strlen (optarg)] = ':';
-                field_name_str[strlen (optarg) + 1] = 0;
-              }
-            else
-              {
-                field_name_str[strlen (optarg)] = 0;
-              }
-
-            if (!(field_name = rec_parse_field_name_str (field_name_str)))
+            if (!rec_field_name_p (optarg))
               {
                 recutl_fatal (_("invalid field name %s.\n"), optarg);
               }
             
-            field = rec_field_new (field_name,
-                                   "foo");
+            field = rec_field_new (optarg, "foo");
             break;
           }
         case VALUE_ARG:
@@ -428,7 +410,7 @@ void recins_parse_args (int argc,
 
   if (field != NULL)
     {
-      recutl_fatal (_("please provide a value for the field %s\n"), field_name_str);
+      recutl_fatal (_("please provide a value for the field %s\n"), field_name);
     }
 
   /* Read the name of the file where to make the insertions.  */

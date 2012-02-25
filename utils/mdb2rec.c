@@ -43,7 +43,7 @@
 static void parse_args (int argc, char **argv);
 static rec_db_t process_mdb (void);
 static rec_rset_t process_table (MdbCatalogEntry *entry);
-static rec_field_name_t get_field_name (MdbHandle *mdb, char *table_name, char *col_name);
+static char *get_field_name (MdbHandle *mdb, const char *table_name, const char *col_name);
 static void get_relationships (MdbHandle *mdb);
 
 /*
@@ -224,13 +224,12 @@ get_relationships (MdbHandle *mdb)
     }
 }
 
-static rec_field_name_t
+static char *
 get_field_name (MdbHandle *mdb,
-                char *table_name,
-                char *col_name)
+                const char *table_name,
+                const char *col_name)
 {
-  rec_field_name_t field_name;
-  char *field_name_str;
+  char *field_name;
   char *referenced_table;
   char *referenced_column;
   size_t i;
@@ -246,7 +245,7 @@ get_field_name (MdbHandle *mdb,
           && (strcmp (relationships[i].column, col_name) == 0))
         {
           referenced_table =
-            rec_field_name_part_normalise (relationships[i].referenced_table);
+            rec_field_name_normalise (relationships[i].referenced_table);
           if (!referenced_table)
             {
               recutl_fatal (_("failed to normalise record type name %s\n"),
@@ -254,7 +253,7 @@ get_field_name (MdbHandle *mdb,
             }
 
           referenced_column = 
-            rec_field_name_part_normalise (relationships[i].referenced_column);
+            rec_field_name_normalise (relationships[i].referenced_column);
           if (!referenced_column)
             {
               recutl_fatal (_("failed to normalise field name %s\n"),
@@ -265,9 +264,8 @@ get_field_name (MdbHandle *mdb,
         }
     }
 
-  field_name = rec_field_name_new ();
-  field_name_str = rec_field_name_part_normalise (col_name);
-  if (!field_name_str)
+  field_name = rec_field_name_normalise (col_name);
+  if (!field_name)
     {
       recutl_fatal (_("failed to normalise field name %s\n"),
                     table_name);
@@ -275,22 +273,9 @@ get_field_name (MdbHandle *mdb,
 
   if (referenced_table && referenced_column)
     {
-      /* Compound field name, but take care about the default
-         role.  */
-      rec_field_name_set (field_name, 0, referenced_table);
-      rec_field_name_set (field_name, 1, referenced_column);
-      if (strcmp (field_name_str, referenced_column) != 0)
-        {
-          rec_field_name_set (field_name, 2, field_name_str);
-        }
-    }
-  else
-    {
-      /* Simple field name.  */
-      rec_field_name_set (field_name, 0, field_name_str);
+      /* TODO: handle foreign keys.  */
     }
 
-  free (field_name_str);
   return field_name;
 }
 
@@ -304,7 +289,7 @@ process_table (MdbCatalogEntry *entry)
   MdbColumn *col;
   char *table_name;
   char *column_name;
-  char *field_name_str;
+  char *field_name;
   char *field_value;
   char **bound_values;
   char *normalised;
@@ -313,7 +298,6 @@ process_table (MdbCatalogEntry *entry)
   char type_value[TYPE_VALUE_SIZE];
   rec_record_t record;
   rec_field_t field;
-  rec_field_name_t field_name;
 
   mdb = entry->mdb;
   table_name = entry->object_name;
@@ -327,17 +311,17 @@ process_table (MdbCatalogEntry *entry)
     }
 
   /* Create the record descriptor and add the %rec: entry.  */
-  field_name_str = rec_field_name_part_normalise (table_name);
-  if (!field_name_str)
+  field_name = rec_field_name_normalise (table_name);
+  if (!field_name)
     {
       recutl_fatal (_("failed to normalise record type name %s\n"),
                     table_name);
     }
 
   record = rec_record_new ();
-  field = rec_field_new_str ("%rec", field_name_str);
+  field = rec_field_new ("%rec", field_name);
   rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY);
-  free (field_name_str);
+  free (field_name);
 
   /* Get the columns of the table.  */
   mdb_read_columns (table);
@@ -348,7 +332,7 @@ process_table (MdbCatalogEntry *entry)
       col = g_ptr_array_index (table->columns, i);
       column_name = col->name;
       type_value[0] = 0;
-      normalised = rec_field_name_part_normalise (column_name);
+      normalised = rec_field_name_normalise (column_name);
       if (!normalised)
         {
           recutl_fatal (_("failed to normalise the field name %s\n"),
@@ -413,7 +397,7 @@ process_table (MdbCatalogEntry *entry)
       if (type_value[0] != 0)
         {
           /* Insert a type field for this column.  */
-          field = rec_field_new_str ("%type", type_value);
+          field = rec_field_new ("%type", type_value);
           rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY);
         }
     }
@@ -448,9 +432,6 @@ process_table (MdbCatalogEntry *entry)
               continue;
             }
 
-          /* Compute the name of the field.  */
-          field_name = get_field_name (mdb, table_name, column_name); 
-
           /* Compute the value of the field.  */
           field_value = xmalloc (bound_lens[i] + 1);
           strncpy (field_value, bound_values[i], bound_lens[i]);
@@ -459,7 +440,8 @@ process_table (MdbCatalogEntry *entry)
           if (mdb2rec_keep_empty_fields || (strlen (field_value) > 0))
             {
               /* Create the field and append it into the record.  */
-              field = rec_field_new (field_name, field_value);
+              field = rec_field_new (get_field_name (mdb, table_name, column_name),
+                                     field_value);
               if (!field)
                 {
                   recutl_fatal (_("invalid field name %s.\n"), column_name);
@@ -522,7 +504,7 @@ process_mdb (void)
     {
       entry = g_ptr_array_index (mdb->catalog, i);
 
-      table_name = rec_field_name_part_normalise (entry->object_name);
+      table_name = rec_field_name_normalise (entry->object_name);
 
       if ((entry->object_type == MDB_TABLE)
           && (mdb_is_user_table (entry) || mdb2rec_include_system)

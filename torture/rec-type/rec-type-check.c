@@ -291,13 +291,13 @@ START_TEST(rec_type_check_field)
 
   /* Positive tests.  */
   fail_if (!rec_type_check (type, "a", NULL));
-  fail_if (!rec_type_check (type, "a:", NULL));
-  fail_if (!rec_type_check (type, "a:b:c:", NULL));
-  fail_if (!rec_type_check (type, "   a:b:c \n\t ", NULL));
+  fail_if (!rec_type_check (type, "   ac \n\t ", NULL));
 
   /* Negative tests.  */
   fail_if (rec_type_check (type, "", NULL));
   fail_if (rec_type_check (type, " ", NULL));
+  fail_if (rec_type_check (type, "a:", NULL));
+  fail_if (rec_type_check (type, "a:b:", NULL));
   fail_if (rec_type_check (type, "a%:b:", NULL));
 
   rec_type_destroy (type);

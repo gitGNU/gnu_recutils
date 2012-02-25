@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.5\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-13 12:00+0100\n"
+"POT-Creation-Date: 2012-02-25 20:13+0100\n"
 "PO-Revision-Date: 2012-01-17 14:57+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -211,14 +211,14 @@ msgstr "%s-underprocess fick ödesdiger signal %d"
 msgid "memory exhausted"
 msgstr "minnet slut"
 
-#: src/rec-fex.c:377
+#: src/rec-fex.c:372
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
 msgstr "internt fel: REC_FEX_MAX_ELEMS överskreds.  Rapportera gärna detta.\n"
 
 #: src/rec-int.c:172
-#, c-format
-msgid "%s: error: the number of records of type %s shall be %zd.\n"
+#, fuzzy, c-format
+msgid "%s: error: the number of records of type %s should be %zd.\n"
 msgstr "%s: fel: antalet poster av typ %s skall vara %zd.\n"
 
 #: src/rec-int.c:182
@@ -231,150 +231,161 @@ msgstr "%s: fel: för många poster av typ %s.  Maximalt tillåtet är %zd.\n"
 msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
 msgstr "%s: fel: för få poster av typ %s.  Minimalt tillåtet är %zd.\n"
 
-#: src/rec-int.c:305
-#, c-format
-msgid "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
-msgstr "%s:%s: varning: typen %s kolliderar med den refererad typen %s i rset %s.\n"
-
-#: src/rec-int.c:410
+#: src/rec-int.c:350
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr "%s:%s: fel: obligatoriskt fält ”%s” hittades inte i posten\n"
 
-#: src/rec-int.c:463
+#: src/rec-int.c:401
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
 msgstr "%s:%s: fel: fält ”%s” skall vara unikt i denna post\n"
 
-#: src/rec-int.c:516
+#: src/rec-int.c:452
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr "%s:%s: fel: förbjudet fält ”%s” finns i posten\n"
 
-#: src/rec-int.c:555
+#: src/rec-int.c:491
 #, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
 msgstr "%s:%s: fel: konfidentiellt fält är inte krypterat\n"
 
-#: src/rec-int.c:607
+#: src/rec-int.c:543
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr "%s:%s: fel: nyckelfältet ”%s” finns inte i posten\n"
 
-#: src/rec-int.c:616
+#: src/rec-int.c:552
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr "%s:%s: fel: flera nyckelfält ”%s” i posten\n"
 
-#: src/rec-int.c:659
+#: src/rec-int.c:595
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr "%s:%s: fel: dupliceras nyckelvärde fält ”%s” i posten\n"
 
-#: src/rec-int.c:709
+#: src/rec-int.c:643
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr "%s:%s: fel: saknat %%rec-fält i postens deskriptor\n"
 
-#: src/rec-int.c:717
+#: src/rec-int.c:651
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr "%s:%s: fel: för många %%rec-fält i postens deskriptor\n"
 
-#: src/rec-int.c:727
+#: src/rec-int.c:661
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr "%s:%s: fel: ogiltig posttyp %s\n"
 
-#: src/rec-int.c:738
+#: src/rec-int.c:672
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr "%s:%s: fel: endast ett %%key-fält är tillåtet i en postdeskriptor\n"
 
-#: src/rec-int.c:748
+#: src/rec-int.c:682
 #, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
 msgstr "%s:%s: fel: endast ett %%size-fält är tillåtet i en postdeskriptor\n"
 
-#: src/rec-int.c:758
+#: src/rec-int.c:692
 #, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
 msgstr "%s:%s: fel: endast ett %%sort-fält är tillåtet i en postdeskriptor\n"
 
-#: src/rec-int.c:782
+#: src/rec-int.c:715
 #, c-format
-msgid "%s:%s: error: expected a comma-separated list of fields before the type specification\n"
-msgstr "%s:%s: fel: en kommaseparerad lista med fält förväntades före typspecifikationen\n"
+msgid ""
+"%s:%s: error: expected a comma-separated list of fields before the type "
+"specification\n"
+msgstr ""
+"%s:%s: fel: en kommaseparerad lista med fält förväntades före "
+"typspecifikationen\n"
 
-#: src/rec-int.c:808 src/rec-int.c:861
+#: src/rec-int.c:741 src/rec-int.c:794
 #, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
 msgstr "%s:%s: fel: den refererade typen %s finns inte\n"
 
-#: src/rec-int.c:820
+#: src/rec-int.c:753
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr "%s:%s: fel: ogiltig typspecifikation\n"
 
-#: src/rec-int.c:835
+#: src/rec-int.c:768
 #, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
 msgstr "%s:%s: fel: ett typnamn förväntades före typspecifikationen\n"
 
-#: src/rec-int.c:873
+#: src/rec-int.c:806
 #, c-format
 msgid "%s:%s: error: invalid typedef specification\n"
 msgstr "%s:%s: fel: ogiltig typedef-specifikation\n"
 
-#: src/rec-int.c:895
+#: src/rec-int.c:828
 #, c-format
 msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
 msgstr "%s:%s: fel: värdet för %s[%zd] är inte en lista med fältnamn\n"
 
-#: src/rec-int.c:911
-#, c-format
-msgid "%s:%s: error: value for %s shall be a field name.\n"
+#: src/rec-int.c:844
+#, fuzzy, c-format
+msgid "%s:%s: error: value for %s should be a field name.\n"
 msgstr "%s:%s: fel: värdet för %s skall vara ett fältnamn.\n"
 
-#: src/rec-int.c:923
-#, c-format
-msgid "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= or <=.\n"
-msgstr "%s:%s: fel: värdet på %s skall vara ett tal eventuellt föregått av >, <, >= eller <=.\n"
+#: src/rec-int.c:856
+#, fuzzy, c-format
+msgid ""
+"%s:%s: error: value for %s should be a number optionally preceded by >, <, "
+">= or <=.\n"
+msgstr ""
+"%s:%s: fel: värdet på %s skall vara ett tal eventuellt föregått av >, <, >= "
+"eller <=.\n"
 
-#: src/rec-int.c:939
-#, c-format
-msgid "%s:%s: error: value for %s shall be a list of field names.\n"
+#: src/rec-int.c:872
+#, fuzzy, c-format
+msgid "%s:%s: error: value for %s should be a list of field names.\n"
 msgstr "%s:%s: fel: värdet för %s skall vara en lista med fältnamn.\n"
 
-#: src/rec-int.c:964
-#, c-format
-msgid "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
-msgstr "%s:%s: fel: automatökat fält ”%s” skall vara av typen heltal, intervall eller datum\n"
+#: src/rec-int.c:896
+#, fuzzy, c-format
+msgid ""
+"%s:%s: error: auto-incremented field %s should be of type int, range or "
+"date\n"
+msgstr ""
+"%s:%s: fel: automatökat fält ”%s” skall vara av typen heltal, intervall "
+"eller datum\n"
 
-#: src/rec-int.c:1046
+#: src/rec-int.c:978
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr "%s:%s: fel: kunde inte hämta fjärrbeskrivaren från url:en %s.\n"
 
-#: src/rec-int.c:1065
+#: src/rec-int.c:997
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr "%s:%s: vel: kan inte läsa extern beskrivare från filen %s.\n"
 
-#: src/rec-int.c:1080
+#: src/rec-int.c:1012
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: fel: %s innehåller inte någon giltig rec-data.\n"
 
-#: src/rec-int.c:1094
+#: src/rec-int.c:1026
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: fel: %s innehåller inte information för typen %s.\n"
 
 #: src/rec-types.c:393
 #, c-format
-msgid "internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() in rec_type_new().\n"
-msgstr "internt fel: rec-types: fick REC_TYPE_NONE från rec_type_parse_type_kind() i rec_type_new().\n"
+msgid ""
+"internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() "
+"in rec_type_new().\n"
+msgstr ""
+"internt fel: rec-types: fick REC_TYPE_NONE från rec_type_parse_type_kind() i "
+"rec_type_new().\n"
 
 #: src/rec-types.c:913
 msgid "invalid integer."
@@ -429,14 +440,18 @@ msgstr "ogiltigt enum-värde."
 #: src/rec-utils.c:87
 #, c-format
 msgid "internal error: rec_int_rec_extract_file: error compiling regexp.\n"
-msgstr "internt fel: rec_int_rec_extract_file: fel vid kompilering av reguljäruttryck.\n"
+msgstr ""
+"internt fel: rec_int_rec_extract_file: fel vid kompilering av "
+"reguljäruttryck.\n"
 
-#: src/rec-utils.c:115 src/rec-utils.c:143
+#: src/rec-utils.c:115 src/rec-utils.c:144
 #, c-format
 msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
-msgstr "internt fel: rec_int_rec_extract_url: fel vid kompilering av reguljäruttryck.\n"
+msgstr ""
+"internt fel: rec_int_rec_extract_url: fel vid kompilering av "
+"reguljäruttryck.\n"
 
-#: src/rec-utils.c:289
+#: src/rec-utils.c:290
 #, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
 msgstr "internt fel: rec_match: fel vid kompilering av reguljäruttryck.\n"
@@ -458,13 +473,17 @@ msgstr "Konvertera CSV-data till rec-data.\n"
 #. no-wrap
 #: utils/csv2rec.c:115
 msgid ""
-"  -t, --type=TYPE                     type name for the converted records; if this\n"
-"                                        parameter is ommited then no type is used.\n"
+"  -t, --type=TYPE                     type name for the converted records; "
+"if this\n"
+"                                        parameter is ommited then no type is "
+"used.\n"
 "  -s, --strict                        be strict parsing the csv file.\n"
 "  -e, --omit-empty                    omit empty fields.\n"
 msgstr ""
-"  -t, -type=TYP                       skriv namn för de konverterade posterna.\n"
-"                                        Om denna parameter utelämnas används\n"
+"  -t, -type=TYP                       skriv namn för de konverterade "
+"posterna.\n"
+"                                        Om denna parameter utelämnas "
+"används\n"
 "                                        ingen typ.\n"
 "  -s, -strict                         var strikt i tolkningen av csv-filen.\n"
 "  -e, -omit-empty                     uteslut tomma fält.\n"
@@ -479,26 +498,26 @@ msgstr "uppnått maximalt antal fält: %d\n"
 msgid "invalid field name '%s' in header\n"
 msgstr "ogiltigt fältnamn ”%s” i huvudet\n"
 
-#: utils/csv2rec.c:248 utils/csv2rec.c:287 utils/csv2rec.c:302
-#: utils/mdb2rec.c:326 utils/mdb2rec.c:439
+#: utils/csv2rec.c:246 utils/csv2rec.c:282 utils/csv2rec.c:297
+#: utils/mdb2rec.c:310 utils/mdb2rec.c:423
 msgid "out of memory\n"
 msgstr "slut på minne\n"
 
-#: utils/csv2rec.c:258
+#: utils/csv2rec.c:254
 msgid "not enough headers"
 msgstr "inte tillräckligt med huvuden"
 
-#: utils/csv2rec.c:344 utils/recdel.c:328 utils/recset.c:706
+#: utils/csv2rec.c:339 utils/recdel.c:328 utils/recset.c:706
 #: utils/recutl.c:294
 #, c-format
 msgid "cannot read file %s\n"
 msgstr "kan inte läsa filen %s\n"
 
-#: utils/csv2rec.c:355
+#: utils/csv2rec.c:350
 msgid "failed to initialize csv parser\n"
 msgstr "det gick inte att initiera csv-tolken\n"
 
-#: utils/csv2rec.c:373
+#: utils/csv2rec.c:368
 #, c-format
 msgid "error while parsing CSV file: %s\n"
 msgstr "fel vid tolkning av CSV-fil: %s\n"
@@ -523,44 +542,47 @@ msgid ""
 "  -s, --system-tables                 include system tables.\n"
 "  -e, --keep-empty-fields             don't prune empty fields in the rec\n"
 "                                        output.\n"
-"  -l, --list-tables                   dump a list of the table names contained\n"
+"  -l, --list-tables                   dump a list of the table names "
+"contained\n"
 "                                        in the mdb file.\n"
 msgstr ""
 "  -s, --system-tables                 inkludera systemtabeller.\n"
-"  -e, --keep-empty-fields             beskär aldrig tomma fält i rec-utdata.\n"
-"  -l, --list-tables                   skriv ut en lista av tabellenamnen som\n"
+"  -e, --keep-empty-fields             beskär aldrig tomma fält i rec-"
+"utdata.\n"
+"  -l, --list-tables                   skriv ut en lista av tabellenamnen "
+"som\n"
 "                                        återfinns i mdb-filen.\n"
 
-#: utils/mdb2rec.c:252 utils/mdb2rec.c:333
+#: utils/mdb2rec.c:251 utils/mdb2rec.c:317
 #, c-format
 msgid "failed to normalise record type name %s\n"
 msgstr "misslyckades att normalisera posttypnamnet %s\n"
 
-#: utils/mdb2rec.c:260 utils/mdb2rec.c:272
+#: utils/mdb2rec.c:259 utils/mdb2rec.c:270
 #, c-format
 msgid "failed to normalise field name %s\n"
 msgstr "misslyckades att normalisera fältnamnet %s\n"
 
-#: utils/mdb2rec.c:354
+#: utils/mdb2rec.c:338
 #, c-format
 msgid "failed to normalise the field name %s\n"
 msgstr "misslyckades att normalisera fältnamnet %s\n"
 
-#: utils/mdb2rec.c:465 utils/recins.c:342 utils/recset.c:265
+#: utils/mdb2rec.c:447 utils/recins.c:328 utils/recset.c:265
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "ogiltigt fältnamn %s.\n"
 
-#: utils/mdb2rec.c:496 utils/rec2csv.c:193 utils/rec2csv.c:200
+#: utils/mdb2rec.c:478 utils/rec2csv.c:193 utils/rec2csv.c:200
 msgid "out of memory"
 msgstr "slut på minne"
 
-#: utils/mdb2rec.c:506
+#: utils/mdb2rec.c:488
 #, c-format
 msgid "could not open file %s\n"
 msgstr "det gick inte att öppna filen %s\n"
 
-#: utils/mdb2rec.c:513
+#: utils/mdb2rec.c:495
 msgid "file does not appear to be an Access database\n"
 msgstr "filen verkar inte vara en Access-databas\n"
 
@@ -581,29 +603,39 @@ msgstr "Konvertera rec-data till csv-data.\n"
 #. no-wrap
 #: utils/rec2csv.c:96
 msgid ""
-"  -t, --type=TYPE                     record set to convert to csv; if this parameter\n"
-"                                        is omitted then the default record set is used\n"
-"  -S, --sort=FIELD                    sort the output by the specified field.\n"
+"  -t, --type=TYPE                     record set to convert to csv; if this "
+"parameter\n"
+"                                        is omitted then the default record "
+"set is used\n"
+"  -S, --sort=FIELD                    sort the output by the specified "
+"field.\n"
 msgstr ""
-"  -t, --type=TYP                      postuppsättning att konvertera till csv;\n"
-"                                        om denna parameter utelämnas används\n"
+"  -t, --type=TYP                      postuppsättning att konvertera till "
+"csv;\n"
+"                                        om denna parameter utelämnas "
+"används\n"
 "                                        standardpostuppsättningen\n"
-"  -S, --sort=FÄLT                     sortera utdata efter det angivna fältet.\n"
+"  -S, --sort=FÄLT                     sortera utdata efter det angivna "
+"fältet.\n"
 
-#: utils/rec2csv.c:135 utils/recsel.c:228
+#: utils/rec2csv.c:135 utils/recsel.c:232
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr "endast ett fält kan anges som ett sorteringskriterium.\n"
 
-#: utils/rec2csv.c:142 utils/recsel.c:235
+#: utils/rec2csv.c:142 utils/recsel.c:239
 msgid "invalid field name in -S.\n"
 msgstr "ogiltigt fältnamn i -S.\n"
 
 #. TRANSLATORS: --help output, recdel synopsis.
 #. no-wrap
 #: utils/recdel.c:89
-#, c-format
-msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [FILE]\n"
-msgstr "Användning: recdel [FLAGGOR] … [-t TYP] [-n NUM | -e UTTR | -q STR | -m ANT] [FIL]\n"
+#, fuzzy, c-format
+msgid ""
+"Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m "
+"NUM] [FILE]\n"
+msgstr ""
+"Användning: recdel [FLAGGOR] … [-t TYP] [-n NUM | -e UTTR | -q STR | -m ANT] "
+"[FIL]\n"
 
 #. TRANSLATORS: --help output, recdel short description.
 #. no-wrap
@@ -615,18 +647,23 @@ msgstr "Ta bort (eller kommentera bort) poster från en rec fil.\n"
 #. no-wrap
 #: utils/recdel.c:101
 msgid ""
-"  -c, --comment                       comment out the matching records instead of\n"
+"  -c, --comment                       comment out the matching records "
+"instead of\n"
 "                                        deleting them.\n"
-"      --force                         delete even in potentially dangerous situations,\n"
-"                                        and if the deletion is violating record restrictions.\n"
+"      --force                         delete even in potentially dangerous "
+"situations,\n"
+"                                        and if the deletion is violating "
+"record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
-"      --verbose                       give a detailed report if the integrity check\n"
+"      --verbose                       give a detailed report if the "
+"integrity check\n"
 "                                        fails.\n"
 msgstr ""
 "  -c, --comment                       kommentera ut de matchande posterna\n"
 "                                        istället för att radera dem.\n"
 "      --force                         radera även i potentiellt farliga\n"
-"                                        situationer, och om raderingen bryter\n"
+"                                        situationer, och om raderingen "
+"bryter\n"
 "                                        mot postrestriktionerna.\n"
 "      --no-external                   använd inte externa deskriptorer.\n"
 "      --verbose                       ge en detaljerad rapport om\n"
@@ -651,7 +688,7 @@ msgstr ""
 msgid "no records of type %s found.\n"
 msgstr "inga poster av typ %s hittades.\n"
 
-#: utils/recdel.c:224 utils/recins.c:501 utils/recsel.c:447
+#: utils/recdel.c:224 utils/recins.c:489 utils/recsel.c:485
 msgid "evaluating the selection expression.\n"
 msgstr "vid beräkning av urvalsuttrycket.\n"
 
@@ -662,7 +699,9 @@ msgstr "ignorera en begäran om att ta bort alla poster av typen %s.\n"
 
 #: utils/recdel.c:291
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
-msgstr "använd --force om du verkligen vill fortsätta, eller använda antingen -n eller -e.\n"
+msgstr ""
+"använd --force om du verkligen vill fortsätta, eller använda antingen -n "
+"eller -e.\n"
 
 #: utils/recdel.c:299 utils/recset.c:432
 msgid "invalid selection expression.\n"
@@ -685,11 +724,13 @@ msgstr "Kontrollera och åtgärda rec-filer.\n"
 #. no-wrap
 #: utils/recfix.c:130
 msgid ""
-"  -t, --type=TYPE                     process only records of the given type.\n"
+"  -t, --type=TYPE                     process only records of the given "
+"type.\n"
 "      --no-external                   don't use external descriptors.\n"
 "      --force                         force the requested operation.\n"
 msgstr ""
-"  -t, --type=TYP                      bearbeta endast poster av den givna typen.\n"
+"  -t, --type=TYP                      bearbeta endast poster av den givna "
+"typen.\n"
 "      --no-external                   använd inte externa deskriptorer.\n"
 "      --force                         tvinga fram den begärda åtgärden.\n"
 
@@ -698,23 +739,30 @@ msgstr ""
 #: utils/recfix.c:141
 msgid ""
 "Operations:\n"
-"      --check                         check integrity of the specified file.  Default.\n"
-"      --sort                          sort the records in the specified file.\n"
-"      --auto                          insert auto-generated fields in records missing them.\n"
+"      --check                         check integrity of the specified "
+"file.  Default.\n"
+"      --sort                          sort the records in the specified "
+"file.\n"
+"      --auto                          insert auto-generated fields in "
+"records missing them.\n"
 msgstr ""
 "Åtgärder:\n"
-"      --check                         kontrollera integriteten på den angivna\n"
+"      --check                         kontrollera integriteten på den "
+"angivna\n"
 "                                        filen.  Standardfall.\n"
 "      --sort                          sortera posterna i den angivna filen.\n"
-"      --auto                          lägg in automatgenererade fält i poster\n"
+"      --auto                          lägg in automatgenererade fält i "
+"poster\n"
 "                                        som saknar dem.\n"
 
 #. TRANSLATORS: --help output, recfix operations related with encryption.
 #. no-wrap
 #: utils/recfix.c:151
 msgid ""
-"      --encrypt                       encrypt confidential fields in the specified file.\n"
-"      --decrypt                       decrypt confidential fields in the specified file.\n"
+"      --encrypt                       encrypt confidential fields in the "
+"specified file.\n"
+"      --decrypt                       decrypt confidential fields in the "
+"specified file.\n"
 msgstr ""
 "      --encrypt                       kryptera konfidentiella fält i den\n"
 "                                        angivna filen.\n"
@@ -730,7 +778,8 @@ msgid ""
 "  -s, --password=PASSWORD             encrypt/decrypt with this password.\n"
 msgstr ""
 "(De)krypteringsflaggor:\n"
-"  -s, --password=LÖSENORD             kryptera/dekryptera med detta lösenord.\n"
+"  -s, --password=LÖSENORD             kryptera/dekryptera med detta "
+"lösenord.\n"
 
 #: utils/recfix.c:210
 msgid "--password|-s must be used as an operation argument.\n"
@@ -749,19 +798,19 @@ msgstr "ange bara ett lösenord.\n"
 msgid "please specify just one operation.\n"
 msgstr "ange bara en åtgärd.\n"
 
-#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:348
+#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:370
 msgid "Password: "
 msgstr "Lösenord: "
 
-#: utils/recfix.c:451
+#: utils/recfix.c:454
 msgid "the database contains already encrypted fields\n"
 msgstr "databasen innehåller redan krypterade fält\n"
 
-#: utils/recfix.c:452
+#: utils/recfix.c:455
 msgid "please use --force or --decrypt\n"
 msgstr "använd --force eller --decrypt\n"
 
-#: utils/recfix.c:561
+#: utils/recfix.c:567
 msgid "unknown operation in recfix: please report this as a bug.\n"
 msgstr "okänd åtgärd i recfix: rapportera gärna detta som ett fel.\n"
 
@@ -781,7 +830,9 @@ msgstr "Använda en mall för poster lästa från standard in.\n"
 #. TRANSLATORS: --help output, recfmt arguments.
 #. no-wrap
 #: utils/recfmt.c:89
-msgid "  -f, --file=FILENAME                 read the template to apply from a file.\n"
+msgid ""
+"  -f, --file=FILENAME                 read the template to apply from a "
+"file.\n"
 msgstr "  -f, -file=FILNAMN             läs mallen att använda från en fil.\n"
 
 #: utils/recfmt.c:123
@@ -803,7 +854,9 @@ msgstr "fel vid beräkning av uttryck på en mallplats.\n"
 
 #: utils/recfmt.c:204
 msgid "recfmt_apply_template: error compiling regexp. Please report this.\n"
-msgstr "recfmt_apply_template: fel vid kompilering av reguljäruttryck.  Vänligen rapportera det här.\n"
+msgstr ""
+"recfmt_apply_template: fel vid kompilering av reguljäruttryck.  Vänligen "
+"rapportera det här.\n"
 
 #. TRANSLATORS: --help output, recinf synopsis.
 #. no-wrap
@@ -816,13 +869,15 @@ msgstr "Användning: recinf [FLAGGA]… [FIL]…\n"
 #. no-wrap
 #: utils/recinf.c:89
 msgid "Print information about the types of records stored in the input.\n"
-msgstr "Skriv ut information om typerna på poster som finns lagrade i indata.\n"
+msgstr ""
+"Skriv ut information om typerna på poster som finns lagrade i indata.\n"
 
 #. TRANSLATORS: --help output, recinf arguments.
 #. no-wrap
 #: utils/recinf.c:96
 msgid ""
-"  -t, --type=RECORD_TYPE          print information on the records having the\n"
+"  -t, --type=RECORD_TYPE          print information on the records having "
+"the\n"
 "                                    specified type.\n"
 "  -d, --descriptor                include the full record descriptors.\n"
 "  -n, --names-only                output just the names of the record files\n"
@@ -830,8 +885,10 @@ msgid ""
 msgstr ""
 "  -t, --type=POST_TYP             skriv ut information om de poster som har\n"
 "                                    angiven typ.\n"
-"  -d, -descriptor                 inkludera fullständiga postendeskriptorer.\n"
-"  -n, -names-only                 skriv bara ut namnen på postfiler som fanns\n"
+"  -d, -descriptor                 inkludera fullständiga "
+"postendeskriptorer.\n"
+"  -n, -names-only                 skriv bara ut namnen på postfiler som "
+"fanns\n"
 "                                    i indata.\n"
 
 #. TRANSLATORS: --help output, recinf special options.
@@ -839,7 +896,8 @@ msgstr ""
 #: utils/recinf.c:109
 msgid ""
 "Special options:\n"
-"  -S, --print-sexps                   print the data in sexps instead of rec format.\n"
+"  -S, --print-sexps                   print the data in sexps instead of rec "
+"format.\n"
 msgstr ""
 "Specialflaggor:\n"
 "  -S, --print-sexps                   skriv ut data i sexps- istället för\n"
@@ -853,9 +911,13 @@ msgstr "fel: det går inte läsa filen %s\n"
 #. TRANSLATORS: --help output, recins synopsis.
 #. no-wrap
 #: utils/recins.c:112
-#, c-format
-msgid "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f STR -v STR]|[-R RECDATA)]... [FILE]\n"
-msgstr "Användning: recins [FLAGGA]… [-t TYP] [-n NUM | -e UTTR | -q STR | -m ANT] [(-f STR -v STR]|[-R RECDATA)]… [FIL]\n"
+#, fuzzy, c-format
+msgid ""
+"Usage: recins [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m "
+"NUM] [(-f NAME -v STR) | -R RECDATA]... [FILE]\n"
+msgstr ""
+"Användning: recins [FLAGGA]… [-t TYP] [-n NUM | -e UTTR | -q STR | -m ANT] "
+"[(-f STR -v STR]|[-R RECDATA)]… [FIL]\n"
 
 #. TRANSLATORS: --help output, recins short description.
 #. no-wrap
@@ -867,137 +929,187 @@ msgstr "Infoga nya poster i en rec-databas.\n"
 #. no-wrap
 #: utils/recins.c:123
 msgid ""
-"  -f, --field=STR                     field name; should be followed by a -v.\n"
-"  -v, --value=STR                     field value; should be preceded by an -f.\n"
-"  -r, --record=STR                    record that will be inserted in the file.\n"
-"      --force                         insert the record even if it is violating\n"
+"  -f, --field=STR                     field name; should be followed by a -"
+"v.\n"
+"  -v, --value=STR                     field value; should be preceded by an -"
+"f.\n"
+"  -r, --record=STR                    record that will be inserted in the "
+"file.\n"
+"      --force                         insert the record even if it is "
+"violating\n"
 "                                        record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
 "      --no-auto                       don't insert auto generated fields.\n"
-"      --verbose                       give a detailed report if the integrity check\n"
+"      --verbose                       give a detailed report if the "
+"integrity check\n"
 "                                        fails.\n"
 msgstr ""
 "  -f, --field=STR                     fältnamn; skall följas av ett -v.\n"
 "  -v, --value=STR                     fältvärde; skall föregås av ett -f.\n"
 "  -r, --record=STR                    post som kommer skjutas in i filen.\n"
-"      --force                         skjut in posten även om det bryter mot\n"
+"      --force                         skjut in posten även om det bryter "
+"mot\n"
 "                                        postrestriktionerna.\n"
 "      --no-external                   använd inte externa deskriptorer.\n"
-"      --no-auto                       skjut inte in automatiskt genererade fält.\n"
+"      --no-auto                       skjut inte in automatiskt genererade "
+"fält.\n"
 "      --verbose                       få en detaljerad rapport om\n"
 "                                        integritetskontrollen hittar fel.\n"
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
 #: utils/recins.c:137
-msgid "  -s, --password=STR                  encrypt confidential fields with the given password.\n"
-msgstr "  -s, --password=STR                  kryptera konfidentiella fält med det angivna lösenordet.\n"
+msgid ""
+"  -s, --password=STR                  encrypt confidential fields with the "
+"given password.\n"
+msgstr ""
+"  -s, --password=STR                  kryptera konfidentiella fält med det "
+"angivna lösenordet.\n"
 
-#: utils/recins.c:316
+#: utils/recins.c:315
 msgid "a -f should be followed by a -v\n"
 msgstr "ett -f skall följas av ett -v\n"
 
-#: utils/recins.c:354
+#: utils/recins.c:339
 msgid "a -v should be preceded by a -f\n"
 msgstr "ett -v skall föregås av ett -f\n"
 
-#: utils/recins.c:379 utils/recsel.c:216
+#: utils/recins.c:364 utils/recsel.c:220
 msgid "more than one password was specified\n"
 msgstr "mer än ett lösenord angavs\n"
 
-#: utils/recins.c:393
+#: utils/recins.c:378
 msgid "error while parsing the record provided by -r\n"
 msgstr "fel vid tolkning av det posten som gavs via -r\n"
 
-#: utils/recins.c:428
+#: utils/recins.c:413
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "ange ett värde för fältet %s\n"
 
 #. TRANSLATORS: --help output, recsel synopsis.
 #. no-wrap
-#: utils/recsel.c:115
-#, c-format
-msgid "Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
-msgstr "Användning: recsel [FLAGGA]… [-t TYP] [-n INDEX |-e POSTUTTR] [-c | (-p|-P) FÄLTUTTR] [FIL]…\n"
+#: utils/recsel.c:118
+#, fuzzy, c-format
+msgid ""
+"Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q STR | -"
+"m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
+msgstr ""
+"Användning: recsel [FLAGGA]… [-t TYP] [-n INDEX |-e POSTUTTR] [-c | (-p|-P) "
+"FÄLTUTTR] [FIL]…\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:120
+#: utils/recsel.c:123
 msgid "Select and print rec data.\n"
 msgstr "Välj och skriv ut rec-data.\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:126
+#: utils/recsel.c:129
+#, fuzzy
 msgid ""
-"  -d, --include-descriptors           print record descriptors along with the matched\n"
+"  -d, --include-descriptors           print record descriptors along with "
+"the matched\n"
 "                                        records.\n"
-"  -C, --collapse                      do not section the result in records with newlines.\n"
-"  -S, --sort=FIELD                    sort the output by the specified field.\n"
-"  -U, --uniq                          remove duplicated fields in the output records.\n"
+"  -C, --collapse                      do not section the result in records "
+"with newlines.\n"
+"  -S, --sort=FIELD                    sort the output by the specified "
+"field.\n"
+"  -G, --group-by=FIELD                group records by the specified field.\n"
+"  -U, --uniq                          remove duplicated fields in the output "
+"records.\n"
 msgstr ""
-"  -d, --include-descriptors           skriv ut postdeskriptorer tillsammans med\n"
+"  -d, --include-descriptors           skriv ut postdeskriptorer tillsammans "
+"med\n"
 "                                        matchade poster.\n"
 "  -C, --collapse                      dela inte upp resultetat i poster med\n"
 "                                        nyrader.\n"
-"  -S, --sort=FÄLT                     sortera utdata efter det angivna fältet.\n"
+"  -S, --sort=FÄLT                     sortera utdata efter det angivna "
+"fältet.\n"
 "  -U, --uniq                          ta bort dubblerade fält i utposter.\n"
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recsel.c:137
-msgid "  -s, --password=STR                  decrypt confidential fields with the given password.\n"
-msgstr "  -s, --password=STR                  dekryptera konfidentiella fält med det angivna lösenordet.\n"
+#: utils/recsel.c:141
+msgid ""
+"  -s, --password=STR                  decrypt confidential fields with the "
+"given password.\n"
+msgstr ""
+"  -s, --password=STR                  dekryptera konfidentiella fält med det "
+"angivna lösenordet.\n"
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
-#: utils/recsel.c:150
+#: utils/recsel.c:154
 msgid ""
 "Output options:\n"
-"  -p, --print=FIELDS                  comma-separated list of fields to print for each\n"
+"  -p, --print=FIELDS                  comma-separated list of fields to "
+"print for each\n"
 "                                        matching record.\n"
-"  -P, --print-values=FIELDS           as -p, but print only the values of the selected\n"
+"  -P, --print-values=FIELDS           as -p, but print only the values of "
+"the selected\n"
 "                                        fields.\n"
-"  -R, --print-row=FIELDS              as -P, but separate the values with spaces instead\n"
+"  -R, --print-row=FIELDS              as -P, but separate the values with "
+"spaces instead\n"
 "                                        of newlines.\n"
-"  -c, --count                         print a count of the matching records instead of\n"
+"  -c, --count                         print a count of the matching records "
+"instead of\n"
 "                                        the records themselves.\n"
 msgstr ""
 "Utskriftsflaggor:\n"
-"  -p, --print=FÄLT                    kommaseparerad lista av fält att skriva\n"
+"  -p, --print=FÄLT                    kommaseparerad lista av fält att "
+"skriva\n"
 "                                        ut för varje matchad post.\n"
-"  -P, --print-values=FÄLT             samma som -p, men skriv endast värdena i\n"
+"  -P, --print-values=FÄLT             samma som -p, men skriv endast värdena "
+"i\n"
 "                                        de valda fälten.\n"
 "  -R, --print-row=FÄLT                samma som -P, men dela av värdena med\n"
 "                                        blanktecken istället för nyrader.\n"
-"  -c, --count                         skriv antalet matchade poster istället\n"
+"  -c, --count                         skriv antalet matchade poster "
+"istället\n"
 "                                        istället för själva posterna.\n"
 
 #. TRANSLATORS: --help output, recsel special options.
 #. no-wrap
-#: utils/recsel.c:164
+#: utils/recsel.c:168
 msgid ""
 "Special options:\n"
-"      --print-sexps                   print the data in sexps instead of rec format.\n"
+"      --print-sexps                   print the data in sexps instead of rec "
+"format.\n"
 msgstr ""
 "Specialflaggor:\n"
 "      --print-sexps                   skriv ut data i sexps- istället för\n"
 "                                        rec-format.\n"
 
-#: utils/recsel.c:247
+#: utils/recsel.c:249
+#, fuzzy
+msgid "only one field can be specified as a grouping criteria.\n"
+msgstr "endast ett fält kan anges som ett sorteringskriterium.\n"
+
+#: utils/recsel.c:257
+#, fuzzy
+msgid "invalid field name in -G.\n"
+msgstr "ogiltigt fältnamn i -S.\n"
+
+#: utils/recsel.c:269
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr "det går inte att ange -[pPR] samtidigt som -c.\n"
 
-#: utils/recsel.c:273
+#: utils/recsel.c:287
+#, fuzzy, c-format
+msgid "invalid list of fields in -%c\n"
+msgstr "ogiltigt fältnamn %s.\n"
+
+#: utils/recsel.c:295
 msgid "internal error creating the field expression.\n"
 msgstr "internt fel när fältuttrycket skapades.\n"
 
-#: utils/recsel.c:289
+#: utils/recsel.c:311
 msgid "cannot specify -c and also -p.\n"
 msgstr "det går inte att ange -c samtidigt som -p.\n"
 
-#: utils/recsel.c:369
+#: utils/recsel.c:391
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr "flera posttyper hittatdes.  Använd -t för att ange en.\n"
 
@@ -1019,7 +1131,8 @@ msgstr "Ändra eller ta bort fält i poster.\n"
 #: utils/recset.c:136
 msgid ""
 "      --no-external                   don't use external descriptors.\n"
-"      --force                         alter the records even if violating record\n"
+"      --force                         alter the records even if violating "
+"record\n"
 "                                        restrictions.\n"
 msgstr ""
 "      --no-external                   använd inte externa deskriptorer.\n"
@@ -1031,7 +1144,8 @@ msgstr ""
 #: utils/recset.c:149
 msgid ""
 "Field selection options:\n"
-"  -f, --fields=FIELDS                 comma-separated list of field names with optional\n"
+"  -f, --fields=FIELDS                 comma-separated list of field names "
+"with optional\n"
 "                                        subscripts.\n"
 msgstr ""
 "Flaggor för fältval:\n"
@@ -1043,26 +1157,37 @@ msgstr ""
 #: utils/recset.c:157
 msgid ""
 "Actions:\n"
-"  -s, --set=VALUE                     change the value of the selected fields.\n"
-"  -a, --add=VALUE                     add the selected fields with the given value.\n"
-"  -S, --set-add=VALUE                 change the value of the selected fields.  If they don't\n"
-"                                        exist then add a new field with that value.\n"
-"  -r, --rename=NAME                   rename the selected fields to a given name.  If an entire\n"
-"                                        record set is selected then the field is renamed in the\n"
+"  -s, --set=VALUE                     change the value of the selected "
+"fields.\n"
+"  -a, --add=VALUE                     add the selected fields with the given "
+"value.\n"
+"  -S, --set-add=VALUE                 change the value of the selected "
+"fields.  If they don't\n"
+"                                        exist then add a new field with that "
+"value.\n"
+"  -r, --rename=NAME                   rename the selected fields to a given "
+"name.  If an entire\n"
+"                                        record set is selected then the "
+"field is renamed in the\n"
 "                                        record descriptor as well.\n"
 "  -d, --delete                        delete the selected fields.\n"
 "  -c, --comment                       comment out the selected fields.\n"
 msgstr ""
 "Åtgärder:\n"
 "  -s, --set=VÄRDE                     ändra värdet på de valda fälten.\n"
-"  -a, --add=VÄRDE                     lägg till de valda fälten med det angivna\n"
+"  -a, --add=VÄRDE                     lägg till de valda fälten med det "
+"angivna\n"
 "                                        värdet.\n"
-"  -S, --set-add=VÄRDE                 ändra värdet på de valda fälten.  Om de\n"
-"                                        inte finns, lägg då till ett nytt fält\n"
+"  -S, --set-add=VÄRDE                 ändra värdet på de valda fälten.  Om "
+"de\n"
+"                                        inte finns, lägg då till ett nytt "
+"fält\n"
 "                                        med det värdet.\n"
 "  -r, --rename=NAMN                   byt namn på de valda fälten till ett\n"
-"                                        angivet namn.  Om en hel postmängd är\n"
-"                                        vald byts namnet även i postdeskriptorn.\n"
+"                                        angivet namn.  Om en hel postmängd "
+"är\n"
+"                                        vald byts namnet även i "
+"postdeskriptorn.\n"
 "  -d, --delete                        radera de valda fälten.\n"
 "  -c, --comment                       kommentera bort de valda fälten.\n"
 
@@ -1083,7 +1208,8 @@ msgid "creating the field expression.\n"
 msgstr "när fältuttryck skapades.\n"
 
 #: utils/recset.c:255
-msgid "the rename operation requires just one field with an optional subscript.\n"
+msgid ""
+"the rename operation requires just one field with an optional subscript.\n"
 msgstr "åtgärden namnbyte tar endast ett fält med en eventuellt index.\n"
 
 #: utils/recset.c:449 utils/recutl.c:489
@@ -1127,7 +1253,8 @@ msgstr "%s hemsida: <http://www.gnu.org/software/recutils/>\n"
 
 #: utils/recutl.c:141
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
-msgstr "Allmän hjälp med att använda GNU-program: <http://www.gnu.org/gethelp/>\n"
+msgstr ""
+"Allmän hjälp med att använda GNU-program: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
@@ -1142,37 +1269,49 @@ msgstr ""
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
 #: utils/recutl.c:161
+#, fuzzy
 msgid ""
 "Record selection options:\n"
-"  -i, --case-insensitive              make strings case-insensitive in selection\n"
+"  -i, --case-insensitive              make strings case-insensitive in "
+"selection\n"
 "                                        expressions.\n"
-"  -t, --type=TYPE                     operate on records of the specified type only.\n"
-"  -e, --expression=EXPR               selection expression.\n"
-"  -q, --quick=STR                     select records with fields containing a string.\n"
-"  -n, --number=NUM,...                select specific records by position, with ranges.\n"
-"  -R, --random=NUM                    select a given number of random records.\n"
+"  -t, --type=TYPE                     operate on records of the specified "
+"type only.\n"
+"  -e, --expression=RECORD_EXPR        selection expression.\n"
+"  -q, --quick=STR                     select records with fields containing "
+"a string.\n"
+"  -n, --number=NUM,...                select specific records by position, "
+"with ranges.\n"
+"  -R, --random=NUM                    select a given number of random "
+"records.\n"
 msgstr ""
 "Flaggor för postval:\n"
 "  -i, --case-insensitive              gör strängar skiftlägseokänsliga i\n"
 "                                        urvaluttryck.\n"
-"  -t, --type=TYP                      arbeta enbart på poster med angiven typ.\n"
+"  -t, --type=TYP                      arbeta enbart på poster med angiven "
+"typ.\n"
 "  -e, --expression=UTTR               urvalsuttryck.\n"
-"  -q, --quick=STR                     välj poster med fält som innehåller en\n"
+"  -q, --quick=STR                     välj poster med fält som innehåller "
+"en\n"
 "                                        sträng.\n"
-"  -n, --number=NUM                    välj en angiven post efter position, med\n"
+"  -n, --number=NUM                    välj en angiven post efter position, "
+"med\n"
 "                                        intervall.\n"
-"  -R, --random=ANT                    välj ett angivet antal med slumpposter.\n"
+"  -R, --random=ANT                    välj ett angivet antal med "
+"slumpposter.\n"
 
 #: utils/recutl.c:186
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"html>.\n"
 "This is free software: you are free to change and redistribute it.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
 "Copyright © %s Jose E. Marchesi.\n"
-"Licens GPLv3+: GNU GPL version 3 eller senare <http://gnu.org/licenses/gpl.html>.\n"
+"Licens GPLv3+: GNU GPL version 3 eller senare <http://gnu.org/licenses/gpl."
+"html>.\n"
 "Detta är fri programvara: du har rätt att ändra och vidaredistribuera den.\n"
 "Det finns INGEN GARANTI, så långt som lagen tillåter.\n"
 
@@ -1213,4 +1352,12 @@ msgstr "läser filen %s"
 
 #: utils/recutl.c:553
 msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
-msgstr "internt fel: recutl_index_list_parse: fel vid kompilering av reguljäruttryck.\n"
+msgstr ""
+"internt fel: recutl_index_list_parse: fel vid kompilering av "
+"reguljäruttryck.\n"
+
+#~ msgid ""
+#~ "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
+#~ msgstr ""
+#~ "%s:%s: varning: typen %s kolliderar med den refererad typen %s i rset "
+#~ "%s.\n"

@@ -97,17 +97,19 @@ rec_writer_new_str (char **str, size_t *str_size)
 void
 rec_writer_destroy (rec_writer_t writer)
 {
-  if (writer->file_out)
+  if (writer)
     {
-      fflush (writer->file_out);
-    }
-  if (writer->buf_out)
-    {
-      rec_buf_close (writer->buf_out);
-    }
+      if (writer->file_out)
+        {
+          fflush (writer->file_out);
+        }
+      if (writer->buf_out)
+        {
+          rec_buf_close (writer->buf_out);
+        }
 
-/*  free (writer->password); */
-  free (writer);
+      free (writer);
+    }
 }
 
 bool
@@ -200,7 +202,7 @@ rec_write_field_with_rset (rec_writer_t writer,
                            rec_writer_mode_t mode)
 {
   size_t pos;
-  rec_field_name_t fname;
+  const char *fname;
   const char *fvalue;
 
   if (mode == REC_WRITER_SEXP)
@@ -317,71 +319,45 @@ rec_write_field_with_rset (rec_writer_t writer,
 
 bool
 rec_write_field_name (rec_writer_t writer,
-                      rec_field_name_t field_name,
+                      const char *field_name,
                       rec_writer_mode_t mode)
 {
   /* Field names can be written in several formats, according to the
    * desired mode:
    *
    * REC_WRITER_NORMAL
-   *    The field name is written in rec format. i.e. NP:NP:...NP:
+   *    The field name is written in rec format. i.e. NP:
    * REC_WRITER_SEXP
-   *    The field name is a list of strings: ("NP" "NP" ... "NP")
+   *    The field name is a string: "NP"
   */
-
-  int i;
 
   if (mode == REC_WRITER_SEXP)
     {
-      if (!rec_writer_putc (writer, '('))
+      if (!rec_writer_putc (writer, '"'))
         {
           return false;
         }
     }
- 
- for (i = 0; i < rec_field_name_size (field_name); i++)
+
+  if (!rec_writer_puts (writer, field_name))
     {
-      if (mode == REC_WRITER_SEXP)
-        {
-          if ((i != 0) && (!rec_writer_putc (writer, ' ')))
-            {
-              return false;
-            }
-          if (!rec_writer_putc (writer, '"'))
-            {
-              return false;
-            }
-        }
+      return false;
+    }
 
-      if (!rec_writer_puts (writer,
-                            rec_field_name_get (field_name, i)))
+  if (mode == REC_WRITER_SEXP)
+    {
+      if (!rec_writer_putc (writer, '"'))
         {
           return false;
         }
-
-      if (mode == REC_WRITER_SEXP)
+    }
+  else
+    {
+      if (!rec_writer_putc (writer, ':'))
         {
-          if (!rec_writer_putc (writer, '"'))
-            {
-              return false;
-            }
-        }
-      else
-        {
-          if (!rec_writer_putc (writer, ':'))
-            {
-              return false;
-            }
+          return false;
         }
     }
-
- if (mode == REC_WRITER_SEXP)
-   {
-     if (!rec_writer_putc (writer, ')'))
-       {
-         return false;
-       }
-   }
 
   return true;
 }
@@ -479,7 +455,7 @@ rec_write_record_with_fex (rec_writer_t writer,
 {
   rec_fex_elem_t elem;
   rec_field_t field;
-  rec_field_name_t field_name;
+  const char *field_name;
   int i, j, min, max;
   size_t fex_size;
   size_t written_fields = 0;
@@ -721,7 +697,7 @@ rec_write_field_str (rec_field_t field,
 }
 
 char *
-rec_write_field_name_str (rec_field_name_t field,
+rec_write_field_name_str (const char *field_name,
                           rec_writer_mode_t mode)
 {
   rec_writer_t writer;
@@ -732,7 +708,7 @@ rec_write_field_name_str (rec_field_name_t field,
   writer = rec_writer_new_str (&result, &result_size);
   if (writer)
     {
-      rec_write_field_name (writer, field, mode);
+      rec_write_field_name (writer, field_name, mode);
       rec_writer_destroy (writer);
     }
   
@@ -758,12 +734,13 @@ rec_write_comment_str (rec_comment_t comment,
   return result;
 }
 
-void
+bool
 rec_writer_set_password (rec_writer_t writer,
-                         char *password)
+                         const char *password)
 {
   free (writer->password);
   writer->password = strdup (password);
+  return (writer->password != NULL);
 }
 
 /*

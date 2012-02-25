@@ -94,22 +94,25 @@ rec_sex_new (bool case_insensitive)
 void
 rec_sex_destroy (rec_sex_t sex)
 {
-  if (sex->parser)
+  if (sex)
     {
-      rec_sex_parser_destroy (sex->parser);
+      if (sex->parser)
+        {
+          rec_sex_parser_destroy (sex->parser);
+        }
+      
+      if (sex->ast)
+        {
+          rec_sex_ast_destroy (sex->ast);
+        }
+      
+      free (sex);  /* yeah! :D */
     }
-
-  if (sex->ast)
-    {
-      rec_sex_ast_destroy (sex->ast);
-    }
-
-  free (sex);  /* yeah! :D */
 }
 
 bool
 rec_sex_compile (rec_sex_t sex,
-                 char *expr)
+                 const char *expr)
 {
   bool res;
 
@@ -867,8 +870,7 @@ rec_sex_eval_node (rec_sex_t sex,
     case REC_SEX_OP_SHA:
       {
         int n;
-        rec_field_name_t field_name;
-        char *field_name_str;
+        const char *field_name;
         rec_sex_ast_node_t child;
 
         /* The child should be a Name.  */
@@ -880,9 +882,7 @@ rec_sex_eval_node (rec_sex_t sex,
             return res;
           }
 
-        field_name_str = rec_sex_ast_node_name (child);
-        field_name = rec_parse_field_name_str (field_name_str);
-
+        field_name = rec_sex_ast_node_name (child);
         n = rec_record_get_num_fields_by_name (record, field_name);
 
         res.type = REC_SEX_VAL_INT;
@@ -935,8 +935,7 @@ rec_sex_eval_node (rec_sex_t sex,
     case REC_SEX_NAME:
       {
         rec_field_t field;
-        rec_field_name_t field_name;
-        char *field_name_str;
+        const char *field_name;
         int index;
         bool tofix;
 
@@ -947,7 +946,7 @@ rec_sex_eval_node (rec_sex_t sex,
           }
         else
           {
-            field_name_str = rec_sex_ast_node_name (node);
+            field_name = rec_sex_ast_node_name (node);
             index = rec_sex_ast_node_index (node);
             tofix = (index != -1);
             if (index == -1)
@@ -955,13 +954,12 @@ rec_sex_eval_node (rec_sex_t sex,
                 index = 0;
               }
 
-            field_name = rec_parse_field_name_str (field_name_str);
             field = rec_record_get_field_by_name (record, field_name, index);
 
             res.type = REC_SEX_VAL_STR;
             if (field)
               {
-                res.str_val = rec_field_value (field);
+                res.str_val = strdup (rec_field_value (field));
               }
             else
               {

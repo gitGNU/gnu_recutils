@@ -45,18 +45,9 @@ REC_COMMENT_TSUITE = rec-comment/rec-comment-new.c \
                      rec-comment/rec-comment-equal-p.c \
                      rec-comment/tsuite-rec-comment.c
 
-REC_FIELD_NAME_TSUITE = rec-field-name/rec-field-name-new.c \
-                        rec-field-name/rec-field-name-destroy.c \
-                        rec-field-name/rec-field-name-dup.c \
-                        rec-field-name/rec-field-name-eql-p.c \
-                        rec-field-name/rec-field-name-equal-p.c \
-                        rec-field-name/rec-field-name-ref-p.c \
-                        rec-field-name/rec-field-name-size.c \
-                        rec-field-name/rec-field-name-set.c \
-                        rec-field-name/rec-field-name-get.c \
-                        rec-field-name/rec-field-name-part-str-p.c \
-                        rec-field-name/rec-field-name-str-p.c \
-                        rec-field-name/rec-field-name-part-normalise.c \
+REC_FIELD_NAME_TSUITE = rec-field-name/rec-field-name-equal-p.c \
+                        rec-field-name/rec-field-name-p.c \
+                        rec-field-name/rec-field-name-normalise.c \
                         rec-field-name/tsuite-rec-field-name.c
 
 REC_TYPE_TSUITE = rec-type/rec-type-new.c \
@@ -82,20 +73,17 @@ REC_FEX_TSUITE = rec-fex/rec-fex-new.c \
                  rec-fex/rec-fex-size.c \
                  rec-fex/rec-fex-get.c \
                  rec-fex/rec-fex-elem-field-name.c \
-                 rec-fex/rec-fex-elem-field-name-str.c \
                  rec-fex/rec-fex-elem-min.c \
                  rec-fex/rec-fex-elem-max.c \
                  rec-fex/rec-fex-str.c \
                  rec-fex/tsuite-rec-fex.c
 
 REC_FIELD_TSUITE = rec-field/rec-field-name.c \
-                   rec-field/rec-field-name-str.c \
                    rec-field/rec-field-set-name.c \
                    rec-field/rec-field-value.c \
                    rec-field/rec-field-set-value.c \
                    rec-field/rec-field-dup.c \
                    rec-field/rec-field-new.c \
-                   rec-field/rec-field-new-str.c \
                    rec-field/rec-field-destroy.c \
                    rec-field/rec-field-equal-p.c \
                    rec-field/rec-field-source.c \

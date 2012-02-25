@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
@@ -40,7 +41,7 @@ START_TEST(rec_parse_field_nominal)
 {
   rec_parser_t parser;
   rec_field_t field;
-  rec_field_name_t fname;
+  char *fname;
   char *str;
 
   str = "foo: bar";
@@ -50,29 +51,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
-  rec_field_name_destroy (fname);
-  rec_field_destroy (field);
-  rec_parser_destroy (parser);
-
-  str = "foo:bar: bar";
-  fname = rec_parse_field_name_str ("foo:bar");
-  fail_if (fname == NULL);
-  parser = rec_parser_new_str (str, "dummy");
-  fail_if (parser == NULL);
-  fail_if (!rec_parse_field (parser, &field));
-  fail_if (strcmp (rec_field_value (field), "bar") != 0);
-  rec_field_name_destroy (fname);
-  rec_field_destroy (field);
-  rec_parser_destroy (parser);
-
-  str = "foo:bar:baz: bar";
-  fname = rec_parse_field_name_str ("foo:bar:baz");
-  fail_if (fname == NULL);
-  parser = rec_parser_new_str (str, "dummy");
-  fail_if (parser == NULL);
-  fail_if (!rec_parse_field (parser, &field));
-  fail_if (strcmp (rec_field_value (field), "bar") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -83,7 +62,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), " bar") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -94,7 +73,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "bar ") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -105,7 +84,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -116,7 +95,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "\nbar") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -127,7 +106,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "\nbar") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -138,7 +117,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "bar\nbaz") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -149,7 +128,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "one\n\n\ntwo") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 
@@ -160,7 +139,7 @@ START_TEST(rec_parse_field_nominal)
   fail_if (parser == NULL);
   fail_if (!rec_parse_field (parser, &field));
   fail_if (strcmp (rec_field_value (field), "bar baz") != 0);
-  rec_field_name_destroy (fname);
+  free (fname);
   rec_field_destroy (field);
   rec_parser_destroy (parser);
 

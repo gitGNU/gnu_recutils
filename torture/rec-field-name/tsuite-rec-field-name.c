@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,18 +26,9 @@
 #include <config.h>
 #include <check.h>
 
-extern TCase *test_rec_field_name_new (void);
-extern TCase *test_rec_field_name_destroy (void);
-extern TCase *test_rec_field_name_dup (void);
-extern TCase *test_rec_field_name_eql_p (void);
 extern TCase *test_rec_field_name_equal_p (void);
-extern TCase *test_rec_field_name_ref_p (void);
-extern TCase *test_rec_field_name_size (void);
-extern TCase *test_rec_field_name_set (void);
-extern TCase *test_rec_field_name_get (void);
-extern TCase *test_rec_field_name_part_str_p (void);
-extern TCase *test_rec_field_name_str_p (void);
-extern TCase *test_rec_field_name_part_normalise (void);
+extern TCase *test_rec_field_name_normalise (void);
+extern TCase *test_rec_field_name_p (void);
 
 Suite *
 tsuite_rec_field_name ()
@@ -45,18 +36,9 @@ tsuite_rec_field_name ()
   Suite *s;
 
   s = suite_create ("rec-field-name");
-  suite_add_tcase (s, test_rec_field_name_new ());
-  suite_add_tcase (s, test_rec_field_name_destroy ());
-  suite_add_tcase (s, test_rec_field_name_dup ());
-  suite_add_tcase (s, test_rec_field_name_eql_p ());
   suite_add_tcase (s, test_rec_field_name_equal_p ());
-  suite_add_tcase (s, test_rec_field_name_ref_p ());
-  suite_add_tcase (s, test_rec_field_name_size ());
-  suite_add_tcase (s, test_rec_field_name_set ());
-  suite_add_tcase (s, test_rec_field_name_get ());
-  suite_add_tcase (s, test_rec_field_name_part_str_p ());
-  suite_add_tcase (s, test_rec_field_name_str_p ());
   suite_add_tcase (s, test_rec_field_name_part_normalise ());
+  suite_add_tcase (s, test_rec_field_name_p ());
 
   return s;
 }

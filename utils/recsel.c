@@ -56,12 +56,12 @@ bool       recsel_collapse     = false;
 bool       recsel_count        = false;
 bool       recutl_insensitive  = false;
 bool       recsel_descriptors  = false;
-rec_field_name_t recutl_sort_by_field = NULL;
+char      *recutl_sort_by_field = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 char      *recsel_password     = NULL;
 bool       recsel_uniq         = false;
 size_t     recutl_random       = 0;
-rec_field_name_t recsel_group_by_field = NULL;
+char      *recsel_group_by_field = NULL;
 
 /*
  * Command line options management.

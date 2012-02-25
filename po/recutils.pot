@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.5\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-01-13 12:00+0100\n"
+"POT-Creation-Date: 2012-02-25 20:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -211,14 +211,14 @@ msgstr ""
 msgid "memory exhausted"
 msgstr ""
 
-#: src/rec-fex.c:377
+#: src/rec-fex.c:372
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
 msgstr ""
 
 #: src/rec-int.c:172
 #, c-format
-msgid "%s: error: the number of records of type %s shall be %zd.\n"
+msgid "%s: error: the number of records of type %s should be %zd.\n"
 msgstr ""
 
 #: src/rec-int.c:182
@@ -231,148 +231,143 @@ msgstr ""
 msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
 msgstr ""
 
-#: src/rec-int.c:305
-#, c-format
-msgid ""
-"%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
-msgstr ""
-
-#: src/rec-int.c:410
+#: src/rec-int.c:350
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:463
+#: src/rec-int.c:401
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
 msgstr ""
 
-#: src/rec-int.c:516
+#: src/rec-int.c:452
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr ""
 
-#: src/rec-int.c:555
+#: src/rec-int.c:491
 #, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
 msgstr ""
 
-#: src/rec-int.c:607
+#: src/rec-int.c:543
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:616
+#: src/rec-int.c:552
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:659
+#: src/rec-int.c:595
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:709
+#: src/rec-int.c:643
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:717
+#: src/rec-int.c:651
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:727
+#: src/rec-int.c:661
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr ""
 
-#: src/rec-int.c:738
+#: src/rec-int.c:672
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:748
+#: src/rec-int.c:682
 #, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:758
+#: src/rec-int.c:692
 #, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:782
+#: src/rec-int.c:715
 #, c-format
 msgid ""
 "%s:%s: error: expected a comma-separated list of fields before the type "
 "specification\n"
 msgstr ""
 
-#: src/rec-int.c:808 src/rec-int.c:861
+#: src/rec-int.c:741 src/rec-int.c:794
 #, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
 msgstr ""
 
-#: src/rec-int.c:820
+#: src/rec-int.c:753
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr ""
 
-#: src/rec-int.c:835
+#: src/rec-int.c:768
 #, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
 msgstr ""
 
-#: src/rec-int.c:873
+#: src/rec-int.c:806
 #, c-format
 msgid "%s:%s: error: invalid typedef specification\n"
 msgstr ""
 
-#: src/rec-int.c:895
+#: src/rec-int.c:828
 #, c-format
 msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
 msgstr ""
 
-#: src/rec-int.c:911
+#: src/rec-int.c:844
 #, c-format
-msgid "%s:%s: error: value for %s shall be a field name.\n"
+msgid "%s:%s: error: value for %s should be a field name.\n"
 msgstr ""
 
-#: src/rec-int.c:923
-#, c-format
-msgid ""
-"%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= "
-"or <=.\n"
-msgstr ""
-
-#: src/rec-int.c:939
-#, c-format
-msgid "%s:%s: error: value for %s shall be a list of field names.\n"
-msgstr ""
-
-#: src/rec-int.c:964
+#: src/rec-int.c:856
 #, c-format
 msgid ""
-"%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
+"%s:%s: error: value for %s should be a number optionally preceded by >, <, "
+">= or <=.\n"
 msgstr ""
 
-#: src/rec-int.c:1046
+#: src/rec-int.c:872
+#, c-format
+msgid "%s:%s: error: value for %s should be a list of field names.\n"
+msgstr ""
+
+#: src/rec-int.c:896
+#, c-format
+msgid ""
+"%s:%s: error: auto-incremented field %s should be of type int, range or "
+"date\n"
+msgstr ""
+
+#: src/rec-int.c:978
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr ""
 
-#: src/rec-int.c:1065
+#: src/rec-int.c:997
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr ""
 
-#: src/rec-int.c:1080
+#: src/rec-int.c:1012
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr ""
 
-#: src/rec-int.c:1094
+#: src/rec-int.c:1026
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr ""
@@ -439,12 +434,12 @@ msgstr ""
 msgid "internal error: rec_int_rec_extract_file: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-utils.c:115 src/rec-utils.c:143
+#: src/rec-utils.c:115 src/rec-utils.c:144
 #, c-format
 msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
 msgstr ""
 
-#: src/rec-utils.c:289
+#: src/rec-utils.c:290
 #, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
 msgstr ""
@@ -484,26 +479,26 @@ msgstr ""
 msgid "invalid field name '%s' in header\n"
 msgstr ""
 
-#: utils/csv2rec.c:248 utils/csv2rec.c:287 utils/csv2rec.c:302
-#: utils/mdb2rec.c:326 utils/mdb2rec.c:439
+#: utils/csv2rec.c:246 utils/csv2rec.c:282 utils/csv2rec.c:297
+#: utils/mdb2rec.c:310 utils/mdb2rec.c:423
 msgid "out of memory\n"
 msgstr ""
 
-#: utils/csv2rec.c:258
+#: utils/csv2rec.c:254
 msgid "not enough headers"
 msgstr ""
 
-#: utils/csv2rec.c:344 utils/recdel.c:328 utils/recset.c:706
+#: utils/csv2rec.c:339 utils/recdel.c:328 utils/recset.c:706
 #: utils/recutl.c:294
 #, c-format
 msgid "cannot read file %s\n"
 msgstr ""
 
-#: utils/csv2rec.c:355
+#: utils/csv2rec.c:350
 msgid "failed to initialize csv parser\n"
 msgstr ""
 
-#: utils/csv2rec.c:373
+#: utils/csv2rec.c:368
 #, c-format
 msgid "error while parsing CSV file: %s\n"
 msgstr ""
@@ -533,36 +528,36 @@ msgid ""
 "                                        in the mdb file.\n"
 msgstr ""
 
-#: utils/mdb2rec.c:252 utils/mdb2rec.c:333
+#: utils/mdb2rec.c:251 utils/mdb2rec.c:317
 #, c-format
 msgid "failed to normalise record type name %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:260 utils/mdb2rec.c:272
+#: utils/mdb2rec.c:259 utils/mdb2rec.c:270
 #, c-format
 msgid "failed to normalise field name %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:354
+#: utils/mdb2rec.c:338
 #, c-format
 msgid "failed to normalise the field name %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:465 utils/recins.c:342 utils/recset.c:265
+#: utils/mdb2rec.c:447 utils/recins.c:328 utils/recset.c:265
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr ""
 
-#: utils/mdb2rec.c:496 utils/rec2csv.c:193 utils/rec2csv.c:200
+#: utils/mdb2rec.c:478 utils/rec2csv.c:193 utils/rec2csv.c:200
 msgid "out of memory"
 msgstr ""
 
-#: utils/mdb2rec.c:506
+#: utils/mdb2rec.c:488
 #, c-format
 msgid "could not open file %s\n"
 msgstr ""
 
-#: utils/mdb2rec.c:513
+#: utils/mdb2rec.c:495
 msgid "file does not appear to be an Access database\n"
 msgstr ""
 
@@ -591,11 +586,11 @@ msgid ""
 "field.\n"
 msgstr ""
 
-#: utils/rec2csv.c:135 utils/recsel.c:228
+#: utils/rec2csv.c:135 utils/recsel.c:232
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr ""
 
-#: utils/rec2csv.c:142 utils/recsel.c:235
+#: utils/rec2csv.c:142 utils/recsel.c:239
 msgid "invalid field name in -S.\n"
 msgstr ""
 
@@ -604,8 +599,8 @@ msgstr ""
 #: utils/recdel.c:89
 #, c-format
 msgid ""
-"Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] "
-"[FILE]\n"
+"Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m "
+"NUM] [FILE]\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recdel short description.
@@ -648,7 +643,7 @@ msgstr ""
 msgid "no records of type %s found.\n"
 msgstr ""
 
-#: utils/recdel.c:224 utils/recins.c:501 utils/recsel.c:447
+#: utils/recdel.c:224 utils/recins.c:489 utils/recsel.c:485
 msgid "evaluating the selection expression.\n"
 msgstr ""
 
@@ -737,19 +732,19 @@ msgstr ""
 msgid "please specify just one operation.\n"
 msgstr ""
 
-#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:348
+#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:370
 msgid "Password: "
 msgstr ""
 
-#: utils/recfix.c:451
+#: utils/recfix.c:454
 msgid "the database contains already encrypted fields\n"
 msgstr ""
 
-#: utils/recfix.c:452
+#: utils/recfix.c:455
 msgid "please use --force or --decrypt\n"
 msgstr ""
 
-#: utils/recfix.c:561
+#: utils/recfix.c:567
 msgid "unknown operation in recfix: please report this as a bug.\n"
 msgstr ""
 
@@ -839,8 +834,8 @@ msgstr ""
 #: utils/recins.c:112
 #, c-format
 msgid ""
-"Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f "
-"STR -v STR]|[-R RECDATA)]... [FILE]\n"
+"Usage: recins [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m "
+"NUM] [(-f NAME -v STR) | -R RECDATA]... [FILE]\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recins short description.
@@ -877,45 +872,45 @@ msgid ""
 "given password.\n"
 msgstr ""
 
-#: utils/recins.c:316
+#: utils/recins.c:315
 msgid "a -f should be followed by a -v\n"
 msgstr ""
 
-#: utils/recins.c:354
+#: utils/recins.c:339
 msgid "a -v should be preceded by a -f\n"
 msgstr ""
 
-#: utils/recins.c:379 utils/recsel.c:216
+#: utils/recins.c:364 utils/recsel.c:220
 msgid "more than one password was specified\n"
 msgstr ""
 
-#: utils/recins.c:393
+#: utils/recins.c:378
 msgid "error while parsing the record provided by -r\n"
 msgstr ""
 
-#: utils/recins.c:428
+#: utils/recins.c:413
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recsel synopsis.
 #. no-wrap
-#: utils/recsel.c:115
+#: utils/recsel.c:118
 #, c-format
 msgid ""
-"Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | "
-"-m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
+"Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q STR | -"
+"m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:120
+#: utils/recsel.c:123
 msgid "Select and print rec data.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:126
+#: utils/recsel.c:129
 msgid ""
 "  -d, --include-descriptors           print record descriptors along with "
 "the matched\n"
@@ -924,13 +919,14 @@ msgid ""
 "with newlines.\n"
 "  -S, --sort=FIELD                    sort the output by the specified "
 "field.\n"
+"  -G, --group-by=FIELD                group records by the specified field.\n"
 "  -U, --uniq                          remove duplicated fields in the output "
 "records.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recsel.c:137
+#: utils/recsel.c:141
 msgid ""
 "  -s, --password=STR                  decrypt confidential fields with the "
 "given password.\n"
@@ -938,7 +934,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
-#: utils/recsel.c:150
+#: utils/recsel.c:154
 msgid ""
 "Output options:\n"
 "  -p, --print=FIELDS                  comma-separated list of fields to "
@@ -957,26 +953,39 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel special options.
 #. no-wrap
-#: utils/recsel.c:164
+#: utils/recsel.c:168
 msgid ""
 "Special options:\n"
 "      --print-sexps                   print the data in sexps instead of rec "
 "format.\n"
 msgstr ""
 
-#: utils/recsel.c:247
+#: utils/recsel.c:249
+msgid "only one field can be specified as a grouping criteria.\n"
+msgstr ""
+
+#: utils/recsel.c:257
+msgid "invalid field name in -G.\n"
+msgstr ""
+
+#: utils/recsel.c:269
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr ""
 
-#: utils/recsel.c:273
+#: utils/recsel.c:287
+#, c-format
+msgid "invalid list of fields in -%c\n"
+msgstr ""
+
+#: utils/recsel.c:295
 msgid "internal error creating the field expression.\n"
 msgstr ""
 
-#: utils/recsel.c:289
+#: utils/recsel.c:311
 msgid "cannot specify -c and also -p.\n"
 msgstr ""
 
-#: utils/recsel.c:369
+#: utils/recsel.c:391
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr ""
 
@@ -1115,7 +1124,7 @@ msgid ""
 "                                        expressions.\n"
 "  -t, --type=TYPE                     operate on records of the specified "
 "type only.\n"
-"  -e, --expression=EXPR               selection expression.\n"
+"  -e, --expression=RECORD_EXPR        selection expression.\n"
 "  -q, --quick=STR                     select records with fields containing "
 "a string.\n"
 "  -n, --number=NUM,...                select specific records by position, "

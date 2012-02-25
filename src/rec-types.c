@@ -234,17 +234,17 @@ struct rec_type_reg_s
 
 static enum rec_type_kind_e rec_type_parse_type_kind (char *str);
 
-static bool rec_type_check_int (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_bool (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_range (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_real (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_size (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_line (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_regexp (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_date (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_email (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_enum (rec_type_t type, char *str, rec_buf_t errors);
-static bool rec_type_check_field (rec_type_t type, char *str, rec_buf_t errors);
+static bool rec_type_check_int (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_bool (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_range (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_real (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_size (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_line (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_regexp (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_date (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_email (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_enum (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_field (rec_type_t type, const char *str, rec_buf_t errors);
 
 /* Parsing routines.  */
 
@@ -505,7 +505,7 @@ rec_type_kind_str (rec_type_t type)
 
 bool
 rec_type_check (rec_type_t type,
-                char *str,
+                const char *str,
                 char **error_str)
 {
   bool res;
@@ -902,7 +902,7 @@ rec_type_parse_type_kind (char *str)
 
 static bool
 rec_type_check_int (rec_type_t type,
-                    char *str,
+                    const char *str,
                     rec_buf_t errors)
 {
   bool ret;
@@ -918,7 +918,7 @@ rec_type_check_int (rec_type_t type,
 
 static bool
 rec_type_check_field (rec_type_t type,
-                      char *str,
+                      const char *str,
                       rec_buf_t errors)
 {
   bool ret;
@@ -934,7 +934,7 @@ rec_type_check_field (rec_type_t type,
 
 static bool
 rec_type_check_bool (rec_type_t type,
-                     char *str,
+                     const char *str,
                      rec_buf_t errors)
 {
   bool ret;
@@ -950,7 +950,7 @@ rec_type_check_bool (rec_type_t type,
 
 static bool
 rec_type_check_range (rec_type_t type,
-                      char *str,
+                      const char *str,
                       rec_buf_t errors)
 {
   bool ret;
@@ -987,7 +987,7 @@ rec_type_check_range (rec_type_t type,
 
 static bool
 rec_type_check_real (rec_type_t type,
-                     char *str,
+                     const char *str,
                      rec_buf_t errors)
 {
   bool ret;
@@ -1003,7 +1003,7 @@ rec_type_check_real (rec_type_t type,
 
 static bool
 rec_type_check_size (rec_type_t type,
-                     char *str,
+                     const char *str,
                      rec_buf_t errors)
 {
   bool ret;
@@ -1026,7 +1026,7 @@ rec_type_check_size (rec_type_t type,
 
 static bool
 rec_type_check_line (rec_type_t type,
-                     char *str, 
+                     const char *str, 
                      rec_buf_t errors)
 {
   bool ret;
@@ -1042,7 +1042,7 @@ rec_type_check_line (rec_type_t type,
 
 static bool
 rec_type_check_regexp (rec_type_t type,
-                       char *str,
+                       const char *str,
                        rec_buf_t errors)
 {
   bool ret;
@@ -1061,7 +1061,7 @@ rec_type_check_regexp (rec_type_t type,
 
 static bool
 rec_type_check_date (rec_type_t type,
-                     char *str,
+                     const char *str,
                      rec_buf_t errors)
 {
   bool ret;
@@ -1084,7 +1084,7 @@ rec_type_check_date (rec_type_t type,
 
 static bool
 rec_type_check_email (rec_type_t type,
-                      char *str,
+                      const char *str,
                       rec_buf_t errors)
 {
   bool ret;
@@ -1100,7 +1100,7 @@ rec_type_check_email (rec_type_t type,
 
 static bool
 rec_type_check_enum (rec_type_t type,
-                     char *str,
+                     const char *str,
                      rec_buf_t errors)
 {
   size_t i;

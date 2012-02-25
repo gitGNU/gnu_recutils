@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ START_TEST(rec_field_char_location_nominal)
 {
   rec_field_t field;
 
-  field = rec_field_new_str ("foo", "value");
+  field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   
   fail_if (rec_field_char_location (field) != 0);

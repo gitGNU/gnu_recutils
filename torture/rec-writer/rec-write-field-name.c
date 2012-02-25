@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,20 +40,15 @@
 START_TEST(rec_write_field_name_nominal)
 {
   rec_writer_t writer;
-  rec_field_name_t fname;
+  char *fname;
   char *str;
   size_t str_size;
 
-  fname = rec_field_name_new ();
-  fail_if (fname == NULL);
-  rec_field_name_set (fname, 0, "foo");
-  rec_field_name_set (fname, 1, "bar");
-  rec_field_name_set (fname, 2, "baz");
+  fname = "foo";
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field_name (writer, fname, REC_WRITER_NORMAL));
-  rec_field_name_destroy (fname);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "foo:bar:baz:") != 0);
+  fail_if (strcmp (str, "foo:") != 0);
   free (str);
 }
 END_TEST
@@ -67,20 +62,15 @@ END_TEST
 START_TEST(rec_write_field_name_sexp)
 {
   rec_writer_t writer;
-  rec_field_name_t fname;
+  char *fname;
   char *str;
   size_t str_size;
 
-  fname = rec_field_name_new ();
-  fail_if (fname == NULL);
-  rec_field_name_set (fname, 0, "foo");
-  rec_field_name_set (fname, 1, "bar");
-  rec_field_name_set (fname, 2, "baz");
+  fname = "foo";
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (!rec_write_field_name (writer, fname, REC_WRITER_SEXP));
-  rec_field_name_destroy (fname);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "(\"foo\" \"bar\" \"baz\")") != 0);
+  fail_if (strcmp (str, "\"foo\"") != 0);
   free (str);
 }
 END_TEST

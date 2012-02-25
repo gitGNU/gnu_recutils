@@ -194,7 +194,7 @@ void
 field_cb (void *s, size_t len, void *data)
 {
   char *str;
-  rec_field_name_t field_name;
+  char *field_name;
   rec_field_t field;
   struct csv2rec_ctx *ctx;
   size_t i;
@@ -225,14 +225,12 @@ field_cb (void *s, size_t len, void *data)
         }
 
       /* Verify that it is a valid field name.  */
-      field_name = rec_parse_field_name_str (str);
-      if (!field_name)
+      field_name = str;
+      if (!rec_field_name_p (field_name))
         {
           recutl_fatal (_("invalid field name '%s' in header\n"),
                         str);
         }
-      rec_field_name_destroy (field_name);
-
       ctx->field_names[ctx->num_field_names] = str;
     }
   else
@@ -251,14 +249,11 @@ field_cb (void *s, size_t len, void *data)
       
       if (!csv2rec_omit_empty || (strlen(str) > 0))
         {
-          field_name = rec_field_name_new ();
-
           if (ctx->num_fields > ctx->num_field_names)
             {
               recutl_fatal (_("not enough headers"));
             }
-          rec_field_name_set (field_name, 0, ctx->field_names[ctx->num_fields]);
-          field = rec_field_new (field_name, str);
+          field = rec_field_new (ctx->field_names[ctx->num_fields], str);
           rec_mset_append (rec_record_mset (ctx->record), MSET_FIELD, (void *) field, MSET_ANY);
         }
 

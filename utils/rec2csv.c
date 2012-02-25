@@ -51,7 +51,7 @@ static void rec2csv_generate_csv (rec_rset_t rset, rec_fex_t fex);
  */
 
 char             *rec2csv_record_type   = NULL;
-rec_field_name_t  rec2csv_sort_by_field = NULL;
+char             *rec2csv_sort_by_field = NULL;
 
 /*
  * Command line options management
@@ -136,8 +136,8 @@ rec2csv_parse_args (int argc,
               }
 
             /* Parse the field name.  */
-            rec2csv_sort_by_field = rec_parse_field_name_str (optarg);
-            if (!rec2csv_sort_by_field)
+            rec2csv_sort_by_field = xstrdup (optarg);
+            if (!rec_field_name_p (rec2csv_sort_by_field))
               {
                 recutl_fatal (_("invalid field name in -S.\n"));
               }
@@ -160,7 +160,7 @@ rec2csv_generate_csv (rec_rset_t rset,
   rec_fex_elem_t fex_elem;
   rec_record_t record;
   rec_field_t field;
-  char *field_name_str;
+  char *field_name;
   char *tmp;
   size_t i;
 
@@ -173,21 +173,21 @@ rec2csv_generate_csv (rec_rset_t rset,
         }
 
       fex_elem = rec_fex_get (fex, i);
-      field_name_str = xstrdup (rec_fex_elem_field_name_str (fex_elem));
+      field_name = xstrdup (rec_fex_elem_field_name (fex_elem));
 
       /* The header is FNAME or FNAME_N where N is the index starting
          at 1.  Note that we shall remove the trailing ':', if any. */
 
-      if (field_name_str[strlen(field_name_str)-1] == ':')
+      if (field_name[strlen(field_name)-1] == ':')
         {
-          field_name_str[strlen(field_name_str)-1] = '\0';
+          field_name[strlen(field_name)-1] = '\0';
         }
 
 
       if (rec_fex_elem_min (fex_elem) != 0)
         {
           if (asprintf (&tmp, "%s_%d",
-                        field_name_str,
+                        field_name,
                         rec_fex_elem_min (fex_elem) + 1) == -1)
             {
               recutl_fatal (_("out of memory"));
@@ -195,14 +195,14 @@ rec2csv_generate_csv (rec_rset_t rset,
         }
       else
         {
-          if (asprintf (&tmp, "%s", field_name_str) == -1)
+          if (asprintf (&tmp, "%s", field_name) == -1)
             {
               recutl_fatal (_("out of memory"));
             }
         }
 
       csv_fwrite (stdout, tmp, strlen(tmp));
-      free (field_name_str);
+      free (field_name);
       free (tmp);
     }
 

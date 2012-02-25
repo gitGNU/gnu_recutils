@@ -48,13 +48,13 @@ START_TEST(rec_write_record_nominal)
 
   record = rec_record_new ();
   fail_if (record == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("foo1"), "value1");
+  field = rec_field_new ("foo1", "value1");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
   comment = rec_comment_new ("comment");
   fail_if (comment == NULL);
   fail_if (rec_mset_append (rec_record_mset(record), MSET_COMMENT, (void *) comment, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
+  field = rec_field_new ("foo2", "value2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
   writer = rec_writer_new_str (&str, &str_size);
@@ -84,13 +84,13 @@ START_TEST(rec_write_record_sexp)
 
   record = rec_record_new ();
   fail_if (record == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("foo1"), "value1");
+  field = rec_field_new ("foo1", "value1");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
   comment = rec_comment_new ("comment");
   fail_if (comment == NULL);
   fail_if (rec_mset_append (rec_record_mset(record), MSET_COMMENT, (void *) comment, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("foo2"), "value2");
+  field = rec_field_new ("foo2", "value2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
   writer = rec_writer_new_str (&str, &str_size);
@@ -98,7 +98,7 @@ START_TEST(rec_write_record_sexp)
   rec_record_destroy (record);
   rec_writer_destroy (writer);
   fail_if (strcmp (str,
-                   "(record  (\n(field  (\"foo1\") \"value1\")\n(comment \"comment\")(field  (\"foo2\") \"value2\")\n))\n") != 0);
+                   "(record  (\n(field  \"foo1\" \"value1\")\n(comment \"comment\")(field  \"foo2\" \"value2\")\n))\n") != 0);
   free (str);
 }
 END_TEST

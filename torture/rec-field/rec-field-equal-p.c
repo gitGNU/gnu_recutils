@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,10 @@ START_TEST(rec_field_equal_p_equal)
   rec_field_t field1;
   rec_field_t field2;
 
-  field1 = rec_field_new_str ("foo:bar:baz", "value");
+  field1 = rec_field_new ("foo", "value");
   fail_if (field1 == NULL);
 
-  field2 = rec_field_new_str ("foo:bar:baz", "value");
+  field2 = rec_field_new ("foo", "value");
   fail_if (field2 == NULL);
 
   fail_if (!rec_field_equal_p (field1, field2));
@@ -68,9 +68,9 @@ START_TEST(rec_field_equal_p_nonequal)
   rec_field_t field1;
   rec_field_t field2;
 
-  field1 = rec_field_new_str ("foo:bar:baz", "value");
+  field1 = rec_field_new ("foo", "value");
   fail_if (field1 == NULL);
-  field2 = rec_field_new_str ("other:name", "value");
+  field2 = rec_field_new ("other", "value");
   fail_if (field2 == NULL);
 
   fail_if (rec_field_equal_p (field1, field2));

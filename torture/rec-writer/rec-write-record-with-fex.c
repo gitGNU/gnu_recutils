@@ -57,16 +57,16 @@ START_TEST(rec_write_record_with_fex_nominal)
    */
   record = rec_record_new ();
   fail_if (record == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
+  field = rec_field_new ("a", "value a");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
+  field = rec_field_new ("b", "value b");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
+  field = rec_field_new ("a", "value a 2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
+  field = rec_field_new ("b", "value b 2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
 
@@ -163,16 +163,16 @@ START_TEST(rec_write_record_with_fex_values)
    */
   record = rec_record_new ();
   fail_if (record == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
+  field = rec_field_new ("a", "value a");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
+  field = rec_field_new ("b", "value b");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
+  field = rec_field_new ("a", "value a 2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
+  field = rec_field_new ("b", "value b 2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
 
@@ -269,16 +269,16 @@ START_TEST(rec_write_record_with_fex_row)
    */
   record = rec_record_new ();
   fail_if (record == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("a"), "value a");
+  field = rec_field_new ("a", "value a");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("b"), "value b");
+  field = rec_field_new ("b", "value b");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("a"), "value a 2");
+  field = rec_field_new ("a", "value a 2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
-  field = rec_field_new (rec_parse_field_name_str ("b"), "value b 2");
+  field = rec_field_new ("b", "value b 2");
   fail_if (field == NULL);
   fail_if (rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
 

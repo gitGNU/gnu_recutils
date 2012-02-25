@@ -38,11 +38,9 @@
 START_TEST(rec_fex_check_simple_nominal)
 {
   fail_if (!rec_fex_check ("foo", REC_FEX_SIMPLE));
-  fail_if (!rec_fex_check ("foo:", REC_FEX_SIMPLE));
   fail_if (!rec_fex_check ("foo bar baz", REC_FEX_SIMPLE));
   fail_if (!rec_fex_check ("foo\nbar\nbaz", REC_FEX_SIMPLE));
   fail_if (!rec_fex_check ("foo\tbar\tbaz", REC_FEX_SIMPLE));
-  fail_if (!rec_fex_check ("foo:bar:baz\tbar:\tbaz", REC_FEX_SIMPLE));
 }
 END_TEST
 
@@ -68,9 +66,8 @@ END_TEST
 START_TEST(rec_fex_check_csv_nominal)
 {
   fail_if (!rec_fex_check ("foo", REC_FEX_CSV));
-  fail_if (!rec_fex_check ("foo:", REC_FEX_CSV));
   fail_if (!rec_fex_check ("foo,bar,baz", REC_FEX_CSV));
-  fail_if (!rec_fex_check ("foo:bar:baz,bar:,baz", REC_FEX_CSV));
+  fail_if (!rec_fex_check ("foobarbaz,bar,baz", REC_FEX_CSV));
 }
 END_TEST
 
@@ -96,13 +93,12 @@ END_TEST
 START_TEST(rec_fex_check_sub_nominal)
 {
   fail_if (!rec_fex_check ("foo", REC_FEX_SUBSCRIPTS));
-  fail_if (!rec_fex_check ("foo:", REC_FEX_SUBSCRIPTS));
   fail_if (!rec_fex_check ("foo[10]", REC_FEX_SUBSCRIPTS));
   fail_if (!rec_fex_check ("foo,bar,baz", REC_FEX_SUBSCRIPTS));
   fail_if (!rec_fex_check ("foo[0],bar[1],baz[2]", REC_FEX_SUBSCRIPTS));
   fail_if (!rec_fex_check ("foo[0-10],bar[1-100],baz[2-20]", REC_FEX_SUBSCRIPTS));
-  fail_if (!rec_fex_check ("foo:bar:baz,bar:,baz", REC_FEX_SUBSCRIPTS));
-  fail_if (!rec_fex_check ("foo:bar:baz,bar:[100-0],baz", REC_FEX_SUBSCRIPTS));
+  fail_if (!rec_fex_check ("foobarbaz,bar,baz", REC_FEX_SUBSCRIPTS));
+  fail_if (!rec_fex_check ("foobarbaz,bar[100-0],baz", REC_FEX_SUBSCRIPTS));
 }
 END_TEST
 

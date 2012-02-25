@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include <config.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <check.h>
 
 #include <rec.h>
@@ -38,55 +39,17 @@
  */
 START_TEST(rec_parse_field_name_str_nominal)
 {
-  rec_field_name_t fname;
+  char *fname;
 
   fname = rec_parse_field_name_str ("foo");
   fail_if (fname == NULL);
-  fail_if (rec_field_name_size (fname) != 1);
-  fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
-  rec_field_name_destroy (fname);
+  fail_if (strcmp (fname, "foo") != 0);
+  free (fname);
 
   fname = rec_parse_field_name_str ("foo:");
   fail_if (fname == NULL);
-  fail_if (rec_field_name_size (fname) != 1);
-  fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
-  rec_field_name_destroy (fname);
-
-  fname = rec_parse_field_name_str ("foo:bar");
-  fail_if (fname == NULL);
-  fail_if (rec_field_name_size (fname) != 2);
-  fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
-  rec_field_name_destroy (fname);
-
-  fname = rec_parse_field_name_str ("foo:bar");
-  fail_if (fname == NULL);
-  fail_if (rec_field_name_size (fname) != 2);
-  fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
-  fail_if (strcmp (rec_field_name_get (fname, 1), "bar") != 0);
-  rec_field_name_destroy (fname);
-
-  fname = rec_parse_field_name_str ("foo:bar:");
-  fail_if (fname == NULL);
-  fail_if (rec_field_name_size (fname) != 2);
-  fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
-  fail_if (strcmp (rec_field_name_get (fname, 1), "bar") != 0);
-  rec_field_name_destroy (fname);
-
-  fname = rec_parse_field_name_str ("foo:bar:baz");
-  fail_if (fname == NULL);
-  fail_if (rec_field_name_size (fname) != 3);
-  fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
-  fail_if (strcmp (rec_field_name_get (fname, 1), "bar") != 0);
-  fail_if (strcmp (rec_field_name_get (fname, 2), "baz") != 0);
-  rec_field_name_destroy (fname);
-
-  fname = rec_parse_field_name_str ("foo:bar:baz:");
-  fail_if (fname == NULL);
-  fail_if (rec_field_name_size (fname) != 3);
-  fail_if (strcmp (rec_field_name_get (fname, 0), "foo") != 0);
-  fail_if (strcmp (rec_field_name_get (fname, 1), "bar") != 0);
-  fail_if (strcmp (rec_field_name_get (fname, 2), "baz") != 0);
-  rec_field_name_destroy (fname);
+  fail_if (strcmp (fname, "foo") != 0);
+  free (fname);
 }
 END_TEST
 
@@ -98,7 +61,7 @@ END_TEST
  */
 START_TEST(rec_parse_field_name_str_invalid)
 {
-  rec_field_name_t fname;
+  char *fname;
 
   fname = rec_parse_field_name_str ("");
   fail_if (fname != NULL);
@@ -113,6 +76,9 @@ START_TEST(rec_parse_field_name_str_invalid)
   fail_if (fname != NULL);
 
   fname = rec_parse_field_name_str ("foobar baz");
+  fail_if (fname != NULL);
+
+  fname = rec_parse_field_name_str ("foo:bar:baz");
   fail_if (fname != NULL);
 
   fname = rec_parse_field_name_str ("foo:baz!!#");

@@ -47,7 +47,7 @@
 
 struct rec_rset_fprops_s
 {
-  rec_field_name_t fname;
+  const char *fname;
 
   bool auto_p;         /* Auto-field.  */
 #if defined REC_CRYPT_SUPPORT
@@ -82,7 +82,7 @@ struct rec_rset_s
   rec_type_reg_t type_reg;
 
   /* Field to order by specified in the record descriptor.  */
-  rec_field_name_t order_by_field;
+  char *order_by_field;
 
   /* Size constraints.  */
   size_t min_size;
@@ -117,14 +117,14 @@ static rec_fex_t rec_rset_type_field_fex (const char *str);
 static char *rec_rset_type_field_type (const char *str);
 
 static rec_rset_fprops_t rec_rset_get_props (rec_rset_t rset,
-                                             rec_field_name_t fname,
+                                             const char *fname,
                                              bool create_p);
 
 static bool rec_rset_add_auto_field_int (rec_rset_t rset,
-                                         rec_field_name_t field_name,
+                                         const char *field_name,
                                          rec_record_t record);
 static bool rec_rset_add_auto_field_date (rec_rset_t rset,
-                                          rec_field_name_t field_name,
+                                          const char *field_name,
                                           rec_record_t record);
 
 static rec_record_t rec_rset_merge_records (rec_record_t to_record,
@@ -226,12 +226,9 @@ rec_rset_destroy (rec_rset_t rset)
           props = props->next;
           free (aux);
         }
-      
-      if (rset->order_by_field)
-        {
-          rec_field_name_destroy (rset->order_by_field);
-        }
-      
+
+      free (rset->order_by_field);
+
       rec_mset_destroy (rset->mset);
       free (rset);
     }
@@ -258,9 +255,7 @@ rec_rset_dup (rec_rset_t rset)
 
       if (rset->order_by_field)
         {
-          new->order_by_field =
-            rec_field_name_dup (rset->order_by_field);
-
+          new->order_by_field = strdup (rset->order_by_field);
           if (!new->order_by_field)
             {
               /* Out of memory.  */
@@ -369,8 +364,7 @@ rec_rset_set_type (rec_rset_t rset,
     }
   else
     {
-      rec_field = rec_field_new (rec_field_name_dup (FNAME(REC_FIELD_REC)),
-                                 type);
+      rec_field = rec_field_new (FNAME(REC_FIELD_REC), type);
       rec_mset_append (rec_record_mset (rset->descriptor), MSET_FIELD, (void *) rec_field, MSET_FIELD);
     }
 }
@@ -425,8 +419,8 @@ rec_rset_get_type_reg (rec_rset_t rset)
 
 void
 rec_rset_rename_field (rec_rset_t rset,
-                       rec_field_name_t field_name,
-                       rec_field_name_t new_field_name)
+                       const char *field_name,
+                       const char *new_field_name)
 {
   size_t j;
   rec_record_t descriptor;
@@ -437,7 +431,7 @@ rec_rset_rename_field (rec_rset_t rset,
   char *result;
   size_t result_size;
   rec_fex_elem_t fex_elem;
-  rec_field_name_t fex_fname;
+  const char *fex_fname;
 
   descriptor = rec_rset_descriptor (rset);
   if (descriptor)
@@ -448,7 +442,7 @@ rec_rset_rename_field (rec_rset_t rset,
 
       while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
         {
-          if (rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_TYPE)))
+          if (rec_field_name_equal_p (rec_field_name (field), FNAME(REC_FIELD_TYPE)))
             {
               /* Process a %type entry.  Invalid entries are
                  skipped.  */
@@ -464,7 +458,7 @@ rec_rset_rename_field (rec_rset_t rset,
                     {
                       fex_elem = rec_fex_get (fex, j);
                       fex_fname = rec_fex_elem_field_name (fex_elem);
-                      if (rec_field_name_eql_p (field_name, fex_fname))
+                      if (rec_field_name_equal_p (field_name, fex_fname))
                         {
                           /* Replace it with new_field_name.  */
                           rec_fex_elem_set_field_name (fex_elem, new_field_name);
@@ -487,14 +481,14 @@ rec_rset_rename_field (rec_rset_t rset,
                   rec_fex_destroy (fex);
                 }
             }
-          else if (rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_KEY))
-                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_MANDATORY))
-                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_UNIQUE))
-                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_PROHIBIT))
+          else if (rec_field_name_equal_p (rec_field_name (field), FNAME(REC_FIELD_KEY))
+                   || rec_field_name_equal_p (rec_field_name (field), FNAME(REC_FIELD_MANDATORY))
+                   || rec_field_name_equal_p (rec_field_name (field), FNAME(REC_FIELD_UNIQUE))
+                   || rec_field_name_equal_p (rec_field_name (field), FNAME(REC_FIELD_PROHIBIT))
 #if defined REC_CRYPT_SUPPORT
-                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_CONFIDENTIAL))
+                   || rec_field_name_equal_p (rec_field_name (field), FNAME(REC_FIELD_CONFIDENTIAL))
 #endif
-                   || rec_field_name_eql_p (rec_field_name (field), FNAME(REC_FIELD_SORT)))
+                   || rec_field_name_equal_p (rec_field_name (field), FNAME(REC_FIELD_SORT)))
             {
               /* Rename the field in the fex expression that is the
                  value of the field.  Skip invalid entries.  */
@@ -506,7 +500,7 @@ rec_rset_rename_field (rec_rset_t rset,
                       fex_elem = rec_fex_get (fex, j);
 
                       fex_fname = rec_fex_elem_field_name (fex_elem);
-                      if (rec_field_name_eql_p (field_name, fex_fname))
+                      if (rec_field_name_equal_p (field_name, fex_fname))
                         {
                           /* Replace it with new_field_name.  */
                           rec_fex_elem_set_field_name (fex_elem, new_field_name);
@@ -554,13 +548,13 @@ rec_rset_auto (rec_rset_t rset)
 
 bool
 rec_rset_field_confidential_p (rec_rset_t rset,
-                               rec_field_name_t field_name)
+                               const char *field_name)
 {
   rec_fex_t fex;
   size_t fex_size;
   size_t i;
   bool result = false;
-  rec_field_name_t fex_field_name;
+  const char *fex_field_name;
 
   fex = rec_rset_confidential (rset);
   fex_size = rec_fex_size (fex);
@@ -568,8 +562,7 @@ rec_rset_field_confidential_p (rec_rset_t rset,
   for (i = 0; i < fex_size; i++)
     {
       fex_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
-      if (rec_field_name_eql_p (field_name,
-                                fex_field_name))
+      if (rec_field_name_equal_p (field_name, fex_field_name))
         {
           result = true;
           break;
@@ -607,7 +600,7 @@ rec_rset_confidential (rec_rset_t rset)
 
 rec_type_t
 rec_rset_get_field_type (rec_rset_t rset,
-                         rec_field_name_t field_name)
+                         const char *field_name)
 {
   rec_type_t type = NULL;
   rec_rset_fprops_t props = NULL;
@@ -655,19 +648,16 @@ rec_rset_source (rec_rset_t rset)
 }
 
 
-void
+bool
 rec_rset_set_order_by_field (rec_rset_t rset,
-                             rec_field_name_t field_name)
+                             const char *field_name)
 {
-  if (rset->order_by_field)
-    {
-      rec_field_name_destroy (rset->order_by_field);
-    }
-  
-  rset->order_by_field = rec_field_name_dup (field_name);
+  free (rset->order_by_field);
+  rset->order_by_field = strdup (field_name);
+  return (rset->order_by_field != NULL);
 }
 
-rec_field_name_t
+const char*
 rec_rset_order_by_field (rec_rset_t rset)
 {
   return rset->order_by_field;
@@ -675,7 +665,7 @@ rec_rset_order_by_field (rec_rset_t rset)
 
 rec_rset_t
 rec_rset_sort (rec_rset_t rset,
-               rec_field_name_t sort_by)
+               const char *sort_by)
 {
   if (sort_by)
     {
@@ -704,7 +694,7 @@ rec_rset_sort (rec_rset_t rset,
 
 rec_rset_t
 rec_rset_group (rec_rset_t rset,
-                rec_field_name_t group_by)
+                const char *group_by)
 {
   rec_mset_iterator_t iter;
   rec_record_t record;
@@ -816,7 +806,7 @@ rec_rset_add_auto_fields (rec_rset_t rset,
 
       for (i = 0; i < num_auto_fields; i++)
         {
-          rec_field_name_t auto_field_name =
+          const char *auto_field_name =
             rec_fex_elem_field_name (rec_fex_get (auto_fields, i));
 
           if (!rec_record_field_p (record, auto_field_name))
@@ -912,7 +902,7 @@ rec_rset_record_compare_fn (void *data1,
                             int type2)
 {
   rec_rset_t rset                  = NULL;
-  rec_field_name_t order_by_field  = NULL;
+  const char *order_by_field       = NULL;
   rec_record_t record1             = NULL;
   rec_record_t record2             = NULL;
   rec_field_t field1               = NULL;
@@ -1244,9 +1234,9 @@ static void
 rec_rset_update_field_props (rec_rset_t rset)
 {
   rec_rset_fprops_t props = NULL;
-  rec_field_name_t auto_field_name;
+  const char *auto_field_name;
 #if defined REC_CRYPT_SUPPORT
-  rec_field_name_t confidential_field_name;
+  const char *confidential_field_name;
 #endif
   char *type_name = NULL;
 
@@ -1275,8 +1265,8 @@ rec_rset_update_field_props (rec_rset_t rset)
       iter = rec_mset_iterator (rec_record_mset (rset->descriptor));
       while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, NULL))
         {
-          rec_field_name_t field_name = rec_field_name (field);
-          char *field_value = rec_field_value (field);
+          const char *field_name = rec_field_name (field);
+          const char *field_value = rec_field_value (field);
 
           /* Update field types.  Only valid %type: descriptors are
              considered.  Invalid descriptors are ignored.  */
@@ -1370,13 +1360,8 @@ rec_rset_update_field_props (rec_rset_t rset)
               rec_parse_regexp (&field_value, "^" REC_TYPE_NAME_RE "[ \n\t]*", &type_name);
               if (type_name)
                 {
-                  if (rset->order_by_field)
-                    {
-                      rec_field_name_destroy (rset->order_by_field);
-                    }
-
-                  rset->order_by_field = rec_parse_field_name_str (type_name);
-                  free (type_name);
+                  free (rset->order_by_field);
+                  rset->order_by_field = type_name;
                 }
             }
 
@@ -1449,8 +1434,8 @@ rec_rset_update_types (rec_rset_t rset)
       iter = rec_mset_iterator (rec_record_mset (rset->descriptor));
       while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
         {
-          rec_field_name_t field_name = rec_field_name (field);
-          char *field_value = rec_field_value (field);
+          const char *field_name = rec_field_name (field);
+          const char *field_value = rec_field_value (field);
 
           if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_TYPEDEF)))
             {
@@ -1563,7 +1548,7 @@ rec_rset_type_field_type (const char *str)
 
 static rec_rset_fprops_t
 rec_rset_get_props (rec_rset_t rset,
-                    rec_field_name_t fname,
+                    const char *fname,
                     bool create_p)
 {
   rec_rset_fprops_t props = NULL;
@@ -1586,7 +1571,7 @@ rec_rset_get_props (rec_rset_t rset,
       props = malloc (sizeof (struct rec_rset_fprops_s));
       if (props)
         {
-          props->fname = rec_field_name_dup (fname);
+          props->fname = strdup (fname);
           props->auto_p = false;
 
 #if defined REC_CRYPT_SUPPORT
@@ -1607,7 +1592,7 @@ rec_rset_get_props (rec_rset_t rset,
 
 static bool
 rec_rset_add_auto_field_int (rec_rset_t rset,
-                             rec_field_name_t field_name,
+                             const char *field_name,
                              rec_record_t record)
 {
   rec_mset_iterator_t iter;
@@ -1650,8 +1635,7 @@ rec_rset_add_auto_field_int (rec_rset_t rset,
 
   if (asprintf (&auto_value_str, "%d", auto_value) != -1)
     {
-      field = rec_field_new (rec_field_name_dup (field_name),
-                             auto_value_str);
+      field = rec_field_new (field_name, auto_value_str);
       if (!field)
         {
           /* Out of memory.  */
@@ -1674,7 +1658,7 @@ rec_rset_add_auto_field_int (rec_rset_t rset,
 
 static bool
 rec_rset_add_auto_field_date (rec_rset_t rset,
-                              rec_field_name_t field_name,
+                              const char *field_name,
                               rec_record_t record)
 {
   rec_field_t auto_field;
@@ -1691,8 +1675,7 @@ rec_rset_add_auto_field_date (rec_rset_t rset,
   setlocale (LC_TIME, ""); /* And restore the locale from the
                               environment. */
 
-  auto_field = rec_field_new (rec_field_name_dup (field_name),
-                              outstr);
+  auto_field = rec_field_new (field_name, outstr);
   if (!auto_field)
     {
       /* Out of memory.  */
@@ -1724,8 +1707,8 @@ rec_rset_merge_records (rec_record_t to_record,
         {
           rec_field_t field = (rec_field_t) data;
 
-          if (rec_field_name_eql_p (rec_field_name (group_field),
-                                    rec_field_name (field))
+          if (rec_field_name_equal_p (rec_field_name (group_field),
+                                      rec_field_name (field))
               && (strcmp (rec_field_value (group_field), rec_field_value (field)) == 0))
             {
               continue;

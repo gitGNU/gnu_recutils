@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ extern TCase *test_rec_fex_sort (void);
 extern TCase *test_rec_fex_size (void);
 extern TCase *test_rec_fex_get (void);
 extern TCase *test_rec_fex_elem_field_name (void);
-extern TCase *test_rec_fex_elem_field_name_str (void);
 extern TCase *test_rec_fex_elem_min (void);
 extern TCase *test_rec_fex_elem_max (void);
 extern TCase *test_rec_fex_str (void);
@@ -51,7 +50,6 @@ tsuite_rec_fex ()
   suite_add_tcase (s, test_rec_fex_size ());
   suite_add_tcase (s, test_rec_fex_get ());
   suite_add_tcase (s, test_rec_fex_elem_field_name ());
-  suite_add_tcase (s, test_rec_fex_elem_field_name_str ());
   suite_add_tcase (s, test_rec_fex_elem_min ());
   suite_add_tcase (s, test_rec_fex_elem_max ());
   suite_add_tcase (s, test_rec_fex_str ());

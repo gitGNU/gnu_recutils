@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,12 +44,11 @@ START_TEST(rec_field_dup_empty)
 {
   rec_field_t field;
   rec_field_t field_copy;
-  rec_field_name_t field_name;
+  const char *field_name;
   const char *field_value;
 
   /* Create a field */
-  field_name = rec_field_name_new ();
-  rec_field_name_set (field_name, 0, "");
+  field_name = "";
   field = rec_field_new (field_name, "");
   fail_if(field == NULL);
 
@@ -62,7 +61,7 @@ START_TEST(rec_field_dup_empty)
   field_value = rec_field_value (field_copy);
 
   /* Validate the attributes */
-  fail_if(strcmp (rec_field_name_get (field_name, 0), "") != 0);
+  fail_if(strcmp (field_name, "") != 0);
   fail_if(strcmp (field_value, "") != 0);
 
   rec_field_destroy (field);
@@ -85,12 +84,11 @@ START_TEST(rec_field_dup_nonempty)
 {
   rec_field_t field;
   rec_field_t field_copy;
-  rec_field_name_t field_name;
+  const char *field_name;
   const char *field_value;
 
   /* Create a field */
-  field_name = rec_field_name_new ();
-  rec_field_name_set (field_name, 0, "name");
+  field_name = "name";
   field = rec_field_new (field_name, "value");
   fail_if(field == NULL);
 
@@ -103,7 +101,7 @@ START_TEST(rec_field_dup_nonempty)
   field_value = rec_field_value (field_copy);
 
   /* Validate the attributes */
-  fail_if(strcmp (rec_field_name_get (field_name, 0), "name") != 0);
+  fail_if(strcmp (field_name, "name") != 0);
   fail_if(strcmp (field_value, "value") != 0);
 
   rec_field_destroy (field);
