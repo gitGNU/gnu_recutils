@@ -1,5 +1,18 @@
 2012-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: support for performance test, and some performance recsel
+	tests.
+	* torture/utils/testutils.sh: Get a second parameter 'perf'.
+	(test_tool): Calculate and print timing statistics if $perf is not
+	empty.
+
+	* torture/utils/p-recsel.sh: New file.
+
+	* torture/utils/Makefile.am (perf): New rule.
+	* Makefile.am (perf): Likewise.
+
+2012-02-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: fix short option for --random in help strings.
 	* utils/recutl.c (recutl_print_help_record_selection): The short
 	command line option for --random is -m not -R.

@@ -28,4 +28,7 @@ EXTRA_DIST = $(TESTS) testutils.sh
 TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) builddir=$(builddir) crypt_support=$(crypt_support) \
                     PATH=$(srcdir)$(PATH_SEPARATOR)$(top_builddir)/utils$(PATH_SEPARATOR)$$PATH
 
+perf:
+	$(SHELL) $(TEST_ENVIRONMENT) p-recsel.sh
+
 # End of Makefile.am

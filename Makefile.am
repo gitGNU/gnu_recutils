@@ -22,4 +22,9 @@ if BUILD_A68
    SUBDIRS += algol68
 endif
 
+perf:
+	$(MAKE) -C torture/utils perf
+
+.PHONY: perf
+
 # End of Makefile.am
