@@ -1,5 +1,11 @@
 2012-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: fix short option for --random in help strings.
+	* utils/recutl.c (recutl_print_help_record_selection): The short
+	command line option for --random is -m not -R.
+
+2012-02-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,utils,torture: support for compound field names removed, and
 	code cleanup.
 	* torture/utils/recset.sh (recset-rename-all-key): Don't use a

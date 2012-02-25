@@ -166,7 +166,7 @@ Record selection options:\n\
   -e, --expression=RECORD_EXPR        selection expression.\n\
   -q, --quick=STR                     select records with fields containing a string.\n\
   -n, --number=NUM,...                select specific records by position, with ranges.\n\
-  -R, --random=NUM                    select a given number of random records.\n"),
+  -m, --random=NUM                    select a given number of random records.\n"),
          stdout);
 }
 
