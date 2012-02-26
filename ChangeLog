@@ -1,5 +1,9 @@
 2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* TESTS: Regenerated.
+
+2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: performance tests for recsel using a sex with regexp
 	matching.
 	* torture/utils/p-recsel.sh (recsel-200-records-sex-regexp): New
