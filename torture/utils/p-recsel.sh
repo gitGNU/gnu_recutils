@@ -66,6 +66,31 @@ test_tool recsel-20000-records perf \
           "" \
           20000-records
 
+test_tool recsel-200-records-sex-regexp perf \
+          recsel \
+          "-e 'field4 ~ \".*04.*\"'" \
+          200-records
+
+test_tool recsel-500-records-sex-regexp perf \
+          recsel \
+          "-e 'field4 ~ \".*04.*\"'" \
+          500-records
+
+test_tool recsel-1000-records-sex-regexp perf \
+          recsel \
+          "-e 'field4 ~ \".*04.*\"'" \
+          1000-records
+
+test_tool recsel-10000-records-sex-regexp perf \
+          recsel \
+          "-e 'field4 ~ \".*04.*\"'" \
+          10000-records
+
+test_tool recsel-20000-records-sex-regexp perf \
+          recsel \
+          "-e 'field4 ~ \".*04.*\"'" \
+          20000-records
+
 #
 # Cleanup
 #

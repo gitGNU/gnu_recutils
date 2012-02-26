@@ -1,3 +1,14 @@
+2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: performance tests for recsel using a sex with regexp
+	matching.
+	* torture/utils/p-recsel.sh (recsel-200-records-sex-regexp): New
+	test.
+	(recsel-500-records-sex-regexp): Likewise.
+	(recsel-1000-records-sex-regexp): Likewise.
+	(recsel-10000-records-sex-regexp): Likewise.
+	(recsel-20000-records-sex-regexp): Likewise.
+
 2012-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	torture: support for performance test, and some performance recsel
