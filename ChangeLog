@@ -1,5 +1,15 @@
 2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	python: start of the python bindings for librec.
+	* python/README: New file.
+	* python/setup.py: Likewise.
+	* python/recmodule.c: Likewise.
+	(prec_version): New function.
+	(initrec): Likewise.
+	(prec_functions): New global.
+
+2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,doc,torture: support for UUID field type and UUID auto fields.
 	* torture/utils/config.sh.in (UUID_SUPPORT): Set to @have_uuid@.
 
