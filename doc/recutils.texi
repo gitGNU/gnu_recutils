@@ -776,7 +776,7 @@ described in the following subsections.
 * String types::        Lines, limited strings and regular expressions. 
 * Enumerated types::    Enumerations and boolean values.
 * Time related types::  Dates and times.
-* Other types::         Emails, fields, @dots{}
+* Other types::         Emails, fields, UUIDs, @dots{}
 @end menu
 
 @node Declaring types
@@ -1134,6 +1134,23 @@ synopsis is:
 %typedef: Field_t field
 @end example
 
+@noindent
+Universally Unique Identifiers (also known as UUIDs) are a way to
+assing a globally unique label to some object.  The @dfn{uuid} field
+type specifier serves that purpose.  The synopsis is:
+
+@example
+%typedef: Id_t uuid
+@end example
+
+@noindent
+The format of the uuids is conformed by 32 hexadecimal digits,
+displayed in 5 groups separated by hyphens, as follows:
+
+@example
+550e8400-e29b-41d4-a716-446655440000
+@end example
+
 @node %auto
 @chapter %auto
 
@@ -1227,6 +1244,7 @@ of the affected field:
 @itemize @minus
 @item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
 @item If it is a @code{date} then a field with the current date will be generated.
+@item If it is a @code{uuid} then a new time-based uuid will be generated.
 @item If no explicit type is defined for an auto generated field it is assumed to be an integer.
 @item Auto generated fields with other types are not allowed.
 @end itemize

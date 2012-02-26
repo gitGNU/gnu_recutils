@@ -32,6 +32,10 @@
 #include <string.h>
 #include <parse-datetime.h>
 
+#if defined UUID_TYPE
+#  include <uuid/uuid.h>
+#endif
+
 #include <rec.h>
 #include <rec-utils.h>
 
@@ -126,6 +130,12 @@ static bool rec_rset_add_auto_field_int (rec_rset_t rset,
 static bool rec_rset_add_auto_field_date (rec_rset_t rset,
                                           const char *field_name,
                                           rec_record_t record);
+
+#if defined UUID_TYPE
+static bool rec_rset_add_auto_field_uuid (rec_rset_t rset,
+                                          const char *field_name,
+                                          rec_record_t record);
+#endif
 
 static rec_record_t rec_rset_merge_records (rec_record_t to_record,
                                             rec_record_t from_record,
@@ -843,6 +853,18 @@ rec_rset_add_auto_fields (rec_rset_t rset,
 
                         break;
                       }
+#if defined UUID_TYPE
+                    case REC_TYPE_UUID:
+                      {
+                        if (!rec_rset_add_auto_field_uuid (rset, auto_field_name, record))
+                          {
+                            /* Out of memory.  */
+                            return NULL;
+                          }
+                        
+                        break;
+                      }
+#endif /* UUID_TYPE */
                     default:
                       {
                         /* Do nothing for other types.  */
@@ -1690,6 +1712,41 @@ rec_rset_add_auto_field_date (rec_rset_t rset,
 
   return true;
 }
+
+#if defined UUID_TYPE
+
+static bool
+rec_rset_add_auto_field_uuid (rec_rset_t rset,
+                              const char *field_name,
+                              rec_record_t record)
+{
+  rec_field_t auto_field;
+  uuid_t uu;
+  char uu_str[40]; /* Enough to hold any standard UUID.  */
+
+  /* Generate a new time-based UUID using the libuuid library and use
+     it for the value of the new auto field.  */
+
+  uuid_generate_time (uu);
+  uuid_unparse (uu, uu_str);
+  
+  auto_field = rec_field_new (field_name, uu_str);
+  if (!auto_field)
+    {
+      /* Out of memory.  */
+      return false;
+    }
+
+  if (!rec_mset_insert_at (rec_record_mset (record), MSET_FIELD, (void *) auto_field, 0))
+    {
+      /* Out of memory.  */
+      return false;
+    }
+
+  return true;
+}
+
+#endif /* UUID_TYPE */
 
 static rec_record_t
 rec_rset_merge_records (rec_record_t to_record,

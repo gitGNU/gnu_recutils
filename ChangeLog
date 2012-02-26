@@ -1,5 +1,42 @@
 2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,doc,torture: support for UUID field type and UUID auto fields.
+	* torture/utils/config.sh.in (UUID_SUPPORT): Set to @have_uuid@.
+
+	* torture/utils/recfix.sh (uuid-fields-ok): New input file.
+	(uuid-fields-invalid): Likewise.
+	(recfix-uuid-ok): New test.
+	(recfix-uuid-invalid): Likewise.
+
+	* doc/recutils.texi (Other types): UUID type documented.
+	(%auto): Likewise.
+
+	* src/rec-int.c (rec_int_check_descriptor): Allow auto-incremented
+	fields of type uuid if suuport for uuids is compiled in.
+
+	* src/rec-rset.c (rec_rset_add_auto_fields): Handle REC_TYPE_UUID.
+	(rec_rset_add_auto_field_uuid): New function.
+
+	* src/rec.h (rec_type_kind_e): Added entry REC_TYPE_UUID.
+
+	* src/rec-types.c (REC_TYPE_UUID_NAME): New constant.
+	(REC_TYPE_CLASS_RE): Add REC_TYPE_UUID_NAME.
+	(rec_type_check_uuid): New function.
+	(rec_type_new): Handle REC_TYPE_UUID.
+	(rec_type_kind_str): Likewise.
+	(rec_type_check): Likewise.
+	(rec_type_parse_type_kind): Likewise.
+
+	* src/Makefile.am (librec_la_LIBADD): link with UUIDLIBS when
+	appropriate.
+
+	* configure.ac: Check for libuuid and subst UUIDLIBS.
+	Define the automake conditional UUID_TYPE.
+
+	* README-dev: List the dependency on libuuid.
+
+2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,doc,torture: support for rewrite rules in field expressions.
 	* torture/utils/recsel.sh (recsel-fex-rewrite-all): New test.
 	(recsel-fex-rewrite-subscript-single): Likewise.

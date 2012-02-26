@@ -24,6 +24,7 @@
 : ${srcdir=.}
 : ${builddir=.}
 : ${crypt_support=yes}
+: ${uuid_support=yes}
 
 . $builddir/config.sh
 . $srcdir/testutils.sh
@@ -982,6 +983,28 @@ Title: baz
 Title: bar
 '
 
+test_declare_input_file uuid-fields-ok \
+'%rec: Item
+%type: Id uuid
+
+Id: 550e8400-e29b-41d4-a716-446655440000
+Name: Item 1
+
+Id: 550e8401-e29b-41d4-a716-446655440000
+Name: Item 2
+'
+
+test_declare_input_file uuid-fields-invalid \
+'%rec: Item
+%type: Id uuid
+
+Id:
+Name: Item 1
+
+Id: foo
+Name: Item 2
+'
+
 #
 # Declare tests.
 #
@@ -1791,6 +1814,21 @@ Title: baz
 Id: 2
 Title: bar
 '
+
+if test "$uuid_support" = "yes"; then
+
+test_tool recfix-uuid-ok ok \
+          recfix \
+          '--check' \
+          uuid-fields-ok \
+          ''
+
+test_tool recfix-uuid-invalid xfail \
+          recfix \
+          '--check' \
+          uuid-fields-invalid
+
+fi
 
 #
 # Cleanup.

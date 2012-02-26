@@ -70,6 +70,11 @@ if REMOTE_DESCRIPTORS
   librec_la_LIBADD += $(CURLLIBS)
 endif
 
+if UUID_TYPE
+  AM_CPPFLAGS += -DUUID_TYPE
+  librec_la_LIBADD += $(UUIDLIBS)
+endif
+
 check-syntax: all
 
 # End of Makefile.am

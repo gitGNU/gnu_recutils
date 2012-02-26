@@ -48,6 +48,9 @@ a less capable software:
   http://curl.haxx.se/libcurl/.
 - The mdbtools are required for building the mdb2rec utility.
   mdbtools can be obtained at http://mdbtools.sourceforge.net.
+- The UUID library from Theodore Ts'o is required for the uuid type.
+  In Debian-like systems that library is packaged under the name
+  uuid-dev and the runtime under the name libuuid1.
 - The algol68toc compiler is required for building the Algol68
   bindings.
 

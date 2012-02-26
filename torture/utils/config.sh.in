@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CRYPT_SUPPORT=@crypt_support@
+crypt_support=@crypt_support@
+uuid_support=@have_uuid@
 EXEEXT=@EXEEXT@
 
 # End of config.sh.in

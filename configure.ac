@@ -99,6 +99,14 @@ if test "x$have_mdb" = "xyes"; then
 fi
 AC_SUBST([MDBLIBS])
 
+have_uuid=no
+AC_CHECK_LIB([uuid],[uuid_generate],[have_uuid=yes],)
+if test "x$have_uuid" = "xyes"; then
+   UUIDLIBS=-luuid
+fi
+AC_SUBST([UUIDLIBS])
+AC_SUBST([have_uuid])
+
 AC_ARG_ENABLE([encryption],
               AS_HELP_STRING([--enable-encryption],
                              [Compile recutils with encryption support (default is YES)]),
@@ -125,6 +133,7 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
 AM_CONDITIONAL([COMPILE_MDB2REC],
                [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])
 AM_CONDITIONAL([REMOTE_DESCRIPTORS], [test "x$have_curl" = "xyes"])
+AM_CONDITIONAL([UUID_TYPE], [test "x$have_uuid" = "xyes"])
 
 dnl Check for an Algol 68 compiler
 
@@ -190,6 +199,10 @@ fi
 
 if test "x$crypt_support" = "xno"; then
    echo "warning: building recutils without encryption support."
+fi
+
+if test "x$have_uuid" = "xno"; then
+   echo "warning: building recutils without support for uuid types."
 fi
 
 dnl End of configure.ac

@@ -890,10 +890,17 @@ does not exist\n"),
                   if ((!type) ||
                       ! ((rec_type_kind (type) == REC_TYPE_INT)
                          || (rec_type_kind (type) == REC_TYPE_RANGE)
+#if defined UUID_TYPE
+                         || (rec_type_kind (type) == REC_TYPE_UUID)
+#endif
                          || (rec_type_kind (type) == REC_TYPE_DATE)))
                     {
                       ADD_ERROR (errors,
-                                _("%s:%s: error: auto-incremented field %s should be of type int, range or date\n"),
+#if defined UUID_TYPE
+                                 _("%s:%s: error: auto-incremented field %s should be of type int, range, uuid or date\n"),
+#else
+                                 _("%s:%s: error: auto-incremented field %s should be of type int, range or date\n"),
+#endif
                                 rec_record_source (descriptor),
                                 rec_record_location_str (descriptor),
                                 auto_field_name);

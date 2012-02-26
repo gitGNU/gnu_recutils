@@ -34,6 +34,10 @@
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 
+#if defined UUID_TYPE
+#  include <uuid/uuid.h>
+#endif
+
 #include <rec-utils.h>
 #include <rec.h>
 
@@ -43,6 +47,7 @@
 
 /* Textual name of the types expected in the type description
    strings.  */
+
 #define REC_TYPE_INT_NAME    "int"
 #define REC_TYPE_BOOL_NAME   "bool"
 #define REC_TYPE_RANGE_NAME  "range"
@@ -54,6 +59,10 @@
 #define REC_TYPE_ENUM_NAME   "enum"
 #define REC_TYPE_EMAIL_NAME  "email"
 #define REC_TYPE_FIELD_NAME  "field"
+
+#if defined UUID_TYPE
+#  define REC_TYPE_UUID_NAME   "uuid"
+#endif
 
 /* Regular expressions.  */
 
@@ -99,13 +108,20 @@
   "$"
   
 /* Regular expression denoting a type name.  */
+
+#if defined UUID_TYPE
+#  define REC_TYPE_CLASS_UUID_RE "|" REC_TYPE_UUID_NAME
+#else
+#  define REC_TYPE_CLASS_UUID_RE
+#endif
+
 #define REC_TYPE_CLASS_RE                               \
   "(" REC_TYPE_INT_NAME   "|" REC_TYPE_RANGE_NAME  "|" \
       REC_TYPE_REAL_NAME  "|" REC_TYPE_SIZE_NAME   "|" \
       REC_TYPE_LINE_NAME  "|" REC_TYPE_REGEXP_NAME "|" \
       REC_TYPE_DATE_NAME  "|" REC_TYPE_ENUM_NAME   "|" \
       REC_TYPE_EMAIL_NAME "|" REC_TYPE_BOOL_NAME   "|" \
-      REC_TYPE_FIELD_NAME \
+      REC_TYPE_FIELD_NAME     REC_TYPE_CLASS_UUID_RE   \
   ")"
 
 /* Regular expressions for the type descriptions.  */
@@ -158,7 +174,7 @@
   REC_TYPE_ENUM_NAME_RE                         \
   "(" REC_TYPE_BLANKS_RE REC_TYPE_ENUM_NAME_RE ")*"
 
-  /* field */
+/* field */
 #define REC_TYPE_FIELD_DESCR_RE                 \
   REC_TYPE_FIELD_NAME
 
@@ -245,6 +261,10 @@ static bool rec_type_check_date (rec_type_t type, const char *str, rec_buf_t err
 static bool rec_type_check_email (rec_type_t type, const char *str, rec_buf_t errors);
 static bool rec_type_check_enum (rec_type_t type, const char *str, rec_buf_t errors);
 static bool rec_type_check_field (rec_type_t type, const char *str, rec_buf_t errors);
+
+#if defined UUID_TYPE
+static bool rec_type_check_uuid (rec_type_t type, const char *str, rec_buf_t errors);
+#endif
 
 /* Parsing routines.  */
 
@@ -382,6 +402,9 @@ rec_type_new (const char *str)
     case REC_TYPE_FIELD:
     case REC_TYPE_DATE:
     case REC_TYPE_EMAIL:
+#if defined UUID_TYPE
+    case REC_TYPE_UUID:
+#endif
       {
         /* We are done.  */
         break;
@@ -493,6 +516,13 @@ rec_type_kind_str (rec_type_t type)
         res = REC_TYPE_FIELD_NAME;
         break;
       }
+#if defined UUID_TYPE
+    case REC_TYPE_UUID:
+      {
+        res = REC_TYPE_UUID_NAME;
+        break;
+      }
+#endif
     default:
       {
         res = REC_TYPE_NONE;
@@ -578,6 +608,13 @@ rec_type_check (rec_type_t type,
         res = rec_type_check_field (type, str, errors);
         break;
       }
+#if defined UUID_TYPE
+    case REC_TYPE_UUID:
+      {
+        res = rec_type_check_uuid (type, str, errors);
+        break;
+      }
+#endif
     }
 
   /* Terminate the 'errors' string.  */
@@ -896,6 +933,12 @@ rec_type_parse_type_kind (char *str)
     {
       res = REC_TYPE_FIELD;
     }
+#if defined UUID_TYPE
+  if (strcmp (str, REC_TYPE_UUID_NAME) == 0)
+    {
+      res = REC_TYPE_UUID;
+    }
+#endif
 
   return res;
 }
@@ -931,6 +974,31 @@ rec_type_check_field (rec_type_t type,
 
   return ret;
 }
+
+#if defined UUID_TYPE
+
+static bool
+rec_type_check_uuid (rec_type_t type,
+                     const char *str,
+                     rec_buf_t errors)
+{
+  int ret;
+  uuid_t uu;
+
+  /* Determine whether the given string is a valid UUID by parsing it
+     using the uuid_parse function provided by the libuuid
+     library.  */
+
+  ret = uuid_parse (str, uu);
+  if ((ret == -1) && errors)
+    {
+      rec_buf_puts (_("invalid 'uuid' value."), errors);
+    }
+
+  return (ret == 0);
+}
+
+#endif /* UUID_TYPE */
 
 static bool
 rec_type_check_bool (rec_type_t type,

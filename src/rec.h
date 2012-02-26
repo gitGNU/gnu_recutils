@@ -562,7 +562,9 @@ enum rec_type_kind_e
     /* A field name.  */
     REC_TYPE_FIELD,
     /* An email.  */
-    REC_TYPE_EMAIL
+    REC_TYPE_EMAIL,
+    /* An universally unique identifier (uuid).  */
+    REC_TYPE_UUID
   };
 
 typedef struct rec_type_s *rec_type_t;
