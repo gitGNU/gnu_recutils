@@ -445,7 +445,7 @@ enum rec_fex_kind_e
 
 #define REC_FNAME_LIST_RE     REC_FNAME_RE "([ \n\t]+" REC_FNAME_RE ")*"
 #define REC_FNAME_LIST_CS_RE  REC_FNAME_RE "(," REC_FNAME_RE ")*"
-#define REC_FNAME_SUB_RE      REC_FNAME_RE "(\\[[0-9]+(-[0-9]+)?\\])?"
+#define REC_FNAME_SUB_RE      REC_FNAME_RE "(\\[[0-9]+(-[0-9]+)?\\])?" "(:" REC_FNAME_RE ")?"
 #define REC_FNAME_LIST_SUB_RE REC_FNAME_SUB_RE "(," REC_FNAME_SUB_RE ")*"
 
 /*********** Creating and destroying field expressions ************/
@@ -508,6 +508,12 @@ int rec_fex_elem_min (rec_fex_elem_t elem);
    refers to just one field) then -1 is returned.  */
 
 int rec_fex_elem_max (rec_fex_elem_t elem);
+
+/* Get the 'rewrite_to' field name associated with the field(s) referred
+   by a given fex element.  If no rewrite rule was specified in the
+   fex entry then NULL is returned.  */
+
+const char *rec_fex_elem_rewrite_to (rec_fex_elem_t elem);
 
 /*********** Miscellaneous field expressions functions ************/
 
@@ -1453,18 +1459,21 @@ bool rec_write_comment (rec_writer_t writer, rec_comment_t comment, rec_writer_m
 
 bool rec_write_field_name (rec_writer_t writer, const char *field_name, rec_writer_mode_t mode);
 
-/* Write a field in the given writer.  This function returns 'false'
-   if there was an EOF condition.  */
+/* Write a field in the given writer.  If NAME is not NULL, use it
+   instead of the proper name of the field.  This function returns
+   'false' if there was an EOF condition.  */
 
-bool rec_write_field (rec_writer_t writer, rec_field_t field, rec_writer_mode_t mode);
+bool rec_write_field (rec_writer_t writer, rec_field_t field,
+                      const char *name, rec_writer_mode_t mode);
 
 /* Write a field in the given writer caring about keeping any
    restriction (such as that the field value must be encrypted) from
-   the given record set.  This function returns 'false' if there was
-   an EOF condition.  */
+   the given record set.  If NAME is not NULL, use it instead of the
+   proper name of the field.  This function returns 'false' if there
+   was an EOF condition.  */
 
 bool rec_write_field_with_rset (rec_writer_t writer, rec_rset_t rset, rec_field_t field,
-                                rec_writer_mode_t mode);
+                                const char *name, rec_writer_mode_t mode);
 
 /* Write a record in the given writer.  This function returns 'false'
    if there was an EOF condition.  */
@@ -1480,8 +1489,9 @@ bool rec_write_record_with_rset (rec_writer_t writer, rec_rset_t rset, rec_recor
                                  rec_writer_mode_t mode);
 
 /* Write a subset of a record to the given writer.  The subset is
-   determined by a field expression.  This function returns 'false' if
-   there was an EOF condition.  */
+   determined by a field expression, which can contain subscripts
+   and/or rewrite rules.  This function returns 'false' if there was
+   an EOF condition.  */
 
 bool rec_write_record_with_fex (rec_writer_t writer, rec_record_t record, rec_fex_t fex,
                                 rec_writer_mode_t mode,

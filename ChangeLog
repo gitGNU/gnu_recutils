@@ -1,5 +1,53 @@
 2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,doc,torture: support for rewrite rules in field expressions.
+	* torture/utils/recsel.sh (recsel-fex-rewrite-all): New test.
+	(recsel-fex-rewrite-subscript-single): Likewise.
+	(recsel-fex-rewrite-subscript-multi): Likewise.
+	(recsel-fex-rewrite-several): Likewise.
+
+	* torture/rec-fex/rec-fex-elem-rewrite-to.c
+	(rec_fex_elem_field_rewrite_to_default): New unit test.
+	(rec_fex_elem_field_rewrite_to_nominal): Likewise.
+
+	* torture/Makefile.am (REC_FEX_TSUITE): Added
+	rec-fex/rec-fex-elem-field-rewrite-to.c.
+
+	* torture/rec-fex/tsuite-rec-fex.c (tsuite_rec_fex): Added
+	test_rec_fex_elem_rewrite_to.
+
+	* torture/rec-fex/rec-fex-elem-rewrite-to.c: New file.
+	(test_rec_fex_elem_rewrite_to): New function.
+
+	* doc/recutils.texi (Field Expressions): Documentation for rewrite
+	rules added.
+
+	* torture/rec-writer/rec-write-field.c (rec_write_field_rewrite):
+	New unit test.
+	(rec_write_field_sexp_rewrite): Likewise.
+
+	* src/rec-writer.c (rec_write_record_with_fex): Invoke
+	rec_write_field passing the rewrite_to property of the fex elem.
+	(rec_write_field): Get an extra argument 'name'.
+	(rec_write_field_with_rset): Likewise.
+	(rec_write_record_with_rset): Adapt to new
+	rec_write_field_with_rset.
+	(rec_write_field_str): Likewise.
+
+	* src/rec-fex.c (rec_fex_parse_elem): The 'str' field must contain
+	a copy of the textual entry (including rewrite rules and
+	subscripts) and not just the field name.
+	(rec_fex_elem_rewrite_to): New function.
+
+	* src/rec.h (REC_FNAME_SUB_RE): Allow the inclusion of a rewrite
+	rule at the end of the entry.
+
+	* src/rec-fex.c (rec_fex_elem_s): New field 'rewrite_to'.
+	(rec_fex_parse_elem): Parse the rewrite rule if it is present in
+	the fex entry.
+
+2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* TESTS: Regenerated.
 
 2012-02-26  Jose E. Marchesi  <jemarch@gnu.org>

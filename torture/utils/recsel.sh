@@ -1120,6 +1120,65 @@ pos: 1
 pos: 5
 '
 
+test_tool recsel-fex-rewrite-all ok \
+          recsel \
+          "-p field1,field2:xxx,field3" \
+          repeated-fields \
+'field1: value11
+xxx: value121
+xxx: value122
+field3: value13
+
+field1: value21
+xxx: value221
+xxx: value222
+field3: value23
+'
+
+test_tool recsel-fex-rewrite-subscript-single ok \
+          recsel \
+          "-p field1,field2[0]:xxx,field2[1],field3" \
+          repeated-fields \
+'field1: value11
+xxx: value121
+field2: value122
+field3: value13
+
+field1: value21
+xxx: value221
+field2: value222
+field3: value23
+'
+test_tool recsel-fex-rewrite-subscript-multi ok \
+          recsel \
+          "-p field1,field2[0-1]:xxx,field3" \
+          repeated-fields \
+'field1: value11
+xxx: value121
+xxx: value122
+field3: value13
+
+field1: value21
+xxx: value221
+xxx: value222
+field3: value23
+'
+
+test_tool recsel-fex-rewrite-several ok \
+          recsel \
+          "-p field1,field2:xxx,field3:yyy" \
+          repeated-fields \
+'field1: value11
+xxx: value121
+xxx: value122
+yyy: value13
+
+field1: value21
+xxx: value221
+xxx: value222
+yyy: value23
+'
+
 #
 # Cleanup
 #

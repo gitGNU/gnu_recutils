@@ -47,7 +47,7 @@ START_TEST(rec_write_field_nominal)
   field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_NORMAL));
+  fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_NORMAL));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "foo: value\n") != 0);
@@ -71,10 +71,59 @@ START_TEST(rec_write_field_sexp)
   field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_SEXP));
+  fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_SEXP));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "(field  \"foo\" \"value\")\n") != 0);
+  free (str);
+}
+END_TEST
+
+/*-
+ * Test: rec_write_field_rewrite
+ * Unit: rec_write_field
+ * Description:
+ * + Write a field using a rewrite_to name.
+ */
+START_TEST(rec_write_field_rewrite)
+{
+  rec_writer_t writer;
+  rec_field_t field;
+  char *str;
+  size_t str_size;
+
+  field = rec_field_new ("foo", "value");
+  fail_if (field == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_field (writer, field, "bar", REC_WRITER_NORMAL));
+  rec_field_destroy (field);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "bar: value\n") != 0);
+  free (str);
+}
+END_TEST
+
+/*-
+ * Test: rec_write_field_sexp_rewrite
+ * Unit: rec_write_field
+ * Description:
+ * + Writea field in sexp format using a rewrite_to
+ * + name.
+ */
+START_TEST(rec_write_field_sexp_rewrite)
+{
+  rec_writer_t writer;
+  rec_field_t field;
+  char *str;
+  size_t str_size;
+
+  field = rec_field_new ("foo", "value");
+  fail_if (field == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_field (writer, field, "bar", REC_WRITER_SEXP));
+  rec_field_destroy (field);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "(field  \"bar\" \"value\")\n") != 0);
   free (str);
 }
 END_TEST
@@ -88,6 +137,8 @@ test_rec_write_field (void)
   TCase *tc = tcase_create ("rec_write_field");
   tcase_add_test (tc, rec_write_field_nominal);
   tcase_add_test (tc, rec_write_field_sexp);
+  tcase_add_test (tc, rec_write_field_rewrite);
+  tcase_add_test (tc, rec_write_field_sexp_rewrite);
 
   return tc;
 }

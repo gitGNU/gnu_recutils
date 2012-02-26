@@ -42,6 +42,7 @@ struct rec_fex_elem_s
   char *str;
 
   char *field_name;
+  char *rewrite_to;
   int max;
   int min;
 };
@@ -221,6 +222,12 @@ int
 rec_fex_elem_max (rec_fex_elem_t elem)
 {
   return elem->max;
+}
+
+const char *
+rec_fex_elem_rewrite_to (rec_fex_elem_t elem)
+{
+  return elem->rewrite_to;
 }
 
 void
@@ -554,20 +561,23 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
   /* 'Empty' part.  */
   elem->field_name = NULL;
   elem->str = NULL;
+  elem->rewrite_to = NULL;
   elem->min = -1;
   elem->max = -1;
 
+  /* The 'str' field keeps a copy of the textual entry.  */
+
+  elem->str = strdup (str);
 
   /* Get the field name.  */
 
   if (!rec_parse_regexp (&p,
                          "^" REC_FNAME_RE,
-                         &(elem->str)))
+                         &(elem->field_name)))
     {
       /* Parse error.  */
       return false;
     }
-  elem->field_name = strdup (elem->str);
 
   /* Get the subscripts if they are present.  */
   if (*p == '[')
@@ -603,6 +613,19 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
           return false;
         }
       p++; /* Skip the ]  */
+    }
+
+  /* Get the rewrite rule if it is present.  */
+  if (*p == ':')
+    {
+      p++;
+      if (!rec_parse_regexp (&p,
+                             "^" REC_FNAME_RE,
+                             &(elem->rewrite_to)))
+        {
+          /* Parse error.  */
+          return false;
+        }
     }
 
   if (*p != '\0')

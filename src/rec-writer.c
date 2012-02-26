@@ -187,11 +187,13 @@ rec_write_comment (rec_writer_t writer,
 bool
 rec_write_field (rec_writer_t writer,
                  rec_field_t field,
+                 const char *name,
                  rec_writer_mode_t mode)
 {
   return rec_write_field_with_rset (writer,
                                     NULL,
                                     field,
+                                    name,
                                     mode);
 }
 
@@ -199,6 +201,7 @@ bool
 rec_write_field_with_rset (rec_writer_t writer,
                            rec_rset_t rset,
                            rec_field_t field,
+                           const char *name,
                            rec_writer_mode_t mode)
 {
   size_t pos;
@@ -222,7 +225,14 @@ rec_write_field_with_rset (rec_writer_t writer,
     }
 
   /* Write the field name */
-  fname = rec_field_name (field);
+  if (name)
+    {
+      fname = name;
+    }
+  else
+    {
+      fname = rec_field_name (field);
+    }
 
   if (!rec_write_field_name (writer, fname, mode))
     {
@@ -414,6 +424,7 @@ rec_write_record_with_rset (rec_writer_t writer,
           if (!rec_write_field_with_rset (writer,
                                           rset,
                                           field,
+                                          NULL, /* name */
                                           mode))
             {
               ret = false;
@@ -523,8 +534,15 @@ rec_write_record_with_fex (rec_writer_t writer,
             }
           else
             {
-              /* Print the field according to the requested mode. */
-              rec_write_field (writer, field, mode);
+              /* Print the field according to the requested mode.  If
+                 there is a rewrite rule defined in this fex entry,
+                 use the rewrite_to field name instead of the original
+                 name of the field.  */
+
+              rec_write_field (writer,
+                               field,
+                               rec_fex_elem_rewrite_to (elem),
+                               mode);
             }
         }
     }
@@ -689,7 +707,7 @@ rec_write_field_str (rec_field_t field,
   writer = rec_writer_new_str (&result, &result_size);
   if (writer)
     {
-      rec_write_field (writer, field, mode);
+      rec_write_field (writer, field, NULL /* name */, mode);
       rec_writer_destroy (writer);
     }
   

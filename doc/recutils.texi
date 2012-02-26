@@ -1816,7 +1816,8 @@ string.  This is used when replacing the slots in templates
 @section Field Expressions
 
 @dfn{Field expressions} (also known as FEXs) are a way to select
-fields of a record.
+fields of a record.  They also allow to do some transformations in the
+selected fields, such as changing their names.
 
 A FEX is composed by a sequence of @dfn{elements} separated by commas:
 
@@ -1883,6 +1884,50 @@ is equivalent to
 
 @example
 Email[0],Name,Email[1-2]
+@end example
+
+It is possible to include a @dfn{rewrite rule} in an element of a
+field expression, which specifies an alias for the selected fields:
+
+@example
+@var{Field_Name}[@var{min}-@var{max}]:@var{Alias}
+@end example
+
+@noindent
+For example, the following field expression specifies an alias for the
+fields named @code{Email} in a record:
+
+@example
+Name,Email:ElectronicEmail
+@end example
+
+Since the rewrite rules only affect to the fields selected in a single
+element of the field expression, it is possible to define different
+aliases to several fields having the same name but occupying different
+positions:
+
+@example
+Name,Email[0]:PrimaryEmail,Email[1]:SecondaryEmail
+@end example
+
+@noindent
+When that field expression is applied to the following record:
+
+@example
+Name: Mr. Foo
+Email: primary@@email.com
+Email: secondary@@email.com
+Email: other@@email.com
+@end example
+
+@noindent
+the result will be:
+
+@example
+Name: Mr. Foo
+PrimaryEmail: primary@@email.com
+SecondaryEmail: secondary@@email.com
+Email: other@@email.com
 @end example
 
 @node recinf
