@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,12 +38,13 @@
 
 struct rec_db_s
 {
-  int size;             /* Number of record sets contained in this
+  size_t size;          /* Number of record sets contained in this
                            database.  */
   gl_list_t rset_list;  /* List of record sets.  */
 };
 
 /* Static functions defined in this file.  */
+
 static bool rec_db_rset_equals_fn (const void *elt1,
                                    const void *elt2);
 static void rec_db_rset_dispose_fn (const void *elt);
@@ -81,11 +82,14 @@ rec_db_new (void)
 void
 rec_db_destroy (rec_db_t db)
 {
-  gl_list_free (db->rset_list);
-  free (db);
+  if (db)
+    {
+      gl_list_free (db->rset_list);
+      free (db);
+    }
 }
 
-int
+size_t
 rec_db_size (rec_db_t db)
 {
   return db->size;
@@ -93,7 +97,7 @@ rec_db_size (rec_db_t db)
 
 rec_rset_t
 rec_db_get_rset (rec_db_t db,
-                 int position)
+                 size_t position)
 {
   rec_rset_t rset;
 
@@ -110,8 +114,7 @@ rec_db_get_rset (rec_db_t db,
           position = db->size - 1;
         }
 
-      rset = (rec_rset_t) gl_list_get_at (db->rset_list,
-                                          position);
+      rset = (rec_rset_t) gl_list_get_at (db->rset_list, position);
     }
 
   return rset;
@@ -120,7 +123,7 @@ rec_db_get_rset (rec_db_t db,
 bool
 rec_db_insert_rset (rec_db_t db,
                     rec_rset_t rset,
-                    int position)
+                    size_t position)
 {
   gl_list_node_t node;
 
@@ -153,7 +156,7 @@ rec_db_insert_rset (rec_db_t db,
 }
 
 bool
-rec_db_remove_rset (rec_db_t db, int position)
+rec_db_remove_rset (rec_db_t db, size_t position)
 {
   bool removed;
 
@@ -183,7 +186,7 @@ rec_db_remove_rset (rec_db_t db, int position)
 
 bool
 rec_db_type_p (rec_db_t db,
-               char *type)
+               const char *type)
 {
   return (rec_db_get_rset_by_type (db, type) != NULL);
 }

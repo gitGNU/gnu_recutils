@@ -1187,66 +1187,64 @@ rec_rset_t rec_rset_add_auto_fields (rec_rset_t rset, rec_record_t record);
  * A database is an ordered set of zero or more record sets.
  */
 
+/* Opaque type representing a database.  */
+
 typedef struct rec_db_s *rec_db_t;
 
-/* Create an empty database.  */
+/************ Creating and destrying databases *********************/
+
+/* Create a new empty database and return it.  This function returns
+   NULL if there is not enough memory to perform the operation.  */
+
 rec_db_t rec_db_new (void);
 
-/* Destroy a database, freeing any used memory.
- *
- * This means that all the record sets contained in the database are
- * also destroyed.
- */
+/* Destroy a database, freeing any used memory.  This means that all
+   the record sets contained in the database are also destroyed.  */
+
 void rec_db_destroy (rec_db_t db);
+
+/*********** Getting and setting properties of databases **********/
 
 /* Return the number of record sets contained in a given record
    set.  */
-int rec_db_size (rec_db_t db);
 
-/* Return a pointer to the record set at the given position.
- *
- * If no such record set is contained in the database then NULL is
- * returned.
- */
-rec_rset_t rec_db_get_rset (rec_db_t db,
-                            int position);
+size_t rec_db_size (rec_db_t db);
+
+/*********** Managing record sets in a database *******************/
+
+/* Return the record set occupying the given position in the database.
+   If no such record set is contained in the database then NULL is
+   returned.  */
+
+rec_rset_t rec_db_get_rset (rec_db_t db, size_t position);
 
 /* Insert the given record set into the given database at the given
- * position.
- *
- * - If POSITION >= rec_rset_size (DB), RSET is appended to the
- *   list of fields.
- *
- * - If POSITION < 0, RSET is prepended.
- *
- * - Otherwise RSET is inserted at the specified position.
- *
- * If the rset is inserted then 'true' is returned. If there is an
- * error then 'false' is returned.
- */
-bool rec_db_insert_rset (rec_db_t db,
-                         rec_rset_t rset,
-                         int position);
+  position.  If POSITION >= rec_rset_size (DB), RSET is appended to
+  the list of fields.  If POSITION < 0, RSET is prepended.  Otherwise
+  RSET is inserted at the specified position.  If the rset is inserted
+  then 'true' is returned. If there is an error then 'false' is
+  returned.  */
+
+bool rec_db_insert_rset (rec_db_t db, rec_rset_t rset, size_t position);
 
 /* Remove the record set contained in the given position into the
- * given database.
- *
- * - If POSITION >= rec_db_size (DB), the last record set is deleted.
- *
- * - If POSITION <= 0, the first record set is deleted.
- *
- * - Otherwise the record set occupying the specified position is
- *   deleted.
- *
- * If a record set has been removed then 'true' is returned.  If there
- * is an error or the database has no record sets 'false' is returned.
- */
-bool rec_db_remove_rset (rec_db_t db, int position);
+   given database.  If POSITION >= rec_db_size (DB), the last record
+   set is deleted.  If POSITION <= 0, the first record set is deleted.
+   Otherwise the record set occupying the specified position is
+   deleted.  If a record set has been removed then 'true' is returned.
+   If there is an error or the database has no record sets 'false' is
+   returned.  */
 
-/* Determine whether an rset named TYPE exists in DB.  */
-bool rec_db_type_p (rec_db_t db, char *type);
+bool rec_db_remove_rset (rec_db_t db, size_t position);
 
-/* Get the rset with the given type from db.  */
+/* Determine whether an rset named TYPE exists in a database.  If TYPE
+   is NULL then it refers to the default record set.  */
+
+bool rec_db_type_p (rec_db_t db, const char *type);
+
+/* Get the rset with the given type from db.  This function returns
+NULL if there is no a record set having that type.  */
+
 rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 
 /*

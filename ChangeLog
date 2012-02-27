@@ -1,5 +1,16 @@
 2012-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: small changes in rec-db.
+	* src/rec-db.c (rec_db_s): Field 'size' is now of type size_t.
+	(rec_db_destroy): Be a no-operation if NULL is passed.
+	(rec_db_size): Return a size_t value.
+	(rec_db_get_rset): The 'position' argument is now a size_t.
+	(rec_db_insert_rset): Likewise.
+	(rec_db_remove_rset): Likewise.
+	(rec_db_type_p): Get a const char* argument.
+
+2012-02-27  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: fix offline make perf.
 	* torture/utils/Makefile.am (perf): Invoke $(srcdir)/p-recsel.sh
 	and set srcdir.
