@@ -29,6 +29,6 @@ TESTS_ENVIRONMENT = top_srcdir=$(top_srcdir) builddir=$(builddir) \
                     PATH=$(srcdir)$(PATH_SEPARATOR)$(top_builddir)/utils$(PATH_SEPARATOR)$$PATH
 
 perf:
-	$(SHELL) $(TEST_ENVIRONMENT) p-recsel.sh
+	 $(TESTS_ENVIRONMENT) srcdir=$(srcdir) $(srcdir)/p-recsel.sh
 
 # End of Makefile.am
