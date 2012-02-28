@@ -37,7 +37,7 @@ tsuite_rec_field_name ()
 
   s = suite_create ("rec-field-name");
   suite_add_tcase (s, test_rec_field_name_equal_p ());
-  suite_add_tcase (s, test_rec_field_name_part_normalise ());
+  suite_add_tcase (s, test_rec_field_name_normalise ());
   suite_add_tcase (s, test_rec_field_name_p ());
 
   return s;

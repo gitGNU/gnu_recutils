@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include <gl_array_list.h>
 #include <gl_list.h>
 
@@ -50,10 +51,14 @@ static bool rec_db_rset_equals_fn (const void *elt1,
 static void rec_db_rset_dispose_fn (const void *elt);
 
 static rec_record_t rec_db_process_fex (rec_record_t record, rec_fex_t fex);
-static bool rec_db_record_selected_p (rec_record_t record,
+static bool rec_db_record_selected_p (size_t num_rec,
+                                      rec_record_t record,
+                                      size_t *index,
                                       rec_sex_t sex,
                                       const char *fast_string,
                                       bool case_insensitive_p);
+static void rec_db_add_random_indexes (size_t **index, size_t num, size_t limit);
+static bool rec_db_index_p (size_t *index, size_t num);
 
 /*
  * Public functions.
@@ -242,8 +247,7 @@ rec_db_get_rset_by_type (rec_db_t db,
 rec_rset_t
 rec_db_query (rec_db_t db,
               const char  *type,
-              size_t       min,
-              size_t       max,
+              size_t       *index,
               rec_sex_t    sex,
               const char  *fast_string,
               size_t       random,
@@ -300,7 +304,19 @@ rec_db_query (rec_db_t db,
      (a sex, an index, a random selection or a "fast string") will be
      duplicated and added to the 'res' record set.  */
 
-  /* TODO: generate a list of random indexes here.  */
+  /* Generate a list of random indexes here if requested.  The
+     generated random indexes are added to the indexes list, which
+     must be NULL if random > 0 (mutually exclusive arguments).  */
+
+  if (random > 0)
+    {
+      rec_db_add_random_indexes (&index, random, rec_rset_num_records (rset));
+      if (!index)
+        {
+          /* Out of memory.  */
+          return NULL;
+        }
+    }
 
   {
     rec_record_t record = NULL;
@@ -314,7 +330,9 @@ rec_db_query (rec_db_t db,
         
         /* Determine whether we must skip this record.  */
         
-        if (!rec_db_record_selected_p (record,
+        if (!rec_db_record_selected_p (num_rec,
+                                       record,
+                                       index,
                                        sex,
                                        fast_string,
                                        flags & REC_Q_ICASE))
@@ -375,7 +393,98 @@ rec_db_query (rec_db_t db,
  */
 
 static bool
-rec_db_record_selected_p (rec_record_t record,
+rec_db_index_p (size_t *index,
+                  size_t num)
+{
+  while ((index[0] != REC_Q_NOINDEX) || (index[1] != REC_Q_NOINDEX))
+    {
+      bool found = false;
+      size_t min = index[0];
+      size_t max = index[1];
+      
+      if (max == REC_Q_NOINDEX)
+        {
+          found = (num == min);
+        }
+      else
+        {
+          found = ((num >= min) && (num <= max));
+        }
+      
+      if (found)
+        {
+          return true;
+        }
+      
+      index = index + 2;
+    }
+
+  return false;
+}
+
+static void
+rec_db_add_random_indexes (size_t **index,
+                           size_t num,
+                           size_t limit)
+{
+  /* Create NUM different random numbers in the [0..limit-1] range,
+     without repetition, and store them in a buffer pointed by
+     INDEX.  */
+
+  size_t i;
+  char random_state[128];
+  struct random_data random_data;
+
+  *index = malloc (sizeof(size_t) * ((num + 1) * 2));
+  if (*index == NULL)
+    {
+      /* Out of memory.  */
+      return;
+    }
+  
+  for (i = 0; i < (num * 2); i++)
+    {
+      (*index)[i]   = REC_Q_NOINDEX;
+      (*index)[i+1] = REC_Q_NOINDEX;
+    }
+
+  /* Insert the random indexes.  */
+
+  memset (&random_data, 0, sizeof (random_data));
+  initstate_r (time(NULL), (char *) &random_state, 128, &random_data);
+  for (i = 0; i < num; i = i + 2)
+    {
+      size_t random_value = 0;
+      
+      random_r (&random_data, (int32_t *) &random_value); /* Can't fail.  */
+      random_value = random_value % limit;
+
+      /* Avoid having repeated random indexes.  */
+      
+      if (rec_db_index_p (*index, random_value))
+        {
+          /* Pick the first available number.  */
+
+          size_t i;
+          for (i = 0; i < limit; i++)
+            {
+              if (!rec_db_index_p (*index, i))
+                {
+                  random_value = i;
+                  break;
+                }
+            }
+        }
+
+      (*index)[i]   = random_value;  /* Min.  */
+      (*index)[i+1] = REC_Q_NOINDEX; /* Max.  */
+    }
+}
+
+static bool
+rec_db_record_selected_p (size_t num_record,
+                          rec_record_t record,
+                          size_t *index,
                           rec_sex_t sex,
                           const char *fast_string,
                           bool case_insensitive_p)
@@ -402,6 +511,16 @@ rec_db_record_selected_p (rec_record_t record,
     {
       bool eval_status;
       return rec_sex_eval (sex, record, &eval_status);
+    }
+
+  /* The memory pointed by INDEX contains pairs of indexes Min,Max.
+     The final pair is always REC_Q_NOINDEX,REC_Q_NOINDEX.  Select the
+     current record only if its position is into some of the defined
+     intervals.  */
+  
+  if (index)
+    {
+      return rec_db_index_p (index, num_record);
     }
 
   return true;

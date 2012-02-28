@@ -1270,15 +1270,14 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
       record set contained in the database.  If TYPE is NULL then the
       default record set, if any, is queried.
 
-   MIN
-   MAX
+   INDEX
 
-      If MIN and/or MAX are not REC_Q_NOINDEX then the records in the
-      interval [MIN..MIN], [MAX..MAX] or [MIN..MAX] are respectively
-      selected.  Otherwise they are ignored.
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of valid
+      records.  The list of ends with the pair
+      REC_Q_NOINDEX,REC_Q_NOINDEX.
 
-      MIN and MAX are mutually exclusive with any other selection
-      option, but not between them.
+      INDEX is mutually exclusive with any other selection option.
 
    SEX
 
@@ -1358,8 +1357,7 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 
 rec_rset_t rec_db_query (rec_db_t     db,
                          const char  *type,
-                         size_t       min,
-                         size_t       max,
+                         size_t      *index,
                          rec_sex_t    sex,
                          const char  *fast_string,
                          size_t       random,

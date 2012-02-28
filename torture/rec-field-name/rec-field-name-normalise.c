@@ -1,9 +1,9 @@
 /* -*- mode: C -*-
  *
- *       File:         rec-field-name-part-normalise.c
+ *       File:         rec-field-name-normalise.c
  *       Date:         Fri Oct 29 15:38:54 2010
  *
- *       GNU recutils - rec_field_name_part_normalise unit tests
+ *       GNU recutils - rec_field_name_normalise unit tests
  *
  */
 
@@ -31,12 +31,12 @@
 #include <rec.h>
 
 /*-
- * Test: rec_field_name_part_normalise_nominal
- * Unit: rec_field_name_part_normalise
+ * Test: rec_field_name_normalise_nominal
+ * Unit: rec_field_name_normalise
  * Description:
- * + Check normalisation of name parts.
+ * + Check normalisation of names.
  */
-START_TEST(rec_field_name_part_normalise_nominal)
+START_TEST(rec_field_name_normalise_nominal)
 {
   char *normalised;
 
@@ -60,12 +60,12 @@ END_TEST
  * Test case creation function
  */
 TCase *
-test_rec_field_name_part_normalise (void)
+test_rec_field_name_normalise (void)
 {
-  TCase *tc = tcase_create ("rec_field_name_part_normalise");
-  tcase_add_test (tc, rec_field_name_part_normalise_nominal);
+  TCase *tc = tcase_create ("rec_field_name_normalise");
+  tcase_add_test (tc, rec_field_name_normalise_nominal);
 
   return tc;
 }
 
-/* End of rec-field-name-part-normalise.c */
+/* End of rec-field-name-normalise.c */

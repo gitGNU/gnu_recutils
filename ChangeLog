@@ -1,5 +1,15 @@
 2012-02-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: random indexes support added to rec_db_query.
+	* src/rec-db.c (rec_db_query): Get an INDEX paramerter pointing to
+	a list of index intervals.
+	(rec_db_record_selected_p): Likewise.
+	(rec_db_record_selected_p): Handle indexes.
+	(rec_db_add_random_indexes): New function.
+	(rec_db_indexes_p): New function.
+
+2012-02-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: first version of rec_db_query.
 	* src/rec-db.c (rec_db_query): New function.
 	(rec_db_process_fex): New function.
