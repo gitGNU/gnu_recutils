@@ -1,3 +1,12 @@
+2012-02-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: first version of rec_db_query.
+	* src/rec-db.c (rec_db_query): New function.
+	(rec_db_process_fex): New function.
+	(rec_db_record_selected_p): New function.
+
+	* src/rec.h: Prototype for rec_db_query.
+
 2012-02-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: small changes in rec-db.

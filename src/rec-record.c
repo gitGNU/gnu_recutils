@@ -573,7 +573,7 @@ rec_record_set_char_location (rec_record_t record,
 
 bool
 rec_record_contains_value (rec_record_t record,
-                           char *str,
+                           const char *str,
                            bool case_insensitive)
 {
   bool res = false;

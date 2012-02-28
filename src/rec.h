@@ -923,7 +923,7 @@ size_t rec_record_get_field_index_by_name (rec_record_t record, rec_field_t fiel
    The string comparison can be either case-sensitive or
    case-insensitive.  */
 
-bool rec_record_contains_value (rec_record_t record, char *value, bool case_insensitive);
+bool rec_record_contains_value (rec_record_t record, const char *value, bool case_insensitive);
 
 /* Determine whether a given record contains a field named after a
    given field name.  */
@@ -1191,6 +1191,12 @@ rec_rset_t rec_rset_add_auto_fields (rec_rset_t rset, rec_record_t record);
 
 typedef struct rec_db_s *rec_db_t;
 
+/* Opaque data type representing a selection expression.  This is
+   placed here as a forward declaration.  See below in this file for
+   the definition of the selection expressions stuff.  */
+
+typedef struct rec_sex_s *rec_sex_t;
+
 /************ Creating and destrying databases *********************/
 
 /* Create a new empty database and return it.  This function returns
@@ -1246,6 +1252,121 @@ bool rec_db_type_p (rec_db_t db, const char *type);
 NULL if there is no a record set having that type.  */
 
 rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
+
+/******************** Database Queries *******************************/
+
+/* Query for some data in a database.  The resulting data is returned
+   in a record set.
+
+   This function takes a lot of arguments:
+
+   DB
+
+      Database to query.
+
+   TYPE 
+
+      The type of records to query.  This string must identify a
+      record set contained in the database.  If TYPE is NULL then the
+      default record set, if any, is queried.
+
+   MIN
+   MAX
+
+      If MIN and/or MAX are not REC_Q_NOINDEX then the records in the
+      interval [MIN..MIN], [MAX..MAX] or [MIN..MAX] are respectively
+      selected.  Otherwise they are ignored.
+
+      MIN and MAX are mutually exclusive with any other selection
+      option, but not between them.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select from the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FEX
+
+      Field expression to apply to the matching records to build the
+      records in the result record set.  If FEX is NULL then the
+      matching records are unaltered.
+
+   PASSWORD
+
+      Password to use to decrypt confidential fields.  If the password
+      does not work then the encrypted fields are returned as-is.  If
+      PASSWORD is NULL, or if it is the empty string, then no attempt
+      to decrypt encrypted fields will be performed.
+
+   COUNTER
+
+      If not NULL, this argument must be a pointer to a size_t
+      variable where the number of selected records is stored.  If
+      this argument is specified then the returned record set will be
+      empty.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_Q_DESCRIPTOR
+
+      If set returned record set will feature a record descriptor.  If
+      the query is involving a single record set then the descriptor
+      will be a copy of the descriptor of the referred record set, and
+      will feature the same record type name.  Otherwise it will be
+      built from the several descriptors of the involved record sets,
+      and the record type name will be formed concatenating the type
+      names of the involved record sets.  If this flag is not
+      activated then the returned record set won't feature a record
+      descriptor.
+
+      REC_Q_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+      This function returns NULL if there is not enough memory to
+      perform the operation.  */
+
+#define REC_Q_DESCRIPTOR 1
+#define REC_Q_ICASE      2
+
+#define REC_Q_NOINDEX ((size_t)-1)
+
+rec_rset_t rec_db_query (rec_db_t     db,
+                         const char  *type,
+                         size_t       min,
+                         size_t       max,
+                         rec_sex_t    sex,
+                         const char  *fast_string,
+                         size_t       random,
+                         rec_fex_t    fex,
+                         const char  *password,
+                         size_t      *counter,
+                         int          flags);
 
 /*
  * INTEGRITY.
@@ -1536,9 +1657,8 @@ char *rec_write_comment_str (rec_comment_t comment, rec_writer_mode_t mode);
  * The plural form is 'sexes'.
  */
 
-/* Opaque data type representing a selection expression.  */
-
-typedef struct rec_sex_s *rec_sex_t;
+/* The opaque type rec_sex_t is defined above in this file as a
+   forward declaration.  */
 
 /**************** Creating and destroying sexes ******************/
 
