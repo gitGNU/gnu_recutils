@@ -62,7 +62,7 @@ START_TEST(rec_write_record_nominal)
   rec_record_destroy (record);
   rec_writer_destroy (writer);
   fail_if (strcmp (str,
-                   "foo1: value1\n#comment\nfoo2: value2\n") != 0);
+                   "foo1: value1\n#comment\nfoo2: value2") != 0);
   free (str);
 }
 END_TEST
@@ -98,10 +98,83 @@ START_TEST(rec_write_record_sexp)
   rec_record_destroy (record);
   rec_writer_destroy (writer);
   fail_if (strcmp (str,
-                   "(record  (\n(field  \"foo1\" \"value1\")\n(comment \"comment\")(field  \"foo2\" \"value2\")\n))\n") != 0);
+                   "(record  (\n(field  \"foo1\" \"value1\")\n(comment \"comment\")\n(field  \"foo2\" \"value2\")))") != 0);
   free (str);
 }
 END_TEST
+
+/*-
+ * Test: rec_write_record_values
+ * Unit: rec_write_record
+ * Description:
+ * + Write records using the
+ * + REC_WRITER_VALUES mode.
+ */
+START_TEST(rec_write_record_values)
+{
+  rec_writer_t writer;
+  rec_record_t record;
+  rec_field_t field;
+  rec_comment_t comment;
+  char *str;
+  size_t str_size;
+
+  record = rec_record_new ();
+  fail_if (record == NULL);
+  field = rec_field_new ("foo1", "value1");
+  fail_if (field == NULL);
+  fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
+  comment = rec_comment_new ("comment");
+  fail_if (comment == NULL);
+  fail_if (rec_mset_append (rec_record_mset(record), MSET_COMMENT, (void *) comment, MSET_ANY) == NULL);
+  field = rec_field_new ("foo2", "value2");
+  fail_if (field == NULL);
+  fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_record (writer, record, REC_WRITER_VALUES));
+  rec_record_destroy (record);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "value1\nvalue2") != 0);
+  free (str);
+}
+END_TEST
+
+/*-
+ * Test: rec_write_record_values_row
+ * Unit: rec_write_record
+ * Description:
+ * + Write records using the
+ * + REC_WRITER_VALUES_ROW mode.
+ */
+START_TEST(rec_write_record_values_row)
+{
+  rec_writer_t writer;
+  rec_record_t record;
+  rec_field_t field;
+  rec_comment_t comment;
+  char *str;
+  size_t str_size;
+
+  record = rec_record_new ();
+  fail_if (record == NULL);
+  field = rec_field_new ("foo1", "value1");
+  fail_if (field == NULL);
+  fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
+  comment = rec_comment_new ("comment");
+  fail_if (comment == NULL);
+  fail_if (rec_mset_append (rec_record_mset(record), MSET_COMMENT, (void *) comment, MSET_ANY) == NULL);
+  field = rec_field_new ("foo2", "value2");
+  fail_if (field == NULL);
+  fail_if (rec_mset_append (rec_record_mset(record), MSET_FIELD, (void *) field, MSET_ANY) == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_record (writer, record, REC_WRITER_VALUES_ROW));
+  rec_record_destroy (record);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "value1 value2") != 0);
+  free (str);
+}
+END_TEST
+
 
 /*
  * Test creation function
@@ -112,6 +185,8 @@ test_rec_write_record (void)
   TCase *tc = tcase_create ("rec_write_record");
   tcase_add_test (tc, rec_write_record_nominal);
   tcase_add_test (tc, rec_write_record_sexp);
+  tcase_add_test (tc, rec_write_record_values);
+  tcase_add_test (tc, rec_write_record_values_row);
 
   return tc;
 }

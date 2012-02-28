@@ -1,5 +1,32 @@
 2012-02-28  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,utils,torture: new writer modes values and values_row, and
+	some improvements in the writer algorithms.
+	* utils/recutl.c (recutl_write_db_to_file): Write the db into the
+	file only if there are record sets to write.  Otherwise create an
+	empty file.
+
+	* src/rec-writer.c (rec_write_string): New function.
+
+	* torture/rec-writer/rec-write-comment.c
+	(rec_write_comment_nominal): Added test with three lines.
+
+	* torture/rec-writer/rec-write-record.c (rec_write_record_values):
+	New unit test.
+	(rec_write_record_values_row): Likewise.
+
+	* torture/rec-writer/rec-write-field.c (rec_write_field_values):
+	New unit test.
+	(rec_write_field_values_row): Likewise.
+
+	* src/rec-writer.c (rec_write_field_with_rset): Implement
+	REC_WRITER_VALUES and REC_WRITER_VALUES_ROW semantics.
+
+	* src/rec.h (rec_writer_mode_e): New write modes REC_WRITER_VALUES
+	and REC_WRITER_VALUES_ROW.
+
+2012-02-28  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: random indexes support added to rec_db_query.
 	* src/rec-db.c (rec_db_query): Get an INDEX paramerter pointing to
 	a list of index intervals.

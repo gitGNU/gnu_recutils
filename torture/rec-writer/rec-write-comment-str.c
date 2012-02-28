@@ -44,13 +44,13 @@ START_TEST(rec_write_comment_str_nominal)
   comment = rec_comment_new ("foo bar");
   str = rec_write_comment_str (comment, REC_WRITER_NORMAL);
   rec_comment_destroy (comment);
-  fail_if (strcmp (str, "#foo bar\n") != 0);
+  fail_if (strcmp (str, "#foo bar") != 0);
 
   comment = rec_comment_new ("");
   str = rec_write_comment_str (comment, REC_WRITER_NORMAL);
   fail_if (str == NULL);
   rec_comment_destroy (comment);
-  fail_if (strcmp (str, "#\n") != 0);
+  fail_if (strcmp (str, "#") != 0);
 }
 END_TEST
 

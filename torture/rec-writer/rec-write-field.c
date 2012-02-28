@@ -50,7 +50,75 @@ START_TEST(rec_write_field_nominal)
   fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_NORMAL));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "foo: value\n") != 0);
+  fail_if (strcmp (str, "foo: value") != 0);
+  free (str);
+}
+END_TEST
+
+/*-
+ * Test: rec_write_field_values
+ * Unit: rec_write_field
+ * Description:
+ * + Write a field using the
+ * + REC_WRITER_VALUES writing mode.
+ */
+START_TEST(rec_write_field_values)
+{
+  rec_writer_t writer;
+  rec_field_t field;
+  char *str;
+  size_t str_size;
+
+  field = rec_field_new ("foo", "value");
+  fail_if (field == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_VALUES));
+  rec_field_destroy (field);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "value") != 0);
+  free (str);
+
+  field = rec_field_new ("name", "foo\nbar\nbaz");
+  fail_if (field == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_VALUES));
+  rec_field_destroy (field);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "foo\nbar\nbaz") != 0);
+  free (str);
+}
+END_TEST
+
+/*-
+ * Test: rec_write_field_values_row
+ * Unit: rec_write_field
+ * Description:
+ * + Write a field using the
+ * + REC_WRITER_VALUES_ROW writing mode.
+ */
+START_TEST(rec_write_field_values_row)
+{
+  rec_writer_t writer;
+  rec_field_t field;
+  char *str;
+  size_t str_size;
+
+  field = rec_field_new ("foo", "value");
+  fail_if (field == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_VALUES_ROW));
+  rec_field_destroy (field);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "value") != 0);
+  free (str);
+
+  field = rec_field_new ("name", "foo\nbar\nbaz");
+  fail_if (field == NULL);
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_VALUES_ROW));
+  rec_field_destroy (field);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "foo\nbar\nbaz") != 0);
   free (str);
 }
 END_TEST
@@ -74,7 +142,7 @@ START_TEST(rec_write_field_sexp)
   fail_if (!rec_write_field (writer, field, NULL, REC_WRITER_SEXP));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "(field  \"foo\" \"value\")\n") != 0);
+  fail_if (strcmp (str, "(field  \"foo\" \"value\")") != 0);
   free (str);
 }
 END_TEST
@@ -98,7 +166,7 @@ START_TEST(rec_write_field_rewrite)
   fail_if (!rec_write_field (writer, field, "bar", REC_WRITER_NORMAL));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "bar: value\n") != 0);
+  fail_if (strcmp (str, "bar: value") != 0);
   free (str);
 }
 END_TEST
@@ -123,7 +191,7 @@ START_TEST(rec_write_field_sexp_rewrite)
   fail_if (!rec_write_field (writer, field, "bar", REC_WRITER_SEXP));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "(field  \"bar\" \"value\")\n") != 0);
+  fail_if (strcmp (str, "(field  \"bar\" \"value\")") != 0);
   free (str);
 }
 END_TEST
@@ -137,6 +205,8 @@ test_rec_write_field (void)
   TCase *tc = tcase_create ("rec_write_field");
   tcase_add_test (tc, rec_write_field_nominal);
   tcase_add_test (tc, rec_write_field_sexp);
+  tcase_add_test (tc, rec_write_field_values);
+  tcase_add_test (tc, rec_write_field_values_row);
   tcase_add_test (tc, rec_write_field_rewrite);
   tcase_add_test (tc, rec_write_field_sexp_rewrite);
 

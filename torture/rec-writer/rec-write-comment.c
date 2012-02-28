@@ -50,7 +50,16 @@ START_TEST(rec_write_comment_nominal)
   fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "#foo bar\n") != 0);
+  fail_if (strcmp (str, "#foo bar") != 0);
+  free (str);
+
+  comment = rec_comment_new ("one\ntwo\nthree");
+  writer = rec_writer_new_str (&str, &str_size);
+  fail_if (writer == NULL);
+  fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
+  rec_comment_destroy (comment);
+  rec_writer_destroy (writer);
+  fail_if (strcmp (str, "#one\n#two\n#three") != 0);
   free (str);
 
   comment = rec_comment_new ("");
@@ -59,7 +68,7 @@ START_TEST(rec_write_comment_nominal)
   fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
-  fail_if (strcmp (str, "#\n") != 0);
+  fail_if (strcmp (str, "#") != 0);
   free (str);
 }
 END_TEST

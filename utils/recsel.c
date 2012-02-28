@@ -532,7 +532,7 @@ recsel_process_data (rec_db_t db)
                   && rec_rset_descriptor (rset))
                 {
                   rec_write_record (writer, rec_rset_descriptor (rset), recsel_write_mode);
-                  fprintf (stdout, "\n");
+                  fprintf (stdout, "\n\n");
                   wrote_descriptor = true;
                 }
 
@@ -550,6 +550,7 @@ recsel_process_data (rec_db_t db)
                                               rset,
                                               record,
                                               recsel_write_mode);
+                  rec_write_string (writer, "\n");
                 }
 
               written++;

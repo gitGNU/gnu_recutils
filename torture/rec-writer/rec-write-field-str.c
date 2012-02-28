@@ -46,7 +46,7 @@ START_TEST(rec_write_field_str_nominal)
   str = rec_write_field_str (field, REC_WRITER_NORMAL);
   fail_if (str == NULL);
   rec_field_destroy (field);
-  fail_if (strcmp (str, "foo: value\n") != 0);
+  fail_if (strcmp (str, "foo: value") != 0);
 }
 END_TEST
 
@@ -66,7 +66,7 @@ START_TEST(rec_write_field_str_sexp)
   str = rec_write_field_str (field, REC_WRITER_SEXP);
   fail_if (str == NULL);
   rec_field_destroy (field);
-  fail_if (strcmp (str, "(field  \"foo\" \"value\")\n") != 0);
+  fail_if (strcmp (str, "(field  \"foo\" \"value\")") != 0);
 }
 END_TEST
 

@@ -1527,6 +1527,8 @@ typedef struct rec_writer_s *rec_writer_t;
 enum rec_writer_mode_e
 {
   REC_WRITER_NORMAL,  /* Generate output in rec format.  */
+  REC_WRITER_VALUES,  /* Generate output in values format.  */
+  REC_WRITER_VALUES_ROW, /* Generate output in row format.  */
   REC_WRITER_SEXP     /* Generate output in sexps.  */
 };
 
@@ -1567,6 +1569,11 @@ bool rec_writer_set_password (rec_writer_t writer, const char *password);
 bool rec_writer_eof (rec_writer_t writer);
 
 /********************** Writing routines **************************/
+
+/* Write a string in the given writer.  This function returns 'false'
+   if there was an EOF condition.  */
+
+bool rec_write_string (rec_writer_t writer, const char *str);
 
 /* Write a comment in the given writer.  This function returns 'false'
    if there was an EOF condition.  */

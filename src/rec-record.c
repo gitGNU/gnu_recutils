@@ -439,6 +439,7 @@ rec_record_to_comment (rec_record_t record)
           rec_buf_puts (rec_write_field_str ((rec_field_t) data,
                                              REC_WRITER_NORMAL),
                         buf);
+          rec_buf_putc ('\n', buf);
         }
       else
         {
@@ -446,6 +447,7 @@ rec_record_to_comment (rec_record_t record)
           rec_buf_puts (rec_write_comment_str (rec_comment_text ((rec_comment_t) data),
                                                REC_WRITER_NORMAL),
                         buf);
+          rec_buf_putc ('\n', buf);
         }
     }
 
