@@ -1,5 +1,21 @@
 2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,utils: set high-level logic moved to librec and recset
+	adapted.
+	* utils/recset.c (recset_process_add): Function removed.
+	(recset_process_set): Likewise.
+	(recset_process_ren): Likewise.
+	(recset_process_del): Likewise.
+	(recset_process_actions): Use the new function in the library.
+
+	* src/rec-db.c (rec_db_set): New function.
+	(rec_db_set_act_rename): Likewise.
+	(rec_db_set_act_set): Likewise.
+	(rec_db_set_act_add): Likewise.
+	(rec_db_set_act_delete): Likewise.
+
+2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,utils: query, insert and delete high-level logic moved to
 	librec and utilities adapted.
 	* torture/utils/recdel.sh (recdel-index-list): New test.

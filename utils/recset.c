@@ -41,22 +41,10 @@
 
 static void recset_parse_args (int argc, char **argv);
 static void recset_process_actions (rec_db_t db);
-static void recset_process_add (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
-static void recset_process_set (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool add_p);
-static void recset_process_ren (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
-static void recset_process_del (rec_rset_t rset, rec_record_t record, rec_fex_t fex);
 
 /*
  * Global variables.
  */
-
-#define RECSET_ACT_NONE    0
-#define RECSET_ACT_SET     1
-#define RECSET_ACT_ADD     2
-#define RECSET_ACT_DELETE  3
-#define RECSET_ACT_COMMENT 4
-#define RECSET_ACT_RENAME  5
-#define RECSET_ACT_SET_ADD 6
 
 char      *recutl_sex_str     = NULL;
 rec_sex_t  recutl_sex         = NULL;
@@ -64,7 +52,7 @@ char      *recutl_quick_str   = NULL;
 char      *recutl_fex_str     = NULL;
 rec_fex_t  recutl_fex         = NULL;
 char      *recutl_type        = NULL;
-int        recset_action      = RECSET_ACT_NONE;
+int        recset_action      = REC_SET_ACT_NONE;
 char      *recset_value       = NULL;
 char      *recset_new_field_name = NULL;
 bool       recutl_insensitive = false;
@@ -180,7 +168,7 @@ Actions:\n\
           recutl_fatal (_("please specify some field with -f.\n")); \
         }                                                       \
                                                                 \
-      if (recset_action != RECSET_ACT_NONE)                     \
+      if (recset_action != REC_SET_ACT_NONE)                     \
         {                                                       \
           recutl_fatal (_("please specify just one action.\n")); \
         }                                                       \
@@ -242,7 +230,7 @@ recset_parse_args (int argc,
         case 's':
           {
             CHECK_ACTION_PREREQ;
-            recset_action = RECSET_ACT_SET;
+            recset_action = REC_SET_ACT_SET;
             recset_value = xstrdup (optarg);
             break;
           }
@@ -255,7 +243,7 @@ recset_parse_args (int argc,
                 recutl_fatal (_("the rename operation requires just one field with an optional subscript.\n"));
               }
 
-            recset_action = RECSET_ACT_RENAME;
+            recset_action = REC_SET_ACT_RENAME;
             recset_value = xstrdup (optarg);
 
             /* Validate the new name.  */
@@ -271,7 +259,7 @@ recset_parse_args (int argc,
         case 'a':
           {
             CHECK_ACTION_PREREQ;
-            recset_action = RECSET_ACT_ADD;
+            recset_action = REC_SET_ACT_ADD;
             recset_value = xstrdup (optarg);
             break;
           }
@@ -279,7 +267,7 @@ recset_parse_args (int argc,
         case 'S':
           {
             CHECK_ACTION_PREREQ;
-            recset_action = RECSET_ACT_SET_ADD;
+            recset_action = REC_SET_ACT_SETADD;
             recset_value = xstrdup (optarg);
             break;
           }
@@ -287,14 +275,14 @@ recset_parse_args (int argc,
         case 'd':
           {
             CHECK_ACTION_PREREQ;
-            recset_action = RECSET_ACT_DELETE;
+            recset_action = REC_SET_ACT_DELETE;
             break;
           }
         case COMMENT_ACTION_ARG:
         case 'c':
           {
             CHECK_ACTION_PREREQ;
-            recset_action = RECSET_ACT_COMMENT;
+            recset_action = REC_SET_ACT_COMMENT;
             break;
           }
         case NO_EXTERNAL_ARG:
@@ -327,367 +315,34 @@ recset_parse_args (int argc,
 static void
 recset_process_actions (rec_db_t db)
 {
-  int n_rset, rset_size;
-  int numrec;
-  rec_rset_t rset;
-  rec_record_t record;
-  bool parse_status = true;
-  rec_mset_iterator_t iter;
-  rec_buf_t errors_buf;
-  char *errors_str;
-  size_t errors_str_size;
+  int flags = 0;
 
-  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
+  if (recutl_insensitive)
     {
-      rset = rec_db_get_rset (db, n_rset);
-      rset_size = rec_rset_num_records (rset);
-
-      /* Don't process empty record sets.  */
-      if (rset_size == 0)
-        {
-          continue;
-        }
-
-      /* If the user specified a type, process the record set only if
-       * it is of the given size.  */
-      if (recutl_type
-          && (!rec_rset_type (rset)
-              || (strcmp (recutl_type, rec_rset_type (rset)) != 0)))
-        {
-          continue;
-        }
-
-      /* If the user didn't specify a type, process a record set if
-       * and only if:
-       *
-       * -  It is the default record set.
-       * -  The file contains just one record set.
-       */
-
-      if (!recutl_type
-          && rec_rset_type (rset)
-          && (rec_db_size (db) > 1))
-        {
-          continue;
-        }
-
-      /* Process this record set.  */
-      numrec = 0;
-
-      /* If the user requested to process random records, calculate
-         them now for this record set.  */
-
-      if (recutl_random > 0)
-        {
-          recutl_reset_indexes ();
-          recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
-        }
-
-      iter = rec_mset_iterator (rec_rset_mset (rset));
-      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
-        {
-          if ((recutl_quick_str && rec_record_contains_value (record,
-                                                              recutl_quick_str,
-                                                              recutl_insensitive))
-              || (!recutl_quick_str && (((recutl_num_indexes() == 0) && !recutl_sex)
-                                        || (((recutl_num_indexes() == 0) &&
-                                             ((recutl_sex &&
-                                               (rec_sex_eval (recutl_sex, record, &parse_status)))))
-                                            || (recutl_index_p (numrec))))))
-            {
-              /* Process a copy of this record.  */
-              switch (recset_action)
-                {
-                case RECSET_ACT_RENAME:
-                  {
-                    recset_process_ren (rset, record, recutl_fex);
-                    break;
-                  }
-                case RECSET_ACT_SET:
-                  {
-                    recset_process_set (rset, record, recutl_fex, false);
-                    break;
-                  }
-                case RECSET_ACT_ADD:
-                  {
-                    recset_process_add (rset, record, recutl_fex);
-                    break;
-                  }
-                case RECSET_ACT_SET_ADD:
-                  {
-                    recset_process_set (rset, record, recutl_fex, true);
-                    break;
-                  }
-                case RECSET_ACT_DELETE:
-                case RECSET_ACT_COMMENT:
-                  {
-                    recset_process_del (rset, record, recutl_fex);
-                    break;
-                  }
-                }
-            }
-          
-          if (!parse_status)
-            {
-              recutl_fatal (_("invalid selection expression.\n"));
-            }
-          
-          numrec++;
-        }
-
-      rec_mset_iterator_free (&iter);
-
-      /* Check for integrity in the modified rset.  */
-      if (!recset_force)
-        {
-          errors_buf = rec_buf_new (&errors_str, &errors_str_size);
-          if (rec_int_check_rset (db, rset, false, recset_external, errors_buf) > 0)
-            {
-              rec_buf_close (errors_buf);
-              if (!recset_verbose)
-                {
-                  recutl_error (_("operation aborted due to integrity failures.\n"));
-                  recutl_error (_("use --verbose to get a detailed report.\n"));
-                }
-              else
-                {
-                  fprintf (stderr, "%s", errors_str);
-                }
-
-              recutl_fatal (_("use --force to skip the integrity check.\n"));
-            }
-        }
-    }
-}
-
-static void
-recset_process_add (rec_rset_t rset,
-                    rec_record_t record,
-                    rec_fex_t fex)
-{
-  rec_field_t field;
-  const char *field_name;
-  rec_fex_elem_t fex_elem;
-  size_t i;
-
-  /* Create new fields from the FEX and add them to the record.  */
-  for (i = 0; i < rec_fex_size (fex); i++)
-    {
-      fex_elem = rec_fex_get (fex, i);
-      field_name = rec_fex_elem_field_name (fex_elem);
-      field = rec_field_new (field_name, recset_value);
-
-      rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY);
-    }
-}
-
-static void
-recset_process_set (rec_rset_t rset,
-                    rec_record_t record,
-                    rec_fex_t fex,
-                    bool add_p)
-{
-  size_t i, j, min, max;
-  size_t num_fields;
-  rec_fex_elem_t fex_elem;
-  rec_field_t field;
-  const char *field_name;
-
-  for (i = 0; i < rec_fex_size (recutl_fex); i++)
-    {
-      fex_elem = rec_fex_get (recutl_fex, i);
-      field_name = rec_fex_elem_field_name (fex_elem);
-      min = rec_fex_elem_min (fex_elem);
-      max = rec_fex_elem_max (fex_elem);
-      
-      num_fields =
-        rec_record_get_num_fields_by_name (record, field_name);
-      if (min == -1)
-        {
-          /* Process all the fields with the given name.  */
-          min = 0;
-          max = num_fields - 1;
-        }
-      if (max == -1)
-        {
-          max = min;
-        }
-      
-      for (j = 0; j < num_fields; j++)
-        {
-          if ((j >= min) && (j <= max))
-            {
-              /* Set the value of the Jth field
-                 named FIELD_NAME, if it exists.*/
-              field = rec_record_get_field_by_name (record,
-                                                    field_name,
-                                                    j);
-              if (field)
-                {
-                  rec_field_set_value (field, recset_value);
-                }
-            }
-        }
-
-      if (add_p && (num_fields == 0))
-        {
-          /* Add a field with this name and value.  */
-          field = rec_field_new (field_name, recset_value);
-          rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY);
-        }
-    }
-}
-
-static void
-recset_process_ren (rec_rset_t rset,
-                    rec_record_t record,
-                    rec_fex_t fex)
-{
-  size_t j, min, max, renamed;
-  size_t num_fields;
-  rec_fex_elem_t fex_elem;
-  rec_field_t field;
-  const char *field_name;
-
-  /* Rename the selected fields.  The size of the FEX is guaranteed to
-     be 1 at this point.  */ 
-  fex_elem = rec_fex_get (recutl_fex, 0);
-  field_name = rec_fex_elem_field_name (fex_elem);
-  min = rec_fex_elem_min (fex_elem);
-  max = rec_fex_elem_max (fex_elem);
-
-  num_fields =
-    rec_record_get_num_fields_by_name (record, field_name);
-  if (min == -1)
-    {
-      /* Process all the fields with the given name.  */
-      min = 0;
-      max = num_fields - 1;
-    }
-  if (max == -1)
-    {
-      max = min;
+      flags = flags | REC_F_ICASE;
     }
 
-  renamed = 0;
-  for (j = 0; j < num_fields; j++)
+  if (!rec_db_set (db,
+                   recutl_type,
+                   recutl_index (),
+                   recutl_sex,
+                   recutl_quick_str,
+                   recutl_random,
+                   recutl_fex,
+                   recset_action,
+                   recset_value,
+                   flags))
     {
-      if ((j >= min) && (j <= max))
-        {
-          /* Set the name of the Jth field
-             named FIELD_NAME, if it exists.*/
-          field = rec_record_get_field_by_name (record,
-                                                field_name,
-                                                j - renamed);
-          if (field)
-            {
-              rec_field_set_name (field, recset_new_field_name);
-              renamed++;
-            }
-        }
+      recutl_fatal ("out of memory\n");
     }
 
-  /* If the operation is applied to all records of a given type (or
-     default) then change the record descriptor as well.
+  
+  /* Check the integrity of the resulting database.  */
 
-     But make sure to do it just once.
-  */
-  if ((!recset_descriptor_renamed)
-      && (recutl_sex == NULL) && (recutl_num_indexes() == 0) && (recutl_random == 0) && (recutl_quick_str == NULL))
+  if (!recset_force && db)
     {
-      rec_rset_rename_field (rset,
-                             field_name,
-                             recset_new_field_name);
-      
-      recset_descriptor_renamed = true;
+      recutl_check_integrity (db, recset_verbose, recset_external);
     }
-}
-
-static void
-recset_process_del (rec_rset_t rset,
-                    rec_record_t record,
-                    rec_fex_t fex)
-{
-  size_t i, j, min, max;
-  size_t num_fields;
-  bool *deletion_mask;
-  rec_fex_elem_t fex_elem;
-  rec_field_t field;
-  const char *field_name;
-  rec_comment_t comment;
-  rec_mset_iterator_t iter;
-  rec_mset_elem_t elem;
-
-  /* Initialize the deletion mask.  */
-  deletion_mask = xmalloc (sizeof (bool) * rec_record_num_fields (record));
-  for (i = 0; i < rec_record_num_fields (record); i++)
-    {
-      deletion_mask[i] = false;
-    }
-                    
-  /* Mark fields that will be deleted from the record.  */
-  for (i = 0; i < rec_fex_size (recutl_fex); i++)
-    {
-      fex_elem = rec_fex_get (recutl_fex, i);
-      field_name = rec_fex_elem_field_name (fex_elem);
-      min = rec_fex_elem_min (fex_elem);
-      max = rec_fex_elem_max (fex_elem);
-
-      num_fields =
-        rec_record_get_num_fields_by_name (record, field_name);
-      if (min == -1)
-        {
-          /* Delete all the fields with the given name.  */
-          min = 0;
-          max = num_fields - 1;
-        }
-      if (max == -1)
-        {
-          max = min;
-        }
-
-      for (j = 0; j < num_fields; j++)
-        {
-          if ((j >= min) && (j <= max))
-            {
-              /* Mark this field for deletion.  */
-              field = rec_record_get_field_by_name (record,
-                                                    rec_fex_elem_field_name (fex_elem),
-                                                    j);
-              deletion_mask[rec_record_get_field_index (record, field)] = true;
-            }
-        }
-    }
-                    
-  /* Delete the marked fields.  */
-  i = 0;
-
-  iter = rec_mset_iterator (rec_record_mset (record));
-  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, &elem))
-    {
-      if (deletion_mask[i])
-        {
-          if (recset_action == RECSET_ACT_COMMENT)
-            {
-              /* Turn the field into a comment.  */
-
-              comment = rec_field_to_comment (field);
-              rec_field_destroy (field);
-              rec_mset_elem_set_data (elem, (void *) comment);
-              rec_mset_elem_set_type (elem, MSET_COMMENT);
-            }
-          else
-            {
-              /* Remove the field from the list and dispose it.  */
-              
-              rec_mset_remove_elem (rec_record_mset (record), elem);
-            }
-        }
-
-      i++;
-    }
-
-  rec_mset_iterator_free (&iter);
 }
 
 int

@@ -60,6 +60,12 @@ static bool rec_db_record_selected_p (size_t num_rec,
 static void rec_db_add_random_indexes (size_t **index, size_t num, size_t limit);
 static bool rec_db_index_p (size_t *index, size_t num);
 
+static bool rec_db_set_act_rename (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool rename_descriptor, const char *arg);
+static bool rec_db_set_act_set (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool xxx, const char *arg);
+static bool rec_db_set_act_add (rec_rset_t rset, rec_record_t record, rec_fex_t fex, const char *arg);
+static bool rec_db_set_act_setadd (rec_rset_t rset, rec_record_t record, rec_fex_t fex, const char *arg);
+static bool rec_db_set_act_delete (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool comment_out);
+
 /*
  * Public functions.
  */
@@ -735,9 +741,410 @@ rec_db_delete (rec_db_t     db,
   return true;
 }
 
+bool rec_db_set (rec_db_t    db,
+                 const char *type,
+                 size_t     *index,
+                 rec_sex_t   sex,
+                 const char *fast_string,
+                 size_t      random,
+                 rec_fex_t   fex,
+                 int         action,
+                 const char *action_arg,
+                 int         flags)
+{
+  /* Get the selected record set.  If the user did not specify a type,
+     the default record set does not exist, and the database contains
+     only one record set, then select it.  */
+
+  rec_rset_t rset = rec_db_get_rset_by_type (db, type);
+  if (!type && !rset && (rec_db_size (db) == 1))
+    {
+      rset = rec_db_get_rset (db, 0);
+    }
+
+  /* Don't process empty record sets.  */
+
+  if (rec_rset_num_records (rset) == 0)
+    {
+      return true;
+    }
+
+  /* If the user requested to manipulate random records then calculate
+     them now for this record set.  */
+
+  if (random > 0)
+    {
+      rec_db_add_random_indexes (&index, random, rec_rset_num_records (rset));
+      if (!index)
+        {
+          /* Out of memory.  */
+          return false;
+        }
+    }
+    
+  /* Iterate on the records, operating on the selected ones.  */
+
+  {
+    rec_record_t record = NULL;
+    size_t num_rec = -1;
+    rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+    bool descriptor_renamed = false;
+
+    while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
+      {
+        num_rec++;
+
+        if (!rec_db_record_selected_p (num_rec,
+                                       record,
+                                       index,
+                                       sex,
+                                       fast_string,
+                                       flags & REC_F_ICASE))
+          {
+            continue;
+          }
+
+        switch (action)
+          {
+          case REC_SET_ACT_RENAME:
+            {
+              /* If the operation is applied to all records of a given
+                 type (or default) then change the record descriptor
+                 as well.  But make sure to do it just once!  */
+
+              bool rename_descriptor = false;
+              if (!descriptor_renamed
+                  && (sex == NULL) && (index == NULL) && (random == 0) && (fast_string == NULL))
+                {
+                  rename_descriptor = true;
+                  descriptor_renamed = true;
+                }
+
+              if (!rec_db_set_act_rename (rset, record, fex, rename_descriptor, action_arg))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+
+              break;
+            }
+          case REC_SET_ACT_SET:
+            {
+              if (!rec_db_set_act_set (rset, record, fex, false, action_arg))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+              break;
+            }
+          case REC_SET_ACT_ADD:
+            {
+              if (!rec_db_set_act_add (rset, record, fex, action_arg))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+              break;
+            }
+          case REC_SET_ACT_SETADD:
+            {
+              if (!rec_db_set_act_set (rset, record, fex, true, action_arg))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+              break;
+            }
+          case REC_SET_ACT_DELETE:
+            {
+              if (!rec_db_set_act_delete (rset, record, fex, false))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+              break;
+            }
+          case REC_SET_ACT_COMMENT:
+            {
+              if (!rec_db_set_act_delete (rset, record, fex, true))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+              break;
+            }
+          default:
+            {
+              /* Ignore an invalid action.  */
+              return true;
+            }
+          }
+      }
+    rec_mset_iterator_free (&iter);
+  }
+
+  return true;
+}
+
 /*
  * Private functions.
  */
+
+static bool
+rec_db_set_act_rename (rec_rset_t rset,
+                       rec_record_t record,
+                       rec_fex_t fex,
+                       bool rename_descriptor,
+                       const char *arg)
+{
+  size_t j, min, max, renamed;
+  size_t num_fields;
+  rec_fex_elem_t fex_elem;
+  rec_field_t field;
+  const char *field_name;
+
+  /* Rename the selected fields.  The size of the FEX is guaranteed to
+     be 1 at this point.  */
+ 
+  fex_elem = rec_fex_get (fex, 0);
+  field_name = rec_fex_elem_field_name (fex_elem);
+  min = rec_fex_elem_min (fex_elem);
+  max = rec_fex_elem_max (fex_elem);
+
+  num_fields =
+    rec_record_get_num_fields_by_name (record, field_name);
+  if (min == -1)
+    {
+      /* Process all the fields with the given name.  */
+      min = 0;
+      max = num_fields - 1;
+    }
+  if (max == -1)
+    {
+      max = min;
+    }
+
+  renamed = 0;
+  for (j = 0; j < num_fields; j++)
+    {
+      if ((j >= min) && (j <= max))
+        {
+          /* Set the name of the Jth field
+             named FIELD_NAME, if it exists.*/
+          field = rec_record_get_field_by_name (record,
+                                                field_name,
+                                                j - renamed);
+          if (field)
+            {
+              rec_field_set_name (field, arg);
+              renamed++;
+            }
+
+          if (rename_descriptor)
+            {
+              
+              rec_rset_rename_field (rset,
+                                     field_name,
+                                     arg);
+            }
+        }
+    }
+
+  return true;
+}
+
+
+static bool
+rec_db_set_act_set (rec_rset_t rset,
+                    rec_record_t record,
+                    rec_fex_t fex,
+                    bool add_p,
+                    const char *arg)
+{
+  size_t i, j, min, max;
+  size_t num_fields;
+  rec_fex_elem_t fex_elem;
+  rec_field_t field;
+  const char *field_name;
+
+  for (i = 0; i < rec_fex_size (fex); i++)
+    {
+      fex_elem = rec_fex_get (fex, i);
+      field_name = rec_fex_elem_field_name (fex_elem);
+      min = rec_fex_elem_min (fex_elem);
+      max = rec_fex_elem_max (fex_elem);
+      
+      num_fields =
+        rec_record_get_num_fields_by_name (record, field_name);
+      if (min == -1)
+        {
+          /* Process all the fields with the given name.  */
+          min = 0;
+          max = num_fields - 1;
+        }
+      if (max == -1)
+        {
+          max = min;
+        }
+      
+      for (j = 0; j < num_fields; j++)
+        {
+          if ((j >= min) && (j <= max))
+            {
+              /* Set the value of the Jth field
+                 named FIELD_NAME, if it exists.*/
+              field = rec_record_get_field_by_name (record,
+                                                    field_name,
+                                                    j);
+              if (field)
+                {
+                  rec_field_set_value (field, arg);
+                }
+            }
+        }
+
+      if (add_p && (num_fields == 0))
+        {
+          /* Add a field with this name and value.  */
+          field = rec_field_new (field_name, arg);
+          if (!rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY))
+            {
+              /* Out of memory.  */
+              return false;
+            }
+        }
+    }
+
+  return true;
+}
+
+static bool
+rec_db_set_act_add (rec_rset_t rset,
+                    rec_record_t record,
+                    rec_fex_t fex,
+                    const char *arg)
+{
+  size_t i;
+
+  /* Create new fields from the FEX and add them to the record.  */
+  for (i = 0; i < rec_fex_size (fex); i++)
+    {
+      rec_fex_elem_t fex_elem = rec_fex_get (fex, i);
+      const char *field_name = rec_fex_elem_field_name (fex_elem);
+      rec_field_t field = rec_field_new (field_name, arg);
+      if (!field)
+        {
+          /* Out of memory.  */
+          return false;
+        }
+
+      if (!rec_mset_append (rec_record_mset (record), MSET_FIELD, (void *) field, MSET_ANY))
+        {
+          /* Out of memory.  */
+          return false;
+        }
+    }
+
+  return true;
+}
+
+static bool
+rec_db_set_act_delete (rec_rset_t rset,
+                       rec_record_t record,
+                       rec_fex_t fex,
+                       bool comment_out)
+{
+  size_t i, j;
+  size_t num_fields;
+  bool *deletion_mask;
+  rec_field_t field;
+  rec_mset_iterator_t iter;
+  rec_mset_elem_t elem;
+
+  /* Initialize the deletion mask.  */
+  deletion_mask = malloc (sizeof (bool) * rec_record_num_fields (record));
+  if (!deletion_mask)
+    {
+      /* Out of memory.  */
+      return false;
+    }
+
+  for (i = 0; i < rec_record_num_fields (record); i++)
+    {
+      deletion_mask[i] = false;
+    }
+                    
+  /* Mark fields that will be deleted from the record.  */
+  for (i = 0; i < rec_fex_size (fex); i++)
+    {
+      rec_fex_elem_t fex_elem = rec_fex_get (fex, i);
+      const char *field_name = rec_fex_elem_field_name (fex_elem);
+      size_t min = rec_fex_elem_min (fex_elem);
+      size_t max = rec_fex_elem_max (fex_elem);
+
+      num_fields =
+        rec_record_get_num_fields_by_name (record, field_name);
+      if (min == -1)
+        {
+          /* Delete all the fields with the given name.  */
+          min = 0;
+          max = num_fields - 1;
+        }
+      if (max == -1)
+        {
+          max = min;
+        }
+
+      for (j = 0; j < num_fields; j++)
+        {
+          if ((j >= min) && (j <= max))
+            {
+              /* Mark this field for deletion.  */
+              field = rec_record_get_field_by_name (record,
+                                                    rec_fex_elem_field_name (fex_elem),
+                                                    j);
+              deletion_mask[rec_record_get_field_index (record, field)] = true;
+            }
+        }
+    }
+                    
+  /* Delete the marked fields.  */
+  i = 0;
+
+  iter = rec_mset_iterator (rec_record_mset (record));
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, &elem))
+    {
+      if (deletion_mask[i])
+        {
+          if (comment_out)
+            {
+              /* Turn the field into a comment.  */
+
+              rec_comment_t comment = rec_field_to_comment (field);
+              if (!comment)
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+
+              rec_field_destroy (field);
+              rec_mset_elem_set_data (elem, (void *) comment);
+              rec_mset_elem_set_type (elem, MSET_COMMENT);
+            }
+          else
+            {
+              /* Remove the field from the list and dispose it.  */
+              
+              rec_mset_remove_elem (rec_record_mset (record), elem);
+            }
+        }
+
+      i++;
+    }
+  rec_mset_iterator_free (&iter);
+
+  return true;
+}
 
 static bool
 rec_db_index_p (size_t *index,

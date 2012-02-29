@@ -1541,6 +1541,132 @@ bool rec_db_delete (rec_db_t     db,
                     size_t       random,
                     int          flags);
 
+/* Manipulate the fields of the selected records in a database: remove
+   them, set their values or rename them.
+
+   This function takes the following arguments:
+
+   DB
+
+      Database where to set fields.
+
+   TYPE
+
+      Type of the records to act in.
+
+   INDEX
+
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of records that
+      will be deleted or commented out. The list of ends with the pair
+      REC_Q_NOINDEX,REC_Q_NOINDEX.
+
+      INDEX is mutually exclusive with any other selection option.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+ 
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select for manipulation in the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+   
+   FEX
+
+      Field expression selecting the fields in the selected records
+      which will be modified.
+
+   ACTION
+
+      Action to perform to the selected fields.  Valid values for this
+      argument are:
+
+      REC_SET_ACT_RENAME
+
+      Rename the matching fields to the string pointed by ACTION_ARG.
+
+      REC_SET_ACT_SET
+
+      Set the value of the matching fields to the string pointed by
+      ACTION_ARG.
+
+      REC_SET_ACT_ADD
+
+      Add new fields with the names specified in the fex to the
+      selected records.  The new fields will have the string pointed
+      by ACTION_ARG as their value.
+
+      REC_SET_ACT_SETADD
+
+      Set the selected fields to the value pointed by ACTION_ARG.  IF
+      the fields dont exist then create them with that value.
+
+      REC_SET_ACT_DELETE
+
+      Delete the selected fields.  ACTION_ARG is ignored by this
+      action.
+
+      REC_SET_ACT_COMMENT
+
+      Comment out the selected fields.  ACTION_ARG is ignored by this
+      action.
+      
+   ACTION_ARG
+
+      Argument to the selected action.  It is ok to pass NULL for
+      actions which dont require an argument.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_F_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+   This function return s'false' if there is not enough memory to
+   perform the operation.
+*/
+
+#define REC_SET_ACT_NONE    0
+#define REC_SET_ACT_RENAME  1
+#define REC_SET_ACT_SET     2
+#define REC_SET_ACT_ADD     3
+#define REC_SET_ACT_SETADD  4
+#define REC_SET_ACT_DELETE  5
+#define REC_SET_ACT_COMMENT 6
+
+bool rec_db_set (rec_db_t    db,
+                 const char *type,
+                 size_t     *index,
+                 rec_sex_t   sex,
+                 const char *fast_string,
+                 size_t      random,
+                 rec_fex_t   fex,
+                 int         action,
+                 const char *action_arg,
+                 int         flags);
+
 /*
  * INTEGRITY.
  *
