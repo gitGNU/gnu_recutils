@@ -128,6 +128,45 @@ field2: value22
 field3: value23
 '
 
+test_tool recdel-index-list ok \
+          recdel \
+          '-n 0,2' \
+          multiple-records \
+'field1: value21
+field2: value22
+field3: value23
+'
+
+test_tool recdel-case-insensitive ok \
+          recdel \
+          '-i -q Value22' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recdel-case-sensitive ok \
+          recdel \
+          '-q Value22' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+
+field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
 test_tool recdel-comment ok \
           recdel \
           '-n 1 -c' \

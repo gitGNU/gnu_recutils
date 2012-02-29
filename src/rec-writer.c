@@ -52,6 +52,8 @@ struct rec_writer_s
 
   char *password;    /* Password to use to decrypt encrypted
                         fields.  */
+
+  bool collapse_p;
 };
 
 static void
@@ -62,6 +64,7 @@ rec_writer_new_common (rec_writer_t writer)
   writer->line = 1;
   writer->eof = false;
   writer->password = NULL;
+  writer->collapse_p = false;
 }
 
 rec_writer_t
@@ -611,7 +614,8 @@ rec_write_record_with_fex (rec_writer_t writer,
 
 bool
 rec_write_rset (rec_writer_t writer,
-                rec_rset_t rset)
+                rec_rset_t rset,
+                rec_writer_mode_t mode)
 {
   bool ret;
   rec_record_t descriptor;
@@ -634,7 +638,7 @@ rec_write_rset (rec_writer_t writer,
     {
       rec_write_record (writer,
                         rec_rset_descriptor (rset),
-                        REC_WRITER_NORMAL);
+                        mode);
       rec_writer_putc (writer, '\n');
 
       return true;
@@ -656,7 +660,7 @@ rec_write_rset (rec_writer_t writer,
           if (descriptor 
               && (!(wrote_descriptor = rec_write_record (writer,
                                                          rec_rset_descriptor (rset),
-                                                         REC_WRITER_NORMAL))))
+                                                         mode))))
             {
               ret = false;
             }
@@ -676,17 +680,17 @@ rec_write_rset (rec_writer_t writer,
         {
           ret = rec_write_record (writer,
                                   (rec_record_t) data,
-                                  REC_WRITER_NORMAL);
-          if (!rec_writer_putc (writer, '\n'))
-            {
-              ret = false;
-            }
+                                  mode);
         }
       else
         {
           ret = rec_write_comment (writer,
                                    (rec_comment_t) data,
-                                   REC_WRITER_NORMAL);
+                                   mode);
+        }
+
+      if (!writer->collapse_p || (position == (rec_rset_num_elems (rset) - 1)))
+        {
           if (!rec_writer_putc (writer, '\n'))
             {
               ret = false;
@@ -721,7 +725,7 @@ rec_write_rset (rec_writer_t writer,
         }
       if (!rec_write_record (writer,
                              rec_rset_descriptor (rset),
-                             REC_WRITER_NORMAL))
+                             mode))
         {
           ret = false;
         }
@@ -755,7 +759,7 @@ rec_write_db (rec_writer_t writer,
             }
         }
       
-      if (!rec_write_rset (writer, rset))
+      if (!rec_write_rset (writer, rset, REC_WRITER_NORMAL))
         {
           ret = false;
           break;
@@ -836,6 +840,13 @@ rec_write_string (rec_writer_t writer,
                   const char *str)
 {
   return rec_writer_puts (writer, str);
+}
+
+void
+rec_writer_set_collapse (rec_writer_t writer,
+                         bool value)
+{
+  writer->collapse_p = value;
 }
 
 /*

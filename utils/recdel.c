@@ -128,15 +128,8 @@ the data from standard input and writing the result to standard output.\n"),
 void
 recdel_delete_records (rec_db_t db)
 {
-  int n_rset;
-  int numrec;
-  int rset_size;
-  rec_rset_t rset;
-  rec_record_t record;
-  rec_comment_t comment;
-  bool parse_status = true;
-  rec_mset_iterator_t iter;
-  rec_mset_elem_t elem;
+  /* Make sure that the user selected an existing record set from
+     which to delete records.  */
 
   if (!rec_db_type_p (db, recutl_type))
     {
@@ -144,93 +137,36 @@ recdel_delete_records (rec_db_t db)
                     recutl_type ? recutl_type : "<default>");
     }
 
-  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
-    {
-      rset = rec_db_get_rset (db, n_rset);
-      rset_size = rec_rset_num_records (rset);
+  /* Invoke the library to perform the requested deletions.  */
 
-      /* Don't process empty record sets.  */
-      if (rset_size == 0)
-        {
-          continue;
-        }
+  {
+    int flags = 0;
 
-      /* If the user specified a type, print the record set only if it
-         is of the given type.  */
-      if (recutl_type
-          && (!rec_rset_type (rset)
-              || (strcmp (recutl_type, rec_rset_type (rset)) != 0)))
-        {
-          continue;
-        }
+    if (recutl_insensitive)
+      {
+        flags = flags | REC_F_ICASE;
+      }
 
-      /* If the user didn't specified a type, process the record set if and only if:
-       *
-       * - It is the default record set.
-       * - The file contains just one record set.
-       */
-      if (!recutl_type
-          && rec_rset_type (rset)
-          && (rec_db_size (db) > 1))
-        {
-          continue;
-        }
+    if (recdel_comment)
+      {
+        flags = flags | REC_F_COMMENT_OUT;
+      }
 
-      /* Process this record set.  */
-      numrec = 0;
+    if (!rec_db_delete (db,
+                        recutl_type,
+                        recutl_index (),
+                        recutl_sex,
+                        recutl_quick_str,
+                        recutl_random,
+                        flags))
+      {
+        recutl_fatal ("out of memory\n");
+      }
+  }
 
-      /* If the user requested to delete random records, calculate
-         them now for this record set.  */
 
-      if (recutl_random > 0)
-        {
-          recutl_reset_indexes ();
-          recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
-        }
+  /* Check the integrity of the resulting database.  */
 
-      iter = rec_mset_iterator (rec_rset_mset (rset));
-      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, &elem))
-        {
-          if ((recutl_quick_str && rec_record_contains_value (record,
-                                                              recutl_quick_str,
-                                                              recutl_insensitive))
-              || (!recutl_quick_str && (((recutl_num_indexes() == 0) && !recutl_sex)
-                                        || (((recutl_num_indexes() == 0) &&
-                                             (recutl_sex &&
-                                              (rec_sex_eval (recutl_sex, record, &parse_status))))
-                                            || (recutl_index_p (numrec))))))
-            {
-              if (recdel_comment)
-                {
-                  /* Replace the records with a comment in the current
-                     element.  */
-
-                  comment = rec_record_to_comment (record);
-                  rec_record_destroy (record);
-                  rec_mset_elem_set_data (elem, (void *) comment);
-                  rec_mset_elem_set_type (elem, MSET_COMMENT);
-                }
-              else
-                {
-                  /* Remove the record from the list and dispose
-                     it.  */
-
-                  rec_mset_remove_elem (rec_rset_mset (rset), elem);
-                }
-            }
-          
-          if (!parse_status)
-            {
-              recutl_fatal (_("evaluating the selection expression.\n"));
-            }
-          
-          numrec++;
-        }
-
-      rec_mset_iterator_free (&iter);
-    }
-
-  /* Integrity check.  */
   if (!recdel_force && db)
     {
       recutl_check_integrity (db, recdel_verbose, recdel_external);
@@ -283,6 +219,10 @@ recdel_parse_args (int argc,
           }
         }
     }
+
+  /* Require the usage of --force for potentially dangerous
+     operations, such as the request of deleting a whole record
+     set.  */
   
   if ((recutl_num_indexes() == 0) && !recutl_sex_str && !recutl_quick_str && !recdel_force && (recutl_random == 0))
     {

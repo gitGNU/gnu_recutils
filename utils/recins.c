@@ -155,125 +155,6 @@ the data from standard input and writing the result to standard output.\n"), std
   recutl_print_help_footer ();
 }
 
-#if defined REC_CRYPT_SUPPORT
-
-void
-recins_encrypt_record (rec_rset_t rset,
-                       rec_record_t record)
-{
-  /* Encrypt the value of fields declared as confidential in this
-     record set.  */
-
-  rec_fex_t confidential_fields = rec_rset_confidential (rset);
-
-  if (rec_fex_size (confidential_fields) > 0)
-    {
-      if (!recins_password && recutl_interactive ())
-        {
-          recins_password = getpass (_("Password: "));
-        }
-      
-      if (recins_password && (strlen (recins_password) > 0))
-        {
-          if (!rec_encrypt_record (rset, record, recins_password))
-            {
-              recutl_fatal ("encrypting a record.  Please report this.\n");
-            }
-        }
-    }
-}
-
-#endif /* REC_CRYPT_SUPPORT */
-
-bool
-recins_insert_record (rec_db_t db,
-                      char *type,
-                      rec_record_t record)
-{
-  bool res;
-  rec_rset_t rset;
-
-  if (!record || (rec_record_num_fields (record) == 0))
-    {
-      /* Do nothing.  */
-      return true;
-    }
-
-  res = true;
-  
-  rset = rec_db_get_rset_by_type (db, type);
-  if (rset)
-    {
-
-      if (recins_auto)
-        {
-          /* Add auto-set fields required by this record set.  */
-          if (!rec_rset_add_auto_fields (rset, record))
-            {
-              recutl_fatal ("out of memory\n");
-            }
-        }
-
-#if defined REC_CRYPT_SUPPORT
-      recins_encrypt_record (rset, record);
-#endif
-
-      /* Set the container in the new record.  */
-      rec_record_set_container (record, rset);
-
-      if (rec_rset_num_records (rset) == 0)
-        {
-          /* The rset is empty => Insert the new record just after the
-             relative position of the record descriptor.
-
-             XXX: move this logic into an 'rec_rset_prepend_record' function.
-          */
-
-          rec_mset_insert_at (rec_rset_mset (rset),
-                              MSET_RECORD,
-                              (void *) record,
-                              rec_rset_descriptor_pos (rset));
-        }
-      else
-        {
-          /* Insert the new record after the last record in the
-             set.  */
-
-          rec_mset_t mset = rec_rset_mset (rset);
-          rec_record_t last_record =
-            (rec_record_t) rec_mset_get_at (mset,
-                                            MSET_RECORD,
-                                            rec_rset_num_records (rset) - 1);
-
-          rec_mset_insert_after (mset,
-                                 MSET_RECORD,
-                                 (void *) record,
-                                 rec_mset_search (mset, (void *) last_record));
-        }
-    }
-  else
-    {
-      /* Create a new type and insert the record there.  We don't need
-         to check for the type of the field in this case.  */
-      rset = rec_rset_new ();
-      rec_rset_set_type (rset, type);
-      rec_record_set_container (record, rset);
-      rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record, MSET_ANY);
-      
-      if (type)
-        {
-          rec_db_insert_rset (db, rset, rec_db_size (db));
-        }
-      else
-        {
-          /* The default rset should always be in the beginning of
-             the db.  */
-          rec_db_insert_rset (db, rset, -1);
-        }
-    }
-
-  return res;
-}
 
 void recins_parse_args (int argc,
                         char **argv)
@@ -430,83 +311,78 @@ void recins_parse_args (int argc,
 void
 recins_add_new_record (rec_db_t db)
 {
-  rec_rset_t rset;
-  rec_record_t record;
-  rec_mset_iterator_t iter;
-  rec_mset_elem_t elem;
-  size_t num_rec;
-  bool parse_status;
-
-  if ((recutl_num_indexes() != 0)
-      || (recutl_sex_str != NULL)
-      || (recutl_quick_str != NULL)
-      || (recutl_random > 0))
-    {
-      /* Replace matching records.  */
-      rset = rec_db_get_rset_by_type (db, recutl_type);
-      if (rset)
-        {
-          num_rec = -1;
-
-
-          /* If the user requested to replace random records,
-             calculate them now for this record set.  */
-
-          if (recutl_random > 0)
-            {
-              recutl_reset_indexes ();
-              recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
-            }
-     
-          if (recins_auto)
-            {
-              /* Add auto-set fields required by this record set.  */
-              if (!rec_rset_add_auto_fields (rset, recins_record))
-                {
-                  recutl_fatal ("out of memory\n");
-                }
-            }
+  int flags = 0;
 
 #if defined REC_CRYPT_SUPPORT
-          recins_encrypt_record (rset, recins_record);
-#endif
 
-          iter = rec_mset_iterator (rec_rset_mset (rset));
-          while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, &elem))
-            {
-              num_rec++;
+  /* Get the password interactively from the user if some field is
+     declared as confidential in the requested record set.  */
 
-              /* Shall we skip this record  */
-              if (((recutl_num_indexes() != 0) && (!recutl_index_p (num_rec)))
-                  || (recutl_quick_str && !rec_record_contains_value (record,
-                                                                      recutl_quick_str,
-                                                                      recutl_insensitive))
-                  || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
-                                          && parse_status)))
-                {
-                  if (recutl_sex_str && (!parse_status))
-                    {
-                      recutl_error (_("evaluating the selection expression.\n"));
-                      exit (EXIT_FAILURE);
-                    }
-                }
-              else
-                {
-                  rec_record_set_container (recins_record, rset);
-                  rec_mset_elem_set_data (elem, (void *) rec_record_dup (recins_record));
-                }
-            }
-        }
+  {
+    rec_rset_t rset;
+    rec_fex_t confidential_fields;
 
-      rec_mset_iterator_free (&iter);
-    }
-  else
+    if (recutl_type)
+      {
+        rset = rec_db_get_rset_by_type (db, recutl_type);
+    
+        if (rset)
+          {
+            confidential_fields = rec_rset_confidential (rset);
+            if (!confidential_fields)
+              {
+                recutl_fatal ("out of memory\n");
+              }
+            
+            if (rec_fex_size (confidential_fields) > 0)
+              {
+                if (!recins_password && recutl_interactive ())
+                  {
+                    recins_password = getpass (_("Password: "));
+                  }
+                
+                /* Passwords can't be empty.  */
+                
+                if (recins_password && (strlen (recins_password) == 0))
+                  {
+                    free (recins_password);
+                    recins_password = NULL;
+                  }
+              }
+          }
+      }
+  }
+
+#endif /* REC_CRYPT_SUPPORT */
+
+  /* Set flags flags and call the library to perform the
+     requested insertion/replacement operation.  */
+
+  if (recutl_insensitive)
     {
-      /* Append the record in the proper rset.  */
-      recins_insert_record (db, recutl_type, recins_record);
+      flags = flags | REC_F_ICASE;
     }
 
-  /* Integrity check.  */
+  if (!recins_auto)
+    {
+      flags = flags | REC_F_NOAUTO;
+    }
+
+  if (!rec_db_insert (db,
+                      recutl_type,
+                      recutl_index (),
+                      recutl_sex,
+                      recutl_quick_str,
+                      recutl_random,
+                      recins_password,
+                      recins_record,
+                      flags))
+    {
+      recutl_fatal ("out of memory\n");
+    }
+
+  /* Check for the integrity of the resulting database.  */
+
   if (!recins_force && db)
     {
       recutl_check_integrity (db, recins_verbose, recins_external);

@@ -1179,6 +1179,17 @@ xxx: value222
 yyy: value23
 '
 
+test_tool recsel-descriptor ok \
+          recsel \
+          "-t type2 -d" \
+          multiple-types \
+'%rec: type2
+
+field1: value21
+field2: value22
+field3: value23
+'          
+
 #
 # Cleanup
 #

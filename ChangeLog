@@ -1,3 +1,47 @@
+2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,utils: query, insert and delete high-level logic moved to
+	librec and utilities adapted.
+	* torture/utils/recdel.sh (recdel-index-list): New test.
+	(recdel-case-insensitive): Likewise.
+	(recdel-case-sensitive): Likewise.
+
+	* src/rec-db.c (rec_db_delete): New function.
+
+	* torture/utils/recins.sh (multiple-records-case): New input file.
+	(recins-case-insensitive): New test.
+	(recins-case-sensitive): New test.
+
+	* src/rec-rset.c (rec_rset_set_type): Get a const char* for the
+	'type' argument.
+
+	* src/rec-db.c (rec_db_insert): New function.
+
+	* torture/utils/recsel.sh (recsel_descriptor): New test.
+
+	* src/rec-writer.c (rec_writer_s): New field "collapse_p".
+	(rec_writer_new_common): Writers don't collapse output by default.
+	(rec_writer_set_collapse): New function.
+
+	* utils/recutl.c (recutl_indexes): Global is now a pointer to
+	size_t.
+	(recutl_init): Initialize recutl_indexes.
+	(recutl_index_p): Removed.
+	(recutl_index_add_random): Likewise.
+	(recutl_reset_indexes): Adapted to *size_t.
+	(recutl_num_indexes): Likewise.
+	(recutl_index): New function.
+
+	* src/rec-writer.c (rec_write_rset): Get a 'mode' argument.
+
+	* src/rec-db.c (rec_db_query): Uniq the records if requested by
+	the user.
+
+	* utils/recsel.c (recsel_parse_args): Set recsel_write_mode when
+	-P and -R are found.
+	(recsel_print_values): Global removed.
+	(recsel_print_row): Global removed.
+
 2012-02-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,utils,torture: new writer modes values and values_row, and

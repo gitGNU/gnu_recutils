@@ -49,32 +49,16 @@
 #include <rec.h>
 #include <recutl.h>
 
-#define MAX_INDEXES 20
-
-struct recutl_index_s
-{
-  size_t min;
-  size_t max;
-  bool max_used;
-};
-
-struct recutl_index_list_s
-{
-  size_t size;
-  struct recutl_index_s *indexes;
-};
-
-typedef struct recutl_index_list_s recutl_index_list_t;
-
 /*
  * Global variables.
  */
 
-bool              recutl_sort_p         = false;
-char             *recutl_order_rset     = NULL;
-char             *recutl_order_by_field = NULL;
-bool              recutl_interactive_p  = false;
-recutl_index_list_t recutl_indexes;
+bool    recutl_sort_p         = false;
+char   *recutl_order_rset     = NULL;
+char   *recutl_order_by_field = NULL;
+bool    recutl_interactive_p  = false;
+size_t *recutl_indexes        = NULL;
+size_t  recutl_indexes_size   = 0;
 
 void recutl_print_help (void); /* Forward prototype.  */
 
@@ -108,8 +92,8 @@ recutl_init (char *util_name)
   recutl_interactive_p = isatty (fileno(stdin));
 
   /* Initially there are no indexes.  */
-  
-  recutl_indexes.size = 0;
+
+  recutl_reset_indexes ();
 }
 
 bool
@@ -538,12 +522,17 @@ recutl_index_list_parse (const char *str)
   const char *p;
   long int number;
   char *end;
+  size_t i;
 
   /* Initialize the list structure.   An pessimistic estimation of the
      number of indexes encoded in the string is used.  */
 
-  recutl_indexes.size = 0;
-  recutl_indexes.indexes = xmalloc (sizeof (struct recutl_index_s) * strlen (str));
+  free (recutl_indexes);
+  recutl_indexes = xmalloc (sizeof (size_t) * (strlen (str) * 2 + 2));
+  for (i = 0; i < (strlen (str) * 2 + 2); i++)
+    {
+      recutl_indexes[i] = REC_Q_NOINDEX;
+    }
   
   /* Make sure the string is valid.  The code below relies on this
      fact.  */
@@ -570,7 +559,7 @@ recutl_index_list_parse (const char *str)
       /* Get the 'min' part of the entry.  */
 
       number = strtol (p, &end, 10);
-      recutl_indexes.indexes[recutl_indexes.size].min = (size_t) number;
+      recutl_indexes[recutl_indexes_size] = (size_t) number;
       p = end;
 
       /* Get the 'max' part of the entry, if any.  */
@@ -579,17 +568,11 @@ recutl_index_list_parse (const char *str)
         {
           p++;
           number = strtol (p, &end, 10);
-          recutl_indexes.indexes[recutl_indexes.size].max = (size_t) number;
+          recutl_indexes[recutl_indexes_size+1] = (size_t) number;
           p = end;
-
-          recutl_indexes.indexes[recutl_indexes.size].max_used = true;
-        }
-      else
-        {
-          recutl_indexes.indexes[recutl_indexes.size].max_used = false;
         }
 
-      recutl_indexes.size++;
+      recutl_indexes_size = recutl_indexes_size + 2;
 
       /* Exit or pass the separator.  */
 
@@ -606,90 +589,24 @@ recutl_index_list_parse (const char *str)
   return res;
 }
 
-size_t
-recutl_num_indexes (void)
-{
-  return recutl_indexes.size;
-}
-
-bool
-recutl_index_p (size_t index)
-{
-  bool res = false;
-  size_t i;
-
-  for (i = 0; i < recutl_indexes.size; i++)
-    {
-      size_t min = recutl_indexes.indexes[i].min;
-
-      if (recutl_indexes.indexes[i].max_used)
-        {
-          size_t max = recutl_indexes.indexes[i].max;
-          res = ((index >= min) && (index <= max));
-        }
-      else
-        {
-          res = (index == min);
-        }
-
-      if (res)
-        {
-          break;
-        }
-    }
-  
-  return res;
-}
-
-void
-recutl_index_add_random (size_t num, size_t limit)
-{
-  size_t i;
-  char random_state[128];
-  struct random_data random_data;
-
-  /* Initialize the list structure.  */
-
-  recutl_indexes.size = num;
-  recutl_indexes.indexes = xmalloc (sizeof (struct recutl_index_s) * num);
-
-  /* Insert the random indexes.  */
-
-  memset (&random_data, 0, sizeof (random_data));
-  initstate_r (time(NULL), (char *) &random_state, 128, &random_data);
-  for (i = 0; i < num; i++)
-    {
-      int32_t random_value = 0;
-
-      random_r (&random_data, &random_value); /* Can't fail.  */
-      random_value = random_value % limit;
-
-      if (recutl_index_p (random_value))
-        {
-          /* Pick the first available number.  */
-
-          size_t i;
-          for (i = 0; i < limit; i++)
-            {
-              if (!recutl_index_p (i))
-                {
-                  random_value = i;
-                  break;
-                }
-            }
-        }
-
-      recutl_indexes.indexes[i].min = random_value;
-      recutl_indexes.indexes[i].max = 0;
-      recutl_indexes.indexes[i].max_used = false;
-    }
-}
-
 void
 recutl_reset_indexes (void)
 {
-  free (recutl_indexes.indexes);
-  recutl_indexes.size = 0;
+  free (recutl_indexes);
+  recutl_indexes = NULL;
+  recutl_indexes_size = 0;
+}
+
+size_t
+recutl_num_indexes (void)
+{
+  return recutl_indexes_size;
+}
+
+size_t *
+recutl_index (void)
+{
+  return recutl_indexes;
 }
 
 /* End of recutl.c */

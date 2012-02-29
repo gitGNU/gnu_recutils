@@ -44,8 +44,6 @@ bool recsel_process_data (rec_db_t db);
  * Global variables
  */
 
-bool       recsel_print_values = false;
-bool       recsel_print_row    = false;
 char      *recutl_sex_str      = NULL;
 rec_sex_t  recutl_sex          = NULL;
 char      *recutl_quick_str    = NULL;
@@ -271,13 +269,12 @@ recsel_parse_args (int argc,
 
             if (c == 'P')
               {
-                recsel_print_values = true;
+                recsel_write_mode = REC_WRITER_VALUES;
               }
 
             if (c == 'R')
               {
-                recsel_print_values = true;
-                recsel_print_row = true;
+                recsel_write_mode = REC_WRITER_VALUES_ROW;
               }
 
             recsel_fex_str = xstrdup (optarg);
@@ -327,26 +324,16 @@ recsel_parse_args (int argc,
 bool
 recsel_process_data (rec_db_t db)
 {
-  bool ret;
-  int rset_size;
-  rec_rset_t rset;
-  rec_record_t record;
-  int n_rset, written, num_rec;
-  rec_writer_t writer;
-  bool parse_status;
-  bool wrote_descriptor;
-  rec_mset_iterator_t iter;
+  int rset_size = 0;
+  rec_rset_t rset = NULL;
+  rec_writer_t writer = NULL;
 
-  ret = true;
-
-  writer = rec_writer_new (stdout);
 
 #if defined REC_CRYPT_SUPPORT
 
-  /* Set the password in the writer.  If recsel was called
-     interactively and with an empty -s, was not used then prompt the
-     user for it.  Otherwise use the password specified in the command
-     line if any.  */
+  /* If recsel was called interactively and with an empty -s, was not
+     used then prompt the user for it.  Otherwise use the password
+     specified in the command line if any.  */
 
   if (!recsel_password
       && (recutl_type || (rec_db_size (db) == 1))
@@ -364,21 +351,24 @@ recsel_process_data (rec_db_t db)
           rset = rec_db_get_rset (db, 0);
         }
 
-      confidential_fields = rec_rset_confidential (rset);
-      if (rec_fex_size (confidential_fields) > 0)
+      if (rset)
         {
-          recsel_password = getpass (_("Password: "));
+          confidential_fields = rec_rset_confidential (rset);
+          if (rec_fex_size (confidential_fields) > 0)
+            {
+              recsel_password = getpass (_("Password: "));
+            }
+          
+          rec_fex_destroy (confidential_fields);
         }
-
-      rec_fex_destroy (confidential_fields);
     }
 
   /* Note that the password must be at least one character long.  */
 
-  if (recsel_password && (strlen (recsel_password) > 0))
+  if (recsel_password && (strlen (recsel_password) == 0))
     {
-      rec_writer_set_password (writer,
-                               recsel_password);
+      free (recsel_password);
+      recsel_password = NULL;
     }
 
 #endif /* REC_CRYPT_SUPPORT */
@@ -386,188 +376,70 @@ recsel_process_data (rec_db_t db)
   /* If the database contains more than one type of records and the
      user did'nt specify the recutl_type then ask the user to clarify
      the request.  */
+
   if (!recutl_type && (rec_db_size (db) > 1))
     {
       recutl_fatal (_("several record types found.  Please use -t to specify one.\n"));
     }
 
-  written = 0;
-  for (n_rset = 0; n_rset < rec_db_size (db); n_rset++)
-    {
-      rset = rec_db_get_rset (db, n_rset);
-      rset_size = rec_rset_num_records (rset);
 
-      wrote_descriptor = false;
+  /* Query the database using the criteria specified by the user in
+     the command line.  */
 
-      /* Don't process empty record sets.  */
-      if (rset_size == 0)
-        {
-          continue;
-        }
+  {
+    int flags = 0;
 
-      /* If the user specified a type, print the record set only if it
-       * is of the given type.  */
-      if (recutl_type
-          && (!rec_rset_type (rset)
-              || (strcmp (recutl_type, rec_rset_type (rset)) != 0)))
-        {
-          continue;
-        }
+    if (recutl_insensitive)
+      {
+        flags = flags | REC_F_ICASE;
+      }
 
-      /* If the user didn't specify a type, print a record set if and
-       * only if:
-       *
-       * - It is the default record set.
-       * - The file contains just one record set.
-       */
+    if (recsel_descriptors)
+      {
+        flags = flags | REC_F_DESCRIPTOR;
+      }
 
-      if (!recutl_type
-          && rec_rset_type (rset)
-          && (rec_db_size (db) > 1))
-        {
-          continue;
-        }
-          
-      /* Process this record set.  */
+    if (recsel_uniq)
+      {
+        flags = flags | REC_F_UNIQ;
+      }
 
-      /* If the user requested to print random records, calculate them
-         now for this record set.  */
-
-      if (recutl_random > 0)
-        {
-          recutl_reset_indexes ();
-          recutl_index_add_random (recutl_random, rec_rset_num_records (rset));
-        }
-
-      if (recsel_group_by_field)
-        {
-          if (!rec_rset_sort  (rset, recsel_group_by_field))
-            {
-              recutl_fatal ("out of memory\n");
-            }
-
-          if (!rec_rset_group (rset, recsel_group_by_field))
-            {
-              recutl_fatal ("out of memory\n");
-            }
-        }
-
-      if (!rec_rset_sort (rset, recutl_sort_by_field))
-        {
-          recutl_fatal ("out of memory\n");
-        }
-
-      num_rec = -1;
-      iter = rec_mset_iterator (rec_rset_mset (rset));
-      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
-        {
-          num_rec++;
-
-          /* Shall we skip this record?  */
-
-          if (recutl_quick_str)
-            {
-              if (!rec_record_contains_value (record,
-                                              recutl_quick_str,
-                                              recutl_insensitive))
-                {
-                  continue;
-                }
-            }
-          else
-            {
-              if (((recutl_num_indexes() != 0) && (!recutl_index_p (num_rec)))
-                  || (recutl_sex_str && !(rec_sex_eval (recutl_sex, record, &parse_status)
-                                          && parse_status)))
-                {
-                  if (recutl_sex_str && (!parse_status))
-                    {
-                      recutl_error (_("evaluating the selection expression.\n"));
-                      return false;
-                    }
-      
-                  continue;
-                }
-            }
-
-          /* Process this record.  */
-          if (recsel_count)
-            {
-              /* We just count this record and continue.  */
-              written++;
-            }
-          else
-            {
-              char *output = NULL;
-
-              /* Remove duplicated fields in the record if requested
-                 by the user.  */
-
-              if (recsel_uniq)
-                {
-                  rec_record_uniq (record);
-                }
-
-              if (recsel_fex_str)
-                {
-                  output = recutl_eval_field_expression (recsel_fex,
-                                                         record,
-                                                         recsel_write_mode,
-                                                         recsel_print_values,
-                                                         recsel_print_row,
-                                                         recsel_password);
-                }
-
-              /* Insert a newline?  */
-              if ((written != 0)
-                  && (!recsel_collapse)
-                  && (!recsel_fex_str || output))
-                {
-                  fprintf (stdout, "\n");
-                }
-
-              /* Write the record descriptor if required.  */
-              if (recsel_descriptors
-                  && !wrote_descriptor
-                  && rec_rset_descriptor (rset))
-                {
-                  rec_write_record (writer, rec_rset_descriptor (rset), recsel_write_mode);
-                  fprintf (stdout, "\n\n");
-                  wrote_descriptor = true;
-                }
-
-              if (recsel_fex_str)
-                {
-                  /* Print the field expression.  */
-                  if (output)
-                    {
-                      fprintf (stdout, "%s", output);
-                    }
-                }
-              else
-                {
-                  rec_write_record_with_rset (writer,
-                                              rset,
-                                              record,
-                                              recsel_write_mode);
-                  rec_write_string (writer, "\n");
-                }
-
-              written++;
-            }
-        }
-
-      rec_mset_iterator_free (&iter);
-    }
+    rset = rec_db_query (db,
+                         recutl_type,
+                         recutl_index(),
+                         recutl_sex,
+                         recutl_quick_str,
+                         recutl_random,
+                         recsel_fex,
+                         recsel_password,
+                         recsel_group_by_field,
+                         recutl_sort_by_field,
+                         flags);
+    if (!rset)
+      {
+        recutl_fatal (_("out of memory\n"));
+      }
+  }
 
   if (recsel_count)
     {
-      fprintf (stdout, "%d\n", written);
+      /* Write the number of matching records.  */
+      
+      fprintf (stdout, "%d\n", rec_rset_num_records (rset));
+    }
+  else
+    {
+      /* Write the resulting record set to the standard output.  */
+
+      writer = rec_writer_new (stdout);
+      rec_writer_set_collapse (writer, recsel_collapse);
+      rec_write_rset (writer, rset, recsel_write_mode);
+      rec_writer_destroy (writer);
     }
 
-  rec_writer_destroy (writer);
+  rec_rset_destroy (rset);
 
-  return ret;
+  return true;
 }
 
 int

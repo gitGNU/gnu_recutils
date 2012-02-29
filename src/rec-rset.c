@@ -347,7 +347,7 @@ rec_rset_set_descriptor_pos (rec_rset_t rset,
 
 void
 rec_rset_set_type (rec_rset_t rset,
-                   char *type)
+                   const char *type)
 {
   rec_field_t rec_field;
 

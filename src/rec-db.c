@@ -253,14 +253,14 @@ rec_db_query (rec_db_t db,
               size_t       random,
               rec_fex_t    fex,
               const char  *password,
-              size_t      *counter,
+              const char  *group_by,
+              const char  *sort_by,
               int          flags)
 {
   rec_rset_t res = NULL;
   rec_rset_t rset = NULL;
-  size_t processed = 0;
   size_t n_rset = 0;
-  
+
   /* Create a new, empty, record set, that will contain the contents
      of the selection.  */
 
@@ -273,30 +273,44 @@ rec_db_query (rec_db_t db,
 
   /* Search for the rset containing records of the requested type.  If
      type equals to NULL then the default record set is used.  */
-  
+
   rset = rec_db_get_rset_by_type (db, type);
   if (!rset)
     {
-      /* Type not found, so return an empty record set.  */
-      return res;
+      /* If the default record set was selected, it was not found, and
+         the database contains only one record set, then it is
+         selected.  */
+
+      if (!type && (rec_db_size (db) == 1))
+        {
+          rset = rec_db_get_rset (db, 0);
+        }
+      else
+        {
+          /* Type not found, so return an empty record set.  */
+          return res;
+        }
     }
 
   /* If a descriptor is requested then get a copy of the descriptor of
      the referred record set, which exists only if it is not the
      default.  */
 
-  if (type && (flags & REC_Q_DESCRIPTOR))
+  if (flags & REC_F_DESCRIPTOR)
     {
-      rec_record_t descriptor = rec_record_dup (rec_rset_descriptor (rset));
-      if (!descriptor)
+      rec_record_t descriptor = rec_rset_descriptor (rset);
+      if (descriptor)
         {
-          /* Out of memory.  */
-          free (res);
-          return NULL;
+          descriptor = rec_record_dup (descriptor);
+          if (!descriptor)
+            {
+              /* Out of memory.  */
+              free (res);
+              return NULL;
+            }
         }
 
-      rec_rset_set_descriptor (res,
-                               rec_record_dup (rec_rset_descriptor (rset)));
+      rec_rset_set_descriptor (res, descriptor);
     }
   
   /* Process this record set.  This means that every record of this
@@ -321,6 +335,27 @@ rec_db_query (rec_db_t db,
   {
     rec_record_t record = NULL;
     size_t num_rec = -1;
+
+    if (group_by)
+      {
+        if (!rec_rset_sort (rset, group_by))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+
+        if (!rec_rset_group (rset, group_by))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+      }
+
+    if (!rec_rset_sort (rset, sort_by))
+      {
+        /* Out of memory.  */
+        return NULL;
+      }
     
     rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
     while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
@@ -335,57 +370,369 @@ rec_db_query (rec_db_t db,
                                        index,
                                        sex,
                                        fast_string,
-                                       flags & REC_Q_ICASE))
+                                       flags & REC_F_ICASE))
           {
             continue;
           }
               
         /* Process this record.  */
+
+        /* Transform the record through the field expression
+           and add it to the result record set.  */
         
-        if (counter != NULL)
+        rec_record_t res_record
+          = rec_db_process_fex (record, fex);
+
+        if (!res_record)
           {
-            /* Just increase the counter of selected records.  */
-            processed++;
+            /* Out of memory.  */
+            return NULL;
           }
-        else
+
+#if defined REC_CRYPT_SUPPORT
+
+        /* Decrypt the confidential fields in the record if some
+           of the fields are declared as "confidential", but only
+           do that if the user provided a password.  Note that we
+           use 'rset' instead of 'res' to cover cases where (flags
+           & REC_F_DESCRIPTOR) == 0.  */
+        
+        if (password)
           {
-            /* Transform the record through the field expression
-               and add it to the result record set.  */
-            
-            rec_record_t res_record
-              = rec_db_process_fex (record, fex);
-            
-            /* Decrypt the confidential fields in the record if some
-               of the fields are declared as "confidential", but only
-               do that if the user provided a password.  Note that we
-               use 'rset' instead of 'res' to cover cases where (flags
-               & REC_Q_DESCRIPTOR) == 0.  */
-            
-            if (password)
-              {
-                if (!rec_decrypt_record (rset, res_record, password))
-                  {
-                    /* Out of memory.  */
-                    return NULL;
-                  }
-              }
-            
-            if (!res_record
-                || !rec_mset_append (rec_rset_mset (rset),
-                                     MSET_RECORD,
-                                     (void *) res_record,
-                                     MSET_RECORD))
+            if (!rec_decrypt_record (rset, res_record, password))
               {
                 /* Out of memory.  */
                 return NULL;
               }
-            
+          }
+#endif
+
+        /* Remove duplicated fields if requested by the user.  */
+        
+        if (flags & REC_F_UNIQ)
+          {
+            rec_record_uniq (res_record);
+          }
+        
+        /* Append.  */
+
+        rec_record_set_container (res_record, res);
+        if (!rec_mset_append (rec_rset_mset (res),
+                              MSET_RECORD,
+                              (void *) res_record,
+                              MSET_RECORD))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+        
+      }
+
+    rec_mset_iterator_free (&iter);
+  }
+
+  return res;
+}
+
+bool
+rec_db_insert (rec_db_t db,
+               const char *type,
+               size_t *index,
+               rec_sex_t sex,
+               const char *fast_string,
+               size_t random,
+               const char *password,
+               rec_record_t record,
+               int flags)
+{
+  /* Discard NULL or empty records.  */
+  
+  if (!record || (rec_record_num_fields (record) == 0))
+    {
+      return true;
+    }
+
+  /* Insert the record in the database.  */
+
+  if (index || sex || fast_string || (random > 0))
+    {
+      /* Replace matching records with copies of RECORD.  */
+
+      rec_rset_t rset = rec_db_get_rset_by_type (db, type);
+      if (rset)
+        {
+          size_t num_rec = -1;
+
+          /* If the user requested to replace random records,
+             calculate them now for this record set.  */
+
+          if (random > 0)
+            {
+              rec_db_add_random_indexes (&index, random, rec_rset_num_records (rset));
+              if (!index)
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+            }
+
+          /* Add auto generated fields unless the user disabled
+             it.  */
+
+          if (!(flags & REC_F_NOAUTO))
+            {
+              if (!rec_rset_add_auto_fields (rset, record))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+            }
+
+#if defined REC_CRYPT_SUPPORT
+
+          /* Encrypt confidential fields if a password was provided by
+             the user.  */
+
+          if (password)
+            {
+              if (!rec_encrypt_record (rset, record, password))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+            }
+#endif
+
+          /* Iterate on the record set, replacing matching records
+             with copies of the provided record.  */
+
+          {
+            rec_record_t rset_record = NULL;
+            rec_mset_elem_t elem;
+            rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+
+            while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &rset_record, &elem))
+              {
+                num_rec++;
+
+                /* Shall we skip this record?  */
+
+                if (!rec_db_record_selected_p (num_rec,
+                                               rset_record,
+                                               index,
+                                               sex,
+                                               fast_string,
+                                               flags & REC_F_ICASE))
+                  {
+                    continue;
+                  }
+
+                /* Replace the record.  */
+
+                rec_record_set_container (record, rset);
+                rec_mset_elem_set_data (elem, (void *) rec_record_dup (record));
+                
+              }
+            rec_mset_iterator_free (&iter);
+          }
+        }
+    }
+  else
+    {
+      /* Append the record in the proper record set.  */
+      
+      rec_rset_t rset = rec_db_get_rset_by_type (db, type);
+
+      if (rset)
+        {
+          rec_record_set_container (record, rset);
+
+          /* Add auto-set fields required by this record set, unless
+             the addition of auto-fields is disabled by the user.  */
+
+          if (!(flags & REC_F_NOAUTO))
+            {
+              if (!rec_rset_add_auto_fields (rset, record))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+            }
+
+#if defined REC_CRYPT_SUPPORT
+          /* Encrypt confidential fields if a password was
+             provided.  */
+
+          if (password)
+            {
+              if (!rec_encrypt_record (rset, record, password))
+                {
+                  /* Out of memory.  */
+                  return false;
+                }
+            }
+#endif
+
+          if (rec_rset_num_records (rset) == 0)
+            {
+              /* The rset is empty => Insert the new record just after
+                 the relative position of the record descriptor.  */
+
+              rec_mset_insert_at (rec_rset_mset (rset),
+                                  MSET_RECORD,
+                                  (void *) record,
+                                  rec_rset_descriptor_pos (rset));
+            }
+          else
+            {
+              /* Insert the new record after the last record in the
+                 set.  */
+
+              rec_mset_t mset = rec_rset_mset (rset);
+              rec_record_t last_record =
+                (rec_record_t) rec_mset_get_at (mset,
+                                                MSET_RECORD,
+                                                rec_rset_num_records (rset) - 1);
+
+              if (!rec_mset_insert_after (mset,
+                                          MSET_RECORD,
+                                          (void *) record,
+                                          rec_mset_search (mset, (void *) last_record)))
+                {
+                  /* Out of memory.  */
+                  return NULL;
+                }
+            }
+        }
+      else
+        {
+          /* Create a new type and insert the record there.  */
+
+          rset = rec_rset_new ();
+          if (!rset)
+            {
+              /* Out of memory.  */
+              return false;
+            }
+
+          rec_rset_set_type (rset, type);
+          rec_record_set_container (record, rset);
+          if (!rec_mset_append (rec_rset_mset (rset),
+                                MSET_RECORD,
+                                (void *) record,
+                                MSET_ANY))
+            {
+              /* Out of memory.  */
+              return false;
+            }
+
+          if (type)
+            {
+              rec_db_insert_rset (db, rset, rec_db_size (db));
+            }
+          else
+            {
+              /* The default rset should always be placed in the
+                 beginning of the db.  */
+
+              rec_db_insert_rset (db, rset, -1);
+            }
+        }
+    }
+
+  return true;
+}
+
+bool
+rec_db_delete (rec_db_t     db,
+               const char  *type,
+               size_t      *index,
+               rec_sex_t    sex,
+               const char  *fast_string,
+               size_t       random,
+               int          flags)
+{
+  /* Get the selected record set.  If the user did not specify a type,
+     the default record set does not exist, and the database contains
+     only one record set, then select it.  */
+
+  rec_rset_t rset = rec_db_get_rset_by_type (db, type);
+  if (!type && !rset && (rec_db_size (db) == 1))
+    {
+      rset = rec_db_get_rset (db, 0);
+    }
+
+  /* Don't process empty record sets.  */
+
+  if (rec_rset_num_records (rset) == 0)
+    {
+      return true;
+    }
+
+  /* If the user requested to delete random records then calculate
+     them now for this record set.  */
+
+  if (random > 0)
+    {
+      rec_db_add_random_indexes (&index, random, rec_rset_num_records (rset));
+      if (!index)
+        {
+          /* Out of memory.  */
+          return false;
+        }
+    }
+
+  /* Iterate on the records, deleting or commenting out the selected
+       ones.  */
+
+  {
+    rec_record_t record = NULL;
+    rec_mset_elem_t elem;
+    size_t num_rec = -1;
+    rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+
+    while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, &elem))
+      {
+        num_rec++;
+
+        if (!rec_db_record_selected_p (num_rec,
+                                       record,
+                                       index,
+                                       sex,
+                                       fast_string,
+                                       flags & REC_F_ICASE))
+          {
+            continue;
+          }
+
+        if (flags & REC_F_COMMENT_OUT)
+          {
+            /* Replace the record with a comment in the current
+               element.  */
+
+            rec_comment_t comment = rec_record_to_comment (record);
+            if (!comment)
+              {
+                /* Out of memory.  */
+                return false;
+              }
+
+            rec_record_destroy (record);
+            rec_mset_elem_set_data (elem, (void *) comment);
+            rec_mset_elem_set_type (elem, MSET_COMMENT);
+          }
+        else
+          {
+            /* Remove the physical record from the record set and
+               dispose it.  */
+
+            rec_mset_remove_elem (rec_rset_mset (rset), elem);
           }
       }
     rec_mset_iterator_free (&iter);
   }
 
-  return res;
+  return true;
 }
 
 /*
@@ -394,7 +741,7 @@ rec_db_query (rec_db_t db,
 
 static bool
 rec_db_index_p (size_t *index,
-                  size_t num)
+                size_t num)
 {
   while ((index[0] != REC_Q_NOINDEX) || (index[1] != REC_Q_NOINDEX))
     {
@@ -442,17 +789,16 @@ rec_db_add_random_indexes (size_t **index,
       return;
     }
   
-  for (i = 0; i < (num * 2); i++)
+  for (i = 0; i < ((num + 1) * 2); i++)
     {
       (*index)[i]   = REC_Q_NOINDEX;
-      (*index)[i+1] = REC_Q_NOINDEX;
     }
 
   /* Insert the random indexes.  */
 
   memset (&random_data, 0, sizeof (random_data));
   initstate_r (time(NULL), (char *) &random_state, 128, &random_data);
-  for (i = 0; i < num; i = i + 2)
+  for (i = 0; i < (num * 2); i = i + 2)
     {
       size_t random_value = 0;
       
@@ -597,7 +943,7 @@ rec_db_process_fex (rec_record_t record,
           res_field = rec_field_dup (field);
           if (alias)
             {
-              if (!rec_field_set_name (field, alias))
+              if (!rec_field_set_name (res_field, alias))
                 {
                   /* Out of memory.  */
                   return NULL;

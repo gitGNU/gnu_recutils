@@ -52,6 +52,20 @@ field2: value32
 field3: value33
 '
 
+test_declare_input_file multiple-records-case \
+'field1: Value11
+field2: Value12
+field3: Value13
+
+field1: Value21
+field2: Value22
+field3: Value23
+
+field1: Value31
+field2: Value32
+field3: Value33
+'
+
 test_declare_input_file multiple-named \
 '%rec: Type1
 
@@ -454,6 +468,38 @@ test_tool recins-random-one ok \
           '-m 1 -f foo -v bar' \
           one-record \
 'foo: bar
+'
+
+test_tool recins-case-insensitive ok \
+          recins \
+          '-i -q value22 -f foo -v bar' \
+          multiple-records-case \
+'field1: Value11
+field2: Value12
+field3: Value13
+
+foo: bar
+
+field1: Value31
+field2: Value32
+field3: Value33
+'
+
+test_tool recins-case-sensitive ok \
+          recins \
+          '-q value22 -f foo -v bar' \
+          multiple-records-case \
+'field1: Value11
+field2: Value12
+field3: Value13
+
+field1: Value21
+field2: Value22
+field3: Value23
+
+field1: Value31
+field2: Value32
+field3: Value33
 '
  
 #

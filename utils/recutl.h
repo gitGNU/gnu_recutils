@@ -249,24 +249,18 @@ bool recutl_interactive (void);
 
 bool recutl_index_list_parse (const char *str);
 
-/* Add a given number of random indexes to the indexes list.  The
-   generated random numbers are in the range 0..LIMIT.  */
-
-void recutl_index_add_random (size_t num, size_t limit);
-
 /* Return the number of indexes in the internal recutl_indexes data
    structure.  */
 
 size_t recutl_num_indexes (void);
 
-/* Return whether an index is stored in the internal recutl_indexes
-   data structure.  */
-
-bool recutl_index_p (size_t index);
-
 /* Reset the list of indexes to be empty.  */
 
 void recutl_reset_indexes (void);
+
+/* Return the index structure.  */
+
+size_t *recutl_index (void);
 
 #endif /* recutl.h */
 

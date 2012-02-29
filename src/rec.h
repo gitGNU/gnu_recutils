@@ -1077,7 +1077,7 @@ char *rec_rset_type (rec_rset_t rset);
    In case there was an existing descriptor in the rset then it is
    updated to reflect the new name.  */
 
-void rec_rset_set_type (rec_rset_t rset, char *type);
+void rec_rset_set_type (rec_rset_t rset, const char *type);
 
 /************ Management of the type registry ***********************/
 
@@ -1253,12 +1253,12 @@ NULL if there is no a record set having that type.  */
 
 rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 
-/******************** Database Queries *******************************/
+/******************** Database High-Level functions *******************/
 
 /* Query for some data in a database.  The resulting data is returned
    in a record set.
 
-   This function takes a lot of arguments:
+   This function takes the following arguments:
 
    DB
 
@@ -1318,12 +1318,13 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
       PASSWORD is NULL, or if it is the empty string, then no attempt
       to decrypt encrypted fields will be performed.
 
-   COUNTER
+   GROUP_BY
 
-      If not NULL, this argument must be a pointer to a size_t
-      variable where the number of selected records is stored.  If
-      this argument is specified then the returned record set will be
-      empty.
+      If not NULL, group the record set by the given field name.
+ 
+   SORT_BY
+
+      If not NULL, sort the record set by the given field name.
 
    FLAGS
 
@@ -1347,11 +1348,12 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
       case-insensitive.  If FALSE any string operation will be
       case-sensitive.
 
-      This function returns NULL if there is not enough memory to
-      perform the operation.  */
+  This function returns NULL if there is not enough memory to
+  perform the operation.  */
 
-#define REC_Q_DESCRIPTOR 1
-#define REC_Q_ICASE      2
+#define REC_F_DESCRIPTOR 1
+#define REC_F_ICASE      2
+#define REC_F_UNIQ       4
 
 #define REC_Q_NOINDEX ((size_t)-1)
 
@@ -1363,8 +1365,181 @@ rec_rset_t rec_db_query (rec_db_t     db,
                          size_t       random,
                          rec_fex_t    fex,
                          const char  *password,
-                         size_t      *counter,
+                         const char  *group_by,
+                         const char  *sort_by,
                          int          flags);
+
+/* Insert a new record into a database, either appending it to some
+   record set or replacing one or more existing records.
+
+   This function takes the following arguments:
+   
+   DB
+
+      Database where to insert the record.
+
+   TYPE
+
+      Type of the new record.  If there is an existing record set
+      holding records of that type then the record is added to it.
+      Otherwise a new record set is appended into the database.
+
+   INDEX
+
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of records that
+      will be replaced by copies of the provided record. The list of
+      ends with the pair REC_Q_NOINDEX,REC_Q_NOINDEX.
+
+      INDEX is mutually exclusive with any other selection option.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select from the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+
+   PASSWORD
+
+      Password to use to crypt confidential fields.  If PASSWORD is
+      NULL, or if it is the empty string, then no attempt to crypt
+      confidential fields will be performed.
+
+   RECORD
+
+      Record to insert.  If more than one record is replaced in the
+      database they will be substitued with copies of this record.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_F_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+      REC_F_NOAUTO
+
+      If set then no auto-fields will be added to the newly created
+      records in the database.
+
+   If no selection option is used then the new record is appended to
+   either an existing record set identified by TYPE or to a newly
+   created record set.  If some selection option is used then the
+   matching existing records will be replaced.
+
+   This function returns 'false' if there is not enough memory to
+   perform the operation.  */
+
+#define REC_F_NOAUTO 8
+
+bool rec_db_insert (rec_db_t     db,
+                    const char  *type,
+                    size_t      *index,
+                    rec_sex_t    sex,
+                    const char  *fast_string,
+                    size_t       random,
+                    const char  *password,
+                    rec_record_t record,
+                    int flags);
+
+/* Delete records from a database, either physically removing them or
+   commenting them out.
+
+   This function takes the following arguments:
+
+   DB
+
+      Database where to remove records.
+
+   TYPE
+
+      Type of the records to remove.
+
+   INDEX
+
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of records that
+      will be deleted or commented out. The list of ends with the pair
+      REC_Q_NOINDEX,REC_Q_NOINDEX.
+
+      INDEX is mutually exclusive with any other selection option.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+ 
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select for deletion in the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_F_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+      REC_F_COMMENT_OUT
+
+      If set the selected records will be commented out instead of physically
+      removed from the database.
+
+  This function returns 'false' if there is not enough memory to
+  perform the operation.  */
+
+#define REC_F_COMMENT_OUT 16
+
+bool rec_db_delete (rec_db_t     db,
+                    const char  *type,
+                    size_t      *index,
+                    rec_sex_t    sex,
+                    const char  *fast_string,
+                    size_t       random,
+                    int          flags);
 
 /*
  * INTEGRITY.
@@ -1561,6 +1736,11 @@ void rec_writer_destroy (rec_writer_t writer);
 
 bool rec_writer_set_password (rec_writer_t writer, const char *password);
 
+/* Determine whether the writer must "collapse" the output records
+   when writing record sets.  */
+
+void rec_writer_set_collapse (rec_writer_t writer, bool value);
+
 /************** Getting the properties of a writer ****************/
 
 /* Determine whether a given writer is in an EOF (end-of-file)
@@ -1626,7 +1806,7 @@ bool rec_write_record_with_fex (rec_writer_t writer, rec_record_t record, rec_fe
 /* Write a record set to the given writer.  This function returns
    'false' if there was an EOF condition.  */
 
-bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
+bool rec_write_rset (rec_writer_t writer, rec_rset_t rset, rec_writer_mode_t mode);
 
 /* Write a database to the given writer.  This function returns
    'false' if there was an EOF condition.  */
