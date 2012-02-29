@@ -1,5 +1,11 @@
 2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: failing unit test adapted to new API.
+	* torture/rec-writer/rec-write-rset.c: Add the 'mode' argument
+	when calling rec_write_rset.
+
+2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,utils: set high-level logic moved to librec and recset
 	adapted.
 	* utils/recset.c (recset_process_add): Function removed.

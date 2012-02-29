@@ -70,7 +70,7 @@ START_TEST(rec_write_rset_nominal)
   fail_if (rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record, MSET_ANY) == NULL);
   
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_rset (writer, rset));
+  fail_if (!rec_write_rset (writer, rset, REC_WRITER_NORMAL));
   rec_rset_destroy (rset);
   rec_writer_destroy (writer);
   fail_if (strcmp (str,
