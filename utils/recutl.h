@@ -223,12 +223,6 @@ void recutl_fatal (const char *fmt, ...);
 
 bool recutl_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 rec_db_t recutl_build_db (int argc, char **argv);
-char *recutl_eval_field_expression (rec_fex_t fex,
-                                    rec_record_t record,
-                                    rec_writer_mode_t mode,
-                                    bool print_values_p,
-                                    bool print_in_a_row_p,
-                                    char *password);
 
 rec_db_t recutl_read_db_from_file (char *file_name);
 void recutl_write_db_to_file (rec_db_t db, char *file_name);

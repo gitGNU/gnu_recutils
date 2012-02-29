@@ -301,39 +301,6 @@ recutl_build_db (int argc, char **argv)
   return db;
 }
 
-char *
-recutl_eval_field_expression (rec_fex_t fex,
-                              rec_record_t record,
-                              rec_writer_mode_t mode,
-                              bool print_values_p,
-                              bool print_in_a_row_p,
-                              char *password)
-{
-  char *res;
-  size_t res_size;
-  rec_writer_t writer;
-  bool wrote_p;
-
-  writer = rec_writer_new_str (&res, &res_size);
-  if (password)
-    {
-      rec_writer_set_password (writer,
-                               password);
-    }
-
-  wrote_p = rec_write_record_with_fex (writer, record, fex, mode,
-                                       print_values_p, print_in_a_row_p);
-  rec_writer_destroy (writer);
-
-  if (!wrote_p)
-    {
-      free (res);
-      res = NULL;
-    }
-
-  return res;
-}
-
 rec_db_t
 recutl_read_db_from_file (char *file_name)
 {

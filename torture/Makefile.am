@@ -122,7 +122,6 @@ REC_WRITER_TSUITE= rec-writer/rec-write-comment.c \
                    rec-writer/rec-writer-destroy.c \
                    rec-writer/rec-write-record.c \
                    rec-writer/rec-writer-new.c \
-                   rec-writer/rec-write-record-with-fex.c \
                    rec-writer/rec-write-rset.c \
                    rec-writer/rec-write-db.c \
                    rec-writer/rec-write-field-name-str.c \

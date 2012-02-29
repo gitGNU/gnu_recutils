@@ -50,9 +50,6 @@ struct rec_writer_s
   bool eof;
   int line;  /* Current line number. */
 
-  char *password;    /* Password to use to decrypt encrypted
-                        fields.  */
-
   bool collapse_p;
 };
 
@@ -63,7 +60,6 @@ rec_writer_new_common (rec_writer_t writer)
   writer->buf_out = NULL;
   writer->line = 1;
   writer->eof = false;
-  writer->password = NULL;
   writer->collapse_p = false;
 }
 
@@ -202,22 +198,7 @@ rec_write_comment (rec_writer_t writer,
 bool
 rec_write_field (rec_writer_t writer,
                  rec_field_t field,
-                 const char *name,
                  rec_writer_mode_t mode)
-{
-  return rec_write_field_with_rset (writer,
-                                    NULL,
-                                    field,
-                                    name,
-                                    mode);
-}
-
-bool
-rec_write_field_with_rset (rec_writer_t writer,
-                           rec_rset_t rset,
-                           rec_field_t field,
-                           const char *name,
-                           rec_writer_mode_t mode)
 {
   size_t pos;
   const char *fname;
@@ -241,16 +222,7 @@ rec_write_field_with_rset (rec_writer_t writer,
 
   if ((mode != REC_WRITER_VALUES) && (mode != REC_WRITER_VALUES_ROW))
     {
-      /* Write the field name */
-      if (name)
-        {
-          fname = name;
-        }
-      else
-        {
-          fname = rec_field_name (field);
-        }
-      
+      fname = rec_field_name (field);
       if (!rec_write_field_name (writer, fname, mode))
         {
           return false;
@@ -270,13 +242,6 @@ rec_write_field_with_rset (rec_writer_t writer,
           return false;
         }
     }
-
-#if defined REC_CRYPT_SUPPORT
-  if (writer->password)
-    {
-      rec_decrypt_field (field, writer->password);
-    }
-#endif /* REC_CRYPT_SUPPORT */
 
   fvalue = rec_field_value (field);
 
@@ -393,18 +358,6 @@ rec_write_record (rec_writer_t writer,
                   rec_record_t record,
                   rec_writer_mode_t mode)
 {
-  return rec_write_record_with_rset (writer,
-                                     NULL,
-                                     record,
-                                     mode);
-}
-
-bool
-rec_write_record_with_rset (rec_writer_t writer,
-                            rec_rset_t rset,
-                            rec_record_t record,
-                            rec_writer_mode_t mode)
-{
   bool ret;
   rec_mset_iterator_t iter;
   rec_mset_elem_t elem;
@@ -439,11 +392,9 @@ rec_write_record_with_rset (rec_writer_t writer,
           /* Write a field.  */
           rec_field_t field = (rec_field_t) data;
 
-          if (!rec_write_field_with_rset (writer,
-                                          rset,
-                                          field,
-                                          NULL, /* name */
-                                          mode))
+          if (!rec_write_field (writer,
+                                field,
+                                mode))
             {
               ret = false;
               break;
@@ -510,106 +461,6 @@ rec_write_record_with_rset (rec_writer_t writer,
     }
 
   return ret;
-}
-
-bool
-rec_write_record_with_fex (rec_writer_t writer,
-                           rec_record_t record,
-                           rec_fex_t fex,
-                           rec_writer_mode_t mode,
-                           bool print_values_p,
-                           bool print_in_a_row_p)
-{
-  rec_fex_elem_t elem;
-  rec_field_t field;
-  const char *field_name;
-  int i, j, min, max;
-  size_t fex_size;
-  size_t written_fields = 0;
-
-  fex_size = rec_fex_size (fex);
-  for (i = 0; i < fex_size; i++)
-    {
-      elem = rec_fex_get (fex, i);
-
-      field_name = rec_fex_elem_field_name (elem);
-      min = rec_fex_elem_min (elem);
-      max = rec_fex_elem_max (elem);
-
-      if ((min == -1) && (max == -1))
-        {
-          /* Print all the fields with that name.  */
-          min = 0;
-          max = rec_record_get_num_fields_by_name (record, field_name);
-        }
-      else if (max == -1)
-        {
-          /* Print just one field: Field[min].  */
-          max = min + 1;
-        }
-      else
-        {
-          /* Print the interval min..max, max inclusive.  */
-          max++;
-        }
-
-      for (j = min; j < max; j++)
-        {
-          if (!(field = rec_record_get_field_by_name (record, field_name, j)))
-            {
-              continue;
-            }
-
-          written_fields++;
-
-#if defined REC_CRYPT_SUPPORT
-          if (writer->password)
-            {
-              rec_decrypt_field (field, writer->password);
-            }
-#endif /* REC_CRYPT_SUPPORT */
-
-          if (print_values_p)
-            {
-              /* Write just the value of the field.  */
-              rec_writer_puts (writer, rec_field_value (field));
-              if (print_in_a_row_p)
-                {
-                  if ((j < (max - 1)) || (i < (fex_size - 1)))
-                    {
-                      rec_writer_putc (writer, ' ');
-                    }
-                }
-              else
-                {
-                  if ((j < (max - 1)) || (i < (fex_size - 1)))
-                    {
-                      rec_writer_putc (writer, '\n');
-                    }
-                }
-            }
-          else
-            {
-              /* Print the field according to the requested mode.  If
-                 there is a rewrite rule defined in this fex entry,
-                 use the rewrite_to field name instead of the original
-                 name of the field.  */
-
-              rec_write_field (writer,
-                               field,
-                               rec_fex_elem_rewrite_to (elem),
-                               mode);
-              rec_writer_putc (writer, '\n');
-            }
-        }
-    }
-
-  if (print_values_p && (written_fields > 0))
-    {
-      rec_writer_putc (writer, '\n');
-    }
-
-  return true;
 }
 
 bool
@@ -781,7 +632,7 @@ rec_write_field_str (rec_field_t field,
   writer = rec_writer_new_str (&result, &result_size);
   if (writer)
     {
-      rec_write_field (writer, field, NULL /* name */, mode);
+      rec_write_field (writer, field, mode);
       rec_writer_destroy (writer);
     }
   
@@ -824,15 +675,6 @@ rec_write_comment_str (rec_comment_t comment,
     }
   
   return result;
-}
-
-bool
-rec_writer_set_password (rec_writer_t writer,
-                         const char *password)
-{
-  free (writer->password);
-  writer->password = strdup (password);
-  return (writer->password != NULL);
 }
 
 bool

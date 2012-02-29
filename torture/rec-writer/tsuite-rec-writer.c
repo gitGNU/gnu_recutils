@@ -32,7 +32,6 @@ extern TCase *test_rec_write_comment (void);
 extern TCase *test_rec_write_field_name (void);
 extern TCase *test_rec_write_field (void);
 extern TCase *test_rec_write_record (void);
-extern TCase *test_rec_write_record_with_fex (void);
 extern TCase *test_rec_write_rset (void);
 extern TCase *test_rec_write_db (void);
 extern TCase *test_rec_write_field_name_str (void);
@@ -51,7 +50,6 @@ tsuite_rec_writer ()
   suite_add_tcase (s, test_rec_write_field_name ());
   suite_add_tcase (s, test_rec_write_field ());
   suite_add_tcase (s, test_rec_write_record ());
-  suite_add_tcase (s, test_rec_write_record_with_fex ());
   suite_add_tcase (s, test_rec_write_rset ());
   suite_add_tcase (s, test_rec_write_db ());
   suite_add_tcase (s, test_rec_write_field_name_str ());

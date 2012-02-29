@@ -1,5 +1,22 @@
 2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: remove obsolete and unused functionality from the rec writer.
+	* src/rec-writer.c (rec_write_record_with_rset): Function removed.
+	(rec_write_field_with_rset): Likewise.
+	(rec_write_field): Don't get a 'name' argument.
+	(rec_writer_s): Field 'password' removed.
+	(rec_writer_new_common): Don't initialize password.
+	(rec_write_field): Encryption support removed.
+	(rec_writer_set_password): Function removed.
+
+	* torture/Makefile.am (REC_WRITER_TSUITE): Tests for
+	rec_write_record_with_fex removed.
+
+	* src/rec-writer.c (rec_write_record_with_fex): Function removed.
+	* utils/recutl.c (recutl_eval_field_expression): Likewise.
+
+2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: failing unit test adapted to new API.
 	* torture/rec-writer/rec-write-rset.c: Add the 'mode' argument
 	when calling rec_write_rset.

@@ -1855,13 +1855,6 @@ void rec_writer_destroy (rec_writer_t writer);
 
 /************ Getting and setting writer properties ***************/
 
-/* Set the password to use when writing encrypted fields.  If NULL is
-   passed then the encrypted fields are not encrypted.  This is the
-   default state of a writer.  This function returns NULL if there is
-   not enough memory to perform the operation.  */
-
-bool rec_writer_set_password (rec_writer_t writer, const char *password);
-
 /* Determine whether the writer must "collapse" the output records
    when writing record sets.  */
 
@@ -1896,38 +1889,12 @@ bool rec_write_field_name (rec_writer_t writer, const char *field_name, rec_writ
    'false' if there was an EOF condition.  */
 
 bool rec_write_field (rec_writer_t writer, rec_field_t field,
-                      const char *name, rec_writer_mode_t mode);
-
-/* Write a field in the given writer caring about keeping any
-   restriction (such as that the field value must be encrypted) from
-   the given record set.  If NAME is not NULL, use it instead of the
-   proper name of the field.  This function returns 'false' if there
-   was an EOF condition.  */
-
-bool rec_write_field_with_rset (rec_writer_t writer, rec_rset_t rset, rec_field_t field,
-                                const char *name, rec_writer_mode_t mode);
+                      rec_writer_mode_t mode);
 
 /* Write a record in the given writer.  This function returns 'false'
    if there was an EOF condition.  */
 
 bool rec_write_record (rec_writer_t writer, rec_record_t record, rec_writer_mode_t mode);
-
-/* Write a record in the given writer caring about keeping any
-   restriction (such as that the fields in the record must be
-   encrypted) from the given record set.  This function returns
-   'false' if there was an EOF condition.  */
-
-bool rec_write_record_with_rset (rec_writer_t writer, rec_rset_t rset, rec_record_t record,
-                                 rec_writer_mode_t mode);
-
-/* Write a subset of a record to the given writer.  The subset is
-   determined by a field expression, which can contain subscripts
-   and/or rewrite rules.  This function returns 'false' if there was
-   an EOF condition.  */
-
-bool rec_write_record_with_fex (rec_writer_t writer, rec_record_t record, rec_fex_t fex,
-                                rec_writer_mode_t mode,
-                                bool print_values_p, bool print_in_a_row_p);
 
 /* Write a record set to the given writer.  This function returns
    'false' if there was an EOF condition.  */

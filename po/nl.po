@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: recutils 1.5\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-02-25 20:13+0100\n"
+"POT-Creation-Date: 2012-02-29 21:43+0100\n"
 "PO-Revision-Date: 2012-01-14 20:35+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -215,7 +215,7 @@ msgstr "subproces %s ontving het fatale signaal %d"
 msgid "memory exhausted"
 msgstr "onvoldoende geheugen beschikbaar"
 
-#: src/rec-fex.c:372
+#: src/rec-fex.c:379
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
 msgstr ""
@@ -358,7 +358,16 @@ msgstr ""
 msgid "%s:%s: error: value for %s should be a list of field names.\n"
 msgstr "%s:%s: fout: de waarde van %s moet een lijst van veldnamen zijn\n"
 
-#: src/rec-int.c:896
+#: src/rec-int.c:900
+#, fuzzy, c-format
+msgid ""
+"%s:%s: error: auto-incremented field %s should be of type int, range, uuid "
+"or date\n"
+msgstr ""
+"%s:%s: fout: automatisch opgehoogd veld '%s' moet een geheel getal, bereik "
+"of datum zijn\n"
+
+#: src/rec-int.c:902
 #, fuzzy, c-format
 msgid ""
 "%s:%s: error: auto-incremented field %s should be of type int, range or "
@@ -367,27 +376,27 @@ msgstr ""
 "%s:%s: fout: automatisch opgehoogd veld '%s' moet een geheel getal, bereik "
 "of datum zijn\n"
 
-#: src/rec-int.c:978
+#: src/rec-int.c:985
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr "%s:%s: fout: kan descriptor op afstand niet laden vanaf URL %s.\n"
 
-#: src/rec-int.c:997
+#: src/rec-int.c:1004
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr "%s:%s: fout: kan externe descriptor niet laden uit bestand %s.\n"
 
-#: src/rec-int.c:1012
+#: src/rec-int.c:1019
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: fout: %s bevat geen geldige rec-gegevens.\n"
 
-#: src/rec-int.c:1026
+#: src/rec-int.c:1033
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: fout: %s bevat geen informatie voor type %s.\n"
 
-#: src/rec-types.c:393
+#: src/rec-types.c:416
 #, c-format
 msgid ""
 "internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() "
@@ -396,53 +405,58 @@ msgstr ""
 "**interne programmafout**: REC_TYPE_NONE gekregen van "
 "rec_type_parse_type_kind() in rec_type_new().\n"
 
-#: src/rec-types.c:913
+#: src/rec-types.c:956
 msgid "invalid integer."
 msgstr "ongeldig geheel getal."
 
-#: src/rec-types.c:929
+#: src/rec-types.c:972
 msgid "invalid 'field' value."
 msgstr "ongeldige waarde voor 'field'."
 
-#: src/rec-types.c:945
+#: src/rec-types.c:995
+#, fuzzy
+msgid "invalid 'uuid' value."
+msgstr "ongeldige waarde voor 'field'."
+
+#: src/rec-types.c:1013
 msgid "invalid 'bool' value."
 msgstr "ongeldige waarde voor 'bool'."
 
-#: src/rec-types.c:968
+#: src/rec-types.c:1036
 msgid "invalid 'range' value."
 msgstr "ongeldige waarde voor 'range'."
 
-#: src/rec-types.c:977
+#: src/rec-types.c:1045
 #, c-format
 msgid "expected an integer between %d and %d."
 msgstr "verwachtte een geheel getal tussen %d en %d."
 
-#: src/rec-types.c:998
+#: src/rec-types.c:1066
 msgid "invalid 'real' value."
 msgstr "ongeldige waarde voor 'real'."
 
-#: src/rec-types.c:1016
+#: src/rec-types.c:1084
 #, c-format
 msgid "value too large.  Expected a size <= %zu."
 msgstr "waarde is te groot.  Verwachtte een grootte <= %zu."
 
-#: src/rec-types.c:1037
+#: src/rec-types.c:1105
 msgid "invalid 'line' value."
 msgstr "ongeldige waarde voor 'line'."
 
-#: src/rec-types.c:1056
+#: src/rec-types.c:1124
 msgid "value does not match the regexp."
 msgstr "waarde komt niet overeen met reguliere expressie."
 
-#: src/rec-types.c:1079
+#: src/rec-types.c:1147
 msgid "invalid date."
 msgstr "ongeldige datum."
 
-#: src/rec-types.c:1095
+#: src/rec-types.c:1163
 msgid "invalid email."
 msgstr "ongeldig e-mailadres."
 
-#: src/rec-types.c:1149
+#: src/rec-types.c:1217
 msgid "invalid enum value."
 msgstr "ongeldige opsommingswaarde."
 
@@ -507,7 +521,7 @@ msgid "invalid field name '%s' in header\n"
 msgstr "ongeldige veldnaam '%s' in kopregel\n"
 
 #: utils/csv2rec.c:246 utils/csv2rec.c:282 utils/csv2rec.c:297
-#: utils/mdb2rec.c:310 utils/mdb2rec.c:423
+#: utils/mdb2rec.c:310 utils/mdb2rec.c:423 utils/recsel.c:420
 msgid "out of memory\n"
 msgstr "onvoldoende geheugen beschikbaar\n"
 
@@ -515,8 +529,8 @@ msgstr "onvoldoende geheugen beschikbaar\n"
 msgid "not enough headers"
 msgstr "niet genoeg koppen"
 
-#: utils/csv2rec.c:339 utils/recdel.c:328 utils/recset.c:706
-#: utils/recutl.c:294
+#: utils/csv2rec.c:339 utils/recdel.c:268 utils/recset.c:361
+#: utils/recutl.c:278
 #, c-format
 msgid "cannot read file %s\n"
 msgstr "kan bestand %s niet lezen\n"
@@ -573,7 +587,7 @@ msgstr "kan veldnaam %s niet normaliseren.\n"
 msgid "failed to normalise the field name %s\n"
 msgstr "kan veldnaam %s niet normaliseren.\n"
 
-#: utils/mdb2rec.c:447 utils/recins.c:328 utils/recset.c:265
+#: utils/mdb2rec.c:447 utils/recins.c:209 utils/recset.c:253
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "ongeldige veldnaam %s.\n"
@@ -621,11 +635,11 @@ msgstr ""
 "gebruikt\n"
 "  -S, --sort=VELD            de uitvoer sorteren op dit veld\n"
 
-#: utils/rec2csv.c:135 utils/recsel.c:232
+#: utils/rec2csv.c:135 utils/recsel.c:230
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr "er kan slechts één veld gegeven worden als sorteercriterium.\n"
 
-#: utils/rec2csv.c:142 utils/recsel.c:239
+#: utils/rec2csv.c:142 utils/recsel.c:237
 msgid "invalid field name in -S.\n"
 msgstr "ongeldige veldnaam bij optie '-S'.\n"
 
@@ -688,26 +702,22 @@ msgstr ""
 "de gegevens van standaardinvoer en schrijft het resultaat naar "
 "standaarduitvoer.\n"
 
-#: utils/recdel.c:143
+#: utils/recdel.c:136
 #, c-format
 msgid "no records of type %s found.\n"
 msgstr "geen records van type %s gevonden.\n"
 
-#: utils/recdel.c:224 utils/recins.c:489 utils/recsel.c:485
-msgid "evaluating the selection expression.\n"
-msgstr "evalueren van selectie-expressie\n"
-
-#: utils/recdel.c:289
+#: utils/recdel.c:229
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr "verzoek om alle records van type %s te verwijderen wordt genegeerd.\n"
 
-#: utils/recdel.c:291
+#: utils/recdel.c:231
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
 msgstr ""
 "gebruik optie '--force' als u echt door wilt gaan, of gebruik '-n' of '-e'\n"
 
-#: utils/recdel.c:299 utils/recset.c:432
+#: utils/recdel.c:239
 msgid "invalid selection expression.\n"
 msgstr "ongeldige selectie-expressie.\n"
 
@@ -796,7 +806,7 @@ msgstr "u kunt slechts één wachtwoord opgeven.\n"
 msgid "please specify just one operation.\n"
 msgstr "u kunt slechts één bewerking opgeven.\n"
 
-#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:370
+#: utils/recfix.c:307 utils/recins.c:341 utils/recsel.c:359
 msgid "Password: "
 msgstr "Wachtwoord: "
 
@@ -899,7 +909,7 @@ msgstr ""
 "  -S, --print-sexps          de gegevens als S-expressies tonen\n"
 "                               in plaats van in rec-indeling\n"
 
-#: utils/recinf.c:259
+#: utils/recinf.c:260
 #, c-format
 msgid "error: cannot read file %s\n"
 msgstr "fout: kan bestand %s niet lezen.\n"
@@ -962,30 +972,30 @@ msgstr ""
 "  -s, --password=WOORD      vertrouwelijke velden versleutelen met dit "
 "wachtwoord\n"
 
-#: utils/recins.c:315
+#: utils/recins.c:196
 msgid "a -f should be followed by a -v\n"
 msgstr "optie '-f' dient gevolgd te worden door optie '-v'.\n"
 
-#: utils/recins.c:339
+#: utils/recins.c:220
 msgid "a -v should be preceded by a -f\n"
 msgstr "optie '-v' dient voorafgegaan te worden door optie '-f'.\n"
 
-#: utils/recins.c:364 utils/recsel.c:220
+#: utils/recins.c:245 utils/recsel.c:218
 msgid "more than one password was specified\n"
 msgstr "er is meer dan één wachtwoord opgegeven\n"
 
-#: utils/recins.c:378
+#: utils/recins.c:259
 msgid "error while parsing the record provided by -r\n"
 msgstr "fout tijdens ontleden van record gegeven met optie '-r'.\n"
 
-#: utils/recins.c:413
+#: utils/recins.c:294
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "u dient een waarde op te geven voor veld %s.\n"
 
 #. TRANSLATORS: --help output, recsel synopsis.
 #. no-wrap
-#: utils/recsel.c:118
+#: utils/recsel.c:116
 #, fuzzy, c-format
 msgid ""
 "Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q STR | -"
@@ -998,13 +1008,13 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:123
+#: utils/recsel.c:121
 msgid "Select and print rec data.\n"
 msgstr "Selecteert en toont rec-gegevens.\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:129
+#: utils/recsel.c:127
 #, fuzzy
 msgid ""
 "  -d, --include-descriptors           print record descriptors along with "
@@ -1026,7 +1036,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recsel.c:141
+#: utils/recsel.c:139
 msgid ""
 "  -s, --password=STR                  decrypt confidential fields with the "
 "given password.\n"
@@ -1036,7 +1046,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
-#: utils/recsel.c:154
+#: utils/recsel.c:152
 msgid ""
 "Output options:\n"
 "  -p, --print=FIELDS                  comma-separated list of fields to "
@@ -1062,7 +1072,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recsel special options.
 #. no-wrap
-#: utils/recsel.c:168
+#: utils/recsel.c:166
 msgid ""
 "Special options:\n"
 "      --print-sexps                   print the data in sexps instead of rec "
@@ -1072,54 +1082,54 @@ msgstr ""
 "      --print-sexps          de gegevens als S-expressies tonen\n"
 "                               in plaats van in rec-indeling\n"
 
-#: utils/recsel.c:249
+#: utils/recsel.c:247
 #, fuzzy
 msgid "only one field can be specified as a grouping criteria.\n"
 msgstr "er kan slechts één veld gegeven worden als sorteercriterium.\n"
 
-#: utils/recsel.c:257
+#: utils/recsel.c:255
 #, fuzzy
 msgid "invalid field name in -G.\n"
 msgstr "ongeldige veldnaam bij optie '-S'.\n"
 
-#: utils/recsel.c:269
+#: utils/recsel.c:267
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr "opties '-c' en '-[pPR][' gaan niet samen.\n"
 
-#: utils/recsel.c:287
+#: utils/recsel.c:284
 #, fuzzy, c-format
 msgid "invalid list of fields in -%c\n"
 msgstr "ongeldige veldnaam %s\n"
 
-#: utils/recsel.c:295
+#: utils/recsel.c:292
 msgid "internal error creating the field expression.\n"
 msgstr "**interne programmafout** tijdens aanmaken van de veldexpressie.\n"
 
-#: utils/recsel.c:311
+#: utils/recsel.c:308
 msgid "cannot specify -c and also -p.\n"
 msgstr "opties '-c' en '-p' gaan niet samen.\n"
 
-#: utils/recsel.c:391
+#: utils/recsel.c:382
 msgid "several record types found.  Please use -t to specify one.\n"
 msgstr ""
 "meerdere recordtypes gevonden.  Gebruik optie '-t' om er één op te geven.\n"
 
 #. TRANSLATORS: --help output, recset synopsis.
 #. no-wrap
-#: utils/recset.c:125
+#: utils/recset.c:113
 #, c-format
 msgid "Usage: recset [OPTION]... [FILE]...\n"
 msgstr "Gebruik:  recset [OPTIE...] [BESTAND...]\n"
 
 #. TRANSLATORS: --help output, recset short description.
 #. no-wrap
-#: utils/recset.c:130
+#: utils/recset.c:118
 msgid "Alter or delete fields in records.\n"
 msgstr "Wijzigt of verwijdert velden in records.\n"
 
 #. TRANSLATORS: --help output, recset options.
 #. no-wrap
-#: utils/recset.c:136
+#: utils/recset.c:124
 msgid ""
 "      --no-external                   don't use external descriptors.\n"
 "      --force                         alter the records even if violating "
@@ -1132,7 +1142,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset field selection options.
 #. no-wrap
-#: utils/recset.c:149
+#: utils/recset.c:137
 msgid ""
 "Field selection options:\n"
 "  -f, --fields=FIELDS                 comma-separated list of field names "
@@ -1145,7 +1155,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, recset actions.
 #. no-wrap
-#: utils/recset.c:157
+#: utils/recset.c:145
 msgid ""
 "Actions:\n"
 "  -s, --set=VALUE                     change the value of the selected "
@@ -1183,76 +1193,64 @@ msgstr ""
 "  -d, --delete               de geselecteerde velden verwijderen\n"
 "  -c, --comment              de geselecteerde velden omzetten in commentaar\n"
 
-#: utils/recset.c:180
+#: utils/recset.c:168
 msgid "please specify some field with -f.\n"
 msgstr "u dient bij optie '-f' een veld op te geven.\n"
 
-#: utils/recset.c:185
+#: utils/recset.c:173
 msgid "please specify just one action.\n"
 msgstr "u kunt slechts één actie opgeven.\n"
 
-#: utils/recset.c:225
+#: utils/recset.c:213
 msgid "invalid field expression in -f.\n"
 msgstr "ongeldige veldexpressie bij optie '-f'.\n"
 
-#: utils/recset.c:233
+#: utils/recset.c:221
 msgid "creating the field expression.\n"
 msgstr "aanmaken van de veldexpressie.\n"
 
-#: utils/recset.c:255
+#: utils/recset.c:243
 msgid ""
 "the rename operation requires just one field with an optional subscript.\n"
 msgstr "hernoemen vereist slechts één veld met een optionele index.\n"
-
-#: utils/recset.c:449 utils/recutl.c:489
-msgid "operation aborted due to integrity failures.\n"
-msgstr "bewerking is afgebroken wegens integriteitsproblemen.\n"
-
-#: utils/recset.c:450 utils/recutl.c:490
-msgid "use --verbose to get a detailed report.\n"
-msgstr "gebruik optie '--verbose' voor een gedetailleerd rapport.\n"
-
-#: utils/recset.c:457 utils/recutl.c:497
-msgid "use --force to skip the integrity check.\n"
-msgstr "gebruik optie '--force' op de integriteitscontrole over te slaan.\n"
 
 #. TRANSLATORS: --help output 5+ (reports)
 #. TRANSLATORS: the placeholder indicates the bug-reporting address
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: utils/recutl.c:129
+#: utils/recutl.c:113
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr ""
 "Rapporteer gebreken in het programma aan <%s>;\n"
 "meld fouten in de vertaling aan <vertaling@vrijschrift.org>.\n"
 
-#: utils/recutl.c:132
+#: utils/recutl.c:116
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr ""
 "Rapporteer gebreken in het programma '%s' aan <%s>;\n"
 "meld fouten in de vertaling aan <vertaling@vrijschrift.org>.\n"
 
-#: utils/recutl.c:136
+#: utils/recutl.c:120
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr "Webpagina van %s: <%s>\n"
 
-#: utils/recutl.c:138
+#: utils/recutl.c:122
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
 msgstr "Webpagina van %s: <http://www.gnu.org/software/recutils/>\n"
 
-#: utils/recutl.c:141
+#: utils/recutl.c:125
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr ""
 "Algemene hulp bij gebruik van GNU-software: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
-#: utils/recutl.c:150
+#: utils/recutl.c:134
 msgid ""
 "      --help                          print a help message and exit.\n"
 "      --version                       show version and exit.\n"
@@ -1262,7 +1260,7 @@ msgstr ""
 
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
-#: utils/recutl.c:161
+#: utils/recutl.c:145
 #, fuzzy
 msgid ""
 "Record selection options:\n"
@@ -1276,7 +1274,7 @@ msgid ""
 "a string.\n"
 "  -n, --number=NUM,...                select specific records by position, "
 "with ranges.\n"
-"  -R, --random=NUM                    select a given number of random "
+"  -m, --random=NUM                    select a given number of random "
 "records.\n"
 msgstr ""
 "Recordselectie:\n"
@@ -1291,7 +1289,7 @@ msgstr ""
 "  -R, --random=AANTAL        dit aantal willekeurig gekozen records "
 "selecteren\n"
 
-#: utils/recutl.c:186
+#: utils/recutl.c:170
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
@@ -1308,7 +1306,7 @@ msgstr ""
 "Deze software kent GEEN GARANTIE, voor zover de wet dit toestaat.\n"
 "\n"
 
-#: utils/recutl.c:192
+#: utils/recutl.c:176
 msgid ""
 "\n"
 "Written by Jose E. Marchesi."
@@ -1316,38 +1314,53 @@ msgstr ""
 "\n"
 "Geschreven door Jose E. Marchesi."
 
-#: utils/recutl.c:204 utils/recutl.c:218
+#: utils/recutl.c:188 utils/recutl.c:202
 msgid ": error: "
 msgstr ": fout: "
 
-#: utils/recutl.c:230
+#: utils/recutl.c:214
 msgid ": warning: "
 msgstr ": waarschuwing: "
 
-#: utils/recutl.c:254
+#: utils/recutl.c:238
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr "duplicaat recordset '%s' uit %s.\n"
 
-#: utils/recutl.c:412
+#: utils/recutl.c:396
 msgid "cannot create a unique name.\n"
 msgstr "kan geen unieke naam aanmaken.\n"
 
-#: utils/recutl.c:433
+#: utils/recutl.c:417
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr "hernoemen van bestand %s naar %s\n"
 
-#: utils/recutl.c:464
+#: utils/recutl.c:448
 #, c-format
 msgid "reading file %s"
 msgstr "lezen van bestand %s"
 
-#: utils/recutl.c:553
+#: utils/recutl.c:473
+msgid "operation aborted due to integrity failures.\n"
+msgstr "bewerking is afgebroken wegens integriteitsproblemen.\n"
+
+#: utils/recutl.c:474
+msgid "use --verbose to get a detailed report.\n"
+msgstr "gebruik optie '--verbose' voor een gedetailleerd rapport.\n"
+
+#: utils/recutl.c:481
+msgid "use --force to skip the integrity check.\n"
+msgstr "gebruik optie '--force' op de integriteitscontrole over te slaan.\n"
+
+#: utils/recutl.c:542
 msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
 msgstr ""
 "**interne programmafout**: recutl_index_list_parse(): fout bij compileren "
 "van regexp.\n"
+
+#~ msgid "evaluating the selection expression.\n"
+#~ msgstr "evalueren van selectie-expressie\n"
 
 #~ msgid ""
 #~ "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
