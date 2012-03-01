@@ -60,6 +60,7 @@
 
    /* Forward prototypes for functions defined below.  */
    char *rec_sex_lex_extract_name (char *str);
+   char *rec_sex_lex_extract_subname (char *str);
    bool rec_sex_lex_extract_index (char *str, int *num);
 
 %}
@@ -126,19 +127,20 @@ STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
 ":"      { return REC_SEX_TOK_COLON; }
 "&"      { return REC_SEX_TOK_AMP; }
 
-{FIELD_NAME}(\[[0-9]+\])? {
+{FIELD_NAME}(\.{FIELD_NAME})?(\[[0-9]+\])? {
   int res;
   char *match;
-  char *name;
+  char *name, *subname;
   int index = -1;
 
   match = strdup (yytext);
   rec_sex_lex_extract_index (match, &index);
   name = rec_sex_lex_extract_name (match);
+  subname = rec_sex_lex_extract_subname (match);
 
   /* Create a name node.  */
   yylval->node = rec_sex_ast_node_new ();
-  rec_sex_ast_node_set_name (yylval->node, name);
+  rec_sex_ast_node_set_name (yylval->node, name, subname);
   rec_sex_ast_node_set_index (yylval->node, index);
   res = REC_SEX_TOK_NAM;
 
@@ -174,7 +176,7 @@ rec_sex_lex_extract_name (char *str)
   char *p;
 
   p = str;
-  while ((*p != '[') && (*p != 0))
+  while ((*p != '[') && (*p != '.') && (*p != 0))
     {
       p++;
     }
@@ -185,6 +187,32 @@ rec_sex_lex_extract_name (char *str)
   res[size] = 0;
 
   return res;
+}
+
+char *
+rec_sex_lex_extract_subname (char *str)
+{
+  char *res = NULL;
+  char *p;
+
+  /* If there is not a subname denoted in STR then this function
+     returns NULL.  */
+  
+  p = str;
+  while ((*p != '.') && (*p != '\0'))
+    {
+      p++;
+    }
+
+  if (*p == '\0')
+    {
+      /* There is not a second name.  */
+      return NULL;
+    }
+
+  p++;  /* Skip the dot separator.  */
+
+  return rec_sex_lex_extract_name (p);
 }
 
 bool

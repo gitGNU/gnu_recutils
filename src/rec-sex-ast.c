@@ -44,7 +44,7 @@ struct rec_sex_ast_node_s
     int integer;
     double real;
     char *string;
-    char *name;
+    char *name[2];
   } val;
 
   int index;
@@ -124,7 +124,8 @@ rec_sex_ast_node_destroy (rec_sex_ast_node_t node)
     }
   else if (node->type == REC_SEX_NAME)
     {
-      free (node->val.name);
+      free (node->val.name[0]);
+      free (node->val.name[1]);
     }
 
   free (node->fixed_val);
@@ -190,23 +191,36 @@ rec_sex_ast_node_set_str (rec_sex_ast_node_t node,
   node->val.string = strdup (str);
 }
 
-char *
+const char *
 rec_sex_ast_node_name (rec_sex_ast_node_t node)
 {
-  return node->val.name;
+  return node->val.name[0];
+}
+
+const char *
+rec_sex_ast_node_subname (rec_sex_ast_node_t node)
+{
+  return node->val.name[1];
 }
 
 void
 rec_sex_ast_node_set_name (rec_sex_ast_node_t node,
-                          char *name)
+                           const char *name,
+                           const char *subname)
 {
   if (node->type == REC_SEX_NAME)
     {
-      free (node->val.name);
+      free (node->val.name[0]);
+      free (node->val.name[1]);
     }
  
   node->type = REC_SEX_NAME;
-  node->val.string = strdup (name);
+  node->val.name[0] = strdup (name);
+  node->val.name[1] = NULL;
+  if (subname)
+    {
+      node->val.name[1] = strdup (subname);
+    }
 }
 
 void

@@ -66,6 +66,8 @@ static bool rec_db_set_act_add (rec_rset_t rset, rec_record_t record, rec_fex_t 
 static bool rec_db_set_act_setadd (rec_rset_t rset, rec_record_t record, rec_fex_t fex, const char *arg);
 static bool rec_db_set_act_delete (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool comment_out);
 
+static rec_rset_t rec_db_join (rec_db_t db, const char *type1, const char *type2);
+
 /*
  * Public functions.
  */
@@ -889,6 +891,68 @@ bool rec_db_set (rec_db_t    db,
 /*
  * Private functions.
  */
+
+static rec_rset_t
+rec_db_join (rec_db_t db, const char *type1, const char *type2)
+{
+  /* Note that this function is inefficient like hell.  */
+
+  /* Perform the cartesian cross of the specified record sets in DB.
+     If some of the specified record sets don't exist as named rset in
+     the specified database then return NULL.  */
+
+  rec_rset_t join  = NULL;
+  rec_rset_t rset1 = rec_db_get_rset_by_type (db, type1);
+  rec_rset_t rset2 = rec_db_get_rset_by_type (db, type2);
+
+  if (!rset1 || !rset2)
+    {
+      return NULL;
+    }
+
+  /* Do the join.  */
+
+  join = rec_rset_new ();
+  if (!join)
+    {
+      /* Out of memory.  */
+      return NULL;
+    }
+  else
+    {
+      rec_record_t record1 = NULL;
+      rec_mset_iterator_t iter1 = rec_mset_iterator (rec_rset_mset (rset1));
+      while (rec_mset_iterator_next (&iter1, MSET_RECORD, (const void **) &record1, NULL))
+        {
+          rec_record_t record2 = NULL;
+          rec_mset_iterator_t iter2 = rec_mset_iterator (rec_rset_mset (rset2));
+          while (rec_mset_iterator_next (&iter2, MSET_RECORD, (const void **) &record2, NULL))
+            {
+              /* Merge record1 and record2 into a new record and add it
+                 to the join.  */
+
+              rec_record_t record = rec_record_new ();
+              if (!record)
+                {
+                  /* Out of memory.  */
+                  return NULL;
+                }
+
+              /* TODO.  */
+              
+              if (!rec_mset_append (rec_rset_mset (join), MSET_RECORD, (void *) record, MSET_ANY))
+                {
+                  /* Out of memory.  */
+                  return NULL;
+                }
+            }
+          rec_mset_iterator_free (&iter2);
+        }
+      rec_mset_iterator_free (&iter1);
+    }
+
+  return join;
+}
 
 static bool
 rec_db_set_act_rename (rec_rset_t rset,

@@ -95,8 +95,9 @@ double rec_sex_ast_node_real (rec_sex_ast_node_t node);
 void rec_sex_ast_node_set_real (rec_sex_ast_node_t node, double num);
 char *rec_sex_ast_node_str (rec_sex_ast_node_t node);
 void rec_sex_ast_node_set_str (rec_sex_ast_node_t node, char *str);
-char *rec_sex_ast_node_name (rec_sex_ast_node_t node);
-void rec_sex_ast_node_set_name (rec_sex_ast_node_t node, char *name);
+const char *rec_sex_ast_node_name (rec_sex_ast_node_t node);
+const char *rec_sex_ast_node_subname (rec_sex_ast_node_t node);
+void rec_sex_ast_node_set_name (rec_sex_ast_node_t node, const char *name, const char *subname);
 
 int rec_sex_ast_node_num_children (rec_sex_ast_node_t node);
 

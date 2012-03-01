@@ -936,6 +936,7 @@ rec_sex_eval_node (rec_sex_t sex,
       {
         rec_field_t field;
         const char *field_name;
+        const char *field_subname;
         int index;
         bool tofix;
 
@@ -947,6 +948,7 @@ rec_sex_eval_node (rec_sex_t sex,
         else
           {
             field_name = rec_sex_ast_node_name (node);
+            field_subname = rec_sex_ast_node_subname (node);
             index = rec_sex_ast_node_index (node);
             tofix = (index != -1);
             if (index == -1)
@@ -954,7 +956,26 @@ rec_sex_eval_node (rec_sex_t sex,
                 index = 0;
               }
 
-            field = rec_record_get_field_by_name (record, field_name, index);
+            /* If there is a subname then the effective field name is
+               the concatenation of the name and the subname separated
+               by a '_' character.  Otherwise it is just the name.  */
+
+            {
+              if (field_subname)
+                {
+                  char *effective_field_name = malloc (sizeof (char) *
+                                                       (strlen (field_name) + strlen (field_subname) + 2));
+                  strncpy (effective_field_name, field_name, strlen(field_name));
+                  effective_field_name[strlen(field_name)] = '_';
+                  strncpy (effective_field_name + strlen(field_name) + 1, field_subname, strlen(field_subname) + 1);
+
+                  field = rec_record_get_field_by_name (record, effective_field_name, index);
+                }
+              else
+                {
+                  field = rec_record_get_field_by_name (record, field_name, index);
+                }
+            }
 
             res.type = REC_SEX_VAL_STR;
             if (field)

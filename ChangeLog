@@ -1,5 +1,20 @@
 2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: support for dot notation in selection expressions.
+	* src/rec-sex-ast.c (rec_sex_ast_node_s): Name structs now contain
+	a name and a subname.
+	(rec_sex_ast_node_set_name): Get a 'subname' argument.
+	(rec_sex_ast_node_name): Return the name.
+	(rec_sex_ast_node_destroy): Destroy both name and subname in a
+	name node.
+	(rec_sex_ast_node_subname): New function.
+
+	* src/rec-sex-lex.l: Rule for field names modified to accept two
+	field names separated by a dot character.
+	(rec_sex_lex_extract_subname): New function.
+
+2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: remove obsolete and unused functionality from the rec writer.
 	* src/rec-writer.c (rec_write_record_with_rset): Function removed.
 	(rec_write_field_with_rset): Likewise.
