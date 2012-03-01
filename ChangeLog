@@ -1,5 +1,19 @@
 2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,utils: inner join implementation.
+	* src/rec-db.c (rec_db_merge_records): New function.
+
+	* utils/recsel.c (recsel_join): New global.
+	(recutl_print_help): Include help for -j.
+	(recsel_parse_args): Process the new command line option
+	-j|--join.
+	(recsel_process_data): Invoke rec_db_query with the proper join
+	option.
+
+	* src/rec-db.c (rec_db_query): Get a 'join' argument.
+
+2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,torture,doc: implementation of the 'rec' field type.
 	* doc/recutils.texi (Other types): Documentation for the 'rec'
 	field type.

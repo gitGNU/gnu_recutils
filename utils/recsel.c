@@ -60,6 +60,7 @@ char      *recsel_password     = NULL;
 bool       recsel_uniq         = false;
 size_t     recutl_random       = 0;
 char      *recsel_group_by_field = NULL;
+char      *recsel_join         = NULL;
 
 /*
  * Command line options management.
@@ -81,7 +82,8 @@ enum
   PASSWORD_ARG,
 #endif
   UNIQ_ARG,
-  GROUP_BY_ARG
+  GROUP_BY_ARG,
+  JOIN_ARG
 };
 
 static const struct option GNU_longOptions[] =
@@ -101,6 +103,7 @@ static const struct option GNU_longOptions[] =
 #endif
     {"uniq", no_argument, NULL, UNIQ_ARG},
     {"group-by", required_argument, NULL, GROUP_BY_ARG},
+    {"join", required_argument, NULL, JOIN_ARG},
     {NULL, 0, NULL, 0}
   };
 
@@ -114,7 +117,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recsel synopsis.
      no-wrap */
   printf (_("\
-Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q STR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
+Usage: recsel [OPTION]... [-t TYPE] [-j FIELD] [-n INDEXES | -e RECORD_EXPR | -q STR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"));
 
   /* TRANSLATORS: --help output, recsel arguments.
      no-wrap */
@@ -127,6 +130,7 @@ Select and print rec data.\n"), stdout);
   fputs (_("\
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
+  -j, --join=FIELD                    perform an inner join using the specified field.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
   -S, --sort=FIELD                    sort the output by the specified field.\n\
   -G, --group-by=FIELD                group records by the specified field.\n\
@@ -183,7 +187,7 @@ recsel_parse_args (int argc,
                              argv,
                              RECORD_SELECTION_SHORT_ARGS
                              ENCRYPTION_SHORT_ARGS
-                             "S:Cdcp:P:R:UG:",
+                             "S:Cdcp:P:R:UG:j:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -237,6 +241,22 @@ recsel_parse_args (int argc,
                 recutl_fatal (_("invalid field name in -S.\n"));
               }
 
+            break;
+          }
+        case JOIN_ARG:
+        case 'j':
+          {
+            if (recsel_join)
+              {
+                recutl_fatal (_("only one field can be specified as join criteria.\n"));
+              }
+
+            if (!rec_field_name_p (optarg))
+              {
+                recutl_fatal (_("please specify a correct field name to -j|--join.\n"));
+              }
+
+            recsel_join = xstrdup (optarg);
             break;
           }
         case GROUP_BY_ARG:
@@ -318,6 +338,13 @@ recsel_parse_args (int argc,
           }
 
         }
+    }
+
+  /* Global checks on the parameters.  */
+
+  if (!recutl_type && recsel_join)
+    {
+      recutl_fatal (_("joins can only be used when a named record set is selected.\n"));
     }
 }
 
@@ -406,6 +433,7 @@ recsel_process_data (rec_db_t db)
 
     rset = rec_db_query (db,
                          recutl_type,
+                         recsel_join,
                          recutl_index(),
                          recutl_sex,
                          recutl_quick_str,

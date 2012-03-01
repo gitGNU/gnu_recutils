@@ -1283,6 +1283,14 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
       record set contained in the database.  If TYPE is NULL then the
       default record set, if any, is queried.
 
+   JOIN
+   
+      If not NULL, this argument must be a string denoting a field
+      name.  This field name must be a foreign key (field of type
+      'rec') defined in the selected record set.  The query operation
+      will do an inner join using T1.Field = T2.Field as join
+      criteria.
+
    INDEX
 
       If not NULL, this argument is a pointer to a buffer containing
@@ -1372,6 +1380,7 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 
 rec_rset_t rec_db_query (rec_db_t     db,
                          const char  *type,
+                         const char  *join,
                          size_t      *index,
                          rec_sex_t    sex,
                          const char  *fast_string,

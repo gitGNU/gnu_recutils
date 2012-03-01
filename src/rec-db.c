@@ -66,7 +66,8 @@ static bool rec_db_set_act_add (rec_rset_t rset, rec_record_t record, rec_fex_t 
 static bool rec_db_set_act_setadd (rec_rset_t rset, rec_record_t record, rec_fex_t fex, const char *arg);
 static bool rec_db_set_act_delete (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool comment_out);
 
-static rec_rset_t rec_db_join (rec_db_t db, const char *type1, const char *type2);
+static rec_rset_t rec_db_join (rec_db_t db, const char *type1, const char *field, const char *type2);
+static rec_record_t rec_db_merge_records (rec_record_t record1, rec_record_t record2, const char *prefix);
 
 /*
  * Public functions.
@@ -255,6 +256,7 @@ rec_db_get_rset_by_type (rec_db_t db,
 rec_rset_t
 rec_db_query (rec_db_t db,
               const char  *type,
+              const char  *join,
               size_t       *index,
               rec_sex_t    sex,
               const char  *fast_string,
@@ -280,7 +282,9 @@ rec_db_query (rec_db_t db,
     }
 
   /* Search for the rset containing records of the requested type.  If
-     type equals to NULL then the default record set is used.  */
+     type equals to NULL then the default record set is used.  If JOIN
+     is not NULL then the record set must be the join of the involved
+     record sets.  */
 
   rset = rec_db_get_rset_by_type (db, type);
   if (!rset)
@@ -297,6 +301,31 @@ rec_db_query (rec_db_t db,
         {
           /* Type not found, so return an empty record set.  */
           return res;
+        }
+    }
+  else
+    {
+      if (join)
+        {
+          /* A join was requested.  The steps to proceed are:
+             
+             - Make sure that the requested field join is declared of
+               type 'rec' in the record set.
+             - Retrieve the referred record set from the database.
+             - Calculate the join and store it in 'rset'.
+          */
+
+          rec_type_t ref_type = rec_rset_get_field_type (rset, join);
+          if (ref_type && (rec_type_kind (ref_type) == REC_TYPE_REC))
+            {
+              const char *referred_type = rec_type_rec (ref_type);
+              rset = rec_db_join (db, type, join, referred_type);
+              if (!rset)
+                {
+                  /* Out of memory.  */
+                  return NULL;
+                }
+            }
         }
     }
 
@@ -892,20 +921,99 @@ bool rec_db_set (rec_db_t    db,
  * Private functions.
  */
 
+static rec_record_t
+rec_db_merge_records (rec_record_t record1,
+                      rec_record_t record2,
+                      const char *prefix)
+{
+  rec_mset_iterator_t iter;
+  rec_field_t field;
+  rec_record_t merge = NULL;
+
+  merge = rec_record_dup (record1);
+  if (!merge)
+    {
+      return NULL;
+    }
+
+  /* Add all the fields from record2 to record1, prepending PREFIX_ to
+     the field name.  It is the responsability of the user to provide
+     a PREFIX whose application results in a unique field.  */
+
+  iter = rec_mset_iterator (rec_record_mset (record2));
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
+    {
+      rec_field_t new_field = rec_field_dup (field);
+      if (!new_field)
+        {
+          /* Out of memory.  */
+          return NULL;
+        }
+
+      /* Apply the prefix.  */
+      {
+        const char *field_name = rec_field_name (new_field);
+        char *new_name = malloc (strlen (field_name) + strlen(prefix) + 2);
+        if (!new_name)
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+
+        strncpy (new_name, prefix, strlen (prefix));
+        new_name[strlen (prefix)] = '_';
+        strncpy (new_name + strlen (prefix) + 1, field_name, strlen (field_name) + 1);
+
+        if (!rec_field_set_name (new_field, new_name))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+
+        free (new_name);
+      }
+
+      if (!rec_mset_append (rec_record_mset (merge),
+                            MSET_FIELD,
+                            (void *) new_field,
+                            MSET_ANY))
+        {
+          /* Out of memory.  */
+          return NULL;
+        }
+    }
+  rec_mset_iterator_free (&iter);
+  
+  return merge;
+}
+
 static rec_rset_t
-rec_db_join (rec_db_t db, const char *type1, const char *type2)
+rec_db_join (rec_db_t db,
+             const char *type1,
+             const char *field,
+             const char *type2)
 {
   /* Note that this function is inefficient like hell.  */
 
-  /* Perform the cartesian cross of the specified record sets in DB.
-     If some of the specified record sets don't exist as named rset in
-     the specified database then return NULL.  */
+  /* Perform the join of the specified record sets, using TYPE1.Field
+     = TYPE2.Key as the join criteria.  If some of the specified
+     record sets don't exist as named rset in the specified database
+     then return NULL.  */
 
+  const char *key  = NULL;
   rec_rset_t join  = NULL;
   rec_rset_t rset1 = rec_db_get_rset_by_type (db, type1);
   rec_rset_t rset2 = rec_db_get_rset_by_type (db, type2);
+  
 
   if (!rset1 || !rset2)
+    {
+      return NULL;
+    }
+
+  /* Determine the key field of the second record set.  */
+  key = rec_rset_key (rset2);
+  if (!key)
     {
       return NULL;
     }
@@ -928,18 +1036,57 @@ rec_db_join (rec_db_t db, const char *type1, const char *type2)
           rec_mset_iterator_t iter2 = rec_mset_iterator (rec_rset_mset (rset2));
           while (rec_mset_iterator_next (&iter2, MSET_RECORD, (const void **) &record2, NULL))
             {
-              /* Merge record1 and record2 into a new record and add it
-                 to the join.  */
 
-              rec_record_t record = rec_record_new ();
+              /* Continue only if there is a field in record1 such as:
+                 record1.field == record2.key.  */
+
+              bool found = false;
+              size_t i = 0;
+              rec_field_t key_field = rec_record_get_field_by_name (record2, key, 0);
+              if (!key_field)
+                {
+                  /* A record without a key is an integrity error, but
+                     none of our business, so just skip it.  */
+                  break;
+                }
+
+              found = false;
+              for (i = 0; i < rec_record_get_num_fields_by_name (record1, field); i++)
+                {
+                  if (strcmp (rec_field_value (key_field),
+                              rec_field_value (rec_record_get_field_by_name (record1, field, i))) == 0)
+                    {
+                      found = true;
+                      break;
+                    }
+                }
+
+              if (!found)
+                {
+                  /* Skip this combination record.  */
+                  continue;
+                }
+
+              /* Merge record1 and record2 into a new record.  */
+
+              rec_record_t record = rec_db_merge_records (record1, record2, field);
               if (!record)
                 {
                   /* Out of memory.  */
                   return NULL;
                 }
 
-              /* TODO.  */
-              
+              /* Remove all the occurrences of the 'field' from
+                 record1, which were substituted in the merge.  */
+
+              while (rec_record_get_num_fields_by_name (record, field) > 0)
+                {
+                  rec_record_remove_field_by_name (record, field, 0);
+                }
+
+              /* Add it into the join result.  */
+
+              rec_record_set_container (record, join);
               if (!rec_mset_append (rec_rset_mset (join), MSET_RECORD, (void *) record, MSET_ANY))
                 {
                   /* Out of memory.  */
