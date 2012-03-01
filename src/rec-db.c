@@ -414,8 +414,8 @@ rec_db_query (rec_db_t db,
               
         /* Process this record.  */
 
-        /* Transform the record through the field expression
-           and add it to the result record set.  */
+        /* Transform the record through the field expression and add
+           it to the result record set.  */
         
         rec_record_t res_record
           = rec_db_process_fex (record, fex);
@@ -424,6 +424,13 @@ rec_db_query (rec_db_t db,
           {
             /* Out of memory.  */
             return NULL;
+          }
+
+        /* Do not add empty records to the result record set.  */
+
+        if (rec_record_num_elems (res_record) == 0)
+          {
+            continue;
           }
 
 #if defined REC_CRYPT_SUPPORT

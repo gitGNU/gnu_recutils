@@ -1188,7 +1188,13 @@ test_tool recsel-descriptor ok \
 field1: value21
 field2: value22
 field3: value23
-'          
+'
+
+test_tool recsel-nonexistent-print ok \
+          recsel \
+          '-p dontexist' \
+          multiple-records \
+          ''
 
 #
 # Cleanup
