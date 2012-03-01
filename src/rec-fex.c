@@ -584,7 +584,6 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
 
   if (*p == '.')
     {
-      size_t len = 0;
       char *subname = NULL;
 
       p++;
@@ -597,12 +596,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
         }
 
       /* Concatenate the field_name and the subname.  */
-
-      len = strlen (elem->field_name);
-      elem->field_name = realloc (elem->field_name, len + strlen (subname) + 2);
-      elem->field_name[len] = '_';
-      strncat (elem->field_name + len + 1, subname, strlen (subname) + 1);
-      free (subname);
+      elem->field_name = rec_concat_strings (elem->field_name, "_", subname);
     }
 
   /* Get the subscripts if they are present.  */

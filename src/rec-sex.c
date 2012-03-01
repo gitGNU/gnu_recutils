@@ -870,7 +870,8 @@ rec_sex_eval_node (rec_sex_t sex,
     case REC_SEX_OP_SHA:
       {
         int n;
-        const char *field_name;
+        const char *field_name    = NULL;
+        const char *field_subname = NULL;
         rec_sex_ast_node_t child;
 
         /* The child should be a Name.  */
@@ -883,7 +884,24 @@ rec_sex_eval_node (rec_sex_t sex,
           }
 
         field_name = rec_sex_ast_node_name (child);
-        n = rec_record_get_num_fields_by_name (record, field_name);
+        field_subname = rec_sex_ast_node_subname (child);
+
+        if (field_subname)
+          {
+            /* Compound a field name from the name/subname pair in the
+               AST node.  */
+            
+            const char *effective_name
+              = rec_concat_strings (field_name, "_", field_subname);
+
+            n = rec_record_get_num_fields_by_name (record,
+                                                   effective_name);
+            free (effective_name);
+          }
+        else
+          {
+            n = rec_record_get_num_fields_by_name (record, field_name);
+          }
 
         res.type = REC_SEX_VAL_INT;
         res.int_val = n;

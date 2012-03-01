@@ -235,6 +235,43 @@ id: 3
 pos: 5
 '
 
+test_declare_input_file packages-maintainers \
+'%rec: Package
+%type: Maintainer,PreviousMaintainer rec Hacker
+
+Name: GNU PDF
+URL: http://www.gnupdf.org
+Maintainer: jemarch@gnu.org
+Maintainer: aleksander@gnu.org
+
+Name: GNU recutils
+URL: http://www.gnu.org/software/recutils
+Maintainer: jemarch@gnu.org
+
+Name: GNU Emacs
+URL: http://www.gnu.org/software/emacs
+Maintainer: stefan@monnier.com
+PreviousMaintainer: rms@gnu.org
+
+%rec: Hacker
+%key: Email
+%type: Email email
+
+Name: Jose E. Marchesi
+Email: jemarch@gnu.org
+URL: http://www.jemarch.net
+
+Name: Aleksander Morgado
+Email: aleksander@gnu.org
+
+Name: Richard M. Stallman
+Email: rms@gnu.org
+URL: http://www.stallman.org
+
+Name: Stefan Monnier
+Email: stefan@monnier.com
+'
+
 #
 # Declare tests
 #
@@ -759,6 +796,15 @@ test_tool recsel-sex-sharp-multiple ok \
 'field1: value11
 field2: value121
 field2: value122
+'
+
+test_tool recsel-sex-sharp-subname ok \
+          recsel \
+          '-t Package -j Maintainer -e "#Maintainer.URL" -P Maintainer.URL' \
+          packages-maintainers \
+'http://www.jemarch.net
+
+http://www.jemarch.net
 '
 
 test_tool recsel-sex-match ok \

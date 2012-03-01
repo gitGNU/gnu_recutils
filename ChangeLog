@@ -1,5 +1,18 @@
 2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: make the # operator to work with field subnames.
+	* src/rec-fex.c (rec_fex_parse_elem): Use rec_concat_strings.
+
+	* src/rec-utils.c (rec_concat_strings): New function.
+
+	* src/rec-sex.c (rec_sex_eval_node): Use the subname of the name
+	node, if present, in the evaluation of OP_SHA operations.
+
+	* torture/utils/recsel.sh (package-maintainers): New input file.
+	(recsel-sex-sharp-subname): New test.
+
+2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: support for field subnames with dot notation in fexes.
 	* src/rec-fex.c (rec_fex_parse_elem): Support subnames in fexes.
 

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -409,6 +409,23 @@ rec_endian_swap (uint32_t number)
     | ((number << 8) & 0x00FF0000)
     | ((number >> 8) & 0x0000FF00)
     | (number << 24);
+
+  return res;
+}
+
+char *
+rec_concat_strings (const char *str1,
+                    const char *str2,
+                    const char *str3)
+{
+  char *res = malloc (strlen (str1) + strlen (str2) + strlen (str3) + 1);
+
+  if (res)
+    {
+      strncpy (res, str1, strlen (str1));
+      strncpy (res + strlen (str1), str2, strlen (str2));
+      strncpy (res + strlen (str1) + strlen (str2), str3, strlen (str3) + 1);
+    }
 
   return res;
 }

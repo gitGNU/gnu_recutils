@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,9 @@ bool rec_letter_p (char c);
 bool rec_parse_int (const char **str, int *num);
 void rec_skip_blanks (const char **str);
 bool rec_parse_regexp (const char **str, const char *re, char **result);
+
+/* String utilities.  */
+char *rec_concat_strings (const char *str1, const char *str2, const char *str3);
 
 /* Miscellanea.  */
 int rec_timespec_subtract (struct timespec *result,
