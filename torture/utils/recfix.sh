@@ -34,6 +34,24 @@ test_init "recfix"
 # Create input files.
 #
 
+test_declare_input_file type-rec-valid \
+'%rec: Package
+%type: Maintainer rec Hacker
+
+Name: GNU recutils
+Maintainer: jemarch@gnu.org
+'
+
+test_declare_input_file type-rec-invalid-empty \
+'%rec: Package
+%type: Maintainer rec
+'
+
+test_declare_input_file type-rec-invalid-malformed \
+'%rec: Package
+%type: Maintainer rec foo;invalid
+'
+
 test_declare_input_file type-int-valid \
 '%rec: Types
 %type: Integer int
@@ -1005,6 +1023,80 @@ Id: foo
 Name: Item 2
 '
 
+test_declare_input_file type-rec-norset \
+'%rec: foo
+%type: Foo rec bar
+
+Foo: foo
+
+Foo: bar
+'
+
+test_declare_input_file type-rec-nokey \
+'%rec: foo
+%type: Foo rec bar
+
+Foo: foo
+
+Foo: bar
+
+%rec: bar
+
+Bar: 10
+
+Bar: 20
+'
+
+test_declare_input_file type-rec-key-notype \
+'%rec: foo
+%type: Foo rec bar
+
+Foo: foo
+
+Foo: bar
+
+%rec: bar
+%key: Bar
+
+Bar: 10
+
+Bar: 20
+'
+
+test_declare_input_file type-rec-key-type \
+'%rec: foo
+%type: Foo rec bar
+
+Foo: 2
+
+Foo: 3
+
+%rec: bar
+%key: Bar
+%type: Bar int
+
+Bar: 10
+
+Bar: 20
+'
+
+test_declare_input_file type-rec-key-type-invalid \
+'%rec: foo
+%type: Foo rec bar
+
+Foo: xxx
+
+Foo: 3
+
+%rec: bar
+%key: Bar
+%type: Bar int
+
+Bar: 10
+
+Bar: 20
+'
+
 #
 # Declare tests.
 #
@@ -1829,6 +1921,50 @@ test_tool recfix-uuid-invalid xfail \
           uuid-fields-invalid
 
 fi
+
+test_tool recfix-type-rec-valid ok \
+          recfix \
+          '--check' \
+          type-rec-valid \
+          ''
+
+test_tool recfix-type-rec-invalid-empty xfail \
+          recfix \
+          '--check' \
+          type-rec-invalid-empty
+
+test_tool recfix-type-rec-invalid-malformed xfail \
+          recfix \
+          '--check' \
+          type-rec-invalid-malformed
+
+test_tool recfix-type-rec-norset ok \
+          recfix \
+          '--check' \
+          type-rec-norset \
+          ''
+test_tool recfix-type-rec-nokey ok \
+          recfix \
+          '--check' \
+          type-rec-nokey \
+          ''
+
+test_tool recfix-type-rec-key-notype ok \
+          recfix \
+          '--check' \
+          type-rec-key-notype \
+          ''
+
+test_tool recfix-type-rec-key-type ok \
+          recfix \
+          '--check' \
+          type-rec-key-type \
+          ''
+
+test_tool recfix-type-rec-key-type-invalid xfail \
+          recfix \
+          '--check' \
+          type-rec-key-type-invalid
 
 #
 # Cleanup.

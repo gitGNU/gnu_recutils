@@ -1151,6 +1151,22 @@ displayed in 5 groups separated by hyphens, as follows:
 550e8400-e29b-41d4-a716-446655440000
 @end example
 
+@noindent
+The @dfn{rec} field type is used to support the notion of @dfn{foreign
+key} in the recutils world.  It is used to denote the fact that a
+field is referring some record stored in another record set.  For
+example:
+
+@example
+%typedef: Maintainer_t rec Hacker
+@end example
+
+@noindent
+The previous example defines the type @code{Maintainer_t} which is of
+type ``record @code{Hacker}''.  This basically means that the values
+to be stored in fields of type @code{Maintainer_t} are of whatever
+type defined for the primary key of the @code{Hacker} record set.
+
 @node %auto
 @chapter %auto
 

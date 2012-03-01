@@ -564,7 +564,9 @@ enum rec_type_kind_e
     /* An email.  */
     REC_TYPE_EMAIL,
     /* An universally unique identifier (uuid).  */
-    REC_TYPE_UUID
+    REC_TYPE_UUID,
+    /* A foreign key.  */
+    REC_TYPE_REC
   };
 
 typedef struct rec_type_s *rec_type_t;
@@ -587,6 +589,10 @@ char *rec_type_kind_str (rec_type_t type);
    not define a range then -1 is returned.  */
 int rec_type_min (rec_type_t type);
 int rec_type_max (rec_type_t type);
+
+/* Get the record set name of a rec type.  If the type does not define
+   a rec then NULL is returned.  */
+const char *rec_type_rec (rec_type_t type);
 
 /* Get and set the name of a type.  Types are created anonymous by
    rec_type_new, so the getter will return NULL unless a name is
@@ -981,6 +987,8 @@ void rec_record_uniq (rec_record_t record);
  * maybe preceded by a record descriptor.
  */
 
+#define REC_RECORD_TYPE_RE REC_FNAME_RE
+
 /* Opaque data type representing a record set.  */
 
 typedef struct rec_rset_s *rec_rset_t;
@@ -1122,6 +1130,11 @@ void rec_rset_rename_field (rec_rset_t rset,
    auto-incremented fields in a record set.  */
 
 rec_fex_t rec_rset_auto (rec_rset_t rset);
+
+/* Return the name of the key field of the record set.  If the record
+   set does not have a key defined then return NULL.  */
+
+const char *rec_rset_key (rec_rset_t rset);
 
 /* Return a fex with the names of all the fields defined as
    confidential fields in a record set.  */

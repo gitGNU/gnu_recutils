@@ -59,6 +59,7 @@
 #define REC_TYPE_ENUM_NAME   "enum"
 #define REC_TYPE_EMAIL_NAME  "email"
 #define REC_TYPE_FIELD_NAME  "field"
+#define REC_TYPE_REC_NAME    "rec"
 
 #if defined UUID_TYPE
 #  define REC_TYPE_UUID_NAME   "uuid"
@@ -107,6 +108,8 @@
   REC_TYPE_ZBLANKS_RE                           \
   "$"
   
+#define REC_TYPE_REC_VALUE_RE
+
 /* Regular expression denoting a type name.  */
 
 #if defined UUID_TYPE
@@ -121,7 +124,8 @@
       REC_TYPE_LINE_NAME  "|" REC_TYPE_REGEXP_NAME "|" \
       REC_TYPE_DATE_NAME  "|" REC_TYPE_ENUM_NAME   "|" \
       REC_TYPE_EMAIL_NAME "|" REC_TYPE_BOOL_NAME   "|" \
-      REC_TYPE_FIELD_NAME     REC_TYPE_CLASS_UUID_RE   \
+      REC_TYPE_FIELD_NAME "|" REC_TYPE_REC_NAME        \
+      REC_TYPE_CLASS_UUID_RE                           \
   ")"
 
 /* Regular expressions for the type descriptions.  */
@@ -178,6 +182,10 @@
 #define REC_TYPE_FIELD_DESCR_RE                 \
   REC_TYPE_FIELD_NAME
 
+/* rec RECORD_TYPE */
+#define REC_TYPE_REC_DESCR_RE                   \
+  REC_TYPE_REC_NAME REC_TYPE_BLANKS_RE REC_RECORD_TYPE_RE
+
 /* email */
 #define REC_TYPE_EMAIL_DESCR_RE                 \
   REC_TYPE_EMAIL_NAME
@@ -201,6 +209,7 @@
      "|" "(" REC_TYPE_EMAIL_DESCR_RE  ")"       \
      "|" "(" REC_TYPE_ENUM_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_FIELD_DESCR_RE  ")"       \
+     "|" "(" REC_TYPE_REC_DESCR_RE    ")"       \
   ")"                                           \
   REC_TYPE_ZBLANKS_RE                           \
   "$"
@@ -221,6 +230,7 @@ struct rec_type_s
     size_t max_size;          /* Size of string.  */
     int range[2];             /* Range.  */
     regex_t regexp;           /* Regular expression.  */
+    char *recname;            /* Record.  */
 
 #define REC_ENUM_MAX_NAMES 50
     char *names[REC_ENUM_MAX_NAMES];   /* Names in enumeration.  */
@@ -261,6 +271,7 @@ static bool rec_type_check_date (rec_type_t type, const char *str, rec_buf_t err
 static bool rec_type_check_email (rec_type_t type, const char *str, rec_buf_t errors);
 static bool rec_type_check_enum (rec_type_t type, const char *str, rec_buf_t errors);
 static bool rec_type_check_field (rec_type_t type, const char *str, rec_buf_t errors);
+static bool rec_type_check_rec (rec_type_t type, const char *str, rec_buf_t errors);
 
 #if defined UUID_TYPE
 static bool rec_type_check_uuid (rec_type_t type, const char *str, rec_buf_t errors);
@@ -272,6 +283,7 @@ static const char *rec_type_parse_size (const char *str, rec_type_t type);
 static const char *rec_type_parse_enum (const char *str, rec_type_t type);
 static const char *rec_type_parse_regexp_type (const char *str, rec_type_t type);
 static const char *rec_type_parse_range (const char *str, rec_type_t type);
+static const char *rec_type_parse_rec (const char *str, rec_type_t type);
 
 /*
  * Public functions.
@@ -388,6 +400,16 @@ rec_type_new (const char *str)
     case REC_TYPE_RANGE:
       {
         p = rec_type_parse_range (p, new);
+        if (!p)
+          {
+            free (new);
+            new = NULL;
+          }
+        break;
+      }
+    case REC_TYPE_REC:
+      {
+        p = rec_type_parse_rec (p, new);
         if (!p)
           {
             free (new);
@@ -516,6 +538,11 @@ rec_type_kind_str (rec_type_t type)
         res = REC_TYPE_FIELD_NAME;
         break;
       }
+    case REC_TYPE_REC:
+      {
+        res = REC_TYPE_REC_NAME;
+        break;
+      }
 #if defined UUID_TYPE
     case REC_TYPE_UUID:
       {
@@ -606,6 +633,11 @@ rec_type_check (rec_type_t type,
     case REC_TYPE_FIELD:
       {
         res = rec_type_check_field (type, str, errors);
+        break;
+      }
+    case REC_TYPE_REC:
+      {
+        res = rec_type_check_rec (type, str, errors);
         break;
       }
 #if defined UUID_TYPE
@@ -878,6 +910,19 @@ rec_type_max (rec_type_t type)
   return res;
 }
 
+const char *
+rec_type_rec (rec_type_t type)
+{
+  const char *res = NULL;
+
+  if (type->kind == REC_TYPE_REC)
+    {
+      res = type->data.recname;
+    }
+
+  return res;
+}
+
 /*
  * Private functions.
  */
@@ -933,6 +978,10 @@ rec_type_parse_type_kind (char *str)
     {
       res = REC_TYPE_FIELD;
     }
+  if (strcmp (str, REC_TYPE_REC_NAME) == 0)
+    {
+      res = REC_TYPE_REC;
+    }
 #if defined UUID_TYPE
   if (strcmp (str, REC_TYPE_UUID_NAME) == 0)
     {
@@ -957,6 +1006,20 @@ rec_type_check_int (rec_type_t type,
     }
 
   return ret;
+}
+
+static bool
+rec_type_check_rec (rec_type_t type,
+                    const char *str,
+                    rec_buf_t errors)
+{
+  /* The values of type 'rec' are of whatever type the primary key of
+     the referred type is.  That check is not implemented here, but in
+     rec-types.c.
+
+     So sorry Mario, but the Princess is kept in another castle...  */
+  
+  return true;
 }
 
 static bool
@@ -1288,8 +1351,8 @@ rec_type_parse_enum (const char *str, rec_type_t type)
         {
           /* Parse an enum entry.  */
           if (!rec_parse_regexp (&p,
-                                      "^" REC_TYPE_ENUM_NAME_RE,
-                                      &(type->data.names[i])))
+                                 "^" REC_TYPE_ENUM_NAME_RE,
+                                 &(type->data.names[i])))
             {
               p = NULL;
               break;
@@ -1385,6 +1448,23 @@ rec_type_parse_regexp_type (const char *str, rec_type_t type)
         {
           p = NULL;
         }
+    }
+
+  return p;
+}
+
+static const char *
+rec_type_parse_rec (const char *str, rec_type_t type)
+{
+  const char *p = str;
+  
+  /* Get the record name.  */
+  rec_skip_blanks (&p);
+  if (!rec_parse_regexp (&p,
+                         "^" REC_RECORD_TYPE_RE,
+                         &(type->data.recname)))
+    {
+      return NULL;
     }
 
   return p;

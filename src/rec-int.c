@@ -243,12 +243,10 @@ rec_int_check_field_type (rec_db_t db,
 {
   bool res = true;
   const char *field_name = NULL;
-  const char *rset_name  = NULL;
   rec_type_t type;
   char *errors_str;
 
   res = true;
-  rset_name = NULL;
 
   field_name = rec_field_name (field);
 
@@ -257,21 +255,64 @@ rec_int_check_field_type (rec_db_t db,
 
   type = rec_rset_get_field_type (rset, rec_field_name (field));
 
-  /* Check the field with the type.  */
+  /* Check the field with the type.  This is done by simply invoking
+     rec_type_check on the field value.  An exception to this is the
+     'rec' type.  The 'rec' type is used to implement foreign keys,
+     and its effect on the type integrity system is that the value of
+     the field must be considered to be of whatever type the primary
+     key of the referred record set is.  */
 
   if (type)
     {
-      if (!rec_type_check (type, rec_field_value (field), &errors_str))
+      if (rec_type_kind (type) == REC_TYPE_REC)
         {
-          if (errors)
+          /* Get the name of the referred record set.  Check the type
+             if and only if:
+             
+             - The referred rset exists in DB and
+             - The referred rset has a primary key.
+             - The primary key of the referred rset has a type.
+          */
+
+          const char *rset_type = rec_type_rec (type);
+          rec_rset_t rset = rec_db_get_rset_by_type (db, rset_type);
+
+          if (rset)
             {
-              ADD_ERROR (errors,
-                         "%s:%s: error: %s\n",
-                         rec_field_source (field), rec_field_location_str (field),
-                         errors_str);
+              const char *key = rec_rset_key (rset);
+              rec_type_t key_type = rec_rset_get_field_type (rset, key);
+
+              if (key_type)
+                {
+                  if (!rec_type_check (key_type, rec_field_value (field), &errors_str))
+                    {
+                      if (errors)
+                        {
+                          ADD_ERROR (errors,
+                                     "%s:%s: error: %s\n",
+                                     rec_field_source (field), rec_field_location_str (field),
+                                     errors_str);
+                        }
+                      free (errors_str);
+                      res = false;
+                    }
+                }
             }
-          free (errors_str);
-          res = false;
+        }
+      else
+        {
+          if (!rec_type_check (type, rec_field_value (field), &errors_str))
+            {
+              if (errors)
+                {
+                  ADD_ERROR (errors,
+                             "%s:%s: error: %s\n",
+                             rec_field_source (field), rec_field_location_str (field),
+                             errors_str);
+                }
+              free (errors_str);
+              res = false;
+            }
         }
     }
 
@@ -1084,7 +1125,7 @@ rec_int_rec_type_p (const char *str)
 {
   return rec_match (str,
                     "^[ \t]*"
-                    REC_FNAME_RE
+                    REC_RECORD_TYPE_RE
                     "[ \n\t]*"
                     "("
                     "(" REC_URL_REGEXP ")"

@@ -1,3 +1,51 @@
+2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,torture,doc: implementation of the 'rec' field type.
+	* doc/recutils.texi (Other types): Documentation for the 'rec'
+	field type.
+
+	* torture/utils/recfix.sh (type-rec-norset): New input file.
+	(type-rec-nokey): Likewise.
+	(type-rec-key-notype): Likewise.
+	(type-rec-key-type): Likewise.
+	(type-rec-key-type-invalid): Likewise.
+	(recfix-type-rec-norset): New test.
+	(recfix-type-rec-nokey): Likewise.
+	(recfix-type-rec-key-notype): Likewise.
+	(recfix-type-rec-type): Likewise.
+	(recfix-type-rec-key-type-invalid): Likewise.
+
+	* src/rec-int.c (rec_int_check_field_type): Check using the type
+	of the key of the referred record set (if any) if the field is of
+	type 'rec'.
+
+	* src/rec-rset.c (rec_rset_fprops_s): New property key_p.
+	(rec_rset_update_field_props): Reset key_p.
+	(rec_rset_get_props): Initialize key_p.
+	(rec_rset_update_field_props): Update the key_p property.
+	(rec_rset_key): New function.
+
+	* src/rec-types.c (rec_type_rec): New function.
+
+	* torture/utils/recfix.sh (type-rec-valid): New input file.
+	(type-rec-invalid-empty): Likewise.
+	(type-rec-invalid-malformed): Likewise.
+	(recfix-type-rec-valid): New test.
+	(recfix-type-rec-invalid-empty): Likewise.
+	(recfix-type-rec-invalid-malformed): Likewise.
+
+	* src/rec-types.c (REC_TYPE_REC_DESCR_RE): New constant.
+	(REC_TYPE_DESCR_RE): Updated.
+	(rec_type_parse_rec): New function.
+	(rec_type_check_rec): Likewise.
+
+	* src/rec-int.c (rec_int_rec_type_p): Use REC_RECORD_TYPE_RE.
+
+	* src/rec.h (REC_RECORD_TYPE_RE): New constant.
+
+	* src/rec-types.c (REC_TYPE_REC_NAME): New constant.
+	(REC_TYPE_CLASS_RE): Updated.
+
 2012-02-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: support for dot notation in selection expressions.

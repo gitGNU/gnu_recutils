@@ -53,6 +53,7 @@ struct rec_rset_fprops_s
 {
   const char *fname;
 
+  bool key_p;          /* Primary key  */
   bool auto_p;         /* Auto-field.  */
 #if defined REC_CRYPT_SUPPORT
   bool confidential_p; /* Confidential field.  */
@@ -529,6 +530,26 @@ rec_rset_rename_field (rec_rset_t rset,
 
   /* Update the types registry.  */
   rec_rset_update_field_props (rset);
+}
+
+const char *
+rec_rset_key (rec_rset_t rset)
+{
+  const char *key = NULL;
+  rec_rset_fprops_t props = rset->field_props;
+
+  while (props)
+    {
+      if (props->key_p)
+        {
+          /* There must be only one field marked as key.  */
+          key = props->fname;
+          break;
+        }
+      props = props->next;
+    }
+  
+  return key;
 }
 
 rec_fex_t
@@ -1256,7 +1277,6 @@ static void
 rec_rset_update_field_props (rec_rset_t rset)
 {
   rec_rset_fprops_t props = NULL;
-  const char *auto_field_name;
 #if defined REC_CRYPT_SUPPORT
   const char *confidential_field_name;
 #endif
@@ -1266,6 +1286,7 @@ rec_rset_update_field_props (rec_rset_t rset)
   props = rset->field_props;
   while (props)
     {
+      props->key_p = false;
       props->auto_p = false;
       if (props->type)
         {
@@ -1347,6 +1368,22 @@ rec_rset_update_field_props (rec_rset_t rset)
                 }
             }
 
+          /* Update the key field.  */
+          if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_KEY)))
+            {
+              /* %key: fields containing incorrect data are
+                  ignored.  */
+
+              const char *field_value = rec_field_value (field);
+              char *type_name = NULL;
+
+              rec_skip_blanks (&field_value);
+              rec_parse_regexp (&field_value, "^" REC_RECORD_TYPE_RE, &type_name);
+              props = rec_rset_get_props (rset, type_name, true);
+              props->key_p = true;
+              free (type_name);
+            }
+
           /* Update auto fields.  */
           if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_AUTO)))
             {
@@ -1360,7 +1397,8 @@ rec_rset_update_field_props (rec_rset_t rset)
 
                   for (i = 0; i < rec_fex_size (fex); i++)
                     {
-                      auto_field_name = rec_fex_elem_field_name (rec_fex_get (fex, i));
+                      const char *auto_field_name
+                        = rec_fex_elem_field_name (rec_fex_get (fex, i));
                       props = rec_rset_get_props (rset, auto_field_name, true);
                       props->auto_p = true;
                     }
@@ -1595,6 +1633,7 @@ rec_rset_get_props (rec_rset_t rset,
         {
           props->fname = strdup (fname);
           props->auto_p = false;
+          props->key_p = false;
 
 #if defined REC_CRYPT_SUPPORT
           props->confidential_p = false;
