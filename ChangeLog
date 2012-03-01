@@ -1,5 +1,12 @@
 2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: support for field subnames with dot notation in fexes.
+	* src/rec-fex.c (rec_fex_parse_elem): Support subnames in fexes.
+
+	* src/rec.h (REC_FNAME_FEX_RE): New constant.
+
+2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,torture: fix a bug that caused to have empty records in query
 	results.
 	* torture/utils/recsel.sh (recsel-nonexistent-print): New test.

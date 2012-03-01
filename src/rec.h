@@ -443,9 +443,10 @@ enum rec_fex_kind_e
 
 /* Regular expressions matching written fexes.  */
 
+#define REC_FNAME_FEX_RE      REC_FNAME_RE "(\\." REC_FNAME_RE ")?"
 #define REC_FNAME_LIST_RE     REC_FNAME_RE "([ \n\t]+" REC_FNAME_RE ")*"
-#define REC_FNAME_LIST_CS_RE  REC_FNAME_RE "(," REC_FNAME_RE ")*"
-#define REC_FNAME_SUB_RE      REC_FNAME_RE "(\\[[0-9]+(-[0-9]+)?\\])?" "(:" REC_FNAME_RE ")?"
+#define REC_FNAME_LIST_CS_RE  REC_FNAME_FEX_RE "(," REC_FNAME_FEX_RE ")*"
+#define REC_FNAME_SUB_RE      REC_FNAME_FEX_RE "(\\[[0-9]+(-[0-9]+)?\\])?" "(:" REC_FNAME_FEX_RE ")?"
 #define REC_FNAME_LIST_SUB_RE REC_FNAME_SUB_RE "(," REC_FNAME_SUB_RE ")*"
 
 /*********** Creating and destroying field expressions ************/

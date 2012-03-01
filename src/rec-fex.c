@@ -579,6 +579,32 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
       return false;
     }
 
+  /* Get the subname and modify the name accordingly, if it
+     exists.  */
+
+  if (*p == '.')
+    {
+      size_t len = 0;
+      char *subname = NULL;
+
+      p++;
+      if (!rec_parse_regexp (&p,
+                             "^" REC_FNAME_RE,
+                             &subname))
+        {
+          /* Parse error.  */
+          return false;
+        }
+
+      /* Concatenate the field_name and the subname.  */
+
+      len = strlen (elem->field_name);
+      elem->field_name = realloc (elem->field_name, len + strlen (subname) + 2);
+      elem->field_name[len] = '_';
+      strncat (elem->field_name + len + 1, subname, strlen (subname) + 1);
+      free (subname);
+    }
+
   /* Get the subscripts if they are present.  */
   if (*p == '[')
     {
