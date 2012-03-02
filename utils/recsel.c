@@ -130,7 +130,6 @@ Select and print rec data.\n"), stdout);
   fputs (_("\
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
-  -j, --join=FIELD                    perform an inner join using the specified field.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
   -S, --sort=FIELD                    sort the output by the specified field.\n\
   -G, --group-by=FIELD                group records by the specified field.\n\
@@ -149,6 +148,9 @@ Select and print rec data.\n"), stdout);
 
   puts ("");
   recutl_print_help_record_selection ();
+  fputs (_("\
+  -j, --join=FIELD                    perform an inner join using the specified field.\n"),
+         stdout);
 
   puts ("");
   /* TRANSLATORS: --help output, recsel output options.
