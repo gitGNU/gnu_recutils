@@ -1,3 +1,9 @@
+2012-03-02  Jose E. Marchesi  <jco@terma.com>
+
+	src: partial implementation of rset mixing in joins.
+	* src/rec-db.c (rec_db_join): Add a record descriptor to the
+	joined record set.
+
 2012-03-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: make the # operator to work with field subnames.
