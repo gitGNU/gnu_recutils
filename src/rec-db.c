@@ -31,6 +31,7 @@
 #include <gl_array_list.h>
 #include <gl_list.h>
 
+#include <rec-utils.h>
 #include <rec.h>
 
 /*
@@ -1104,6 +1105,62 @@ rec_db_join (rec_db_t db,
         }
       rec_mset_iterator_free (&iter1);
     }
+
+  /* The descriptor of the new record set will define records of type
+     TYPE_FIELD, where FIELD is the name specified to trigger the
+     operation.  The contents of the descriptor will be the contents
+     of the descriptor of TYPE plus some of the fields in the
+     descriptor of the referred type.  In particular, fields denoting
+     properties of the fields "imported" into the joined table (such
+     as types) are copied.  */
+  {
+    rec_record_t new_descriptor = rec_record_new ();
+    if (!new_descriptor)
+      {
+        /* Out of memory.  */
+        return NULL;
+      }
+
+    /* Set the type of the joined record set.  */
+
+    {
+      rec_field_t new_field = NULL;
+      char *new_rset_type = rec_concat_strings (type1, "_", field);
+      if (!new_rset_type)
+        {
+          /* Out of memory.  */
+          return NULL;
+        }
+
+      new_field = rec_field_new (rec_std_field_name (REC_FIELD_REC),
+                                 new_rset_type);
+      if (!rec_mset_append (rec_record_mset (new_descriptor),
+                            MSET_FIELD,
+                            (void *) new_field,
+                            MSET_ANY))
+        {
+          /* Out of memory.  */
+          return NULL;
+        }
+    }
+
+    /* Add all the fields of the record descriptor of rset1, not
+       including:
+
+       - %rec, for obvious reasons.
+
+       - Any %type field on the 'join field', since the join field is
+         removed from the records in the join.
+
+    */
+
+    {
+      rec_record_t descriptor1 = rec_rset_descriptor (rset1);
+
+    }
+    
+    rec_rset_set_descriptor (join, new_descriptor);
+  }
 
   return join;
 }
