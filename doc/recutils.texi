@@ -2110,9 +2110,16 @@ Select records having a field whose value contains the substring
 @itemx @w{@kbd{--random}=@var{num}}
 Select @var{num} random records.  If @var{num} is zero then select all
 the records. 
-@item -t TYPE
+@item -t @var{type}
 @itemx @w{@kbd{--type}=@var{type}}
 Select records of a given type only.
+@item -j @var{field}
+@itemx @w{@kbd{--field}=@var{field}}
+Perform an inner join of the record set selected in @option{-t} and
+the record set for which @var{field} is a foreign key.  @var{field}
+must be a field declared with type @code{rec} and thus must be a
+foreign key.  If a join is performed then any selection expression and
+field expression operate on the joined record sets.
 @end table
 
 The @dfn{output options} are used to determine what information about
