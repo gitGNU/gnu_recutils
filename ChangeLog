@@ -1,3 +1,13 @@
+2012-03-02  Giuseppe Scrivano  <giuseppe@southpole.se>
+
+	src: make some variables static.
+	* utils/recutl.c (recutl_sort_p): Make it static.
+	(recutl_order_rset): Likewise.
+	(recutl_order_by_field): Likewise.
+	(recutl_interactive_p): Likewise.
+	(recutl_indexes): Likewise.
+	(recutl_indexes_size): Likewise.
+
 2012-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (recsel Invocation): Document -j|--join.
