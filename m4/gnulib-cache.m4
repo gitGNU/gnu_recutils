@@ -27,7 +27,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --libtool --macro-prefix=gl --no-vc-files announce-gen array-list autobuild base64 closeout crc execute fprintf-posix gendocs getopt-gnu getpass-gnu gettext gettext-h gnupload list maintainer-makefile mkstemp parse-datetime printf-posix progname random_r readline regex regexprops-generic stdint strcasestr strsep tempname vasnprintf-posix vasprintf vasprintf-posix
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --libtool --macro-prefix=gl --no-vc-files announce-gen array-list autobuild base64 closeout crc execute fprintf-posix gendocs getopt-gnu getpass-gnu gettext gettext-h gnupload list maintainer-makefile mkstemp parse-datetime printf-posix progname random_r read-file readline regex regexprops-generic stdint strcasestr strsep tempname vasnprintf-posix vasprintf vasprintf-posix
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -53,6 +53,7 @@ gl_MODULES([
   printf-posix
   progname
   random_r
+  read-file
   readline
   regex
   regexprops-generic

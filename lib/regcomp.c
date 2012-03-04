@@ -14,8 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. */
+   with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
 static reg_errcode_t re_compile_internal (regex_t *preg, const char * pattern,
 					  size_t length, reg_syntax_t syntax);
@@ -586,19 +585,23 @@ weak_alias (__regerror, regerror)
 static const bitset_t utf8_sb_map =
 {
   /* Set the first 128 bits.  */
-# if 4 * BITSET_WORD_BITS < ASCII_CHARS
-#  error "bitset_word_t is narrower than 32 bits"
-# elif 3 * BITSET_WORD_BITS < ASCII_CHARS
+# ifdef __GNUC__
+  [0 ... 0x80 / BITSET_WORD_BITS - 1] = BITSET_WORD_MAX
+# else
+#  if 4 * BITSET_WORD_BITS < ASCII_CHARS
+#   error "bitset_word_t is narrower than 32 bits"
+#  elif 3 * BITSET_WORD_BITS < ASCII_CHARS
   BITSET_WORD_MAX, BITSET_WORD_MAX, BITSET_WORD_MAX,
-# elif 2 * BITSET_WORD_BITS < ASCII_CHARS
+#  elif 2 * BITSET_WORD_BITS < ASCII_CHARS
   BITSET_WORD_MAX, BITSET_WORD_MAX,
-# elif 1 * BITSET_WORD_BITS < ASCII_CHARS
+#  elif 1 * BITSET_WORD_BITS < ASCII_CHARS
   BITSET_WORD_MAX,
-# endif
+#  endif
   (BITSET_WORD_MAX
    >> (SBC_MAX % BITSET_WORD_BITS == 0
        ? 0
        : BITSET_WORD_BITS - SBC_MAX % BITSET_WORD_BITS))
+# endif
 };
 #endif
 
@@ -873,7 +876,7 @@ init_dfa (re_dfa_t *dfa, size_t pat_len)
      calculation below, and for similar doubling calculations
      elsewhere.  And it's <= rather than <, because some of the
      doubling calculations add 1 afterwards.  */
-  if (BE (SIZE_MAX / max_object_size / 2 <= pat_len, 0))
+  if (BE (MIN (IDX_MAX, SIZE_MAX / max_object_size) / 2 <= pat_len, 0))
     return REG_ESPACE;
 
   dfa->nodes_alloc = pat_len + 1;
@@ -947,9 +950,39 @@ static void
 internal_function
 init_word_char (re_dfa_t *dfa)
 {
-  int i, j, ch;
   dfa->word_ops_used = 1;
-  for (i = 0, ch = 0; i < BITSET_WORDS; ++i)
+  int i = 0;
+  int j;
+  int ch = 0;
+  if (BE (dfa->map_notascii == 0, 1))
+    {
+      if (BITSET_WORD_BITS == 64)
+	{
+	  dfa->word_char[0] = UINT64_C (0x03ff000000000000);
+	  dfa->word_char[1] = UINT64_C (0x07fffffe87fffffe);
+	  i = 2;
+	}
+      else if (BITSET_WORD_BITS == 32)
+	{
+	  dfa->word_char[0] = UINT32_C (0x00000000);
+	  dfa->word_char[1] = UINT32_C (0x03ff0000);
+	  dfa->word_char[2] = UINT32_C (0x87fffffe);
+	  dfa->word_char[3] = UINT32_C (0x07fffffe);
+	  i = 4;
+	}
+      else
+        goto general_case;
+      ch = 128;
+
+      if (BE (dfa->is_utf8, 1))
+	{
+	  memset (&dfa->word_char[i], '\0', (SBC_MAX - ch) / 8);
+	  return;
+	}
+    }
+
+ general_case:
+  for (; i < BITSET_WORDS; ++i)
     for (j = 0; j < BITSET_WORD_BITS; ++j, ++ch)
       if (isalnum (ch) || ch == '_')
 	dfa->word_char[i] |= (bitset_word_t) 1 << j;
@@ -2092,7 +2125,7 @@ peek_token_bracket (re_token_t *token, re_string_t *input, reg_syntax_t syntax)
 
 /* Entry point of the parser.
    Parse the regular expression REGEXP and return the structure tree.
-   If an error is occured, ERR is set by error code, and return NULL.
+   If an error occurs, ERR is set by error code, and return NULL.
    This function build the following tree, from regular expression <reg_exp>:
 	   CAT
 	   / \
@@ -2193,16 +2226,21 @@ parse_branch (re_string_t *regexp, regex_t *preg, re_token_t *token,
       expr = parse_expression (regexp, preg, token, syntax, nest, err);
       if (BE (*err != REG_NOERROR && expr == NULL, 0))
 	{
+	  if (tree != NULL)
+	    postorder (tree, free_tree, NULL);
 	  return NULL;
 	}
       if (tree != NULL && expr != NULL)
 	{
-	  tree = create_tree (dfa, tree, expr, CONCAT);
-	  if (tree == NULL)
+	  bin_tree_t *newtree = create_tree (dfa, tree, expr, CONCAT);
+	  if (newtree == NULL)
 	    {
+	      postorder (expr, free_tree, NULL);
+	      postorder (tree, free_tree, NULL);
 	      *err = REG_ESPACE;
 	      return NULL;
 	    }
+	  tree = newtree;
 	}
       else if (tree == NULL)
 	tree = expr;
@@ -2451,7 +2489,11 @@ parse_sub_exp (re_string_t *regexp, regex_t *preg, re_token_t *token,
     {
       tree = parse_reg_exp (regexp, preg, token, syntax, nest, err);
       if (BE (*err == REG_NOERROR && token->type != OP_CLOSE_SUBEXP, 0))
-	*err = REG_EPAREN;
+	{
+	  if (tree != NULL)
+	    postorder (tree, free_tree, NULL);
+	  *err = REG_EPAREN;
+	}
       if (BE (*err != REG_NOERROR, 0))
 	return NULL;
     }
@@ -2615,7 +2657,7 @@ parse_dup_op (bin_tree_t *elem, re_string_t *regexp, re_dfa_t *dfa,
      Build the range expression which starts from START_ELEM, and ends
      at END_ELEM.  The result are written to MBCSET and SBCSET.
      RANGE_ALLOC is the allocated size of mbcset->range_starts, and
-     mbcset->range_ends, is a pointer argument sinse we may
+     mbcset->range_ends, is a pointer argument since we may
      update it.  */
 
 static reg_errcode_t
@@ -2749,11 +2791,12 @@ build_range_exp (const reg_syntax_t syntax,
 
 static reg_errcode_t
 internal_function
-build_collating_symbol (bitset_t sbcset,
 # ifdef RE_ENABLE_I18N
-			re_charset_t *mbcset, Idx *coll_sym_alloc,
-# endif
-			const unsigned char *name)
+build_collating_symbol (bitset_t sbcset, re_charset_t *mbcset,
+			Idx *coll_sym_alloc, const unsigned char *name)
+# else /* not RE_ENABLE_I18N */
+build_collating_symbol (bitset_t sbcset, const unsigned char *name)
+# endif /* not RE_ENABLE_I18N */
 {
   size_t name_len = strlen ((const char *) name);
   if (BE (name_len != 1, 0))
@@ -2781,8 +2824,8 @@ parse_bracket_exp (re_string_t *regexp, re_dfa_t *dfa, re_token_t *token,
   const int32_t *symb_table;
   const unsigned char *extra;
 
-  /* Local function for parse_bracket_exp used in _LIBC environement.
-     Seek the collating symbol entry correspondings to NAME.
+  /* Local function for parse_bracket_exp used in _LIBC environment.
+     Seek the collating symbol entry corresponding to NAME.
      Return the index of the symbol in the SYMB_TABLE.  */
 
   auto inline int32_t
@@ -2885,11 +2928,11 @@ parse_bracket_exp (re_string_t *regexp, re_dfa_t *dfa, re_token_t *token,
       return UINT_MAX;
     }
 
-  /* Local function for parse_bracket_exp used in _LIBC environement.
+  /* Local function for parse_bracket_exp used in _LIBC environment.
      Build the range expression which starts from START_ELEM, and ends
      at END_ELEM.  The result are written to MBCSET and SBCSET.
      RANGE_ALLOC is the allocated size of mbcset->range_starts, and
-     mbcset->range_ends, is a pointer argument sinse we may
+     mbcset->range_ends, is a pointer argument since we may
      update it.  */
 
   auto inline reg_errcode_t
@@ -2969,11 +3012,11 @@ parse_bracket_exp (re_string_t *regexp, re_dfa_t *dfa, re_token_t *token,
       return REG_NOERROR;
     }
 
-  /* Local function for parse_bracket_exp used in _LIBC environement.
+  /* Local function for parse_bracket_exp used in _LIBC environment.
      Build the collating element which is represented by NAME.
      The result are written to MBCSET and SBCSET.
      COLL_SYM_ALLOC is the allocated size of mbcset->coll_sym, is a
-     pointer argument sinse we may update it.  */
+     pointer argument since we may update it.  */
 
   auto inline reg_errcode_t
   __attribute ((always_inline))
@@ -3075,6 +3118,10 @@ parse_bracket_exp (re_string_t *regexp, re_dfa_t *dfa, re_token_t *token,
   if (BE (sbcset == NULL, 0))
 #endif /* RE_ENABLE_I18N */
     {
+      re_free (sbcset);
+#ifdef RE_ENABLE_I18N
+      re_free (mbcset);
+#endif
       *err = REG_ESPACE;
       return NULL;
     }
@@ -3413,7 +3460,7 @@ parse_bracket_symbol (bracket_elem_t *elem, re_string_t *regexp,
      Build the equivalence class which is represented by NAME.
      The result are written to MBCSET and SBCSET.
      EQUIV_CLASS_ALLOC is the allocated size of mbcset->equiv_classes,
-     is a pointer argument sinse we may update it.  */
+     is a pointer argument since we may update it.  */
 
 static reg_errcode_t
 #ifdef RE_ENABLE_I18N
@@ -3444,19 +3491,18 @@ build_equiv_class (bitset_t sbcset, const unsigned char *name)
 						   _NL_COLLATE_EXTRAMB);
       indirect = (const int32_t *) _NL_CURRENT (LC_COLLATE,
 						_NL_COLLATE_INDIRECTMB);
-      idx1 = findidx (&cp);
-      if (BE (idx1 == 0 || cp < name + strlen ((const char *) name), 0))
+      idx1 = findidx (&cp, -1);
+      if (BE (idx1 == 0 || *cp != '\0', 0))
 	/* This isn't a valid character.  */
 	return REG_ECOLLATE;
 
-      /* Build single byte matcing table for this equivalence class.  */
-      char_buf[1] = (unsigned char) '\0';
+      /* Build single byte matching table for this equivalence class.  */
       len = weights[idx1 & 0xffffff];
       for (ch = 0; ch < SBC_MAX; ++ch)
 	{
 	  char_buf[0] = ch;
 	  cp = char_buf;
-	  idx2 = findidx (&cp);
+	  idx2 = findidx (&cp, 1);
 /*
 	  idx2 = table[ch];
 */
@@ -3509,7 +3555,7 @@ build_equiv_class (bitset_t sbcset, const unsigned char *name)
      Build the character class which is represented by NAME.
      The result are written to MBCSET and SBCSET.
      CHAR_CLASS_ALLOC is the allocated size of mbcset->char_classes,
-     is a pointer argument sinse we may update it.  */
+     is a pointer argument since we may update it.  */
 
 static reg_errcode_t
 #ifdef RE_ENABLE_I18N

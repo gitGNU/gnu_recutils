@@ -50,6 +50,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module c-strcaseeq:
   # Code from module clock-time:
   # Code from module cloexec:
+  # Code from module close:
   # Code from module close-stream:
   # Code from module closeout:
   # Code from module configmake:
@@ -66,6 +67,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module fatal-signal:
   # Code from module fcntl:
   # Code from module fcntl-h:
+  # Code from module fd-hook:
   # Code from module float:
   # Code from module fpending:
   # Code from module fpieee:
@@ -79,6 +81,9 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_FUNC_FSEEKO])
   # Code from module fseterr:
   # Code from module fstat:
+  # Code from module ftell:
+  # Code from module ftello:
+  AC_REQUIRE([AC_FUNC_FSEEKO])
   # Code from module gendocs:
   # Code from module getdelim:
   # Code from module getdtablesize:
@@ -144,6 +149,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module raise:
   # Code from module random_r:
   # Code from module rawmemchr:
+  # Code from module read-file:
   # Code from module readline:
   # Code from module realloc-posix:
   # Code from module regex:
@@ -230,6 +236,11 @@ fi
 gl_WCHAR_MODULE_INDICATOR([btowc])
 gl_CLOCK_TIME
 gl_MODULE_INDICATOR_FOR_TESTS([cloexec])
+gl_FUNC_CLOSE
+if test $REPLACE_CLOSE = 1; then
+  AC_LIBOBJ([close])
+fi
+gl_UNISTD_MODULE_INDICATOR([close])
 gl_CLOSE_STREAM
 gl_MODULE_INDICATOR([close-stream])
 gl_CLOSEOUT
@@ -299,6 +310,16 @@ if test $REPLACE_FSTAT = 1; then
   gl_PREREQ_FSTAT
 fi
 gl_SYS_STAT_MODULE_INDICATOR([fstat])
+gl_FUNC_FTELL
+if test $REPLACE_FTELL = 1; then
+  AC_LIBOBJ([ftell])
+fi
+gl_STDIO_MODULE_INDICATOR([ftell])
+gl_FUNC_FTELLO
+if test $HAVE_FTELLO = 0 || test $REPLACE_FTELLO = 1; then
+  AC_LIBOBJ([ftello])
+fi
+gl_STDIO_MODULE_INDICATOR([ftello])
 gl_FUNC_GETDELIM
 if test $HAVE_GETDELIM = 0 || test $REPLACE_GETDELIM = 1; then
   AC_LIBOBJ([getdelim])
@@ -534,6 +555,7 @@ if test $HAVE_RAWMEMCHR = 0; then
   gl_PREREQ_RAWMEMCHR
 fi
 gl_STRING_MODULE_INDICATOR([rawmemchr])
+gl_PREREQ_READ_FILE
 gl_FUNC_READLINE
 if test "$gl_cv_lib_readline" = no; then
   AC_LIBOBJ([readline])
@@ -850,6 +872,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/cloexec.h
   lib/close-stream.c
   lib/close-stream.h
+  lib/close.c
   lib/closeout.c
   lib/closeout.h
   lib/config.charset
@@ -868,6 +891,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fatal-signal.h
   lib/fcntl.c
   lib/fcntl.in.h
+  lib/fd-hook.c
+  lib/fd-hook.h
   lib/float+.h
   lib/float.c
   lib/float.in.h
@@ -882,6 +907,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fseterr.c
   lib/fseterr.h
   lib/fstat.c
+  lib/ftell.c
+  lib/ftello.c
   lib/getdelim.c
   lib/getdtablesize.c
   lib/getline.c
@@ -952,6 +979,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/random_r.c
   lib/rawmemchr.c
   lib/rawmemchr.valgrind
+  lib/read-file.c
+  lib/read-file.h
   lib/readline.c
   lib/readline.h
   lib/realloc.c
@@ -1041,6 +1070,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/btowc.m4
   m4/clock_time.m4
   m4/close-stream.m4
+  m4/close.m4
   m4/closeout.m4
   m4/codeset.m4
   m4/configmake.m4
@@ -1067,6 +1097,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fseek.m4
   m4/fseeko.m4
   m4/fstat.m4
+  m4/ftell.m4
+  m4/ftello.m4
   m4/getdelim.m4
   m4/getdtablesize.m4
   m4/getline.m4
@@ -1142,6 +1174,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/raise.m4
   m4/random_r.m4
   m4/rawmemchr.m4
+  m4/read-file.m4
   m4/readline.m4
   m4/realloc.m4
   m4/regex.m4

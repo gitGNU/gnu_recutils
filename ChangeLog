@@ -1,3 +1,11 @@
+2012-03-04  Giuseppe Scrivano  <gscrivano@gnu.org>
+
+	src,lib: use the `read-line' module from gnulib.
+	* lib/read-file.h: Imported from gnulib.
+	* lib/read-file.c: Likewise.
+	* utils/recutl.c (recutl_read_file): Call `fread_file' instead
+	of reimplementing it.
+
 2012-03-02  Giuseppe Scrivano  <giuseppe@southpole.se>
 
 	src: make some variables static.

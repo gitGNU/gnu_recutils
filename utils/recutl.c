@@ -48,6 +48,7 @@
 
 #include <rec.h>
 #include <recutl.h>
+#include "read-file.h"
 
 /*
  * Global variables.
@@ -397,26 +398,14 @@ recutl_read_file (char *file_name)
 {
   char *result;
   FILE *in;
-  size_t file_size;
 
   result = NULL;
   in = fopen (file_name, "r");
   if (in)
     {
-      /* Get the size of the file.  */
-      fseek (in, 0, SEEK_END);
-      file_size = ftell (in);
-      fseek (in, 0, SEEK_SET);
-
-      /* Read the contents of the file into file_name.  */
-      result = xmalloc (file_size + 1);
-      if (fread (result, file_size, 1, in) == 0)
-        {
-          recutl_fatal (_("reading file %s"), file_name);
-        }
-
+      size_t file_size;
+      result = fread_file (in, &file_size);
       fclose (in);
-      result[file_size] = '\0';
     }
 
   return result;
