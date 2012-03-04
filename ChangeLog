@@ -1,6 +1,6 @@
 2012-03-04  Giuseppe Scrivano  <gscrivano@gnu.org>
 
-	src,lib: use the `read-line' module from gnulib.
+	src,lib: use the `read-file' module from gnulib.
 	* lib/read-file.h: Imported from gnulib.
 	* lib/read-file.c: Likewise.
 	* utils/recutl.c (recutl_read_file): Call `fread_file' instead
