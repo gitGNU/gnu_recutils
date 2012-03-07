@@ -1,3 +1,9 @@
+2012-03-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: some system tests for the recsel join functionality.
+	* torture/utils/recsel.sh (recsel-join-default-rset): New test.
+	(recsel-join-no-foreign): Likewise.
+
 2012-03-04  Giuseppe Scrivano  <gscrivano@gnu.org>
 
 	src,lib: use the `read-file' module from gnulib.

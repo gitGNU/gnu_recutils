@@ -1242,6 +1242,20 @@ test_tool recsel-nonexistent-print ok \
           multiple-records \
           ''
 
+test_tool recsel-join-default-rset xfail \
+          recsel \
+          '-j field2' \
+          multiple-records
+
+test_tool recsel-join-no-foreign ok \
+          recsel \
+          '-t type1 -j field2' \
+          multiple-types \
+'field1: value11
+field2: value12
+field3: value13
+'
+
 #
 # Cleanup
 #
