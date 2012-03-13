@@ -1,3 +1,8 @@
+2012-03-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec.h (GNU_REC_H): Sentinel of the header file renamed from
+	REC_H in order to avoid potential conflicts.
+
 2012-03-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	torture: some system tests for the recsel join functionality.

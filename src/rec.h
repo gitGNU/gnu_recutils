@@ -23,8 +23,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef REC_H
-#define REC_H
+#ifndef GNU_REC_H
+#define GNU_REC_H
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -2070,6 +2070,6 @@ bool rec_decrypt_record (rec_rset_t rset, rec_record_t record,
 
 #endif /* REC_CRYPT_SUPPORT */
 
-#endif /* !REC_H */
+#endif /* !GNU_REC_H */
 
 /* End of rec.h */
