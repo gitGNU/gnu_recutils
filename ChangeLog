@@ -1,3 +1,11 @@
+2012-03-27  Michał Masłowski  <mtjm@mtjm.eu>
+
+	src: always provide encryption routines and their prototypes.
+	* src/Makefile.am [!CRYPT]: Build rec-crypt-dummy.c instead of
+	rec-crypt.c if encryption is disabled.
+	* src/rec-crypt-dummy.c: New file.
+	* src/rec.h: Unconditionalize encryption routine declarations.
+
 2012-03-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/rec.h (GNU_REC_H): Sentinel of the header file renamed from

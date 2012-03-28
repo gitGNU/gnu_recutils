@@ -46,6 +46,8 @@ librec_la_SOURCES = rec.c \
 
 if CRYPT
    librec_la_SOURCES += rec-crypt.c
+else
+   librec_la_SOURCES += rec-crypt-dummy.c
 endif
 
 BUILT_SOURCES = rec-sex-tab.h

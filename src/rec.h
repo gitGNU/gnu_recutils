@@ -1998,12 +1998,13 @@ char *rec_sex_eval_str (rec_sex_t sex, rec_record_t record);
 void rec_sex_print_ast (rec_sex_t sex);
 
 
-#if defined REC_CRYPT_SUPPORT
-
 /*
  * ENCRYPTION
  *
  * The following routines encrypt and decrypt fields in rec data.
+ *
+ * If librec was built without encryption support, all of them will do
+ * nothing and return 'false' as if an error occurred.
  */
 
 /* Prefix used in the encrypted and ASCII encoded field values, which
@@ -2067,8 +2068,6 @@ bool rec_decrypt_field (rec_field_t field, const char *password);
 
 bool rec_decrypt_record (rec_rset_t rset, rec_record_t record,
                          const char *password);
-
-#endif /* REC_CRYPT_SUPPORT */
 
 #endif /* !GNU_REC_H */
 
