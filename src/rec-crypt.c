@@ -115,6 +115,7 @@ rec_encrypt (char   *in,
   if (gcry_cipher_setkey (handler, key, AESV2_KEYSIZE)
       != GPG_ERR_NO_ERROR)
     {
+      gcry_cipher_close (handler);
       return false;
     }
 
@@ -122,7 +123,12 @@ rec_encrypt (char   *in,
     {
       iv[i] = i;
     }
-  gcry_cipher_setiv (handler, iv, AESV2_BLKSIZE);
+  if (gcry_cipher_setiv (handler, iv, AESV2_BLKSIZE)
+      != GPG_ERR_NO_ERROR)
+    {
+      gcry_cipher_close (handler);
+      return false;
+    }
 
   /* Encrypt the data.  */
   *out_size = real_in_size;
@@ -135,6 +141,7 @@ rec_encrypt (char   *in,
                            real_in_size) != 0)
     {
       /* Error.  */
+      gcry_cipher_close (handler);
       return false;
     }
 
@@ -183,6 +190,7 @@ rec_decrypt (char   *in,
       != GPG_ERR_NO_ERROR)
     {
       printf ("error setting key\n");
+      gcry_cipher_close (handler);
       return false;
     }
 
@@ -190,7 +198,12 @@ rec_decrypt (char   *in,
     {
       iv[i] = i;
     }
-  gcry_cipher_setiv (handler, iv, AESV2_BLKSIZE);
+  if (gcry_cipher_setiv (handler, iv, AESV2_BLKSIZE)
+      != GPG_ERR_NO_ERROR)
+    {
+      gcry_cipher_close (handler);
+      return false;
+    }
 
   /* Decrypt the data.  */
   *out_size = in_size;
@@ -202,6 +215,7 @@ rec_decrypt (char   *in,
                            in_size) != 0)
     {
       /* Error.  */
+      gcry_cipher_close (handler);
       return false;
     }
 
@@ -219,6 +233,7 @@ rec_decrypt (char   *in,
 
       if (crc32 (*out, strlen(*out) - 4) != crc)
         {
+          gcry_cipher_close (handler);
           return false;
         }
 
@@ -226,6 +241,7 @@ rec_decrypt (char   *in,
     }
   else
     {
+      gcry_cipher_close (handler);
       return false;
     }
 
