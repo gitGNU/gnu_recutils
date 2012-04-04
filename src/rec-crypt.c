@@ -37,6 +37,8 @@
 #define AESV2_BLKSIZE 16
 #define AESV2_KEYSIZE 16
 
+#define SALT_SIZE 4
+
 bool
 rec_encrypt (char   *in,
              size_t  in_size,
@@ -119,7 +121,8 @@ rec_encrypt (char   *in,
       return false;
     }
 
-  for (i = 0; i < AESV2_BLKSIZE; i++)
+  gcry_create_nonce (iv, SALT_SIZE);
+  for (i = SALT_SIZE; i < AESV2_BLKSIZE; i++)
     {
       iv[i] = i;
     }
@@ -130,13 +133,16 @@ rec_encrypt (char   *in,
       return false;
     }
 
-  /* Encrypt the data.  */
-  *out_size = real_in_size;
+  *out_size = real_in_size + SALT_SIZE;
   *out = malloc (*out_size);
 
+  /* Append salt at the end of the output.  */
+  memcpy (*out + real_in_size, iv, SALT_SIZE);
+
+  /* Encrypt the data.  */
   if (gcry_cipher_encrypt (handler,
                            *out,
-                           *out_size,
+                           real_in_size,
                            real_in,
                            real_in_size) != 0)
     {
@@ -163,8 +169,13 @@ rec_decrypt (char   *in,
   size_t password_size;
   char key[AESV2_KEYSIZE];
   char iv[AESV2_BLKSIZE];
-  
-  if ((in_size % AESV2_BLKSIZE) != 0)
+  size_t salt_size = 0;
+
+  if (((in_size - SALT_SIZE) % AESV2_BLKSIZE) == 0)
+    {
+      salt_size = SALT_SIZE;
+    }
+  else if ((in_size % AESV2_BLKSIZE) != 0)
     {
       return false;
     }
@@ -194,7 +205,9 @@ rec_decrypt (char   *in,
       return false;
     }
 
-  for (i = 0; i < AESV2_BLKSIZE; i++)
+  /* Extract salt at the end of the output.  */
+  memcpy (iv, in + in_size - salt_size, salt_size);
+  for (i = salt_size; i < AESV2_BLKSIZE; i++)
     {
       iv[i] = i;
     }
@@ -206,13 +219,13 @@ rec_decrypt (char   *in,
     }
 
   /* Decrypt the data.  */
-  *out_size = in_size;
+  *out_size = in_size - salt_size;
   *out = malloc (*out_size);
   if (gcry_cipher_decrypt (handler,
                            *out,
                            *out_size,
                            in,
-                           in_size) != 0)
+                           in_size - salt_size) != 0)
     {
       /* Error.  */
       gcry_cipher_close (handler);

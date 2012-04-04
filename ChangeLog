@@ -1,3 +1,10 @@
+2012-04-04  Daiki Ueno  <ueno@unixuser.org>
+
+	src: use a pinch of salt when encrypting confidential fields.
+	* src/rec-crypt.c (rec_encrypt): Insert a random salt to improve
+	security.
+	(rec_decrypt): Extract the salt of the encrypted data.
+
 2012-04-03  Daiki Ueno  <ueno@unixuser.org>
 
 	src: several leaks fixed in rec-crypt.c.
