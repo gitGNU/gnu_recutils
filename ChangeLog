@@ -1,3 +1,9 @@
+2012-04-09  Daiki Ueno  <ueno@unixuser.org>
+
+	rec-mode: fix error when rec-finish-editing on newly created file.
+	* etc/rec-mode.el (rec-update-buffer-descriptors): Don't assume
+	that the current buffer is already saved on the disk.
+
 2012-04-04  Daiki Ueno  <ueno@unixuser.org>
 
 	src: use a pinch of salt when encrypting confidential fields.
