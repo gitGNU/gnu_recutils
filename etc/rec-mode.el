@@ -582,31 +582,35 @@ The current record is the record where the pointer is"
   "Get a list of the record descriptors in the current buffer."
   (message "Updating record descriptors...")
   (setq rec-buffer-descriptors
-        (save-excursion
-          (let ((rec-file-name (if buffer-file-name
-                                   buffer-file-name
-                                 ""))
-                descriptors records)
-            ;; Call 'recinf' to get the list of record descriptors in
-            ;; sexp format.
-            (with-temp-buffer
-              (call-process rec-recinf
-                            nil ; infile
-                            t   ; output to current buffer
-                            nil ; display
-                            "-S" "-d" rec-file-name)
-              (goto-char (point-min))
-              (insert "(")
-              (goto-char (point-max))
-              (insert ")")
-              (setq descriptors (read (buffer-substring-no-properties (point-min) (point-max)))))
-            ;; Calculate the value of 'rec-buffer-descriptors'.
-            (mapcar (lambda (descriptor)
-                      (let ((marker (make-marker)))
-                        (set-marker marker (rec-record-position descriptor))
-                        (setq records (cons (list 'descriptor descriptor marker) records))))
-                    descriptors)
-            (reverse records))))
+	(let ((buffer (generate-new-buffer "Rec Inf "))
+	      descriptors records status)
+	  (unwind-protect
+	      (progn
+		;; Call 'recinf' to get the list of record descriptors in
+		;; sexp format.
+		(setq status (call-process-region (point-min) (point-max)
+						  rec-recinf
+						  nil ; delete
+						  buffer
+						  nil ; display
+						  "-S" "-d"))
+		(if (/= status 0)
+		    (error "recinf returned error: %d" status))
+		(with-current-buffer buffer
+		  (goto-char (point-min))
+		  (insert "(")
+		  (goto-char (point-max))
+		  (insert ")")
+		  (setq descriptors (read (point-min-marker)))))
+	    (kill-buffer buffer))
+	  ;; Calculate the value of 'rec-buffer-descriptors'.
+	  (mapcar (lambda (descriptor)
+		    (let ((marker (make-marker)))
+		      (set-marker marker (rec-record-position descriptor))
+		      (setq records (cons (list 'descriptor descriptor marker)
+					  records))))
+		  descriptors)
+	  (reverse records)))
   (message ""))
 
 (defun rec-update-buffer-descriptors-xxx ()
