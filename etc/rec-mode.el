@@ -1,6 +1,6 @@
 ;;; rec-mode.el --- Major mode for viewing/editing rec files
 
-;; Copyright (C) 2009, 2010, 2011 Jose E. Marchesi
+;; Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi
 
 ;; Maintainer: Jose E. Marchesi
 
@@ -56,6 +56,9 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
 
 ;;;; Variables and constants that the user does not want to touch (really!)
 
+(defconst rec-keyword-prefix "%"
+  "Prefix used to distinguish special fields.")
+
 (defconst rec-keyword-rec "%rec"
   ;; Remember to update `rec-font-lock-keywords' if you change this
   ;; value!!
@@ -101,7 +104,7 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
   "Syntax table used in rec-mode")
 
 (defvar rec-font-lock-keywords
-  `(("^%\\(rec\\|key\\|unique\\|type\\|typedef\\|prohibit\\|mandatory\\|type\\|doc\\|fsort\\|auto\\|confidential\\|sort\\):" . font-lock-keyword-face)
+  `((,(concat "^" rec-keyword-prefix "[a-zA-Z0-9_-]+:") . font-lock-keyword-face)
     (,rec-field-name-re . font-lock-variable-name-face)
     ("^\\+" . font-lock-constant-face))
   "Font lock keywords used in rec-mode")
@@ -1676,9 +1679,11 @@ Commands:
   (setq major-mode 'rec-mode)
   ;; Goto the first record of the first type (including the Unknown)
   (rec-update-buffer-descriptors)
-  ;; Initialize the value of rec-custom-searches
-;;  (rec-init-selections)
-  (if (equal rec-open-mode 'navigation)
+  ;; If the configured open-mode is navigation, set up the buffer
+  ;; accordingly.  But don't go into navigation mode if the file is
+  ;; empty.
+  (if (and (equal rec-open-mode 'navigation)
+           (> (buffer-size (current-buffer)) 0))
     (progn
       (setq buffer-read-only t)
       (setq rec-type (car (rec-buffer-types)))

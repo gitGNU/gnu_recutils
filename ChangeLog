@@ -1,3 +1,14 @@
+2012-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: don't use a fixed list of keywords when font-locking
+	special fields and other minor fixes.
+	* etc/rec-mode.el (rec-mode): Don't go into navigation mode if the
+	file is empty.
+	(rec-keyword-prefix): New constant.
+	Copyright years list updated.
+	(rec-font-lock-keywords): Recognize as special fields any field
+	whose name starts with %.
+
 2012-04-09  Daiki Ueno  <ueno@unixuser.org>
 
 	rec-mode: fix error when rec-finish-editing on newly created file.
