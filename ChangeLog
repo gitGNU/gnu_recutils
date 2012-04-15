@@ -1,3 +1,7 @@
+2012-04-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (Common Options): Typo fixed.
+
 2012-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: don't use a fixed list of keywords when font-locking
