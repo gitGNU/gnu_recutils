@@ -582,8 +582,17 @@ rec_sex_eval_node (rec_sex_t sex,
           {
             /* String comparison.  */
             res.type = REC_SEX_VAL_INT;
-            res.int_val = (strcmp (child_val1.str_val,
-                                   child_val2.str_val) == 0);
+
+            if (rec_sex_parser_case_insensitive (sex->parser))
+              {
+                res.int_val = (strcasecmp (child_val1.str_val,
+                                           child_val2.str_val) == 0);
+              }
+            else
+              {
+                res.int_val = (strcmp (child_val1.str_val,
+                                       child_val2.str_val) == 0);
+              }
           }
         else
           {
@@ -624,8 +633,17 @@ rec_sex_eval_node (rec_sex_t sex,
           {
             /* String comparison.  */
             res.type = REC_SEX_VAL_INT;
-            res.int_val = (strcmp (child_val1.str_val,
-                                   child_val2.str_val) != 0);
+
+            if (rec_sex_parser_case_insensitive (sex->parser))
+              {
+                res.int_val = (strcasecmp (child_val1.str_val,
+                                           child_val2.str_val) != 0);
+              }
+            else
+              {
+                res.int_val = (strcmp (child_val1.str_val,
+                                       child_val2.str_val) != 0);
+              }
           }
         else
           {
@@ -891,7 +909,7 @@ rec_sex_eval_node (rec_sex_t sex,
             /* Compound a field name from the name/subname pair in the
                AST node.  */
             
-            const char *effective_name
+            char *effective_name
               = rec_concat_strings (field_name, "_", field_subname);
 
             n = rec_record_get_num_fields_by_name (record,

@@ -895,6 +895,50 @@ bar"\""' -c" \
 '1
 '
 
+test_tool recsel-sex-string-equal ok \
+          recsel \
+          "-e 'field2 = \"value12\"'" \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+'
+
+test_tool recsel-sex-string-non-equal ok \
+          recsel \
+          "-e 'field2 != \"value12\"'" \
+          multiple-records \
+'field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
+test_tool recsel-sex-string-equal-insensitive ok \
+          recsel \
+          "-i -e 'field2 = \"vaLue12\"'" \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+'
+
+test_tool recsel-sex-string-non-equal-insensitive ok \
+          recsel \
+          "-i -e 'field2 != \"vaLue12\"'" \
+          multiple-records \
+'field1: value21
+field2: value22
+field3: value23
+
+field1: value31
+field2: value32
+field3: value33
+'
+
 test_tool recsel-quick-simple ok \
           recsel \
           "-q value22" \

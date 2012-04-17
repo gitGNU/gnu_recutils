@@ -1,5 +1,17 @@
 2012-04-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: make the string comparison operators case-insensitive in
+	selection expressions when requested.
+	* torture/utils/recsel.sh (rec-sex-string-equal): New test.
+	(rec-sex-string-non-equal): Likewise.
+	(rec-sex-string-equal-insensitive): Likewise.
+	(rec-sex-string-non-equal-insensitive): Likewise.
+
+	* src/rec-sex.c (rec_sex_eval_node): Make the = and != operators
+	case insensitive with strings when applicable.
+
+2012-04-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils,doc: fix the --number command line option.
 	* torture/utils/recsel.sh (recsel-index-long): New test.
 
