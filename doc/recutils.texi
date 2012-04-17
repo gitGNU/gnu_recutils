@@ -2092,6 +2092,7 @@ the records in the input.
 
 @table @samp
 @item -n @var{indexes}
+@item @w{@kbd{--number}=@var{indexes}}
 Match the records occupying the given positions in its record set.
 @var{indexes} must be a comma-separated list of numbers or ranges, the
 ranges being two numbers separated with dashes.  For example, the
@@ -2340,6 +2341,7 @@ next table.
 
 @table @samp
 @item -n @var{indexes}
+@item @w{@kbd{--number}=@var{indexes}}
 Match the records occupying the given positions in its record set.
 @var{indexes} must be a comma-separated list of numbers or ranges, the
 ranges being two numbers separated with dashes.  For example, the
@@ -2440,6 +2442,7 @@ Options}) the program accepts the following options.
 Remove records of the given type.  If this parameter is not specified
 then records of any type will be removed.
 @item -n @var{indexes}
+@item @w{@kbd{--number}=@var{indexes}}
 Match the records occupying the given positions in its record set.
 @var{indexes} must be a comma-separated list of numbers or ranges, the
 ranges being two numbers separated with dashes.  For example, the
@@ -2517,6 +2520,7 @@ Make strings case-insensitive in selection expressions.
 Operate on the records of the given type.  If this parameter is not
 specified then records of any type will be removed.
 @item -n @var{indexes}
+@item @w{@kbd{--number}=@var{indexes}}
 Operate on the records occupying the given positions in its record
 set.  @var{indexes} must be a comma-separated list of numbers or
 ranges, the ranges being two numbers separated with dashes.  For

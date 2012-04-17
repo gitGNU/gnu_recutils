@@ -70,7 +70,7 @@
    {"type", required_argument, NULL, TYPE_ARG},                        \
    {"expression", required_argument, NULL, EXPRESSION_ARG},            \
    {"quick", required_argument, NULL, QUICK_ARG},                      \
-   {"num", required_argument, NULL, NUM_ARG},                          \
+   {"number", required_argument, NULL, NUM_ARG},                       \
    {"case-insensitive", no_argument, NULL, INSENSITIVE_ARG},           \
    {"random", required_argument, NULL, RANDOM_ARG}
 

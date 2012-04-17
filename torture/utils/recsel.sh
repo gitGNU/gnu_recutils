@@ -477,6 +477,15 @@ field2: value12
 field3: value13
 '
 
+test_tool recsel-index-long ok \
+          recsel \
+          '--number=0' \
+          multiple-records \
+'field1: value11
+field2: value12
+field3: value13
+'
+
 test_tool recsel-index-second ok \
           recsel \
           '-n 1' \
