@@ -254,7 +254,8 @@ recutl_parse_db_from_file (FILE *in,
       rec_parser_perror (parser, "%s", file_name);
       res = false;
     }
-  
+  rec_parser_destroy (parser);
+
   return res;
 }
 

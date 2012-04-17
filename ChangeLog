@@ -1,3 +1,18 @@
+2012-04-16  Michał Masłowski  <mtjm@mtjm.eu>
+
+	src,utils: fix several memory leaks.
+	* src/rec-field.c (rec_field_destroy): Free the value, like the
+	other structure members.
+
+	* src/rec-mset.c (rec_mset_destroy): Free type names and the mset
+	when destroying it.
+
+	* src/rec-parser.c (rec_parse_field): Free field name and value
+	after setting them, since only copies are used later.
+
+	* utils/recutl.c (recutl_parse_db_from_file): Destroy the parser
+	after using it.
+
 2012-04-17  Jose E. Marchesi  <jco@terma.com>
 
 	src: weird duplication of the file contens in rec-crypt-dummy.c

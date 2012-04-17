@@ -182,6 +182,7 @@ rec_field_destroy (rec_field_t field)
   if (field)
     {
       free (field->name);
+      free (field->value);
       free (field->source);
       free (field->location_str);
       free (field->char_location_str);

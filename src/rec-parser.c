@@ -393,11 +393,11 @@ rec_parse_field (rec_parser_t parser,
           rec_field_set_location (new, location);
           rec_field_set_char_location (new, char_location);
           *field = new;
+
+          free (field_value);
         }
-      else
-        {
-          free (field_name);
-        }
+
+      free (field_name);
     }
 
   return ret;

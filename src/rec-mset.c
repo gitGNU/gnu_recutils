@@ -146,7 +146,13 @@ rec_mset_destroy (rec_mset_t mset)
 {
   if (mset)
     {
+      int i;
+      for (i = 0; i < mset->ntypes; i++)
+        {
+          free(mset->name[i]);
+        }
       gl_list_free (mset->elem_list);
+      free (mset);
     }
 }
 
