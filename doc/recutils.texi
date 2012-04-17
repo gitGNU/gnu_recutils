@@ -1906,19 +1906,17 @@ The second and the third email with:
 Email[1-2]
 @end example
 
-And so on.  Note that a selection is an ordered set not allowing
-duplicated values.  Thus, the field expression:
+And so on.  Note that it is possible to select the same field (or
+range of fields) more than once just by repeating them in a field
+expression.  Thus, the field expression:
 
 @example
 Email[0],Name,Email
 @end example
 
 @noindent
-is equivalent to
-
-@example
-Email[0],Name,Email[1-2]
-@end example
+will print the first email, the name, and then all the email fields
+including the first one.
 
 It is possible to include a @dfn{rewrite rule} in an element of a
 field expression, which specifies an alias for the selected fields:

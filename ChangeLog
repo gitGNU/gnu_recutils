@@ -1,5 +1,12 @@
 2012-04-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: documentation for field expressions fixed.
+	* doc/recutils.texi (Field Expressions): Documentation fixed in
+	order to reflect the fact that it is possible to repeat the same
+	field in the same field expression.
+
+2012-04-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: make the string comparison operators case-insensitive in
 	selection expressions when requested.
 	* torture/utils/recsel.sh (rec-sex-string-equal): New test.
