@@ -2019,6 +2019,7 @@ Print all the record descriptors present in the file.
 Output just the names of the record types found in the input.  If the
 input is composed by anonymous records only then don't emit any
 output.
+@item -S
 @itemx @w{@kbd{--print-sexps}}
 Print the data in the form of sexps (lisp expressions) instead of rec
 format.  This option is intended to be used by lisp programs.
@@ -2059,6 +2060,9 @@ standard output.
 The following @dfn{global options} are available.
 
 @table @samp
+@item -i
+@itemx @w{@kbd{--case-insensitive}}
+Make strings case-insensitive in selection expressions.
 @item -C
 @item @w{@kbd{--collapse}}
 Do not section the result in records with newlines.
@@ -2360,6 +2364,9 @@ records are selected, i.e. no replace mode is activated.
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.
+@itemx @w{@kbd{--force}}
+Insert the requested record even in potentially dangerous situations,
+such as when the data integrity of the database is compromised.
 @end table
 
 @node recins Examples
@@ -2461,12 +2468,14 @@ the records.
 @item -c
 @itemx @w{@kbd{--comment}}
 Comment the matching records out instead of removing them.
-@item -f
 @itemx @w{@kbd{--force}}
 Delete even in potentially dangerous situations, such as the request
 to delete all the records of some type, for example.
 @itemx @w{@kbd{--no-external}}
 Don't use external record descriptors.
+@item -i
+@itemx @w{@kbd{--case-insensitive}}
+Make strings case-insensitive in selection expressions.
 @itemx @w{@kbd{--verbose}}
 Be verbose when reporting integrity problems.
 @end table
@@ -2670,6 +2679,9 @@ as confidential.  This operation requires a password.  If no password
 is specified with @option{-s} and the program is run in a terminal, a
 prompt is used to get the password from the user.
 
+If this operation is performed to a file having encrypted fields, the
+operation will fail unless @w{@kbd{--force}} is used.
+
 Note that this is a destructive operation.
 @itemx @w{@kbd{--decrypt}}
 Decrypt all the encrypted fields in the database which are marked as
@@ -2692,6 +2704,8 @@ described in the table below.
 @item -s @var{secret}
 @itemx @w{@kbd{--password}=@var{secret}}
 Password used to encrypt or decrypt fields.
+@itemx @w{@kbd{--force}}
+Force potentially dangerous operations.
 @end table
 
 @node recfix Examples

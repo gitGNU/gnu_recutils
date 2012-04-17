@@ -1,5 +1,20 @@
 2012-04-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: missing documentation added for some command line options,
+	and inconsistencies removed.
+	* utils/recfix.c (recutl_print_help): Don't document -t|--type,
+	because it is not yet implemented.
+
+	* doc/recutils.texi (recinf Invocation): Document that -S is the
+	short form for --print-sexps.
+	(recsel Invocation): Document -i|--case-insensitive.
+	(recdel Invocation): Likewise.
+	(recins Invocation): Document the --force command line option.
+	(recfix Invocation): Likewise.
+	(recdel Invocation): -f is not an alias for --force.
+
+2012-04-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: documentation for field expressions fixed.
 	* doc/recutils.texi (Field Expressions): Documentation fixed in
 	order to reflect the fact that it is possible to repeat the same

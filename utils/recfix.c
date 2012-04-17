@@ -128,7 +128,6 @@ Check and fix rec files.\n"),
   /* TRANSLATORS: --help output, recfix global arguments.
      no-wrap */
   fputs (_("\
-  -t, --type=TYPE                     process only records of the given type.\n\
       --no-external                   don't use external descriptors.\n\
       --force                         force the requested operation.\n"),
          stdout);
