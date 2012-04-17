@@ -1,3 +1,9 @@
+2012-04-17  Jose E. Marchesi  <jco@terma.com>
+
+	src: weird duplication of the file contens in rec-crypt-dummy.c
+	fixed.
+	* src/rec-crypt-dummy.c: Weird duplication of file fixed.  WTF...
+
 2012-04-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Common Options): Typo fixed.
