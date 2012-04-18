@@ -1,3 +1,9 @@
+2012-04-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	doc: new CSS file adapted from lilypond.
+	* doc/css/recutils-manuals.css: New file, adapted from
+	lilypond-manuals.css.
+
 2012-04-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: missing documentation added for some command line options,
