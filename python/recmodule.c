@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-02-26 21:14:36 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-04-22 13:50:41 jemarch"
  *
  *       File:         recmodule.c
  *       Date:         Sun Feb 26 20:27:56 2012
@@ -22,6 +22,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <config.h>
 
 #include <Python.h>
 #include <rec.h>

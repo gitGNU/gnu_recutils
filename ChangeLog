@@ -1,5 +1,10 @@
 2012-04-22  Jose E. Marchesi  <jemarch@gnu.org>
 
+	syntax-check fixes.
+	* python/recmodule.c: Include config.h
+
+2012-04-22  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: support for >= and <= in selection expressions.
 	* torture/utils/recsel.sh (rec-sex-integer-lessequalthan): New
 	test.
