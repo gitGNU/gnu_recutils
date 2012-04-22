@@ -656,11 +656,29 @@ test_tool recsel-sex-integer-lessthan ok \
 'field1: -10
 '
 
+test_tool recsel-sex-integer-lessequalthan ok \
+          recsel \
+          '-e "field1 <= 0"' \
+          integer-fields \
+'field1: -10
+
+field1: 0
+'
+
 test_tool recsel-sex-integer-biggerthan ok \
           recsel \
           '-e "field1 > 10"' \
           integer-fields \
 'field1: 314
+'
+
+test_tool recsel-sex-integer-biggerequalthan ok \
+          recsel \
+          '-e "field1 >= 10"' \
+          integer-fields \
+'field1: 314
+
+field1: 10
 '
 
 test_tool recsel-sex-integer-plus ok \
@@ -753,7 +771,6 @@ test_tool recsel-sex-real-lessthan ok \
           real-fields \
 'field1: -10.0
 '
-
 test_tool recsel-sex-real-biggerthan ok \
           recsel \
           '-e "field1 > 3.14"' \

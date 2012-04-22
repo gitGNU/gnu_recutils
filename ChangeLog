@@ -1,3 +1,23 @@
+2012-04-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: support for >= and <= in selection expressions.
+	* torture/utils/recsel.sh (rec-sex-integer-lessequalthan): New
+	test.
+	(rec-sex-integer-greaterequalthan): Likewise.
+
+	* src/rec-sex.c (rec_sex_eval_node): Semantics of REC_SEX_OP_GTE
+	and REC_SEX_OP_LTE implemented.
+
+	* src/rec-sex-ast.h (rec_sex_ast_node_type_e): New entries
+	REC_SEX_OP_LTE and REC_SEX_OP_GTE.
+
+	* src/rec-sex-tab.y: New tokens REC_SEX_TOK_LTE and
+	REC_SEX_TOK_GTE.
+	(exp): Rules for the >= and <= infix operators.
+
+	* src/rec-sex-lex.l ("<="): New rule.
+	(">="): Likewise.
+
 2012-04-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc: new CSS file adapted from lilypond.

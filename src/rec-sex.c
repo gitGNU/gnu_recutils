@@ -752,6 +752,7 @@ rec_sex_eval_node (rec_sex_t sex,
         break;
       }
     case REC_SEX_OP_LT:
+    case REC_SEX_OP_LTE:
       {
         int op1;
         int op2;
@@ -768,7 +769,15 @@ rec_sex_eval_node (rec_sex_t sex,
             ATOD_VAL (op2_real, child_val2);
 
             res.type = REC_SEX_VAL_INT;
-            res.int_val = op1_real < op2_real;
+
+            if (rec_sex_ast_node_type (node) == REC_SEX_OP_LT)
+              {
+                res.int_val = op1_real < op2_real;
+              }
+            else
+              {
+                res.int_val = op1_real <= op2_real;
+              }
           }
         else
           {
@@ -777,12 +786,21 @@ rec_sex_eval_node (rec_sex_t sex,
             ATOI_VAL (op2, child_val2);
             
             res.type = REC_SEX_VAL_INT;
-            res.int_val = op1 < op2;
+
+            if (rec_sex_ast_node_type (node) == REC_SEX_OP_LT)
+              {
+                res.int_val = op1 < op2;
+              }
+            else
+              {
+                res.int_val = op1 <= op2;
+              }
           }
 
         break;
       }
     case REC_SEX_OP_GT:
+    case REC_SEX_OP_GTE:
       {
         int op1;
         int op2;
@@ -799,7 +817,15 @@ rec_sex_eval_node (rec_sex_t sex,
             ATOD_VAL (op2_real, child_val2);
 
             res.type = REC_SEX_VAL_INT;
-            res.int_val = op1_real > op2_real;
+
+            if (rec_sex_ast_node_type (node) == REC_SEX_OP_GT)
+              {
+                res.int_val = op1_real > op2_real;
+              }
+            else
+              {
+                res.int_val = op1_real >= op2_real;
+              }
           }
         else
           {
@@ -808,7 +834,15 @@ rec_sex_eval_node (rec_sex_t sex,
             ATOI_VAL (op2, child_val2);
             
             res.type = REC_SEX_VAL_INT;
-            res.int_val = op1 > op2;
+
+            if (rec_sex_ast_node_type (node) == REC_SEX_OP_GT)
+              {
+                res.int_val = op1 > op2;
+              }
+            else
+              {
+                res.int_val = op1 >= op2;
+              }
           }
 
         break;

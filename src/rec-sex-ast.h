@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ enum rec_sex_ast_node_type_e
   REC_SEX_OP_MAT,
   REC_SEX_OP_LT,
   REC_SEX_OP_GT,
+  REC_SEX_OP_LTE,
+  REC_SEX_OP_GTE,
   REC_SEX_OP_AND,
   REC_SEX_OP_OR,
   REC_SEX_OP_NOT,
