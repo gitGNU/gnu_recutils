@@ -267,9 +267,18 @@ recutl_build_db (int argc, char **argv)
   FILE *in;
 
   db = rec_db_new ();
+  if (!db)
+    {
+      return NULL;
+    }
+
+  /* Register the default functions in the database.  */
+
+  
 
   /* Process the input files, if any.  Otherwise use the standard
      input to read the rec data.  */
+
   if (optind < argc)
     {
       while (optind < argc)

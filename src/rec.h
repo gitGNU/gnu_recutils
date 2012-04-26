@@ -446,8 +446,11 @@ enum rec_fex_kind_e
 #define REC_FNAME_FEX_RE      REC_FNAME_RE "(\\." REC_FNAME_RE ")?"
 #define REC_FNAME_LIST_RE     REC_FNAME_RE "([ \n\t]+" REC_FNAME_RE ")*"
 #define REC_FNAME_LIST_CS_RE  REC_FNAME_FEX_RE "(," REC_FNAME_FEX_RE ")*"
-#define REC_FNAME_SUB_RE      REC_FNAME_FEX_RE "(\\[[0-9]+(-[0-9]+)?\\])?" "(:" REC_FNAME_FEX_RE ")?"
-#define REC_FNAME_LIST_SUB_RE REC_FNAME_SUB_RE "(," REC_FNAME_SUB_RE ")*"
+#define REC_FNAME_SUB_RE      REC_FNAME_FEX_RE "(\\[[0-9]+(-[0-9]+)?\\])?"
+#define REC_FEX_FUNCTION_NAME "[a-zA-Z_][a-zA-Z0-9_]*"
+#define REC_FEX_CALL          REC_FEX_FUNCTION_NAME "\\(" REC_FNAME_SUB_RE "\\)"
+#define REC_FNAME_LIST_SUB_ELEM_RE "(" REC_FNAME_SUB_RE "|" REC_FEX_CALL ")" "(:" REC_FNAME_FEX_RE ")?"
+#define REC_FNAME_LIST_SUB_RE REC_FNAME_LIST_SUB_ELEM_RE "(," REC_FNAME_LIST_SUB_ELEM_RE ")*"
 
 /*********** Creating and destroying field expressions ************/
 
@@ -515,6 +518,16 @@ int rec_fex_elem_max (rec_fex_elem_t elem);
    fex entry then NULL is returned.  */
 
 const char *rec_fex_elem_rewrite_to (rec_fex_elem_t elem);
+
+/* Get the function name associated with a given fex element.  If the
+   fex entry is not a function call then NULL is returned.  */
+
+const char *rec_fex_elem_function_name (rec_fex_elem_t elem);
+
+/* Get the pointer to the context data to be used in the function
+   call, if any.  */
+
+void **rec_fex_elem_function_data (rec_fex_elem_t elem);
 
 /*********** Miscellaneous field expressions functions ************/
 
@@ -932,6 +945,11 @@ size_t rec_record_get_field_index_by_name (rec_record_t record, rec_field_t fiel
 
 bool rec_record_contains_value (rec_record_t record, const char *value, bool case_insensitive);
 
+/* Determine whether a record contains a field whose name is
+   FIELD_NAME and value FIELD_VALUE.  */
+
+bool rec_record_contains_field (rec_record_t record, const char *field_name, const char *field_value);
+
 /* Determine whether a given record contains a field named after a
    given field name.  */
 
@@ -980,6 +998,11 @@ rec_comment_t rec_record_to_comment (rec_record_t record);
    field name and value.  */
 
 void rec_record_uniq (rec_record_t record);
+
+/* Append two records.  This function adds all the fields in
+   SRC_RECORD to DEST_RECORD.  */
+
+void rec_record_append (rec_record_t dest_record, rec_record_t src_record);
 
 /*
  * RECORD SETS
@@ -1211,6 +1234,12 @@ typedef struct rec_db_s *rec_db_t;
 
 typedef struct rec_sex_s *rec_sex_t;
 
+/* Opaque data type representing a function registry.  This is placed
+   here as a forward declaration.  See below in this file for the
+   description of field functions.  */
+
+typedef struct rec_func_reg_s *rec_func_reg_t;
+
 /************ Creating and destrying databases *********************/
 
 /* Create a new empty database and return it.  This function returns
@@ -1266,6 +1295,12 @@ bool rec_db_type_p (rec_db_t db, const char *type);
 NULL if there is no a record set having that type.  */
 
 rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
+
+/******************** Miscellaneous database functions ****************/
+
+/* Return the functions registry of the given database.  */
+
+rec_func_reg_t rec_db_functions (rec_db_t db);
 
 /******************** Database High-Level functions *******************/
 
@@ -2068,6 +2103,69 @@ bool rec_decrypt_field (rec_field_t field, const char *password);
 
 bool rec_decrypt_record (rec_rset_t rset, rec_record_t record,
                          const char *password);
+
+/*
+ * FIELD FUNCTIONS
+ *
+ * The following routines and data types provide support for "field
+ * functions".  Field functions are applied to records and return
+ * other records.
+ */
+
+/* Data type representing a field function.  Field functions get a
+   record set, a record, a field name and subscripts which can be -1.
+   The field functions must return a record, which may be empty.  If
+   an out-of-memory condition occurs then they return NULL.  */
+
+typedef rec_record_t (*rec_func_t) (rec_rset_t    rset,
+                                    rec_record_t  record,
+                                    const char   *field_name,
+                                    size_t        min,
+                                    size_t        max);
+
+/*
+ * FUNCTIONS REGISTRIES
+ *
+ * The following data types and functions provide support for
+ * maintaining registries with collections of field functions.  The
+ * field functions are identified by a constant string that must be
+ * unique in the registry.
+ */
+
+/* See the definition of rec_func_reg_t above.  */
+
+/******** Creating and destroying function registries ************/
+
+/* Create a new, empty function registry.  If there is not error to
+   perform the operation then NULL is returned.  */
+
+rec_func_reg_t rec_func_reg_new (void);
+
+/* Destroy a functions registry, freeing any used resources.  */
+
+void rec_func_reg_destroy (rec_func_reg_t func_reg);
+
+/********* Registering functions and fetching them ***************/
+
+/* Register a field function into a functions register, associating it
+   with a given constant string.  If a function associated with the
+   given string already exists in the registry then it is substitued
+   by the provided function.  The function true if the operation was
+   successful, and false if there was not enough memory to perform the
+   operation.  */
+
+bool rec_func_reg_add (rec_func_reg_t func_reg, const char *name, rec_func_t function);
+
+/* Fetch a field function from a functions registry.  If no function
+   associated with NAME is found in the registry then NULL is
+   returned.  */
+
+rec_func_t rec_func_reg_get (rec_func_reg_t func_get, const char *name);
+
+/* Register the standard built-in functions shipped with librec in the
+   given functions register.  */
+
+void rec_func_reg_add_standard (rec_func_reg_t func_reg);
 
 #endif /* !GNU_REC_H */
 

@@ -781,7 +781,8 @@ rec_rset_group (rec_rset_t rset,
                   else
                     {
                       /* Insert all the elements of record2 into
-                         record, but not group_by_field.  */
+                         record, but not group_by_field.  Also, remove
+                         duplicated fields.  */
 
                       if (!rec_rset_merge_records (record,
                                                    record2,
@@ -1803,12 +1804,26 @@ rec_rset_merge_records (rec_record_t to_record,
         {
           rec_field_t field = (rec_field_t) data;
 
+          /* Don't add the field used as grouping criteria.  */
+
           if (rec_field_name_equal_p (rec_field_name (group_field),
                                       rec_field_name (field))
               && (strcmp (rec_field_value (group_field), rec_field_value (field)) == 0))
             {
               continue;
             }
+
+          /* Don't allow duplicated fields in the resulting record
+             generated as a result of this operation.  */
+
+          if (rec_record_contains_field (to_record,
+                                         rec_field_name (field),
+                                         rec_field_value (field)))
+            {
+              continue;
+            }
+
+          /* Ok, add this field.  */
 
           if (!rec_mset_append (rec_record_mset (to_record),
                                 MSET_FIELD,

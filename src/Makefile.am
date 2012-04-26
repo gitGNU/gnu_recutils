@@ -1,7 +1,7 @@
 # src/ Makefile.am
 # GNU rec
 
-# Copyright (C) 2009, 2010 Jose E. Marchesi
+# Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,8 @@ librec_la_SOURCES = rec.c \
                     rec-sex.c \
                     rec-fex.c \
                     rec-types.c \
-                    rec-buf.c
+                    rec-buf.c \
+                    rec-func.c
 
 if CRYPT
    librec_la_SOURCES += rec-crypt.c

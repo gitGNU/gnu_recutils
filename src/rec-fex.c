@@ -45,6 +45,9 @@ struct rec_fex_elem_s
   char *rewrite_to;
   int max;
   int min;
+
+  char *function_name;
+  void *function_data;
 };
 
 #define REC_FEX_MAX_ELEMS 256
@@ -408,6 +411,18 @@ rec_fex_append (rec_fex_t fex,
   return new_elem;
 }
 
+const char *
+rec_fex_elem_function_name (rec_fex_elem_t elem)
+{
+  return elem->function_name;
+}
+
+void **
+rec_fex_elem_function_data (rec_fex_elem_t elem)
+{
+  return elem->function_data;
+}
+
 /*
  * Private functions.
  */
@@ -523,6 +538,7 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
           res = false;
           break;
         }
+
       if (!rec_fex_parse_elem (elem, elem_str))
         {
           /* Parse error.  */
@@ -560,6 +576,8 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
 
   /* 'Empty' part.  */
   elem->field_name = NULL;
+  elem->function_name = NULL;
+  elem->function_data = NULL;
   elem->str = NULL;
   elem->rewrite_to = NULL;
   elem->min = -1;
@@ -569,8 +587,27 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
 
   elem->str = strdup (str);
 
-  /* Get the field name.  */
+  /* Each FEX element can be either a function call or a field name
+     with an optional subscript.  */
 
+  if (rec_match (p, "^" REC_FEX_CALL))
+    {
+      /* Get the function name and the field argument and store them
+         in the FEX element.  */
+
+      if (!rec_parse_regexp (&p,
+                             "^" REC_FEX_FUNCTION_NAME,
+                             &(elem->function_name)))
+        {
+          /* Parse error.  */
+          return false;
+        }
+
+      p++; /* Skip the ( */
+    }
+
+  /* Get the field name.  */
+      
   if (!rec_parse_regexp (&p,
                          "^" REC_FNAME_RE,
                          &(elem->field_name)))
@@ -578,14 +615,14 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
       /* Parse error.  */
       return false;
     }
-
+  
   /* Get the subname and modify the name accordingly, if it
      exists.  */
-
+  
   if (*p == '.')
     {
       char *subname = NULL;
-
+      
       p++;
       if (!rec_parse_regexp (&p,
                              "^" REC_FNAME_RE,
@@ -594,11 +631,11 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
           /* Parse error.  */
           return false;
         }
-
+      
       /* Concatenate the field_name and the subname.  */
       elem->field_name = rec_concat_strings (elem->field_name, "_", subname);
     }
-
+  
   /* Get the subscripts if they are present.  */
   if (*p == '[')
     {
@@ -611,7 +648,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
           free (elem->field_name);
           return false;
         }
-
+      
       if (*p == '-')
         {
           p++;
@@ -624,7 +661,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
               return false;
             }
         }
-
+      
       if (*p != ']')
         {
           /* Parse error.  */
@@ -635,6 +672,11 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
       p++; /* Skip the ]  */
     }
 
+  if (elem->function_name)
+    {
+      p++; /* Skip the ) */
+    }
+      
   /* Get the rewrite rule if it is present.  */
   if (*p == ':')
     {

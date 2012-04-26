@@ -40,9 +40,10 @@
 
 struct rec_db_s
 {
-  size_t size;          /* Number of record sets contained in this
-                           database.  */
-  gl_list_t rset_list;  /* List of record sets.  */
+  size_t size;                    /* Number of record sets contained
+                                     in this database.  */
+  gl_list_t rset_list;            /* List of record sets.  */
+  rec_func_reg_t functions_reg;   /* Functions registry.  */
 };
 
 /* Static functions defined in this file.  */
@@ -51,7 +52,11 @@ static bool rec_db_rset_equals_fn (const void *elt1,
                                    const void *elt2);
 static void rec_db_rset_dispose_fn (const void *elt);
 
-static rec_record_t rec_db_process_fex (rec_record_t record, rec_fex_t fex);
+static rec_record_t rec_db_process_fex (rec_db_t db,
+                                        rec_rset_t rset,
+                                        rec_record_t record,
+                                        rec_fex_t fex);
+
 static bool rec_db_record_selected_p (size_t num_rec,
                                       rec_record_t record,
                                       size_t *index,
@@ -95,6 +100,18 @@ rec_db_new (void)
           free (new);
           new = NULL;
         }
+
+      /* Add the standard field functions to the registry in the
+         database.  */
+
+      new->functions_reg = rec_func_reg_new ();
+      if (!new->functions_reg)
+        {
+          /* Out of memory.  */
+          free (new);
+          return NULL;
+        }
+      rec_func_reg_add_standard (new->functions_reg);
     }
 
   return new;
@@ -105,6 +122,7 @@ rec_db_destroy (rec_db_t db)
 {
   if (db)
     {
+      rec_func_reg_destroy (db->functions_reg);
       gl_list_free (db->rset_list);
       free (db);
     }
@@ -255,7 +273,7 @@ rec_db_get_rset_by_type (rec_db_t db,
 }
 
 rec_rset_t
-rec_db_query (rec_db_t db,
+rec_db_query (rec_db_t     db,
               const char  *type,
               const char  *join,
               size_t       *index,
@@ -374,27 +392,12 @@ rec_db_query (rec_db_t db,
     rec_record_t record = NULL;
     size_t num_rec = -1;
 
-    if (group_by)
-      {
-        if (!rec_rset_sort (rset, group_by))
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
-
-        if (!rec_rset_group (rset, group_by))
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
-      }
-
     if (!rec_rset_sort (rset, sort_by))
       {
         /* Out of memory.  */
         return NULL;
-      }
-    
+      }    
+
     rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
     while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
       {
@@ -419,7 +422,7 @@ rec_db_query (rec_db_t db,
            it to the result record set.  */
         
         rec_record_t res_record
-          = rec_db_process_fex (record, fex);
+          = rec_db_process_fex (db, rset, record, fex);
 
         if (!res_record)
           {
@@ -472,8 +475,22 @@ rec_db_query (rec_db_t db,
           }
         
       }
-
     rec_mset_iterator_free (&iter);
+
+    if (group_by)
+      {
+        if (!rec_rset_sort (res, group_by))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+
+        if (!rec_rset_group (res, group_by))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+      }
   }
 
   return res;
@@ -923,6 +940,12 @@ bool rec_db_set (rec_db_t    db,
   }
 
   return true;
+}
+
+rec_func_reg_t
+rec_db_functions (rec_db_t db)
+{
+  return db->functions_reg;
 }
 
 /*
@@ -1555,7 +1578,9 @@ rec_db_record_selected_p (size_t num_record,
 }
 
 static rec_record_t
-rec_db_process_fex (rec_record_t record,
+rec_db_process_fex (rec_db_t db,
+                    rec_rset_t rset,
+                    rec_record_t record,
                     rec_fex_t fex)
 {
   rec_record_t res = NULL;
@@ -1577,7 +1602,10 @@ rec_db_process_fex (rec_record_t record,
     }
 
   /* Iterate on the elements of the FEX, picking and transforming the
-     fields of RECORD that must be copied and inserted into RES.  */
+     fields of RECORD that must be copied and inserted into RES.  If a
+     function call is found in the fex then invoke the corresponding
+     function and add the fields returned by that function into the
+     record.  */
 
   fex_size = rec_fex_size (fex);
   for (i = 0; i < fex_size; i++)
@@ -1585,60 +1613,88 @@ rec_db_process_fex (rec_record_t record,
       rec_fex_elem_t elem = rec_fex_get (fex, i);
       const char *field_name = rec_fex_elem_field_name (elem);
       const char *alias = rec_fex_elem_rewrite_to (elem);
+      const char *function_name = rec_fex_elem_function_name (elem);
       size_t min = rec_fex_elem_min (elem);
       size_t max = rec_fex_elem_max (elem);
 
-      if ((min == -1) && (max == -1))
+      if (function_name)
         {
-          /* Add all the fields with that name.  */
-             min = 0;
-             max = rec_record_get_num_fields_by_name (record, field_name);
-        }
-      else if (max == -1)
-        {
-          /* Add just one field: Field[min].  */
-          max = min + 1;
+          /* Get a handler for the fields function and invoke it,
+             passing the field_name argument and the indexes.  The
+             record returned by the function is then appended into the
+             current record.  Note that missing field functions are
+             simply ignored.  */
+
+          rec_func_t func = rec_func_reg_get (rec_db_functions(db), function_name);
+          if (func)
+            {
+              rec_record_t func_res = (func) (rset,
+                                              record,
+                                              field_name,
+                                              min,
+                                              max);
+
+              if (func_res)
+                {
+                  rec_record_append (res, func_res);
+                  rec_record_destroy (func_res);
+                }
+            }
         }
       else
         {
-          /* Add the interval min..max, max inclusive.  */
-          max++;
-        }
-
-      /* Add the selected fields to the result record.  */
-
-      for (j = min; j < max; j++)
-        {
-          rec_field_t res_field = NULL;
-          rec_field_t field =
-            rec_record_get_field_by_name (record, field_name, j);
-
-          if (!field)
+          if ((min == -1) && (max == -1))
             {
-              continue;
+              /* Add all the fields with that name.  */
+              min = 0;
+              max = rec_record_get_num_fields_by_name (record, field_name);
+            }
+          else if (max == -1)
+            {
+              /* Add just one field: Field[min].  */
+              max = min + 1;
+            }
+          else
+            {
+              /* Add the interval min..max, max inclusive.  */
+              max++;
             }
 
-          /* Duplicate the field and append it into 'res'.  If there
-             is a rewrite rule defined in this fex entry then use it
-             instead of the original name of the field.  */
+          /* Add the selected fields to the result record.  */
 
-          res_field = rec_field_dup (field);
-          if (alias)
+          for (j = min; j < max; j++)
             {
-              if (!rec_field_set_name (res_field, alias))
+              rec_field_t res_field = NULL;
+              rec_field_t field =
+                rec_record_get_field_by_name (record, field_name, j);
+
+              if (!field)
+                {
+                  continue;
+                }
+
+              /* Duplicate the field and append it into 'res'.  If there
+                 is a rewrite rule defined in this fex entry then use it
+                 instead of the original name of the field.  */
+
+              res_field = rec_field_dup (field);
+              if (alias)
+                {
+                  if (!rec_field_set_name (res_field, alias))
+                    {
+                      /* Out of memory.  */
+                      return NULL;
+                    }
+                }
+
+              if (!rec_mset_append (rec_record_mset (res),
+                                    MSET_FIELD,
+                                    (void *) res_field,
+                                    MSET_FIELD))
                 {
                   /* Out of memory.  */
                   return NULL;
                 }
-            }
-
-          if (!rec_mset_append (rec_record_mset (res),
-                                MSET_FIELD,
-                                (void *) res_field,
-                                MSET_FIELD))
-            {
-              /* Out of memory.  */
-              return NULL;
             }
         }
     }

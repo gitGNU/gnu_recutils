@@ -1,3 +1,58 @@
+2012-04-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,utils: implementation of field functions, and Count.
+	* src/rec-record.c (rec_record_contains_field): New function.
+
+	* src/rec-rset.c (rec_rset_merge_records): The merge operation
+	must not create duplicated fields on the resulting record.
+
+	* src/rec-db.c (rec_db_new): Add standard field functions to the
+	database functions registry.
+
+	* src/rec-func.c (rec_func_reg_add_standard): New function.
+	(rec_func_std_count): New function.
+
+	* src/Makefile.am (librec_la_SOURCES): Added rec-func.c
+
+	* src/rec-db.c (rec_db_s): New field 'functions_reg'.
+	(rec_db_new): Initialize the functions register of the database.
+	(rec_db_destroy): Dispose the memory used by the functions
+	register when destroying the databse.
+	(rec_db_functions): New function.
+
+	* utils/recutl.c (recutl_build_db): Return NULL if there is not
+	enough memory to create the database.
+
+	* src/rec-func.c (rec_func_reg_s): New structure.
+	(rec_type_reg_new): New function.
+	(rec_func_reg_destroy): Likewise.
+	(rec_func_reg_add): Likewise.
+	(rec_func_reg_et): Likewise.
+
+	* src/rec-fex.c (rec_fex_elem_function_data): New function.
+	(rec_fex_elem_s): New field function_data.
+	(rec_fex_parse_elem): Initialize function_data to NULL.
+
+	* src/rec.h: Data types and functions declarations for the field
+	functions and the function registries.
+
+	* src/rec-func.c: New file.
+
+	* src/rec-record.c (rec_record_append): New function.
+
+	* src/rec-db.c (rec_db_process_fex): Fetch and invoke the
+	corresponding field functions if the fex contains function calls.
+
+	* src/rec-fex.c (rec_fex_elem_s): New member function_name.
+	(rec_fex_parse_elem): Parse function calls.
+	(rec_fex_elem_function_name): New function.
+
+2012-04-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec.h (REC_FEX_FNAME): New constant.
+	(REC_FEX_CALL): Likewise.
+	(REC_FNAME_FEX_RE): Modified to allow call entries.
+
 2012-04-22  Jose E. Marchesi  <jemarch@gnu.org>
 
 	syntax-check fixes.

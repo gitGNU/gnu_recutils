@@ -610,6 +610,31 @@ rec_record_contains_value (rec_record_t record,
   return res;
 }
 
+bool
+rec_record_contains_field (rec_record_t record,
+                           const char *field_name,
+                           const char *field_value)
+{
+  bool res = false;
+  rec_mset_iterator_t iter;
+  rec_field_t field;
+
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
+    {
+      if (rec_field_name_equal_p (field_name,
+                                  rec_field_name (field))
+          && (strcmp (field_value, rec_field_value (field)) == 0))
+        {
+          res = true;
+          break;
+        }
+    }
+  rec_mset_iterator_free (&iter);
+
+  return res;
+}
+
 void *
 rec_record_container (rec_record_t record)
 {
@@ -688,6 +713,27 @@ rec_record_uniq (rec_record_t record)
   /* Cleanup.  */
 
   free (to_remove);
+}
+
+void
+rec_record_append (rec_record_t dest_record,
+                   rec_record_t src_record)
+{
+  rec_mset_iterator_t iter;
+  rec_field_t field;
+
+  iter = rec_mset_iterator (src_record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
+    {
+      if (!rec_mset_append (rec_record_mset (dest_record),
+                            MSET_FIELD,
+                            (void *) rec_field_dup (field),
+                            MSET_FIELD))
+        {
+          /* Out of memory.  Just return.  */
+          return;
+        }
+    }
 }
 
 /*
