@@ -123,6 +123,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module mbsinit:
   # Code from module mbtowc:
   # Code from module memchr:
+  # Code from module minmax:
   # Code from module mkstemp:
   # Code from module mktime:
   # Code from module msvc-inval:
@@ -471,6 +472,7 @@ if test $HAVE_MEMCHR = 0 || test $REPLACE_MEMCHR = 1; then
   gl_PREREQ_MEMCHR
 fi
 gl_STRING_MODULE_INDICATOR([memchr])
+gl_MINMAX
 gl_FUNC_MKSTEMP
 if test $HAVE_MKSTEMP = 0 || test $REPLACE_MKSTEMP = 1; then
   AC_LIBOBJ([mkstemp])
@@ -971,6 +973,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbtowc.c
   lib/memchr.c
   lib/memchr.valgrind
+  lib/minmax.h
   lib/mkstemp.c
   lib/mktime-internal.h
   lib/mktime.c
@@ -1173,6 +1176,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbstate_t.m4
   m4/mbtowc.m4
   m4/memchr.m4
+  m4/minmax.m4
   m4/mkstemp.m4
   m4/mktime.m4
   m4/mmap-anon.m4

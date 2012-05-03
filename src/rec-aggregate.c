@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-03 20:48:41 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-05-03 21:13:47 jemarch"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -27,7 +27,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <float.h>
 #include <math.h>
+#include <minmax.h>
 
 #include <rec-utils.h>
 #include <rec.h>
@@ -60,6 +62,18 @@ static char *rec_aggregate_std_sum (rec_rset_t rset,
                                     rec_record_t record,
                                     const char *field_name);
 static double rec_aggregate_std_sum_record (rec_record_t record,
+                                            const char *field_name);
+
+static char *rec_aggregate_std_min (rec_rset_t rset,
+                                    rec_record_t record,
+                                    const char *field_name);
+static double rec_aggregate_std_min_record (rec_record_t record,
+                                            const char *field_name);
+
+static char *rec_aggregate_std_max (rec_rset_t rset,
+                                    rec_record_t record,
+                                    const char *field_name);
+static double rec_aggregate_std_max_record (rec_record_t record,
                                             const char *field_name);
 
 /*
@@ -159,13 +173,17 @@ rec_aggregate_reg_add_standard (rec_aggregate_reg_t func_reg)
 
   rec_aggregate_reg_add (func_reg, "Count", &rec_aggregate_std_count);
   rec_aggregate_reg_add (func_reg, "Sum", &rec_aggregate_std_sum);
+  rec_aggregate_reg_add (func_reg, "Min", &rec_aggregate_std_min);
+  rec_aggregate_reg_add (func_reg, "Max", &rec_aggregate_std_max);
 }
 
 bool
 rec_aggregate_std_p (const char *name)
 {
   return ((strcasecmp (name, "Count") == 0)
-          || (strcasecmp (name, "Sum") == 0));
+          || (strcasecmp (name, "Sum") == 0)
+          || (strcasecmp (name, "Min") == 0)
+          || (strcasecmp (name, "Max") == 0));
 }
 
 /*
@@ -267,6 +285,138 @@ rec_aggregate_std_sum_record (rec_record_t record,
   rec_mset_iterator_free (&iter);
 
   return sum;
+}
+
+static char *
+rec_aggregate_std_min (rec_rset_t rset,
+                       rec_record_t record,
+                       const char *field_name)
+{
+  char *result = NULL;
+  double min   = DBL_MAX;
+
+  if (record)
+    {
+      min = rec_aggregate_std_min_record (record, field_name);
+    }
+  else if (rset)
+    {
+      rec_record_t rec = NULL;
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
+        {
+          min = MIN (min, rec_aggregate_std_min_record (rec, field_name));
+        }
+      rec_mset_iterator_free (&iter);
+    }
+
+  /* Return the min as a string.  Note that if NULL is returned it
+     will be returned by this function below to signal the
+     end-of-memory condition.  */
+
+  if (min == floor (min))
+    {
+      asprintf (&result, "%ld", (size_t) min);
+    }
+  else
+    {
+      asprintf (&result, "%f", min);
+    }
+
+  return result;
+}
+
+static double
+rec_aggregate_std_min_record (rec_record_t record,
+                              const char *field_name)
+{
+  /* Calculate the minimum of the fields in a given record.  Fields
+     not representing a real value are ignored.  */
+
+  double min = DBL_MAX;
+  rec_field_t field;
+  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
+
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
+    {
+      const char *field_value = rec_field_value (field);
+      double field_value_double = 0;
+      
+      if (rec_field_name_equal_p (rec_field_name (field), field_name)
+          && rec_atod (field_value, &field_value_double))
+        {
+          min = MIN (min, field_value_double);
+        }
+    }
+  rec_mset_iterator_free (&iter);
+
+  return min;
+}
+
+static char *
+rec_aggregate_std_max (rec_rset_t rset,
+                       rec_record_t record,
+                       const char *field_name)
+{
+  char *result = NULL;
+  double max   = DBL_MIN;
+
+  if (record)
+    {
+      max = rec_aggregate_std_max_record (record, field_name);
+    }
+  else if (rset)
+    {
+      rec_record_t rec = NULL;
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
+        {
+          max = MAX (max, rec_aggregate_std_max_record (rec, field_name));
+        }
+      rec_mset_iterator_free (&iter);
+    }
+
+  /* Return the max as a string.  Note that if NULL is returned it
+     will be returned by this function below to signal the
+     end-of-memory condition.  */
+
+  if (max == floor (max))
+    {
+      asprintf (&result, "%ld", (size_t) max);
+    }
+  else
+    {
+      asprintf (&result, "%f", max);
+    }
+
+  return result;
+}
+
+static double
+rec_aggregate_std_max_record (rec_record_t record,
+                              const char *field_name)
+{
+  /* Calculate the minimum of the fields in a given record.  Fields
+     not representing a real value are ignored.  */
+
+  double max = DBL_MIN;
+  rec_field_t field;
+  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
+
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
+    {
+      const char *field_value = rec_field_value (field);
+      double field_value_double = 0;
+      
+      if (rec_field_name_equal_p (rec_field_name (field), field_name)
+          && rec_atod (field_value, &field_value_double))
+        {
+          max = MAX (max, field_value_double);
+        }
+    }
+  rec_mset_iterator_free (&iter);
+
+  return max;
 }
 
 /* End of rec-aggregate.c */
