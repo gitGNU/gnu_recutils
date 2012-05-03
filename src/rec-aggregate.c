@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-03 18:49:10 jco"
+/* -*- mode: C -*- Time-stamp: "2012-05-03 18:57:12 jco"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -141,7 +141,7 @@ rec_aggregate_reg_get (rec_aggregate_reg_t func_reg,
 
   for (i = 0; i < func_reg->num_functions; i++)
     {
-      if (strcmp (func_reg->functions[i].name, name) == 0)
+      if (strcasecmp (func_reg->functions[i].name, name) == 0)
         {
           res = func_reg->functions[i].function;
           break;
