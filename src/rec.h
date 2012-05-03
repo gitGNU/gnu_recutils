@@ -489,6 +489,11 @@ rec_fex_elem_t rec_fex_get (rec_fex_t fex, size_t position);
 rec_fex_elem_t rec_fex_append (rec_fex_t fex, const char *fname,
                                int min, int max);
 
+/* Determine whether all the elements of the given FEX are function
+   calls.  */
+
+bool rec_fex_all_calls_p (rec_fex_t fex);
+
 /**************** Accessing field expression elements **************/
 
 /* Return the name of the field(s) referred by a given fex

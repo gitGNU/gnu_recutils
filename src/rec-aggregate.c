@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-03 15:40:28 jco"
+/* -*- mode: C -*- Time-stamp: "2012-05-03 16:16:57 jco"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -160,56 +160,28 @@ rec_aggregate_std_count (rec_rset_t rset,
                          const char *field_name)
 {
   char *result = NULL;
+  size_t count = 0;
 
-  /* Get the value of the first occurrence of a field called
-     FIELD_NAME and then count the number of records in RSET
-     having such a field.  In case no such field exists in the
-     current record then we are done.  */
-  
-  rec_field_t count_field =
-    rec_record_get_field_by_name (record, field_name, 0);
-  
-  if (count_field)
+  if (record)
     {
-      size_t count = 0;
-      rec_record_t rec = NULL;
-      rec_mset_iterator_t rset_iter =
-        rec_mset_iterator (rec_rset_mset (rset));
-      
-      while (rec_mset_iterator_next (&rset_iter, MSET_RECORD, (void *) &rec, NULL))
-        {
-          rec_field_t field = NULL;
-          rec_mset_iterator_t rec_iter =
-            rec_mset_iterator (rec_record_mset (rec));
-          
-          if (rec == record)
-            {
-              /* Small optimization.  */
-              count++;
-              continue;
-            }
-          
-          while (rec_mset_iterator_next (&rec_iter, MSET_FIELD, (void *) &field, NULL))
-            {
-              const char *fname = rec_field_name (field);
-              if (rec_field_name_equal_p (rec_field_name (field), field_name)
-                  && (strcmp (rec_field_value (field), rec_field_value (count_field)) == 0))
-                {
-                  count++;
-                  break; /* We count 1 per record containing a
-                            field with the same value.  */
-                }                  
-            }
-          rec_mset_iterator_free (&rec_iter);
-        }
-      rec_mset_iterator_free (&rset_iter);
-      
-      /* Return the count as a string.  Note that if NULL is returned
-         it will be returned by this function below to signal the
-         end-of-memory condition.  */
-      
-      asprintf (&result, "%ld", count);
+      count = rec_record_get_num_fields_by_name (record, field_name);
     }
+  else if (rset)
+    {
+      rec_record_t rec = NULL;
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
+        {
+          count = count + rec_record_get_num_fields_by_name (rec, field_name);
+        }
+      rec_mset_iterator_free (&iter);
+    }
+
+  /* Return the count as a string.  Note that if NULL is returned it
+     will be returned by this function below to signal the
+     end-of-memory condition.  */
+      
+  asprintf (&result, "%ld", count);
 
   return result;
 }

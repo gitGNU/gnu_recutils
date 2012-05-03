@@ -423,6 +423,24 @@ rec_fex_elem_function_data (rec_fex_elem_t elem)
   return elem->function_data;
 }
 
+bool
+rec_fex_all_calls_p (rec_fex_t fex)
+{
+  bool result = true;
+  size_t i = 0;
+
+  for (i = 0; i < fex->num_elems; i++)
+    {
+      if (fex->elems[i]->function_name == NULL)
+        {
+          result = false;
+          break;
+        }
+    }
+
+  return result;
+}
+
 /*
  * Private functions.
  */

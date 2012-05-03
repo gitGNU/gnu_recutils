@@ -383,115 +383,138 @@ rec_db_query (rec_db_t     db,
         }
     }
 
-  /* Process this record set.  This means that every record of this
-     record set which is selected by some of the selection arguments
-     (a sex, an index, a random selection or a "fast string") will be
-     duplicated and added to the 'res' record set.  */
+  if (fex && !group_by && rec_fex_all_calls_p (fex))
+    {
+      /* This query is a request for the value of several aggregates,
+         with no grouping.  This means that the resulting rset will
+         contain one record containing the evaluation of the
+         aggregates.  This is peformed by invoking rec_db_process_fex
+         with a NULL record.  */
 
-  {
-    rec_record_t record = NULL;
-    size_t num_rec = -1;
+      rec_record_t record = rec_db_process_fex (db, rset, NULL, fex);
+      if (record)
+        {
+          rec_record_set_container (record, res);
+          if (!rec_mset_append (rec_rset_mset (res),
+                                MSET_RECORD,
+                                (void *) record,
+                                MSET_RECORD))
+            {
+              /* Out of memory.  */
+              return NULL;
+            }
+        }
+    }
+  else
+    {
+      /* Process this record set.  This means that every record of this
+         record set which is selected by some of the selection arguments
+         (a sex, an index, a random selection or a "fast string") will
+         be duplicated and added to the 'res' record set.  */
 
-    if (!rec_rset_sort (rset, sort_by))
-      {
-        /* Out of memory.  */
-        return NULL;
-      }
+      rec_record_t record = NULL;
+      size_t num_rec = -1;
 
-    if (group_by)
-      {
-        if (!rec_rset_sort (rset, group_by))
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
+      if (!rec_rset_sort (rset, sort_by))
+        {
+          /* Out of memory.  */
+          return NULL;
+        }
 
-        if (!rec_rset_group (rset, group_by))
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
-      }
+      if (group_by)
+        {
+          if (!rec_rset_sort (rset, group_by))
+            {
+              /* Out of memory.  */
+              return NULL;
+            }
 
-    rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
-    while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
-      {
-        bool selected = false;
-        num_rec++;
+          if (!rec_rset_group (rset, group_by))
+            {
+              /* Out of memory.  */
+              return NULL;
+            }
+        }
+
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
+        {
+          bool selected = false;
+          num_rec++;
         
-        /* Determine whether we must skip this record.  */
+          /* Determine whether we must skip this record.  */
         
-        if (!rec_db_record_selected_p (num_rec,
-                                       record,
-                                       index,
-                                       sex,
-                                       fast_string,
-                                       flags & REC_F_ICASE))
-          {
-            continue;
-          }
+          if (!rec_db_record_selected_p (num_rec,
+                                         record,
+                                         index,
+                                         sex,
+                                         fast_string,
+                                         flags & REC_F_ICASE))
+            {
+              continue;
+            }
               
-        /* Process this record.  */
+          /* Process this record.  */
 
-        /* Transform the record through the field expression and add
-           it to the result record set.  */
+          /* Transform the record through the field expression and add
+             it to the result record set.  */
         
-        rec_record_t res_record
-          = rec_db_process_fex (db, rset, record, fex);
+          rec_record_t res_record
+            = rec_db_process_fex (db, rset, record, fex);
 
-        if (!res_record)
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
+          if (!res_record)
+            {
+              /* Out of memory.  */
+              return NULL;
+            }
 
-        /* Do not add empty records to the result record set.  */
+          /* Do not add empty records to the result record set.  */
 
-        if (rec_record_num_elems (res_record) == 0)
-          {
-            continue;
-          }
+          if (rec_record_num_elems (res_record) == 0)
+            {
+              continue;
+            }
 
 #if defined REC_CRYPT_SUPPORT
 
-        /* Decrypt the confidential fields in the record if some
-           of the fields are declared as "confidential", but only
-           do that if the user provided a password.  Note that we
-           use 'rset' instead of 'res' to cover cases where (flags
-           & REC_F_DESCRIPTOR) == 0.  */
+          /* Decrypt the confidential fields in the record if some
+             of the fields are declared as "confidential", but only
+             do that if the user provided a password.  Note that we
+             use 'rset' instead of 'res' to cover cases where (flags
+             & REC_F_DESCRIPTOR) == 0.  */
         
-        if (password)
-          {
-            if (!rec_decrypt_record (rset, res_record, password))
-              {
-                /* Out of memory.  */
-                return NULL;
-              }
-          }
+          if (password)
+            {
+              if (!rec_decrypt_record (rset, res_record, password))
+                {
+                  /* Out of memory.  */
+                  return NULL;
+                }
+            }
 #endif
 
-        /* Remove duplicated fields if requested by the user.  */
+          /* Remove duplicated fields if requested by the user.  */
         
-        if (flags & REC_F_UNIQ)
-          {
-            rec_record_uniq (res_record);
-          }
+          if (flags & REC_F_UNIQ)
+            {
+              rec_record_uniq (res_record);
+            }
         
-        /* Append.  */
+          /* Append.  */
 
-        rec_record_set_container (res_record, res);
-        if (!rec_mset_append (rec_rset_mset (res),
-                              MSET_RECORD,
-                              (void *) res_record,
-                              MSET_RECORD))
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
+          rec_record_set_container (res_record, res);
+          if (!rec_mset_append (rec_rset_mset (res),
+                                MSET_RECORD,
+                                (void *) res_record,
+                                MSET_RECORD))
+            {
+              /* Out of memory.  */
+              return NULL;
+            }
         
-      }
-    rec_mset_iterator_free (&iter);
-  }
+        }
+      rec_mset_iterator_free (&iter);
+    }
 
   return res;
 }
@@ -1656,7 +1679,7 @@ rec_db_process_fex (rec_db_t db,
                     }
                   else
                     {
-                      agg_field_name = malloc (strlen(function_name) + strlen (field_name) + 1);
+                      agg_field_name = malloc (strlen(function_name) + 1 /* _ */ + strlen (field_name) + 1);
                       if (!agg_field_name)
                         {
                           /* Out of memory.  */
@@ -1664,6 +1687,7 @@ rec_db_process_fex (rec_db_t db,
                         }
                       
                       strncpy (agg_field_name, function_name, strlen (function_name) + 1);
+                      strcat (agg_field_name, "_");
                       strcat (agg_field_name, field_name);
                     }
 
