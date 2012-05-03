@@ -69,6 +69,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module fcntl-h:
   # Code from module fd-hook:
   # Code from module float:
+  # Code from module floor:
   # Code from module fpending:
   # Code from module fpieee:
   AC_REQUIRE([gl_FP_IEEE])
@@ -109,6 +110,8 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_SYS_LARGEFILE])
   # Code from module list:
   # Code from module localcharset:
+  # Code from module locale:
+  # Code from module localeconv:
   # Code from module lseek:
   # Code from module lstat:
   # Code from module maintainer-makefile:
@@ -277,6 +280,11 @@ fi
 if test $REPLACE_ITOLD = 1; then
   AC_LIBOBJ([itold])
 fi
+gl_FUNC_FLOOR
+if test $REPLACE_FLOOR = 1; then
+  AC_LIBOBJ([floor])
+fi
+gl_MATH_MODULE_INDICATOR([floor])
 gl_FUNC_FPENDING
 if test $ac_cv_func___fpending = no; then
   AC_LIBOBJ([fpending])
@@ -302,6 +310,7 @@ gl_STDIO_MODULE_INDICATOR([fseek])
 gl_FUNC_FSEEKO
 if test $HAVE_FSEEKO = 0 || test $REPLACE_FSEEKO = 1; then
   AC_LIBOBJ([fseeko])
+  gl_PREREQ_FSEEKO
 fi
 gl_STDIO_MODULE_INDICATOR([fseeko])
 gl_FUNC_FSTAT
@@ -318,6 +327,7 @@ gl_STDIO_MODULE_INDICATOR([ftell])
 gl_FUNC_FTELLO
 if test $HAVE_FTELLO = 0 || test $REPLACE_FTELLO = 1; then
   AC_LIBOBJ([ftello])
+  gl_PREREQ_FTELLO
 fi
 gl_STDIO_MODULE_INDICATOR([ftello])
 gl_FUNC_GETDELIM
@@ -400,10 +410,18 @@ if test $gl_func_isnanl_no_libm != yes; then
   gl_PREREQ_ISNANL
 fi
 gl_LANGINFO_H
+AC_REQUIRE([gl_LARGEFILE])
 gl_LIST
 gl_LOCALCHARSET
 LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(abs_top_builddir)/$gl_source_base\""
 AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
+gl_LOCALE_H
+gl_FUNC_LOCALECONV
+if test $REPLACE_LOCALECONV = 1; then
+  AC_LIBOBJ([localeconv])
+  gl_PREREQ_LOCALECONV
+fi
+gl_LOCALE_MODULE_INDICATOR([localeconv])
 gl_FUNC_LSEEK
 if test $REPLACE_LSEEK = 1; then
   AC_LIBOBJ([lseek])
@@ -896,6 +914,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/float+.h
   lib/float.c
   lib/float.in.h
+  lib/floor.c
   lib/fpending.c
   lib/fpending.h
   lib/fprintf.c
@@ -937,6 +956,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/langinfo.in.h
   lib/localcharset.c
   lib/localcharset.h
+  lib/locale.in.h
+  lib/localeconv.c
   lib/lseek.c
   lib/lstat.c
   lib/malloc.c
@@ -973,6 +994,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf.c
   lib/progname.c
   lib/progname.h
+  lib/quote.h
   lib/quotearg.c
   lib/quotearg.h
   lib/raise.c
@@ -1089,6 +1111,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fcntl.m4
   m4/fcntl_h.m4
   m4/float_h.m4
+  m4/floor.m4
   m4/fpending.m4
   m4/fpieee.m4
   m4/fprintf-posix.m4
@@ -1136,6 +1159,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/locale-fr.m4
   m4/locale-ja.m4
   m4/locale-zh.m4
+  m4/locale_h.m4
+  m4/localeconv.m4
   m4/lock.m4
   m4/longlong.m4
   m4/lseek.m4

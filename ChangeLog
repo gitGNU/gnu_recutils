@@ -1,3 +1,7 @@
+2012-05-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	gnulib module floor imported.
+
 2012-05-03  Jose E. Marchesi  <jco@terma.com>
 
 	src: aggregate function names are case-insensitive.
