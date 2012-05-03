@@ -415,12 +415,6 @@ rec_db_query (rec_db_t     db,
       rec_record_t record = NULL;
       size_t num_rec = -1;
 
-      if (!rec_rset_sort (rset, sort_by))
-        {
-          /* Out of memory.  */
-          return NULL;
-        }
-
       if (group_by)
         {
           if (!rec_rset_sort (rset, group_by))
@@ -434,6 +428,12 @@ rec_db_query (rec_db_t     db,
               /* Out of memory.  */
               return NULL;
             }
+        }
+
+      if (!rec_rset_sort (rset, sort_by))
+        {
+          /* Out of memory.  */
+          return NULL;
         }
 
       rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));

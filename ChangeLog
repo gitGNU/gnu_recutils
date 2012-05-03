@@ -1,5 +1,11 @@
 2012-05-03  Jose E. Marchesi  <jco@terma.com>
 
+	src: sort after grouping so -S works with -G.
+	* src/rec-db.c (rec_db_query): Sort after grouping, so -S works
+	with -G.
+
+2012-05-03  Jose E. Marchesi  <jco@terma.com>
+
 	src: new semantics and interfaces for aggregates.
 	* src/rec-db.c (rec_db_process_fex): Use _ to separate the
 	function name and the field name when generating names for
