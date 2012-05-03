@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-03 18:57:12 jco"
+/* -*- mode: C -*- Time-stamp: "2012-05-03 20:48:41 jemarch"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -154,8 +154,18 @@ rec_aggregate_reg_get (rec_aggregate_reg_t func_reg,
 void
 rec_aggregate_reg_add_standard (rec_aggregate_reg_t func_reg)
 {
+  /* Please update the rec_aggregate_std_p function if you add a new
+     standard aggregate function.  */
+
   rec_aggregate_reg_add (func_reg, "Count", &rec_aggregate_std_count);
   rec_aggregate_reg_add (func_reg, "Sum", &rec_aggregate_std_sum);
+}
+
+bool
+rec_aggregate_std_p (const char *name)
+{
+  return ((strcasecmp (name, "Count") == 0)
+          || (strcasecmp (name, "Sum") == 0));
 }
 
 /*

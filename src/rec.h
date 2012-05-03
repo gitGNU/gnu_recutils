@@ -2171,6 +2171,11 @@ rec_aggregate_t rec_aggregate_reg_get (rec_aggregate_reg_t func_get, const char 
 
 void rec_aggregate_reg_add_standard (rec_aggregate_reg_t func_reg);
 
+/* Determine whether a given function name is a standard aggregate.
+   The comparison is case-insensitive.  */
+
+bool rec_aggregate_std_p (const char *name);
+
 #endif /* !GNU_REC_H */
 
 /* End of rec.h */

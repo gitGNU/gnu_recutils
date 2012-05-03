@@ -314,6 +314,23 @@ recsel_parse_args (int argc,
                 recutl_fatal (_("internal error creating the field expression.\n"));
               }
 
+            /* Check that all the functions called in the fex exist.
+               Otherwise raise an error.  */
+            
+            {
+              size_t i = 0;
+              for (i = 0; i < rec_fex_size (recsel_fex); i++)
+                {
+                  rec_fex_elem_t elem = rec_fex_get (recsel_fex, i);
+                  const char *fname = rec_fex_elem_function_name (elem);
+
+                  if (fname && !rec_aggregate_std_p (fname))
+                    {
+                      recutl_fatal (_("invalid aggregate function '%s'\n"), fname);
+                    }
+                }
+            }
+
             break;
           }
         case COLLAPSE_ARG:
