@@ -1,3 +1,24 @@
+2012-05-03  Jose E. Marchesi  <jco@terma.com>
+
+	src: field functions renamed to aggregates.
+	* src/rec-aggregate.c (rec_aggregate_std_count): Return a char*
+	instead of a record.
+
+	* src/rec-db.c (struct rec_db_s): Field functions_reg renamed to
+	aggregates.
+
+	* src/Makefile.am (librec_la_SOURCES): rec-func.c is now called
+	rec-aggregate.c.
+
+	* src/rec-aggregate.c: Renamed from src/rec-func.c, and all
+	rec_func_* symbols renamed to rec_aggregate_*.
+
+	* src/rec.h: rec_func_t modified to return a string instead of a
+	record and renamed to rec_aggregate_t.
+
+	* src/rec-db.c (rec_db_query): Perform the group-by operation
+	before the selection.
+
 2012-04-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,utils: implementation of field functions, and Count.

@@ -43,7 +43,7 @@ struct rec_db_s
   size_t size;                    /* Number of record sets contained
                                      in this database.  */
   gl_list_t rset_list;            /* List of record sets.  */
-  rec_func_reg_t functions_reg;   /* Functions registry.  */
+  rec_aggregate_reg_t aggregates; /* Registry with the aggregates.  */
 };
 
 /* Static functions defined in this file.  */
@@ -104,14 +104,14 @@ rec_db_new (void)
       /* Add the standard field functions to the registry in the
          database.  */
 
-      new->functions_reg = rec_func_reg_new ();
-      if (!new->functions_reg)
+      new->aggregates = rec_aggregate_reg_new ();
+      if (!new->aggregates)
         {
           /* Out of memory.  */
           free (new);
           return NULL;
         }
-      rec_func_reg_add_standard (new->functions_reg);
+      rec_aggregate_reg_add_standard (new->aggregates);
     }
 
   return new;
@@ -122,7 +122,7 @@ rec_db_destroy (rec_db_t db)
 {
   if (db)
     {
-      rec_func_reg_destroy (db->functions_reg);
+      rec_aggregate_reg_destroy (db->aggregates);
       gl_list_free (db->rset_list);
       free (db);
     }
@@ -369,11 +369,6 @@ rec_db_query (rec_db_t     db,
       rec_rset_set_descriptor (res, descriptor);
     }
   
-  /* Process this record set.  This means that every record of this
-     record set which is selected by some of the selection arguments
-     (a sex, an index, a random selection or a "fast string") will be
-     duplicated and added to the 'res' record set.  */
-
   /* Generate a list of random indexes here if requested.  The
      generated random indexes are added to the indexes list, which
      must be NULL if random > 0 (mutually exclusive arguments).  */
@@ -388,6 +383,11 @@ rec_db_query (rec_db_t     db,
         }
     }
 
+  /* Process this record set.  This means that every record of this
+     record set which is selected by some of the selection arguments
+     (a sex, an index, a random selection or a "fast string") will be
+     duplicated and added to the 'res' record set.  */
+
   {
     rec_record_t record = NULL;
     size_t num_rec = -1;
@@ -396,7 +396,22 @@ rec_db_query (rec_db_t     db,
       {
         /* Out of memory.  */
         return NULL;
-      }    
+      }
+
+    if (group_by)
+      {
+        if (!rec_rset_sort (rset, group_by))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+
+        if (!rec_rset_group (rset, group_by))
+          {
+            /* Out of memory.  */
+            return NULL;
+          }
+      }
 
     rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
     while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
@@ -476,21 +491,6 @@ rec_db_query (rec_db_t     db,
         
       }
     rec_mset_iterator_free (&iter);
-
-    if (group_by)
-      {
-        if (!rec_rset_sort (res, group_by))
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
-
-        if (!rec_rset_group (res, group_by))
-          {
-            /* Out of memory.  */
-            return NULL;
-          }
-      }
   }
 
   return res;
@@ -942,10 +942,10 @@ bool rec_db_set (rec_db_t    db,
   return true;
 }
 
-rec_func_reg_t
-rec_db_functions (rec_db_t db)
+rec_aggregate_reg_t
+rec_db_aggregates (rec_db_t db)
 {
-  return db->functions_reg;
+  return db->aggregates;
 }
 
 /*
@@ -1619,25 +1619,77 @@ rec_db_process_fex (rec_db_t db,
 
       if (function_name)
         {
-          /* Get a handler for the fields function and invoke it,
-             passing the field_name argument and the indexes.  The
-             record returned by the function is then appended into the
-             current record.  Note that missing field functions are
-             simply ignored.  */
+          /* Get a handler for the aggregate function and invoke it on
+             the rset or record, passing the field_name argument and
+             the indexes.  The value returned by the funciton is then
+             appended into the current record in a new field, named
+             after the name of the aggregate and the name of the
+             argument field.  Non-existing aggregates are simply
+             ignored.  */
 
-          rec_func_t func = rec_func_reg_get (rec_db_functions(db), function_name);
+          rec_aggregate_t func = rec_aggregate_reg_get (rec_db_aggregates (db), function_name);
           if (func)
             {
-              rec_record_t func_res = (func) (rset,
-                                              record,
-                                              field_name,
-                                              min,
-                                              max);
-
+              char *func_res = (func) (rset,
+                                       record,
+                                       field_name,
+                                       min,
+                                       max);
+              
               if (func_res)
                 {
-                  rec_record_append (res, func_res);
-                  rec_record_destroy (func_res);
+                  /* Add a new field with the result of the aggregate
+                     as its value.  */
+
+                  rec_field_t agg_field = NULL;
+                  char *agg_field_name = NULL;
+                  char *agg_field_value = func_res;
+
+                  /* The name of the new field is a composition of the
+                     name of the invoked function and the name of the
+                     field to which the function is applied.  Unless
+                     an alias is used, of course.  */
+
+                  if (alias)
+                    {
+                      agg_field_name = strdup (alias);
+                      if (!agg_field_name)
+                        {
+                          /* Out of memory.  */
+                          return NULL;
+                        }
+                    }
+                  else
+                    {
+                      agg_field_name = malloc (strlen(function_name) + strlen (field_name) + 1);
+                      if (!agg_field_name)
+                        {
+                          /* Out of memory.  */
+                          return NULL;
+                        }
+                      
+                      strncpy (agg_field_name, function_name, strlen (function_name) + 1);
+                      strcat (agg_field_name, field_name);
+                    }
+
+                  agg_field = rec_field_new (agg_field_name, agg_field_value);
+                  if (!agg_field)
+                    {
+                      /* Out of memory.  */
+                      return NULL;
+                    }
+                  
+                  if (!rec_mset_append (rec_record_mset (res),
+                                        MSET_FIELD,
+                                        (void *) agg_field,
+                                        MSET_FIELD))
+                    {
+                      /* Out of memory.  */
+                      return NULL;
+                    }
+
+                  free (agg_field_name);
+                  free (func_res);
                 }
             }
         }

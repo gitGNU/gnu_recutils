@@ -43,7 +43,7 @@ librec_la_SOURCES = rec.c \
                     rec-fex.c \
                     rec-types.c \
                     rec-buf.c \
-                    rec-func.c
+                    rec-aggregate.c
 
 if CRYPT
    librec_la_SOURCES += rec-crypt.c

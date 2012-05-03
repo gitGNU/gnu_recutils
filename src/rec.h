@@ -1234,11 +1234,11 @@ typedef struct rec_db_s *rec_db_t;
 
 typedef struct rec_sex_s *rec_sex_t;
 
-/* Opaque data type representing a function registry.  This is placed
-   here as a forward declaration.  See below in this file for the
-   description of field functions.  */
+/* Opaque data type representing a registry of aggregates.  This is
+   placed here as a forward declaration.  See below in this file for
+   the description of field functions.  */
 
-typedef struct rec_func_reg_s *rec_func_reg_t;
+typedef struct rec_aggregate_reg_s *rec_aggregate_reg_t;
 
 /************ Creating and destrying databases *********************/
 
@@ -1298,9 +1298,9 @@ rec_rset_t rec_db_get_rset_by_type (rec_db_t db, const char *type);
 
 /******************** Miscellaneous database functions ****************/
 
-/* Return the functions registry of the given database.  */
+/* Return the registry of aggregates of the given database.  */
 
-rec_func_reg_t rec_db_functions (rec_db_t db);
+rec_aggregate_reg_t rec_db_aggregates (rec_db_t db);
 
 /******************** Database High-Level functions *******************/
 
@@ -2105,45 +2105,46 @@ bool rec_decrypt_record (rec_rset_t rset, rec_record_t record,
                          const char *password);
 
 /*
- * FIELD FUNCTIONS
+ * AGGREGATES
  *
- * The following routines and data types provide support for "field
- * functions".  Field functions are applied to records and return
- * other records.
+ * The following routines and data types provide support for
+ * "aggregate functions".  Aggregate functions are applied to sets of
+ * fields and return a single value.
  */
 
-/* Data type representing a field function.  Field functions get a
-   record set, a record, a field name and subscripts which can be -1.
-   The field functions must return a record, which may be empty.  If
-   an out-of-memory condition occurs then they return NULL.  */
+/* Data type representing an aggregate function.  Aggregate functions
+   get a record set, a record, a field name and subscripts which can
+   be -1.  The field functions must return a string, which may be
+   empty.  If an out-of-memory condition occurs then they return
+   NULL.  */
 
-typedef rec_record_t (*rec_func_t) (rec_rset_t    rset,
-                                    rec_record_t  record,
-                                    const char   *field_name,
-                                    size_t        min,
-                                    size_t        max);
+typedef char *(*rec_aggregate_t) (rec_rset_t    rset,
+                                  rec_record_t  record,
+                                  const char   *field_name,
+                                  size_t        min,
+                                  size_t        max);
 
 /*
- * FUNCTIONS REGISTRIES
+ * AGGREGATES REGISTRIES
  *
  * The following data types and functions provide support for
- * maintaining registries with collections of field functions.  The
- * field functions are identified by a constant string that must be
- * unique in the registry.
+ * maintaining registries with collections of aggregate functions.
+ * The aggregate functions are identified by a constant string that
+ * must be unique in the registry.
  */
 
-/* See the definition of rec_func_reg_t above.  */
+/* See the definition of rec_aggregate_reg_t above.  */
 
 /******** Creating and destroying function registries ************/
 
-/* Create a new, empty function registry.  If there is not error to
+/* Create a new, empty aggregates registry.  If there is not error to
    perform the operation then NULL is returned.  */
 
-rec_func_reg_t rec_func_reg_new (void);
+rec_aggregate_reg_t rec_aggregate_reg_new (void);
 
 /* Destroy a functions registry, freeing any used resources.  */
 
-void rec_func_reg_destroy (rec_func_reg_t func_reg);
+void rec_aggregate_reg_destroy (rec_aggregate_reg_t func_reg);
 
 /********* Registering functions and fetching them ***************/
 
@@ -2154,18 +2155,18 @@ void rec_func_reg_destroy (rec_func_reg_t func_reg);
    successful, and false if there was not enough memory to perform the
    operation.  */
 
-bool rec_func_reg_add (rec_func_reg_t func_reg, const char *name, rec_func_t function);
+bool rec_aggregate_reg_add (rec_aggregate_reg_t func_reg, const char *name, rec_aggregate_t function);
 
 /* Fetch a field function from a functions registry.  If no function
    associated with NAME is found in the registry then NULL is
    returned.  */
 
-rec_func_t rec_func_reg_get (rec_func_reg_t func_get, const char *name);
+rec_aggregate_t rec_aggregate_reg_get (rec_aggregate_reg_t func_get, const char *name);
 
 /* Register the standard built-in functions shipped with librec in the
-   given functions register.  */
+   given aggregate register.  */
 
-void rec_func_reg_add_standard (rec_func_reg_t func_reg);
+void rec_aggregate_reg_add_standard (rec_aggregate_reg_t func_reg);
 
 #endif /* !GNU_REC_H */
 
