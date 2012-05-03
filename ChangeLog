@@ -1,5 +1,17 @@
 2012-05-03  Jose E. Marchesi  <jco@terma.com>
 
+	src: don't allow subscripts in the fields passed to function calls
+	in fexes and aggregates.
+	* src/rec.h: rec_aggregate_t modified to not get min and max
+	arguments.
+	(REC_FEX_CALL): Don't allow subscripts in the field names used in
+	the function calls.
+
+	* src/rec-aggregate.c (rec_aggregate_std_count): Don't get 'min'
+	and 'max' arguments.
+
+2012-05-03  Jose E. Marchesi  <jco@terma.com>
+
 	src: field functions renamed to aggregates.
 	* src/rec-aggregate.c (rec_aggregate_std_count): Return a char*
 	instead of a record.

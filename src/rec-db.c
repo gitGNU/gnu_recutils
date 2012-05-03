@@ -1630,12 +1630,7 @@ rec_db_process_fex (rec_db_t db,
           rec_aggregate_t func = rec_aggregate_reg_get (rec_db_aggregates (db), function_name);
           if (func)
             {
-              char *func_res = (func) (rset,
-                                       record,
-                                       field_name,
-                                       min,
-                                       max);
-              
+              char *func_res = (func) (rset, record, field_name);
               if (func_res)
                 {
                   /* Add a new field with the result of the aggregate

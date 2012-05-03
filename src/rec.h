@@ -448,7 +448,7 @@ enum rec_fex_kind_e
 #define REC_FNAME_LIST_CS_RE  REC_FNAME_FEX_RE "(," REC_FNAME_FEX_RE ")*"
 #define REC_FNAME_SUB_RE      REC_FNAME_FEX_RE "(\\[[0-9]+(-[0-9]+)?\\])?"
 #define REC_FEX_FUNCTION_NAME "[a-zA-Z_][a-zA-Z0-9_]*"
-#define REC_FEX_CALL          REC_FEX_FUNCTION_NAME "\\(" REC_FNAME_SUB_RE "\\)"
+#define REC_FEX_CALL          REC_FEX_FUNCTION_NAME "\\(" REC_FNAME_FEX_RE "\\)"
 #define REC_FNAME_LIST_SUB_ELEM_RE "(" REC_FNAME_SUB_RE "|" REC_FEX_CALL ")" "(:" REC_FNAME_FEX_RE ")?"
 #define REC_FNAME_LIST_SUB_RE REC_FNAME_LIST_SUB_ELEM_RE "(," REC_FNAME_LIST_SUB_ELEM_RE ")*"
 
@@ -2120,9 +2120,7 @@ bool rec_decrypt_record (rec_rset_t rset, rec_record_t record,
 
 typedef char *(*rec_aggregate_t) (rec_rset_t    rset,
                                   rec_record_t  record,
-                                  const char   *field_name,
-                                  size_t        min,
-                                  size_t        max);
+                                  const char   *field_name);
 
 /*
  * AGGREGATES REGISTRIES

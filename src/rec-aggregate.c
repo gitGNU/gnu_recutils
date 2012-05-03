@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-03 14:35:55 jco"
+/* -*- mode: C -*- Time-stamp: "2012-05-03 15:40:28 jco"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -53,9 +53,7 @@ struct rec_aggregate_reg_s
 
 static char *rec_aggregate_std_count (rec_rset_t rset,
                                       rec_record_t record,
-                                      const char *field_name,
-                                      size_t min,
-                                      size_t max);
+                                      const char *field_name);
 
 /*
  * Public functions.
@@ -159,9 +157,7 @@ rec_aggregate_reg_add_standard (rec_aggregate_reg_t func_reg)
 static char *
 rec_aggregate_std_count (rec_rset_t rset,
                          rec_record_t record,
-                         const char *field_name,
-                         size_t min,
-                         size_t max)
+                         const char *field_name)
 {
   char *result = NULL;
 
