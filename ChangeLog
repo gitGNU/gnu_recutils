@@ -1,5 +1,11 @@
 2012-05-03  Jose E. Marchesi  <jco@terma.com>
 
+	src: implementation of the SUM aggregate.
+	* src/rec-aggregate.c (rec_aggregate_std_sum): New function.
+	(rec_aggregate_std_sum_record): Likewise.
+
+2012-05-03  Jose E. Marchesi  <jco@terma.com>
+
 	src: sort after grouping so -S works with -G.
 	* src/rec-db.c (rec_db_query): Sort after grouping, so -S works
 	with -G.

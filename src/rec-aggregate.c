@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-03 16:16:57 jco"
+/* -*- mode: C -*- Time-stamp: "2012-05-03 18:49:10 jco"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -27,6 +27,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <rec-utils.h>
 #include <rec.h>
@@ -54,6 +55,12 @@ struct rec_aggregate_reg_s
 static char *rec_aggregate_std_count (rec_rset_t rset,
                                       rec_record_t record,
                                       const char *field_name);
+
+static char *rec_aggregate_std_sum (rec_rset_t rset,
+                                    rec_record_t record,
+                                    const char *field_name);
+static double rec_aggregate_std_sum_record (rec_record_t record,
+                                            const char *field_name);
 
 /*
  * Public functions.
@@ -148,6 +155,7 @@ void
 rec_aggregate_reg_add_standard (rec_aggregate_reg_t func_reg)
 {
   rec_aggregate_reg_add (func_reg, "Count", &rec_aggregate_std_count);
+  rec_aggregate_reg_add (func_reg, "Sum", &rec_aggregate_std_sum);
 }
 
 /*
@@ -182,8 +190,73 @@ rec_aggregate_std_count (rec_rset_t rset,
      end-of-memory condition.  */
       
   asprintf (&result, "%ld", count);
+  return result;
+}
+
+static char *
+rec_aggregate_std_sum (rec_rset_t rset,
+                       rec_record_t record,
+                       const char *field_name)
+{
+  char *result = NULL;
+  double sum   = 0;
+
+  if (record)
+    {
+      sum = rec_aggregate_std_sum_record (record, field_name);
+    }
+  else if (rset)
+    {
+      rec_record_t rec = NULL;
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
+        {
+          sum = sum + rec_aggregate_std_sum_record (rec, field_name);
+        }
+      rec_mset_iterator_free (&iter);
+    }
+
+  /* Return the sum as a string.  Note that if NULL is returned it
+     will be returned by this function below to signal the
+     end-of-memory condition.  */
+
+  if (sum == floor (sum))
+    {
+      asprintf (&result, "%ld", (size_t) sum);
+    }
+  else
+    {
+      asprintf (&result, "%f", sum);
+    }
 
   return result;
+}
+
+static double
+rec_aggregate_std_sum_record (rec_record_t record,
+                              const char *field_name)
+{
+  /* Calculate the sum of the fields in a given record.  Fields not
+     representing a real value are ignored.  */
+
+  double sum = 0;
+  rec_field_t field;
+  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
+
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
+    {
+      const char *field_value = rec_field_value (field);
+      double field_value_double = 0;
+      
+      if (rec_field_name_equal_p (rec_field_name (field), field_name)
+          && rec_atod (field_value, &field_value_double))
+        {
+          sum = sum + field_value_double;
+        }
+    }
+  rec_mset_iterator_free (&iter);
+
+  return sum;
 }
 
 /* End of rec-aggregate.c */
