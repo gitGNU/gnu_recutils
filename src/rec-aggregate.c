@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-03 21:13:47 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-05-05 19:18:15 jemarch"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -75,6 +75,28 @@ static char *rec_aggregate_std_max (rec_rset_t rset,
                                     const char *field_name);
 static double rec_aggregate_std_max_record (rec_record_t record,
                                             const char *field_name);
+
+/*
+ * Static structure containing the descriptors of the standard
+ * aggregates.
+ *
+ * The aggregate names must be in lower-case, even if the matching is
+ * case-insensitive.
+ */
+
+struct rec_aggregate_descriptor_s
+{
+  const char *name;
+  rec_aggregate_t func;
+};
+
+#define NUM_STD_AGGREGATES 4
+
+static struct rec_aggregate_descriptor_s std_aggregates[] =
+  {{"count", &rec_aggregate_std_count},
+   {"sum",   &rec_aggregate_std_sum},
+   {"min",   &rec_aggregate_std_min},
+   {"max",   &rec_aggregate_std_max}};
 
 /*
  * Public functions.
@@ -168,22 +190,30 @@ rec_aggregate_reg_get (rec_aggregate_reg_t func_reg,
 void
 rec_aggregate_reg_add_standard (rec_aggregate_reg_t func_reg)
 {
-  /* Please update the rec_aggregate_std_p function if you add a new
-     standard aggregate function.  */
+  size_t i = 0;
 
-  rec_aggregate_reg_add (func_reg, "Count", &rec_aggregate_std_count);
-  rec_aggregate_reg_add (func_reg, "Sum", &rec_aggregate_std_sum);
-  rec_aggregate_reg_add (func_reg, "Min", &rec_aggregate_std_min);
-  rec_aggregate_reg_add (func_reg, "Max", &rec_aggregate_std_max);
+  for (i = 0; i < NUM_STD_AGGREGATES; i++)
+    {
+      rec_aggregate_reg_add (func_reg, std_aggregates[i].name, std_aggregates[i].func);
+    }
 }
 
 bool
 rec_aggregate_std_p (const char *name)
 {
-  return ((strcasecmp (name, "Count") == 0)
-          || (strcasecmp (name, "Sum") == 0)
-          || (strcasecmp (name, "Min") == 0)
-          || (strcasecmp (name, "Max") == 0));
+  bool found = false;
+  size_t i   = 0;
+
+  for (i = 0; i < NUM_STD_AGGREGATES; i++)
+    {
+      if (strcasecmp (name, std_aggregates[i].name) == 0)
+        {
+          found = true;
+          break;
+        }
+    }
+
+  return found;
 }
 
 /*
@@ -221,202 +251,91 @@ rec_aggregate_std_count (rec_rset_t rset,
   return result;
 }
 
-static char *
-rec_aggregate_std_sum (rec_rset_t rset,
-                       rec_record_t record,
-                       const char *field_name)
+#define REC_AGGREGATE_ACCUM_FUNC(NAME, OP)                              \
+  static char *                                                         \
+  rec_aggregate_std_##NAME (rec_rset_t rset,                            \
+                            rec_record_t record,                        \
+                            const char *field_name)                     \
+  {                                                                     \
+  char *result = NULL;                                                  \
+  double val   = 0;                                                     \
+                                                                        \
+  if (record)                                                           \
+    {                                                                   \
+      val = rec_aggregate_std_##NAME##_record (record, field_name);     \
+    }                                                                   \
+  else if (rset)                                                        \
+    {                                                                   \
+      rec_record_t rec = NULL;                                          \
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset)); \
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL)) \
+        {                                                               \
+          val = OP (val, rec_aggregate_std_##NAME##_record (rec, field_name)); \
+        }                                                               \
+      rec_mset_iterator_free (&iter);                                   \
+    }                                                                   \
+                                                                        \
+  /* Return the val as a string.  Note that if NULL is returned it      \
+     will be returned by this function below to signal the              \
+     end-of-memory condition.  */                                       \
+                                                                        \
+  if (val == floor (val))                                               \
+    {                                                                   \
+      asprintf (&result, "%ld", (size_t) val);                          \
+    }                                                                   \
+  else                                                                  \
+    {                                                                   \
+      asprintf (&result, "%f", val);                                    \
+    }                                                                   \
+                                                                        \
+  return result;                                                        \
+  }                                                                     \
+                                                                        \
+  static double                                                         \
+  rec_aggregate_std_##NAME##_record (rec_record_t record,               \
+                                     const char *field_name)            \
+  {                                                                     \
+  /* Calculate the val of the fields in a given record.  Fields not     \
+     representing a real value are ignored.  */                         \
+                                                                        \
+  double val = 0;                                                       \
+  rec_field_t field;                                                    \
+  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record)); \
+                                                                        \
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL)) \
+    {                                                                   \
+  const char *field_value = rec_field_value (field);                    \
+  double field_value_double = 0;                                        \
+                                                                        \
+  if (rec_field_name_equal_p (rec_field_name (field), field_name)       \
+      && rec_atod (field_value, &field_value_double))                   \
+    {                                                                   \
+      val = OP (val, field_value_double);                               \
+    }                                                                   \
+    }                                                                   \
+  rec_mset_iterator_free (&iter);                                       \
+                                                                        \
+  return val;                                                           \
+  }
+
+/*
+ * Aggregate: Sum(Field)
+ */
+
+static inline double
+op_sum (double op1, double op2)
 {
-  char *result = NULL;
-  double sum   = 0;
-
-  if (record)
-    {
-      sum = rec_aggregate_std_sum_record (record, field_name);
-    }
-  else if (rset)
-    {
-      rec_record_t rec = NULL;
-      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
-      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
-        {
-          sum = sum + rec_aggregate_std_sum_record (rec, field_name);
-        }
-      rec_mset_iterator_free (&iter);
-    }
-
-  /* Return the sum as a string.  Note that if NULL is returned it
-     will be returned by this function below to signal the
-     end-of-memory condition.  */
-
-  if (sum == floor (sum))
-    {
-      asprintf (&result, "%ld", (size_t) sum);
-    }
-  else
-    {
-      asprintf (&result, "%f", sum);
-    }
-
-  return result;
+  return op1 + op2;
 }
 
-static double
-rec_aggregate_std_sum_record (rec_record_t record,
-                              const char *field_name)
-{
-  /* Calculate the sum of the fields in a given record.  Fields not
-     representing a real value are ignored.  */
+REC_AGGREGATE_ACCUM_FUNC(sum, op_sum);
 
-  double sum = 0;
-  rec_field_t field;
-  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
+/*
+ * Aggregate: Min(Field)
+ * Aggregate: Max(Field)
+ */
 
-  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
-    {
-      const char *field_value = rec_field_value (field);
-      double field_value_double = 0;
-      
-      if (rec_field_name_equal_p (rec_field_name (field), field_name)
-          && rec_atod (field_value, &field_value_double))
-        {
-          sum = sum + field_value_double;
-        }
-    }
-  rec_mset_iterator_free (&iter);
-
-  return sum;
-}
-
-static char *
-rec_aggregate_std_min (rec_rset_t rset,
-                       rec_record_t record,
-                       const char *field_name)
-{
-  char *result = NULL;
-  double min   = DBL_MAX;
-
-  if (record)
-    {
-      min = rec_aggregate_std_min_record (record, field_name);
-    }
-  else if (rset)
-    {
-      rec_record_t rec = NULL;
-      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
-      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
-        {
-          min = MIN (min, rec_aggregate_std_min_record (rec, field_name));
-        }
-      rec_mset_iterator_free (&iter);
-    }
-
-  /* Return the min as a string.  Note that if NULL is returned it
-     will be returned by this function below to signal the
-     end-of-memory condition.  */
-
-  if (min == floor (min))
-    {
-      asprintf (&result, "%ld", (size_t) min);
-    }
-  else
-    {
-      asprintf (&result, "%f", min);
-    }
-
-  return result;
-}
-
-static double
-rec_aggregate_std_min_record (rec_record_t record,
-                              const char *field_name)
-{
-  /* Calculate the minimum of the fields in a given record.  Fields
-     not representing a real value are ignored.  */
-
-  double min = DBL_MAX;
-  rec_field_t field;
-  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
-
-  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
-    {
-      const char *field_value = rec_field_value (field);
-      double field_value_double = 0;
-      
-      if (rec_field_name_equal_p (rec_field_name (field), field_name)
-          && rec_atod (field_value, &field_value_double))
-        {
-          min = MIN (min, field_value_double);
-        }
-    }
-  rec_mset_iterator_free (&iter);
-
-  return min;
-}
-
-static char *
-rec_aggregate_std_max (rec_rset_t rset,
-                       rec_record_t record,
-                       const char *field_name)
-{
-  char *result = NULL;
-  double max   = DBL_MIN;
-
-  if (record)
-    {
-      max = rec_aggregate_std_max_record (record, field_name);
-    }
-  else if (rset)
-    {
-      rec_record_t rec = NULL;
-      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
-      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
-        {
-          max = MAX (max, rec_aggregate_std_max_record (rec, field_name));
-        }
-      rec_mset_iterator_free (&iter);
-    }
-
-  /* Return the max as a string.  Note that if NULL is returned it
-     will be returned by this function below to signal the
-     end-of-memory condition.  */
-
-  if (max == floor (max))
-    {
-      asprintf (&result, "%ld", (size_t) max);
-    }
-  else
-    {
-      asprintf (&result, "%f", max);
-    }
-
-  return result;
-}
-
-static double
-rec_aggregate_std_max_record (rec_record_t record,
-                              const char *field_name)
-{
-  /* Calculate the minimum of the fields in a given record.  Fields
-     not representing a real value are ignored.  */
-
-  double max = DBL_MIN;
-  rec_field_t field;
-  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
-
-  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
-    {
-      const char *field_value = rec_field_value (field);
-      double field_value_double = 0;
-      
-      if (rec_field_name_equal_p (rec_field_name (field), field_name)
-          && rec_atod (field_value, &field_value_double))
-        {
-          max = MAX (max, field_value_double);
-        }
-    }
-  rec_mset_iterator_free (&iter);
-
-  return max;
-}
+REC_AGGREGATE_ACCUM_FUNC(min, MIN);
+REC_AGGREGATE_ACCUM_FUNC(max, MAX);
 
 /* End of rec-aggregate.c */

@@ -1,3 +1,13 @@
+2012-05-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: improvements in the aggregates implementation to avoid code
+	duplication.
+	* src/rec-aggregate.c: New global variable std_aggregates
+	containing descriptors for the standard aggregates.
+	(rec_aggregate_reg_add_standard): Use std_aggregates.
+	(rec_aggregate_std_p): Likewise.
+	(REC_AGGREGATE_ACCUM_FUNC): New macro.
+
 2012-05-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: new aggregates min and max.
