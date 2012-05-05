@@ -1,5 +1,12 @@
 2012-05-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: new aggregate Avg.
+	* src/rec-aggregate.c (std_aggregates): New aggregate "avg".
+	(rec_aggregate_std_avg): New function.
+	(rec_aggregate_std_avg_record): Likewise.
+
+2012-05-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: improvements in the aggregates implementation to avoid code
 	duplication.
 	* src/rec-aggregate.c: New global variable std_aggregates

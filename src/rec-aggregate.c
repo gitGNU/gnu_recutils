@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-05 19:18:15 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-05-05 20:03:26 jemarch"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -58,6 +58,12 @@ static char *rec_aggregate_std_count (rec_rset_t rset,
                                       rec_record_t record,
                                       const char *field_name);
 
+static char *rec_aggregate_std_avg (rec_rset_t rset,
+                                    rec_record_t record,
+                                    const char *field_name);
+static double rec_aggregate_std_avg_record (rec_record_t record,
+                                            const char *field_name);
+
 static char *rec_aggregate_std_sum (rec_rset_t rset,
                                     rec_record_t record,
                                     const char *field_name);
@@ -90,10 +96,11 @@ struct rec_aggregate_descriptor_s
   rec_aggregate_t func;
 };
 
-#define NUM_STD_AGGREGATES 4
+#define NUM_STD_AGGREGATES 5
 
 static struct rec_aggregate_descriptor_s std_aggregates[] =
   {{"count", &rec_aggregate_std_count},
+   {"avg",   &rec_aggregate_std_avg},
    {"sum",   &rec_aggregate_std_sum},
    {"min",   &rec_aggregate_std_min},
    {"max",   &rec_aggregate_std_max}};
@@ -249,6 +256,75 @@ rec_aggregate_std_count (rec_rset_t rset,
       
   asprintf (&result, "%ld", count);
   return result;
+}
+
+static char *
+rec_aggregate_std_avg (rec_rset_t rset,
+                       rec_record_t record,
+                       const char *field_name)
+{
+  char *result = NULL;
+  size_t avg = 0;
+
+  if (record)
+    {
+      avg = rec_aggregate_std_avg_record (record, field_name);
+    }
+  else if (rset)
+    {
+      size_t num_records = 0;
+      rec_record_t rec = NULL;
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+      while (rec_mset_iterator_next (&iter, MSET_RECORD, (void *) &rec, NULL))
+        {
+          avg = avg + rec_aggregate_std_avg_record (rec, field_name);
+          num_records++;
+        }
+      rec_mset_iterator_free (&iter);
+
+      if (num_records != 0)
+        {
+          avg = avg / num_records;
+        }
+    }
+
+  /* Return the average as a string.  Note that if NULL is returned it
+     will be returned by this function below to signal the
+     end-of-memory condition.  */
+      
+  asprintf (&result, "%ld", avg);
+  return result;
+}
+
+static double
+rec_aggregate_std_avg_record (rec_record_t record,
+                              const char *field_name)
+{
+  double avg = 0;
+  rec_field_t field;
+  size_t num_fields = 0;
+  rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
+
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (void *) &field, NULL))
+    {
+      double field_value_double = 0;
+      const char *field_value = rec_field_value (field);
+
+      if (rec_field_name_equal_p (rec_field_name (field), field_name)
+          && rec_atod (field_value, &field_value_double))
+        {
+          avg = avg + field_value_double;
+          num_fields++;
+        }
+    }
+  rec_mset_iterator_free (&iter);
+
+  if (num_fields != 0)
+    {
+      avg = avg / num_fields;
+    }
+
+  return avg;
 }
 
 #define REC_AGGREGATE_ACCUM_FUNC(NAME, OP)                              \
