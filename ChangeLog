@@ -1,3 +1,8 @@
+2012-05-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (recsel Grouping): New section documenting the
+	-G operation.
+
 2012-05-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: new aggregate Avg.

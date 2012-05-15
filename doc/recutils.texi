@@ -2036,6 +2036,7 @@ part of records) based in some criteria specified by the user.
 * recsel Invocation::      Command line options.
 * recsel Examples::        Examples of the usage of @command{recsel}.
 * recsel Encryption::      Reading confidential data.
+* recsel Grouping::        Grouping records by a given field.
 @end menu
 
 @node recsel Invocation
@@ -2269,6 +2270,10 @@ Password: encrypted-TTTVVVBBBNNN
 @noindent
 We would need to invoke @command{recsel} with the password used to
 encrypt the admin entry in order to read it back unencrypted.
+
+@node recsel Grouping
+@section recsel Grouping
+
 
 @node recins
 @chapter recins
