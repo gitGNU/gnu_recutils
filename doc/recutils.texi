@@ -499,7 +499,7 @@ Used to describe the contents of a record set.
 @item %type
 Used to define named types and to associated types with fields.
 @item %sort
-Used to keep your records sorted by some given field.
+Used to keep your records sorted by some given fields.
 @item %size
 Used to control the dimensions of a record set.
 @item %confidential
@@ -1289,18 +1289,19 @@ This special field allows to set a sorting criteria for the records
 contained in a record set.  Its usage is:
 
 @example
-%sort: @var{field_name}
+%sort: @var{field1} @var{field2} ...
 @end example
 
 @noindent
 Meaning that the desired order for the records will be determined by
-the contents of the fields named @code{field_name}.  The sorting is
-always done in ascending order, and there may be records not featuring
-fields named @code{field_name}, i.e. it is not mandatory for the
-sorting field to be mandatory :D.
+the contents of the fields named in the @code{%sort} value.  The
+sorting is always done in ascending order, and there may be records
+not featuring the involved fields, it is not mandatory for the sorting
+fields to be mandatory :D.
 
 It is an error to have more than one @code{%sort} field in the same
-record descriptor, as only one field can be used as sorting criteria.
+record descriptor, as only one field list can be used as sorting
+criteria.
 
 Consider for example that we want to keep the records in our stockage
 system ordered by entry date.  We could achieve that by using the
@@ -1357,6 +1358,101 @@ The sorting of the selected field depends on its type:
 @item Dates are ordered as expected.
 @item Any other kind of field is ordered using a lexicographic order.
 @end itemize
+
+It is possible to specify several fields as the sorting criteria.  In
+that case the records are sorted using a lexicoraphic order.  Consider
+for example the following unsorted database containing marks for
+several students:
+
+@example
+%rec: Marks
+%type: Class enum A B C
+%type: Score real
+
+Name: Mr. One
+Class: C
+Score: 6.8
+
+Name: Mr. Two
+Class: A
+Score: 6.8
+
+Name: Mr. Three
+Class: B
+Score: 9.2
+
+Name: Mr. Four
+Class: A
+Score: 2.1
+
+Name: Mr. Five
+Class: C
+Score: 4
+@end example
+
+If we wanted to sort it by @code{Class} and by @code{Score} we would
+insert a @code{%sort} special field in the descriptor, having:
+
+@example
+%rec: Marks
+%type: Class enum A B C
+%type: Score real
+%sort: Class Score
+
+Name: Mr. Four
+Class: A
+Score: 2.1
+
+Name: Mr. Two
+Class: A
+Score: 6.8
+
+Name: Mr. Three
+Class: B
+Score: 9.2
+
+Name: Mr. Five
+Class: C
+Score: 4
+
+Name: Mr. One
+Class: C
+Score: 6.8
+@end example
+
+Note that the order of the fields in the @code{%sort} field is
+significant.  If we reverse the order in the example above then we get
+a different sorted set:
+
+@example
+%rec: Marks
+%type: Class enum A B C
+%type: Score real
+%sort: Score Class
+
+Name: Mr. Four
+Class: A
+Score: 2.1
+
+Name: Mr. Five
+Class: C
+Score: 4
+
+Name: Mr. Two
+Class: A
+Score: 6.8
+
+Name: Mr. One
+Class: C
+Score: 6.8
+
+Name: Mr. Three
+Class: B
+Score: 9.2
+@end example
+
+In this last case, Mr. One comes after Mr. Two because the class A
+comes before the class B even if they got the same score (@code{6.8}).
 
 @node %size
 @chapter %size
@@ -2074,10 +2170,10 @@ Print record descriptors along with the matched records
 @itemx @w{@kbd{--password}=@var{secret}}
 Try to decrypt confidential fields with the given password.
 @item -S
-@itemx @w{@kbd{--sort}=@var{field}}
-Sort the output by @var{field}.  This option has precedence to
-whatever sorting criteria is specified in the corresponding record
-descriptor with @code{%sort}.
+@itemx @w{@kbd{--sort}=@var{fields}}
+Sort the output by the comma separated list of fields names
+@var{fields}.  This option has precedence to whatever sorting criteria
+is specified in the corresponding record descriptor with @code{%sort}.
 @item -U
 @itemx @w{@kbd{--uniq}}
 Remove duplicated fields in the output records.  Fields are
@@ -2940,10 +3036,10 @@ Options}) the program accepts the following options.
 Type of the records to convert.  If no type is specified then the
 default records (with no name) are converted.
 @item -S
-@itemx @w{@kbd{--sort}=@var{field}}
-Sort the output by @var{field}.  This option has precedence to
-whatever sorting criteria is specified in the corresponding record
-descriptor with @code{%sort}.
+@itemx @w{@kbd{--sort}=@var{fields}}
+Sort the output by the comma separated list of field names
+@var{fields}.  This option has precedence to whatever sorting criteria
+is specified in the corresponding record descriptor with @code{%sort}.
 @end table
 
 @node rec2csv Conversion

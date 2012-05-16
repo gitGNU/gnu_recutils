@@ -96,7 +96,7 @@ Convert rec data into csv data.\n"), stdout);
   fputs (_("\
   -t, --type=TYPE                     record set to convert to csv; if this parameter\n\
                                         is omitted then the default record set is used\n\
-  -S, --sort=FIELD                    sort the output by the specified field.\n"),
+  -S, --sort=FIELDS                   sort the output by the specified fields.\n"),
          stdout);
 
   recutl_print_help_common ();

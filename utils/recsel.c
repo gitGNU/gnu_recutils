@@ -131,7 +131,7 @@ Select and print rec data.\n"), stdout);
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
-  -S, --sort=FIELD                    sort the output by the specified field.\n\
+  -S, --sort=FIELDS                   sort the output by the specified fields.\n\
   -G, --group-by=FIELD                group records by the specified field.\n\
   -U, --uniq                          remove duplicated fields in the output records.\n"),
          stdout);
