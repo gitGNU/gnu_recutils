@@ -177,6 +177,32 @@ Id: -2
 Key: baz
 '
 
+test_declare_input_file sort-multiple \
+'%rec: SortMultiple
+%sort: Class Price
+%type: Price real
+
+Item: one
+Class: B
+Price: 30
+
+Item: two
+Class: A
+Price: 30
+
+Item: three
+Class: C
+Price: 40
+
+Item: four
+Class: A
+Price: 10
+
+Item: five
+Class: B
+Price: 15
+'
+
 test_declare_input_file empty-field-values \
 'a: a1
 b:
@@ -1054,6 +1080,31 @@ Id: 100
 Key: foo
 '
 
+test_tool recsel-sort-multiple ok \
+          recsel \
+          '' \
+          sort-multiple \
+'Item: four
+Class: A
+Price: 10
+
+Item: two
+Class: A
+Price: 30
+
+Item: five
+Class: B
+Price: 15
+
+Item: one
+Class: B
+Price: 30
+
+Item: three
+Class: C
+Price: 40
+'
+
 test_tool recsel-sort-field ok \
           recsel \
           '-S Key' \
@@ -1068,6 +1119,30 @@ Id: 100
 Key: foo
 '
 
+test_tool recsel-sort-field-multiple ok \
+          recsel \
+          '-S Price,Class' \
+          sort-multiple \
+'Item: four
+Class: A
+Price: 10
+
+Item: five
+Class: B
+Price: 15
+
+Item: two
+Class: A
+Price: 30
+
+Item: one
+Class: B
+Price: 30
+
+Item: three
+Class: C
+Price: 40
+'
 test_tool recsel-sort-field-nonexist ok \
           recsel \
           '-S doesnotexist' \

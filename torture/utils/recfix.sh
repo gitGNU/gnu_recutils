@@ -887,6 +887,31 @@ Date: 23 September 1972
 Id: 4
 Date: 1 April 1999
 '
+test_declare_input_file unsorted-multiple \
+'%rec: SortMultiple
+%sort: Class Price
+%type: Price real
+
+Item: one
+Class: B
+Price: 30
+
+Item: two
+Class: A
+Price: 30
+
+Item: three
+Class: C
+Price: 40
+
+Item: four
+Class: A
+Price: 10
+
+Item: five
+Class: B
+Price: 15
+'
 
 test_declare_input_file confidential \
 '%rec: foo
@@ -1653,6 +1678,35 @@ Name: B Field
 
 Id: 4
 Name: A Field
+'
+
+test_tool recfix-sort-multiple ok \
+          recfix \
+          '--sort' \
+          unsorted-multiple \
+'%rec: SortMultiple
+%sort: Class Price
+%type: Price real
+
+Item: four
+Class: A
+Price: 10
+
+Item: two
+Class: A
+Price: 30
+
+Item: five
+Class: B
+Price: 15
+
+Item: one
+Class: B
+Price: 30
+
+Item: three
+Class: C
+Price: 40
 '
 
 test_tool recfix-sort-ints-with-equals ok \

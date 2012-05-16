@@ -1,5 +1,15 @@
 2012-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture: tests for sorting with multiple fields.
+	* torture/utils/recsel.sh (sort-multiple): New input file.
+	(recsel-sort-multiple): New test.
+	(recsel-sort-field-multiple): Likewise.
+
+	* torture/utils/recfix.sh (unsorted-multiple): New input file.
+	(recfix-sort-multiple): New test.
+
+2012-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,utils: implementation for sorting with multiple fields.
 	* src/rec-fex.c (rec_fex_parse_str_simple): Initialize
 	function_name, function_data and rewrite_to to NULL.
