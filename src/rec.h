@@ -466,6 +466,12 @@ rec_fex_t rec_fex_new (const char *str, enum rec_fex_kind_e kind);
 
 void rec_fex_destroy (rec_fex_t fex);
 
+/* Create a copy of a given fex and return a reference to it.  If
+   there is not enough memory to perform the operation then NULL is
+   returned.  */
+
+rec_fex_t rec_fex_dup (rec_fex_t fex);
+
 /********* Getting and setting field expression properties **********/
 
 /* Get the number of elements stored in a field expression.  */
@@ -650,6 +656,14 @@ bool rec_type_equal_p (rec_type_t type1, rec_type_t type2);
    arises, return it in ERROR_STR if it is not NULL.  */
 
 bool rec_type_check (rec_type_t type, const char *str, char **error_str);
+
+/* Compare two values of a given type.  The comparison criteria will
+   vary depending of the given type: numerical for ints and reals,
+   time comparison for dates, etc.  If TYPE is NULL then a
+   lexicographic comparison is performed.  Return -1 if VAL1 < VAL2, 0
+   if VAL1 == VAL2 and 1 if VAL1 > VAL2.  */
+
+int rec_type_values_cmp (rec_type_t type, const char *val1, const char *val2);
 
 /*
  * TYPE REGISTRIES.
@@ -1182,26 +1196,28 @@ bool rec_rset_field_confidential_p (rec_rset_t rset, const char *field_name);
 
 char *rec_rset_source (rec_rset_t rset);
 
-/* Set a field name that will be used as the sorting criteria for a
-   record set.  The field name will take precedence to any other way
-   to define the sorting criteria, such as the %sort special field in
-   the record descriptor.  This function returns 'false' if there is
-   not enough memory to perform the operation.  */
+/* Set  an orderd  set of  of field  names that  will be  used as  the
+   sorting  criteria for  a record  set.   The field  names will  take
+   precedence to any other way to define the sorting criteria, such as
+   the %sort  special field in  the record descriptor.   This function
+   returns  'false' if  there  is  not enough  memory  to perform  the
+   operation.  */
 
-bool rec_rset_set_order_by_field (rec_rset_t rset, const char *field_name);
+bool rec_rset_set_order_by_fields (rec_rset_t rset, rec_fex_t field_names);
 
-/* Return the field name that is used to sort a record set.  */
+/* Return the field names that are used to sort a record set.  */
 
-const char *rec_rset_order_by_field (rec_rset_t rset);
+rec_fex_t rec_rset_order_by_fields (rec_rset_t rset);
 
-/* Sort a record set.  The SORT_BY parameter is a field name that, if
-   non NULL, will be used as the sorting criteria.  If no SORT_BY
-   field is specified then whatever sorting criteria specified in the
-   record set is used.  If no sorting criteria exists then the
-   function is a no-op.  The function returns a copy of RSET or NULL
-   if there is not enough memory to perform the operation.  */
+/* Sort a  record set.  The  SORT_BY parameter is  a fex that,  if non
+   NULL, contains  the field names which  will be used as  the sorting
+   criteria.  If no SORT_BY fields  is specified then whatever sorting
+   criteria  specified in  the  record  set is  used.   If no  sorting
+   criteria exists then the function is a no-op.  The function returns
+   a copy of RSET or NULL if there is not enough memory to perform the
+   operation.  */
 
-rec_rset_t rec_rset_sort (rec_rset_t rset, const char *sort_by);
+rec_rset_t rec_rset_sort (rec_rset_t rset, rec_fex_t sort_by);
 
 /* Group the records of a record set by a given field GROUP_BY.  The
    given record set must be sorted by GROUP_BY.  Note that this
@@ -1429,7 +1445,7 @@ rec_rset_t rec_db_query (rec_db_t     db,
                          rec_fex_t    fex,
                          const char  *password,
                          const char  *group_by,
-                         const char  *sort_by,
+                         rec_fex_t    sort_by,
                          int          flags);
 
 /* Insert a new record into a database, either appending it to some

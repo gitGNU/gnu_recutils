@@ -50,8 +50,8 @@ static void rec2csv_generate_csv (rec_rset_t rset, rec_fex_t fex);
  * Global variables
  */
 
-char             *rec2csv_record_type   = NULL;
-char             *rec2csv_sort_by_field = NULL;
+char             *rec2csv_record_type    = NULL;
+rec_fex_t         rec2csv_sort_by_fields = NULL;
 
 /*
  * Command line options management
@@ -130,16 +130,16 @@ rec2csv_parse_args (int argc,
         case SORT_ARG:
         case 'S':
           {
-            if (rec2csv_sort_by_field)
+            if (rec2csv_sort_by_fields)
               {
-                recutl_fatal (_("only one field can be specified as a sorting criteria.\n"));
+                recutl_fatal (_("only one list of fields can be specified as a sorting criteria.\n"));
               }
 
             /* Parse the field name.  */
-            rec2csv_sort_by_field = xstrdup (optarg);
-            if (!rec_field_name_p (rec2csv_sort_by_field))
+            rec2csv_sort_by_fields = rec_fex_new (optarg, REC_FEX_CSV);
+            if (!rec2csv_sort_by_fields)
               {
-                recutl_fatal (_("invalid field name in -S.\n"));
+                recutl_fatal (_("invalid field name list in -S.\n"));
               }
 
             break;
@@ -299,7 +299,7 @@ rec2csv_process_data (rec_db_t db)
         {
           /* Process this record set.  */
 
-          if (!rec_rset_sort (rset, rec2csv_sort_by_field))
+          if (!rec_rset_sort (rset, rec2csv_sort_by_fields))
             {
               recutl_fatal ("out of memory\n");
             }

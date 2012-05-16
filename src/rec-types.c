@@ -77,8 +77,13 @@
 #define REC_TYPE_INT_VALUE_RE                   \
   "^" REC_TYPE_ZBLANKS_RE REC_INT_RE REC_TYPE_ZBLANKS_RE "$"
 
+#define REC_TYPE_BOOL_TRUE_VALUES_RE  "1|yes|true"
+#define REC_TYPE_BOOL_FALSE_VALUES_RE "0|no|false"
+
 #define REC_TYPE_BOOL_VALUE_RE                  \
-  "^" REC_TYPE_ZBLANKS_RE "(yes|no|true|false|0|1)" REC_TYPE_ZBLANKS_RE "$"
+  "^" REC_TYPE_ZBLANKS_RE "(" REC_TYPE_BOOL_TRUE_VALUES_RE "|" \
+                              REC_TYPE_BOOL_FALSE_VALUES_RE    \
+                          ")" REC_TYPE_ZBLANKS_RE "$"
 
 #define REC_TYPE_REAL_VALUE_RE                  \
   "^" REC_TYPE_ZBLANKS_RE "-?([0-9]+)?(\\.[0-9]+)?" REC_TYPE_ZBLANKS_RE "$"
@@ -921,6 +926,142 @@ rec_type_rec (rec_type_t type)
     }
 
   return res;
+}
+
+int
+rec_type_values_cmp (rec_type_t type,
+                     const char *val1,
+                     const char *val2)
+{
+  int type_comparison;
+  enum rec_type_kind_e kind = REC_TYPE_NONE;
+
+  if (type)
+    {
+      kind = type->kind;
+    }
+
+  switch (kind)
+    {
+    case REC_TYPE_INT:
+    case REC_TYPE_RANGE:
+      {
+        int int1, int2 = 0;
+
+        if (!rec_atoi (val1, &int1) || !rec_atoi (val2, &int2))
+          {
+            goto lexi;
+          }
+
+        if (int1 < int2)
+          {
+            type_comparison = -1;
+          }
+        else if (int1 > int2)
+          {
+            type_comparison = 1;
+          }
+        else
+          {
+            type_comparison = 0;
+          }
+
+        break;
+      }
+    case REC_TYPE_REAL:
+      {
+        double real1, real2 = 0;
+
+        if (!rec_atod (val1, &real1) || !rec_atod (val2, &real2))
+          {
+            goto lexi;
+          }
+
+        if (real1 < real2)
+          {
+            type_comparison = -1;
+          }
+        else if (real1 > real2)
+          {
+            type_comparison = 1;
+          }
+        else
+          {
+            type_comparison = 0;
+          }
+
+        break;
+      }
+    case REC_TYPE_BOOL:
+      {
+        bool bool1, bool2 = false;
+
+        /* Boolean fields storing 'false' come first.  */
+            
+        bool1 = rec_match (val1,
+                           REC_TYPE_ZBLANKS_RE "(" REC_TYPE_BOOL_TRUE_VALUES_RE ")" REC_TYPE_ZBLANKS_RE);
+        bool2 = rec_match (val2,
+                           REC_TYPE_ZBLANKS_RE "(" REC_TYPE_BOOL_TRUE_VALUES_RE ")" REC_TYPE_ZBLANKS_RE);
+
+        if (!bool1 && bool2)
+          {
+            type_comparison = -1;
+          }
+        else if (bool1 == bool2)
+          {
+            type_comparison = 0;
+          }
+        else
+          {
+            type_comparison = 1;
+          }
+
+        break;
+      }
+    case REC_TYPE_DATE:
+      {
+        struct timespec op1;
+        struct timespec op2;
+        struct timespec diff;
+
+        if (parse_datetime (&op1, val1, NULL)
+            && parse_datetime (&op2, val2, NULL))
+          {
+            if ((op1.tv_sec == op2.tv_sec)
+                && (op1.tv_nsec == op2.tv_nsec))
+              {
+                /* op1 == op2 */
+                type_comparison = 0;
+              }
+            else if (rec_timespec_subtract (&diff, &op1, &op2))
+              {
+                /* op1 < op2 */
+                type_comparison = -1;
+              }
+            else
+              {
+                /* op1 > op2 */
+                type_comparison = 1;
+              }
+          }
+        else
+          {
+            /* Invalid date => lexicographic order.  */
+            goto lexi;
+          }
+
+        break;
+      }
+    default:
+          {
+          lexi:
+            /* Lexicographic order.  */
+            type_comparison = strcmp (val1, val2);
+            break;
+          }
+    }
+
+  return type_comparison;
 }
 
 /*

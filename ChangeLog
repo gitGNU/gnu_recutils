@@ -1,3 +1,49 @@
+2012-05-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,utils: implementation for sorting with multiple fields.
+	* src/rec-fex.c (rec_fex_parse_str_simple): Initialize
+	function_name, function_data and rewrite_to to NULL.
+
+	* utils/rec2csv.c: rec2csv_sort_by_fields is now a fex.
+	(rec2csv_process_data): Pass the fex to rec_rset_sort.
+
+	* utils/recsel.c: recutl_sort_by_fields is now a fex.
+	(recsel_parse_args): Handle several field names in -S.
+	(recsel_process_data): Pass the fex to rec_db_query.
+
+	* src/rec-db.c (rec_db_query): The sort_by parameter is now a fex.
+
+	* src/rec-rset.c (rec_rset_record_compare_fn): Use
+	rec_type_values_cmp.
+	(rec_rset_record_compare_fn): Rewritten to work on multiple
+	fields.
+
+	* src/rec-types.c (rec_type_values_cmp): New function.
+	(REC_TYPE_BOOL_TRUE_VALUES_RE): New constant.
+	(REC_TYPE_BOOL_FALSE_VALUES_RE): Likewise.
+	(REC_TYPE_BOOL_VALUE_RE): Use REC_TYPE_BOOL_TRUE_VALUES_RE and
+	REC_TYPE_BOOL_FALSE_VALUES_RE.
+
+	* src/rec-int.c (rec_int_check_descriptor): The %sort special
+	field now acccepts a simple_fex as its value.
+
+	* src/rec-rset.c (rec_rset_update_field_props): Use fexes as
+	order_by fields.
+
+	* src/rec-rset.c (rec_rset_dup): Use rec_fex_dup to duplicate the
+	fex containing the sort_by fields.
+	(rec_rset_set_order_by_field): Get a fex.
+	(rec_rset_order_by_field): Return a fex.
+	(rec_rset_sort): Get a fex.
+
+	* src/rec-fex.c (rec_fex_dup): New function.
+
+	* src/rec-rset.c (rec_rset_s): order_by_fields is now a fex.
+	(REC_RSET_MAX_ORDER): Unused constant removed.
+	(rec_rset_new): order_by_field renamed to order_by_fields.
+	(rec_rset_destroy): Destroy rset->order_by_fields with
+	rec_fex_destroy.
+
 2012-05-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (recsel Grouping): New section documenting the

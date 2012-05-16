@@ -69,8 +69,6 @@ typedef struct rec_rset_fprops_s *rec_rset_fprops_t;
 /* The rec_rset_s structure contains the data associated with a record
    set.  */
 
-#define REC_RSET_MAX_ORDER 256
-
 struct rec_rset_s
 {
   rec_record_t descriptor;
@@ -86,8 +84,9 @@ struct rec_rset_s
   /* Type registry.  */
   rec_type_reg_t type_reg;
 
-  /* Field to order by specified in the record descriptor.  */
-  char *order_by_field;
+  /* Simple fex containing the fields to use for ordering the records
+     of this record descriptor.  */
+  rec_fex_t order_by_fields;
 
   /* Size constraints.  */
   size_t min_size;
@@ -184,7 +183,7 @@ rec_rset_new (void)
           rset->field_props = NULL;
 
           /* No order by field, initially.  */
-          rset->order_by_field = NULL;
+          rset->order_by_fields = NULL;
 
           /* register the types.  See rec.h for the definition of
              MSET_COMMENT and MSET_RECORD.  */
@@ -238,7 +237,7 @@ rec_rset_destroy (rec_rset_t rset)
           free (aux);
         }
 
-      free (rset->order_by_field);
+      rec_fex_destroy (rset->order_by_fields);
 
       rec_mset_destroy (rset->mset);
       free (rset);
@@ -264,10 +263,10 @@ rec_rset_dup (rec_rset_t rset)
       new->type_reg = NULL;
       new->field_props = NULL;
 
-      if (rset->order_by_field)
+      if (rset->order_by_fields)
         {
-          new->order_by_field = strdup (rset->order_by_field);
-          if (!new->order_by_field)
+          new->order_by_fields = rec_fex_dup (rset->order_by_fields);
+          if (!new->order_by_fields)
             {
               /* Out of memory.  */
               rec_rset_destroy (new);
@@ -680,30 +679,30 @@ rec_rset_source (rec_rset_t rset)
 
 
 bool
-rec_rset_set_order_by_field (rec_rset_t rset,
-                             const char *field_name)
+rec_rset_set_order_by_fields (rec_rset_t rset,
+                              rec_fex_t field_names)
 {
-  free (rset->order_by_field);
-  rset->order_by_field = strdup (field_name);
-  return (rset->order_by_field != NULL);
+  rec_fex_destroy (rset->order_by_fields);
+  rset->order_by_fields = rec_fex_dup (field_names);
+  return (rset->order_by_fields != NULL);
 }
 
-const char*
-rec_rset_order_by_field (rec_rset_t rset)
+rec_fex_t
+rec_rset_order_by_fields (rec_rset_t rset)
 {
-  return rset->order_by_field;
+  return rset->order_by_fields;
 }
 
 rec_rset_t
 rec_rset_sort (rec_rset_t rset,
-               const char *sort_by)
+               rec_fex_t sort_by)
 {
   if (sort_by)
     {
-      rec_rset_set_order_by_field (rset, sort_by);
+      rec_rset_set_order_by_fields (rset, sort_by);
     }
 
-  if (rset->order_by_field)
+  if (rset->order_by_fields)
     {
       /* Duplicate the multi-set indicating that the elements must be
          sorted.  */
@@ -714,7 +713,7 @@ rec_rset_sort (rec_rset_t rset,
           return NULL;
         }
 
-      /* Update field properties, in case order_by_field was changed
+      /* Update field properties, in case order_by_fields was changed
          above.  */
   
       rec_rset_update_field_props (rset);
@@ -945,18 +944,6 @@ rec_rset_record_compare_fn (void *data1,
                             void *data2,
                             int type2)
 {
-  rec_rset_t rset                  = NULL;
-  const char *order_by_field       = NULL;
-  rec_record_t record1             = NULL;
-  rec_record_t record2             = NULL;
-  rec_field_t field1               = NULL;
-  rec_field_t field2               = NULL;
-  rec_type_t field_type            = NULL;
-  int type_comparison              = 0;
-  int int1, int2                   = 0;
-  double real1, real2              = 0;
-  bool bool1, bool2                = false;
-
   /* data1 and data2 are both records.
 
      order_by_field can't be NULL, because this callback is invoked
@@ -965,217 +952,93 @@ rec_rset_record_compare_fn (void *data1,
 
      The following rules apply here:
      
-     1. If group_by is not in both record1 and record2,
-        data1 < data2.
+     1. If the fields in order_by_fields are not in both record1 and
+        record2, then data1 < data2.
  
-     2. Else,
+     2. Else, perform a lexicographic comparison, i.e.
 
-     2.1 If type(order_by_field) == int, range, or real:
-         compare by numerical order.
-
-     2.2. If type(order_by_field) == bool:
-          true < false.
-
-     2.2.1. If type(order_by_field) == date:
-            compare by date chronology order.
-
-     2.2.2. Otherwise: compare by lexicographical order.
+        (a1, a2, ...) < (b1, b2, ...) IFF
+                      a1 < b1 OR (a1 = b2 AND a2 < b2) OR ...
 
     Note that record1 will always be a regular record.  Never a
     descriptor.
   */
+
+  rec_rset_t rset                  = NULL;
+  rec_record_t record1             = NULL;
+  rec_record_t record2             = NULL;
+  rec_field_t field1               = NULL;
+  rec_field_t field2               = NULL;
+  int type_comparison              = 0;
+
 
   /* Get the records and the containing rset.  */
   record1 = (rec_record_t) data1;
   record2 = (rec_record_t) data2;
   rset = (rec_rset_t) rec_record_container (record1);
 
-  /* Get the order by field and check if it is present in both
+  /* Perform a lexicographic comparison of the order_by_fields in both
      registers.  */
-  order_by_field = rset->order_by_field;
-  field1 = rec_record_get_field_by_name (record1, order_by_field, 0);
-  field2 = rec_record_get_field_by_name (record2, order_by_field, 0);
+
+  {
+    rec_fex_t order_by_fields = rset->order_by_fields;
+    size_t i = 0;
+
+    for (i = 0; i < rec_fex_size (order_by_fields); i++)
+      {
+        rec_fex_elem_t elem       = rec_fex_get (order_by_fields, i);
+        const char    *field_name = rec_fex_elem_field_name (elem);
+        rec_field_t    field1     = rec_record_get_field_by_name (record1, field_name, 0);
+        rec_field_t    field2     = rec_record_get_field_by_name (record2, field_name, 0);
+
+        /* If any of the fields is not present in some of the records
+           then that record is considered to be smaller than the
+           record featuring the other one.  */
+
+        if (field1 && !field2)
+          {
+            type_comparison = 1; /* field1 > field2 */
+            break;
+          }
+        else if (!field1 && field2)
+          {
+            type_comparison = -1;  /* field1 < field2 */
+            break;
+          }
+        else if (!field1 && !field2)
+          {
+            /* Not 0 in order to keep the relative position of the
+               records.  */
+
+            type_comparison = -1;  /* field1 < field2 */
+            break;
+          }
+
+        /* A field with such a name exists in both records.  Compare
+           the field typed values.  */
+
+        type_comparison = rec_type_values_cmp (rec_rset_get_field_type (rset, field_name),
+                                               rec_field_value (field1),
+                                               rec_field_value (field2));
+
+        if (type_comparison != 0)
+          {
+            /* Either (a1, a2, ...) < (b1, b2, ...) or (a1, a2, ...) >
+               (b1, b2, ...) */
+
+            break;
+          }
+      }
+  }
+
+  /* If both records are equal, return -1 instead of 0 in order to
+     maintain the relative ordering between equal records.  */
+
+  if (type_comparison == 0)
+    {
+      type_comparison = -1;
+    }
   
-  if (field1 && !field2)
-    {
-      return 1; /* field1 > field2 */
-    }
-  else if (!field1 && field2)
-    {
-      return -1;  /* field1 < field2 */
-
-    }
-  else if (!field1 && !field2)
-    {
-      return -1; /* field1 < field2 */
-    }
-
-  /* Discriminate by field type.  */
-  field_type = rec_rset_get_field_type (rset,
-                                        order_by_field);
-  if (field_type)
-    {
-      switch (rec_type_kind (field_type))
-        {
-        case REC_TYPE_INT:
-        case REC_TYPE_RANGE:
-          {
-            if (!rec_atoi (rec_field_value(field1), &int1)
-                || !rec_atoi (rec_field_value(field2), &int2))
-              {
-                goto lexi;
-              }
-
-            if (int1 < int2)
-              {
-                type_comparison = -1;
-              }
-            else if (int1 > int2)
-              {
-                type_comparison = 1;
-              }
-            else
-              {
-                /* Result is -1 instead of 0 in order to maintain the
-                   relative order between equal records.  */
-
-                type_comparison = -1;
-              }
-
-            break;
-          }
-        case REC_TYPE_REAL:
-          {
-            if (!rec_atod (rec_field_value (field1), &real1)
-                || !rec_atod (rec_field_value (field2), &real2))
-              {
-                goto lexi;
-              }
-
-            if (real1 < real2)
-              {
-                type_comparison = -1;
-              }
-            else if (real1 > real2)
-              {
-                type_comparison = 1;
-              }
-            else
-              {
-                /* Result is -1 instead of 0 in order to maintain the
-                   relative order between equal records.  */
-
-                type_comparison = -1;
-              }
-
-            break;
-          }
-        case REC_TYPE_BOOL:
-          {
-            /* Boolean fields storing 'false' come first.  */
-            
-            bool1 = rec_match (rec_field_value (field1),
-                               "[ \t]*(1|yes|true)[ \t]*");
-            bool2 = rec_match (rec_field_value (field2),
-                               "[ \t]*(1|yes|true)[ \t]*");
-
-            if (!bool1 && bool2)
-              {
-                type_comparison = -1;
-              }
-            else if (bool1 == bool2)
-              {
-                /* Result is -1 instead of 0 in order to maintain the
-                   relative order between equal records.  */
-
-                type_comparison = -1;
-              }
-            else
-              {
-                type_comparison = 1;
-              }
-
-            break;
-          }
-        case REC_TYPE_DATE:
-          {
-            struct timespec op1;
-            struct timespec op2;
-            struct timespec diff;
-
-            if (parse_datetime (&op1,
-                                rec_field_value (field1),
-                                NULL)
-                && parse_datetime (&op2,
-                                   rec_field_value (field2),
-                                   NULL))
-              {
-                if ((op1.tv_sec == op2.tv_sec)
-                    && (op1.tv_nsec == op2.tv_nsec))
-                  {
-                    /* op1 == op2 */
-
-                    /* Result is -1 instead of 0 in order to maintain the
-                       relative order between equal records.  */
-                    
-                    type_comparison = -1;
-                  }
-                else if (rec_timespec_subtract (&diff, &op1, &op2))
-                  {
-                    /* op1 < op2 */
-                    type_comparison = -1;
-                  }
-                else
-                  {
-                    /* op1 > op2 */
-                    type_comparison = 1;
-                  }
-              }
-            else
-              {
-                /* Invalid date => lexicographic order.  */
-                goto lexi;
-              }
-
-            break;
-          }
-        default:
-          {
-          lexi:
-            /* Lexicographic order.  */
-            type_comparison =
-              strcmp (rec_field_value (field1),
-                      rec_field_value (field2)); /* 3.2.2.  */
-
-            if (type_comparison == 0)
-              {
-                /* Result is -1 instead of 0 in order to maintain the
-                   relative order between equal records.  */
-
-                type_comparison = -1;
-              }
-
-            break;
-          }
-        }
-    }
-  else
-    {
-      /* Non typed fields contain free text, so apply a lexicographic
-         order as well.  */
-      type_comparison =
-        strcmp (rec_field_value (field1),
-                rec_field_value (field2)); /* 3.2.2.  */
-
-      if (type_comparison == 0)
-        {
-          /* Result is -1 instead of 0 in order to maintain the
-             relative order between equal records.  */
-
-          type_comparison = -1;
-        }
-    }
-
   return type_comparison;
 }
 
@@ -1406,23 +1269,20 @@ rec_rset_update_field_props (rec_rset_t rset)
                 }
             }
 
-          /* Update sort fields.  Since only one field can be set as
-             the sorting criteria, the last field takes
-             precedence.  */
+          /* Update sort fields.  The last field takes precedence.  */
           if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SORT)))
             {
-              /* Parse the field name in the field value.  Invalid
+              /* Parse the simple fex in the field value.  Invalid
                  entries are just ignored.  */
               
               const char *field_value = rec_field_value (field);
               char *type_name = NULL;
 
-              rec_skip_blanks (&field_value);
-              rec_parse_regexp (&field_value, "^" REC_TYPE_NAME_RE "[ \n\t]*", &type_name);
-              if (type_name)
+              rec_fex_t fex = rec_fex_new (field_value, REC_FEX_SIMPLE);
+              if (fex)
                 {
-                  free (rset->order_by_field);
-                  rset->order_by_field = type_name;
+                  rec_fex_destroy (rset->order_by_fields);
+                  rset->order_by_fields = fex;
                 }
             }
 

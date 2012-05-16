@@ -854,7 +854,8 @@ does not exist\n"),
           else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_MANDATORY))
                    || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_UNIQUE))
                    || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_PROHIBIT))
-                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_AUTO)))
+                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_AUTO))
+                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SORT)))
             {
               /* Check that the value of this field is a parseable
                  list of field names.  */
@@ -872,21 +873,6 @@ does not exist\n"),
                              rec_field_name (field),
                              rec_record_get_field_index_by_name (descriptor, field));
                   res++;
-                }
-            }
-          else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SORT)))
-            {
-              if (!rec_match (field_value,
-                              "^"
-                              "[ \n\t]*" REC_FNAME_RE "[ \n\t]*"
-                              "$"))
-                {
-                  ADD_ERROR (errors,
-                            _("%s:%s: error: value for %s should be a field name.\n"),
-                            rec_field_source (field),
-                            rec_field_location_str (field),
-                            field_name);
-                  res++ ;
                 }
             }
           else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SIZE)))

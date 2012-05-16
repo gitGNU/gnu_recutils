@@ -54,7 +54,7 @@ bool       recsel_collapse     = false;
 bool       recsel_count        = false;
 bool       recutl_insensitive  = false;
 bool       recsel_descriptors  = false;
-char      *recutl_sort_by_field = NULL;
+rec_fex_t  recutl_sort_by_fields = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 char      *recsel_password     = NULL;
 bool       recsel_uniq         = false;
@@ -231,16 +231,16 @@ recsel_parse_args (int argc,
         case SORT_ARG:
         case 'S':
           {
-            if (recutl_sort_by_field)
+            if (recutl_sort_by_fields)
               {
-                recutl_fatal (_("only one field can be specified as a sorting criteria.\n"));
+                recutl_fatal (_("only one field list can be specified as a sorting criteria.\n"));
               }
 
             /* Parse the field name.  */
-            recutl_sort_by_field = rec_parse_field_name_str (optarg);
-            if (!recutl_sort_by_field)
+            recutl_sort_by_fields = rec_fex_new (optarg, REC_FEX_CSV);
+            if (!recutl_sort_by_fields)
               {
-                recutl_fatal (_("invalid field name in -S.\n"));
+                recutl_fatal (_("invalid field names in -S.\n"));
               }
 
             break;
@@ -460,7 +460,7 @@ recsel_process_data (rec_db_t db)
                          recsel_fex,
                          recsel_password,
                          recsel_group_by_field,
-                         recutl_sort_by_field,
+                         recutl_sort_by_fields,
                          flags);
     if (!rset)
       {

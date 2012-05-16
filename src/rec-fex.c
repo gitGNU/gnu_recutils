@@ -150,6 +150,74 @@ rec_fex_destroy (rec_fex_t fex)
     }
 }
 
+rec_fex_t
+rec_fex_dup (rec_fex_t fex)
+{
+  rec_fex_t copy = NULL;
+  size_t i = 0;
+
+  copy = malloc (sizeof (struct rec_fex_s));
+  if (copy)
+    {
+      rec_fex_init (copy);
+  
+      copy->num_elems = fex->num_elems;
+      copy->str = strdup (fex->str);
+      if (!copy->str)
+        {
+          /* Out of memory.  */
+          rec_fex_destroy (copy);
+          return NULL;
+        }
+
+      for (i = 0; i < fex->num_elems; i++)
+        {
+          if (fex->elems[i] == NULL)
+            {
+              copy->elems[i] = NULL;
+              continue;
+            }
+
+          copy->elems[i] = malloc (sizeof (struct rec_fex_elem_s));
+          if (!copy->elems[i])
+            {
+              /* Out of memory.  */
+              rec_fex_destroy (copy);
+              return NULL;
+            }
+
+          copy->elems[i]->max = fex->elems[i]->max;
+          copy->elems[i]->min = fex->elems[i]->min;
+
+#define REC_COPY_STR_MAYBE_RETURN(FNAME)                                \
+          do                                                            \
+            {                                                           \
+               if (!fex->elems[i]->FNAME)                               \
+                 {                                                      \
+                   copy->elems[i]->FNAME = NULL;                        \
+                 }                                                      \
+               else                                                     \
+                 {                                                      \
+                   copy->elems[i]->FNAME = strdup (fex->elems[i]->FNAME); \
+                   if (!copy->elems[i]->FNAME)                          \
+                     {                                                  \
+                       /* Out of memory.  */                            \
+                       rec_fex_destroy (copy);                          \
+                       return NULL;                                     \
+                     }                                                  \
+                 }                                                      \
+            } while (0)
+
+          REC_COPY_STR_MAYBE_RETURN (str);
+          REC_COPY_STR_MAYBE_RETURN (field_name);
+          REC_COPY_STR_MAYBE_RETURN (rewrite_to);
+          REC_COPY_STR_MAYBE_RETURN (function_name);
+        }
+    }
+
+  return copy;
+}
+
 bool
 rec_fex_check (const char *str, enum rec_fex_kind_e kind)
 {
@@ -490,6 +558,9 @@ rec_fex_parse_str_simple (rec_fex_t new,
               /* Add an element to the FEX.  */
 
               elem->field_name = strdup (elem_str);
+              elem->function_name = NULL;
+              elem->function_data = NULL;
+              elem->rewrite_to = NULL;
               elem->str = strdup (elem_str);
               elem->min = -1;
               elem->max = -1;
