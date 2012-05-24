@@ -139,7 +139,7 @@ static bool rec_rset_add_auto_field_uuid (rec_rset_t rset,
 
 static rec_record_t rec_rset_merge_records (rec_record_t to_record,
                                             rec_record_t from_record,
-                                            rec_field_t  group_field);
+                                            rec_fex_t excluded_fields);
 
 static int rec_rset_compare_typed_records (rec_rset_t rset,
                                            rec_record_t record1,
@@ -730,7 +730,7 @@ rec_rset_sort (rec_rset_t rset,
 
 rec_rset_t
 rec_rset_group (rec_rset_t rset,
-                const char *group_by)
+                rec_fex_t group_by)
 {
   rec_mset_iterator_t iter;
   rec_record_t record;
@@ -760,47 +760,35 @@ rec_rset_group (rec_rset_t rset,
     {
       if (!deletion_map[num_record])
         {
-          rec_field_t group_by_field = rec_record_get_field_by_name (record,
-                                                                     group_by,
-                                                                     0);
-          if (group_by_field)
+          size_t num_record_2 = num_record;
+          rec_mset_iterator_t iter2 = iter;
+          rec_record_t record2;
+          
+          while (rec_mset_iterator_next (&iter2, MSET_RECORD, (const void**)&record2, NULL))
             {
-              size_t num_record_2 = num_record;
-              rec_mset_iterator_t iter2 = iter;
-              rec_record_t record2;
-
-              while (rec_mset_iterator_next (&iter2, MSET_RECORD, (const void**)&record2, NULL))
+              num_record_2++;
+              
+              if (rec_rset_compare_typed_records (rset, record, record2, group_by) != 0)
                 {
-                  rec_field_t group_by_field2 = rec_record_get_field_by_name (record2,
-                                                                              group_by,
-                                                                              0);
+                  break;
+                }
+              else
+                {
+                  /* Insert all the elements of record2 into record,
+                     but not the group-by fields.  Also, remove any
+                     duplicated field created in record2 as the result
+                     of the operation.  */
 
-                  num_record_2++;
-
-                  if (!group_by_field2
-                      || (strcmp (rec_field_value (group_by_field),
-                                  rec_field_value (group_by_field2)) != 0))
+                  if (!rec_rset_merge_records (record,
+                                               record2,
+                                               group_by))
                     {
-                      break;
+                      /* Out of memory.  */
+                      return NULL;
                     }
-                  else
-                    {
-                      /* Insert all the elements of record2 into
-                         record, but not group_by_field.  Also, remove
-                         duplicated fields.  */
-
-                      if (!rec_rset_merge_records (record,
-                                                   record2,
-                                                   group_by_field))
-                        {
-                          /* Out of memory.  */
-                          return NULL;
-                        }
-
-                      /* Mark record2 for removal.  */
-                      
-                      deletion_map[num_record_2] = true;
-                    }
+                  
+                  /* Mark record2 for removal.  */
+                  deletion_map[num_record_2] = true;
                 }
             }
         }
@@ -1611,7 +1599,7 @@ rec_rset_add_auto_field_uuid (rec_rset_t rset,
 static rec_record_t
 rec_rset_merge_records (rec_record_t to_record,
                         rec_record_t from_record,
-                        rec_field_t group_field)
+                        rec_fex_t    group_by_fields)
 {
   rec_mset_elem_t elem;
   void *data;
@@ -1624,11 +1612,10 @@ rec_rset_merge_records (rec_record_t to_record,
         {
           rec_field_t field = (rec_field_t) data;
 
-          /* Don't add the field used as grouping criteria.  */
+          /* Don't add the field if it is in the list of group-by
+             fields.  */
 
-          if (rec_field_name_equal_p (rec_field_name (group_field),
-                                      rec_field_name (field))
-              && (strcmp (rec_field_value (group_field), rec_field_value (field)) == 0))
+          if (rec_fex_member_p (group_by_fields, rec_field_name (field), -1, -1))
             {
               continue;
             }
@@ -1701,7 +1688,7 @@ rec_rset_compare_typed_records (rec_rset_t rset,
         }
       else if (!field1 && !field2)
         {
-          result = 0;  /* field1 = field2 */
+          result = -1;  /* field1 < field2 */
           break;
         }
 

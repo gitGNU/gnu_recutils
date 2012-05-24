@@ -282,7 +282,7 @@ rec_db_query (rec_db_t     db,
               size_t       random,
               rec_fex_t    fex,
               const char  *password,
-              const char  *group_by,
+              rec_fex_t    group_by,
               rec_fex_t    sort_by,
               int          flags)
 {
@@ -417,20 +417,11 @@ rec_db_query (rec_db_t     db,
 
       if (group_by)
         {
-          rec_fex_t fex = rec_fex_new (group_by, REC_FEX_CSV);
-          if (!fex)
+          if (!rec_rset_sort (rset, group_by))
             {
               /* Out of memory.  */
               return NULL;
             }
-
-          if (!rec_rset_sort (rset, fex))
-            {
-              /* Out of memory.  */
-              return NULL;
-            }
-
-          rec_fex_destroy (fex);
 
           if (!rec_rset_group (rset, group_by))
             {

@@ -1219,15 +1219,15 @@ rec_fex_t rec_rset_order_by_fields (rec_rset_t rset);
 
 rec_rset_t rec_rset_sort (rec_rset_t rset, rec_fex_t sort_by);
 
-/* Group the records of a record set by a given field GROUP_BY.  The
-   given record set must be sorted by GROUP_BY.  Note that this
-   function uses the first field with the given name found in a
-   record, ignoring any subsequent field.  It is up to the user to
+/* Group the records of a record  set by the given fields in GROUP_BY.
+   The given  record set must be  sorted by GROUP_BY.  Note  that this
+   function  uses the  first field  with the  given names  found in  a
+   record, ignoring  any subsequent field.   It is  up to the  user to
    provide the right records in order to get the desired results.  The
-   function returns a copy of RSET or NULL if there was not enough
+   function returns  a copy of  RSET or NULL  if there was  not enough
    memory to perform the operation.  */
 
-rec_rset_t rec_rset_group (rec_rset_t rset, const char *group_by);
+rec_rset_t rec_rset_group (rec_rset_t rset, rec_fex_t group_by);
 
 /* Add missing auto fields defined in a record set to a given record.
    The record could not be stored in the record set used to determine
@@ -1398,11 +1398,11 @@ rec_aggregate_reg_t rec_db_aggregates (rec_db_t db);
 
    GROUP_BY
 
-      If not NULL, group the record set by the given field name.
+      If not NULL, group the record set by the given field names.
  
    SORT_BY
 
-      If not NULL, sort the record set by the given field name.
+      If not NULL, sort the record set by the given field names.
 
    FLAGS
 
@@ -1444,7 +1444,7 @@ rec_rset_t rec_db_query (rec_db_t     db,
                          size_t       random,
                          rec_fex_t    fex,
                          const char  *password,
-                         const char  *group_by,
+                         rec_fex_t    group_by,
                          rec_fex_t    sort_by,
                          int          flags);
 

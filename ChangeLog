@@ -1,3 +1,21 @@
+2012-05-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,doc: support for grouping by several fields.
+	* doc/recutils.texi (recsel Invocation): Document that -G accepts
+	a comma separated list of fields.
+
+	* utils/recsel.c: recutl_group_by_fields is now a fex.
+	(recsel_parse_args): Adjust error messages to that fact and parse
+	the fex.
+	(recutl_print_help): Likewise.
+	(recsel_process_data): Use recsel_group_by_fields.
+
+	* src/rec-db.c (rec_db_set): group-by is now a fex.
+
+	* src/rec-rset.c (rec_rset_merge_records): Get a fex argument with
+	the list of fields used for grouping.
+	(rec_rset_group): Group by multiple fields.
+
 2012-05-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: new function rec_rset_compare_typed_records.

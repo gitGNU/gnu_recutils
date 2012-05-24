@@ -2180,10 +2180,9 @@ Remove duplicated fields in the output records.  Fields are
 duplicated if there are more than one featuring the same field name
 and the same value.
 @item -G
-@itemx @w{@kbd{--group-by}=@var{field}}
-Group the output records by the provided @var{field}.  The first field
-named @var{field} in each record is used for grouping, the rest being
-ignored.  Note that grouping is performed before sorting.
+@itemx @w{@kbd{--group-by}=@var{fields}}
+Group the output records by the provided comma separated set of
+@var{fields}.  Note that grouping is performed before sorting.
 @end table
 
 The @dfn{selection options} are used to select a subset of

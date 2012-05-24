@@ -54,12 +54,12 @@ bool       recsel_collapse     = false;
 bool       recsel_count        = false;
 bool       recutl_insensitive  = false;
 bool       recsel_descriptors  = false;
-rec_fex_t  recutl_sort_by_fields = NULL;
+rec_fex_t  recutl_sort_by_fields  = NULL;
+rec_fex_t  recsel_group_by_fields = NULL;
 rec_writer_mode_t recsel_write_mode = REC_WRITER_NORMAL;
 char      *recsel_password     = NULL;
 bool       recsel_uniq         = false;
 size_t     recutl_random       = 0;
-char      *recsel_group_by_field = NULL;
 char      *recsel_join         = NULL;
 
 /*
@@ -131,8 +131,8 @@ Select and print rec data.\n"), stdout);
   -d, --include-descriptors           print record descriptors along with the matched\n\
                                         records.\n\
   -C, --collapse                      do not section the result in records with newlines.\n\
-  -S, --sort=FIELDS                   sort the output by the specified fields.\n\
-  -G, --group-by=FIELD                group records by the specified field.\n\
+  -S, --sort=FIELD,...                sort the output by the specified fields.\n\
+  -G, --group-by=FIELD,...            group records by the specified fields.\n\
   -U, --uniq                          remove duplicated fields in the output records.\n"),
          stdout);
 
@@ -264,17 +264,17 @@ recsel_parse_args (int argc,
         case GROUP_BY_ARG:
         case 'G':
           {
-            if (recsel_group_by_field)
+            if (recsel_group_by_fields)
               {
-                recutl_fatal (_("only one field can be specified as a grouping criteria.\n"));
+                recutl_fatal (_("only one field list can be specified as a grouping criteria.\n"));
               }
 
             /* Parse the field name.  */
 
-            recsel_group_by_field = rec_parse_field_name_str (optarg);
-            if (!recsel_group_by_field)
+            recsel_group_by_fields = rec_fex_new (optarg, REC_FEX_CSV);
+            if (!recsel_group_by_fields)
               {
-                recutl_fatal (_("invalid field name in -G.\n"));
+                recutl_fatal (_("invalid field names in -G.\n"));
               }
 
             break;
@@ -459,7 +459,7 @@ recsel_process_data (rec_db_t db)
                          recutl_random,
                          recsel_fex,
                          recsel_password,
-                         recsel_group_by_field,
+                         recsel_group_by_fields,
                          recutl_sort_by_fields,
                          flags);
     if (!rset)
