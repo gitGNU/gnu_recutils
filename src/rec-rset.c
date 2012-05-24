@@ -141,6 +141,12 @@ static rec_record_t rec_rset_merge_records (rec_record_t to_record,
                                             rec_record_t from_record,
                                             rec_field_t  group_field);
 
+static int rec_rset_compare_typed_records (rec_rset_t rset,
+                                           rec_record_t record1,
+                                           rec_record_t record2,
+                                           rec_fex_t fields);
+                                           
+
 /* The following macro is used by some functions to reduce
    verbosity.  */
 
@@ -980,56 +986,10 @@ rec_rset_record_compare_fn (void *data1,
   /* Perform a lexicographic comparison of the order_by_fields in both
      registers.  */
 
-  {
-    rec_fex_t order_by_fields = rset->order_by_fields;
-    size_t i = 0;
-
-    for (i = 0; i < rec_fex_size (order_by_fields); i++)
-      {
-        rec_fex_elem_t elem       = rec_fex_get (order_by_fields, i);
-        const char    *field_name = rec_fex_elem_field_name (elem);
-        rec_field_t    field1     = rec_record_get_field_by_name (record1, field_name, 0);
-        rec_field_t    field2     = rec_record_get_field_by_name (record2, field_name, 0);
-
-        /* If any of the fields is not present in some of the records
-           then that record is considered to be smaller than the
-           record featuring the other one.  */
-
-        if (field1 && !field2)
-          {
-            type_comparison = 1; /* field1 > field2 */
-            break;
-          }
-        else if (!field1 && field2)
-          {
-            type_comparison = -1;  /* field1 < field2 */
-            break;
-          }
-        else if (!field1 && !field2)
-          {
-            /* Not 0 in order to keep the relative position of the
-               records.  */
-
-            type_comparison = -1;  /* field1 < field2 */
-            break;
-          }
-
-        /* A field with such a name exists in both records.  Compare
-           the field typed values.  */
-
-        type_comparison = rec_type_values_cmp (rec_rset_get_field_type (rset, field_name),
-                                               rec_field_value (field1),
-                                               rec_field_value (field2));
-
-        if (type_comparison != 0)
-          {
-            /* Either (a1, a2, ...) < (b1, b2, ...) or (a1, a2, ...) >
-               (b1, b2, ...) */
-
-            break;
-          }
-      }
-  }
+  type_comparison = rec_rset_compare_typed_records (rset,
+                                                    record1,
+                                                    record2,
+                                                    rset->order_by_fields);
 
   /* If both records are equal, return -1 instead of 0 in order to
      maintain the relative ordering between equal records.  */
@@ -1706,6 +1666,62 @@ rec_rset_merge_records (rec_record_t to_record,
   rec_mset_iterator_free (&iter);
 
   return to_record;
+}
+
+static int
+rec_rset_compare_typed_records (rec_rset_t rset,
+                                rec_record_t record1,
+                                rec_record_t record2,
+                                rec_fex_t fields)
+{
+  int result = 0;
+  size_t i = 0;
+  size_t num_fields = rec_fex_size (fields);
+
+  for (i = 0; i < num_fields; i++)
+    {
+      rec_fex_elem_t elem       = rec_fex_get (fields, i);
+      const char    *field_name = rec_fex_elem_field_name (elem);
+      rec_field_t    field1     = rec_record_get_field_by_name (record1, field_name, 0);
+      rec_field_t    field2     = rec_record_get_field_by_name (record2, field_name, 0);
+
+      /* If any of the fields is not present in some of the records
+         then that record is considered to be smaller than the record
+         featuring the other one.  */
+
+      if (field1 && !field2)
+        {
+          result = 1; /* field1 > field2 */
+          break;
+        }
+      else if (!field1 && field2)
+        {
+          result = -1;  /* field1 < field2 */
+          break;
+        }
+      else if (!field1 && !field2)
+        {
+          result = 0;  /* field1 = field2 */
+          break;
+        }
+
+      /* A field with such a name exists in both records.  Compare the
+         field typed values.  */
+      
+      result =  rec_type_values_cmp (rec_rset_get_field_type (rset, field_name),
+                                     rec_field_value (field1),
+                                     rec_field_value (field2));
+
+      if (result != 0)
+        {
+          /* Either (a1, a2, ...) < (b1, b2, ...) or (a1, a2, ...) >
+             (b1, b2, ...) */
+          
+          break;
+        }
+    }
+
+  return result;
 }
 
 /* End of rec-rset.c */

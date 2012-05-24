@@ -1,3 +1,9 @@
+2012-05-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: new function rec_rset_compare_typed_records.
+	* src/rec-rset.c (rec_rset_compare_typed_records): New function.
+	(rec_rset_record_compare_fn): Use rec_rset_compare_typed_records.
+
 2012-05-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc,manual: document the sorting with several fields.
