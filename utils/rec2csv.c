@@ -136,10 +136,16 @@ rec2csv_parse_args (int argc,
               }
 
             /* Parse the field name.  */
+
+            if (!rec_fex_check (optarg, REC_FEX_CSV))
+              {
+                recutl_fatal (_("invalid field name list in -S.\n"));
+              }
+
             rec2csv_sort_by_fields = rec_fex_new (optarg, REC_FEX_CSV);
             if (!rec2csv_sort_by_fields)
               {
-                recutl_fatal (_("invalid field name list in -S.\n"));
+                recutl_fatal (_("internal error creating fex.\n"));
               }
 
             break;

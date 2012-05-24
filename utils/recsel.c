@@ -237,10 +237,16 @@ recsel_parse_args (int argc,
               }
 
             /* Parse the field name.  */
+
+            if (!rec_fex_check (optarg, REC_FEX_CSV))
+              {
+                recutl_fatal (_("invalid field names in -S.\n"));
+              }
+
             recutl_sort_by_fields = rec_fex_new (optarg, REC_FEX_CSV);
             if (!recutl_sort_by_fields)
               {
-                recutl_fatal (_("invalid field names in -S.\n"));
+                recutl_fatal (_("internal error creating fex.\n"));
               }
 
             break;
@@ -270,11 +276,15 @@ recsel_parse_args (int argc,
               }
 
             /* Parse the field name.  */
+            if (!rec_fex_check (optarg, REC_FEX_CSV))
+              {
+                recutl_fatal (_("invalid field names in -G.\n"));
+              }
 
             recsel_group_by_fields = rec_fex_new (optarg, REC_FEX_CSV);
             if (!recsel_group_by_fields)
               {
-                recutl_fatal (_("invalid field names in -G.\n"));
+                recutl_fatal (_("internal error creating fex.\n"));
               }
 
             break;
