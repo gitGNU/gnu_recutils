@@ -4,386 +4,6 @@
 %key: Test
 %mandatory: Unit
 
-Test: rec_record_remove_field_existing
-Unit: rec_record_remove_field
-Description:
-+  Remove a field from a record.
-+
-+ 1. The call to rec_record_remove_field should
-+    return true.
-+ 2. The field should be removed from the record.
-
-Test: rec_record_field_p_existing
-Unit: rec_record_field_p
-Description:
-+ Check for the existence of a field included
-+ in the record.
-+
-+ 1. The call to rec_record_field_p should
-+    return true
-
-Test: rec_record_field_p_nonexisting
-Unit: rec_record_field_p
-Description:
-+ Check for the existence of a field not included
-+ in the record.
-+
-+ 1. The call to rec_record_field_p should
-+    return false.
-
-Test: rec_record_insert_field_empty
-Unit: rec_record_insert_field
-Description:
-+ Insert a field into an empty record.
-+
-+ 1. The call to rec_record_insert_field should
-+    return true.
-
-Test: rec_record_insert_field_nonempty
-Unit: rec_record_insert_field
-Description:
-+  Insert a field into a non empy record.
-+
-+ 1. The call to rec_record_insert_field should
-+    success.
-
-Test: rec_record_insert_field_duplicated
-Unit: rec_record_insert_field
-Description:
-+ Fields with duplicated names are not allowed.
-+
-+ 1. The attempt to insert a duplicated field
-+    should success.
-
-Test: rec_record_new_and_destroy
-Unit: rec_record_new
-Description:
-+ Create a new record and destroy it.
-+
-+  1. The call to rec_record_new should not fail.
-+  2. The call to rec_record_destroy should not fail.
-
-Test: rec_record_size_empty
-Unit: rec_record_size
-Description:
-+ Get the size of a newly created record.
-+
-+ 1. The call to rec_record_size should return 0.
-
-Test: rec_record_size_nonempty
-Unit: rec_record_size
-Description:
-+ Get the size of a record containing 3 fields.
-+
-+ 1. The call to rec_record_size should return 3.
-
-Test: rec_sex_new_nominal
-Unit: rec_sex_new
-Description:
-+ Create selection expressions.
-
-Test: rec_sex_destroy_nominal
-Unit: rec_sex_destroy
-Description:
-+ Destroy selection expressions.
-
-Test: rec_sex_eval_match
-Unit: rec_sex_eval
-Description:
-+ Eval SEX expressions against matching records.
-
-Test: rec_sex_eval_nomatch
-Unit: rec_sex_eval
-Description:
-+ Eval SEX expressions against non matching
-+ records.
-
-Test: rec_sex_compile_nominal
-Unit: rec_sex_compile
-Description:
-+ Compile valid selection expressions.
-
-Test: rec_sex_compile_invalid
-Unit: rec_sex_compile
-Description:
-+ Try to compile invalid selection expressions.
-
-Test: rec_field_set_name_empty
-Unit: rec_field_set_name
-Description:
-+ Set the name of a field to the empty string
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    set.
-
-Test: rec_field_set_name_nonempty
-Unit: rec_field_set_name
-Description:
-+ Set the name of a field to a non-empty name
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    set.
-
-Test: rec_field_set_char_location_nominal
-Unit: rec_field_set_char_location
-Description:
-+ Set the char location of a field.
-
-Test: rec_field_dup_empty
-Unit: rec_field_dup
-Description:
-+ Dup a field with empty name and empty value.
-+
-+ 1. The name of the copied field should be the
-+    empty string.
-+ 2. The value of the copied field should be the
-+    empty string.
-
-Test: rec_field_dup_non_empty
-Unit: rec_field_dup
-Description:
-+ Dup a field with non-empty name and non-empty value.
-+
-+ 1. The name of the copied field should be the
-+    appropriate.
-+ 2. The value of the copied field should be the
-+    appropriate.
-
-Test: rec_field_char_location_str_nominal
-Unit: rec_field_char_location_str
-Description:
-+ Get the char location of a field as a string.
-
-Test: rec_field_equal_p_equal
-Unit: rec_field_equal_p
-Description:
-+ Test if two given fields are equal. i.e.
-+ they have eql field names and the same value.
-
-Test: rec_field_equal_p_nonequal
-Unit: rec_field_equal_p
-Description:
-+ Check whether two different fields are
-+ equal.
-+
-+ The comparison function shall return false.
-
-Test: rec_field_location_nominal
-Unit: rec_field_location
-Description:
-+ Get the location of a field.
-
-Test: rec_field_set_source_nominal
-Unit: rec_field_set_source
-Description:
-+ Set the source of a field.
-
-Test: rec_field_char_location_nominal
-Unit: rec_field_char_location
-Description:
-+ Get the char location of a field.
-
-Test: rec_field_to_comment_nominal
-Unit: rec_field_to_comment
-Description:
-+ Convert fields into comments.
-
-Test: rec_field_set_value_empty
-Unit: rec_field_set_value
-Description:
-+ Set the value of a field to the empty string
-+
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    set.
-
-Test: rec_field_set_value_nonempty
-Unit: rec_field_set_value
-Description:
-+ Set the value of a field to a non-empty value
-+
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    set.
-
-Test: rec_field_value_empty
-Unit: rec_field_value
-Description:
-+ Get the value of a field with an empy value
-+
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    returned.
-
-Test: rec_field_value_nonempty
-Unit: rec_field_value
-Description:
-+ Get the value of a field with a non-empty value
-+
-+ 1. The call should not produce an error.
-+ 2. The value of the field should be properly
-+    returned.
-
-Test: rec_field_location_str_nominal
-Unit: rec_field_location_str
-Description:
-+ Get the location of a field as a string.
-
-Test: rec_field_source_nominal
-Unit: rec_field_source
-Description:
-+ Get the source property of a field.
-
-Test: rec_field_name_empty
-Unit: rec_field_name
-Description:
-+ Get the name of a field with an empy name
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    returned.
-
-Test: rec_field_name_nonempty
-Unit: rec_field_name
-Description:
-+ Get the name of a field with a non-empty name
-+
-+ 1. The call should not produce an error.
-+ 2. The name of the field should be properly
-+    returned.
-
-Test: rec_field_new_nominal
-Unit: rec_field_new
-Description:
-+ Create a field.
-
-Test: rec_field_set_location_nominal
-Unit: rec_field_set_location
-Description:
-+ Set the location of a field.
-
-Test: rec_field_destroy_nominal
-Unit: rec_field_destroy
-Description:
-+ Destroy a field.
-
-Test: rec_mset_dup_empty
-Unit: rec_mset_dup
-Description:
-+ Dup an empty mset.
-+
-+ 1. The copy shall be successfully returned.
-+ 2. The copy shall be empty.
-
-Test: rec_mset_dup_nonempty
-Unit: rec_mset_dup
-Description:
-+ Dup an mset containing two elements of a nonempty type.
-+
-+ 1. The copy shall be successfully returned.
-+ 2. The copy shall contain the same elements.
-
-Test: rec_mset_type_p_any
-Unit: rec_mset_type_p
-Description:
-+ Check for the MSET_ANY type with rec_mset_type_p.
-+
-+ 1. The MSET_ANY type shall exist.
-
-Test: rec_mset_type_p_existing
-Unit: rec_mset_type_p
-Description:
-+ Register a type in an empty mset and check
-+ for it with rec_mset_type_p.
-+
-+ 1. The function shall report that the type
-+    exists.
-
-Test: rec_mset_type_p_nonexisting
-Unit: rec_mset_type_p
-Description:
-+ Register a type in an empty mset and check
-+ for other type with rec_mset_type_p.
-+
-+ 1. The function shall report that the type
-+    does not exist.
-
-Test: rec_mset_register_type_nominal
-Unit: rec_mset_register_type
-Description:
-+ Register a type in a mset.
-+
-+ 1. The registration should succeed.
-+ 2. The number returned by rec_mset_register_type shall
-+    be bigger than 0.
-
-Test: rec_mset_count_empty
-Unit: rec_mset_count
-Description:
-+ Count the number of total elements of an
-+ empty mset.
-+
-+ 1. The function shall return 0.
-
-Test: rec_mset_count_existing
-Unit: rec_mset_count
-Description:
-+ Count the number of elements of a non empty
-+ mset.
-+
-+ 1. The function shall return the number of
-+    elements.
-
-Test: rec_mset_count_nonexisting
-Unit: rec_mset_count
-Description:
-+ Count the number of total elements pertaining to
-+ an unexisting type in a mset.
-+
-+ 1. The function shall return 0.
-
-Test: rec_mset_get_at_empty
-Unit: rec_mset_get_at
-Description:
-+ Try to get an element from an empty mset.
-+
-+ 1. The function shall return NULL.
-
-Test: rec_mset_get_at_existing
-Unit: rec_mset_get
-Description:
-+ Get an existing element from a mset.
-+
-+ 1. The function shall return a pointer to
-+    the element.
-
-Test: rec_mset_get_at_any
-Unit: rec_mset_get
-Description:
-+ Get an existing element from a mset using
-+ the ANY index.
-+
-+ 1. The function shall return a pointer to
-+    the element.
-
-Test: rec_mset_get_at_invalid
-Unit: rec_mset_get_at
-Description:
-+ Get the first element of a mset by using invalid
-+ indexes.
-+
-+ 1. The function shall return NULL.
-
-Test: rec_mset_new_and_destroy
-Unit: rec_mset_new
-Description:
-+ Create an empty record set and destroy it.
-+
-+ 1. The value returned by rec_mset_new shall not
-+    be NULL.
-
 Test: rec_comment_dup_nominal
 Unit: rec_comment_dup
 Description:
@@ -394,19 +14,12 @@ Description:
 + 2. The contents of the copy shall be the same
 +    than the contents of the original.
 
-Test: rec_comment_text_nominal
-Unit: rec_comment_text
+Test: rec_comment_equal_p_nominal
+Unit: rec_comment_equal_p
 Description:
-+ Get the contents of a comment.
++ Compare comments.
 +
-+ 1. The function shall return the right contents.
-
-Test: rec_comment_text_empty
-Unit: rec_comment_text
-Description:
-+ Get the contents of an empty comment.
-+
-+ 1. The function shall return the empty string.
++ 1. The comparisons shall be correct.
 
 Test: rec_comment_new_nominal
 Unit: rec_comment_new
@@ -422,12 +35,19 @@ Description:
 +
 + 1. rec_comment_new shall return NULL.
 
-Test: rec_comment_equal_p_nominal
-Unit: rec_comment_equal_p
+Test: rec_comment_text_nominal
+Unit: rec_comment_text
 Description:
-+ Compare comments.
++ Get the contents of a comment.
 +
-+ 1. The comparisons shall be correct.
++ 1. The function shall return the right contents.
+
+Test: rec_comment_text_empty
+Unit: rec_comment_text
+Description:
++ Get the contents of an empty comment.
++
++ 1. The function shall return the empty string.
 
 Test: rec_comment_set_text_nominal
 Unit: rec_comment_set_text
@@ -443,6 +63,11 @@ Description:
 +
 + 1. The call shall not crash.
 
+Test: rec_field_name_p_nominal
+Unit: rec_field_name_p
+Description:
++ Check field name parts.
+
 Test: rec_field_name_equal_p_empty
 Unit: rec_field_name_equal_p
 Description:
@@ -457,68 +82,32 @@ Description:
 + Compare two field names with
 + rec_field_name_equal_p.
 
-Test: rec_field_name_part_normalise_nominal
-Unit: rec_field_name_part_normalise
+Test: rec_field_name_normalise_nominal
+Unit: rec_field_name_normalise
 Description:
-+ Check normalisation of name parts.
-
-Test: rec_field_name_p_nominal
-Unit: rec_field_name_p
-Description:
-+ Check field name parts.
-
-Test: rec_write_record_with_fex_nominal
-Unit: rec_write_record_with_fex
-Description:
-+ Process a record through a field expression
-+ and write out the result.
-
-Test: rec_write_record_with_fex_values
-Unit: rec_write_record_with_fex
-Description:
-+ Process a record through a field expression
-+ and write out the result.
-
-Test: rec_write_record_with_fex_row
-Unit: rec_write_record_with_fex
-Description:
-+ Process a record through a field expression
-+ and write out the result.
-
-Test: rec_write_comment_nominal
-Unit: rec_write_comment
-Description:
-+ Write comments.
-
-Test: rec_write_comment_sexp
-Unit: rec_write_comment
-Description:
-+ Write comments.
++ Check normalisation of names.
 
 Test: rec_write_field_nominal
 Unit: rec_write_field
 Description:
 + Write fields.
 
+Test: rec_write_field_values
+Unit: rec_write_field
+Description:
++ Write a field using the
++ REC_WRITER_VALUES writing mode.
+
+Test: rec_write_field_values_row
+Unit: rec_write_field
+Description:
++ Write a field using the
++ REC_WRITER_VALUES_ROW writing mode.
+
 Test: rec_write_field_sexp
 Unit: rec_write_field
 Description:
 + Write fields.
-
-Test: rec_write_comment_str_nominal
-Unit: rec_write_comment_str
-Description:
-+ Write comments.
-
-Test: rec_write_comment_str_sexp
-Unit: rec_write_comment_str
-Description:
-+ Write comments.
-
-Test: rec_write_db_nominal
-Unit: rec_write_db
-Description:
-+ Write a database.
 
 Test: rec_write_field_str_nominal
 Unit: rec_write_field_str
@@ -530,16 +119,6 @@ Unit: rec_write_field_str
 Description:
 + Write fields.
 
-Test: rec_write_field_name_str_nominal
-Unit: rec_write_field_name_str
-Description:
-+ Write field names.
-
-Test: rec_write_field_name_str_sexp
-Unit: rec_write_field_name_str
-Description:
-+ Write field names.
-
 Test: rec_write_rset_nominal
 Unit: rec_write_rset
 Description:
@@ -549,6 +128,26 @@ Test: rec_writer_destroy_nominal
 Unit: rec_writer_destroy
 Description:
 + Destroy a rec writer.
+
+Test: rec_write_comment_nominal
+Unit: rec_write_comment
+Description:
++ Write comments.
+
+Test: rec_write_comment_sexp
+Unit: rec_write_comment
+Description:
++ Write comments.
+
+Test: rec_write_db_nominal
+Unit: rec_write_db
+Description:
++ Write a database.
+
+Test: rec_writer_new_nominal
+Unit: rec_writer_new
+Description:
++ Create a rec writer.
 
 Test: rec_write_field_name_nominal
 Unit: rec_write_field_name
@@ -570,84 +169,37 @@ Unit: rec_write_record
 Description:
 + Write records in sexps.
 
-Test: rec_writer_new_nominal
-Unit: rec_writer_new
+Test: rec_write_record_values
+Unit: rec_write_record
 Description:
-+ Create a rec writer.
++ Write records using the
++ REC_WRITER_VALUES mode.
 
-Test: rec_type_reg_get_nominal
-Unit: rec_type_reg_get
+Test: rec_write_record_values_row
+Unit: rec_write_record
 Description:
-+ Insert a type in a type registry and get it.
-+ The call shall success.
++ Write records using the
++ REC_WRITER_VALUES_ROW mode.
 
-Test: rec_type_reg_get_nonexisting
-Unit: rec_type_reg_get
+Test: rec_write_field_name_str_nominal
+Unit: rec_write_field_name_str
 Description:
-+ Try to get a nonexisting named type
-+ from a type registry.
++ Write field names.
 
-Test: rec_type_reg_destroy_nominal
-Unit: rec_type_reg_destroy
+Test: rec_write_field_name_str_sexp
+Unit: rec_write_field_name_str
 Description:
-+ Destroy a type registry.
++ Write field names.
 
-Test: rec_type_reg_new_nominal
-Unit: rec_type_reg_new
+Test: rec_write_comment_str_nominal
+Unit: rec_write_comment_str
 Description:
-+ Creation of a type registry.
++ Write comments.
 
-Test: rec_fex_sort_nominal
-Unit: rec_fex_sort
+Test: rec_write_comment_str_sexp
+Unit: rec_write_comment_str
 Description:
-+ Sort a field expression.
-
-Test: rec_fex_elem_field_name_nominal
-Unit: rec_fex_elem_field_name
-Description:
-+ Get the field name of a field expression
-+ element.
-
-Test: rec_fex_get_nominal
-Unit: rec_fex_get
-Description:
-+ Get elements from a field expression.
-
-Test: rec_fex_get_invalid
-Unit: rec_fex_get
-Description:
-+ Get elements from a field expression
-+ providing invalid positions.
-+
-+ The calls to 'rec_fex_get' shall return
-+ NULL in those cases.
-
-Test: rec_fex_new_single
-Unit: rec_fex_new
-Description:
-+ Create field expressions composed by a single
-+ field.  It shall work for any kind of field name.
-
-Test: rec_fex_new_simple
-Unit: rec_fex_new
-Description:
-+ Create field expressions of the SIMPLE variety.
-
-Test: rec_fex_new_csv
-Unit: rec_fex_new
-Description:
-+ Create field expressions of the CSV variety.
-
-Test: rec_fex_new_subscripts
-Unit: rec_fex_new
-Description:
-+ Create field expressions featuring subscripts.
-
-Test: rec_fex_new_invalid
-Unit: rec_fex_new
-Description:
-+ Try to create field expressions from an invalid string.
-+ The creation of the fex shall fail.
++ Write comments.
 
 Test: rec_fex_check_simple_nominal
 Unit: rec_fex_check
@@ -679,6 +231,21 @@ Unit: rec_fex_check
 Description:
 + Check for comma-separated field expressions.
 
+Test: rec_fex_sort_nominal
+Unit: rec_fex_sort
+Description:
++ Sort a field expression.
+
+Test: rec_fex_str_nominal
+Unit: rec_fex_str
+Description:
++ Write fexes in strings.
+
+Test: rec_fex_destroy_nominal
+Unit: rec_fex_destroy
+Description:
++ Destroy a properly initialized field expression.
+
 Test: rec_fex_elem_max_nosub
 Unit: rec_fex_elem_max
 Description:
@@ -702,10 +269,70 @@ Description:
 + a field expression created with
 + full subscripts (both min and max).
 
-Test: rec_fex_destroy_nominal
-Unit: rec_fex_destroy
+Test: rec_fex_elem_field_name_nominal
+Unit: rec_fex_elem_field_name
 Description:
-+ Destroy a properly initialized field expression.
++ Get the field name of a field expression
++ element.
+
+Test: rec_fex_new_single
+Unit: rec_fex_new
+Description:
++ Create field expressions composed by a single
++ field.  It shall work for any kind of field name.
+
+Test: rec_fex_new_simple
+Unit: rec_fex_new
+Description:
++ Create field expressions of the SIMPLE variety.
+
+Test: rec_fex_new_csv
+Unit: rec_fex_new
+Description:
++ Create field expressions of the CSV variety.
+
+Test: rec_fex_new_subscripts
+Unit: rec_fex_new
+Description:
++ Create field expressions featuring subscripts.
+
+Test: rec_fex_new_invalid
+Unit: rec_fex_new
+Description:
++ Try to create field expressions from an invalid string.
++ The creation of the fex shall fail.
+
+Test: rec_fex_elem_rewrite_to_default
+Unit: rec_fex_elem_rewrite_to
+Description:
++ The rewrite_to property of a fex
++ elem without a rewrite rule must be NULL.
+
+Test: rec_fex_elem_rewrite_to_nominal
+Unit: rec_fex_elem_rewrite_to
+Description:
++ The rewrite_to property of a fex
++ elem must be properly parsed and returned.
+
+Test: rec_fex_get_nominal
+Unit: rec_fex_get
+Description:
++ Get elements from a field expression.
+
+Test: rec_fex_get_invalid
+Unit: rec_fex_get
+Description:
++ Get elements from a field expression
++ providing invalid positions.
++
++ The calls to 'rec_fex_get' shall return
++ NULL in those cases.
+
+Test: rec_fex_size_nominal
+Unit: rec_fex_size
+Description:
++ Get the size of several field
++ expressions.
 
 Test: rec_fex_elem_min_nosub
 Unit: rec_fex_elem_min
@@ -730,139 +357,15 @@ Description:
 + a field expression created with
 + full subscripts (both min and max).
 
-Test: rec_fex_str_nominal
-Unit: rec_fex_str
+Test: rec_type_new_nominal
+Unit: rec_type_new
 Description:
-+ Write fexes in strings.
++ Create types from correct type descriptions.
 
-Test: rec_fex_size_nominal
-Unit: rec_fex_size
+Test: rec_type_new_invalid
+Unit: rec_type_new
 Description:
-+ Get the size of several field
-+ expressions.
-
-Test: rec_parse_field_name_nominal
-Unit: rec_parse_field_name
-Description:
-+ Parse valid field names.
-
-Test: rec_parse_field_name_invalid
-Unit: rec_parse_field_name
-Description:
-+ Try to parse invalid field names.
-
-Test: rec_parse_field_nominal
-Unit: rec_parse_field
-Description:
-+ Parse valid fields.
-
-Test: rec_parse_field_invalid
-Unit: rec_parse_field
-Description:
-+ Try to parse invalid fields.
-
-Test: rec_parser_new_str_nominal
-Unit: rec_parser_new_str
-Description:
-+ Create a rec parser.
-
-Test: rec_parse_record_str_nominal
-Unit: rec_parse_record_str
-Description:
-+ Parse valid records from strings.
-
-Test: rec_parse_record_str_invalid
-Unit: rec_parse_record_str
-Description:
-+ Try to parse invalid records from strings.
-
-Test: rec_parse_db_nominal
-Unit: rec_parse_db
-Description:
-+ Parse valid databases.
-
-Test: rec_parse_db_invalid
-Unit: rec_parse_db
-Description:
-+ Try to parse invalid databases.
-
-Test: rec_parser_eof_nominal
-Unit: rec_parser_eof
-Description:
-+ Check for EOF in a parser operating a stream.
-
-Test: rec_parse_field_name_str_nominal
-Unit: rec_parse_field_name_str
-Description:
-+ Parse valid field names.
-
-Test: rec_parse_field_name_str_invalid
-Unit: rec_parse_field_name_str
-Description:
-+ Try to parse invalid field names.
-
-Test: rec_parser_reset_nominal
-Unit: rec_parser_reset
-Description:
-+ Reset a rec parser.
-
-Test: rec_parse_record_nominal
-Unit: rec_parse_record
-Description:
-+ Parse valid records.
-
-Test: rec_parse_record_invalid
-Unit: rec_parse_record
-Description:
-+ Try to parse invalid records.
-
-Test: rec_parser_new_nominal
-Unit: rec_parser_new
-Description:
-+ Create a rec parser.
-
-Test: rec_parse_rset_nominal
-Unit: rec_parse_rset
-Description:
-+ Parse valid record sets.
-
-Test: rec_parse_rset_invalid
-Unit: rec_parse_rset
-Description:
-+ Try to parse invalid record sets.
-
-Test: rec_parser_perror_nominal
-Unit: rec_parser_perror
-Description:
-+ Print the error message associated with a failed
-+ parsing.
-
-Test: rec_parser_error_nominal
-Unit: rec_parser_error
-Description:
-+ Check for the error status of a rec parser.
-
-Test: rec_parser_destroy_nominal
-Unit: rec_parser_destroy
-Description:
-+ Destroy a rec parser.
-
-Test: rec_type_kind_nominal
-Unit: rec_type_kind
-Description:
-+ Get the kind of types.
-
-Test: rec_type_name_anonymous
-Unit: rec_type_name
-Description:
-+ Get the name of an anonymous type.
-+ The returned value shall be NULL.
-
-Test: rec_type_name_nominal
-Unit: rec_type_name
-Description:
-+ Get the name of a type.
-+ The returned name shall be correct.
++ Try to create types from invalid type descriptions.
 
 Test: rec_type_check_int
 Unit: rec_type_check
@@ -919,12 +422,46 @@ Unit: rec_type_check
 Description:
 + Check strings of type email.
 
+Test: rec_type_equal_p_nominal
+Unit: rec_type_equal_p
+Description:
++ Check equality for equal types.
+
+Test: rec_type_destroy_nominal
+Unit: rec_type_destroy
+Description:
++ Destroy a type.
+
 Test: rec_type_set_name_nominal
 Unit: rec_type_name
 Description:
 + Set the name of a type.
 + The call shall not crash.
 + The returned type must match.
+
+Test: rec_type_kind_nominal
+Unit: rec_type_kind
+Description:
++ Get the kind of types.
+
+Test: rec_type_kind_str_nominal
+Unit: rec_type_kind_str
+Description:
++ Get the string representation of all
++ the supported types and check they are
++ ok.
+
+Test: rec_type_name_anonymous
+Unit: rec_type_name
+Description:
++ Get the name of an anonymous type.
++ The returned value shall be NULL.
+
+Test: rec_type_name_nominal
+Unit: rec_type_name
+Description:
++ Get the name of a type.
++ The returned name shall be correct.
 
 Test: rec_type_descr_p_nominal
 Unit: rec_type_descr_p
@@ -936,31 +473,532 @@ Unit: rec_type_descr_p
 Description:
 + Check for invalid type descriptions.
 
-Test: rec_type_equal_p_nominal
-Unit: rec_type_equal_p
+Test: rec_type_reg_new_nominal
+Unit: rec_type_reg_new
 Description:
-+ Check equality for equal types.
++ Creation of a type registry.
 
-Test: rec_type_kind_str_nominal
-Unit: rec_type_kind_str
+Test: rec_type_reg_destroy_nominal
+Unit: rec_type_reg_destroy
 Description:
-+ Get the string representation of all
-+ the supported types and check they are
-+ ok.
++ Destroy a type registry.
 
-Test: rec_type_new_nominal
-Unit: rec_type_new
+Test: rec_type_reg_get_nominal
+Unit: rec_type_reg_get
 Description:
-+ Create types from correct type descriptions.
++ Insert a type in a type registry and get it.
++ The call shall success.
 
-Test: rec_type_new_invalid
-Unit: rec_type_new
+Test: rec_type_reg_get_nonexisting
+Unit: rec_type_reg_get
 Description:
-+ Try to create types from invalid type descriptions.
++ Try to get a nonexisting named type
++ from a type registry.
 
-Test: rec_type_destroy_nominal
-Unit: rec_type_destroy
+Test: rec_parse_record_str_nominal
+Unit: rec_parse_record_str
 Description:
-+ Destroy a type.
++ Parse valid records from strings.
+
+Test: rec_parse_record_str_invalid
+Unit: rec_parse_record_str
+Description:
++ Try to parse invalid records from strings.
+
+Test: rec_parse_db_nominal
+Unit: rec_parse_db
+Description:
++ Parse valid databases.
+
+Test: rec_parse_db_invalid
+Unit: rec_parse_db
+Description:
++ Try to parse invalid databases.
+
+Test: rec_parse_rset_nominal
+Unit: rec_parse_rset
+Description:
++ Parse valid record sets.
+
+Test: rec_parse_rset_invalid
+Unit: rec_parse_rset
+Description:
++ Try to parse invalid record sets.
+
+Test: rec_parser_seek_mem_tell
+Unit: rec_parser_seek_mem
+Description:
++ Check that tell gives the same position as seeked to.
+
+Test: rec_parser_seek_mem_skip
+Unit: rec_parser_seek_mem
+Description:
++ Check that seek might skip a part of a record.
+
+Test: rec_parser_seek_mem_fail
+Unit: rec_parser_seek_mem
+Description:
++ Check that seek outside the file fails.
+
+Test: rec_parser_error_nominal
+Unit: rec_parser_error
+Description:
++ Check for the error status of a rec parser.
+
+Test: rec_parser_perror_nominal
+Unit: rec_parser_perror
+Description:
++ Print the error message associated with a failed
++ parsing.
+
+Test: rec_parse_field_name_nominal
+Unit: rec_parse_field_name
+Description:
++ Parse valid field names.
+
+Test: rec_parse_field_name_invalid
+Unit: rec_parse_field_name
+Description:
++ Try to parse invalid field names.
+
+Test: rec_parse_record_nominal
+Unit: rec_parse_record
+Description:
++ Parse valid records.
+
+Test: rec_parse_record_invalid
+Unit: rec_parse_record
+Description:
++ Try to parse invalid records.
+
+Test: rec_parser_eof_nominal
+Unit: rec_parser_eof
+Description:
++ Check for EOF in a parser operating a stream.
+
+Test: rec_parser_destroy_nominal
+Unit: rec_parser_destroy
+Description:
++ Destroy a rec parser.
+
+Test: rec_parser_new_nominal
+Unit: rec_parser_new
+Description:
++ Create a rec parser.
+
+Test: rec_parse_field_nominal
+Unit: rec_parse_field
+Description:
++ Parse valid fields.
+
+Test: rec_parse_field_invalid
+Unit: rec_parse_field
+Description:
++ Try to parse invalid fields.
+
+Test: rec_parser_new_mem_nominal
+Unit: rec_parser_new_mem
+Description:
++ Parse a valid truncated record set.
+
+Test: rec_parser_new_str_nominal
+Unit: rec_parser_new_str
+Description:
++ Create a rec parser.
+
+Test: rec_parse_field_name_str_nominal
+Unit: rec_parse_field_name_str
+Description:
++ Parse valid field names.
+
+Test: rec_parse_field_name_str_invalid
+Unit: rec_parse_field_name_str
+Description:
++ Try to parse invalid field names.
+
+Test: rec_parser_reset_nominal
+Unit: rec_parser_reset
+Description:
++ Reset a rec parser.
+
+Test: rec_sex_new_nominal
+Unit: rec_sex_new
+Description:
++ Create selection expressions.
+
+Test: rec_sex_eval_match
+Unit: rec_sex_eval
+Description:
++ Eval SEX expressions against matching records.
+
+Test: rec_sex_eval_nomatch
+Unit: rec_sex_eval
+Description:
++ Eval SEX expressions against non matching
++ records.
+
+Test: rec_sex_compile_nominal
+Unit: rec_sex_compile
+Description:
++ Compile valid selection expressions.
+
+Test: rec_sex_compile_invalid
+Unit: rec_sex_compile
+Description:
++ Try to compile invalid selection expressions.
+
+Test: rec_sex_destroy_nominal
+Unit: rec_sex_destroy
+Description:
++ Destroy selection expressions.
+
+Test: rec_mset_get_at_empty
+Unit: rec_mset_get_at
+Description:
++ Try to get an element from an empty mset.
++
++ 1. The function shall return NULL.
+
+Test: rec_mset_get_at_existing
+Unit: rec_mset_get
+Description:
++ Get an existing element from a mset.
++
++ 1. The function shall return a pointer to
++    the element.
+
+Test: rec_mset_get_at_any
+Unit: rec_mset_get
+Description:
++ Get an existing element from a mset using
++ the ANY index.
++
++ 1. The function shall return a pointer to
++    the element.
+
+Test: rec_mset_get_at_invalid
+Unit: rec_mset_get_at
+Description:
++ Get the first element of a mset by using invalid
++ indexes.
++
++ 1. The function shall return NULL.
+
+Test: rec_mset_new_and_destroy
+Unit: rec_mset_new
+Description:
++ Create an empty record set and destroy it.
++
++ 1. The value returned by rec_mset_new shall not
++    be NULL.
+
+Test: rec_mset_type_p_any
+Unit: rec_mset_type_p
+Description:
++ Check for the MSET_ANY type with rec_mset_type_p.
++
++ 1. The MSET_ANY type shall exist.
+
+Test: rec_mset_type_p_existing
+Unit: rec_mset_type_p
+Description:
++ Register a type in an empty mset and check
++ for it with rec_mset_type_p.
++
++ 1. The function shall report that the type
++    exists.
+
+Test: rec_mset_type_p_nonexisting
+Unit: rec_mset_type_p
+Description:
++ Register a type in an empty mset and check
++ for other type with rec_mset_type_p.
++
++ 1. The function shall report that the type
++    does not exist.
+
+Test: rec_mset_count_empty
+Unit: rec_mset_count
+Description:
++ Count the number of total elements of an
++ empty mset.
++
++ 1. The function shall return 0.
+
+Test: rec_mset_count_existing
+Unit: rec_mset_count
+Description:
++ Count the number of elements of a non empty
++ mset.
++
++ 1. The function shall return the number of
++    elements.
+
+Test: rec_mset_count_nonexisting
+Unit: rec_mset_count
+Description:
++ Count the number of total elements pertaining to
++ an unexisting type in a mset.
++
++ 1. The function shall return 0.
+
+Test: rec_mset_dup_empty
+Unit: rec_mset_dup
+Description:
++ Dup an empty mset.
++
++ 1. The copy shall be successfully returned.
++ 2. The copy shall be empty.
+
+Test: rec_mset_dup_nonempty
+Unit: rec_mset_dup
+Description:
++ Dup an mset containing two elements of a nonempty type.
++
++ 1. The copy shall be successfully returned.
++ 2. The copy shall contain the same elements.
+
+Test: rec_mset_register_type_nominal
+Unit: rec_mset_register_type
+Description:
++ Register a type in a mset.
++
++ 1. The registration should succeed.
++ 2. The number returned by rec_mset_register_type shall
++    be bigger than 0.
+
+Test: rec_field_set_char_location_nominal
+Unit: rec_field_set_char_location
+Description:
++ Set the char location of a field.
+
+Test: rec_field_equal_p_equal
+Unit: rec_field_equal_p
+Description:
++ Test if two given fields are equal. i.e.
++ they have eql field names and the same value.
+
+Test: rec_field_equal_p_nonequal
+Unit: rec_field_equal_p
+Description:
++ Check whether two different fields are
++ equal.
++
++ The comparison function shall return false.
+
+Test: rec_field_set_location_nominal
+Unit: rec_field_set_location
+Description:
++ Set the location of a field.
+
+Test: rec_field_char_location_nominal
+Unit: rec_field_char_location
+Description:
++ Get the char location of a field.
+
+Test: rec_field_destroy_nominal
+Unit: rec_field_destroy
+Description:
++ Destroy a field.
+
+Test: rec_field_set_value_empty
+Unit: rec_field_set_value
+Description:
++ Set the value of a field to the empty string
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
+
+Test: rec_field_set_value_nonempty
+Unit: rec_field_set_value
+Description:
++ Set the value of a field to a non-empty value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    set.
+
+Test: rec_field_location_str_nominal
+Unit: rec_field_location_str
+Description:
++ Get the location of a field as a string.
+
+Test: rec_field_new_nominal
+Unit: rec_field_new
+Description:
++ Create a field.
+
+Test: rec_field_dup_empty
+Unit: rec_field_dup
+Description:
++ Dup a field with empty name and empty value.
++
++ 1. The name of the copied field should be the
++    empty string.
++ 2. The value of the copied field should be the
++    empty string.
+
+Test: rec_field_dup_non_empty
+Unit: rec_field_dup
+Description:
++ Dup a field with non-empty name and non-empty value.
++
++ 1. The name of the copied field should be the
++    appropriate.
++ 2. The value of the copied field should be the
++    appropriate.
+
+Test: rec_field_name_empty
+Unit: rec_field_name
+Description:
++ Get the name of a field with an empy name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
+
+Test: rec_field_name_nonempty
+Unit: rec_field_name
+Description:
++ Get the name of a field with a non-empty name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    returned.
+
+Test: rec_field_set_source_nominal
+Unit: rec_field_set_source
+Description:
++ Set the source of a field.
+
+Test: rec_field_source_nominal
+Unit: rec_field_source
+Description:
++ Get the source property of a field.
+
+Test: rec_field_char_location_str_nominal
+Unit: rec_field_char_location_str
+Description:
++ Get the char location of a field as a string.
+
+Test: rec_field_set_name_empty
+Unit: rec_field_set_name
+Description:
++ Set the name of a field to the empty string
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
+
+Test: rec_field_set_name_nonempty
+Unit: rec_field_set_name
+Description:
++ Set the name of a field to a non-empty name
++
++ 1. The call should not produce an error.
++ 2. The name of the field should be properly
++    set.
+
+Test: rec_field_value_empty
+Unit: rec_field_value
+Description:
++ Get the value of a field with an empy value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
+
+Test: rec_field_value_nonempty
+Unit: rec_field_value
+Description:
++ Get the value of a field with a non-empty value
++
++ 1. The call should not produce an error.
++ 2. The value of the field should be properly
++    returned.
+
+Test: rec_field_to_comment_nominal
+Unit: rec_field_to_comment
+Description:
++ Convert fields into comments.
+
+Test: rec_field_location_nominal
+Unit: rec_field_location
+Description:
++ Get the location of a field.
+
+Test: rec_record_insert_field_empty
+Unit: rec_record_insert_field
+Description:
++ Insert a field into an empty record.
++
++ 1. The call to rec_record_insert_field should
++    return true.
+
+Test: rec_record_insert_field_nonempty
+Unit: rec_record_insert_field
+Description:
++  Insert a field into a non empy record.
++
++ 1. The call to rec_record_insert_field should
++    success.
+
+Test: rec_record_insert_field_duplicated
+Unit: rec_record_insert_field
+Description:
++ Fields with duplicated names are not allowed.
++
++ 1. The attempt to insert a duplicated field
++    should success.
+
+Test: rec_record_new_and_destroy
+Unit: rec_record_new
+Description:
++ Create a new record and destroy it.
++
++  1. The call to rec_record_new should not fail.
++  2. The call to rec_record_destroy should not fail.
+
+Test: rec_record_remove_field_existing
+Unit: rec_record_remove_field
+Description:
++  Remove a field from a record.
++
++ 1. The call to rec_record_remove_field should
++    return true.
++ 2. The field should be removed from the record.
+
+Test: rec_record_size_empty
+Unit: rec_record_size
+Description:
++ Get the size of a newly created record.
++
++ 1. The call to rec_record_size should return 0.
+
+Test: rec_record_size_nonempty
+Unit: rec_record_size
+Description:
++ Get the size of a record containing 3 fields.
++
++ 1. The call to rec_record_size should return 3.
+
+Test: rec_record_field_p_existing
+Unit: rec_record_field_p
+Description:
++ Check for the existence of a field included
++ in the record.
++
++ 1. The call to rec_record_field_p should
++    return true
+
+Test: rec_record_field_p_nonexisting
+Unit: rec_record_field_p
+Description:
++ Check for the existence of a field not included
++ in the record.
++
++ 1. The call to rec_record_field_p should
++    return false.
 
 # End of Tests

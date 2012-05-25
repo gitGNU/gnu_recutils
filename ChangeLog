@@ -1,5 +1,18 @@
 2012-05-25  Michał Masłowski  <mtjm@mtjm.eu>
 
+	src,torture: support changing parser position.
+	* src/rec-parser.c (rec_parser_seek, rec_parser_tell): New
+	functions.
+	* src/rec.h: Prototypes for rec_parser_seek, rec_parser_tell.
+
+	* torture/Makefile.am (REC_PARSER_TSUITE): rec-parser-seek-mem.c
+	added.
+	* torture/rec-parser/rec-parser-seek-mem.c: New file.
+	* torture/rec-parser/tsuite-rec-parser.c (tsuite_rec_parser):
+	Added test_rec_parser_seek_mem.
+
+2012-05-25  Michał Masłowski  <mtjm@mtjm.eu>
+
 	src,torture: support parsing non-null terminated buffers.
 	* src/rec-parser.c (struct rec_parser_s): New field in_size.
 	* src/rec-parser.c (rec_parser_new): Initialize in_size to an

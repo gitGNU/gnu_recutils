@@ -121,7 +121,7 @@ rec_parser_new (FILE *in,
     {
       parser->in_file = in;
       parser->in_buffer = NULL;
-      parser->in_size = -1;
+      parser->in_size = 0;
 
       if (!rec_parser_init_common (parser, source))
         {
@@ -734,6 +734,58 @@ rec_parse_record_str (const char *str)
     }
 
   return record;
+}
+
+bool
+rec_parser_seek (rec_parser_t parser,
+                 size_t line_number,
+                 size_t position)
+{
+  if (parser->in_file)
+    {
+      if (fseek (parser->in_file, position, SEEK_SET))
+        {
+          return false;
+        }
+    }
+  else if (parser->in_buffer)
+    {
+      if (position > parser->in_size)
+        {
+          return false;
+        }
+      parser->p = parser->in_buffer + position;
+    }
+  else
+    {
+      /* This point should not be reached!  */
+      fprintf (stderr, "rec_parser_seek: no backend in parser. This is a bug.\
+  Please report it.");
+      return false;
+    }
+  parser->line = line_number;
+  parser->character = position;
+  return true;
+}
+
+long
+rec_parser_tell (rec_parser_t parser)
+{
+  if (parser->in_file)
+    {
+      return ftell (parser->in_file);
+    }
+  else if (parser->in_buffer)
+    {
+      return parser->p - parser->in_buffer;
+    }
+  else
+    {
+      /* This point should not be reached!  */
+      fprintf (stderr, "rec_parser_seek: no backend in parser. This is a bug.\
+  Please report it.");
+      return -1;
+    }
 }
 
 /*
