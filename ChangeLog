@@ -1,3 +1,21 @@
+2012-05-25  Michał Masłowski  <mtjm@mtjm.eu>
+
+	src,torture: support parsing non-null terminated buffers.
+	* src/rec-parser.c (struct rec_parser_s): New field in_size.
+	* src/rec-parser.c (rec_parser_new): Initialize in_size to an
+	invalid value.
+	* src/rec-parser.c (rec_parser_getc): Use in_size instead of null
+	check to find EOF in memory buffers.
+	* src/rec-parser.c (rec_parser_new_mem): New function.
+	* src/rec-parser.c (rec_parser_new_str): Use rec_parser_new_mem.
+	* src/rec.h: Prototype for rec_parser_new_mem.
+
+	* torture/Makefile.am (REC_PARSER_TSUITE): rec-parser-new-mem.c
+	added.
+	* torture/rec-parser/rec-parser-new-mem.c: New file.
+	* torture/rec-parser/tsuite-rec-parser.c (tsuite_rec_parser):
+	Added test_rec_parser_new_mem.
+
 2012-05-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: fix the detection of invalid fexes in -G and -S.

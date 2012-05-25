@@ -72,6 +72,7 @@ struct rec_parser_s
 {
   FILE *in_file;          /* File stream used by the parser.  */
   const char *in_buffer;  /* Buffer used by the parser.  */
+  size_t in_size;         /* Length of in_buffer. */
   const char *p;          /* Pointer to the next unreaded character in
                              in_buffer */
   char *source;
@@ -120,6 +121,7 @@ rec_parser_new (FILE *in,
     {
       parser->in_file = in;
       parser->in_buffer = NULL;
+      parser->in_size = -1;
 
       if (!rec_parser_init_common (parser, source))
         {
@@ -135,12 +137,21 @@ rec_parser_t
 rec_parser_new_str (const char *buffer,
                     const char *source)
 {
+  return rec_parser_new_mem (buffer, strlen (buffer), source);
+}
+
+rec_parser_t
+rec_parser_new_mem (const char *buffer,
+                    size_t size,
+                    const char *source)
+{
   rec_parser_t parser;
 
   parser = malloc (sizeof (struct rec_parser_s));
   if (parser != NULL)
     {
       parser->in_buffer = buffer;
+      parser->in_size = size;
       parser->in_file = NULL;
 
       if (!rec_parser_init_common (parser, source))
@@ -742,7 +753,7 @@ rec_parser_getc (rec_parser_t parser)
     }
   else if (parser->in_buffer)
     {
-      if (*(parser->p) == '\0')
+      if (parser->p == parser->in_buffer + parser->in_size)
         {
           ci = EOF;
         }

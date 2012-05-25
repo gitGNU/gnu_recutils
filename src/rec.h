@@ -1809,7 +1809,15 @@ typedef struct rec_parser_s *rec_parser_t;
 rec_parser_t rec_parser_new (FILE *in, const char *source);
 
 /* Create a parser associated with a given buffer that will be used as
-   the source for the tokens.  If not enough memory, return NULL.  */
+   the source for the tokens.  The buffer is of specified size and
+   doesn't have to be null-terminated.  If not enough memory, return
+   NULL.  */
+
+rec_parser_t rec_parser_new_mem (const char *buffer, size_t size, const char *source);
+
+/* Create a parser associated with a given null-terminated buffer that
+   will be used as the source for the tokens.  If not enough memory,
+   return NULL.  */
 
 rec_parser_t rec_parser_new_str (const char *buffer, const char *source);
 
