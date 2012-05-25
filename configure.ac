@@ -92,13 +92,6 @@ if test "x$have_curl" = "xyes"; then
 fi
 AC_SUBST([CURLLIBS])
 
-have_mdb=no
-AC_CHECK_LIB([mdb],[mdb_init],[have_mdb=yes],)
-if test "x$have_mdb" = "xyes"; then
-   MDBLIBS=-lmdb
-fi
-AC_SUBST([MDBLIBS])
-
 have_uuid=no
 AC_CHECK_LIB([uuid],[uuid_generate],[have_uuid=yes],)
 if test "x$have_uuid" = "xyes"; then
@@ -129,6 +122,28 @@ AC_SUBST([crypt_support])
 have_glib=no
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= 2.0.0],
                   [have_glib=yes], [have_glib=no])
+
+have_mdb=no
+AC_CHECK_LIB([mdb],[mdb_init],[have_mdb=yes],)
+if test "x$have_mdb" = "xyes"; then
+   MDBLIBS=-lmdb
+
+   OLD_CFLAGS=$CFLAGS
+   CFLAGS="$CFLAGS $pkg_cv_GLIB_CFLAGS"
+   mdb_uses_sdatetime=no
+   AC_CHECK_DECL([MDB_SDATETIME],[mdb_uses_sdatetime=yes],,[#include <glib.h>
+#include <mdbtools.h>])
+   CFLAGS=$OLD_CFLAGS
+
+   if test "x$mdb_uses_sdatetime" = "xyes"; then
+      MDB_DATETIME="MDB_SDATETIME"
+   else
+      MDB_DATETIME="MDB_DATETIME"
+   fi
+
+   AC_SUBST([MDB_DATETIME])
+fi
+AC_SUBST([MDBLIBS])
 
 AM_CONDITIONAL([COMPILE_MDB2REC],
                [test "x$have_glib" = "xyes" && test "x$have_mdb" = "xyes"])

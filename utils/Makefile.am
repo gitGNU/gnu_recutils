@@ -38,7 +38,8 @@ if USE_COVERAGE
 endif
 
 AM_CPPFLAGS = -I$(top_srcdir)/lib -I$(top_srcdir)/src \
-              -I$(top_srcdir)/libcsv -DLOCALEDIR=\"$(localedir)\"
+              -I$(top_srcdir)/libcsv -DLOCALEDIR=\"$(localedir)\" \
+              -DMDB_DATETIME=$(MDB_DATETIME)
 
 recinf_SOURCES = $(COMMONSRC) \
                  recinf.c

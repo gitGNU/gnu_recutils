@@ -1,5 +1,18 @@
 2012-05-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	build,src: support versions of mdbtools using MDB_SDATETIME and
+	MDB_DATETIME.
+	* utils/mdb2rec.c (process_table): Use MDB_DATETIME instead of
+	MDB_SDATETIME.
+
+	* utils/Makefile.am (mdb2rec_CPPFLAGS): Set MDB_DATETIME to the
+	proper symbol.
+
+	* configure.ac (MDB_DATETIME): Check whether mdblib is using
+	MDB_SDATETIME or MDB_DATETIME.
+
+2012-05-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture,src: tests for aggregates and multiple-field grouping, and
 	several fixes.
 	* src/rec-aggregate.c (REC_AGGREGATE_ACCUM_FUNC): Get an INIT_VAL

@@ -370,7 +370,7 @@ process_table (MdbCatalogEntry *entry)
                       "%s real", normalised);
             break;
           }
-        case MDB_SDATETIME:
+        case MDB_DATETIME:
           {
             snprintf (type_value, TYPE_VALUE_SIZE,
                       "%s date", normalised);
