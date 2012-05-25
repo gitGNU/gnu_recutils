@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-05 20:03:26 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-05-25 15:16:18 jemarch"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -264,7 +264,7 @@ rec_aggregate_std_avg (rec_rset_t rset,
                        const char *field_name)
 {
   char *result = NULL;
-  size_t avg = 0;
+  double avg = 0;
 
   if (record)
     {
@@ -292,7 +292,15 @@ rec_aggregate_std_avg (rec_rset_t rset,
      will be returned by this function below to signal the
      end-of-memory condition.  */
       
-  asprintf (&result, "%ld", avg);
+  if (avg == floor (avg))
+    {
+      asprintf (&result, "%ld", (size_t) avg);      
+    }
+  else
+    {
+      asprintf (&result, "%f", avg);
+    }
+
   return result;
 }
 
@@ -327,14 +335,14 @@ rec_aggregate_std_avg_record (rec_record_t record,
   return avg;
 }
 
-#define REC_AGGREGATE_ACCUM_FUNC(NAME, OP)                              \
+#define REC_AGGREGATE_ACCUM_FUNC(NAME, OP, INIT_VAL)                    \
   static char *                                                         \
   rec_aggregate_std_##NAME (rec_rset_t rset,                            \
                             rec_record_t record,                        \
                             const char *field_name)                     \
   {                                                                     \
   char *result = NULL;                                                  \
-  double val   = 0;                                                     \
+  double val   = INIT_VAL;                                              \
                                                                         \
   if (record)                                                           \
     {                                                                   \
@@ -374,7 +382,7 @@ rec_aggregate_std_avg_record (rec_record_t record,
   /* Calculate the val of the fields in a given record.  Fields not     \
      representing a real value are ignored.  */                         \
                                                                         \
-  double val = 0;                                                       \
+  double val = INIT_VAL;                                                \
   rec_field_t field;                                                    \
   rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record)); \
                                                                         \
@@ -404,14 +412,14 @@ op_sum (double op1, double op2)
   return op1 + op2;
 }
 
-REC_AGGREGATE_ACCUM_FUNC(sum, op_sum);
+REC_AGGREGATE_ACCUM_FUNC(sum, op_sum, 0);
 
 /*
  * Aggregate: Min(Field)
  * Aggregate: Max(Field)
  */
 
-REC_AGGREGATE_ACCUM_FUNC(min, MIN);
-REC_AGGREGATE_ACCUM_FUNC(max, MAX);
+REC_AGGREGATE_ACCUM_FUNC(min, MIN, DBL_MAX);
+REC_AGGREGATE_ACCUM_FUNC(max, MAX, DBL_MIN);
 
 /* End of rec-aggregate.c */

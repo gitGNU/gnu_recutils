@@ -261,6 +261,28 @@ id: 3
 pos: 5
 '
 
+test_declare_input_file sales \
+'Item: A
+Date: 21 April 2012
+Cost: 23
+
+Item: B
+Date: 20 April 2012
+Cost: 50
+
+Item: A
+Date: 21 April 2012
+Cost: 10
+
+Item: C
+Date: 12 January 2003
+Cost: 12
+
+Item: D
+Date: 20 April 2012
+Cost: 100
+'
+
 test_declare_input_file packages-maintainers \
 '%rec: Package
 %type: Maintainer,PreviousMaintainer rec Hacker
@@ -1309,6 +1331,171 @@ pos: 4
 id: 3
 pos: 1
 pos: 5
+'
+
+test_tool recsel-group-multiple-fields ok \
+          recsel \
+          '-G Date,Item' \
+          sales \
+'Item: C
+Date: 12 January 2003
+Cost: 12
+
+Item: B
+Date: 20 April 2012
+Cost: 50
+
+Item: D
+Date: 20 April 2012
+Cost: 100
+
+Item: A
+Date: 21 April 2012
+Cost: 23
+Cost: 10
+'
+
+# rewrite rule
+
+test_tool recsel-aggregate-field-name ok \
+           recsel \
+           '-p "Count(Cost)"' \
+           sales \
+'Count_Cost: 5
+'
+
+test_tool recsel-aggregate-case-insensitive ok \
+          recsel \
+          '-p "cOuNt(Cost)"' \
+          sales \
+'cOuNt_Cost: 5
+'
+
+test_tool recsel-aggregate-rewrite-rule ok \
+          recsel \
+          '-p "Count(Cost):MyCount"' \
+          sales \
+'MyCount: 5
+'
+
+test_tool recsel-aggregate-count-overall ok \
+          recsel \
+          '-P "Count(Cost)"' \
+          sales \
+'5
+'
+
+test_tool recsel-aggregate-count-grouped ok \
+          recsel \
+          '-p "Item,Count(Cost)" -G Item' \
+          sales \
+'Item: A
+Count_Cost: 2
+
+Item: B
+Count_Cost: 1
+
+Item: C
+Count_Cost: 1
+
+Item: D
+Count_Cost: 1
+'
+
+test_tool recsel-aggregate-avg-overall ok \
+          recsel \
+          '-P "Avg(Cost)"' \
+          sales \
+'39
+'
+
+test_tool recsel-aggregate-avg-grouped ok \
+          recsel \
+          '-p "Item,Avg(Cost)" -G Item' \
+          sales \
+'Item: A
+Avg_Cost: 16.500000
+
+Item: B
+Avg_Cost: 50
+
+Item: C
+Avg_Cost: 12
+
+Item: D
+Avg_Cost: 100
+'
+
+test_tool recsel-aggregate-sum-overall ok \
+          recsel \
+          '-P "Sum(Cost)"' \
+          sales \
+'195
+'
+
+test_tool recsel-aggregate-sum-grouped ok \
+          recsel \
+          '-p "Item,Sum(Cost):TotalCost" -G Item' \
+          sales \
+'Item: A
+TotalCost: 33
+
+Item: B
+TotalCost: 50
+
+Item: C
+TotalCost: 12
+
+Item: D
+TotalCost: 100
+'
+
+test_tool recsel-aggregate-min-overall ok \
+          recsel \
+          '-P "Min(Cost)"' \
+          sales \
+'10
+'
+
+test_tool recsel-aggregate-min-grouped ok \
+          recsel \
+          '-p "Item,Min(Cost)" -G Item' \
+          sales \
+'Item: A
+Min_Cost: 10
+
+Item: B
+Min_Cost: 50
+
+Item: C
+Min_Cost: 12
+
+Item: D
+Min_Cost: 100
+'
+
+test_tool recsel-aggregate-max-overall ok \
+          recsel \
+          '-P "Max(Cost)"' \
+          sales \
+'100
+'
+
+test_tool recsel-aggregate-max-grouped ok \
+          recsel \
+          '-p "Item,Max(Cost)" -G Item' \
+          sales \
+'Item: A
+Max_Cost: 23
+
+Item: B
+Max_Cost: 50
+
+Item: C
+Max_Cost: 12
+
+Item: D
+Max_Cost: 100
 '
 
 test_tool recsel-fex-rewrite-all ok \

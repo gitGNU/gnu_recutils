@@ -1,5 +1,28 @@
 2012-05-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	torture,src: tests for aggregates and multiple-field grouping, and
+	several fixes.
+	* src/rec-aggregate.c (REC_AGGREGATE_ACCUM_FUNC): Get an INIT_VAL
+	argument.
+	Use DBL_MAX and DBL_MIN.
+	(rec_aggregate_std_avg): avg must be a double for the average.
+
+	* torture/utils/recsel.sh (sales): New input file.
+	(recsel-group-multiple-fields): New test.
+	(recsel-aggregate-field-name): Likewise.
+	(recsel-aggregate-case-insensitive): Likewise.
+	(recsel-aggregate-rewrite-rule): Likewise.
+	(recsel-aggregate-count-overall): Likewise.
+	(recsel-aggregate-count-grouped): Likewise.
+	(recsel-aggregate-sum-overall): Likewise.
+	(recsel-aggregate-sum-grouped): Likewise.
+	(recsel-aggregate-min-overall): Likewise.
+	(recsel-aggregate-min-grouped): Likewise.
+	(recsel-aggregate-max-overall): Likewise.
+	(recsel-aggregate-max-grouped): Likewise.
+
+2012-05-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: fix the detection of invalid fexes in -G and -S.
 	* utils/rec2csv.c (rec2csv_parse_args): Use rec_fex_check to
 	validate the list of fields in the command line.
