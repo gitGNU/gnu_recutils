@@ -106,6 +106,7 @@ libtool
 config.cache
 torture/utils/config.sh
 /lib/strings.h
+/lib/locale.h
 /algol68/rec.c
 /algol68/rec.m
 /algol68/librec-a68.a
