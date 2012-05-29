@@ -1,3 +1,10 @@
+2012-05-29  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Syntax fixes.
+	* python/setup.py: Trailing blank removed.
+
+	* doc/recutils.texi (recins Encryption): Fix usage of @pxref.
+
 2012-05-25  Michał Masłowski  <mtjm@mtjm.eu>
 
 	src,torture: support changing parser position.

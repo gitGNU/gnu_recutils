@@ -2507,7 +2507,7 @@ $ recins -t Account -s mypassword -f Login -v foo -f Password -v secret accounts
 @noindent
 Will encrypt the value of the @code{Password} field with
 @code{mypassword} as long as the field is declared as confidential.
-See @pxref{%confidential} for details on confidential fields.
+(@pxref{%confidential} for details on confidential fields).
 
 @command{recins} will issue a warning if a confidential field is
 inserted in the database but no password was provided to encrypt it.

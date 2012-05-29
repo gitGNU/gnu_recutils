@@ -40,5 +40,5 @@ setup(
                   ),
         ],
     )
-    
+
 # End of setup.py
