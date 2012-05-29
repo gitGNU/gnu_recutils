@@ -102,6 +102,7 @@ REC_RECORD_TSUITE = rec-record/tsuite-rec-record.c
 
 REC_PARSER_TSUITE = rec-parser/rec-parser-new.c \
                     rec-parser/rec-parser-new-str.c \
+                    rec-parser/rec-parser-new-mem.c \
                     rec-parser/rec-parser-destroy.c \
                     rec-parser/rec-parse-field-name-str.c \
                     rec-parser/rec-parse-field-name.c \
@@ -114,6 +115,7 @@ REC_PARSER_TSUITE = rec-parser/rec-parser-new.c \
                     rec-parser/rec-parser-error.c \
                     rec-parser/rec-parser-reset.c \
                     rec-parser/rec-parser-perror.c \
+                    rec-parser/rec-parser-seek-mem.c \
                     rec-parser/tsuite-rec-parser.c
 
 REC_WRITER_TSUITE= rec-writer/rec-write-comment.c \

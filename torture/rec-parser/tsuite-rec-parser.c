@@ -28,6 +28,7 @@
 
 extern TCase *test_rec_parser_new (void);
 extern TCase *test_rec_parser_new_str (void);
+extern TCase *test_rec_parser_new_mem (void);
 extern TCase *test_rec_parser_destroy (void);
 extern TCase *test_rec_parse_field_name_str (void);
 extern TCase *test_rec_parse_field_name (void);
@@ -40,6 +41,7 @@ extern TCase *test_rec_parser_eof (void);
 extern TCase *test_rec_parser_error (void);
 extern TCase *test_rec_parser_reset (void);
 extern TCase *test_rec_parser_perror (void);
+extern TCase *test_rec_parser_seek_mem (void);
 
 Suite *
 tsuite_rec_parser ()
@@ -49,6 +51,7 @@ tsuite_rec_parser ()
   s = suite_create ("rec-parser");
   suite_add_tcase (s, test_rec_parser_new ());
   suite_add_tcase (s, test_rec_parser_new_str ());
+  suite_add_tcase (s, test_rec_parser_new_mem ());
   suite_add_tcase (s, test_rec_parser_destroy ());
   suite_add_tcase (s, test_rec_parse_field_name_str ());
   suite_add_tcase (s, test_rec_parse_field_name ());
@@ -61,6 +64,7 @@ tsuite_rec_parser ()
   suite_add_tcase (s, test_rec_parser_error ());
   suite_add_tcase (s, test_rec_parser_reset ());
   suite_add_tcase (s, test_rec_parser_perror ());
+  suite_add_tcase (s, test_rec_parser_seek_mem ());
 
   return s;
 }

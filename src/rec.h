@@ -1809,7 +1809,15 @@ typedef struct rec_parser_s *rec_parser_t;
 rec_parser_t rec_parser_new (FILE *in, const char *source);
 
 /* Create a parser associated with a given buffer that will be used as
-   the source for the tokens.  If not enough memory, return NULL.  */
+   the source for the tokens.  The buffer is of specified size and
+   doesn't have to be null-terminated.  If not enough memory, return
+   NULL.  */
+
+rec_parser_t rec_parser_new_mem (const char *buffer, size_t size, const char *source);
+
+/* Create a parser associated with a given null-terminated buffer that
+   will be used as the source for the tokens.  If not enough memory,
+   return NULL.  */
 
 rec_parser_t rec_parser_new_str (const char *buffer, const char *source);
 
@@ -1888,6 +1896,16 @@ void rec_parser_reset (rec_parser_t parser);
  */
 
 void rec_parser_perror (rec_parser_t parser, const char *fmt, ...);
+
+/* Change the position in file of the parser to a given offset from
+   the start of the input.  The line number is only used to store it
+   in the parsed records.  Return 'false' on error, e.g. when the
+   stream used is not seekable or when the position is outside the
+   buffer. */
+bool rec_parser_seek (rec_parser_t parser, size_t line_number, size_t position);
+
+/* Return the current position in the file of the parser or -1 on error. */
+long rec_parser_tell (rec_parser_t parser);
 
 /*
  * WRITER
