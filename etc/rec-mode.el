@@ -1288,6 +1288,7 @@ buffer"
       (goto-char marker)
       (rec-delete-field)
       (rec-insert-field (list 'field
+                              0
                               name
                               value))
       (goto-char prev-pointer)))
