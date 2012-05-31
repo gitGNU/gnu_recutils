@@ -938,7 +938,7 @@ rec_rset_record_compare_fn (void *data1,
                             void *data2,
                             int type2)
 {
-  /* data1 and data2 are both records.
+  /* data1 is a record.  data2 can be either a record or a comment.
 
      order_by_field can't be NULL, because this callback is invoked
      only if rec_mset_add_sorted is used to add an element to the
@@ -965,6 +965,11 @@ rec_rset_record_compare_fn (void *data1,
   rec_field_t field2               = NULL;
   int type_comparison              = 0;
 
+  /* If elem2 is a comment then elem1 > elem2.  */
+  if (type2 == MSET_COMMENT)
+    {
+      return 1;
+    }
 
   /* Get the records and the containing rset.  */
   record1 = (rec_record_t) data1;
@@ -1019,8 +1024,9 @@ rec_rset_comment_compare_fn (void *data1,
                              void *data2,
                              int   type2)
 {
-  /* data1 is a comment, and data2 is a record.  The comment is always
-     < than the record.  */
+  /* data1 is a comment, and data2 can be either a comment or a
+     record.  In any case, data1 < data2.  */
+
   return -1;
 }
 

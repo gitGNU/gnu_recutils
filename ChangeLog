@@ -1,3 +1,12 @@
+2012-05-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: fix sorting code to properly handle interleaved comments.
+	* src/rec-rset.c (rec_rset_record_compare_fn): Return 1 if elem2
+	is a comment.
+
+	* torture/utils/recsel.sh (sort-with-comment): New input file.
+	(sort-with-comment): New test.
+
 2012-05-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Syntax fixes.

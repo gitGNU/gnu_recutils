@@ -177,6 +177,25 @@ Id: -2
 Key: baz
 '
 
+test_declare_input_file sort-with-comment \
+'%rec: Sorted
+%sort: Id
+%type: Id int
+
+# Foo
+
+# Bar
+
+Id: 100
+Key: foo
+
+Id: 20
+Key: bar
+
+Id: -2
+Key: baz
+'
+
 test_declare_input_file sort-multiple \
 '%rec: SortMultiple
 %sort: Class Price
@@ -1092,6 +1111,20 @@ test_tool recsel-sort ok \
           recsel \
           '' \
           sort \
+'Id: -2
+Key: baz
+
+Id: 20
+Key: bar
+
+Id: 100
+Key: foo
+'
+
+test_tool recsel-sort-with-comment ok \
+          recsel \
+          '' \
+          sort-with-comment \
 'Id: -2
 Key: baz
 
