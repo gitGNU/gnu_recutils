@@ -1,5 +1,16 @@
 2012-06-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: fixes in goto-type and show-type.
+	* etc/rec-mode.el (rec-buffer-types): Return the values of the
+	first %rec entry in each record, not a list.
+	(rec-show-type): Show the first data record of the selected type,
+	if it exists.
+	(rec-show-type): Get an optional argument show-descriptor.
+	(rec-cmd-show-descriptor): Call rec-show-type with show-descriptor
+	t.
+
+2012-06-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: field names are no longer lists of parts.
 	* etc/rec-mode.el (rec-parse-record): Docstring updated.
 	(rec-field-name-re): Updated.

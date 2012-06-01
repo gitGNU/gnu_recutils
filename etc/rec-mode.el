@@ -633,7 +633,7 @@ existing buffer."
   ;; used.  The rest are ignored.
   (mapcar
    (lambda (elem)
-     (rec-record-assoc rec-keyword-rec (cadr elem)))
+     (car (rec-record-assoc rec-keyword-rec (cadr elem))))
    rec-buffer-descriptors))
 
 (defun rec-type-p (type)
@@ -960,13 +960,14 @@ the result buffer."
 
 ;;;; Navigation
 
-(defun rec-show-type (type)
-  "Show the records of the given type"
+(defun rec-show-type (type &optional show-descriptor)
+  "Show the records of the given type.  If TYPE is nil then the records
+of the default type are shown."
   (widen)
   (unless (rec-goto-type type)
     (message "No records of the requested type were found."))
   ;; Show the first data record of this type, if it exists.
-  (if (and (not type)
+  (if (and (not show-descriptor)
            (save-excursion
              (let ((record-type (rec-record-type)))
                (and (rec-goto-next-rec)
@@ -1516,7 +1517,7 @@ This jump sets jump-back."
       (setq rec-jump-back (point-marker))
       (if rec-editing
           (rec-goto-type type)
-        (rec-show-type type)))))
+        (rec-show-type type t)))))
 
 (defun rec-cmd-count ()
   "Display a message in the minibuffer showing the number of
