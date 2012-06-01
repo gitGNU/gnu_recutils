@@ -1,3 +1,18 @@
+2012-06-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: field names are no longer lists of parts.
+	* etc/rec-mode.el (rec-parse-record): Docstring updated.
+	(rec-field-name-re): Updated.
+	(rec-insert-field-name): Updated to new field structure.
+	(rec-buffer-types): Call rec-record-assoc with a string field
+	name, not a list.
+	(rec-record-descriptor-p): Likewise, and use rec-keyword-rec.
+	(rec-goto-type): Likewise.
+	(rec-regular-p): Likewise.
+	(rec-record-type): Likewise.
+	(rec-search-first): Likewise.
+	(rec-init-selections): Likewise.
+
 2012-05-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: editing of individual fields now works.

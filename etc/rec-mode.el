@@ -71,7 +71,7 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
   "regexp denoting the beginning of a record")
 
 (defvar rec-field-name-re
-  "^\\([a-zA-Z0-1_%-]+:\\)+"
+  "^[a-zA-Z%][a-zA-Z0-9_-]*:"
   "Regexp matching a field name")
 
 (defvar rec-field-value-re
@@ -185,21 +185,13 @@ If the point is not at the beginning of a comment then return nil"
 
 (defun rec-parse-field-name ()
   "Parse and return a field name starting at point.
-
-Return a list with whose elements are the parts of the field
-name.  For the name a:b:c:d: the following list is returned:
-
-   (\"a\" \"b\" \"c\" \"d\")
-
 If the point is not at the beginning of a field name return nil"
   (when (and (equal (current-column) 0)
              (looking-at rec-field-name-re))
     (goto-char (match-end 0))
-    (split-string
-     (buffer-substring-no-properties (match-beginning 0)
-                                     (- (match-end 0) 1))
-     ":")))
-
+    (buffer-substring-no-properties (match-beginning 0)
+                                    (- (match-end 0) 1))))
+ 
 (defun rec-parse-field-name-from-string (str)
   "Parse and return a field name parsed from a string.
 
@@ -267,7 +259,7 @@ descriptor then return nil"
 The returned structure is a list of fields preceded by the symbol
 'record':
 
-   (record FIELD-1 FIELD-2 ... FIELD-N)
+   (record POS (FIELD-1 FIELD-2 ... FIELD-N))
 
 If the pointer is not at the beginning of a record, then return
 nil"
@@ -291,10 +283,9 @@ nil"
 
 (defun rec-insert-field-name (field-name)
   "Insert the written form of FIELD-NAME in the current buffer"
-  (when (listp field-name)
-    (mapcar (lambda (elem)
-              (when (stringp elem) (insert elem ":")))
-            field-name)))
+  (when (stringp field-name)
+    (insert (concat field-name ":"))
+    t))
 
 (defun rec-insert-field-value (field-value)
   "Insert the written form of FIELD-VALUE in the current buffer"
@@ -342,13 +333,12 @@ nil"
 
 (defun rec-record-descriptor-p (record)
   "Determine if the given record is a descriptor."
-  (not (null (rec-record-assoc '("%rec") record))))
+  (not (null (rec-record-assoc rec-keyword-rec record))))
 
 (defun rec-record-assoc (name record)
   "Get a list with the values of the fields in RECORD named NAME.
 
-NAME shall be a field name i.e. a list of field name parts.
-
+NAME shall be a field name.
 If no such field exists in RECORD then nil is returned."
   (if (stringp name)
       (setq name (rec-parse-field-name-from-string name)))
@@ -629,7 +619,7 @@ The current record is the record where the pointer is"
               (rec-beginning-of-record)
               (setq marker (point-marker))
               (setq rec (rec-parse-record))
-              (when (rec-record-assoc (list rec-keyword-rec) rec)
+              (when (rec-record-assoc rec-keyword-rec rec)
                 (setq records (cons (list 'descriptor rec marker) records)))
               (if (not (= (point) (point-max)))
                   (forward-char)))
@@ -642,11 +632,9 @@ existing buffer."
   ;; If a descriptor has more than a %rec field, then the first one is
   ;; used.  The rest are ignored.
   (mapcar
-   (lambda (elem) (car elem))
-   (mapcar
-    (lambda (elem)
-      (rec-record-assoc (list rec-keyword-rec) (cadr elem)))
-    rec-buffer-descriptors)))
+   (lambda (elem)
+     (rec-record-assoc rec-keyword-rec (cadr elem)))
+   rec-buffer-descriptors))
 
 (defun rec-type-p (type)
   "Determine if there are records of type TYPE in the current
@@ -680,7 +668,7 @@ this function returns nil."
           (descriptors rec-buffer-descriptors))
       (mapcar
        (lambda (elem)
-         (when (equal (car (rec-record-assoc (list rec-keyword-rec)
+         (when (equal (car (rec-record-assoc rec-keyword-rec
                                              (cadr elem)))
                       type)
            (setq found t)
@@ -839,7 +827,7 @@ the list of records."
 Return nil otherwise."
   (let ((rec (rec-current-record)))
     (when rec
-      (= (length (rec-record-assoc (list rec-keyword-rec) rec))
+      (= (length (rec-record-assoc rec-keyword-rec rec))
          0))))
 
 (defun rec-record-type ()
@@ -849,7 +837,7 @@ If the record is of no known type, return nil."
   (let ((descriptor (rec-record-descriptor)))
     (cond
      ((listp descriptor)
-      (car (rec-record-assoc (list rec-keyword-rec)
+      (car (rec-record-assoc rec-keyword-rec
                              (cadr descriptor))))
      ((equal descriptor "")
       "")
@@ -896,7 +884,7 @@ If such a record is not found then return nil."
           (if (member value (rec-record-assoc name record))
               (setq found t)
             ;; Check end-of-type
-            (if (rec-record-assoc (list rec-keyword-rec) record)
+            (if (rec-record-assoc rec-keyword-rec record)
                 (setq end-of-type t))))
         (when found (point))))))
 
@@ -1084,11 +1072,11 @@ Each character should identify only one name."
     (rec-do
      (lambda ()
        (let* ((rec (rec-parse-record))
-              (name (rec-record-assoc (list "Name") rec))
-              (letter (rec-record-assoc (list "Letter") rec))
-              (fields (rec-record-assoc (list "Field") rec))
-              (type (rec-record-assoc (list "Type") rec))
-              (expr (rec-record-assoc (list "Predicate") rec)))
+              (name (rec-record-assoc "Name" rec))
+              (letter (rec-record-assoc "Letter" rec))
+              (fields (rec-record-assoc "Field" rec))
+              (type (rec-record-assoc "Type" rec))
+              (expr (rec-record-assoc "Predicate" rec)))
          (when (and (equal (length name) 1)
                     (equal (length letter) 1)
                     (equal (length (car letter)) 1)
