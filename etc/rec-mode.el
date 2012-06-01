@@ -37,7 +37,7 @@
 (defgroup rec-mode nil
   "rec-mode subsystem"
   :group 'applications
-  :link '(url-link "http://www.gnu.org/software/rec"))
+  :link '(url-link "http://www.gnu.org/software/recutils"))
 
 (defcustom rec-open-mode 'navigation
   "Default mode to use when switching a buffer to rec-mode.
@@ -59,7 +59,7 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
 (defconst rec-keyword-prefix "%"
   "Prefix used to distinguish special fields.")
 
-(defconst rec-keyword-rec "%rec"
+(defconst rec-keyword-rec (concat rec-keyword-prefix "rec")
   ;; Remember to update `rec-font-lock-keywords' if you change this
   ;; value!!
   "Rec keyword.")
@@ -104,10 +104,10 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
   "Syntax table used in rec-mode")
 
 (defvar rec-font-lock-keywords
-  `((,(concat "^" rec-keyword-prefix "[a-zA-Z0-9_-]+:") . font-lock-keyword-face)
-    (,rec-field-name-re . font-lock-variable-name-face)
-    ("^\\+" . font-lock-constant-face))
-  "Font lock keywords used in rec-mode")
+`((,(concat "^" rec-keyword-prefix "[a-zA-Z0-9_-]+:") . font-lock-keyword-face)
+  (,rec-field-name-re . font-lock-variable-name-face)
+  ("^\\+" . font-lock-constant-face))
+"Font lock keywords used in rec-mode")
 
 (defvar rec-mode-edit-map
   (let ((map (make-sparse-keymap)))
@@ -116,14 +116,11 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "\C-ce" 'rec-cmd-edit-field)
     (define-key map "\C-ct" 'rec-cmd-show-descriptor)
     (define-key map "\C-c#" 'rec-cmd-count)
-    (define-key map "\C-cl" 'rec-cmd-sel)
-    (define-key map "\C-cs" 'rec-cmd-search)
     (define-key map "\C-cm" 'rec-cmd-trim-field-value)
     (define-key map "\C-cc" 'rec-cmd-compile)
     (define-key map "\C-cI" 'rec-cmd-show-info)
     (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
-    (define-key map (concat "\C-c" (kbd "RET")) 'rec-cmd-jump)
     (define-key map "\C-cb" 'rec-cmd-jump-back)
     (define-key map "\C-c\C-c" 'rec-finish-editing)
     map)
@@ -140,8 +137,6 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "A" 'rec-cmd-append-field)
     (define-key map "I" 'rec-cmd-show-info)
     (define-key map "t" 'rec-cmd-show-descriptor)
-    (define-key map "l" 'rec-cmd-sel)
-    (define-key map "s" 'rec-cmd-search)
     (define-key map "m" 'rec-cmd-trim-field-value)
     (define-key map "c" 'rec-cmd-compile)
     (define-key map "\C-ct" 'rec-find-type)
@@ -149,7 +144,7 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
-    (define-key map (kbd "SPC") 'rec-cmd-toggle-field-visibility)
+;;  (define-key map (kbd "SPC") 'rec-cmd-toggle-field-visibility)
     (define-key map "b" 'rec-cmd-jump-back)
     map)
   "Keymap for rec-mode")
@@ -259,7 +254,7 @@ descriptor then return nil"
 The returned structure is a list of fields preceded by the symbol
 'record':
 
-   (record POS (FIELD-1 FIELD-2 ... FIELD-N))
+   (record POSITION (FIELD-1 FIELD-2 ... FIELD-N))
 
 If the pointer is not at the beginning of a record, then return
 nil"
@@ -421,7 +416,7 @@ If no such field exists in RECORD then nil is returned."
       (with-temp-buffer
         (insert value)
         (goto-char (point-min))
-        (when (looking-at "[ \t\n]+")
+        (when (looking-at "[ \t\n][ \t\n]+")
           (delete-region (match-beginning 0)
                          (match-end 0)))
         (goto-char (point-max))
@@ -606,26 +601,6 @@ The current record is the record where the pointer is"
 	  (reverse records)))
   (message ""))
 
-(defun rec-update-buffer-descriptors-xxx ()
-  "Get a list of the record descriptors in the current buffer."
-  (message "Updating record descriptors...")
-  (setq rec-buffer-descriptors
-        (save-excursion
-          (let (records rec marker)
-            (goto-char (point-min))
-            (while (and (not (= (point) (point-max)))
-                        (re-search-forward
-                         (concat "^" (regexp-quote rec-keyword-rec) ":") nil t))
-              (rec-beginning-of-record)
-              (setq marker (point-marker))
-              (setq rec (rec-parse-record))
-              (when (rec-record-assoc rec-keyword-rec rec)
-                (setq records (cons (list 'descriptor rec marker) records)))
-              (if (not (= (point) (point-max)))
-                  (forward-char)))
-            (reverse records))))
-  (message ""))
-
 (defun rec-buffer-types ()
   "Return a list with the names of the record types in the
 existing buffer."
@@ -782,46 +757,6 @@ specified type in the current file."
       (setq num (buffer-substring-no-properties (point-min) (point-max))))
     (string-to-number num)))
 
-(defun rec-do (rec-do-func &optional type descriptors)
-  "Apply REC-DO-FUNC for each record of type TYPE.  If TYPE is nil
-then the function is applied for all the records existing in the
-file (including the record descriptors).  A third optional
-parameter specify whether to include the record descriptors in
-the list of records."
-  (save-excursion
-    (save-restriction
-      (widen)
-      (unless (rec-goto-type type)
-        (goto-char (point-min))
-        (rec-goto-next-rec))
-      (let ((in-type t)
-            (first-time t)
-            exit)
-        (while (and (not exit)
-                    in-type
-                    (if (not first-time)
-                        (rec-goto-next-rec)
-                      t))
-          (setq first-time nil)
-          (setq in-type (or (not type)
-                            (equal (rec-record-type) type)))
-          (when (and in-type
-                     (or descriptors
-                         (rec-regular-p)))
-            (setq exit (not (funcall rec-do-func)))))))))
-
-(defun rec-map (rec-map-func &optional type descriptors)
-  "XXX"
-  (let (res)
-    (rec-do (lambda ()
-              (setq res
-                    (cons (funcall rec-map-func)
-                          res))
-              t)
-            type
-            descriptors)
-    (reverse res)))
-
 (defun rec-regular-p ()
   "Return t if the record under point is a regular record.
 Return nil otherwise."
@@ -865,98 +800,6 @@ Return nil if the point is not on a record."
       (if found
           descriptor
         ""))))
-
-;;;; Searching functions
-
-(defun rec-search-first (type name value)
-  "Return the position of the beginning of the record of type TYPE
-containing a field NAME:VALUE.
-
-If such a record is not found then return nil."
-  (save-excursion
-    (let (found end-of-type record)
-      (when (rec-goto-type type)
-        (while (and (not found) (not end-of-type)
-                    (rec-goto-next-rec))
-          ;; Read a record
-          (setq record (rec-current-record))
-          ;; Check if found
-          (if (member value (rec-record-assoc name record))
-              (setq found t)
-            ;; Check end-of-type
-            (if (rec-record-assoc rec-keyword-rec record)
-                (setq end-of-type t))))
-        (when found (point))))))
-
-;;;; Selecting
-
-(defun rec-sel (what func &optional type write-descriptor)
-  "Make a selection on the rec file.
-
-FUNC is a function that will be evaluated XXX.
-
-If some of the fields specified in WHAT does not exist in the
-matching records, then they are not included in the result.
-
-NAME is the name of a field, like \"Name\", that will be compared
-with \"VALUE\".
-
-If WRITE-DESCRIPTOR is t, then record descriptors are included in
-the result buffer."
-  (let ((sel-buffer
-         (get-buffer-create (generate-new-buffer-name "Rec Sel ")))
-        inserted-types)
-    (with-current-buffer sel-buffer
-      (insert "# -*- mode: rec -*- \n"
-              "#\n"
-              "# Result of rec-sel with \n# ")
-      (print func (lambda (c) (unless (equal c ?\n) (insert c))))
-      (insert "\n\n"))
-    (message "Searching...")
-    (rec-do
-     (lambda ()
-       (save-excursion
-         (let* ((rec (rec-parse-record))
-                (type (rec-record-type))
-                (descriptor (rec-record-descriptor)))
-           (when (apply func (list rec))
-             ;; Matching record
-             ;; Print it (the requested fields)
-             (with-current-buffer sel-buffer
-               (let (buffer-read-only)
-                 (when (and descriptor
-                            (not (member type inserted-types)))
-                   (when write-descriptor
-                     ;; Insert the type descriptor
-                     (rec-insert-record (cadr descriptor)))
-                   (insert "\n")
-                   (setq inserted-types
-                         (cons type inserted-types)))
-                 (rec-insert-record rec what)
-                 (insert "\n")))))
-         t))
-     type)
-    (with-current-buffer sel-buffer
-      (insert "\n"
-              "# End of rec-sel\n")
-      (goto-char (point-min))
-      (rec-mode))
-    (switch-to-buffer-other-window sel-buffer)
-    (message "")))
-
-;;;; Selection macros
-;;
-;; Note that in the context of the body in the following macros `rec'
-;; is a record data structure.
-
-(defmacro rec-field-eq (name val)
-  `(let ((value (rec-record-assoc ,name rec)))
-     (if value
-         (equal (car value) ,val)
-       nil)))
-
-(defmacro rec-field-count (name)
-  `(lenth (rec-record-assoc ,name rec)))
 
 ;;;; Navigation
 
@@ -1048,50 +891,6 @@ Each character should identify only one name."
             (setq result char)
             (throw 'exit t)))))
       result)))
-
-(defun rec-selection-list ()
-  "XXX"
-  (let (search-list)
-    ;; Add standard searches
-    (add-to-list 'search-list
-                 (list "Generic search" ?E))
-    ;; Add custom searches
-    (append search-list
-            (mapcar
-             (lambda (elem)
-               (if (and (listp elem)
-                        (>= (length elem) 4))
-                   (let ((char (car elem))
-                         (descr (cadr elem)))
-                     (list descr char))
-                 (error "Invalid entry in rec-custom-searches")))
-             rec-custom-searches))))
-
-(defun rec-init-selections ()
-  "XXX"
-  (let (res)
-    (rec-do
-     (lambda ()
-       (let* ((rec (rec-parse-record))
-              (name (rec-record-assoc "Name" rec))
-              (letter (rec-record-assoc "Letter" rec))
-              (fields (rec-record-assoc "Field" rec))
-              (type (rec-record-assoc "Type" rec))
-              (expr (rec-record-assoc "Predicate" rec)))
-         (when (and (equal (length name) 1)
-                    (equal (length letter) 1)
-                    (equal (length (car letter)) 1)
-                    (equal (length expr) 1))
-           (add-to-list 'res
-                        (list (aref (car letter) 0)
-                              (car name)
-                              (mapcar (lambda (elem)
-                                        (rec-parse-field-name-from-string elem)) fields)
-                              (read (car expr))
-                              type)))
-         t))
-     "RecModeSelection")
-    (setq rec-custom-searches res)))
 
 ;;;; Rec Idle mode
 ;;
@@ -1280,8 +1079,7 @@ buffer"
                               0
                               name
                               value))
-      (goto-char prev-pointer)))
-  (rec-init-selections))
+      (goto-char prev-pointer))))
 
 (defun rec-beginning-of-field ()
   "Goto to the beginning of the current field"
@@ -1504,7 +1302,6 @@ point."
   (rec-set-head-line nil)
   (rec-set-mode-line (rec-record-type))
   (setq rec-editing nil)
-  (rec-init-selections)
   (message "End of edition"))
 
 (defun rec-cmd-show-descriptor ()
@@ -1539,37 +1336,6 @@ records of the current type"
     (goto-char (point-max))
     (insert "\n")
     (backward-char)))
-
-(defun rec-cmd-sel ()
-  "XXX"
-  (interactive)
-  (let ((res (rec-fast-selection
-              (rec-selection-list)
-              "Selection Type")))
-    (cond
-     ((equal res ?E)
-      ;; Prompt the user for an expression and search
-      (let (what func name type)
-        (setq type (read-from-minibuffer "Type of record (empty for all): "))
-        (if (equal type "")
-            (setq type nil)
-          (when (not (member type (rec-buffer-types)))
-            (error (concat "cannot find type " type))))
-        (while (not (equal
-                     (setq name
-                           (read-from-minibuffer "Field to print (empty when done): "))
-                     ""))
-          (add-to-list 'what
-                       (rec-parse-field-name-from-string name)))
-        (setq func (read-from-minibuffer "Search expression: "))
-        (rec-sel what (read (concat "(lambda (rec) " func ")")) type)))
-     (res
-      ;; Launch the appropriate expression
-      (let* ((search (assoc res rec-custom-searches))
-             (what (nth 2 search))
-             (func (nth 3 search))
-             (type (nth 4 search)))
-        (rec-sel what (list 'lambda (list 'rec) func) type))))))
 
 (defun rec-cmd-trim-field-value ()
   "Trim the value of the field under point, if any."
@@ -1646,6 +1412,7 @@ Commands:
 \\{rec-mode-map}"
   (interactive)
   (kill-all-local-variables)
+  (widen)
   ;; Local variables
   (make-local-variable 'font-lock-defaults)
   (make-local-variable 'rec-type)

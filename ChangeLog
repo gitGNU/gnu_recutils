@@ -1,5 +1,29 @@
 2012-06-01  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: misc small fixes.
+	* etc/rec-mode.el (rec-mode): docstring updated to reflect the
+	real URL.
+	(rec-keyword-rec): Use rec-keyword-prefix.
+	(rec-mode-edit-map): Remove obsolete or not-working entries.
+	(rec-mode-map): Likewise.
+	(rec-field-trim-value): Don't remove the initial newline when
+	trimming when there is only one.
+	(rec-update-buffer-descriptors-xxx): Removed.
+	(rec-map): Removed.
+	(rec-do): Removed.
+	(rec-sel): Removed.
+	(rec-field-eq): Removed.
+	(rec-field-count): Removed.
+	(rec-init-selections): Removed.
+	(rec-finish-editing): Don't call rec-init-selections.
+	(rec-finish-editing-field): Likewise.
+	(rec-search-first): Removed.
+	(rec-selection-list): Removed.
+	(rec-cmd-sel): Removed.
+	(rec-mode): Wide the buffer after killing local variables.
+
+2012-06-01  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: fixes in goto-type and show-type.
 	* etc/rec-mode.el (rec-buffer-types): Return the values of the
 	first %rec entry in each record, not a list.
