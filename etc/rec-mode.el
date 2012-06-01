@@ -823,8 +823,6 @@ of the default type are shown."
   (setq buffer-read-only t)
   (rec-narrow-to-record)
   (use-local-map rec-mode-map)
-  ;; TODO: Update field names for autocompletion
-  ;;  (let ((names (rec-record-field-names (rec-current-record)))))
   (rec-set-head-line nil)
   (rec-set-mode-line (rec-record-type)))
 
@@ -1421,14 +1419,10 @@ Commands:
   (make-local-variable 'rec-update-p)
   (make-local-variable 'rec-preserve-last-newline)
   (make-local-variable 'rec-editing)
-  (make-local-variable 'rec-field-names)
-  (make-local-variable 'rec-custom-searches)
   (setq rec-editing nil)
   (setq rec-jump-back nil)
   (setq rec-update-p nil)
   (setq rec-preserve-last-newline nil)
-  (setq rec-field-names nil)
-  (setq rec-custom-searches nil)
   (setq font-lock-defaults '(rec-font-lock-keywords))
   (use-local-map rec-mode-map)
   (set-syntax-table rec-mode-syntax-table)
