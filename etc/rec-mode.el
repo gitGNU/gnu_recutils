@@ -826,6 +826,148 @@ of the default type are shown."
   (rec-set-head-line nil)
   (rec-set-mode-line (rec-record-type)))
 
+;;;; Field types
+;;
+;; This section contains functions and variable implementing field
+;; types as described in the recutils manual.
+;;
+;; Each type is stored in a structure like:
+;;
+;;    (type KIND EXPR DATA)
+;;
+;; Where EXPR is the type descriptor used to create the type, and NAME
+;; is the name of the type.
+;;
+;; KIND is the class of the type, and is one of:
+;;
+;;    int, bool, range, real, size, line, regexp, date,
+;;    enum, field, email, uuid, rec
+;;      
+;; DESCR is the data describing the type, and its value depends on the
+;; kind:
+;;
+;;    - For sized strings, it is the maximum size of the string.
+;;
+;;    - For ranges, it is a list (MIN MAX) defining the range
+;;      [MIN,MAX].  Open ranges can be specified by using nil.  For
+;;      example: (0,nil).
+;;     
+;;    - For regexps, it is a string containing the regexp.
+;;
+;;    - For record types, it is a string containing the type of
+;;      the referred records.
+;;     
+;;    - For any other type, it is nil.
+
+(defvar rec-types
+  '("int" "bool" "range" "real" "size" "line" "regexp" "date" "enum" "field" "email" "uuid" "rec")
+  "Kind of supported types")
+
+(defun rec-type-kind-p (kind)
+  "Determine whether the given symbol or string is a type kind."
+  (let (kind-symbol)
+    (cond
+     ((symbolp kind)
+      (member (symbol-name kind) rec-types))
+     ((stringp kind)
+      (member kind rec-types))
+     (t
+      nil))))
+
+(defun rec-parse-type (str)
+  "Parse STR into a new type structure and return it.
+
+STR must contain a type description as defined in the recutils
+manual."
+  (let (type)
+    (with-temp-buffer
+      (insert str)
+      (goto-char (point-min))
+      (when (looking-at "[a-z]+")
+        (let ((kind (match-string 0)))
+          (goto-char (match-end 0))
+          (when (rec-type-kind-p kind)
+            (cond
+             ((member kind '("int" "bool" "real" "line" "date" "field" "email" "uuid"))
+              (when (looking-at "[ \n\t]*$")
+                (list 'type (intern kind) str nil)))
+             ((equal kind "size")
+              (when (looking-at "[ \n\t]*\\([0-9]+\\)[ \n\t]*$")
+                (list (intern kind) str (string-to-int (match-string 1)))))
+             ((equal kind "range")
+              (when (or
+                     (looking-at "[ \n\t]*\\(-?[0-9]+\\)[ \n\t]*$")
+                     (looking-at "[ \n\t]*\\(-?[0-9]+\\)[ \n\t]+\\([0-9]+\\)[ \n\t]*$"))
+                (let ((min (string-to-int (match-string 1)))
+                      (max (when (stringp (match-string 2))
+                             (string-to-int (match-string 2)))))
+                (list 'type (intern kind) str (list min max)))))
+             ((equal kind "enum")
+              (when (looking-at "\\([ \n\t]+[a-zA-Z0-9][a-zA-Z0-9_-]*\\)+[ \n\t]*$")
+                (let (names)
+                  (while (looking-at "[ \n\t]+\\([a-zA-Z0-9][a-zA-Z0-9_-]*\\)")
+                    (setq names (cons (match-string 1) names))
+                    (goto-char (match-end 0)))
+                  (list 'type (intern kind) str (reverse names)))))
+             ((equal kind "rec")
+              (when (looking-at "[ \n\t]*\\([a-zA-Z%][a-zA-Z0-9_-]*\\)[ \n\t]*$") ; Field name without a colon.
+                (let ((referred-record (match-string 1)))
+                  (list 'type (intern kind) str referred-record))))
+             ((equal kind "regexp")
+              (when (looking-at "[ \n\t]*\\(.*?\\)[ \n\t]*$")
+                (let ((expr (match-string 1)))
+                  (when (and (>= (length expr) 2)
+                             (equal (elt expr 0) (elt expr (- (length expr) 1))))
+                    (list 'type (intern kind) str (substring expr 1 -1))))))
+             (t
+              nil))))))))
+
+(defun rec-check-type (type str)
+  "Check whether STR contains a value conforming to TYPE, which
+is a field type structure."
+  (let* ((kind (cadr type))
+         (expr (caddr type))
+         (data (cadddr type))
+         (value (if (equal kind 'line)
+                    str
+                  str)))
+    (cond
+     ((equal kind 'int)
+      (string-match-p "^-?[0-9]+$" value))
+     ((equal kind 'bool)
+      (string-match-p "^\\(yes\\|no\\|0\\|1\\|true\\|false\\)$" value))
+     ((equal kind 'range)
+      (let ((min (car data))
+            (max (cadr data)))
+        (when (looking-at "-?[0-9]+$")
+          (let ((number (string-to-int (match-string 0))))
+          (and (>= number min) (<= number max))))))
+     ((equal kind 'real)
+      (string-match-p "^-?\\([0-9]*\\.\\)?[0-9]+$" value))
+     ((equal kind 'size)
+      (<= (length str) data))
+     ((equal kind 'line)
+      (string-match-p "^[^\n]*$"))
+     ((equal kind 'regexp)
+      (string-match-p data value))
+     ((equal kind 'date)
+      ;; TODO.
+      t)
+     ((equal kind 'enum)
+      (member value data))
+     ((equal kind 'field)
+      (string-match-p "^[a-zA-Z%][a-zA-Z0-9_-]*$" value))
+     ((equal kind 'email)
+      (string-match-p "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]+$" value))
+     ((equal kind 'uuid)
+      ;; TODO.
+      t)
+     ((equal kind 'rec)
+      ;; TODO.
+      t)
+     (t
+      nil))))
+
 ;;;; Mode line and Head line
 
 (defun rec-set-mode-line (str)
@@ -1194,41 +1336,6 @@ the file.  Interactive version."
                          (rec-record-type))))))
   (unless rec-editing
     (rec-show-record)))
-
-(defun rec-cmd-jump ()
-  "Jump to the first record containing the reference under
-point."
-  (interactive)
-  (widen)
-  (let (size field name value)
-    (if (setq field (rec-current-field))
-        (progn (setq name (rec-field-name field))
-               (setq value (rec-field-value field))
-               (if (or (= (length name) 2)
-                       (= (length name) 3))
-                   (progn
-                     (let* ((field-type (nth 0 name))
-                            (field-name (nth 1 name))
-                            (pos (rec-search-first field-type
-                                                   (list field-name)
-                                                   value)))
-                       (if pos
-                           (progn
-                             (setq rec-jump-back (point-marker))
-                             (goto-char pos)
-                             (unless rec-editing
-                               (rec-narrow-to-record)))
-                         (message "Not found.")
-                         (unless rec-editing
-                           (rec-show-record)))))
-                 (message "Not in a reference.")
-                 (unless rec-editing
-                   (rec-show-record))))
-      (message "Not in a reference.")
-      (save-excursion
-        (rec-goto-previous-rec)
-        (unless rec-editing
-          (rec-show-record))))))
 
 (defun rec-cmd-jump-back ()
   "Undo the previous jump"
