@@ -114,7 +114,8 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "\C-cn" 'rec-cmd-goto-next-rec)
     (define-key map "\C-cp" 'rec-cmd-goto-previous-rec)
     (define-key map "\C-ce" 'rec-cmd-edit-field)
-    (define-key map "\C-ct" 'rec-cmd-show-descriptor)
+    (define-key map "\C-cd" 'rec-cmd-show-descriptor)
+    (define-key map "\C-ct" 'rec-cmd-show-type)
     (define-key map "\C-c#" 'rec-cmd-count)
     (define-key map "\C-cm" 'rec-cmd-trim-field-value)
     (define-key map "\C-cc" 'rec-cmd-compile)
@@ -136,7 +137,8 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "B" 'rec-edit-buffer)
     (define-key map "A" 'rec-cmd-append-field)
     (define-key map "I" 'rec-cmd-show-info)
-    (define-key map "t" 'rec-cmd-show-descriptor)
+    (define-key map "d" 'rec-cmd-show-descriptor)
+    (define-key map "t" 'rec-cmd-show-type)
     (define-key map "m" 'rec-cmd-trim-field-value)
     (define-key map "c" 'rec-cmd-compile)
     (define-key map "\C-ct" 'rec-find-type)
@@ -187,20 +189,6 @@ If the point is not at the beginning of a field name return nil"
     (buffer-substring-no-properties (match-beginning 0)
                                     (- (match-end 0) 1))))
  
-(defun rec-parse-field-name-from-string (str)
-  "Parse and return a field name parsed from a string.
-
-If the string does not contain a field name, then return nil."
-  (with-temp-buffer
-    (insert str)
-    ;; Add a colon to the end if does not exist
-    (save-excursion
-      (goto-char (point-max))
-      (unless (equal (char-before) ?:)
-        (insert ?:)))
-    (goto-char (point-min))
-    (rec-parse-field-name)))
-
 (defun rec-parse-field-value ()
   "Return the field value under the pointer.
 
@@ -335,8 +323,6 @@ nil"
 
 NAME shall be a field name.
 If no such field exists in RECORD then nil is returned."
-  (if (stringp name)
-      (setq name (rec-parse-field-name-from-string name)))
   (when (rec-record-p record)
     (let (result)
       (mapcar (lambda (field)
@@ -534,6 +520,12 @@ The current field is the field where the pointer is."
       (when begin-pos
         (goto-char begin-pos)
         (rec-parse-field)))))
+
+(defun rec-current-field-type ()
+  "Return the field type of the field under point, if any."
+  (let ((current-field (rec-current-field)))
+    (when current-field
+      (rec-field-type (rec-field-name current-field)))))
 
 (defun rec-current-record ()
   "Return a structure with the contents of the current record.
@@ -903,12 +895,19 @@ manual."
                              (string-to-int (match-string 2)))))
                 (list 'type (intern kind) str (list min max)))))
              ((equal kind "enum")
-              (when (looking-at "\\([ \n\t]+[a-zA-Z0-9][a-zA-Z0-9_-]*\\)+[ \n\t]*$")
-                (let (names)
-                  (while (looking-at "[ \n\t]+\\([a-zA-Z0-9][a-zA-Z0-9_-]*\\)")
-                    (setq names (cons (match-string 1) names))
-                    (goto-char (match-end 0)))
-                  (list 'type (intern kind) str (reverse names)))))
+              (let ((str-copy str)
+                    (here (point)))
+                ;; Remove comments from the enum description.
+                (delete-region (point-min) (point-max))
+                (insert (replace-regexp-in-string "([^)]*)" "" str-copy))
+                (goto-char here)
+                (when (looking-at "\\([ \n\t]*[a-zA-Z0-9][a-zA-Z0-9_-]*\\)+[ \n\t]*$")
+                  (let (names)
+                    ;; Scan the enum literals.
+                    (while (looking-at "[ \n\t]+\\([a-zA-Z0-9][a-zA-Z0-9_-]*\\)")
+                      (setq names (cons (match-string 1) names))
+                      (goto-char (match-end 0)))
+                    (list 'type (intern kind) str-copy (reverse names))))))
              ((equal kind "rec")
               (when (looking-at "[ \n\t]*\\([a-zA-Z%][a-zA-Z0-9_-]*\\)[ \n\t]*$") ; Field name without a colon.
                 (let ((referred-record (match-string 1)))
@@ -921,6 +920,18 @@ manual."
                     (list 'type (intern kind) str (substring expr 1 -1))))))
              (t
               nil))))))))
+
+(defun rec-type-kind (type)
+  "Return the kind of a given type."
+  (cadr type))
+
+(defun rec-type-data (type)
+  "Return the data associated with a given type."
+  (cadddr type))
+
+(defun rec-type-text (type)
+  "Return the textual description of a given type."
+  (caddr type))
 
 (defun rec-check-type (type str)
   "Check whether STR contains a value conforming to TYPE, which
@@ -967,6 +978,28 @@ is a field type structure."
       t)
      (t
       nil))))
+
+(defun rec-field-type (field-name)
+  "Return the type of the given field, if any, as determined in
+the current record set.  If the field has no type, i.e. it is an
+unrestricted field which can contain any text, then `nil' is
+returned."
+  (let* ((descriptor (rec-record-descriptor))
+         (types (rec-record-assoc "%type" (cadr descriptor)))
+         res-type)
+    ;; Note that invalid %type entries are simply ignored.
+    (mapcar
+     (lambda (type-descr)
+       (with-temp-buffer
+         (insert type-descr)
+         (goto-char (point-min))
+         (when (looking-at "[ \n\t]*\\([a-zA-Z%][a-zA-Z0-9_-]*\\)[ \n\t]*")
+           (let ((name (match-string 1)))
+             (goto-char (match-end 0))
+             (when (equal name field-name)
+               (setq res-type (rec-parse-type (buffer-substring (point) (point-max)))))))))
+     types)
+    res-type))
 
 ;;;; Mode line and Head line
 
@@ -1179,10 +1212,27 @@ buffer"
          (field (rec-current-field))
          (field-value (rec-field-value field))
          (field-name (rec-field-name field))
+         (field-type (rec-field-type field-name))
+         (field-type-kind (when field-type (rec-type-kind field-type)))
          (pointer (rec-beginning-of-field-pos))
          (prev-buffer (current-buffer)))
     (if field-value
-        (progn
+        (cond
+         ((equal (rec-type-kind field-type) 'enum)
+          (let* ((data (rec-type-data field-type))
+                 (fast-selection-data (mapcar
+                                       (lambda (elem)
+                                         (list elem ?a))
+                                       data))
+                 (new-value (rec-fast-selection fast-selection-data "New value")))
+            (when new-value
+              (let ((buffer-read-only nil))
+                (rec-delete-field)
+                (rec-insert-field (list 'field
+                                        0
+                                        field-name
+                                        new-value))))))
+         (t
           (setq edit-buf (get-buffer-create "Rec Edit"))
           (set-buffer edit-buf)
           (delete-region (point-min) (point-max))
@@ -1198,7 +1248,7 @@ buffer"
           (insert field-value)
           (switch-to-buffer-other-window edit-buf)
           (goto-char (point-min))
-          (message "Edit the value of the field and use C-c C-c to exit"))
+          (message "Edit the value of the field and use C-c C-c to exit")))
       (message "Not in a field"))))
 
 (defun rec-finish-editing-field ()
@@ -1420,6 +1470,15 @@ This jump sets jump-back."
       (if rec-editing
           (rec-goto-type type)
         (rec-show-type type t)))))
+
+(defun rec-cmd-show-type ()
+  "Show the descriptor corresponding to the field under point, in
+the modeline."
+  (interactive)
+  (let ((type (rec-current-field-type)))
+    (if type
+        (message (rec-type-text type))
+      (message "Unrestricted text"))))
 
 (defun rec-cmd-count ()
   "Display a message in the minibuffer showing the number of

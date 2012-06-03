@@ -1,5 +1,20 @@
 2012-06-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* etc/rec-mode.el (rec-parse-field-name-from-string): Deleted.
+	(rec-mode-map): Use "d" to show descriptors, not t.
+	(rec-mode-edit-map): Likewise with C-cd.
+	(rec-mode-edit-map): New entry for rec-cmd-show-type.
+	(rec-mode-map): Likewise.
+	(rec-type-descriptor): New function.
+	(rec-parse-type): Allow comments in parenthesis in enum
+	descriptions.
+	(rec-cmd-edit-field): Edit the field value in several ways,
+	depending on its type.
+	(rec-type-data): New function.
+	(rec-type-kind): Likewise.
+
+2012-06-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: several functions to support field types.
 	* etc/rec-mode.el (rec-types): New variable.
 	(rec-type-kind-p): New function.
