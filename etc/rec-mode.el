@@ -1364,8 +1364,8 @@ file.  Interactive version."
         (rec-goto-next-rec)
       (if (not (rec-record-type))
           (message "No more records")
-        (message (concat "No more records of type "
-                         (rec-record-type))))))
+        (message "%s" (concat "No more records of type "
+                              (rec-record-type))))))
   (unless rec-editing
     (rec-show-record)))
 
@@ -1382,8 +1382,8 @@ the file.  Interactive version."
         (rec-goto-previous-rec)
       (if (not (rec-record-type))
           (message "No more records")
-        (message (concat "No more records of type "
-                         (rec-record-type))))))
+        (message "%s" (concat "No more records of type "
+                              (rec-record-type))))))
   (unless rec-editing
     (rec-show-record)))
 
@@ -1477,7 +1477,7 @@ the modeline."
   (interactive)
   (let ((type (rec-current-field-type)))
     (if type
-        (message (rec-type-text type))
+        (message "%s" (rec-type-text type))
       (message "Unrestricted text"))))
 
 (defun rec-cmd-count ()
@@ -1486,11 +1486,11 @@ records of the current type"
   (interactive)
   (message "Counting records...")
   (let ((type (rec-record-type)))
-    (message (concat (number-to-string (rec-count type))
-                     (if (or (not type)
-                             (equal type ""))
-                         " records"
-                       (concat " records of type " type))))))
+    (message "%s" (concat (number-to-string (rec-count type))
+                          (if (or (not type)
+                                  (equal type ""))
+                              " records"
+                            (concat " records of type " type))))))
 
 (defun rec-cmd-append-field ()
   "Goto the end of the record and switch to edit record mode."
@@ -1549,7 +1549,7 @@ records of the current type"
     ;; Show the message.
     (setq msg (replace-regexp-in-string "\n$" "" msg))
     (setq msg (replace-regexp-in-string "\n" ", " msg))
-    (message msg)))
+    (message "%s" msg)))
 
 (defun rec-cmd-beginning-of-line ()
   "Move the point to the beginning of the current line.

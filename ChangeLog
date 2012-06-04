@@ -1,3 +1,13 @@
+2012-06-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: avoid security problems in calls to message by using %s.
+	* etc/rec-mode.el (rec-cmd-show-type): Use "%s" in message to
+	avoid security problems.
+	(rec-cmd-goto-next-rec): Likewise.
+	(rec-cmd-goto-previous-rec): Likewise.
+	(rec-cmd-count): Likewise.
+	(rec-cmd-show-info): Likewise.
+
 2012-06-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/rec-mode.el (rec-parse-field-name-from-string): Deleted.
