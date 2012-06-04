@@ -1218,14 +1218,21 @@ buffer"
          (prev-buffer (current-buffer)))
     (if field-value
         (cond
-         ((equal (rec-type-kind field-type) 'enum)
+         ((equal field-type-kind 'enum)
           (let* ((data (rec-type-data field-type))
                  (i -1)
-                 (fast-selection-data (mapcar
-                                       (lambda (elem)
-                                         (setq i (+ i 1))
-                                         (list elem (+ i ?a)))
-                                       data))
+                 (fast-selection-data
+                  (cond
+                   ((equal field-type-kind 'enum)
+                    (mapcar
+                     (lambda (elem)
+                       (setq i (+ i 1))
+                       (list elem (+ i ?a)))
+                     data))
+                   ((equal field-type-kind 'bool)
+                    '(("yes" ?y) ("no" ?n) ("1" ?o) ("0" ?z) ("true" ?t) ("false" ?f)))
+                   (t
+                    (error "Invalid kind of type"))))
                  (letter (rec-fast-selection fast-selection-data "New value")))
             (when letter
               (let ((buffer-read-only nil)
