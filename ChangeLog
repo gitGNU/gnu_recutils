@@ -1,5 +1,15 @@
 2012-06-04  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: complete support for editing fields storing enumerated
+	values.
+	* etc/rec-mode.el (rec-cmd-show-type): Use
+	display-message-or-buffer in order to avoid overflowing the echo
+	area.
+	(rec-cmd-edit-field): Complete support for editing fields
+	containing enum values.
+
+2012-06-04  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: avoid security problems in calls to message by using %s.
 	* etc/rec-mode.el (rec-cmd-show-type): Use "%s" in message to
 	avoid security problems.

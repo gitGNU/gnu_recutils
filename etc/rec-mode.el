@@ -1220,18 +1220,27 @@ buffer"
         (cond
          ((equal (rec-type-kind field-type) 'enum)
           (let* ((data (rec-type-data field-type))
+                 (i -1)
                  (fast-selection-data (mapcar
                                        (lambda (elem)
-                                         (list elem ?a))
+                                         (setq i (+ i 1))
+                                         (list elem (+ i ?a)))
                                        data))
-                 (new-value (rec-fast-selection fast-selection-data "New value")))
-            (when new-value
-              (let ((buffer-read-only nil))
+                 (letter (rec-fast-selection fast-selection-data "New value")))
+            (when letter
+              (let ((buffer-read-only nil)
+                    new-value)
+                (mapcar
+                 (lambda (elem)
+                   (when (equal letter (cadr elem))
+                     (setq new-value (car elem))))
+                 fast-selection-data)
                 (rec-delete-field)
-                (rec-insert-field (list 'field
-                                        0
-                                        field-name
-                                        new-value))))))
+                (save-excursion
+                  (rec-insert-field (list 'field
+                                          0
+                                          field-name
+                                          new-value)))))))
          (t
           (setq edit-buf (get-buffer-create "Rec Edit"))
           (set-buffer edit-buf)
@@ -1477,7 +1486,7 @@ the modeline."
   (interactive)
   (let ((type (rec-current-field-type)))
     (if type
-        (message "%s" (rec-type-text type))
+        (display-message-or-buffer (rec-type-text type))
       (message "Unrestricted text"))))
 
 (defun rec-cmd-count ()
