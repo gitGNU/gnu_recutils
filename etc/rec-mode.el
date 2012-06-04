@@ -1218,7 +1218,8 @@ buffer"
          (prev-buffer (current-buffer)))
     (if field-value
         (cond
-         ((equal field-type-kind 'enum)
+         ((or (equal field-type-kind 'enum)
+              (equal field-type-kind 'bool))
           (let* ((data (rec-type-data field-type))
                  (i -1)
                  (fast-selection-data
