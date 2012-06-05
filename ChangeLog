@@ -1,5 +1,12 @@
 2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: support for selection expressions in rec-count.
+	* etc/rec-mode.el (rec-count): Support for selection expressions
+	in counts.
+	(rec-cmd-count): Likewise.
+
+2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: folding of fields.
 	* etc/rec-mode.el (rec-show-record): Call to
 	rec-hide-record-fields.

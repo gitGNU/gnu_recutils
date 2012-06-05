@@ -730,7 +730,7 @@ If no such record exist then don't move and return nil."
     (when pos
       (goto-char pos))))
 
-(defun rec-count (&optional type)
+(defun rec-count (&optional type sex)
   "If TYPE is a string, return the number of records of the
 specified type in the current file."
   (let (num
@@ -739,16 +739,28 @@ specified type in the current file."
                          "")))
     (with-temp-buffer
       (if (stringp type)
-        (call-process rec-recsel
-                      nil ; infile
-                      t   ; output to current buffer.
-                      nil ; display
-                      "-t" type "-c" rec-file-name)
-        (call-process rec-recsel
-                      nil ; infile
-                      t   ; output to current buffer.
-                      nil ; display
-                      "-c" rec-file-name))
+          (if (stringp sex)
+            (call-process rec-recsel
+                          nil ; infile
+                          t   ; output to current buffer.
+                          nil ; display
+                          "-t" type "-e" sex "-c" rec-file-name)
+            (call-process rec-recsel
+                          nil ; infile
+                          t   ; output to current buffer.
+                          nil ; display
+                          "-t" type "-c" rec-file-name))
+        (if (stringp sex)
+          (call-process rec-recsel
+                        nil ; infile
+                        t   ; output to current buffer.
+                        nil ; display
+                        "-e" sex "-c" rec-file-name)
+          (call-process rec-recsel
+                        nil ; infile
+                        t   ; output to current buffer.
+                        nil ; display
+                        "-c" rec-file-name)))
       (setq num (buffer-substring-no-properties (point-min) (point-max))))
     (string-to-number num)))
 
@@ -1604,17 +1616,25 @@ the modeline."
         (display-message-or-buffer (rec-type-text type))
       (message "Unrestricted text"))))
 
-(defun rec-cmd-count ()
+(defun rec-cmd-count (n)
   "Display a message in the minibuffer showing the number of
-records of the current type"
-  (interactive)
-  (message "Counting records...")
-  (let ((type (rec-record-type)))
-    (message "%s" (concat (number-to-string (rec-count type))
-                          (if (or (not type)
-                                  (equal type ""))
-                              " records"
-                            (concat " records of type " type))))))
+records of the current type.
+
+If a numeric argument is used then prompt for a selection
+expression."
+  (interactive "P")
+  (let ((sex (and (not (null n)) (read-from-minibuffer "Selection expression: "))))
+    (when (equal sex "")
+      (setq sex nil))
+    (message "Counting records...")
+    (let ((type (rec-record-type)))
+      (message "%s" (concat (number-to-string (rec-count type sex))
+                            (if (or (not type)
+                                    (equal type ""))
+                                " records"
+                              (concat " records of type " type))
+                            (when (and sex (not (equal sex "")))
+                              (concat " with sex " sex)))))))
 
 (defun rec-cmd-append-field ()
   "Goto the end of the record and switch to edit record mode."
