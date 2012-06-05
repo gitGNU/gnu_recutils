@@ -84,6 +84,8 @@ libtool
 /doc/texinfo.log
 /doc/texput.log
 /doc/version.texi
+/doc/version-rec-mode.texi
+/doc/stamp-1
 /doc/recutils.dvi
 /doc/recutils.pdf
 /doc/recutils.vrs

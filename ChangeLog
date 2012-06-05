@@ -1,5 +1,16 @@
 2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: skeleton for the rec-mode manual.
+	* .gitignore: Ignore doc/version-rec-mode.texi
+
+	* doc/Makefile.am (info_TEXINFOS): Added rec-mode.texi.
+
+	* doc/rec-mode.texi: New file.
+	(Introduction): New chapter.
+	(GNU Free Documentation License): New chapter.
+
+2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: support for selection expressions in rec-count.
 	* etc/rec-mode.el (rec-count): Support for selection expressions
 	in counts.
