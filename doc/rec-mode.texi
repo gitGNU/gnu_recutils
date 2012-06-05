@@ -48,16 +48,50 @@ This manual documents version @value{VERSION} of rec-mode.
 @end ifnottex
 
 @menu
-Overview
-* Introduction::        Introducing rec-mode.
-
+* Introduction::                Getting started
 * GNU Free Documentation License:: Distribution terms for this document.
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+Introduction
+
+* Summary::                     Brief summary of what rec-mode does
+* Installation::                How to install rec-mode
+* Activation::                  How to activate rec-mode for certain buffers
+* Feedback::                    Bug reports, ideas, patches etc.
+@end detailmenu
 @end menu
 
 @node Introduction
 @chapter Introduction
 
-Blah blah.
+@menu
+* Summary::                     Brief summary of what rec-mode does
+* Installation::                How to install rec-mode
+* Activation::                  How to activate rec-mode for certain buffers
+* Feedback::                    Bug reports, ideas, patches etc.
+@end menu
+
+@node Summary
+@section Summary
+
+TBC
+
+@node Installation
+@section Installation
+
+TBC
+
+@node Activation
+@section Activation
+
+TBC
+
+@node Feedback
+@section Feedback
+
+TBC
 
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License

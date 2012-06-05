@@ -1,5 +1,12 @@
 2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: some more dummy sections for the rec-mode manual.
+	* doc/rec-mode.texi (Summary): New section.
+	(Installation): Likewise.
+	(Feedback): Likewise.
+
+2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: skeleton for the rec-mode manual.
 	* .gitignore: Ignore doc/version-rec-mode.texi
 
