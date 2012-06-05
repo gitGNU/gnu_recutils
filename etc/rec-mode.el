@@ -45,6 +45,10 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
   :type 'symbol
   :group 'rec-mode)
 
+(defvar rec-max-lines-in-fields 15
+  "Values of fields having more than the specified lines will be
+hidden by default in navigation mode.")
+
 (defvar rec-recsel "recsel"
   "Name of the 'recsel' utility from the GNU recutils.")
 
@@ -120,7 +124,6 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "\C-cm" 'rec-cmd-trim-field-value)
     (define-key map "\C-cc" 'rec-cmd-compile)
     (define-key map "\C-cI" 'rec-cmd-show-info)
-    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map "\C-cb" 'rec-cmd-jump-back)
     (define-key map "\C-c\C-c" 'rec-finish-editing)
@@ -142,11 +145,11 @@ Valid values are `edit' and `navigation'.  The default is `navigation'"
     (define-key map "m" 'rec-cmd-trim-field-value)
     (define-key map "c" 'rec-cmd-compile)
     (define-key map "\C-ct" 'rec-find-type)
-    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
+;;    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
-;;  (define-key map (kbd "SPC") 'rec-cmd-toggle-field-visibility)
+    (define-key map (kbd "SPC") 'rec-cmd-toggle-field-visibility)
     (define-key map "b" 'rec-cmd-jump-back)
     map)
   "Keymap for rec-mode")
@@ -816,7 +819,104 @@ of the default type are shown."
   (rec-narrow-to-record)
   (use-local-map rec-mode-map)
   (rec-set-head-line nil)
-  (rec-set-mode-line (rec-record-type)))
+  (rec-set-mode-line (rec-record-type))
+  ;; Hide the contents of big fields.
+  (rec-hide-record-fields))
+
+;;;; Field folding
+
+(defvar rec-hide-field-overlays nil
+  "Overlays hiding fields.")
+
+(defun rec-hide-record-fields ()
+  "Hide the contents of fields whose value exceeds
+`rec-max-lines-in-fields' lines.  TAB can then be used to toggle
+the visibility."
+  (let ((record (rec-current-record)))
+    (when (rec-record-p record)
+      (mapcar
+       (lambda (field)
+         (let ((lines-in-value (with-temp-buffer
+                                 (insert (rec-field-value field))
+                                 (count-lines (point-min) (point-max))))
+               ov)
+           (when (> lines-in-value rec-max-lines-in-fields)
+             (save-excursion
+               (goto-char (rec-field-position field))
+               (rec-fold-field))
+             t)))
+       (rec-record-fields record)))))
+
+(defun rec-field-folded-p ()
+  "Return whether the current field is folded."
+  (let ((field (rec-current-field)))
+    (when (rec-field-p field)
+      (let ((value-start (+ (point) (length (rec-field-name field)) 1)))
+        (memq t (mapcar (lambda (overlay)
+                          (eq (overlay-get overlay 'invisible)
+                              'rec-hide-field))
+                        (overlays-at value-start)))))))
+
+(defun rec-fold-field ()
+  "Fold the current field."
+  (let ((field (rec-current-field)))
+    (when (rec-field-p field)
+      (save-excursion
+        (goto-char (rec-field-position field))
+        (when (looking-at rec-field-re)
+          (let ((value-start (+ (point) (length (rec-field-name field)) 1))
+                (value-end (- (match-end 0) 1))
+                ov)
+            (setq ov (make-overlay value-start value-end))
+            (overlay-put ov 'invisible 'rec-hide-field)
+            (push ov rec-hide-field-overlays)))))))
+
+(defun rec-unfold-field ()
+  "Unfold the current field."
+  (let ((field (rec-current-field)))
+    (when (rec-field-p field)
+      (let ((value-start (+ (point) (length (rec-field-name field)) 1)))
+        (mapcar (lambda (overlay)
+                  (when (eq (overlay-get overlay 'invisible) 'rec-hide-field)
+                    (delete-overlay overlay)))
+                (overlays-at value-start))))))
+
+(defun rec-unfold-all-fields ()
+  "Unfold all folded fields in the buffer."
+  (mapc 'delete-overlay rec-hide-field-overlays)
+  (setq rec-hide-field-overlays nil))
+
+(defun rec-unfold-record-fields ()
+  "Unfold any folded field in the current record."
+  (let ((record (rec-current-record)))
+    (when (rec-record-p record)
+      (mapcar 
+       (lambda (field)
+         (save-excursion
+           (goto-char (rec-field-position field))
+           (rec-unfold-field)))
+       (rec-record-fields record)))))
+          
+(defun rec-toggle-field-visibility ()
+  "Toggle the visibility of the current field."
+  (let ((field (rec-current-field)))
+    (when (rec-field-p field)
+      (save-excursion
+        (goto-char (rec-field-position field))
+        (when (looking-at rec-field-re)
+          (let* ((value-start (+ (point) (length (rec-field-name field)) 1))
+                 (value-end (- (match-end 0) 1))
+                 ov)
+            (if (memq t (mapcar (lambda (overlay)
+                                  (eq (overlay-get overlay 'invisible)
+                                      'rec-hide-field))
+                                (overlays-at value-start)))
+                (mapcar
+                 (lambda (overlay)
+                   (delete-overlay overlay))
+                 (overlays-at value-start))
+              (setq ov (make-overlay value-start value-end))
+              (overlay-put ov 'invisible 'rec-hide-field))))))))
 
 ;;;; Field types
 ;;
@@ -1378,7 +1478,9 @@ file.  Interactive version."
           (and (rec-goto-next-rec)
                (equal (rec-record-type) record-type)
                (not (rec-record-descriptor-p (rec-current-record)))))
-        (rec-goto-next-rec)
+        (progn
+          (rec-unfold-all-fields)
+          (rec-goto-next-rec))
       (if (not (rec-record-type))
           (message "No more records")
         (message "%s" (concat "No more records of type "
@@ -1396,7 +1498,9 @@ the file.  Interactive version."
           (and (rec-goto-previous-rec)
                (equal (rec-record-type) record-type)
                (not (rec-record-descriptor-p (rec-current-record)))))
-        (rec-goto-previous-rec)
+        (progn
+          (rec-unfold-all-fields)
+          (rec-goto-previous-rec))
       (if (not (rec-record-type))
           (message "No more records")
         (message "%s" (concat "No more records of type "
@@ -1420,6 +1524,7 @@ the file.  Interactive version."
   "Go to the record edition mode"
   (interactive)
   (setq rec-editing t)
+  (rec-unfold-all-fields)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (rec-set-head-line "Editing record - use C-cC-c to return to navigation mode")
@@ -1431,6 +1536,7 @@ the file.  Interactive version."
   "Go to the type edition mode"
   (interactive)
   (setq rec-editing t)
+  (rec-unfold-all-fields)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (widen)
@@ -1446,6 +1552,7 @@ the file.  Interactive version."
   "Go to the buffer edition mode"
   (interactive)
   (setq rec-editing t)
+  (rec-unfold-all-fields)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (widen)
@@ -1568,21 +1675,13 @@ records of the current type"
     (setq msg (replace-regexp-in-string "\n" ", " msg))
     (message "%s" msg)))
 
-(defun rec-cmd-beginning-of-line ()
-  "Move the point to the beginning of the current line.
-
-If the current line is part of the value of a field then go to
-the first character of the line being part of the value."
+(defun rec-cmd-toggle-field-visibility ()
+  "Toggle the visibility of the field under point."
   (interactive)
-  (beginning-of-line)
-  ;; Skip a field name or a continuation line.
-  (cond
-   ((looking-at rec-field-name-re)
-    (rec-parse-field-name)
-    (when (looking-at " ") (forward-char 1)))
-   ((looking-at "\+ ?")
-    (forward-char 1)
-    (when (looking-at " ") (forward-char 1)))))
+  (when (rec-field-p (rec-current-field))
+    (if (rec-field-folded-p)
+        (rec-unfold-field)
+      (rec-fold-field))))
 
 ;;;; Definition of modes
 
@@ -1607,6 +1706,7 @@ Commands:
   (setq rec-update-p nil)
   (setq rec-preserve-last-newline nil)
   (setq font-lock-defaults '(rec-font-lock-keywords))
+  (add-to-invisibility-spec '(rec-hide-field . "..."))
   (use-local-map rec-mode-map)
   (set-syntax-table rec-mode-syntax-table)
   (setq mode-name "Rec")

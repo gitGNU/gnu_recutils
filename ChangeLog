@@ -1,3 +1,26 @@
+2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: folding of fields.
+	* etc/rec-mode.el (rec-show-record): Call to
+	rec-hide-record-fields.
+	(rec-hide-record-fields): New function.
+	(rec-toggle-field-visibility): Likewise.
+	(rec-cmd-toggle-field-visibility): Likewise.
+	(rec-mode-edit-map): Bind SPC with
+	rec-cmd-toggle-field-visibility.
+	(rec-mode-map): Likewise.
+	(rec-mode): Add an invisibility spec for fields.
+	(rec-show-fields-all): New function.
+	(rec-field-folded-p): Likewise.
+	(rec-fold-field): Likewise.
+	(rec-cmd-beginning-of-line): Removed.
+	(rec-max-lines-in-fields): Default to 15.
+	(rec-unfold-record-fields): New function.
+	(rec-unfold-all-fields): New function.
+	(rec-edit-type): Unfold all fields before switching to edit mode.
+	(rec-edit-buffer): Likewise.
+	(rec-edit-record): Likewise.
+
 2012-06-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/rec-mode.el (rec-cmd-edit-field): Support editing boolean
