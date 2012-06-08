@@ -1,3 +1,18 @@
+2012-06-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: presentation of continuation lines in navigation modes,
+	and other improvements.
+	* etc/rec-mode.el (rec-query): renamed from rec-select, and
+	completed.
+	(cl): Package required, for keyword arguments support.
+	(rec-show-record): Call rec-hide-continuation-line-markers.
+	(rec-hide-continuation-line-markers): New function.
+	(rec-continuation-line-markers-overlays): New variable.
+	(rec-continuation-line-markers-width): New variable.
+	(rec-remove-continuation-line-marker-overlays): New function.
+	(rec-mode-syntax-table): Put " and ' in the word-constituent
+	syntax class to avoid unwanted font-locking and pairing.
+
 2012-06-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: some more dummy sections for the rec-mode manual.

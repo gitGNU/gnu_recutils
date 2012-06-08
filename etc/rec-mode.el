@@ -31,6 +31,7 @@
 ;;; Code:
 
 (require 'compile)
+(require 'cl)
 
 ;;;; Customization
 
@@ -104,6 +105,8 @@ hidden by default in navigation mode.")
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?# "<" st)   ; Comment start
     (modify-syntax-entry ?\n ">" st)  ; Comment end
+    (modify-syntax-entry ?\" "w" st)
+    (modify-syntax-entry ?\' "w" st)
     st)
   "Syntax table used in rec-mode")
 
@@ -833,7 +836,43 @@ of the default type are shown."
   (rec-set-head-line nil)
   (rec-set-mode-line (rec-record-type))
   ;; Hide the contents of big fields.
-  (rec-hide-record-fields))
+  (rec-hide-record-fields)
+  ;; Change the appearance of continuation line markers to look like
+  ;; indentation.
+  (rec-hide-continuation-line-markers))
+
+(defvar rec-continuation-line-markers-width 4
+  "Width (in number of characters) used to represent continuation
+  line markers in navigation mode.")
+
+(defvar rec-continuation-line-markers-overlays nil
+  "Continuation line markers overlays.")
+
+(defun rec-hide-continuation-line-markers ()
+  "Change the appearance of continuation line markers in the
+current buffer to look like indentation."
+  (let ((record (rec-current-record)))
+    (when (rec-record-p record)
+      (mapcar
+       (lambda (field)
+         (let* ((pos (rec-field-position field))
+                (value-begin (+ pos (length (rec-field-name field)) 1))
+                (value-end (+ value-begin
+                              (length (with-temp-buffer
+                                        (insert (rec-field-value field))
+                                        (buffer-substring (point-min) (point-max)))))))
+           (save-excursion
+             (goto-char value-begin)
+             (while (re-search-forward "^\\+ ?" value-end t)
+               (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
+                 (overlay-put ov 'display '(space . (:width rec-continuation-line-markers-width)))
+                 (push ov rec-continuation-line-markers-overlays))))))
+       (rec-record-fields record)))))
+
+(defun rec-remove-continuation-line-marker-overlays ()
+  "Delete all the continuation line markers overlays."
+  (mapc 'delete-overlay rec-continuation-line-markers-overlays)
+  (setq rec-continuation-line-markers-overlays))
 
 ;;;; Field folding
 
@@ -1311,10 +1350,98 @@ call additional functions registered with the timer calls."
     (let ((debug-on-error nil))
       (save-match-data (rec-idle-core-handler)))))
 
+
+;;;; Database access functions
+;;
+;; The following functions map the high-level API rec_db_* provided by
+;; librec, using the command line utilities instead.  Note that we are
+;; using the support for keyword arguments provided by the cl package
+;; in order to ease the usage of the functions.
+;;
+;; Note that the functions are not checking for the integrity of the
+;; arguments: it is the invoked recutil which is in charge of that.
+
+(defun* rec-query (&rest args
+                   &key (type nil) (join nil) (index nil) (sex nil)
+                        (fast-string nil) (random nil) (fex nil) (password nil)
+                        (group-by nil) (sort-by nil) (icase nil) (uniq nil))
+  "Perform a query in the current buffer using recsel.
+
+ARGS contains the arguments to pass to the program."
+  (let ((buffer (generate-new-buffer "Rec Sel "))
+        args records status)
+    (save-restriction
+      (widen)
+      (unwind-protect
+          (progn
+            ;; Prepare the arguments to recsel based on the arguments
+            ;; passed to this function.
+            (when (stringp type)
+              (setq args (cons "-t" (cons type args))))
+            (when (stringp join)
+              (setq args (cons "-j" (cons join args))))
+            (when (integerp index)
+              (setq args (cons "-n" (cons (number-to-string index) args))))
+            (when (stringp sex)
+              (setq args (cons "-e" (cons sex args))))
+            (when (stringp fast-string)
+              (setq args (cons "-q" (cons fast-string args))))
+            (when (integerp random)
+              (setq args (cons "-m" (cons (number-to-string random) args))))
+            (when (stringp fex)
+              (setq args (cons "-p" (cons fex args))))
+            (when (stringp password)
+              (setq args (cons "-s" (cons password args))))
+            (when (stringp group-by)
+              (setq args (cons "-G" (cons group-by args))))
+            (when (stringp sort-by)
+              (setq args (cons "-S" (cons sort-by args))))
+            (when icase
+              (setq args (cons "-i" args)))
+            (when uniq
+              (setq args (cons "-U" args)))
+            (when (and (not fex) (not group-by) (not sort-by))
+              (setq args (cons "--print-sexps" args)))
+            ;; Call 'recsel' to perform the query.
+            (setq status (apply #'call-process-region
+                                (point-min) (point-max)
+                                rec-recsel
+                                nil ; delete
+                                buffer
+                                nil ; display
+                                args))
+            (if (/= status 0)
+                (error "recsel returned error: %d" status))
+            (with-current-buffer buffer
+              (goto-char (point-min))
+              (insert "(")
+              (goto-char (point-max))
+              (insert ")")
+              (setq records (read (point-min-marker)))))
+        (kill-buffer buffer)))
+    records))
+
+;;;; Selection of records
+;;
+;; The following functions implement selection of records, which
+;; maintains a subset of the records in the current buffer.
+
+(defvar rec-current-selection nil
+  "List of records corresponding to the last executed selection,
+or `nil' if no selection is active.")
+(make-variable-buffer-local 'rec-current-selection)
+
+(defun rec-select ()
+  "Perform a selection on the current buffer using some criteria.
+
+The result of the selection is stored in `rec-current-selection'."
+  (interactive)
+  (setq rec-current-selection (rec-query)))
+  
 ;;;; Commands
 ;;
-;; The following functions are implementing commands available in the
-;; modes.
+;; The following functions implement interactive commands available in
+;; the several modes defined in this file.
 
 (defun rec-cmd-edit-field ()
   "Edit the contents of the field under point in a separate
@@ -1398,7 +1525,8 @@ buffer"
                               0
                               name
                               value))
-      (goto-char prev-pointer))))
+      (goto-char prev-pointer)
+      (rec-hide-continuation-line-markers))))
 
 (defun rec-beginning-of-field ()
   "Goto to the beginning of the current field"
@@ -1492,6 +1620,7 @@ file.  Interactive version."
                (not (rec-record-descriptor-p (rec-current-record)))))
         (progn
           (rec-unfold-all-fields)
+          (rec-remove-continuation-line-marker-overlays)
           (rec-goto-next-rec))
       (if (not (rec-record-type))
           (message "No more records")
@@ -1512,6 +1641,7 @@ the file.  Interactive version."
                (not (rec-record-descriptor-p (rec-current-record)))))
         (progn
           (rec-unfold-all-fields)
+          (rec-remove-continuation-line-marker-overlays)
           (rec-goto-previous-rec))
       (if (not (rec-record-type))
           (message "No more records")
@@ -1537,6 +1667,7 @@ the file.  Interactive version."
   (interactive)
   (setq rec-editing t)
   (rec-unfold-all-fields)
+  (rec-remove-continuation-line-marker-overlays)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (rec-set-head-line "Editing record - use C-cC-c to return to navigation mode")
@@ -1549,6 +1680,7 @@ the file.  Interactive version."
   (interactive)
   (setq rec-editing t)
   (rec-unfold-all-fields)
+  (rec-remove-continuation-line-marker-overlays)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (widen)
@@ -1565,6 +1697,7 @@ the file.  Interactive version."
   (interactive)
   (setq rec-editing t)
   (rec-unfold-all-fields)
+  (rec-remove-continuation-line-marker-overlays)
   (setq buffer-read-only nil)
   (use-local-map rec-mode-edit-map)
   (widen)
