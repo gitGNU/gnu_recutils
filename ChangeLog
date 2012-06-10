@@ -1,3 +1,10 @@
+2012-06-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: bug affecting the hiding of continuation line markers
+	fixed.
+	* etc/rec-mode.el (rec-hide-continuation-line-markers): Use
+	rec-insert-field-value in order to determine the length.
+
 2012-06-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: presentation of continuation lines in navigation modes,

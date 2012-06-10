@@ -859,11 +859,11 @@ current buffer to look like indentation."
                 (value-begin (+ pos (length (rec-field-name field)) 1))
                 (value-end (+ value-begin
                               (length (with-temp-buffer
-                                        (insert (rec-field-value field))
+                                        (rec-insert-field-value (rec-field-value field))
                                         (buffer-substring (point-min) (point-max)))))))
            (save-excursion
              (goto-char value-begin)
-             (while (re-search-forward "^\\+ ?" value-end t)
+             (while (re-search-forward "^\\+ ?" (+ value-end 1) t)
                (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
                  (overlay-put ov 'display '(space . (:width rec-continuation-line-markers-width)))
                  (push ov rec-continuation-line-markers-overlays))))))
