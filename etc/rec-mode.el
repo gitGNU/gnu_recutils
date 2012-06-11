@@ -69,6 +69,12 @@ hidden by default in navigation mode.")
   ;; value!!
   "Rec keyword.")
 
+(defconst rec-keyword-key (concat rec-keyword-prefix "key")
+  "Key keyword.")
+
+(defconst rec-keyword-mandatory (concat rec-keyword-prefix "mandatory")
+  "Mandatory keyword.")
+
 (defvar rec-comment-re "^#.*"
   "regexp denoting a comment line")
 
@@ -810,6 +816,24 @@ Return nil if the point is not on a record."
       (if found
           descriptor
         ""))))
+
+(defun rec-mandatory-fields ()
+  "Return a list with the names of the mandatory fields in the
+current record set."
+  (let ((descriptor (cadr (rec-record-descriptor))))
+    (when descriptor
+      (let ((fields-str (rec-record-assoc rec-keyword-mandatory descriptor)))
+        (when fields-str
+          (split-string (car fields-str)))))))
+
+(defun rec-key ()
+  "Return the name of the field declared as the key of the
+current record set, if any.  Otherwise return `nil'."
+  (let ((descriptor (cadr (rec-record-descriptor))))
+    (when descriptor
+      (let ((key (rec-record-assoc rec-keyword-key descriptor)))
+        (when key
+          (car key))))))
 
 ;;;; Navigation
 
@@ -1835,6 +1859,15 @@ expression."
     (if (rec-field-folded-p)
         (rec-unfold-field)
       (rec-fold-field))))
+
+;; (defun rec-cmd-create-new-record ()
+;;   "Create a new record with some default fields in the current
+;; record set."
+;;   (interactive)
+;;   (let ((key (rec-key))
+;;         (mandatory (rec-mandatory-fields))
+;;         fields record)
+;;     (when (not (member key mandatory))
 
 ;;;; Definition of modes
 

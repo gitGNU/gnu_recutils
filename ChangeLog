@@ -1,3 +1,12 @@
+2012-06-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: new functions returning properties of the current record
+	set.
+	* etc/rec-mode.el (rec-keyword-mandatory): New constant.
+	(rec-keyword-key): Likewise.
+	(rec-mandatory-fields): New function.
+	(rec-key): Likewise.
+
 2012-06-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: bug affecting the hiding of continuation line markers
