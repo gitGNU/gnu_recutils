@@ -1,0 +1,1200 @@
+# Serbian translation of recutils.
+# Copyright (C) 2012 Free Software Foundation, Inc.
+# This file is distributed under the same license as the recutils package.
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: recutils-1.5\n"
+"Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
+"POT-Creation-Date: 2012-01-13 12:00+0100\n"
+"PO-Revision-Date: 2012-06-15 09:02+0200\n"
+"Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
+"Language-Team: Serbian <gnu@prevod.org>\n"
+"Language: sr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: lib/closeout.c:112
+msgid "write error"
+msgstr "грешка уписа"
+
+#: lib/error.c:188
+msgid "Unknown system error"
+msgstr "Непозната грешка система"
+
+#: lib/execute.c:189 lib/execute.c:262 lib/wait-process.c:282
+#: lib/wait-process.c:356
+#, c-format
+msgid "%s subprocess failed"
+msgstr "%s потпроцес није успео"
+
+#: lib/getopt.c:547 lib/getopt.c:576
+#, c-format
+msgid "%s: option '%s' is ambiguous; possibilities:"
+msgstr "%s: опција „%s“ је нејасна; могућности:"
+
+#: lib/getopt.c:624 lib/getopt.c:628
+#, c-format
+msgid "%s: option '--%s' doesn't allow an argument\n"
+msgstr "%s: опција „--%s“ не дозвољава аргумент\n"
+
+#: lib/getopt.c:637 lib/getopt.c:642
+#, c-format
+msgid "%s: option '%c%s' doesn't allow an argument\n"
+msgstr "%s: опција „%c%s“ не дозвољава аргумент\n"
+
+#: lib/getopt.c:685 lib/getopt.c:704
+#, c-format
+msgid "%s: option '--%s' requires an argument\n"
+msgstr "%s: опција „--%s“ захтева аргумент\n"
+
+#: lib/getopt.c:742 lib/getopt.c:745
+#, c-format
+msgid "%s: unrecognized option '--%s'\n"
+msgstr "%s: непозната опција „--%s“\n"
+
+#: lib/getopt.c:753 lib/getopt.c:756
+#, c-format
+msgid "%s: unrecognized option '%c%s'\n"
+msgstr "%s: непозната опција „%c%s“\n"
+
+#: lib/getopt.c:805 lib/getopt.c:808
+#, c-format
+msgid "%s: invalid option -- '%c'\n"
+msgstr "%s: неисправна опција -- „%c“\n"
+
+#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
+#, c-format
+msgid "%s: option requires an argument -- '%c'\n"
+msgstr "%s: опција захтева аргумент -- „%c“\n"
+
+#: lib/getopt.c:934 lib/getopt.c:950
+#, c-format
+msgid "%s: option '-W %s' is ambiguous\n"
+msgstr "%s: опција „-W %s“ је нејасна\n"
+
+#: lib/getopt.c:974 lib/getopt.c:992
+#, c-format
+msgid "%s: option '-W %s' doesn't allow an argument\n"
+msgstr "%s: опција „-W %s“ не дозвољава аргумент\n"
+
+#: lib/getopt.c:1013 lib/getopt.c:1031
+#, c-format
+msgid "%s: option '-W %s' requires an argument\n"
+msgstr "%s: опција „-W %s“ захтева аргумент\n"
+
+#. TRANSLATORS:
+#. Get translations for open and closing quotation marks.
+#. The message catalog should translate "`" to a left
+#. quotation mark suitable for the locale, and similarly for
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
+#.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
+#.
+#. If you don't know what to put here, please see
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. and use glyphs suitable for your language.
+#: lib/quotearg.c:311
+msgid "`"
+msgstr "„"
+
+#: lib/quotearg.c:312
+msgid "'"
+msgstr "“"
+
+#: lib/regcomp.c:131
+msgid "Success"
+msgstr "Успешно"
+
+#: lib/regcomp.c:134
+msgid "No match"
+msgstr "Нема подударања"
+
+#: lib/regcomp.c:137
+msgid "Invalid regular expression"
+msgstr "Неисправан регуларан израз"
+
+#: lib/regcomp.c:140
+msgid "Invalid collation character"
+msgstr "Неисправан знак поретка"
+
+#: lib/regcomp.c:143
+msgid "Invalid character class name"
+msgstr "Неисправан назив класе знака"
+
+#: lib/regcomp.c:146
+msgid "Trailing backslash"
+msgstr "Пратећа контра коса црта"
+
+#: lib/regcomp.c:149
+msgid "Invalid back reference"
+msgstr "Неисправна повратна референца"
+
+#: lib/regcomp.c:152
+msgid "Unmatched [ or [^"
+msgstr "Не одговара [ или [^"
+
+#: lib/regcomp.c:155
+msgid "Unmatched ( or \\("
+msgstr "Не одговара ( или \\("
+
+#: lib/regcomp.c:158
+msgid "Unmatched \\{"
+msgstr "Не одговара \\{"
+
+#: lib/regcomp.c:161
+msgid "Invalid content of \\{\\}"
+msgstr "Неисправан садржај \\{\\}"
+
+#: lib/regcomp.c:164
+msgid "Invalid range end"
+msgstr "Неисправан крај опсега"
+
+#: lib/regcomp.c:167
+msgid "Memory exhausted"
+msgstr "Меморија је потрошена"
+
+#: lib/regcomp.c:170
+msgid "Invalid preceding regular expression"
+msgstr "Неисправан регуларан израз који претходи"
+
+#: lib/regcomp.c:173
+msgid "Premature end of regular expression"
+msgstr "Прерани крај регуларног израза"
+
+#: lib/regcomp.c:176
+msgid "Regular expression too big"
+msgstr "Регуларни израз је превелик"
+
+#: lib/regcomp.c:179
+msgid "Unmatched ) or \\)"
+msgstr "Не одговара ) или \\)"
+
+#: lib/regcomp.c:700
+msgid "No previous regular expression"
+msgstr "Нема претходног регуларног израза"
+
+#: lib/w32spawn.h:43
+#, c-format
+msgid "_open_osfhandle failed"
+msgstr "„_open_osfhandle“ није успело"
+
+#: lib/w32spawn.h:84
+#, c-format
+msgid "cannot restore fd %d: dup2 failed"
+msgstr "не могу да повратим фд %d: „dup2“ није успело"
+
+#: lib/wait-process.c:223 lib/wait-process.c:255 lib/wait-process.c:317
+#, c-format
+msgid "%s subprocess"
+msgstr "%s потпроцес"
+
+#: lib/wait-process.c:274 lib/wait-process.c:346
+#, c-format
+msgid "%s subprocess got fatal signal %d"
+msgstr "%s потпроцес је добио кобни сигнал %d"
+
+#: lib/xalloc-die.c:34
+msgid "memory exhausted"
+msgstr "меморија је потрошена"
+
+#: src/rec-fex.c:377
+#, c-format
+msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
+msgstr "унутрашња грешка: „REC_FEX_MAX_ELEMS“ је превелико.  Молим известите о овоме.\n"
+
+#: src/rec-int.c:172
+#, c-format
+msgid "%s: error: the number of records of type %s shall be %zd.\n"
+msgstr "%s: грешка: број записа врсте %s ће бити %zd.\n"
+
+#: src/rec-int.c:182
+#, c-format
+msgid "%s: error: too many records of type %s. Maximum allowed are %zd.\n"
+msgstr "%s: грешка: превише записа врсте %s. Највише је дозвољено %zd.\n"
+
+#: src/rec-int.c:189
+#, c-format
+msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
+msgstr "%s: грешка: премало записа врсте %s. Најмање је дозвољено %zd.\n"
+
+#: src/rec-int.c:305
+#, c-format
+msgid "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
+msgstr "%s:%s: упозорење: врста %s се сукобљава са врстом примерка %s у рскупу %s.\n"
+
+#: src/rec-int.c:410
+#, c-format
+msgid "%s:%s: error: mandatory field '%s' not found in record\n"
+msgstr "%s:%s: грешка: обавезно поље „%s“ није пронађено у запису\n"
+
+#: src/rec-int.c:463
+#, c-format
+msgid "%s:%s: error: field '%s' should be unique in this record\n"
+msgstr "%s:%s: грешка: поље „%s“ треба да буде јединствено у овом запису\n"
+
+#: src/rec-int.c:516
+#, c-format
+msgid "%s:%s: error: prohibited field '%s' found in record\n"
+msgstr "%s:%s: грешка: забрањено поље „%s“ је пронађено у запису\n"
+
+#: src/rec-int.c:555
+#, c-format
+msgid "%s:%s: error: confidential field is not encrypted\n"
+msgstr "%s:%s: грешка: поверљиво поље није шифровано\n"
+
+#: src/rec-int.c:607
+#, c-format
+msgid "%s:%s: error: key field '%s' not found in record\n"
+msgstr "%s:%s: грешка: кључно поље „%s“ није пронађено у запису\n"
+
+#: src/rec-int.c:616
+#, c-format
+msgid "%s:%s: error: multiple key fields '%s' in record\n"
+msgstr "%s:%s: грешка: више кључних поља „%s“ у запису\n"
+
+#: src/rec-int.c:659
+#, c-format
+msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
+msgstr "%s:%s: грешка: удвострчена вредност кључа у пољу „%s“ у запису\n"
+
+#: src/rec-int.c:709
+#, c-format
+msgid "%s:%s: error: missing %%rec field in record descriptor\n"
+msgstr "%s:%s: грешка: недостаје %%рек поље у описнику записа\n"
+
+#: src/rec-int.c:717
+#, c-format
+msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
+msgstr "%s:%s: грешка: превише %%rec поља у описнику записа\n"
+
+#: src/rec-int.c:727
+#, c-format
+msgid "%s:%s: error: invalid record type %s\n"
+msgstr "%s:%s: грешка: неисправна врста записа %s\n"
+
+#: src/rec-int.c:738
+#, c-format
+msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
+msgstr "%s:%s: грешка: само једно %%key поље је дозвољено у описнику записа\n"
+
+#: src/rec-int.c:748
+#, c-format
+msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
+msgstr "%s:%s: грешка: само једно %%size поље је дозвољено у описнику записа\n"
+
+#: src/rec-int.c:758
+#, c-format
+msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
+msgstr "%s:%s: грешка: само једно %%sort поље је дозвољено у описнику записа\n"
+
+#: src/rec-int.c:782
+#, c-format
+msgid "%s:%s: error: expected a comma-separated list of fields before the type specification\n"
+msgstr "%s:%s: грешка: очекиван је зарезом раздвојен списак поља пре спецификације врсте\n"
+
+#: src/rec-int.c:808 src/rec-int.c:861
+#, c-format
+msgid "%s:%s: error: the referred type %s does not exist\n"
+msgstr "%s:%s: грешка: односна врста %s не постоји\n"
+
+#: src/rec-int.c:820
+#, c-format
+msgid "%s:%s: error: invalid type specification\n"
+msgstr "%s:%s: грешка: неисправна спецификација врсте\n"
+
+#: src/rec-int.c:835
+#, c-format
+msgid "%s:%s: error: expected a type name before the type specification\n"
+msgstr "%s:%s: грешка: очекиван је назив врсте пре спецификације врсте\n"
+
+#: src/rec-int.c:873
+#, c-format
+msgid "%s:%s: error: invalid typedef specification\n"
+msgstr "%s:%s: грешка: неисправна спецификација одреднице врсте\n"
+
+#: src/rec-int.c:895
+#, c-format
+msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
+msgstr "%s:%s: грешка: вредност за %s[%zd] није списак назива поља\n"
+
+#: src/rec-int.c:911
+#, c-format
+msgid "%s:%s: error: value for %s shall be a field name.\n"
+msgstr "%s:%s: грешка: вредност за %s ће бити назив поља.\n"
+
+#: src/rec-int.c:923
+#, c-format
+msgid "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= or <=.\n"
+msgstr "%s:%s: грешка: вредност за %s ће бити број коме по могућности претходи >, <, >= или <=.\n"
+
+#: src/rec-int.c:939
+#, c-format
+msgid "%s:%s: error: value for %s shall be a list of field names.\n"
+msgstr "%s:%s: грешка: вредност за %s ће бити списак назива поља.\n"
+
+#: src/rec-int.c:964
+#, c-format
+msgid "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
+msgstr "%s:%s: грешка: само-повећано поље %s ће бити врсте „int“ (цео број), „range“ (опсег) или „date“ (датум)\n"
+
+#: src/rec-int.c:1046
+#, c-format
+msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
+msgstr "%s:%s: грешка: не могу да довучем удаљени описник са адресе %s.\n"
+
+#: src/rec-int.c:1065
+#, c-format
+msgid "%s:%s: error: could not read external descriptor from file %s.\n"
+msgstr "%s:%s: грешка: не могу прочитам спољни описник из датотеке %s.\n"
+
+#: src/rec-int.c:1080
+#, c-format
+msgid "%s:%s: error: %s does not contain valid rec data.\n"
+msgstr "%s:%s: грешка: %s не садржи исправне податке записа.\n"
+
+#: src/rec-int.c:1094
+#, c-format
+msgid "%s:%s: error: %s does not contain information for type %s.\n"
+msgstr "%s:%s: грешка: %s не садржи податке за врсту %s.\n"
+
+#: src/rec-types.c:393
+#, c-format
+msgid "internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() in rec_type_new().\n"
+msgstr "унутрашња грешка: врсте-записа: добих „REC_TYPE_NONE“ из „rec_type_parse_type_kind()“ у „rec_type_new()“.\n"
+
+#: src/rec-types.c:913
+msgid "invalid integer."
+msgstr "неисправ цео број."
+
+#: src/rec-types.c:929
+msgid "invalid 'field' value."
+msgstr "неисправна вредност „field“."
+
+#: src/rec-types.c:945
+msgid "invalid 'bool' value."
+msgstr "неисправна вредност „bool“."
+
+#: src/rec-types.c:968
+msgid "invalid 'range' value."
+msgstr "неисправна вредност „range“."
+
+#: src/rec-types.c:977
+#, c-format
+msgid "expected an integer between %d and %d."
+msgstr "очекиван је цео број између %d и %d."
+
+#: src/rec-types.c:998
+msgid "invalid 'real' value."
+msgstr "неисправна вредност „real“."
+
+#: src/rec-types.c:1016
+#, c-format
+msgid "value too large.  Expected a size <= %zu."
+msgstr "вредност је превелика.  Очекивана вредност је <= %zu."
+
+#: src/rec-types.c:1037
+msgid "invalid 'line' value."
+msgstr "неисправна вредност „line“."
+
+#: src/rec-types.c:1056
+msgid "value does not match the regexp."
+msgstr "вредност се не поклапа са регуларним изразом."
+
+#: src/rec-types.c:1079
+msgid "invalid date."
+msgstr "неисправан датум."
+
+#: src/rec-types.c:1095
+msgid "invalid email."
+msgstr "неисправна ел. пошта."
+
+#: src/rec-types.c:1149
+msgid "invalid enum value."
+msgstr "неисправна бројевна вредност."
+
+#: src/rec-utils.c:87
+#, c-format
+msgid "internal error: rec_int_rec_extract_file: error compiling regexp.\n"
+msgstr "унутрашња грешка: „rec_int_rec_extract_file“: грешка превођења регуларног израза.\n"
+
+#: src/rec-utils.c:115 src/rec-utils.c:143
+#, c-format
+msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
+msgstr "унутрашња грешка: „rec_int_rec_extract_url“: грешка превођења регуларног израза.\n"
+
+#: src/rec-utils.c:289
+#, c-format
+msgid "internal error: rec_match: error compiling regexp.\n"
+msgstr "унутрашња грешка: „rec_match“: грешка превођења регуларног израза.\n"
+
+#. TRANSLATORS: --help output, csv2rec synopsis.
+#. no-wrap
+#: utils/csv2rec.c:104
+#, c-format
+msgid "Usage: csv2rec [OPTIONS]... [CSV_FILE]\n"
+msgstr "Употреба: csv2rec [ОПЦИЈЕ]... [ЦСВ_ДАТОТЕКА]\n"
+
+#. TRANSLATORS: --help output, csv2rec short description.
+#. no-wrap
+#: utils/csv2rec.c:109
+msgid "Convert csv data into rec data.\n"
+msgstr "Претворите цсв податке у податке записа.\n"
+
+#. TRANSLATORS: --help output, csv2rec options.
+#. no-wrap
+#: utils/csv2rec.c:115
+msgid ""
+"  -t, --type=TYPE                     type name for the converted records; if this\n"
+"                                        parameter is ommited then no type is used.\n"
+"  -s, --strict                        be strict parsing the csv file.\n"
+"  -e, --omit-empty                    omit empty fields.\n"
+msgstr ""
+"  -t, --type=ВРСТА                    назив врсте за претворене записе; ако је овај\n"
+"                                      параметар изостављен онда се не користи врста.\n"
+"  -s, --strict                        бива тачан обрађујући цсв датотеку.\n"
+"  -e, --omit-empty                    изоставља празна поља.\n"
+
+#: utils/csv2rec.c:213
+#, c-format
+msgid "reached maximum number of fields: %d\n"
+msgstr "достигнут је највећи број поља: %d\n"
+
+#: utils/csv2rec.c:231
+#, c-format
+msgid "invalid field name '%s' in header\n"
+msgstr "неисправан назив поља „%s“ у заглављу\n"
+
+#: utils/csv2rec.c:248 utils/csv2rec.c:287 utils/csv2rec.c:302
+#: utils/mdb2rec.c:326 utils/mdb2rec.c:439
+msgid "out of memory\n"
+msgstr "нема више меморије\n"
+
+#: utils/csv2rec.c:258
+msgid "not enough headers"
+msgstr "нема довољно заглавља"
+
+#: utils/csv2rec.c:344 utils/recdel.c:328 utils/recset.c:706
+#: utils/recutl.c:294
+#, c-format
+msgid "cannot read file %s\n"
+msgstr "не могу да прочитам датотеку „%s“\n"
+
+#: utils/csv2rec.c:355
+msgid "failed to initialize csv parser\n"
+msgstr "нисам успео да покренем цсв обрађивача\n"
+
+#: utils/csv2rec.c:373
+#, c-format
+msgid "error while parsing CSV file: %s\n"
+msgstr "грешка приликом обраде ЦСВ датотеке: %s\n"
+
+#. TRANSLATORS: --help output, mdb2rec synopsis.
+#. no-wrap
+#: utils/mdb2rec.c:103
+#, c-format
+msgid "Usage: mdb2rec [OPTIONS]... MDB_FILE [TABLE]\n"
+msgstr "Употреба: mdb2rec [ОПЦИЈЕ]... МДБ_ДАТОТЕКА [ТАБЕЛА]\n"
+
+#. TRANSLATORS: --help output, mdb2rec short description.
+#. no-wrap
+#: utils/mdb2rec.c:108
+msgid "Convert an mdb file into a rec file.\n"
+msgstr "Претворите мдб датотеку у датотеку записа.\n"
+
+#. TRANSLATORS: --help output, mdb2rec options.
+#. no-wrap
+#: utils/mdb2rec.c:114
+msgid ""
+"  -s, --system-tables                 include system tables.\n"
+"  -e, --keep-empty-fields             don't prune empty fields in the rec\n"
+"                                        output.\n"
+"  -l, --list-tables                   dump a list of the table names contained\n"
+"                                        in the mdb file.\n"
+msgstr ""
+"  -s, --system-tables                 укључује системске табеле.\n"
+"  -e, --keep-empty-fields             не избацује празна поља у излазу\n"
+"                                      записа.\n"
+"  -l, --list-tables                   прослеђује списак назива табела\n"
+"                                      садржаних у мдб датотеци.\n"
+
+#: utils/mdb2rec.c:252 utils/mdb2rec.c:333
+#, c-format
+msgid "failed to normalise record type name %s\n"
+msgstr "нисам успео да нормализујем назив врсте записа %s\n"
+
+#: utils/mdb2rec.c:260 utils/mdb2rec.c:272
+#, c-format
+msgid "failed to normalise field name %s\n"
+msgstr "нисам успео да нормализујем назив поља %s\n"
+
+#: utils/mdb2rec.c:354
+#, c-format
+msgid "failed to normalise the field name %s\n"
+msgstr "нисам успео да нормализујем назив поља %s\n"
+
+#: utils/mdb2rec.c:465 utils/recins.c:342 utils/recset.c:265
+#, c-format
+msgid "invalid field name %s.\n"
+msgstr "неисправан назив поља %s.\n"
+
+#: utils/mdb2rec.c:496 utils/rec2csv.c:193 utils/rec2csv.c:200
+msgid "out of memory"
+msgstr "нема више меморије"
+
+#: utils/mdb2rec.c:506
+#, c-format
+msgid "could not open file %s\n"
+msgstr "не могу да отворим датотеку %s\n"
+
+#: utils/mdb2rec.c:513
+msgid "file does not appear to be an Access database\n"
+msgstr "датотека не изгледа да је база пдатака Аксеса\n"
+
+#. TRANSLATORS: --help output, rec2csv synopsis.
+#. no-wrap
+#: utils/rec2csv.c:85
+#, c-format
+msgid "Usage: rec2csv [OPTIONS]... [REC_FILE]\n"
+msgstr "Употреба: rec2csv [ОПЦИЈЕ]... [ДАТОТЕКА_ЗАПИСА]\n"
+
+#. TRANSLATORS: --help output, rec2csv short description.
+#. no-wrap
+#: utils/rec2csv.c:90
+msgid "Convert rec data into csv data.\n"
+msgstr "Претворите податке записа у цсв податке.\n"
+
+#. TRANSLATORS: --help output, rec2csv options.
+#. no-wrap
+#: utils/rec2csv.c:96
+msgid ""
+"  -t, --type=TYPE                     record set to convert to csv; if this parameter\n"
+"                                        is omitted then the default record set is used\n"
+"  -S, --sort=FIELD                    sort the output by the specified field.\n"
+msgstr ""
+"  -t, --type=ВРСТА                     скуп записа за претварање у цсв; ако је овај параматар\n"
+"                                       изостављен онда се користи основни скуп записа\n"
+"  -S, --sort=ПОЉЕ                      ређа резултат према наведеном пољу.\n"
+
+#: utils/rec2csv.c:135 utils/recsel.c:228
+msgid "only one field can be specified as a sorting criteria.\n"
+msgstr "само једно поље може бити наведено као критеријум ређања.\n"
+
+#: utils/rec2csv.c:142 utils/recsel.c:235
+msgid "invalid field name in -S.\n"
+msgstr "неисправан назив поља у -S.\n"
+
+#. TRANSLATORS: --help output, recdel synopsis.
+#. no-wrap
+#: utils/recdel.c:89
+#, c-format
+msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [FILE]\n"
+msgstr "Употреба: recdel [ОПЦИЈЕ]... [-t ВРСТА] [-n БРОЈ | -e ИЗРАЗ | -q НИЗ | -m БРОЈ] [ДАТОТЕКА]\n"
+
+#. TRANSLATORS: --help output, recdel short description.
+#. no-wrap
+#: utils/recdel.c:94
+msgid "Remove (or comment out) records from a rec file.\n"
+msgstr "Уклоните (или ставите у напомену) записе из датотеке записа.\n"
+
+#. TRANSLATORS: --help output, recdel arguments.
+#. no-wrap
+#: utils/recdel.c:101
+msgid ""
+"  -c, --comment                       comment out the matching records instead of\n"
+"                                        deleting them.\n"
+"      --force                         delete even in potentially dangerous situations,\n"
+"                                        and if the deletion is violating record restrictions.\n"
+"      --no-external                   don't use external descriptors.\n"
+"      --verbose                       give a detailed report if the integrity check\n"
+"                                        fails.\n"
+msgstr ""
+"  -c, --comment                       ставља у напомену подударајуће записе\n"
+"                                      уместо да их брише.\n"
+"      --force                         брише чак и у потенцијално опасним ситуацијама,\n"
+"                                      и ако брисање нарушава ограничења записа.\n"
+"      --no-external                   не користи спољне описнике.\n"
+"      --verbose                       даје опширан извештај ако провера\n"
+"                                      целовитости не успе.\n"
+
+#. TRANSLATORS: --help output, notes on recdel.
+#. no-wrap
+#. TRANSLATORS: --help output, notes on recfix.
+#. no-wrap
+#. TRANSLATORS: --help output, notes on recins.
+#. no-wrap
+#: utils/recdel.c:119 utils/recfix.c:169 utils/recins.c:150
+msgid ""
+"If no FILE is specified then the command acts like a filter, getting\n"
+"the data from standard input and writing the result to standard output.\n"
+msgstr ""
+"Ако ДАТОТЕКА није наведена онда наредба делује као пропусник, добављајући\n"
+"податке са стандардног улаза и записујући резултат на стандардни излаз.\n"
+
+#: utils/recdel.c:143
+#, c-format
+msgid "no records of type %s found.\n"
+msgstr "нису пронађени записи врсте %s.\n"
+
+#: utils/recdel.c:224 utils/recins.c:501 utils/recsel.c:447
+msgid "evaluating the selection expression.\n"
+msgstr "процењује израз избора.\n"
+
+#: utils/recdel.c:289
+#, c-format
+msgid "ignoring a request to delete all records of type %s.\n"
+msgstr "занемарује захтев за брисање свих записа врсте %s.\n"
+
+#: utils/recdel.c:291
+msgid "use --force if you really want to proceed, or use either -n or -e.\n"
+msgstr "користите „--force“ ако заиста желите да наставите, или користите „-n“ или „-e“.\n"
+
+#: utils/recdel.c:299 utils/recset.c:432
+msgid "invalid selection expression.\n"
+msgstr "неисправан израз избора.\n"
+
+#. TRANSLATORS: --help output, recfix synopsis.
+#. no-wrap
+#: utils/recfix.c:118
+#, c-format
+msgid "Usage: recfix [OPTION]... [OPERATION] [OP_OPTION]... [FILE]\n"
+msgstr "Употреба: recfix [ОПЦИЈА]... [РАДЊА] [ОПЦИЈА_РАДЊЕ]... [ДАТОТЕКА]\n"
+
+#. TRANSLATORS: --help output, recfix short description.
+#. no-wrap
+#: utils/recfix.c:123
+msgid "Check and fix rec files.\n"
+msgstr "Проверите и поправите датотеке записа.\n"
+
+#. TRANSLATORS: --help output, recfix global arguments.
+#. no-wrap
+#: utils/recfix.c:130
+msgid ""
+"  -t, --type=TYPE                     process only records of the given type.\n"
+"      --no-external                   don't use external descriptors.\n"
+"      --force                         force the requested operation.\n"
+msgstr ""
+"  -t, --type=ВРСТА                    обрађује само записе дате врсте.\n"
+"      --no-external                   не користи спољног описника.\n"
+"      --force                         приморава захтевану радњу.\n"
+
+#. TRANSLATORS: --help output, recfix operations.
+#. no-wrap
+#: utils/recfix.c:141
+msgid ""
+"Operations:\n"
+"      --check                         check integrity of the specified file.  Default.\n"
+"      --sort                          sort the records in the specified file.\n"
+"      --auto                          insert auto-generated fields in records missing them.\n"
+msgstr ""
+"Радње:\n"
+"      --check                         cпроверава целовитост наведене датотеке.  Основно.\n"
+"      --sort                          ређа записе у наведеној датотеци.\n"
+"      --auto                          умеће самостворена поља у записима који их немају.\n"
+
+#. TRANSLATORS: --help output, recfix operations related with encryption.
+#. no-wrap
+#: utils/recfix.c:151
+msgid ""
+"      --encrypt                       encrypt confidential fields in the specified file.\n"
+"      --decrypt                       decrypt confidential fields in the specified file.\n"
+msgstr ""
+"      --encrypt                       шифрује поверљива поља у наведеној датотеци.\n"
+"      --decrypt                       дешифрује поверљива поља у наведеној датотеци.\n"
+
+#. TRANSLATORS: --help output, recfix encryption and decryption
+#. options.
+#. no-wrap
+#: utils/recfix.c:160
+msgid ""
+"De/Encryption options:\n"
+"  -s, --password=PASSWORD             encrypt/decrypt with this password.\n"
+msgstr ""
+"Опције де/шифровања:\n"
+"  -s, --password=ЛОЗИНКА              шифрује/дешифрује овом лозинком.\n"
+
+#: utils/recfix.c:210
+msgid "--password|-s must be used as an operation argument.\n"
+msgstr "„--password|-s“ мора бити коришћено као аргумент радње.\n"
+
+#: utils/recfix.c:216
+msgid "the specified operation does not require a password.\n"
+msgstr "наведена радња не захтева лозинку.\n"
+
+#: utils/recfix.c:221
+msgid "please specify just one password.\n"
+msgstr "молим наведите барем једну лозинку.\n"
+
+#: utils/recfix.c:232 utils/recfix.c:242 utils/recfix.c:252 utils/recfix.c:263
+#: utils/recfix.c:273
+msgid "please specify just one operation.\n"
+msgstr "молим наведите барем једну радњу.\n"
+
+#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:348
+msgid "Password: "
+msgstr "Лозинка: "
+
+#: utils/recfix.c:451
+msgid "the database contains already encrypted fields\n"
+msgstr "база података садржи већ шифрована поља\n"
+
+#: utils/recfix.c:452
+msgid "please use --force or --decrypt\n"
+msgstr "молим користите „--force“ или „--decrypt“\n"
+
+#: utils/recfix.c:561
+msgid "unknown operation in recfix: please report this as a bug.\n"
+msgstr "непозната радња у поправци записа: молим пријавите ово као грешку.\n"
+
+#. TRANSLATORS: --help output, recfmt synopsis.
+#. no-wrap
+#: utils/recfmt.c:78
+#, c-format
+msgid "Usage: recfmt [OPTION]... [TEMPLATE]\n"
+msgstr "Употреба: recfmt [ОПЦИЈА]... [ШАБЛОН]\n"
+
+#. TRANSLATORS: --help output, recfmt arguments.
+#. no-wrap
+#: utils/recfmt.c:83
+msgid "Apply a template to records read from standard input.\n"
+msgstr "Примените шаблон на читања записа са стандардног улаза.\n"
+
+#. TRANSLATORS: --help output, recfmt arguments.
+#. no-wrap
+#: utils/recfmt.c:89
+msgid "  -f, --file=FILENAME                 read the template to apply from a file.\n"
+msgstr "  -f, --file=НАЗИВДАТОТЕКЕ            чита шаблон за примену из датотеке.\n"
+
+#: utils/recfmt.c:123
+#, c-format
+msgid "can't open file %s for reading.\n"
+msgstr "не могу да отворим датотеку „%s“ за читање.\n"
+
+#: utils/recfmt.c:141
+msgid "don't specify a template in the command line and -f at the same time.\n"
+msgstr "не наводи шаблон на линији наредби и „-f“ у исто време.\n"
+
+#: utils/recfmt.c:164
+msgid "invalid expression in a template slot.\n"
+msgstr "неисправан израз у прикључку шаблона.\n"
+
+#: utils/recfmt.c:170
+msgid "error evaluating expression in a template slot.\n"
+msgstr "грешка процењивања израза у прикључку шаблона.\n"
+
+#: utils/recfmt.c:204
+msgid "recfmt_apply_template: error compiling regexp. Please report this.\n"
+msgstr "фмтзпс_примени_шаблон: грешка превођења регуларног израза. Молим пријавите ово.\n"
+
+#. TRANSLATORS: --help output, recinf synopsis.
+#. no-wrap
+#: utils/recinf.c:84
+#, c-format
+msgid "Usage: recinf [OPTION]... [FILE]...\n"
+msgstr "Употреба: recinf [ОПЦИЈА]... [ДАТОТЕКА]...\n"
+
+#. TRANSLATORS: --help output, recinf short description.
+#. no-wrap
+#: utils/recinf.c:89
+msgid "Print information about the types of records stored in the input.\n"
+msgstr "Исписшите податке о врстама записа ускладиштених у улазу.\n"
+
+#. TRANSLATORS: --help output, recinf arguments.
+#. no-wrap
+#: utils/recinf.c:96
+msgid ""
+"  -t, --type=RECORD_TYPE          print information on the records having the\n"
+"                                    specified type.\n"
+"  -d, --descriptor                include the full record descriptors.\n"
+"  -n, --names-only                output just the names of the record files\n"
+"                                    found in the input.\n"
+msgstr ""
+"  -t, --type=ВРСТА_ЗАПИСА         исписује податке о записима који имају\n"
+"                                  наведене врсте.\n"
+"  -d, --descriptor                укључује пуне описнике записа.\n"
+"  -n, --names-only                резултира само називима датотека записа\n"
+"                                  пронађених у уносу.\n"
+
+#. TRANSLATORS: --help output, recinf special options.
+#. no-wrap
+#: utils/recinf.c:109
+msgid ""
+"Special options:\n"
+"  -S, --print-sexps                   print the data in sexps instead of rec format.\n"
+msgstr ""
+"Посебне опције:\n"
+"  -S, --print-sexps                   исписује податке у сехпс уместо у рек формату.\n"
+
+#: utils/recinf.c:259
+#, c-format
+msgid "error: cannot read file %s\n"
+msgstr "грешка: не могу да читам датотеку „%s“\n"
+
+#. TRANSLATORS: --help output, recins synopsis.
+#. no-wrap
+#: utils/recins.c:112
+#, c-format
+msgid "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f STR -v STR]|[-R RECDATA)]... [FILE]\n"
+msgstr "Употреба: recins [ОПЦИЈА]... [t ВРСТА] [-n БРОЈ | -e ИЗРАЗ | -q НИЗ | -m БРОЈ] [(-f НИЗ -v НИЗ]|[-R ПОДАЦИЗАПИСА)]... [ДАТОТЕКА]\n"
+
+#. TRANSLATORS: --help output, recins short description.
+#. no-wrap
+#: utils/recins.c:117
+msgid "Insert new records in a rec database.\n"
+msgstr "Уметните нове записе у базу података.\n"
+
+#. TRANSLATORS: --help output, recins arguments.
+#. no-wrap
+#: utils/recins.c:123
+msgid ""
+"  -f, --field=STR                     field name; should be followed by a -v.\n"
+"  -v, --value=STR                     field value; should be preceded by an -f.\n"
+"  -r, --record=STR                    record that will be inserted in the file.\n"
+"      --force                         insert the record even if it is violating\n"
+"                                        record restrictions.\n"
+"      --no-external                   don't use external descriptors.\n"
+"      --no-auto                       don't insert auto generated fields.\n"
+"      --verbose                       give a detailed report if the integrity check\n"
+"                                        fails.\n"
+msgstr ""
+"  -f, --field=НИЗ                     назив поља; трба да га следи -v.\n"
+"  -v, --value=НИЗ                     вредност поља; трба да јој претходи -f.\n"
+"  -r, --record=НИЗ                    запис који ће бити уметнут у датотеку.\n"
+"      --force                         умеће запис чак и ако нарушава\n"
+"                                      ограничења записа.\n"
+"      --no-external                   не користи спољне описнике.\n"
+"      --no-auto                       не умеће самостворена поља.\n"
+"      --verbose                       даје опширан извештај ако провера целовитости\n"
+"                                      не успе.\n"
+
+#. TRANSLATORS: --help output, encryption related options.
+#. no-wrap
+#: utils/recins.c:137
+msgid "  -s, --password=STR                  encrypt confidential fields with the given password.\n"
+msgstr "  -s, --password=НИЗ                  шифрује поверљива поља датом лозинком.\n"
+
+#: utils/recins.c:316
+msgid "a -f should be followed by a -v\n"
+msgstr "након „-f“ треба да следи „-v“\n"
+
+#: utils/recins.c:354
+msgid "a -v should be preceded by a -f\n"
+msgstr "испред „-v“ треба да претходи „-f“\n"
+
+#: utils/recins.c:379 utils/recsel.c:216
+msgid "more than one password was specified\n"
+msgstr "наведено је неколико лозинки\n"
+
+#: utils/recins.c:393
+msgid "error while parsing the record provided by -r\n"
+msgstr "грешка за време обраде записа достављеног „-r“-ом\n"
+
+#: utils/recins.c:428
+#, c-format
+msgid "please provide a value for the field %s\n"
+msgstr "молим обезбедите вредност за поље %s\n"
+
+#. TRANSLATORS: --help output, recsel synopsis.
+#. no-wrap
+#: utils/recsel.c:115
+#, c-format
+msgid "Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
+msgstr "Употреба: recsel [ОПЦИЈА]... [-t ВРСТА] [-n ИНДЕКСИ | -e ИЗРАЗ_ЗАПИСА | -q ИЗРАЗ | -m БРОЈ] [-c | (-p|-P) ИЗРАЗ_ПОЉА] [ДАТОТЕКА]...\n"
+
+#. TRANSLATORS: --help output, recsel arguments.
+#. no-wrap
+#: utils/recsel.c:120
+msgid "Select and print rec data.\n"
+msgstr "Изаберите и исписшите податке записа.\n"
+
+#. TRANSLATORS: --help output, recsel arguments.
+#. no-wrap
+#: utils/recsel.c:126
+msgid ""
+"  -d, --include-descriptors           print record descriptors along with the matched\n"
+"                                        records.\n"
+"  -C, --collapse                      do not section the result in records with newlines.\n"
+"  -S, --sort=FIELD                    sort the output by the specified field.\n"
+"  -U, --uniq                          remove duplicated fields in the output records.\n"
+msgstr ""
+"  -d, --include-descriptors           исписује описнике записа поред поклопљених\n"
+"                                      записа.\n"
+"  -C, --collapse                      не дели резултат у записима новим редовима.\n"
+"  -S, --sort=ПОЉЕ                     ређа излазе према наведеном пољу.\n"
+"  -U, --uniq                          уклања удвостручена поља у излазним записима.\n"
+
+#. TRANSLATORS: --help output, encryption related options.
+#. no-wrap
+#: utils/recsel.c:137
+msgid "  -s, --password=STR                  decrypt confidential fields with the given password.\n"
+msgstr "  -s, --password=НИЗ                  дешифрује поверљива поља датом лозинком.\n"
+
+#. TRANSLATORS: --help output, recsel output options.
+#. no-wrap
+#: utils/recsel.c:150
+msgid ""
+"Output options:\n"
+"  -p, --print=FIELDS                  comma-separated list of fields to print for each\n"
+"                                        matching record.\n"
+"  -P, --print-values=FIELDS           as -p, but print only the values of the selected\n"
+"                                        fields.\n"
+"  -R, --print-row=FIELDS              as -P, but separate the values with spaces instead\n"
+"                                        of newlines.\n"
+"  -c, --count                         print a count of the matching records instead of\n"
+"                                        the records themselves.\n"
+msgstr ""
+"Опције излаза:\n"
+"  -p, --print=ПОЉА                    зарезом раздвојен списак поља за исписивање за\n"
+"                                      сваки поклопљени запис.\n"
+"  -P, --print-values=ПОЉА             као -p, али исписује само вредност изабраних\n"
+"                                      поља.\n"
+"  -R, --print-row=ПОЉА                као -P, али раздваја вредности просторима уместо\n"
+"                                      новим редовима.\n"
+"  -c, --count                         исписује број поклопљених записа уместо\n"
+"                                      самих записа.\n"
+
+#. TRANSLATORS: --help output, recsel special options.
+#. no-wrap
+#: utils/recsel.c:164
+msgid ""
+"Special options:\n"
+"      --print-sexps                   print the data in sexps instead of rec format.\n"
+msgstr ""
+"Посебне опције:\n"
+"      --print-sexps                   исписује податке у сехпс уместо у рек формату.\n"
+
+#: utils/recsel.c:247
+msgid "cannot specify -[pPR] and also -c.\n"
+msgstr "не можете да наведете „-[pPR]“ и такође „-c“.\n"
+
+#: utils/recsel.c:273
+msgid "internal error creating the field expression.\n"
+msgstr "унутрашња грешка стварања израза поља.\n"
+
+#: utils/recsel.c:289
+msgid "cannot specify -c and also -p.\n"
+msgstr "не можете да наведете „-c“ и такође „-p“.\n"
+
+#: utils/recsel.c:369
+msgid "several record types found.  Please use -t to specify one.\n"
+msgstr "пронађено је неколико врста записа.  Молим користите „-t“ да наведете једну.\n"
+
+#. TRANSLATORS: --help output, recset synopsis.
+#. no-wrap
+#: utils/recset.c:125
+#, c-format
+msgid "Usage: recset [OPTION]... [FILE]...\n"
+msgstr "Употреба: recset [ОПЦИЈА]... [ДАТОТЕКА]...\n"
+
+#. TRANSLATORS: --help output, recset short description.
+#. no-wrap
+#: utils/recset.c:130
+msgid "Alter or delete fields in records.\n"
+msgstr "Измените или обришите поља у запису.\n"
+
+#. TRANSLATORS: --help output, recset options.
+#. no-wrap
+#: utils/recset.c:136
+msgid ""
+"      --no-external                   don't use external descriptors.\n"
+"      --force                         alter the records even if violating record\n"
+"                                        restrictions.\n"
+msgstr ""
+"      --no-external                   dне користи смољне описнике.\n"
+"      --force                         мења записе чак и ако нарушава\n"
+"                                      ограничења записа.\n"
+
+#. TRANSLATORS: --help output, recset field selection options.
+#. no-wrap
+#: utils/recset.c:149
+msgid ""
+"Field selection options:\n"
+"  -f, --fields=FIELDS                 comma-separated list of field names with optional\n"
+"                                        subscripts.\n"
+msgstr ""
+"Опције избора поља:\n"
+"  -f, --fields=ПОЉА                 зарезом раздвојен списак назива поља\n"
+"                                    са опционалним подскриптама.\n"
+
+#. TRANSLATORS: --help output, recset actions.
+#. no-wrap
+#: utils/recset.c:157
+msgid ""
+"Actions:\n"
+"  -s, --set=VALUE                     change the value of the selected fields.\n"
+"  -a, --add=VALUE                     add the selected fields with the given value.\n"
+"  -S, --set-add=VALUE                 change the value of the selected fields.  If they don't\n"
+"                                        exist then add a new field with that value.\n"
+"  -r, --rename=NAME                   rename the selected fields to a given name.  If an entire\n"
+"                                        record set is selected then the field is renamed in the\n"
+"                                        record descriptor as well.\n"
+"  -d, --delete                        delete the selected fields.\n"
+"  -c, --comment                       comment out the selected fields.\n"
+msgstr ""
+"Радње:\n"
+"  -s, --set=ВРЕДНОСТ                  мења вредност изабраних поља.\n"
+"  -a, --add=ВРЕДНОСТ                  додаје изабрана поља са датом вредношћу.\n"
+"  -S, --set-add=ВРЕДНОСТ              мења вредност изабраних поља.  Ако не постоје\n"
+"                                      тада додаје ново поље са том вредношћу.\n"
+"  -r, --rename=НАЗИВ                  преименује изабрана поља на дати назив.  Ако је изабран\n"
+"                                      читав скуп записа тада је поље такође применовано\n"
+"                                      и у описнику.\n"
+"  -d, --delete                        брише изабрана поља.\n"
+"  -c, --comment                       ставља у напомену изабрана поља.\n"
+
+#: utils/recset.c:180
+msgid "please specify some field with -f.\n"
+msgstr "молим наведите неко поље са „-f“.\n"
+
+#: utils/recset.c:185
+msgid "please specify just one action.\n"
+msgstr "молим наведите барем једну радњу.\n"
+
+#: utils/recset.c:225
+msgid "invalid field expression in -f.\n"
+msgstr "неисправан израз поља у „-f“.\n"
+
+#: utils/recset.c:233
+msgid "creating the field expression.\n"
+msgstr "стварам израз поља.\n"
+
+#: utils/recset.c:255
+msgid "the rename operation requires just one field with an optional subscript.\n"
+msgstr "радња преименовања захтева само једно поље са опционалним подскриптом.\n"
+
+#: utils/recset.c:449 utils/recutl.c:489
+msgid "operation aborted due to integrity failures.\n"
+msgstr "радња је прекинута услед неуспеха целовитости.\n"
+
+#: utils/recset.c:450 utils/recutl.c:490
+msgid "use --verbose to get a detailed report.\n"
+msgstr "користите „--verbose“ да добијете опширан извештај.\n"
+
+#: utils/recset.c:457 utils/recutl.c:497
+msgid "use --force to skip the integrity check.\n"
+msgstr "користите „--force“ да прескочите проверу целовитости.\n"
+
+#. TRANSLATORS: --help output 5+ (reports)
+#. TRANSLATORS: the placeholder indicates the bug-reporting address
+#. for this application.  Please add _another line_ with the
+#. address for translation bugs.
+#. no-wrap
+#: utils/recutl.c:129
+#, c-format
+msgid "Report bugs to: %s\n"
+msgstr "Грешке пријавите на: %s\n"
+
+#: utils/recutl.c:132
+#, c-format
+msgid "Report %s bugs to: %s\n"
+msgstr "Грешке програма „%s“ пријавите на: %s\n"
+
+#: utils/recutl.c:136
+#, c-format
+msgid "%s home page: <%s>\n"
+msgstr "%s матична страница: <%s>\n"
+
+#: utils/recutl.c:138
+#, c-format
+msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
+msgstr "%s матична страница: <http://www.gnu.org/software/recutils/>\n"
+
+#: utils/recutl.c:141
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+msgstr "Општа помоћ користећи ГНУ софтвер: <http://www.gnu.org/gethelp/>\n"
+
+#. TRANSLATORS: --help output, common arguments.
+#. no-wrap
+#: utils/recutl.c:150
+msgid ""
+"      --help                          print a help message and exit.\n"
+"      --version                       show version and exit.\n"
+msgstr ""
+"      --help                          исписује помоћ и излази.\n"
+"      --version                       приказује издање и излази.\n"
+
+#. TRANSLATORS: --help output, record selection arguments
+#. no-wrap
+#: utils/recutl.c:161
+msgid ""
+"Record selection options:\n"
+"  -i, --case-insensitive              make strings case-insensitive in selection\n"
+"                                        expressions.\n"
+"  -t, --type=TYPE                     operate on records of the specified type only.\n"
+"  -e, --expression=EXPR               selection expression.\n"
+"  -q, --quick=STR                     select records with fields containing a string.\n"
+"  -n, --number=NUM,...                select specific records by position, with ranges.\n"
+"  -R, --random=NUM                    select a given number of random records.\n"
+msgstr ""
+"Опције избор азаписа:\n"
+"  -i, --case-insensitive              чини ниске неосетљиве на величину слова\n"
+"                                      у изразима избора.\n"
+"  -t, --type=ВРСТА                    ради само над записима наведене врсте.\n"
+"  -e, --expression=ИЗРАЗ              израз избора.\n"
+"  -q, --quick=НИЗ                     бира записе са пољима која садрже ниску.\n"
+"  -n, --number=БРОЈ,...               бира нарочите записе према положају, са опсезима.\n"
+"  -R, --random=БРОЈ                   бира дати број насумичних записа.\n"
+
+#: utils/recutl.c:186
+#, c-format
+msgid ""
+"Copyright (C) %s Jose E. Marchesi.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n"
+"This is free software: you are free to change and redistribute it.\n"
+"There is NO WARRANTY, to the extent permitted by law.\n"
+msgstr ""
+"Ауторска права (C) %s Хозе Е. Маркези.\n"
+"Лиценца ОЈЛв3+: ГНУ ОЈЛ издање 3 или касније <http://gnu.org/licenses/gpl.html>.\n"
+"Ово је слободан софтвер: слободни сте да га мењате и расподељујете.\n"
+"Не постоји НИКАКВА ГАРАНЦИЈА, у оквирима дозвољеним законом.\n"
+
+#: utils/recutl.c:192
+msgid ""
+"\n"
+"Written by Jose E. Marchesi."
+msgstr ""
+"\n"
+"Написао Хозе Е. Маркези."
+
+#: utils/recutl.c:204 utils/recutl.c:218
+msgid ": error: "
+msgstr ": грешка: "
+
+#: utils/recutl.c:230
+msgid ": warning: "
+msgstr ": упозорење: "
+
+#: utils/recutl.c:254
+#, c-format
+msgid "duplicated record set '%s' from %s.\n"
+msgstr "удвостручени скуп записа „%s“ из %s.\n"
+
+#: utils/recutl.c:412
+msgid "cannot create a unique name.\n"
+msgstr "не могу да створим јединствени назив.\n"
+
+#: utils/recutl.c:433
+#, c-format
+msgid "renaming file %s to %s\n"
+msgstr "преименујем датотеку „%s“ у „%s“\n"
+
+#: utils/recutl.c:464
+#, c-format
+msgid "reading file %s"
+msgstr "читам датотеку „%s“"
+
+#: utils/recutl.c:553
+msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
+msgstr "унутрашња грешка: „recutl_index_list_parse“: грешка превођења регуларног израза.\n"
