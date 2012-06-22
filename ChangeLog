@@ -1,3 +1,8 @@
+2012-06-22  Jose E. Marchesi  <jco@terma.com>
+
+	manual: some work in the grouping section.
+	* doc/recutils.texi (recsel Grouping): Some work in the section.
+
 2012-06-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: new functions returning properties of the current record

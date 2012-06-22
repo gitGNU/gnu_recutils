@@ -2369,6 +2369,100 @@ encrypt the admin entry in order to read it back unencrypted.
 @node recsel Grouping
 @section recsel Grouping
 
+@dfn{Grouping} is an important technique used in relational databases,
+always combined with aggregate functions.
+
+Consider for example a relation of items in a shop stockage.  For each
+item it is stored its type, its category, its price, the date of the
+last selling operation of an item of that type, and the amount of
+items currently available in stock.  A sample of such a database is
+contained in the following table:
+
+@multitable @columnfractions .08 .21 .21 .08 .21 .21
+@item Id   @tab Type @tab Category @tab Price @tab LastSell @tab Available
+@item 12   @tab EC Car @tab Toy @tab 12.2 @tab 20/April/2012 @tab 623
+@item 16   @tab Terria Nat. @tab Food @tab 0.60 @tab 22/April/2012 @tab 8239
+@item 17   @tab Typex @tab Office @tab 1.20 @tab 22/April/2012 @tab 10878
+@item 19   @tab Notebook @tab Office @tab 1.00 @tab 21/April/2012 @tab 77455
+@item 20   @tab Sexy Puzzle @tab Toy @tab 6.20 @tab 21/April/2012 @tab 12
+@end multitable
+
+The @acronym{SQL} aggregate functions can be applied to the totality
+of the tuples in the relation.  For example, using the @code{Count}
+aggregate function we can calculate the number of entries in the
+relation as follows:
+
+@example
+> SELECT Count(Id) FROM Items
+6
+@end example
+
+@noindent
+Similarly, the average price of all the item types stored in the
+stockage is obtained using the following query:
+
+@example
+> SELECT Average(Price) FROM Items
+4.24
+@end example
+
+But, what if we are interested in some property of a subset of the
+tuples in the relation?  SQL allows to partition the contents of a
+relation in several ``groups'', using a list of fields which act as
+the grouping criteria.
+
+For example, if we wanted to group the contents of the @code{Items}
+relation in groups of items of the same category, we would end with
+the following ``subrelations'':
+
+@multitable @columnfractions .08 .21 .21 .08 .21 .21
+@item Id   @tab Type @tab Category @tab Price @tab LastSell @tab Available
+@item 12   @tab EC Car @tab Toy @tab 12.2 @tab 20/April/2012 @tab 623
+@item 20   @tab Sexy Puzzle @tab Toy @tab 6.20 @tab 21/April/2012 @tab 12
+@item ---- @tab ----        @tab ----@tab ---- @tab ----           @tab ----
+@item 16   @tab Terria Nat. @tab Food @tab 0.60 @tab 22/April/2012 @tab 8239
+@item ---- @tab ----        @tab ----@tab ---- @tab ----           @tab ----
+@item 17   @tab Typex @tab Office @tab 1.20 @tab 22/April/2012 @tab 10878
+@item 19   @tab Notebook @tab Office @tab 1.00 @tab 21/April/2012 @tab 77455
+@end multitable
+
+Aggregate functions can then be applied to the sub-relations.  For
+example, the average prices of the several item categories stored in
+the database, we would use the query:
+
+@example
+SELECT Category,Average(Price) FROM Items GROUP BY Category
+@end example
+
+@noindent
+Obtaining the following result relation:
+
+@multitable @columnfractions .10 .10
+@item Toy    @tab 9.2
+@item Food   @tab 0.60
+@item Office @tab 1.1
+@end multitable
+
+Note that in most relational systems the query above is processed in
+several differentiated steps:
+
+@enumerate
+@item A selection is performed in the relation using whatever
+expression is specified in the @code{WHERE} part of the query.  In
+this example no expression is used, so the selection result is the
+whole relation.
+@item The relation is partitioned using the list of fields specified
+in the @code{GROUP BY} part of the query.  Note that the relational
+paradigm does not support this notion of sub-relation.  Thus, the
+partitioning is not something directly visible by the user of the
+system.  It is just a temporary representation of the data.
+@item A selection is performed in each partition using the expression
+in the @code{HAVING} part of the query.  In this example no expression
+is used.
+@item Finally the @code{SELECT} part, which contains calls to
+aggregate functions and the grouping fields, is executed for each
+partition.
+@end enumerate
 
 @node recins
 @chapter recins
