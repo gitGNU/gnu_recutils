@@ -132,6 +132,8 @@ hidden by default in navigation mode.")
     (define-key map "\C-c#" 'rec-cmd-count)
     (define-key map "\C-cm" 'rec-cmd-trim-field-value)
     (define-key map "\C-cc" 'rec-cmd-compile)
+    (define-key map "\C-csq" 'rec-cmd-select-fast)
+    (define-key map "\C-css" 'rec-cmd-select-sex)
     (define-key map "\C-cI" 'rec-cmd-show-info)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map "\C-cb" 'rec-cmd-jump-back)
@@ -153,6 +155,8 @@ hidden by default in navigation mode.")
     (define-key map "t" 'rec-cmd-show-type)
     (define-key map "m" 'rec-cmd-trim-field-value)
     (define-key map "c" 'rec-cmd-compile)
+    (define-key map "sq" 'rec-cmd-select-fast)
+    (define-key map "ss" 'rec-cmd-select-sex)
     (define-key map "\C-ct" 'rec-find-type)
 ;;    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map "#" 'rec-cmd-count)
@@ -1455,12 +1459,40 @@ ARGS contains the arguments to pass to the program."
 or `nil' if no selection is active.")
 (make-variable-buffer-local 'rec-current-selection)
 
-(defun rec-select ()
+(defun rec-navigate-selection ()
+  "Goto the first record of the current selection, if any."
+  (if (not rec-current-selection)
+      (message "No current selection")
+    (widen)
+    (let* ((first-record (car rec-current-selection))
+           (pos (rec-record-position first-record)))
+      (goto-char pos)
+      (rec-show-record))))
+          
+(defun rec-cmd-select ()
   "Perform a selection on the current buffer using some criteria.
 
 The result of the selection is stored in `rec-current-selection'."
   (interactive)
   (setq rec-current-selection (rec-query)))
+
+(defun rec-cmd-select-fast (str)
+  "Perform a selection on the current record set using a fast string search.
+
+A prefix argument means to use a case-insensitive search."
+  (interactive "sFast string query: ")
+  (when (not (equal str ""))
+    (setq rec-current-selection (rec-query :fast-string str))
+    (rec-navigate-selection)))
+
+(defun rec-cmd-select-sex (sex)
+  "Perform a selection on the current record set using a selection expression.
+
+A prefix argument means to use a case-insensitive search."
+  (interactive "sSelection expression: ")
+  (when (not (equal sex ""))
+    (setq rec-current-selection (rec-query :sex sex))
+    (rec-navigate-selection)))
   
 ;;;; Commands
 ;;

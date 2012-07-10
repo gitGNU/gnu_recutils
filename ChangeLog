@@ -1,3 +1,10 @@
+2012-07-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-cmd-select-fast): New function.
+	(rec-cmd-select-sex): Likewise.
+	(rec-mode-edit-map): Bindings for selection functions added.
+	(rec-mode-map): Likewise.
+
 2012-06-22  Jose E. Marchesi  <jco@terma.com>
 
 	manual: some work in the grouping section.
