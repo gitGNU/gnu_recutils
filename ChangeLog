@@ -1,3 +1,8 @@
+2012-07-10 Jose E. Marchesi <jemarch@termi>
+
+	Tasktool operations.
+	* TODO: Task 14 resolved to 'DONE'.
+
 2012-07-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/rec-mode.el (rec-cmd-select-fast): New function.

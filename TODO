@@ -154,7 +154,7 @@ Summary: Fix rec-finish-editing in rec-mode.el.
 Category: rec-mode
 CreatedAt: Sun Nov  7 14:46:14 CET 2010
 AssignedTo: jemarch@gnu.org
-Status: TODO
+Status: DONE
 Description: When opening a file foo.rec with the following contents:
 + 
 + -- begin of file
@@ -182,6 +182,11 @@ Description: When opening a file foo.rec with the following contents:
 + press B and then C-cC-c.  We get an error:
 + 
 + Wrong type argument: number-or-marker-p, nil
+Note: Tue Jul 10 15:40:13 CEST 2012
++ Task resolved to 'DONE'.
++ 
++ DONE
+ClosedAt: Tue Jul 10 15:40:13 CEST 2012
 
 Id: 15
 Summary: Make rec-mode to honour the external descriptors.
