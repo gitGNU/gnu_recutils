@@ -1,3 +1,26 @@
+2012-07-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	algol68: several new wrappers for librec functions.
+	* algol68/rec.a68 (MODE RSET): New mode.
+	(rec rset new): New wrapper.
+	(rec rset destroy): Likewise.
+	(rec rset dup): Likewise.
+	(MODE MSET): New mode.
+	(MODE MSETELEM): Likewise.
+	(mset any): New constant.
+	(rec mset new): New wrapper.
+	(rec mset destroy): Likewise.
+	(rec mset dup): Likewise.
+	(rec mset type p): Likewise.
+	(rec mset get at): Likewise.
+	(rec mset insert at): Likewise.
+	(rec mset insert after): Likewise.
+	(rec mset append): Likewise.
+	(rec mset add sorted): Likewise.
+	(rec mset remove at): Likewise.
+	(rec mset remove elem): Likewise.
+	(rec mset search): Likewise.
+
 2012-07-10 Jose E. Marchesi <jemarch@termi>
 
 	Tasktool operations.

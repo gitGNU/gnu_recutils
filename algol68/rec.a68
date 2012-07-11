@@ -5,7 +5,7 @@ USE standard:
   allows to use the librec library in Algol 68 programs compiled with
   the ctrans compiler.
 
-  Copyright (C) 2011 Jose E. Marchesi
+  Copyright (C) 2011, 2012 Jose E. Marchesi
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -69,8 +69,82 @@ PROC(VECTOR[]CHAR,RECBUF)INT rec buf puts =
 
 PROC(RECBUF,INT)VOID rec buf rewind =
    ALIEN "A68_REC_BUF_REWIND(buf,n)"
-         "#define A68_REC_BUF_REWIND(buf,n) rec_buf_rewind((rec_buf_t)buf, A_INT_int(n))"
+         "#define A68_REC_BUF_REWIND(buf,n) rec_buf_rewind((rec_buf_t)buf, A_INT_int(n))";
 
+{ Msets.  }
+
+MODE MSET     = CPTR;
+MODE MSETELEM = CPTR;
+
+INT mset any = ALIEN "MSET_ANY" "/**/";
+
+PROC MSET rec mset new =
+   ALIEN "A68_REC_MSET_NEW()"
+         "#define A68_REC_MSET_NEW() rec_mset_new()";
+
+PROC(MSET)VOID rec mset destroy =
+   ALIEN "A68_REC_MSET_DESTROY(mset)"
+         "#define A68_REC_MSET_DESTROY(mset) rec_mset_destroy (mset)";
+
+PROC(MSET)MSET rec mset dup =
+   ALIEN "A68_REC_MSET_DUP(mset)"
+         "#define A68_REC_MSET_DUP(mset) rec_mset_dup (mset)";
+
+PROC(MSET,INT)BOOL rec mset type p =
+   ALIEN "A68_REC_MSET_TYPE_P(mset,type)"
+         "#define A68_REC_MSET_TYPE_P(mset,type) (A68_BOOL) rec_mset_type_p (mset, A_INT_int(type))";
+
+PROC(MSET,INT)INT rec mset count =
+   ALIEN "A68_REC_MSET_COUNT(mset,type)"
+         "#define A68_REC_MSET_COUNT(mset,type) rec_mset_count (mset, A_INT_int(type))";
+
+PROC(MSET,INT,INT)CPTR rec mset get at =
+   ALIEN "A68_REC_MSET_GET_AT(mset,type,position)"
+         "#define A68_REC_MSET_GET_AT(mset,type,position) rec_mset_get_at (mset, A_INT_int(type), A_INT_int(position))";
+
+PROC(MSET,INT,CPTR,INT)MSETELEM rec mset insert at =
+   ALIEN "A68_REC_MSET_INSERT_AT(mset,type,data,position)"
+         "#define A68_REC_MSET_INSERT_AT(mset,type,data,position) rec_mset_insert_at (mset, A_INT_int(type), data, A_INT_int(position))";
+
+PROC(MSET,INT,CPTR,MSETELEM)MSETELEM rec mset insert after =
+   ALIEN "A68_REC_MSET_INSERT_AFTER(mset,type,data,elem)"
+         "#define A68_REC_MSET_INSERT_AFTER(mset,type,data,elem) rec_mset_insert_after (mset, A_INT_int(type), data, elem)";
+
+PROC(MSET,INT,CPTR,INT)MSETELEM rec mset append =
+   ALIEN "A68_REC_MSET_APPEND(mset,elem_type,data,type)"
+         "#define A68_REC_MSET_APPEND(mset,elem_type,data,type) rec_mset_append (mset, A_INT_int(elem_type), data, A_INT_int(type))";
+
+PROC(MSET,INT,CPTR)MSETELEM rec mset add sorted =
+   ALIEN "A68_REC_MSET_ADD_SORTED(mset,type,data)"
+         "#define A68_REC_MSET_ADD_SORTED(mset,type,data) rec_mset_add_sorted (mset, A_INT_int(type), data)";
+
+PROC(MSET,INT,INT)BOOL rec mset remove at =
+   ALIEN "A68_REC_MSET_REMOVE_AT(mset,type,position)"
+         "#define A68_REC_MSET_REMOVE_AT(mset,type,position) (A68_BOOL) rec_mset_remove_at (mset, A_INT_int(type), A_INT_int(position))";
+
+PROC(MSET,MSETELEM)BOOL rec mset remove elem =
+   ALIEN "A68_REC_MSET_REMOVE_ELEM(mset,elem)"
+         "#define A68_REC_MSET_REMOVE_ELEM(mset,elem) (A68_BOOL) rec_mset_remove_elem (mset,elem)";
+
+PROC(MSET,CPTR)MSETELEM rec mset search =
+   ALIEN "A68_REC_MSET_SEARCH(mset,data)"
+         "#define A68_REC_MSET_SEARCH(mset,data) rec_mset_search (mset, data)";
+
+{ Record Sets.  }
+
+MODE RSET = CPTR;
+
+PROC RSET rec rset new =
+   ALIEN "A68_REC_RSET_NEW()"
+         "#define A68_REC_RSET_NEW() rec_rset_new()";
+
+PROC(RSET)VOID rec rset destroy =
+   ALIEN "A68_REC_RSET_DESTROY(rset)"
+         "#define A68_REC_RSET_DESTROY(rset) rec_rset_destroy(rset)";
+
+PROC(RSET)RSET rec rset dup =
+   ALIEN "A68_REC_RSET_DUP(rset)"
+         "#define A68_REC_RSET_DUP(rset) rec_rset_dup(rset)"
 
 KEEP
 
@@ -85,6 +159,20 @@ KEEP
    { Flexible buffers.  }
 
    rec buf new, rec buf close, rec buf putc, rec buf puts,
-   rec buf rewind
+   rec buf rewind,
+
+   { Msets.  }
+
+   MSET, MSETELEM,
+   mset any,
+   rec mset new, rec mset destroy, rec mset dup, rec mset type p,
+   rec mset count, rec mset get at, rec mset insert at,
+   rec mset insert after, rec mset append, rec mset add sorted,
+   rec mset remove at, rec mset remove elem, rec mset search,
+
+   { Record sets.  }
+
+   RSET,
+   rec rset new, rec rset destroy, rec rset dup
 
 FINISH
