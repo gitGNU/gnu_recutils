@@ -1506,10 +1506,15 @@ A prefix argument means to use a case-insensitive search."
 ;; The following functions implement interactive commands available in
 ;; the several modes defined in this file.
 
-(defun rec-cmd-edit-field ()
+(defun rec-cmd-edit-field (n)
   "Edit the contents of the field under point in a separate
-buffer"
-  (interactive)
+buffer.
+
+The input method used for getting the field value depends on its
+type, unless a prefix argument is used.  Then the more general
+method, i.e. asking for the new value in an unrestricted buffer,
+will be used for fields of any type."
+  (interactive "P")
   (let* (edit-buf
          (field (rec-current-field))
          (field-value (rec-field-value field))
@@ -1520,8 +1525,9 @@ buffer"
          (prev-buffer (current-buffer)))
     (if field-value
         (cond
-         ((or (equal field-type-kind 'enum)
-              (equal field-type-kind 'bool))
+         ((and (or (equal field-type-kind 'enum)
+                   (equal field-type-kind 'bool))
+               (null n))
           (let* ((data (rec-type-data field-type))
                  (i -1)
                  (fast-selection-data
@@ -1551,7 +1557,8 @@ buffer"
                                           0
                                           field-name
                                           new-value)))))))
-         ((and (equal field-type-kind 'date) rec-popup-calendar)
+         ((and (equal field-type-kind 'date) rec-popup-calendar
+               (null n))
           (setq rec-field-name field-name)
           (setq rec-prev-buffer prev-buffer)
           (setq rec-pointer pointer)
