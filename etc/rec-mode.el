@@ -1565,6 +1565,10 @@ will be used for fields of any type."
           (calendar)
           (let ((old-map (current-local-map))
                 (map (copy-keymap calendar-mode-map)))
+            (define-key map "q"
+              `(lambda () (interactive)
+                 (use-local-map (quote ,old-map))
+                 (calendar-exit)))
             (define-key map (kbd "RET")
               `(lambda () (interactive)
                  (let* ((date (calendar-cursor-to-date))

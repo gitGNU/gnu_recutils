@@ -1,5 +1,13 @@
 2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: allow the user to cancel the edit date operation by
+	quitting the calendar window.
+	* etc/rec-mode.el (rec-cmd-edit-field): Remap "q" in the calendar
+	to remove the modified local map in the *Calendar* buffer if the
+	user quits the calendar.
+
+2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: rec-cmd-edit-field supports a numeric argument.
 	* etc/rec-mode.el (rec-cmd-edit-field): Use the more general input
 	method for reading field values regardless their types if a
