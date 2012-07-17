@@ -1572,7 +1572,7 @@ will be used for fields of any type."
               `(lambda () (interactive)
                  (use-local-map (quote ,old-map))
                  (calendar-exit)))
-            (define-key map "n"
+            (define-key map "t"
               `(lambda () (interactive)
                  (use-local-map (quote ,old-map))
                  (calendar-exit)
@@ -1599,7 +1599,7 @@ will be used for fields of any type."
                                                rec-field-name
                                                (format-time-string "%Y-%m-%d" time))))))))
             (use-local-map map)
-            (message "[RET]: Select date [n]: Now, time-stamp     [q]: Exit")))
+            (message "[RET]: Select date [t]: Time-stamp     [q]: Exit")))
          (t
           (setq edit-buf (get-buffer-create "Rec Edit"))
           (set-buffer edit-buf)
