@@ -32,6 +32,7 @@
 
 (require 'compile)
 (require 'cl)
+(require 'calendar)
 
 ;;;; Customization
 
@@ -44,6 +45,12 @@
   "Default mode to use when switching a buffer to rec-mode.
 Valid values are `edit' and `navigation'.  The default is `navigation'"
   :type 'symbol
+  :group 'rec-mode)
+
+(defcustom rec-popup-calendar t
+  "Whether to use a popup calendar to select dates when editing field
+values.  The default is `t'."
+  :type 'boolean
   :group 'rec-mode)
 
 (defvar rec-max-lines-in-fields 15
@@ -1544,6 +1551,28 @@ buffer"
                                           0
                                           field-name
                                           new-value)))))))
+         ((and (equal field-type-kind 'date) rec-popup-calendar)
+          (setq rec-field-name field-name)
+          (setq rec-prev-buffer prev-buffer)
+          (setq rec-pointer pointer)
+          (calendar)
+          (let ((old-map (current-local-map))
+                (map (copy-keymap calendar-mode-map)))
+            (define-key map (kbd "RET")
+              `(lambda () (interactive)
+                 (let* ((date (calendar-cursor-to-date))
+                        (time (encode-time 0 0 0 (nth 1 date) (nth 0 date) (nth 2 date))))
+                   (use-local-map (quote ,old-map))
+                   (calendar-exit)
+                   (set-buffer rec-prev-buffer)
+                   (let ((buffer-read-only nil))
+                     (rec-delete-field)
+                     (save-excursion
+                       (rec-insert-field (list 'field
+                                               0
+                                               rec-field-name
+                                               (format-time-string "%Y-%m-%d" time))))))))
+            (use-local-map map)))
          (t
           (setq edit-buf (get-buffer-create "Rec Edit"))
           (set-buffer edit-buf)
