@@ -36,6 +36,9 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 
+dnl Check for Guile
+GUILE_FLAGS
+
 dnl Both lex and yacc are required to generate the lexer/parser source
 dnl files.
 

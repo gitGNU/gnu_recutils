@@ -53,8 +53,8 @@ endif
 
 BUILT_SOURCES = rec-sex-tab.h
 AM_YFLAGS = -d
-AM_LFLAGS = -d
-AM_CFLAGS = 
+AM_LFLAGS = -d $(GUILE_LDFLAGS)
+AM_CFLAGS = $(GUILE_CFLAGS)
 if USE_COVERAGE
   AM_CFLAGS += -fprofile-arcs -ftest-coverage
 endif
