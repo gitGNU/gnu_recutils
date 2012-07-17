@@ -1182,11 +1182,17 @@ returned."
        (with-temp-buffer
          (insert type-descr)
          (goto-char (point-min))
-         (when (looking-at "[ \n\t]*\\([a-zA-Z%][a-zA-Z0-9_-]*\\)[ \n\t]*")
-           (let ((name (match-string 1)))
-             (goto-char (match-end 0))
-             (when (equal name field-name)
-               (setq res-type (rec-parse-type (buffer-substring (point) (point-max)))))))))
+         (when (looking-at "[ \n\t]*\\([a-zA-Z%][a-zA-Z0-9_-]*\\(,[a-zA-Z%][a-zA-Z0-9_-]*\\)?\\)[ \n\t]*")
+           (let ((names (match-string 1))
+                 (begin-description (match-end 0))
+                 name)
+             (goto-char (match-beginning 1))
+             (while (looking-at "\\([a-zA-Z%][a-zA-Z0-9_-]*\\),?")
+               (if (equal (match-string 1) field-name)
+                   (progn
+                     (goto-char begin-description)
+                     (setq res-type (rec-parse-type (buffer-substring (point) (point-max)))))
+                 (goto-char (match-end 0))))))))
      types)
     res-type))
 

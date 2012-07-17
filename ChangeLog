@@ -1,5 +1,11 @@
 2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: support for multiple field names in %type entries.
+	* etc/rec-mode.el (rec-field-type): Support for multiple field
+	names in %type entries.
+
+2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: time-stamps are now triggered with `t' instead of `n'.
 	* etc/rec-mode.el (rec-cmd-edit-field): Change the key to
 	trigger a time-stamp from `n' to `t'.
