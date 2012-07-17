@@ -1,5 +1,12 @@
 2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: support for generating time-stamps in date fields.
+	* etc/rec-mode.el (rec-cmd-edit-field): Support for getting a
+	timestamp when editing date fields.
+	(rec-time-stamp-format): New constant.
+
+2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: fix edition of the default record set.
 	* etc/rec-mode.el (rec-record-descriptor): Return `nil' for a
 	non-existant record descriptor, not "".

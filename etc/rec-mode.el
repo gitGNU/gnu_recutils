@@ -82,6 +82,9 @@ hidden by default in navigation mode.")
 (defconst rec-keyword-mandatory (concat rec-keyword-prefix "mandatory")
   "Mandatory keyword.")
 
+(defconst rec-time-stamp-format "%Y-%m-%d %a %H:%M"
+  "Format for `format-time-string' which is used for time stamps.")
+  
 (defvar rec-comment-re "^#.*"
   "regexp denoting a comment line")
 
@@ -1569,6 +1572,18 @@ will be used for fields of any type."
               `(lambda () (interactive)
                  (use-local-map (quote ,old-map))
                  (calendar-exit)))
+            (define-key map "n"
+              `(lambda () (interactive)
+                 (use-local-map (quote ,old-map))
+                 (calendar-exit)
+                 (set-buffer rec-prev-buffer)
+                 (let ((buffer-read-only nil))
+                   (rec-delete-field)
+                   (save-excursion
+                     (rec-insert-field (list 'field
+                                             0
+                                             rec-field-name
+                                             (format-time-string rec-time-stamp-format)))))))
             (define-key map (kbd "RET")
               `(lambda () (interactive)
                  (let* ((date (calendar-cursor-to-date))
@@ -1583,7 +1598,8 @@ will be used for fields of any type."
                                                0
                                                rec-field-name
                                                (format-time-string "%Y-%m-%d" time))))))))
-            (use-local-map map)))
+            (use-local-map map)
+            (message "[RET]: Select date [n]: Now, time-stamp     [q]: Exit")))
          (t
           (setq edit-buf (get-buffer-create "Rec Edit"))
           (set-buffer edit-buf)
