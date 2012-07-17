@@ -1,5 +1,12 @@
 2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: support for undo in navigation mode.
+	* etc/rec-mode.el (rec-mode-map): Remap `undo' into rec-cmd-undo
+	when in navigation mode.
+	(rec-cmd-undo): New function.
+
+2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: support for multiple field names in %type entries.
 	* etc/rec-mode.el (rec-field-type): Support for multiple field
 	names in %type entries.

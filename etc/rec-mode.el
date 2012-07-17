@@ -169,6 +169,7 @@ hidden by default in navigation mode.")
     (define-key map "ss" 'rec-cmd-select-sex)
     (define-key map "\C-ct" 'rec-find-type)
 ;;    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
+    (define-key map [remap undo] 'rec-cmd-undo)
     (define-key map "#" 'rec-cmd-count)
     (define-key map (kbd "RET") 'rec-cmd-jump)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
@@ -1767,6 +1768,12 @@ the file.  Interactive version."
                               (rec-record-type))))))
   (unless rec-editing
     (rec-show-record)))
+
+(defun rec-cmd-undo ()
+  "Undo a change in the buffer when in navigation mode."
+  (interactive)
+  (let ((buffer-read-only nil))
+    (undo)))
 
 (defun rec-cmd-jump-back ()
   "Undo the previous jump"
