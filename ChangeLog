@@ -1,5 +1,11 @@
 2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: fix edition of the default record set.
+	* etc/rec-mode.el (rec-record-descriptor): Return `nil' for a
+	non-existant record descriptor, not "".
+
+2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: allow the user to cancel the edit date operation by
 	quitting the calendar window.
 	* etc/rec-mode.el (rec-cmd-edit-field): Remap "q" in the calendar

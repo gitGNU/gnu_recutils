@@ -826,7 +826,7 @@ Return nil if the point is not on a record."
           (setq i (+ i 1))))
       (if found
           descriptor
-        ""))))
+        nil))))
 
 (defun rec-mandatory-fields ()
   "Return a list with the names of the mandatory fields in the
