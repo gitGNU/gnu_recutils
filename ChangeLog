@@ -1,5 +1,9 @@
 2012-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* .x-sc_prohibit_defined_have_decl_tests: New file.
+
+2012-07-20  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* gnulib module flock imported.
 
 2012-07-17  Jose E. Marchesi  <jemarch@gnu.org>
