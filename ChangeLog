@@ -1,3 +1,7 @@
+2012-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* .gitignore: Ignore generated files under guile/.
+
 2012-07-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	guile: minimal guile bindings.
