@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-07-20 20:57:24 jemarch"
+/* -*- mode: C -*- Time-stamp: "2012-07-21 01:45:15 jemarch"
  *
  *       File:         guile-rec.c
  *       Date:         Fri Jul 20 19:59:24 2012
@@ -82,6 +82,15 @@ SCM_DEFINE (scm_rec_db_new, "make-db", 0, 0, 0,
   SCM_RETURN_NEWSMOB (scm_tc16_rec_db, (scm_t_bits) db);
 }
 #undef FUNC_NAME
+
+SCM_DEFINE (scm_rec_db_size, "db-size", 1, 0, 0,
+            (SCM obj),
+            "Get the number of record sets stored in a given database.")
+#define FUNC_NAME s_scm_rec_db_size
+{
+  rec_db_t db = (rec_db_t) SCM_SMOB_DATA (obj);
+  return scm_from_unsigned_integer (rec_db_size (db));
+}
 
 /* Initialization.  */
 

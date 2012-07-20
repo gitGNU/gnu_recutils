@@ -1,5 +1,12 @@
 2012-07-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	guile: binding for db-size.
+	* guile/recutils.scm (recutils): Export db-size.
+
+	* guile/guile-rec.c (scm_rec_db_size): Binding for rec_db_size.
+
+2012-07-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* .gitignore: Ignore generated files under guile/.
 
 2012-07-20  Jose E. Marchesi  <jemarch@gnu.org>
