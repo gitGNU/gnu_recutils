@@ -69,6 +69,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module fcntl-h:
   # Code from module fd-hook:
   # Code from module float:
+  # Code from module flock:
   # Code from module floor:
   # Code from module fpending:
   # Code from module fpieee:
@@ -187,6 +188,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module string:
   # Code from module strings:
   # Code from module strsep:
+  # Code from module sys_file:
   # Code from module sys_stat:
   # Code from module sys_time:
   # Code from module sys_types:
@@ -281,6 +283,12 @@ fi
 if test $REPLACE_ITOLD = 1; then
   AC_LIBOBJ([itold])
 fi
+gl_FUNC_FLOCK
+if test $HAVE_FLOCK = 0; then
+  AC_LIBOBJ([flock])
+  gl_PREREQ_FLOCK
+fi
+gl_HEADER_SYS_FILE_MODULE_INDICATOR([flock])
 gl_FUNC_FLOOR
 if test $REPLACE_FLOOR = 1; then
   AC_LIBOBJ([floor])
@@ -314,6 +322,10 @@ if test $HAVE_FSEEKO = 0 || test $REPLACE_FSEEKO = 1; then
   gl_PREREQ_FSEEKO
 fi
 gl_STDIO_MODULE_INDICATOR([fseeko])
+gl_FUNC_FSETERR
+if test $ac_cv_func___fseterr = no; then
+  AC_LIBOBJ([fseterr])
+fi
 gl_FUNC_FSTAT
 if test $REPLACE_FSTAT = 1; then
   AC_LIBOBJ([fstat])
@@ -677,6 +689,8 @@ if test $HAVE_STRSEP = 0; then
   gl_PREREQ_STRSEP
 fi
 gl_STRING_MODULE_INDICATOR([strsep])
+gl_HEADER_SYS_FILE_H
+AC_PROG_MKDIR_P
 gl_HEADER_SYS_STAT_H
 AC_PROG_MKDIR_P
 gl_HEADER_SYS_TIME_H
@@ -916,6 +930,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/float+.h
   lib/float.c
   lib/float.in.h
+  lib/flock.c
   lib/floor.c
   lib/fpending.c
   lib/fpending.h
@@ -1058,6 +1073,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strings.in.h
   lib/strncasecmp.c
   lib/strsep.c
+  lib/sys_file.in.h
   lib/sys_stat.in.h
   lib/sys_time.in.h
   lib/sys_types.in.h
@@ -1114,6 +1130,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fcntl.m4
   m4/fcntl_h.m4
   m4/float_h.m4
+  m4/flock.m4
   m4/floor.m4
   m4/fpending.m4
   m4/fpieee.m4
@@ -1122,6 +1139,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/frexpl.m4
   m4/fseek.m4
   m4/fseeko.m4
+  m4/fseterr.m4
   m4/fstat.m4
   m4/ftell.m4
   m4/ftello.m4
@@ -1187,6 +1205,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/nl_langinfo.m4
   m4/nls.m4
   m4/nocrash.m4
+  m4/off_t.m4
   m4/onceonly.m4
   m4/open.m4
   m4/parse-datetime.m4
@@ -1231,6 +1250,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/string_h.m4
   m4/strings_h.m4
   m4/strsep.m4
+  m4/sys_file_h.m4
   m4/sys_socket_h.m4
   m4/sys_stat_h.m4
   m4/sys_time_h.m4
