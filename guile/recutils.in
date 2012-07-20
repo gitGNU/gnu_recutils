@@ -1,0 +1,15 @@
+;;; -*- mode: scheme -*-
+;;;
+;;; GNU recutils -- Guile bindings for recutils
+
+(define-module (recutils)
+  #:export (db? rset? make-db))
+
+(define %libdir
+  (or (getenv "LIBREC_GUILE_EXTENSION_DIR")
+      "@guileextensiondir@"))
+
+(load-extension (string-append %libdir "/guile-rec")
+                "scm_init_rec")
+
+;;; recutils.in ends here

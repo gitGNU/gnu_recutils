@@ -1,3 +1,18 @@
+2012-07-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	guile: minimal guile bindings.
+	* guile/guile-rec.c: New file.
+	(SCM_SMOB_FREE): New function.
+	Likewise.
+
+	* guile/recutils.in: New file.
+
+	* configure.ac: Generate guile/Makefile.
+
+	* Makefile.am (SUBDIRS): Added guile.
+
+	* guile/Makefile.am: New file.
+
 2012-07-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/Makefile.am (AM_LFLAGS): Add GUILE_LDFLAGS.

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+GUILE_LOAD_PATH="@abs_top_builddir@/guile/modules:$GUILE_LOAD_PATH"
+export GUILE_LOAD_PATH
+
+LIBREC_GUILE_EXTENSION_DIR="@abs_top_builddir@/guile"
+export LIBREC_GUILE_EXTENSION_DIR
+
+exec @abs_top_builddir@/libtool --mode=execute \
+    -dlopen "@abs_top_builddir@/guile/guile-rec.la" \
+    @GUILE@ "$@"
+

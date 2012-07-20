@@ -39,6 +39,10 @@ AM_PROG_CC_C_O
 dnl Check for Guile
 GUILE_FLAGS
 
+dnl TODO: only if guile is found
+AC_PATH_PROG([GUILE_SNARF], [guile-snarf])
+AC_SUBST([GUILE_SNARF])
+
 dnl Both lex and yacc are required to generate the lexer/parser source
 dnl files.
 
@@ -189,19 +193,22 @@ AC_ARG_ENABLE([coverage],
 AM_CONDITIONAL([USE_COVERAGE], [test "x$use_gcov" = "xyes"])
 
 dnl Generate output files
+
+AC_CONFIG_FILES([guile/pre-inst-guile], [chmod +x guile/pre-inst-guile])
 AC_OUTPUT(Makefile
-          lib/Makefile
-          libcsv/Makefile
-          src/Makefile
-          utils/Makefile
-          doc/Makefile
-          po/Makefile.in
-          torture/Makefile
-          torture/utils/Makefile
-          torture/utils/config.sh
-          man/Makefile
-          etc/Makefile
-          algol68/Makefile)
+                lib/Makefile
+                libcsv/Makefile
+                src/Makefile
+                guile/Makefile
+                utils/Makefile
+                doc/Makefile
+                po/Makefile.in
+                torture/Makefile
+                torture/utils/Makefile
+                torture/utils/config.sh
+                man/Makefile
+                etc/Makefile
+                algol68/Makefile)
 
 dnl Report warnings
 

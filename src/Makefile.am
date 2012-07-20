@@ -1,5 +1,5 @@
 # src/ Makefile.am
-# GNU rec
+# GNU recutils
 
 # Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi
 
@@ -53,10 +53,8 @@ endif
 
 BUILT_SOURCES = rec-sex-tab.h
 AM_YFLAGS = -d
-AM_LFLAGS = -d $(GUILE_LDFLAGS)
-AM_CFLAGS = $(GUILE_CFLAGS)
 if USE_COVERAGE
-  AM_CFLAGS += -fprofile-arcs -ftest-coverage
+  AM_CFLAGS = -fprofile-arcs -ftest-coverage
 endif
 
 AM_LDFLAGS = -no-undefined
