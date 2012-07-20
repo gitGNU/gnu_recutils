@@ -115,3 +115,4 @@ torture/utils/config.sh
 /torture/utils/*.in
 /guile/*.x
 /guile/recutils.scm
+/guile/pre-inst-guile
