@@ -1,5 +1,11 @@
 2012-07-23  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: new command rec-cmd-statistics.
+	* etc/rec-mode.el (rec-cmd-statistic): New function.
+	(rec-mode-map): Map rec-cmd-statistic with %.
+
+2012-07-23  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: rec-cmd-count now suggests a default selection
 	expression when invoked with a numeric prefix.
 	* etc/rec-mode.el (rec-cmd-count): Use a default expression using

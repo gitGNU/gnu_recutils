@@ -171,6 +171,7 @@ hidden by default in navigation mode.")
 ;;    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map [remap undo] 'rec-cmd-undo)
     (define-key map "#" 'rec-cmd-count)
+    (define-key map "%" 'rec-cmd-statistic)
     (define-key map (kbd "RET") 'rec-cmd-jump)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map (kbd "SPC") 'rec-cmd-toggle-field-visibility)
@@ -1903,6 +1904,36 @@ expression."
                             (when (and sex (not (equal sex "")))
                               (concat " with sex " sex)))))))
 
+(defun rec-cmd-statistic ()
+  "Display a statistic on the occurrence of the value contained
+  in the field under point in the minibuffer, if any.
+
+This command is especially useful with enumerated types."
+  (interactive)
+  (let* ((field (rec-current-field))
+         (field-name (rec-field-name field))
+         (type (rec-field-type field-name))
+         (type-kind (when type (rec-type-kind type))))
+    (cond ((equal type-kind 'enum)
+           (let* ((keys (rec-type-data type))
+                  (total (rec-count (rec-record-type)))
+                  (percentages (mapcar (lambda (key)
+                                         (let ((key-count (rec-count (rec-record-type)
+                                                                     (concat field-name " = '" key "'"))))
+                                           (list key key-count (/ (* key-count 100) total))))
+                                       keys))
+                  str)
+             (mapcar (lambda (occurrence)
+                       (setq str (concat str
+                                         (number-to-string (nth 1 occurrence))
+                                         " "
+                                         (nth 0 occurrence)
+                                         " ("
+                                         (number-to-string (nth 2 occurrence))
+                                         "%) ")))
+                     percentages)
+             (message "%s" str))))))
+    
 (defun rec-cmd-append-field ()
   "Goto the end of the record and switch to edit record mode."
   (interactive)
