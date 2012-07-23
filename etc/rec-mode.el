@@ -1881,9 +1881,18 @@ records of the current type.
 If a numeric argument is used then prompt for a selection
 expression."
   (interactive "P")
-  (let ((sex (and (not (null n)) (read-from-minibuffer "Selection expression: "))))
+  (let* ((default-sex (let ((current-field (rec-current-field)))
+                        (when (and current-field
+                                   (not (string-match "\n" (rec-field-value current-field)))
+                                   (< (length (rec-field-value current-field)) 20))
+                          (concat (rec-field-name current-field) " = '" (rec-field-value current-field) "'"))))
+         (sex (and (not (null n)) (read-from-minibuffer (concat "Selection expression"
+                                                                (if default-sex
+                                                                    (concat " (default " default-sex ")")
+                                                                  "")
+                                                                ": ")))))
     (when (equal sex "")
-      (setq sex nil))
+      (setq sex default-sex))
     (message "Counting records...")
     (let ((type (rec-record-type)))
       (message "%s" (concat (number-to-string (rec-count type sex))
