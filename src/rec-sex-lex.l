@@ -113,6 +113,7 @@ STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
 "<="     { return REC_SEX_TOK_LTE; }
 ">="     { return REC_SEX_TOK_GTE; }
 "=="     { return REC_SEX_TOK_SAMETIME; }
+"=>"     { return REC_SEX_TOK_IMPLIES; }
 "*"      { return REC_SEX_TOK_MUL; }
 "="      { return REC_SEX_TOK_EQL; }
 "!="     { return REC_SEX_TOK_NEQ; }

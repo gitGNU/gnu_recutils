@@ -1,3 +1,16 @@
+2012-07-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: implementation of the => sex operator.
+	* src/rec-sex.c (rec_sex_eval_node): Implementation of the
+	"implies" operator.
+
+	* src/rec-sex-ast.h (enum rec_sex_ast_node_type_e): New value
+	REC_SEX_OP_IMPLIES.
+
+	* src/rec-sex-tab.y: Rule for the implies operator.
+
+	* src/rec-sex-lex.l ("=>"): New token for the "implies" operator.
+
 2012-07-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: new command rec-cmd-statistics.

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -749,6 +749,22 @@ rec_sex_eval_node (rec_sex_t sex,
 
         res.type = REC_SEX_VAL_INT;
         res.int_val = ((diff.tv_sec == 0) && (diff.tv_nsec == 0));
+        break;
+      }
+    case REC_SEX_OP_IMPLIES:
+      {
+        int op1;
+        int op2;
+
+        GET_CHILD_VAL (child_val1, 0);
+        GET_CHILD_VAL (child_val2, 1);
+
+        ATOI_VAL (op1, child_val1);
+        ATOI_VAL (op2, child_val2);
+
+        res.type = REC_SEX_VAL_INT;
+        res.int_val = !op1 || (op1 && op2);
+
         break;
       }
     case REC_SEX_OP_LT:
