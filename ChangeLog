@@ -1,3 +1,8 @@
+2012-07-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	doc: documentation of the => operator.
+	* doc/recutils.texi (SEX Operators): Document the => operator.
+
 2012-07-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: implementation of the => sex operator.

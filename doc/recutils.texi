@@ -1841,6 +1841,15 @@ The boolean operators @strong{and} (@code{&&}), @strong{or}
 (@code{||}) and  @strong{not} (@code{!}) are supported with the same
 semantics as their C counterparts.
 
+A compound boolean operator @code{=>} is also supported in order to
+ease the elaboration of constraints in records.  @code{A => B}, which
+can be read as ``A implies B'', translates into @code{!A || (A && B)}.
+
+@example
+A => B 
+@end example
+
+
 The boolean operators expect integer operands, and will try to convert
 any string operand to an integer value.
 
