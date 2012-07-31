@@ -54,7 +54,8 @@ static const char *fnames[] =
     "%sort",
     "%type",
     "%typedef",
-    "%unique"
+    "%unique",
+    "%constraint"
   };
 
 const char *

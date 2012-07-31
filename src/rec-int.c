@@ -58,6 +58,8 @@ static int rec_int_check_record_unique (rec_rset_t rset, rec_record_t record,
                                         rec_buf_t errors);
 static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
                                           rec_buf_t errors);
+static int rec_int_check_record_sex_constraints (rec_rset_t rset, rec_record_t record,
+                                                 rec_buf_t errors);
 
 #if defined REC_CRYPT_SUPPORT
 static int rec_int_check_record_secrets (rec_rset_t rset, rec_record_t record,
@@ -229,8 +231,8 @@ rec_int_check_record (rec_db_t db,
 #if defined REC_CRYPT_SUPPORT
     + rec_int_check_record_secrets   (rset, record, errors)
 #endif
-    + rec_int_check_record_prohibit  (rset, record, errors);
-
+    + rec_int_check_record_prohibit  (rset, record, errors)
+    + rec_int_check_record_sex_constraints (rset, record, errors);
 
   return res;
 }
@@ -497,6 +499,34 @@ rec_int_check_record_prohibit (rec_rset_t rset,
                   res++;
                 }
             }
+        }
+    }
+
+  return res;
+}
+
+static int
+rec_int_check_record_sex_constraints (rec_rset_t rset,
+                                      rec_record_t record,
+                                      rec_buf_t errors)
+{
+  int res = 0;
+  size_t i = 0;
+  size_t num_constraints = rec_rset_num_sex_constraints (rset);
+
+  for (i = 0; i < num_constraints; i++)
+    {
+      bool status = false;
+      rec_sex_t sex = rec_rset_sex_constraint (rset, i);
+
+      if (!rec_sex_eval (sex, record, &status))
+        {
+          ADD_ERROR (errors,
+                     _("%s:%s: error: %%constraint[%d] violated in record\n"),
+                     rec_record_source (record),
+                     rec_record_location_str (record),
+                     i);
+          res++;
         }
     }
 
@@ -849,6 +879,35 @@ does not exist\n"),
                                 rec_field_location_str (field));
                       res++;
                     }
+                }
+            }
+          else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_CONSTRAINT)))
+            {
+              /* Check that the value of this field is a valid
+                 selection expression.  */
+              
+              rec_sex_t sex = rec_sex_new (false);
+              if (sex)
+                {
+                  if (rec_sex_compile (sex, field_value))
+                    {
+                      rec_sex_destroy (sex);
+                    }
+                  else
+                    {
+                      ADD_ERROR (errors,
+                                 _("%s:%s: error: value for %s[%zd] is not a valid selection expression\n"),
+                                 rec_record_source (descriptor),
+                                 rec_record_location_str (descriptor),
+                                 rec_field_name (field),
+                                 rec_record_get_field_index_by_name (descriptor, field));
+                      res++;
+                    }
+                }
+              else
+                {
+                  /* Out of memory.  */
+                  res++;
                 }
             }
           else if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_MANDATORY))

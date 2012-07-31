@@ -92,6 +92,10 @@ struct rec_rset_s
   size_t min_size;
   size_t max_size;
 
+  /* Sex-driven constraints.  */
+  rec_sex_t *constraints;
+  size_t num_constraints;
+
   /* Storage for records and comments.  */
   int record_type;
   int comment_type;
@@ -105,6 +109,7 @@ static void rec_rset_init (rec_rset_t rset);
 static void rec_rset_update_types (rec_rset_t rset);
 static void rec_rset_update_field_props (rec_rset_t rset);
 static void rec_rset_update_size_constraints (rec_rset_t rset);
+static void rec_rset_update_sex_constraints (rec_rset_t rset);
 
 static bool rec_rset_record_equal_fn (void *data1, void *data2);
 static void rec_rset_record_disp_fn (void *data);
@@ -175,6 +180,8 @@ rec_rset_new (void)
           rset->descriptor_pos = 0;
           rset->min_size = 0;
           rset->max_size = SIZE_MAX;
+          rset->constraints = NULL;
+          rset->num_constraints = 0;
 
           /* Create an empty type registry.  */
           rset->type_reg = rec_type_reg_new ();
@@ -223,12 +230,18 @@ void
 rec_rset_destroy (rec_rset_t rset)
 {
   rec_rset_fprops_t props, aux = NULL;
+  size_t i = 0;
 
   if (rset)
     {
       rec_record_destroy (rset->descriptor);
       rec_type_reg_destroy (rset->type_reg);
-      
+
+      for (i = 0; i < rset->num_constraints; i++)
+        {
+          rec_sex_destroy (rset->constraints[i]);
+        }
+
       props = rset->field_props;
       while (props)
         {
@@ -268,6 +281,8 @@ rec_rset_dup (rec_rset_t rset)
       /* XXX: make copies of the following structures.  */
       new->type_reg = NULL;
       new->field_props = NULL;
+      new->constraints = NULL;
+      new->num_constraints = 0;
 
       if (rset->order_by_fields)
         {
@@ -336,6 +351,7 @@ rec_rset_set_descriptor (rec_rset_t rset, rec_record_t record)
   rec_rset_update_types (rset);
   rec_rset_update_field_props (rset);
   rec_rset_update_size_constraints (rset);
+  rec_rset_update_sex_constraints (rset);
 }
 
 size_t
@@ -894,6 +910,19 @@ rec_rset_add_auto_fields (rec_rset_t rset,
   return rset;
 }
 
+size_t
+rec_rset_num_sex_constraints (rec_rset_t rset)
+{
+  return rset->num_constraints;
+}
+
+rec_sex_t
+rec_rset_sex_constraint (rec_rset_t rset,
+                         size_t index)
+{
+  return rset->constraints[index];
+}
+
 /*
  * Private functions
  */
@@ -1028,6 +1057,79 @@ rec_rset_comment_compare_fn (void *data1,
      record.  In any case, data1 < data2.  */
 
   return -1;
+}
+
+static void
+rec_rset_update_sex_constraints (rec_rset_t rset)
+{
+  /* Reset the existing constraints.  */
+
+  {
+    size_t i = 0;
+
+    for (i = 0; i < rset->num_constraints; i++)
+      {
+        rec_sex_destroy (rset->constraints[i]);
+      }
+    rset->num_constraints = 0;
+  }
+
+  /* If there is not a record descriptor in the record set then simply
+     return.  */
+
+  if (!rset->descriptor)
+    {
+      return;
+    }
+
+  /* Allocate memory for the constraints memory.  In case of
+     not-enough-memory simply return.  */
+
+  {
+    size_t num_constraints =
+      rec_record_get_num_fields_by_name (rset->descriptor, FNAME(REC_FIELD_CONSTRAINT));
+    rset->constraints = malloc (num_constraints * sizeof(rec_sex_t));
+
+    if (!rset->constraints)
+      {
+        return;
+      }
+  }
+  
+  /* Scan the record descriptor for %constraint: directives, and build
+     the constraints.  Not well formed constraint entries,
+     i.e. entries not containing valid sexes, are simply ignored.  */
+
+  {
+    rec_field_t field = NULL;
+    rec_mset_iterator_t iter;
+
+    iter = rec_mset_iterator (rec_record_mset (rset->descriptor));
+    while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **)&field, NULL))
+      {
+        const char *field_name = rec_field_name (field);
+        const char *field_value = rec_field_value (field);
+
+        if (rec_field_name_equal_p (field_name, FNAME(REC_FIELD_CONSTRAINT)))
+          {
+            rec_sex_t sex = rec_sex_new (false);
+            if (!sex)
+              {
+                return;
+              }
+
+            if (rec_sex_compile (sex, field_value))
+              {
+                rset->constraints[rset->num_constraints++] = sex;
+              }
+            else
+              {
+                rec_sex_destroy (sex);
+              }
+          }
+      }
+    rec_mset_iterator_free (&iter);
+  }
 }
 
 static void

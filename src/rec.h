@@ -395,7 +395,8 @@ enum rec_std_field_e
   REC_FIELD_SORT,
   REC_FIELD_TYPE,
   REC_FIELD_TYPEDEF,
-  REC_FIELD_UNIQUE
+  REC_FIELD_UNIQUE,
+  REC_FIELD_CONSTRAINT
 };
 
 /******************* Field name utilities **********************/
@@ -1036,6 +1037,12 @@ void rec_record_append (rec_record_t dest_record, rec_record_t src_record);
 
 typedef struct rec_rset_s *rec_rset_t;
 
+/* Opaque data type representing a selection expression.  This is
+   placed here as a forward declaration.  See below in this file for
+   the definition of the selection expressions stuff.  */
+
+typedef struct rec_sex_s *rec_sex_t;
+
 /* Record set mset types.  MSET_COMMENT is defined above.  */
 
 #define MSET_RECORD 1
@@ -1158,6 +1165,21 @@ size_t rec_rset_min_records (rec_rset_t rset);
 
 size_t rec_rset_max_records (rec_rset_t rset);
 
+/********************** Sex constraints *****************************/
+
+/* Return the number of sex constraints defined in a record set.  This
+   is 0 for record sets for which no sex constraints have been
+   defined.  */
+
+size_t rec_rset_num_sex_constraints (rec_rset_t rset);
+
+/* Return a given sex constraint defined in a record sex.  The
+   provided index must be between 0 and the value returned by
+   rec_rset_num_sex_constraints - 1.  */
+
+rec_sex_t rec_rset_sex_constraint (rec_rset_t rset, size_t index);
+
+
 /********************** Other functionality *************************/
 
 /* Rename a field in a record descriptor.  Field names are not
@@ -1248,12 +1270,6 @@ rec_rset_t rec_rset_add_auto_fields (rec_rset_t rset, rec_record_t record);
 /* Opaque type representing a database.  */
 
 typedef struct rec_db_s *rec_db_t;
-
-/* Opaque data type representing a selection expression.  This is
-   placed here as a forward declaration.  See below in this file for
-   the definition of the selection expressions stuff.  */
-
-typedef struct rec_sex_s *rec_sex_t;
 
 /* Opaque data type representing a registry of aggregates.  This is
    placed here as a forward declaration.  See below in this file for

@@ -81,6 +81,7 @@ Special Fields
 * %auto::               Auto counters and time-stamps.
 * %sort::               Keeping your record sets sorted.
 * %size::               Restricting the size of your database.
+* %constraint::         Setting arbitrary constraints.
 * %confidential::       Storing confidential information.
 
 Advanced Topics and Reference
@@ -1457,8 +1458,8 @@ comes before the class B even if they got the same score (@code{6.8}).
 @node %size
 @chapter %size
 
-This special field is used to define constraints in the number of
-records stored in a record set.  Its usage is:
+The @code{%size} special field is used to define constraints in the
+number of records stored in a record set.  Its usage is:
 
 @example
 %size: [@var{relational_operator}] @var{number}
@@ -1492,6 +1493,49 @@ It is valid to specify a size of @code{0}, meaning that no records of
 this type shall exist in the file.
 
 This field shall appear only once in a record descriptor.
+
+@node %constraint
+@chapter %constraint
+
+The @code{%constraint} special field is used to define constraints
+based on selection expressions.  Its usage is:
+
+@example
+%constraint: @var{expr}
+@end example
+
+@noindent
+where @var{expr} is a selection expression.  When a constraint is
+present in a record set it means that all the records of that type
+must satisfy the selection expression, i.e. the evaluation of the
+expression with the record returns 1.  Otherwise an integrity error is
+raised.
+
+Consider for example a record type @code{Task} featuring two fields of
+type date called @code{Start} and @code{End}.  We can use a constraint
+in the record set to specify that the task cannot start after it
+finishes:
+
+@example
+%rec: Task
+%type: Start,End date
+%constraint: Start << End
+@end example
+
+The ``implies'' operator @code{=>} is specially useful when defining
+constraints, since it allows to specify conditional constraints.  For
+example, we could specify that if a task is closed then it must have
+an @code{End} date in the following way:
+
+@example
+%rec: Task
+%type: Start,End date
+%constraint: Start << End
+%constraint: Status = 'CLOSED' => #End
+@end example
+
+Note that it is ok to declare several constraints in the same record
+set.
 
 @node %confidential
 @chapter %confidential

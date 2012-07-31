@@ -1,5 +1,47 @@
 2012-07-31  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,doc,torture: support for the %constraint special field.
+	* doc/recutils.texi (%size and %constraint): Document the
+	usage of the %constraint special field.
+
+	* src/rec-rset.c (rec_rset_num_sex_constraints): New function.
+	(rec_rset_sex_constraint): Likewise.
+
+	* src/rec-int.c (rec_int_check_record): Call to
+	rec_int_check_record_sex_constraints.
+	(rec_int_check_record_sex_constraints): New function.
+
+	* torture/utils/recfix.sh (constraint-sex-valid): New input file.
+	(constraint-sex-invalid): Likewise.
+	(constraint-sex-invalid-empty): Likewise.
+	(constraint-sex-several-valid): Likewise.
+	(constraint-sex-several-invalid): Likewise.
+	(constraint-sex-with-violation): Likewise.
+	(recfix-constraint-sex-valid): New test.
+	(recfix-constraint-sex-invalid): Likewise.
+	(recfix-constraint-sex-invalid-empty): Likewise.
+	(recfix-constraint-sex-several-valid): Likewise.
+	(recfix-constraint-sex-several-invalid): Likewise.
+	(recfix-constraint-sex-with-violation): Likewise.
+
+	* src/rec-int.c (rec_int_check_descriptor): Check for the
+	integrity of the %constraint fields.
+
+	* src/rec-rset.c (rec_rset_new): Initialize the internal
+	constraints structures to empty.
+	(rec_rset_destroy): Destroy the internal constraints structures.
+	(rec_rset_dup): Dup constraints.
+	(rec_rset_set_descriptor): Update sex constraints.
+	(rec_rset_update_sex_constraints): New function.
+
+	* src/rec.h (enum rec_std_field_e): New member
+	REC_FIELD_CONSTRAINT.
+
+	* src/rec-field-name.c (fnames): New special field name
+	%constraint.
+
+2012-07-31  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: test for the => operator in sexes.
 	* torture/utils/recsel.sh (implications): New input file.
 	(recsel-sex-implies-1): New test.

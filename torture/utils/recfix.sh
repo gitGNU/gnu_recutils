@@ -1122,6 +1122,101 @@ Bar: 10
 Bar: 20
 '
 
+test_declare_input_file constraint-sex-valid \
+'%rec: Task
+%constraint: Status = '\''Closed'\'' => #ClosedBy
+
+Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 1
+Status: Closed
+ClosedBy: bar
+
+Id: 2
+Status: Open
+'
+
+test_declare_input_file constraint-sex-invalid \
+'%rec: Task
+%constraint: Status &= 'Closed' => #ClosedBy
+
+Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 1
+Status: Closed
+
+Id: 2
+Status: Open
+'
+
+test_declare_input_file constraint-sex-invalid-empty \
+'%rec: Task
+%constraint:
+
+Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 1
+Status: Closed
+
+Id: 2
+Status: Open
+'
+
+test_declare_input_file constraint-sex-with-violation \
+'%rec: Task
+%constraint: Status = '\''Closed'\''
++ => #ClosedBy = 0
+
+Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 1
+Status: Closed
+
+Id: 2
+Status: Open
+'
+
+test_declare_input_file constraint-sex-several-valid \
+'%rec: Task
+%constraint: Status = '\''Closed'\'' => #ClosedBy
+%constraint: 1
+
+Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 1
+Status: Closed
+ClosedBy: mr foo
+
+Id: 2
+Status: Open
+'
+
+test_declare_input_file constraint-sex-several-invalid \
+'%rec: Task
+%constraint: Status = '\''Closed'\'' => #ClosedBy
+%constraint: Id = 1 => Status != '\''Closed'\''
+
+Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 1
+Status: Closed
+
+Id: 2
+Status: Open
+'
+
 #
 # Declare tests.
 #
@@ -2019,6 +2114,38 @@ test_tool recfix-type-rec-key-type-invalid xfail \
           recfix \
           '--check' \
           type-rec-key-type-invalid
+
+test_tool recfix-constraint-sex-valid ok \
+          recfix \
+          '--check' \
+          constraint-sex-valid \
+          ''
+
+test_tool recfix-constraint-sex-invalid xfail \
+          recfix \
+          '--check' \
+          constraint-sex-invalid
+
+test_tool recfix-constraint-sex-invalid-empty xfail \
+          recfix \
+          '--check' \
+          constraint-sex-invalid-empty
+
+test_tool recfix-constraint-sex-several-valid ok \
+          recfix \
+          '--check' \
+          constraint-sex-several-valid \
+          ''
+
+test_tool recfix-constraint-sex-several-invalid xfail \
+          recfix \
+          '--check' \
+          constraint-sex-several-invalid
+
+test_tool recfix-constraint-sex-with-violation xfail \
+          recfix \
+          '--check' \
+          constraint-sex-with-violation
 
 #
 # Cleanup.
