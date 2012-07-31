@@ -339,6 +339,20 @@ Name: Stefan Monnier
 Email: stefan@monnier.com
 '
 
+test_declare_input_file implications \
+'%rec: Task
+
+Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 1
+Status: Closed
+
+Id: 2
+Status: Open
+'
+
 #
 # Declare tests
 #
@@ -932,6 +946,18 @@ test_tool recsel-sex-date-after ok \
 'Date: Tue Nov 30 12:00:00 CET 2010
 
 Date: Tue Nov 30 12:00:00 CET 2030
+'
+
+test_tool recsel-sex-implies-1 ok \
+          recsel \
+          '-e "Status = '\''Closed'\'' => #ClosedBy"' \
+          implications \
+'Id: 0
+Status: Closed
+ClosedBy: jemarch
+
+Id: 2
+Status: Open
 '
 
 test_tool recsel-sex-conditional-1 ok \

@@ -1,3 +1,9 @@
+2012-07-31  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: test for the => operator in sexes.
+	* torture/utils/recsel.sh (implications): New input file.
+	(recsel-sex-implies-1): New test.
+
 2012-07-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc: documentation of the => operator.
