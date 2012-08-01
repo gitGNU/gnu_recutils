@@ -2012,7 +2012,7 @@ This command is especially useful with enumerated types."
     (if (and begin-pos end-pos)
         (progn
           (copy-region-as-kill begin-pos end-pos)
-          (message "Field copied to kill buffer"))
+          (message "Field copied to kill ring"))
       (message "Not in a field"))))
 
 (defun rec-cmd-kill-record ()
@@ -2022,9 +2022,10 @@ This command is especially useful with enumerated types."
         (end-pos (rec-end-of-record-pos)))
     (if (and begin-pos end-pos)
         (progn
-          (when (not (equal begin-pos (point-min)))
-            ;; Delete the newline before the record as well.
-            (setq begin-pos (- begin-pos 1)))
+          (when (looking-back "^[ \t]*")
+            ;; Delete the newline before the record as well, but do
+            ;; not include it in the kill ring.
+            (delete-region (match-beginning 0) (+ (match-end 0) 1)))
           (kill-region begin-pos end-pos))
       (message "Not in a record"))))
 
@@ -2036,7 +2037,7 @@ This command is especially useful with enumerated types."
     (if (and begin-pos end-pos)
         (progn
           (copy-region-as-kill begin-pos end-pos)
-          (message "record copied to kill buffer"))
+          (message "record copied to kill ring"))
       (message "Not in a record"))))
 
 ;;;; Definition of modes
