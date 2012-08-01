@@ -1,3 +1,14 @@
+2012-08-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: copy/kill fields and records commands.
+	* etc/rec-mode.el (rec-cmd-kill-field): New function.
+	(rec-cmd-copy-field): Likewise.
+	(rec-cmd-kill-record): Likewise.
+	(rec-cmd-copy-record): Likewise.
+	(rec-mode-edit-map): Map the copy/kill commands for fields and
+	records.
+	(rec-mode-map): Likewise.
+
 2012-07-31  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,doc,torture: support for the %constraint special field.

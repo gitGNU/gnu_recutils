@@ -145,6 +145,10 @@ hidden by default in navigation mode.")
     (define-key map "\C-csq" 'rec-cmd-select-fast)
     (define-key map "\C-css" 'rec-cmd-select-sex)
     (define-key map "\C-cI" 'rec-cmd-show-info)
+    (define-key map "\C-cf\C-w" 'rec-cmd-kill-field)
+    (define-key map "\C-cf\M-w" 'rec-cmd-copy-field)
+    (define-key map "\C-cr\C-w" 'rec-cmd-kill-record)
+    (define-key map "\C-cr\M-w" 'rec-cmd-copy-record)
     (define-key map (kbd "TAB") 'rec-cmd-goto-next-field)
     (define-key map "\C-cb" 'rec-cmd-jump-back)
     (define-key map "\C-c\C-c" 'rec-finish-editing)
@@ -165,6 +169,12 @@ hidden by default in navigation mode.")
     (define-key map "t" 'rec-cmd-show-type)
     (define-key map "m" 'rec-cmd-trim-field-value)
     (define-key map "c" 'rec-cmd-compile)
+    (define-key map "f\C-w" 'rec-cmd-kill-field)
+    (define-key map "f\M-w" 'rec-cmd-copy-field)
+    (define-key map "r\C-w" 'rec-cmd-kill-record)
+    (define-key map "r\M-w" 'rec-cmd-copy-record)
+    (define-key map "f\C-w" 'rec-cmd-kill-field)
+    (define-key map "f\M-w" 'rec-cmd-copy-field)
     (define-key map "sq" 'rec-cmd-select-fast)
     (define-key map "ss" 'rec-cmd-select-sex)
     (define-key map "\C-ct" 'rec-find-type)
@@ -1676,22 +1686,6 @@ will be used for fields of any type."
     (when pos
       (goto-char pos))))
 
-(defun rec-kill-field ()
-  "Kill the current field"
-  (interactive)
-  (let ((begin-pos (rec-beginning-of-field-pos))
-        (end-pos (rec-end-of-field-pos)))
-    (when (and begin-pos end-pos)
-      (kill-region begin-pos end-pos))))
-
-(defun rec-copy-field ()
-  "Copy the current field"
-  (interactive)
-  (let ((begin-pos (rec-beginning-of-field-pos))
-        (end-pos (rec-end-of-field-pos)))
-    (when (and begin-pos end-pos)
-      (copy-region-as-kill begin-pos end-pos))))
-
 (defun rec-delete-field ()
   "Delete the current field"
   (interactive)
@@ -2001,14 +1995,49 @@ This command is especially useful with enumerated types."
         (rec-unfold-field)
       (rec-fold-field))))
 
-;; (defun rec-cmd-create-new-record ()
-;;   "Create a new record with some default fields in the current
-;; record set."
-;;   (interactive)
-;;   (let ((key (rec-key))
-;;         (mandatory (rec-mandatory-fields))
-;;         fields record)
-;;     (when (not (member key mandatory))
+(defun rec-cmd-kill-field ()
+  "Kill the current field"
+  (interactive)
+  (let ((begin-pos (rec-beginning-of-field-pos))
+        (end-pos (rec-end-of-field-pos)))
+    (if (and begin-pos end-pos)
+        (kill-region begin-pos end-pos)
+      (message "Not in a field"))))
+
+(defun rec-cmd-copy-field ()
+  "Copy the current field"
+  (interactive)
+  (let ((begin-pos (rec-beginning-of-field-pos))
+        (end-pos (rec-end-of-field-pos)))
+    (if (and begin-pos end-pos)
+        (progn
+          (copy-region-as-kill begin-pos end-pos)
+          (message "Field copied to kill buffer"))
+      (message "Not in a field"))))
+
+(defun rec-cmd-kill-record ()
+  "Kill the current record"
+  (interactive)
+  (let ((begin-pos (rec-beginning-of-record-pos))
+        (end-pos (rec-end-of-record-pos)))
+    (if (and begin-pos end-pos)
+        (progn
+          (when (not (equal begin-pos (point-min)))
+            ;; Delete the newline before the record as well.
+            (setq begin-pos (- begin-pos 1)))
+          (kill-region begin-pos end-pos))
+      (message "Not in a record"))))
+
+(defun rec-cmd-copy-record ()
+  "Copy the current record"
+  (interactive)
+  (let ((begin-pos (rec-beginning-of-record-pos))
+        (end-pos (rec-end-of-record-pos)))
+    (if (and begin-pos end-pos)
+        (progn
+          (copy-region-as-kill begin-pos end-pos)
+          (message "record copied to kill buffer"))
+      (message "Not in a record"))))
 
 ;;;; Definition of modes
 
