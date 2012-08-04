@@ -661,7 +661,7 @@ rec_rset_get_field_type (rec_rset_t rset,
   if (props)
     {
       type = props->type;
-      if (!type)
+      if (!type && props->type_name)
         {
           type = rec_type_reg_get (rset->type_reg, props->type_name);
         }

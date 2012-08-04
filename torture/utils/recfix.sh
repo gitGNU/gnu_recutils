@@ -1217,6 +1217,14 @@ Id: 2
 Status: Open
 '
 
+test_declare_input_file unused-type \
+'%rec: Task
+%typedef: Status_t enum Open Closed
+%key: Id
+
+Id: 1
+'
+
 #
 # Declare tests.
 #
@@ -2146,6 +2154,12 @@ test_tool recfix-constraint-sex-with-violation xfail \
           recfix \
           '--check' \
           constraint-sex-with-violation
+
+test_tool recfix-unused-type ok \
+          recfix \
+          '--check' \
+          unused-type \
+          ''
 
 #
 # Cleanup.
