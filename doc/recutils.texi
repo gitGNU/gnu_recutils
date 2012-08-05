@@ -2189,7 +2189,7 @@ format.  This option is intended to be used by lisp programs.
 
 @command{recsel} reads the given rec files (or the data in the
 standard input if no file is specified) and prints out records (or
-part of records) based in some criteria specified by the user.
+part of records) based upon some criteria specified by the user.
 
 @menu
 * recsel Invocation::      Command line options.
