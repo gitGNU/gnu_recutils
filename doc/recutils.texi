@@ -161,7 +161,7 @@ medium simple databases.
 The GNU recutils suite comprises:
 
 @itemize @minus
-@item This texinfo manual, describing the Rec format and the accompanying software.
+@item This Texinfo manual, describing the Rec format and the accompanying software.
 @item A C library (librec) that provides a rich set of functions to manipulate rec data.
 @item A set of C utilities (recinf, recsel, recins, recdel, recset and  recfix) that can be used in shell scripts and in the command line to operate on rec files.
 @item An emacs mode, @code{rec-mode}.
@@ -712,7 +712,7 @@ the notion of ``primary key'' usually implemented in the relational
 systems.
 
 Consider for example a database of items in a stockage.  Each item is
-idenfitied by a numerical @code{Id} field.  No item may have more than
+identified by a numerical @code{Id} field.  No item may have more than
 one @code{Id}, and no items may exist without an associated
 @code{Id}.  Additionally, no two items may share the same @code{Id}.
 This common situation can be implementing by declaring @code{Id} as
@@ -760,7 +760,7 @@ Phone: +49 666 666 66
 @end example
 
 Where @code{Id} is a numeric identifier for a person. @code{Name} will
-never use several lines. @code{Age} will tipically be in the range
+never use several lines. @code{Age} will typically be in the range
 @code{0..120}, and there are only a few valid values for
 @code{MaritalStatus}: single, married and widow.  Phones may be
 restricted to some standard format as well to be valid.  All those
@@ -1137,7 +1137,7 @@ synopsis is:
 
 @noindent
 Universally Unique Identifiers (also known as UUIDs) are a way to
-assing a globally unique label to some object.  The @dfn{uuid} field
+assign a globally unique label to some object.  The @dfn{uuid} field
 type specifier serves that purpose.  The synopsis is:
 
 @example
@@ -1184,7 +1184,7 @@ There can be several @code{%auto} fields in the same record
 descriptor, the effective list of auto-generated fields being the
 union of all the entries.
 
-Auto generated fields are a very useful facility usually providen by
+Auto generated fields are a very useful facility usually provided by
 database implementations.  Consider for example a list of articles in
 stock in a toys store:
 
@@ -1335,7 +1335,7 @@ recutils, where @command{recfix} can be used for that purpose.
 @xref{recfix}.
 
 On the other hand any program listing, presenting or processing data
-extracted from the recfile must honour the @code{%sort} entry.  For
+extracted from the recfile must honor the @code{%sort} entry.  For
 example, when using the following @command{recsel} program in the
 database above we would get the output sorted by date:
 
@@ -1361,7 +1361,7 @@ The sorting of the selected field depends on its type:
 @end itemize
 
 It is possible to specify several fields as the sorting criteria.  In
-that case the records are sorted using a lexicoraphic order.  Consider
+that case the records are sorted using a lexicographic order.  Consider
 for example the following unsorted database containing marks for
 several students:
 
@@ -1534,7 +1534,7 @@ an @code{End} date in the following way:
 %constraint: Status = 'CLOSED' => #End
 @end example
 
-Note that it is ok to declare several constraints in the same record
+Note that it is acceptable to declare several constraints in the same record
 set.
 
 @node %confidential
@@ -1605,7 +1605,7 @@ Password: secret
 
 Unencrypted confidential fields are considered a data integrity error,
 and utilities like @code{recfix} will report it.  The same utility can
-be used to ``fix'' the database by massively encripting any
+be used to ``fix'' the database by massively encrypting any
 unencrypted field.
 
 Nothing prevents the usage of several passwords in the same database.
@@ -1624,7 +1624,7 @@ among all the webmasters, and the ShellPassword entries with a more
 restricted password available only to the administrator of the
 machine.
 
-The GNU recutils fully support encypted fields.  See the documentation
+The GNU recutils fully support encrypted fields.  See the documentation
 for @code{recsel}, @code{recins} and @code{recfix} for details on how
 to operate on files containing confidential fields.
 
@@ -1703,7 +1703,7 @@ such as @samp{a@{1z} are not accepted.
 
 The longest possible match is returned; this applies to the regular
 expression as a whole and (subject to this constraint) to
-subexpressions within groups.
+sub-expressions within groups.
 
 @node Common Options
 @chapter Common Options
@@ -2476,7 +2476,7 @@ the grouping criteria.
 
 For example, if we wanted to group the contents of the @code{Items}
 relation in groups of items of the same category, we would end with
-the following ``subrelations'':
+the following ``sub-relations'':
 
 @multitable @columnfractions .08 .21 .21 .08 .21 .21
 @item Id   @tab Type @tab Category @tab Price @tab LastSell @tab Available
@@ -2946,7 +2946,7 @@ confidential.  This operation requires a password.  If no password is
 specified with @option{-s} and the program is run in a terminal, a
 prompt is used to get the password from the user.
 
-Note that this is a descructive operation.
+Note that this is a destructive operation.
 @itemx @w{@kbd{--auto}}
 Insert auto-generated fields as appropriate in the records which are
 missing them.
