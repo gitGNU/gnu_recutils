@@ -1,3 +1,14 @@
+2012-08-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,torture: don't try to perform a join if the referred type does
+	not exist in the database.
+	* src/rec-db.c (rec_db_query): Don't perform a join if records of
+	the referred type cannot be found in the database.
+
+	* torture/utils/recsel.sh (non-existant-foreign-key): New input
+	file.
+	(recsel-non-existant-foreign-key): New test.
+
 2012-08-04  Michał Masłowski  <mtjm@mtjm.eu>
 
 	src,torture: fix a recfix crash reported by John Darrington.

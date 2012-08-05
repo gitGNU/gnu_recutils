@@ -338,11 +338,15 @@ rec_db_query (rec_db_t     db,
           if (ref_type && (rec_type_kind (ref_type) == REC_TYPE_REC))
             {
               const char *referred_type = rec_type_rec (ref_type);
-              rset = rec_db_join (db, type, join, referred_type);
-              if (!rset)
+
+              if (rec_db_get_rset_by_type (db, referred_type))
                 {
-                  /* Out of memory.  */
-                  return NULL;
+                  rset = rec_db_join (db, type, join, referred_type);
+                  if (!rset)
+                    {
+                      /* Out of memory.  */
+                      return NULL;
+                    }
                 }
             }
         }

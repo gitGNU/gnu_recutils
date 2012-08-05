@@ -353,6 +353,14 @@ Id: 2
 Status: Open
 '
 
+test_declare_input_file non-existant-foreign-key \
+'%rec: Record
+%type: Foreign rec NonExistant
+
+Name: Fred
+Foreign: xxx
+'
+
 #
 # Declare tests
 #
@@ -1645,6 +1653,14 @@ test_tool recsel-join-no-foreign ok \
 'field1: value11
 field2: value12
 field3: value13
+'
+
+test_tool recsel-non-existant-foreign-key ok \
+          recsel \
+          '-t Record -j Foreign' \
+          non-existant-foreign-key \
+'Name: Fred
+Foreign: xxx
 '
 
 #
