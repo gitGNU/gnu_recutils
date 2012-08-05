@@ -282,7 +282,7 @@ name is:
 @end example
 
 Field names are case-sensitive.  @code{Foo} and @code{foo} are
-considered different field names.
+different field names.
 
 The following list contains valid field names (the final colon is not
 part of the names):
@@ -541,7 +541,7 @@ Title: Loan
 
 @noindent
 Only one @code{%rec} field shall appear in a record descriptor.  If
-there are more it is considered an integrity violation.  It is highly
+there are more it is an integrity violation.  It is highly
 recommended (but not enforced) to place this field in the first
 position of the record descriptor.
 
@@ -614,10 +614,10 @@ appear in the records stored in a database.  Their usage is:
 In both cases the list of field names are separated by one or more
 blank characters.
 
-The fields listed in some @code{%mandatory} entry will be considered
+The fields listed in some @code{%mandatory} entry are
 mandatory; i.e.@:, at least one field with this name shall be present
-in any record of this kind.  Records violating this restriction will
-be considered invalid and a checking tool will report the situation as
+in any record of this kind.  Records violating this restriction are
+invalid and a checking tool will report the situation as
 a data integrity failure.
 
 Consider for example an ``addressbook'' database where each record
@@ -642,10 +642,10 @@ Phone: +98 43434433
 @end example
 
 @noindent
-Similarly, the fields listed in some @code{%prohibit} entry will be
-considered forbidden; i.e.@:, no field with this name shall be present
+Similarly, the fields listed in some @code{%prohibit} entry are
+forbidden; i.e.@:, no field with this name shall be present
 in any record of this kind.  Again, records violating this restriction
-will be considered invalid.
+are invalid.
 
 This can be useful when some field name is reserved for some future
 use.  For example, if we want to make sure no @code{Telex} will be
@@ -733,7 +733,7 @@ Title: Sticker big
 @noindent
 It would not make sense to have several primary keys in a record set,
 and thus it is not allowed to have several @code{%key} fields in the
-same record descriptor.  That situation is considered a data integrity
+same record descriptor.  That is a data integrity
 violation and will be reported by a checking tool.
 
 @node %doc
@@ -1327,7 +1327,7 @@ Date: 2 March 2009
 @noindent
 As you can see in the example above, the fact we use @code{%sort} in a
 database does not mean that the database will be always physically
-ordered.  Unsorted record sets are not considered a data integrity
+ordered.  Unsorted record sets are not a data integrity
 problem, and thus the diagnosis tools must not declare a recfile as
 invalid because of this.  Some tool may provide a way to physically
 order the fields in the file.  That is certainly the case of the GNU
@@ -1603,7 +1603,7 @@ Email: bar@@bar.com
 Password: secret
 @end example
 
-Unencrypted confidential fields are considered a data integrity error,
+Unencrypted confidential fields are a data integrity error,
 and utilities like @code{recfix} will report it.  The same utility can
 be used to ``fix'' the database by massively encrypting any
 unencrypted field.
