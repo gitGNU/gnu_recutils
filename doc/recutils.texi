@@ -1541,7 +1541,7 @@ set.
 @chapter %confidential
 
 This special field allows to declare a set of fields as
-@dfn{confidential}, meaning they contain sensible information such as
+@dfn{confidential}, meaning they contain sensitive information such as
 passwords or secrets.  Its usage is:
 
 @example
@@ -2668,7 +2668,7 @@ Will encrypt the value of the @code{Password} field with
 
 @command{recins} will issue a warning if a confidential field is
 inserted in the database but no password was provided to encrypt it.
-This is to avoid having unencrypted sensible data in the recfiles.
+This is to avoid having unencrypted sensitive data in the recfiles.
 
 @node recdel
 @chapter recdel
