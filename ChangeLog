@@ -1,5 +1,14 @@
 2012-08-05  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,doc: support for dot notation in simple fexes.
+	* doc/recutils.texi (Field Expressions): Document dot notation in
+	field expressions.
+
+	* src/rec-fex.c (rec_fex_parse_str_simple): Support for dot
+	notation in field names in simple fexes.
+
+2012-08-05  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,torture: don't try to perform a join if the referred type does
 	not exist in the database.
 	* src/rec-db.c (rec_db_query): Don't perform a join if records of

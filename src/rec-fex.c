@@ -552,12 +552,55 @@ rec_fex_parse_str_simple (rec_fex_t new,
     {
       if (strlen (elem_str) > 0)
         {
-          if (rec_field_name_p (elem_str)
-              && (elem = malloc (sizeof (struct rec_fex_elem_s))))
+          if (elem = malloc (sizeof (struct rec_fex_elem_s)))
             {
-              /* Add an element to the FEX.  */
+              const char *p = elem_str;
 
-              elem->field_name = strdup (elem_str);
+              /* Get the field name.  */
+
+              if (!rec_parse_regexp (&p,
+                                     "^" REC_FNAME_RE,
+                                     &(elem->field_name)))
+                {
+                  /* Parse error. */
+                  free (elem);
+                  return false;
+                }
+
+              /* Get the subname, if any, and modify the name
+                 accordingly.  */
+
+              if (*p == '.')
+                {
+                  char *subname = NULL;
+
+                  p++;
+                  if (!rec_parse_regexp (&p,
+                                         "^" REC_FNAME_RE,
+                                         &subname))
+                    {
+                      /* Parse error.  */
+                      free (elem->field_name);
+                      free (elem);
+                      return false;
+                    }
+
+                  /* Concatenate the field name and the subname.  */
+                  elem->field_name = rec_concat_strings (elem->field_name, "_", subname);
+                }
+
+              /* Check that there are no extra stuff at the end of the
+                 string.  */
+
+              if (*p != '\0')
+                {
+                  free (elem->field_name);
+                  free (elem);
+                  return false;
+                }
+
+              /* Initialize other attributes of the fex entry.  */
+
               elem->function_name = NULL;
               elem->function_data = NULL;
               elem->rewrite_to = NULL;

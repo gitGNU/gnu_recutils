@@ -2111,6 +2111,16 @@ SecondaryEmail: secondary@@email.com
 Email: other@@email.com
 @end example
 
+It is possible to use the dot notation in order to refer to field and
+sub-fields.  This is mainly used in the context of joins, where new
+fields are created having compound names such as @code{Foo_Bar}.  A
+reference to such a field can be done in the fex using dot notation
+like follows:
+
+@example
+Foo.Bar
+@end example
+
 @node recinf
 @chapter recinf
 
