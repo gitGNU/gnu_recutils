@@ -624,7 +624,7 @@ Consider for example an ``addressbook'' database where each record
 stores the information associated with a contact.  The records will be
 heterogeneous, in the sense they won't feature exactly the same
 fields: the contact of an internet shop will probably have an
-@code{Url} field, while the entry for our grandmother probably wont.
+@code{Url} field, while the entry for our grandmother probably won't.
 We still want to make sure that every entry has at a field: the name
 of the contact.  In that case we could use @code{%mandatory} as
 follows:
