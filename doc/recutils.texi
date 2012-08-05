@@ -1286,7 +1286,7 @@ directives.
 @node %sort
 @chapter %sort
 
-This special field allows to set a sorting criteria for the records
+This special field allows to set sorting criteria for the records
 contained in a record set.  Its usage is:
 
 @example
@@ -2201,7 +2201,7 @@ part of records) based in some criteria specified by the user.
 @node recsel Invocation
 @section recsel Invocation
 
-@command{recsel} searches rec files for records satisfying a certain
+@command{recsel} searches rec files for records satisfying certain
 criteria.  Synopsis:
 
 @example
@@ -2926,7 +2926,7 @@ default operation.
 @itemx @w{@kbd{--sort}}
 Perform a physical sort of all the records contained in the file (or
 the standard input) after checking for its integrity.  The sorting
-criteria is provided by the @code{%sort} special field, if any.  If
+criteria are provided by the @code{%sort} special field, if any.  If
 there is an integrity failure the sorting is not performed.
 
 Note that this is a destructive operation.
@@ -3195,7 +3195,7 @@ default records (with no name) are converted.
 @itemx @w{@kbd{--sort}=@var{fields}}
 Sort the output by the comma separated list of field names
 @var{fields}.  This option has precedence to whatever sorting criteria
-is specified in the corresponding record descriptor with @code{%sort}.
+are specified in the corresponding record descriptor with @code{%sort}.
 @end table
 
 @node rec2csv Conversion
