@@ -249,7 +249,7 @@ Simple.  The file contains a set of records separated by blank lines.
 Each record is composed by a set of fields with a name and a value.
 
 The GNU recutils can then be used to access the contents of the file.
-For example, we could get a list of the names of loaned books invoking
+For example, we could get a list of the names of loaned books by invoking
 @command{recsel} in the following way:
 
 @example
@@ -341,7 +341,7 @@ Email: john@@smith.name
 @end example
 
 The @dfn{size of a record} is defined as the number of fields that it
-contains.  There is no such like an empty record, so the minimum size
+contains.  A record cannot be empty, so the minimum size
 for a record is 1.  The maximum number of fields for a record is only
 limited by the available physical resources.  The size of the previous
 record is 3.
@@ -648,8 +648,8 @@ in any record of this kind.  Again, records violating this restriction
 are invalid.
 
 This can be useful when some field name is reserved for some future
-use.  For example, if we want to make sure no @code{Telex} will be
-even used in our contacts database, we would change the record
+use.  For example, if we want to make sure no @code{Telex} will ever
+be used in our contacts database, we would change the record
 descriptor as follows:
 
 @example
@@ -685,7 +685,7 @@ usage is:
 @noindent
 The list of field names are separated by one or more blank characters.
 
-The @code{%unique} special field allows to declare fields as unique,
+The @code{%unique} special field allows one to declare fields as unique,
 meaning there cannot exist more than one field with the same name in a
 single record.
 
@@ -708,7 +708,7 @@ descriptor.  The set of unique fields is the union of all the entries.
 set.  Its effect is that any field with that name must be both unique
 and mandatory, and additionally the values of those fields shall be
 unique in the context of the record set.  This closely corresponds to
-the notion of ``primary key'' usually implemented in the relational
+the notion of ``primary key'' usually implemented in relational
 systems.
 
 Consider for example a database of items in a stockage.  Each item is
@@ -767,7 +767,7 @@ restricted to some standard format as well to be valid.  All those
 restrictions (and many others) can be enforced by using @dfn{field
 types}.
 
-There are two kind of field types: anonymous and named.  Those are
+There are two kind of field types: @dfn{anonymous} and @dfn{named}.  Those are
 described in the following subsections.
 
 @menu
@@ -885,7 +885,7 @@ useful when several fields are declared to be of the same type:
 @noindent
 Anonymous types can be used by writing a type description instead of a
 type name.  They help to avoid superfluous type declarations.  A
-record containing a single Id field, for example, can be defined
+record containing a single @code{Id} field, for example, can be defined
 without having to use a @code{%typedef} in the following way:
 
 @example
@@ -1021,6 +1021,8 @@ name.  The synopsis is:
 @end example
 
 @noindent
+where @var{re} is the regular expression to match.
+
 For example, consider the @code{Id_t} type designed to represent
 the encoding of the identifier of ID cards in some country:
 
@@ -1037,7 +1039,7 @@ IDCard: invalid id card
 @end example
 
 @noindent
-Note that the slashes delimiting the @code{RE} can be replaced with
+Note that the slashes delimiting the @var{re} can be replaced with
 any other character that is not itself used as part of the regexp.
 That is useful in some cases such as:
 
@@ -1054,7 +1056,7 @@ several GNU extensions.  @xref{Regular Expressions}.
 
 Fields of this type contain symbols taken from an enumeration.
 
-The type is described by writing the sequence of symbols conforming
+The type is described by writing the sequence of symbols comprising
 the enumeration.  Enumeration symbols are strings described by the
 following regexp:
 
@@ -1075,7 +1077,7 @@ For example:
 @noindent
 It is possible to insert comments when describing an enum type.  The
 comments are delimited by parenthesis pairs.  The contents of the
-comments can be any character but parenthesis.  For example:
+comments can be any character but parentheses.  For example:
 
 @example
 %typedef: TaskStatus_t enum
@@ -1146,7 +1148,7 @@ type specifier serves that purpose.  The synopsis is:
 
 @noindent
 The format of the uuids is conformed by 32 hexadecimal digits,
-displayed in 5 groups separated by hyphens, as follows:
+displayed in 5 groups separated by hyphens. For example:
 
 @example
 550e8400-e29b-41d4-a716-446655440000
@@ -1329,7 +1331,7 @@ As you can see in the example above, the fact we use @code{%sort} in a
 database does not mean that the database will be always physically
 ordered.  Unsorted record sets are not a data integrity
 problem, and thus the diagnosis tools must not declare a recfile as
-invalid because of this.  Some tool may provide a way to physically
+invalid because of this.  Some tools may provide a way to physically
 order the fields in the file.  That is certainly the case of the GNU
 recutils, where @command{recfix} can be used for that purpose.
 @xref{recfix}.
@@ -1356,7 +1358,7 @@ The sorting of the selected field depends on its type:
 @itemize @minus
 @item Numeric fields (integers, ranges, reals) are numerically ordered.
 @item Boolean fields are ordered considering that ``false'' values come first.
-@item Dates are ordered as expected.
+@item Dates are ordered chronologically.
 @item Any other kind of field is ordered using a lexicographic order.
 @end itemize
 
@@ -1486,7 +1488,7 @@ The optional @var{relational_operator} shall be one of @code{<},
 %rec: Item
 %key: Id
 %size: <= 100
-%doc: We have at much 100 different articles.
+%doc: We have at most 100 different articles.
 @end example
 
 It is valid to specify a size of @code{0}, meaning that no records of
@@ -2167,7 +2169,7 @@ In addition of the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
 @table @samp
-@item -t TYPE
+@item -t @var{type}
 @itemx @w{@kbd{--type}=@var{type}}
 Select records of a given type only.
 @item -d
@@ -2212,7 +2214,7 @@ recsel [@var{option}]@dots{} [-n @var{indexes} | -e @var{record_expr} | -q @var{
 In addition of the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
-If no FILE is specified then the command acts like a filter, getting
+If no @var{file} is specified then the command acts like a filter, getting
 the data from the standard input and writing the result in the
 standard output.
 
@@ -2259,7 +2261,7 @@ Match the records occupying the given positions in its record set.
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
 records up to the tenth: @code{-n 0,2,4-9}.
-@item -e @var{record_expr}
+@item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be taken into account to
@@ -2554,11 +2556,11 @@ The new record that will be inserted by the command is constructed by
 using pairs of @samp{-f} and @samp{-v} options.  Each pair defines a
 field.  The order of the parameters is significant.
 
-If no FILE is specified then the command acts like a filter, getting
+If no @var{file} is specified then the command acts like a filter, getting
 the data from the standard input and writing the result in the
 standard output.
 
-If the specified FILE does not exist, it is created.
+If the specified @var{file} does not exist, it is created.
 
 In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
@@ -2592,8 +2594,8 @@ Be verbose when reporting integrity problems.
 Don't generate @dfn{auto} fields. @xref{%auto}.
 @end table
 
-Record selection arguments are supported as well.  If they are used
-then @command{recins} enters in ``replacement mode''.  Instead of
+Record selection arguments are supported too.  If they are used
+then @command{recins} enters ``replacement mode''.  Instead of
 appending the new record, matched records are replaced by copies of
 the provided record.  The selection arguments are summarized in the
 next table.
@@ -2642,8 +2644,8 @@ Register a new event in a log file, using recins as a filter:
 
 @example
 recins -f Date -v `date` -f Entry -v "$HW_ADDR device connected" \
-       < $LOGFILE > $LOGFILE.t \
-  && cat $LOGFILE.t >> $LOGFILE
+       < $LOG@var{file} > $LOG@var{file}.t \
+  && cat $LOG@var{file}.t >> $LOG@var{file}
 @end example
 
 @node recins Encryption
@@ -2782,7 +2784,7 @@ Make strings case-insensitive in selection expressions.
 @item -t
 @itemx @w{@kbd{--type}=@var{expr}}
 Operate on the records of the given type.  If this parameter is not
-specified then records of any type will be removed.
+specified then records of any type will be affected.
 @item -n @var{indexes}
 @item @w{@kbd{--number}=@var{indexes}}
 Operate on the records occupying the given positions in its record
@@ -2790,7 +2792,7 @@ set.  @var{indexes} must be a comma-separated list of numbers or
 ranges, the ranges being two numbers separated with dashes.  For
 example, the following list denotes the first, the third, the fourth
 and all records up to the tenth: @code{-n 0,2,4-9}.
-@item -e @var{record_expr}
+@item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be processed.
@@ -2817,18 +2819,18 @@ Actions:
 
 @table @samp
 @item -s
-@itemx @w{@kbd{--set}=@var{VALUE}}
-Set the value of the selected fields to @var{VALUE}.
+@itemx @w{@kbd{--set}=@var{value}}
+Set the value of the selected fields to @var{value}.
 @item -a
-@itemx @w{@kbd{--add}=@var{VALUE}}
-Add a new field to the selected record with value @var{VALUE}.
+@itemx @w{@kbd{--add}=@var{value}}
+Add a new field to the selected record with value @var{value}.
 @item -S
-@itemx @w{@kbd{--set-add}=@var{VALUE}}
-Set the value of the selected fields to @var{VALUE}.  If some of the
+@itemx @w{@kbd{--set-add}=@var{value}}
+Set the value of the selected fields to @var{value}.  If some of the
 fields don't exist in a record, append it with the specified value.
 @item -r
-@itemx @w{@kbd{--rename}=@var{VALUE}}
-Rename a field.  @var{VALUE} shall be a valid field name.  The field
+@itemx @w{@kbd{--rename}=@var{value}}
+Rename a field.  @var{value} shall be a valid field name.  The field
 expression associated with this action shall contain a single field
 name and an optional subscript.  If an entire record set is selected
 then the field is renamed in the record descriptor as well.
@@ -2844,14 +2846,14 @@ Don't use external record descriptors.
 Be verbose when reporting integrity problems.
 @itemx @w{@kbd{--force}}
 Perform the requested operation even in potentially dangerous
-situations, or when the integrity of the data stored in the fail is
+situations, or when the integrity of the data stored in the file is
 affected.
 @end table
 
 @node recset Examples
 @section recset Examples
 
-Remove ``TmpName'' fields from any record in ``data.rec'':
+Remove ``TmpName'' fields from any record in @file{data.rec}:
 
 @example
 $ recset -f TmpName -d data.rec
@@ -3039,8 +3041,8 @@ line.
 
 A recfmt template is a text string that may contain @dfn{template
 spots}.  Those spots are substituted in the template using the
-information of a given record.  Any text that is not into a spot is
-literally copied to the output.
+information of a given record.  Any text that is not within a spot is
+copied literally to the output.
 
 Spots are written surrounded by double curly braces, like:
 
