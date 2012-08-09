@@ -773,7 +773,7 @@ described in the following subsections.
 @menu
 * Declaring types::     Declaration of types in record descriptors.
 * Types and fields::    Associating fields with types.
-* Escalar types::       Numbers and ranges.
+* Scalar types::       Numbers and ranges.
 * String types::        Lines, limited strings and regular expressions. 
 * Enumerated types::    Enumerations and boolean values.
 * Time related types::  Dates and times.
@@ -893,11 +893,11 @@ without having to use a @code{%typedef} in the following way:
 %type: Id int
 @end example
 
-@node Escalar types
-@section Escalar types
+@node Scalar types
+@section Scalar types
 
 The rec format supports the declaration of fields of the following
-escalar types: integer numbers, ranges and reals.
+scalar types: integer numbers, ranges and reals.
 
 Signed @dfn{integers} are supported by using the @code{integer}
 declaration:

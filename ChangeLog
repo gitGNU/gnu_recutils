@@ -1,3 +1,8 @@
+2012-08-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	doc: typo fixed in manual.
+	* doc/recutils.texi: Incorrect "escalar" replaced by "scalar".
+
 2012-08-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,doc: support for dot notation in simple fexes.
