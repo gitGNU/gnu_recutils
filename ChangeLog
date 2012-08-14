@@ -1,3 +1,10 @@
+2012-08-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: compare real numbers with LC_NUMERIC=C.
+	* src/rec-utils.c: Include locale.h.
+	(rec_atod): Make sure that the dot is the decimal separator
+	regardless of the locale in the environment.
+
 2012-08-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc: typo fixed in manual.

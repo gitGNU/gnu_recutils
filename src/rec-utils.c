@@ -30,6 +30,7 @@
 #include <gettext.h>
 #define _(str) dgettext (PACKAGE, str)
 #include <string.h>
+#include <locale.h>
 
 #include <rec-utils.h>
 
@@ -64,7 +65,12 @@ rec_atod (const char *str,
 
   res = false;
   
+  setlocale (LC_NUMERIC, "C"); /* We want the dot to always be the
+                                  decimal separator. */
   *number = strtod (str, &end);
+  setlocale (LC_NUMERIC, ""); /* Restore the locale from the
+                                 environment.  */
+
   if ((*str != '\0') && (*end == '\0'))
     {
       /* The entire string is valid.  */
