@@ -110,7 +110,7 @@ The Recutils
 @chapter Introduction
 
 GNU recutils is a set of tools and libraries to access human-editable,
-text-based databases called @emph{recfiles}.  The data is stored as a
+text-based databases called @emph{recfiles}.  The data are stored as a
 sequence of records, each record containing an arbitrary number of
 named fields.  Advanced capabilities usually found in other data
 storage systems are supported: data types, data integrity (keys,
@@ -125,7 +125,7 @@ requirements.  Big systems having complex data storage requirements
 will probably make use of some full-fledged relational system such as
 MySQL or PostgreSQL.  Less demanding applications, or applications
 with special deployment requirements, may find it more convenient to
-use a simpler system such as SQLite, where the data is stored in a
+use a simpler system such as SQLite, where the data are stored in a
 single binary file.  XML files are often used to store configuration
 settings for programs, and to encode data to be transmitted through
 networks.
@@ -135,8 +135,8 @@ solutions@dots{} but consider the following characteristics of the
 data storage systems mentioned in the previous paragraph:
 
 @table @minus
-@item The stored data is not directly readable by humans.
-@item The stored data is definitely not directly writable by humans.
+@item The stored data are not directly readable by humans.
+@item The stored data are definitely not directly writable by humans.
 @item They are program dependent.
 @item They are not easily managed by version control systems.
 @end table
