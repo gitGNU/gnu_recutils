@@ -454,7 +454,7 @@ Type: sell
 Date: 20 April 2011
 
 Id: 2
-Type: adquisition
+Type: acquisition
 Date: 21 April 2011
 @end example
 
