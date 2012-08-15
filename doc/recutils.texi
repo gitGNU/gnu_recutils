@@ -6,6 +6,11 @@
 @afourpaper
 @comment %**end of header
 
+@comment Latin: id est 
+@macro ie
+@i{i.e.}
+@end macro
+
 @copying
 This manual is for GNU recutils (version @value{VERSION},
 @value{UPDATED}).
@@ -615,7 +620,7 @@ In both cases the list of field names are separated by one or more
 blank characters.
 
 The fields listed in some @code{%mandatory} entry are
-mandatory; i.e.@:, at least one field with this name shall be present
+mandatory; @ie{}, at least one field with this name shall be present
 in any record of this kind.  Records violating this restriction are
 invalid and a checking tool will report the situation as
 a data integrity failure.
@@ -643,7 +648,7 @@ Phone: +98 43434433
 
 @noindent
 Similarly, the fields listed in some @code{%prohibit} entry are
-forbidden; i.e.@:, no field with this name shall be present
+forbidden; @ie{}, no field with this name shall be present
 in any record of this kind.  Again, records violating this restriction
 are invalid.
 
@@ -973,7 +978,7 @@ Height: 10
 @section String types
 
 The @code{line} field type specifier can be used to restrict the value
-of a field to a single line, i.e.@: no newline characters are allowed.
+of a field to a single line, @ie{} no newline characters are allowed.
 For example, a type for proper names could be declared as:
 
 @example
@@ -1509,7 +1514,7 @@ based on selection expressions.  Its usage is:
 @noindent
 where @var{expr} is a selection expression.  When a constraint is
 present in a record set it means that all the records of that type
-must satisfy the selection expression, i.e. the evaluation of the
+must satisfy the selection expression, @ie{} the evaluation of the
 expression with the record returns 1.  Otherwise an integrity error is
 raised.
 
@@ -1952,7 +1957,7 @@ based on the value of some expression:
 expr1 ? expr2 : expr3
 @end example
 
-If @code{expr1} evaluates to true (i.e.@: it is an integer or the string
+If @code{expr1} evaluates to true (@ie{} it is an integer or the string
 representation of an integer and its value is not zero) then the
 operator yields @code{expr2}.  Otherwise it yields @code{expr3}.
 
@@ -2156,7 +2161,7 @@ $ recinf hackers.rec tasks.rec
 102 Task
 @end example
 
-If the input contains anonymous records, i.e.@: records that are before
+If the input contains anonymous records, @ie{} records that are before
 the first record descriptor, the corresponding line resume won't have
 a type name:
 
@@ -2619,7 +2624,7 @@ Remove records having a field whose value contains the substring
 @item -m @var{num}
 @itemx @w{@kbd{--random}=@var{num}}
 Select @var{num} random records.  If @var{num} is zero then all
-records are selected, i.e. no replace mode is activated.
+records are selected, @ie{} no replace mode is activated.
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.

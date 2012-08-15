@@ -1,5 +1,11 @@
 2012-08-15  John Darrington  <john@darrington.wattle.id.au>
 
+	doc: Add a macro for id est
+	* doc/recutils.texi: In English text, I think its easier to recognise these latin
+	abbreviations in italics.  So I've added a macro for i.e.
+
+2012-08-15  John Darrington  <john@darrington.wattle.id.au>
+
 	doc: "data" is plural ("datum" is the singular)
 	* doc/recutils.texi: I find conjugations like "this data" just sound wrong.
 
