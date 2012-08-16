@@ -1,5 +1,11 @@
 2012-08-16  John Darrington  <john@darrington.wattle.id.au>
 
+	doc: Grammar and typos
+	* doc/recutils.texi: Corrected various minor grammatical and
+	typographical errors.
+
+2012-08-16  John Darrington  <john@darrington.wattle.id.au>
+
 	doc: Comments vs. %doc
 	* doc/recutils.texi: Elaborated on the distinction between comments
 	and %doc fields. Added an example for %doc

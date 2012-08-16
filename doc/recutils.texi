@@ -136,7 +136,7 @@ settings for programs, and to encode data to be transmitted through
 networks.
 
 So it looks like all the needs are covered by the existing
-solutions@dots{} but consider the following characteristics of the
+solutions @dots{} but consider the following characteristics of the
 data storage systems mentioned in the previous paragraph:
 
 @table @minus
@@ -201,13 +201,13 @@ A book can have several titles.
 @item
 A book can have more than one author.
 @item
-Sometimes the author is not known.
+For some books the author is not known.
 @item
 Sometimes we don't care about who the author of a book is.
 @item
 We usually store our books at home.
 @item
-We use to loan books to friends.
+Sometimes we loan books to friends.
 @item
 On occasions we loose track to the physical location of a book.  Did
 we loan it to anyone?  Was it lost in the last move?  Is it in some
@@ -494,7 +494,7 @@ fields in a record descriptor, but such fields will have no effect on
 the described record set.
 
 What follows is an exhaustive list of the supported special fields.
-They are discussed in deep in the following sections.
+They are discussed in depth in the following sections.
 
 @table @code
 @item %rec
