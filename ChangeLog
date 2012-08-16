@@ -1,5 +1,11 @@
 2012-08-16  John Darrington  <john@darrington.wattle.id.au>
 
+	doc: Comments vs. %doc
+	* doc/recutils.texi: Elaborated on the distinction between comments
+	and %doc fields. Added an example for %doc
+
+2012-08-16  John Darrington  <john@darrington.wattle.id.au>
+
 	doc: Grammar
 	* doc/recutils.texi: "allows to" is not correct English.  Added a
 	subject or reformulated as appropriate.

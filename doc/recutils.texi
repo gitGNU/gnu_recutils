@@ -372,8 +372,10 @@ Age: 969
 Any line having an @code{#} (ASCII 0x23) character in the first column
 is a comment line.
 
-Comment lines are quite useful to insert additional information that
+Comment may be used to insert information that
 is not part of the database but useful otherwise.
+They are completely ignored by processing tools and can only ever be seen by
+looking at the recfile itself. 
 
 It is also quite convenient to comment-out information from the
 recfile without having to remove it in a definitive way: you may want
@@ -403,6 +405,15 @@ kind of markers:
 @dots{}
 
 # End of TODO
+@end example
+
+
+Unlike some file formats, comments in recfiles must be complete lines.
+You cannot start a comment in the middle of a line.
+For example, in the following, the @code{#} does @emph{not} start a comment:
+@example
+Name: Peter the Great # Russian Tsar
+Age: 53   
 @end example
 
 @node Record Descriptors
@@ -744,10 +755,39 @@ violation and will be reported by a checking tool.
 @node %doc
 @chapter %doc
 
-This field contains documentation about the record.
-
-It is like a comment, but this field can be managed in a programmatic
+This field contains documentation about the record.   It is similar to a
+comment (@pxref{Comments}), but this field can be managed in a programmatic
 way easier.
+
+Unlike a comment, @code{%doc} fields are recognised by tools such as
+@command{recinf} (@pxref{recinf}) which process record descriptors.
+It is a good idea to use the @code{%doc} field to provide a description
+of the records; typically a  description more verbose than the name provided
+by the  @code{%rec} field.
+For example, you might have two record sets with @code{%rec} and @code{%doc}
+fields as follows:
+
+@example
+%rec: Contact
+%doc: Family and friends
+
+Name: Granny
+Phone: +12 23456677
+
+Name: Edwina
+Phone: +55 0923 8765
+
+
+%rec: Associate
+%doc: Colleagues and other business contacts
+
+Name: Karl Schmidt
+Phone: +49 88234566
+
+Name: Genevieve Curie
+Phone: +33 34 87 65
+@end example
+
 
 @node %typedef and %type
 @chapter %typedef and %type
