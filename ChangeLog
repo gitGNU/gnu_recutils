@@ -1,5 +1,11 @@
 2012-08-16  John Darrington  <john@darrington.wattle.id.au>
 
+	doc: Reals always use the dot as separator
+	* doc/recutils.texi: Added a note to the effect that the LC_NUMERIC
+	locale class does not affect how real types are interpreted.
+
+2012-08-16  John Darrington  <john@darrington.wattle.id.au>
+
 	doc: Grammar and typos
 	* doc/recutils.texi: Corrected various minor grammatical and
 	typographical errors.

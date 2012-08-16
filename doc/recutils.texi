@@ -995,7 +995,10 @@ ten, like for example:
 @noindent
 @dfn{Real} fields can be declared with the @code{real} type specifier.
 A wide range of real numbers can be represented this way, only limited
-by the underlying floating point representation.  For example:
+by the underlying floating point representation.  
+The decimal separator is always the dot (@code{.}) character regardless
+of the locale setting.
+For example:
 
 @example
 %typedef: Longitude_t real
@@ -1013,6 +1016,7 @@ Examples of fields of type real:
 Width: 25.01
 Height: 10
 @end example
+
 
 @node String types
 @section String types
