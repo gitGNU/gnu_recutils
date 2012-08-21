@@ -197,7 +197,7 @@ rec_parser_perror (rec_parser_t parser,
   va_start (ap, fmt);
   vfprintf (stderr, fmt, ap);
   fputs (": ", stderr);
-  number_str = malloc(30);
+  number_str = NULL;  /* asprintf does the allocation */
   if (asprintf (&number_str, "%zu", parser->line) != -1)
     {
       fputs (number_str, stderr);
@@ -464,6 +464,8 @@ rec_parse_record (rec_parser_t parser,
     {
       /* Expected a field.  */
       parser->error = REC_PARSER_EFIELD;
+      rec_record_destroy (new);
+      *record = NULL;
       return false;
     }
 
@@ -687,7 +689,7 @@ rec_parse_field_name_str (const char *str)
     }
 
   strncpy (str2, str, str_size);
-  if (str2[str_size - 1] == ':')
+  if (str_size > 0 && str2[str_size - 1] == ':')
     {
       str2[str_size] = '\0';
     }
@@ -1193,10 +1195,10 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
     }
   else
     {
-      free (str);
       *comment = NULL;
     }
 
+  free (str);
   return ret;
 }
 

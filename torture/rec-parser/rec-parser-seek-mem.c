@@ -74,6 +74,7 @@ START_TEST(rec_parser_seek_mem_skip)
   fail_if (!rec_parse_record (parser, &record));
   fail_if (rec_record_num_fields (record) != 1);
   fail_if (rec_record_location (record) != 2);
+  rec_record_destroy (record);
   rec_parser_destroy (parser);
 }
 END_TEST

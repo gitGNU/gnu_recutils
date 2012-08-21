@@ -1,3 +1,67 @@
+2012-08-21  Michał Masłowski  <mtjm@mtjm.eu>
+
+	src,torture: Fix memory leaks found by valgrind in unit tests.
+	* src/rec-fex.c (rec_fex_destroy): Free rewrite_to of each
+	element.
+	(rec_fex_parse_str_simple): Free fex_str, rewrite_to of each
+	element and use common code for destroying partial results on
+	error.
+	(rec_fex_parse_str_subscripts): Free fex_str and in case of error
+	field_name and str of each element.
+	(rec_fex_parse_elem): Free elem->str, elem->field_name and
+	elem->rewrite_to on error.
+	* src/rec-parser.c (rec_parser_perror): Don't allocate number_str,
+	asprintf will do it.
+	(rec_parse_record): Free the record on error.
+	(rec_parse_comment): Free the comment string not only on error.
+	* src/rec-rset.c (rec_rset_destroy): Free constraints.
+	* src/rec-sex-ast.c (rec_sex_ast_node_destroy): Free the node.
+	* src/rec-types.c (rec_type_new): Free the type on error.
+	(rec_type_destroy): Free the data of enum and regexp types.
+
+	* torture/rec-fex/rec-fex-new.c (rec_fex_new_subscripts): Destroy
+	the fex after use.
+	* torture/rec-fex/rec-fex-str.c (rec_fex_str_nominal): Likewise.
+	* torture/rec-field/rec-field-set-name.c
+	(rec_field_set_name_empty): Destroy the field after use.
+	(rec_field_set_name_nonempty): Likewise.
+	* torture/rec-field/rec-field-set-value.c
+	(rec_field_set_value_empty): Likewise.
+	(rec_field_set_value_nonempty): Likewise.
+	* torture/rec-field/rec-field-value.c (rec_field_value_empty):
+	Likewise.
+	(rec_field_value_nonempty): Likewise.
+	* torture/rec-parser/rec-parse-record-str.c
+	(rec_parse_record_str_nominal): Free fname after use.
+	* torture/rec-parser/rec-parse-record.c
+	(rec_parse_record_nominal): Likewise.
+	* torture/rec-parser/rec-parse-rset.c (rec_parse_rset_nominal):
+	Destroy the rset after use.
+	* torture/rec-parser/rec-parser-new-mem.c
+	(rec_parser_new_mem_nominal): Likewise.
+	* torture/rec-parser/rec-parser-seek-mem.c
+	(rec_parser_seek_mem_skip): Destroy the record after use.
+	* torture/rec-writer/rec-write-comment-str.c
+	(rec_write_comment_str_nominal): Free str after use.
+	(rec_write_comment_str_sexp): Likewise.
+	* torture/rec-writer/rec-write-field-name-str.c
+	(rec_write_field_name_str_nominal): Likewise.
+	(rec_write_field_name_str_sexp): Likewise.
+	* torture/rec-writer/rec-write-field-str.c
+	(rec_write_field_str_nominal): Likewise.
+	(rec_write_field_str_sexp): Likewise.
+
+2012-08-21  Michał Masłowski  <mtjm@mtjm.eu>
+
+	src: Initialize unused fields to 0 in rec_fex_append.
+	* src/rec-fex.c (rec_fex_append): Zero new_elem content.
+
+2012-08-21  Michał Masłowski  <mtjm@mtjm.eu>
+
+	src: Fix an invalid read in an unit test detected by valgrind.
+	* src/rec-parser.c (rec_parse_field_name_str): Do the check for
+	trailing ':' only for nonempty strings.
+
 2012-08-16  John Darrington  <john@darrington.wattle.id.au>
 
 	doc: Reals always use the dot as separator

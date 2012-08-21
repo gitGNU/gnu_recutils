@@ -45,6 +45,7 @@ START_TEST(rec_write_field_name_str_nominal)
   str = rec_write_field_name_str (fname, REC_WRITER_NORMAL);
   fail_if (str == NULL);
   fail_if (strcmp (str, "foo:") != 0);
+  free (str);
 }
 END_TEST
 
@@ -62,6 +63,7 @@ START_TEST(rec_write_field_name_str_sexp)
   fname = "foo";
   str = rec_write_field_name_str (fname, REC_WRITER_SEXP);
   fail_if (strcmp (str, "\"foo\"") != 0);
+  free (str);
 }
 END_TEST
 

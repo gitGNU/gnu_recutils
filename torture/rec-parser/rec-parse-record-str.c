@@ -50,6 +50,7 @@ START_TEST(rec_parse_record_str_nominal)
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
   fail_if (!rec_field_name_equal_p (fname,
                                     rec_field_name (field)));
+  free (fname);
   rec_record_destroy (record);
 }
 END_TEST

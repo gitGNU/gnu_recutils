@@ -228,6 +228,7 @@ START_TEST(rec_fex_new_subscripts)
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 1)) != 23);
   fail_if (rec_fex_elem_min (rec_fex_get (fex, 2)) != -1);
   fail_if (rec_fex_elem_max (rec_fex_get (fex, 2)) != -1);
+  rec_fex_destroy (fex);
 }
 END_TEST
 

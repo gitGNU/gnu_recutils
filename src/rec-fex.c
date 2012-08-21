@@ -140,6 +140,7 @@ rec_fex_destroy (rec_fex_t fex)
     {
       for (i = 0; i < fex->num_elems; i++)
         {
+          free (fex->elems[i]->rewrite_to);
           free (fex->elems[i]->field_name);
           free (fex->elems[i]->str);
           free (fex->elems[i]);
@@ -454,6 +455,7 @@ rec_fex_append (rec_fex_t fex,
   new_elem = malloc (sizeof (struct rec_fex_elem_s));
   if (new_elem)
     {
+      memset (new_elem, 0, sizeof (*new_elem));
       new_elem->field_name = strdup (fname);
       if (!new_elem->field_name)
         {
@@ -530,7 +532,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
 {
   bool res;
   rec_fex_elem_t elem;
-  char *fex_str;
+  char *fex_str, *fex_str_orig;
   char *elem_str;
   size_t i;
 
@@ -544,6 +546,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
     {
       return false;
     }
+  fex_str_orig = fex_str;
 
   res = true;
 
@@ -564,7 +567,8 @@ rec_fex_parse_str_simple (rec_fex_t new,
                 {
                   /* Parse error. */
                   free (elem);
-                  return false;
+                  res = false;
+                  break;
                 }
 
               /* Get the subname, if any, and modify the name
@@ -582,7 +586,8 @@ rec_fex_parse_str_simple (rec_fex_t new,
                       /* Parse error.  */
                       free (elem->field_name);
                       free (elem);
-                      return false;
+                      res = false;
+                      break;
                     }
 
                   /* Concatenate the field name and the subname.  */
@@ -596,7 +601,8 @@ rec_fex_parse_str_simple (rec_fex_t new,
                 {
                   free (elem->field_name);
                   free (elem);
-                  return false;
+                  res = false;
+                  break;
                 }
 
               /* Initialize other attributes of the fex entry.  */
@@ -633,12 +639,14 @@ rec_fex_parse_str_simple (rec_fex_t new,
       /* Destroy parsed elements.  */
       for (i = 0; i < new->num_elems; i++)
         {
+          free (new->elems[i]->rewrite_to);
           free (new->elems[i]->field_name);
           free (new->elems[i]->str);
           free (new->elems[i]);
         }
     }
 
+  free (fex_str_orig);
   return res;
 }
 
@@ -648,7 +656,7 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
 {
   bool res;
   char *elem_str;
-  char *fex_str;
+  char *fex_str, *fex_str_orig;
   rec_fex_elem_t elem;
   int i;
 
@@ -659,6 +667,7 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
     {
       return false;
     }
+  fex_str_orig = fex_str;
 
   elem_str = strsep (&fex_str, ",");
   do
@@ -676,9 +685,12 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
           /* Parse error.  */
           for (i = 0; i < new->num_elems; i++)
             {
+              free (new->elems[i]->field_name);
+              free (new->elems[i]->str);
               free (new->elems[i]);
             }
 
+          free (elem);
           res = false;
           break;
         }
@@ -693,6 +705,7 @@ rec_fex_parse_str_subscripts (rec_fex_t new,
       new->str = strdup (str);
     }
 
+  free (fex_str_orig);
   return res;
 }
 
@@ -732,6 +745,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
                              &(elem->function_name)))
         {
           /* Parse error.  */
+          free (elem->str);
           return false;
         }
 
@@ -745,6 +759,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
                          &(elem->field_name)))
     {
       /* Parse error.  */
+      free (elem->str);
       return false;
     }
   
@@ -761,6 +776,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
                              &subname))
         {
           /* Parse error.  */
+          free (elem->str);
           return false;
         }
       
@@ -818,6 +834,8 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
                              &(elem->rewrite_to)))
         {
           /* Parse error.  */
+          free (elem->str);
+          free (elem->field_name);
           return false;
         }
     }
@@ -826,6 +844,7 @@ rec_fex_parse_elem (rec_fex_elem_t elem,
     {
       free (elem->str);
       free (elem->field_name);
+      free (elem->rewrite_to);
       return false;
     }
 

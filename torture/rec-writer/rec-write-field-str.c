@@ -47,6 +47,7 @@ START_TEST(rec_write_field_str_nominal)
   fail_if (str == NULL);
   rec_field_destroy (field);
   fail_if (strcmp (str, "foo: value") != 0);
+  free (str);
 }
 END_TEST
 
@@ -67,6 +68,7 @@ START_TEST(rec_write_field_str_sexp)
   fail_if (str == NULL);
   rec_field_destroy (field);
   fail_if (strcmp (str, "(field  \"foo\" \"value\")") != 0);
+  free (str);
 }
 END_TEST
 

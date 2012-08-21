@@ -52,6 +52,8 @@ START_TEST(rec_field_set_value_empty)
   rec_field_set_value (field, "");
   field_value = rec_field_value (field);
   fail_if(strcmp (field_value, "") != 0);
+
+  rec_field_destroy (field);
 }
 END_TEST
 
@@ -78,6 +80,8 @@ START_TEST(rec_field_set_value_nonempty)
   rec_field_set_value (field, "foo");
   field_value = rec_field_value (field);
   fail_if(strcmp (field_value, "foo") != 0);
+
+  rec_field_destroy (field);
 }
 END_TEST
 

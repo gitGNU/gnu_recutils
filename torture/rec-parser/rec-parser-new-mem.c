@@ -51,6 +51,7 @@ START_TEST(rec_parser_new_mem_nominal)
   parser = rec_parser_new_mem (str, strlen(short_str), "dummy");
   fail_if (!rec_parse_rset (parser, &rset));
   fail_if (rec_rset_num_records (rset) != 2);
+  rec_rset_destroy (rset);
   rec_parser_destroy (parser);
 }
 END_TEST

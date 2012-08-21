@@ -46,12 +46,14 @@ START_TEST(rec_parse_rset_nominal)
   parser = rec_parser_new_str (str, "dummy");
   fail_if (!rec_parse_rset (parser, &rset));
   fail_if (rec_rset_num_records (rset) != 3);
+  rec_rset_destroy (rset);
   rec_parser_destroy (parser);
 
   str = "%rec: foo\n\nfoo1: bar1\n\nfoo2: bar2\n\nfoo3: bar3";
   parser = rec_parser_new_str (str, "dummy");
   fail_if (!rec_parse_rset (parser, &rset));
   fail_if (rec_rset_num_records (rset) != 3);
+  rec_rset_destroy (rset);
   rec_parser_destroy (parser);
 
   str = "foo1: bar1\n\n#foo2: bar2\n\nfoo3: bar3";
@@ -60,6 +62,7 @@ START_TEST(rec_parse_rset_nominal)
   fail_if (rec_rset_num_elems (rset) != 3);
   fail_if (rec_rset_num_comments (rset) != 1);
   fail_if (rec_rset_num_records (rset) != 2);
+  rec_rset_destroy (rset);
   rec_parser_destroy (parser);
 }
 END_TEST

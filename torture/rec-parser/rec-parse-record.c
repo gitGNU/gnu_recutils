@@ -55,6 +55,7 @@ START_TEST(rec_parse_record_nominal)
                                   rec_field_name (field)));
   rec_record_destroy (record);
   rec_parser_destroy (parser);
+  free (fname);
 
   str = "foo: bar\nfoo2: bar2";
   fname = rec_parse_field_name_str ("foo");
@@ -65,11 +66,13 @@ START_TEST(rec_parse_record_nominal)
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
   fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
+  free (fname);
   fname = rec_parse_field_name_str ("foo2");
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 1);
   fail_if (strcmp (rec_field_value (field), "bar2") != 0);
   fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
+  free (fname);
   rec_record_destroy (record);
   rec_parser_destroy (parser);
 
@@ -82,16 +85,19 @@ START_TEST(rec_parse_record_nominal)
   fail_if (strcmp (rec_field_value (field), "bar") != 0);
   fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
+  free (fname);
   fname = rec_parse_field_name_str ("foo2");
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 1);
   fail_if (strcmp (rec_field_value (field), "") != 0);
   fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
+  free (fname);
   fname = rec_parse_field_name_str ("foo3");
   field = (rec_field_t) rec_mset_get_at (rec_record_mset (record), MSET_FIELD, 2);
   fail_if (strcmp (rec_field_value (field), "bar3") != 0);
   fail_if (!rec_field_name_equal_p (fname,
                                   rec_field_name (field)));
+  free (fname);
   rec_record_destroy (record);
   rec_parser_destroy (parser);
 }

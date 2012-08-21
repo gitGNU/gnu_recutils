@@ -55,6 +55,7 @@ START_TEST(rec_fex_str_nominal)
   fail_if (str == NULL);
   fail_if (strcmp (str, "foo") != 0);
   free (str);
+  rec_fex_destroy (fex);
 
   fex = rec_fex_new ("foo bar baz", REC_FEX_SIMPLE);
   fail_if (fex == NULL);
@@ -70,6 +71,7 @@ START_TEST(rec_fex_str_nominal)
   fail_if (str == NULL);
   fail_if (strcmp (str, "foo,bar,baz") != 0);
   free (str);
+  rec_fex_destroy (fex);
 
   fex = rec_fex_new ("foo[0],bar[1-2],baz", REC_FEX_SUBSCRIPTS);
   fail_if (fex == NULL);
@@ -85,6 +87,7 @@ START_TEST(rec_fex_str_nominal)
   fail_if (str == NULL);
   fail_if (strcmp (str, "foo[0],bar[1-2],baz") != 0);
   free (str);
+  rec_fex_destroy (fex);
 }
 END_TEST
 

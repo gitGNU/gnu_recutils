@@ -45,12 +45,14 @@ START_TEST(rec_write_comment_str_nominal)
   str = rec_write_comment_str (comment, REC_WRITER_NORMAL);
   rec_comment_destroy (comment);
   fail_if (strcmp (str, "#foo bar") != 0);
+  free (str);
 
   comment = rec_comment_new ("");
   str = rec_write_comment_str (comment, REC_WRITER_NORMAL);
   fail_if (str == NULL);
   rec_comment_destroy (comment);
   fail_if (strcmp (str, "#") != 0);
+  free (str);
 }
 END_TEST
 
@@ -70,12 +72,14 @@ START_TEST(rec_write_comment_str_sexp)
   fail_if (str == NULL);
   rec_comment_destroy (comment);
   fail_if (strcmp (str, "(comment \"foo bar\")") != 0);
+  free (str);
 
   comment = rec_comment_new ("");
   str = rec_write_comment_str (comment, REC_WRITER_SEXP);
   fail_if (str == NULL);
   rec_comment_destroy (comment);
   fail_if (strcmp (str, "(comment \"\")") != 0);
+  free (str);
 }
 END_TEST
 

@@ -454,7 +454,7 @@ rec_type_new (const char *str)
         {
           if (!rec_blank_p (*p))
             {
-              free (new);
+              rec_type_destroy (new);
               new = NULL;
               break;
             }
@@ -673,6 +673,20 @@ rec_type_check (rec_type_t type,
 void
 rec_type_destroy (rec_type_t type)
 {
+  int i;
+
+  if (type->kind == REC_TYPE_ENUM)
+    {
+      for (i = 0; type->data.names[i]; i++)
+        {
+          free (type->data.names[i]);
+        }
+    }
+  else if (type->kind == REC_TYPE_REGEXP)
+    {
+      regfree (&type->data.regexp);
+    }
+
   free (type->name);
   free (type);
 }

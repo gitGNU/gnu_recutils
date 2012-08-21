@@ -241,6 +241,7 @@ rec_rset_destroy (rec_rset_t rset)
         {
           rec_sex_destroy (rset->constraints[i]);
         }
+      free (rset->constraints);
 
       props = rset->field_props;
       while (props)

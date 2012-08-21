@@ -129,6 +129,7 @@ rec_sex_ast_node_destroy (rec_sex_ast_node_t node)
     }
 
   free (node->fixed_val);
+  free (node);
 }
 
 enum rec_sex_ast_node_type_e
