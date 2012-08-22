@@ -1,3 +1,8 @@
+2012-08-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-types.c (rec_type_destroy): Be a no-operation in case
+	the passed type is NULL.
+
 2012-08-21  Michał Masłowski  <mtjm@mtjm.eu>
 
 	src,torture: Fix memory leaks found by valgrind in unit tests.
