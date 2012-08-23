@@ -100,7 +100,7 @@ rec_extract_file (const char *str)
       /* Get the match.  */
       rec_file_length = matches.rm_eo - matches.rm_so;
       rec_file = malloc (rec_file_length + 1);
-      strncpy (rec_file, str + matches.rm_so + 1, rec_file_length - 1);
+      memcpy (rec_file, str + matches.rm_so + 1, rec_file_length - 1);
       rec_file[rec_file_length - 1] = '\0';
     }
 
@@ -128,7 +128,7 @@ rec_extract_url (const char *str)
       /* Get the match.  */
       rec_url_length = matches.rm_eo - matches.rm_so;
       rec_url = malloc (rec_url_length + 1);
-      strncpy (rec_url, str + matches.rm_so, rec_url_length);
+      memcpy (rec_url, str + matches.rm_so, rec_url_length);
       rec_url[rec_url_length] = '\0';
     }
 
@@ -157,7 +157,7 @@ rec_extract_type (const char *str)
       /* Get the match.  */
       rec_type_length = matches.rm_eo - matches.rm_so;
       rec_type = malloc (rec_type_length + 1);
-      strncpy (rec_type, str + matches.rm_so, rec_type_length);
+      memcpy (rec_type, str + matches.rm_so, rec_type_length);
       rec_type[rec_type_length] = '\0';
     }
 
@@ -225,7 +225,7 @@ rec_parse_regexp (const char **str, const char *re, char **result)
                  since the pattern starts with a ^ rm_so shall be 0 and we
                  can use rm_eo relative to *p.  */
               *result = malloc (pm.rm_eo + 1);
-              strncpy (*result, p, pm.rm_eo);
+              memcpy (*result, p, pm.rm_eo);
               (*result)[pm.rm_eo] = '\0';
             }
 
@@ -428,9 +428,9 @@ rec_concat_strings (const char *str1,
 
   if (res)
     {
-      strncpy (res, str1, strlen (str1));
-      strncpy (res + strlen (str1), str2, strlen (str2));
-      strncpy (res + strlen (str1) + strlen (str2), str3, strlen (str3) + 1);
+      memcpy (res, str1, strlen (str1));
+      memcpy (res + strlen (str1), str2, strlen (str2));
+      memcpy (res + strlen (str1) + strlen (str2), str3, strlen (str3) + 1);
     }
 
   return res;

@@ -84,7 +84,7 @@ hidden by default in navigation mode.")
 
 (defconst rec-time-stamp-format "%Y-%m-%d %a %H:%M"
   "Format for `format-time-string' which is used for time stamps.")
-  
+
 (defvar rec-comment-re "^#.*"
   "regexp denoting a comment line")
 
@@ -226,7 +226,7 @@ If the point is not at the beginning of a field name return nil"
     (goto-char (match-end 0))
     (buffer-substring-no-properties (match-beginning 0)
                                     (- (match-end 0) 1))))
- 
+
 (defun rec-parse-field-value ()
   "Return the field value under the pointer.
 
@@ -991,13 +991,13 @@ the visibility."
   "Unfold any folded field in the current record."
   (let ((record (rec-current-record)))
     (when (rec-record-p record)
-      (mapcar 
+      (mapcar
        (lambda (field)
          (save-excursion
            (goto-char (rec-field-position field))
            (rec-unfold-field)))
        (rec-record-fields record)))))
-          
+
 (defun rec-toggle-field-visibility ()
   "Toggle the visibility of the current field."
   (let ((field (rec-current-field)))
@@ -1035,7 +1035,7 @@ the visibility."
 ;;
 ;;    int, bool, range, real, size, line, regexp, date,
 ;;    enum, field, email, uuid, rec
-;;      
+;;
 ;; DESCR is the data describing the type, and its value depends on the
 ;; kind:
 ;;
@@ -1044,12 +1044,12 @@ the visibility."
 ;;    - For ranges, it is a list (MIN MAX) defining the range
 ;;      [MIN,MAX].  Open ranges can be specified by using nil.  For
 ;;      example: (0,nil).
-;;     
+;;
 ;;    - For regexps, it is a string containing the regexp.
 ;;
 ;;    - For record types, it is a string containing the type of
 ;;      the referred records.
-;;     
+;;
 ;;    - For any other type, it is nil.
 
 (defvar rec-types
@@ -1496,7 +1496,7 @@ or `nil' if no selection is active.")
            (pos (rec-record-position first-record)))
       (goto-char pos)
       (rec-show-record))))
-          
+
 (defun rec-cmd-select ()
   "Perform a selection on the current buffer using some criteria.
 
@@ -1521,7 +1521,7 @@ A prefix argument means to use a case-insensitive search."
   (when (not (equal sex ""))
     (setq rec-current-selection (rec-query :sex sex))
     (rec-navigate-selection)))
-  
+
 ;;;; Commands
 ;;
 ;; The following functions implement interactive commands available in
@@ -1927,7 +1927,7 @@ This command is especially useful with enumerated types."
                                          "%) ")))
                      percentages)
              (message "%s" str))))))
-    
+
 (defun rec-cmd-append-field ()
   "Goto the end of the record and switch to edit record mode."
   (interactive)

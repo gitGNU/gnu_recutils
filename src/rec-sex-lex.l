@@ -186,7 +186,7 @@ rec_sex_lex_extract_name (char *str)
 
   size = p - str;
   res = malloc (size + 1);
-  strncpy (res, str, size);
+  memcpy (res, str, size);
   res[size] = 0;
 
   return res;

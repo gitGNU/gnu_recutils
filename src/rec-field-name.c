@@ -79,7 +79,7 @@ rec_field_name_normalise (const char *str)
   normalised_name = malloc (strlen (str) + 1);
   if (normalised_name)
     {
-      strncpy (normalised_name, str, strlen (str));
+      memcpy (normalised_name, str, strlen (str));
       normalised_name[strlen(str)] = '\0';
       
       for (i = 0; i < strlen (normalised_name); i++)

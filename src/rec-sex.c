@@ -911,8 +911,8 @@ rec_sex_eval_node (rec_sex_t sex,
 
             res.type = REC_SEX_VAL_STR;
             res.str_val = malloc (str1_size + str2_size + 1);
-            strncpy (res.str_val, child_val1.str_val, str1_size);
-            strncpy (res.str_val + str1_size, child_val2.str_val, str2_size);
+            memcpy (res.str_val, child_val1.str_val, str1_size);
+            memcpy (res.str_val + str1_size, child_val2.str_val, str2_size);
             res.str_val[str1_size + str2_size] = '\0';
           }
         else
@@ -1051,9 +1051,9 @@ rec_sex_eval_node (rec_sex_t sex,
                 {
                   char *effective_field_name = malloc (sizeof (char) *
                                                        (strlen (field_name) + strlen (field_subname) + 2));
-                  strncpy (effective_field_name, field_name, strlen(field_name));
+                  memcpy (effective_field_name, field_name, strlen(field_name));
                   effective_field_name[strlen(field_name)] = '_';
-                  strncpy (effective_field_name + strlen(field_name) + 1, field_subname, strlen(field_subname) + 1);
+                  memcpy (effective_field_name + strlen(field_name) + 1, field_subname, strlen(field_subname) + 1);
 
                   field = rec_record_get_field_by_name (record, effective_field_name, index);
                 }

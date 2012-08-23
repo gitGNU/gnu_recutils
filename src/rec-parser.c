@@ -688,7 +688,7 @@ rec_parse_field_name_str (const char *str)
       return NULL;
     }
 
-  strncpy (str2, str, str_size);
+  memcpy (str2, str, str_size);
   if (str_size > 0 && str2[str_size - 1] == ':')
     {
       str2[str_size] = '\0';

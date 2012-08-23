@@ -1018,9 +1018,9 @@ rec_db_merge_records (rec_record_t record1,
             return NULL;
           }
 
-        strncpy (new_name, prefix, strlen (prefix));
+        memcpy (new_name, prefix, strlen (prefix));
         new_name[strlen (prefix)] = '_';
-        strncpy (new_name + strlen (prefix) + 1, field_name, strlen (field_name) + 1);
+        memcpy (new_name + strlen (prefix) + 1, field_name, strlen (field_name) + 1);
 
         if (!rec_field_set_name (new_field, new_name))
           {
@@ -1690,7 +1690,7 @@ rec_db_process_fex (rec_db_t db,
                           return NULL;
                         }
                       
-                      strncpy (agg_field_name, function_name, strlen (function_name) + 1);
+                      memcpy (agg_field_name, function_name, strlen (function_name) + 1);
                       strcat (agg_field_name, "_");
                       strcat (agg_field_name, field_name);
                     }

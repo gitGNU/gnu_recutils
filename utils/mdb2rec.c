@@ -434,7 +434,7 @@ process_table (MdbCatalogEntry *entry)
 
           /* Compute the value of the field.  */
           field_value = xmalloc (bound_lens[i] + 1);
-          strncpy (field_value, bound_values[i], bound_lens[i]);
+          memcpy (field_value, bound_values[i], bound_lens[i]);
           field_value[bound_lens[i]] = '\0';
 
           if (mdb2rec_keep_empty_fields || (strlen (field_value) > 0))

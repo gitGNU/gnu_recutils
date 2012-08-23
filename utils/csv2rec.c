@@ -201,7 +201,7 @@ field_cb (void *s, size_t len, void *data)
 
   ctx = (struct csv2rec_ctx *) data;
   str = xmalloc (len + 1);
-  strncpy (str, s, len);
+  memcpy (str, s, len);
   str[len] = '\0';
 
   if (ctx->header_p)

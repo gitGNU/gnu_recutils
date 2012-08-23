@@ -1056,7 +1056,7 @@ rec_int_merge_remote (rec_rset_t rset,
               curl = curl_easy_init ();
 
               /* Create a temporary file.  */
-              strncpy (tmpfile_name, "recint-XXXXXX", 13);
+              memcpy (tmpfile_name, "recint-XXXXXX", 13);
               tmpfile_name[13] = '\0';
               tmpfile_des = gen_tempname (tmpfile_name, 0, 0, GT_FILE);
               external_file = fdopen (tmpfile_des, "r+");

@@ -2501,10 +2501,10 @@ contained in the following table:
 @item 20   @tab Sexy Puzzle @tab Toy @tab 6.20 @tab 21/April/2012 @tab 12
 @end multitable
 
-The @acronym{SQL} aggregate functions can be applied to the totality
-of the tuples in the relation.  For example, using the @code{Count}
-aggregate function we can calculate the number of entries in the
-relation as follows:
+The SQL aggregate functions can be applied to the totality of the
+tuples in the relation.  For example, using the @code{Count} aggregate
+function we can calculate the number of entries in the relation as
+follows:
 
 @example
 > SELECT Count(Id) FROM Items

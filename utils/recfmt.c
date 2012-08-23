@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,7 +214,7 @@ recfmt_apply_template (rec_record_t record,
       if (matches.rm_so > 0)
         {
           tmp = xmalloc (matches.rm_so + 1);
-          strncpy (tmp, p, matches.rm_so);
+          memcpy (tmp, p, matches.rm_so);
           tmp[matches.rm_so] = '\0';
           rec_buf_puts (tmp, result_buf);
           free (tmp);
@@ -223,7 +223,7 @@ recfmt_apply_template (rec_record_t record,
       /* Get the match.  */
       tmp_size = matches.rm_eo - matches.rm_so - 4;
       tmp = xmalloc (tmp_size + 1);
-      strncpy (tmp, p + matches.rm_so + 2, tmp_size);
+      memcpy (tmp, p + matches.rm_so + 2, tmp_size);
       tmp[tmp_size] = '\0';
 
       /* Advance p. */
