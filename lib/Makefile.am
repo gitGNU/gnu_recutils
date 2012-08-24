@@ -597,7 +597,7 @@ EXTRA_libgnu_la_SOURCES += gettimeofday.c
 
 distclean-local: clean-GNUmakefile
 clean-GNUmakefile:
-	test x'$(VPATH)' != x && rm -f $(top_builddir)/GNUmakefile || :
+	test '$(srcdir)' = . || rm -f $(top_builddir)/GNUmakefile
 
 EXTRA_DIST += $(top_srcdir)/GNUmakefile
 
@@ -2472,6 +2472,7 @@ EXTRA_libgnu_la_SOURCES += time_r.c
 
 ## begin gnulib module timespec
 
+libgnu_la_SOURCES += timespec.c
 
 EXTRA_DIST += timespec.h
 
