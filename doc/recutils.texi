@@ -73,40 +73,23 @@ Overview
 * A Little Example::    Recutils in action.
 
 The Basic Rec Format
-* Fields and Records::  The basic structures conforming Rec files.
-* Comments::            Comments are useful to store meta data.
-* Record Descriptors::  Describing different types of records.
+* Fields and Records::    The basic structures conforming Rec files.
+* Comments::              Comments are useful to store meta data.
+* Record Descriptors::    Describing different types of records.
 
-Special Fields
-* %rec::                External and remote descriptors.
-* %mandatory and %prohibit:: Requiring or forbidding specific fields.
-* %unique and %key::    Working with keys.
-* %doc::                Documenting your database.
-* %typedef and %type::  Field types.
-* %auto::               Auto counters and time-stamps.
-* %sort::               Keeping your record sets sorted.
-* %size::               Restricting the size of your database.
-* %constraint::         Setting arbitrary constraints.
-* %confidential::       Storing confidential information.
-
-Advanced Topics and Reference
-* Date input formats::  Textual date representations that can be used
-                          in Rec files.
-* Regular Expressions:: Flavor of regexps supported in recfiles.
-
-The Recutils
-* Common Options::      Common command line arguments for the record
-                          utilities.
-* recinf::              Printing information about rec files.
-* recsel::              Selecting records.
-* recins::              Inserting records.
-* recdel::              Deleting records.
-* recset::              Managing fields.
-* recfix::              Fixing broken rec files, and diagnostics.
-* recfmt::              Formatting records using templates.
-* csv2rec::             Converting csv data into rec data.
-* rec2csv::             Converting rec data into csv data.
-* mdb2rec::             Converting mdb files into rec files.
+* Recutils Expressions::  
+* Recutils Reference::
+* Conversion Utilities::
+@c * recinf::              Printing information about rec files.
+@c * recsel::              Selecting records.
+@c * recins::              Inserting records.
+@c * recdel::              Deleting records.
+@c * recset::              Managing fields.
+@c * recfix::              Fixing broken rec files, and diagnostics.
+@c * recfmt::              Formatting records using templates.
+@c * csv2rec::             Converting csv data into rec data.
+@c * rec2csv::             Converting rec data into csv data.
+@c * mdb2rec::             Converting mdb files into rec files.
 
 * GNU Free Documentation License:: Distribution terms for this document.
 @end menu
@@ -426,6 +409,19 @@ properties.  The most basic property that can be specified for a set
 of records is their @dfn{type}.  The special field name @code{%rec} is
 used for that purpose:
 
+@menu
+* %rec::                External and remote descriptors.
+* %mandatory and %prohibit:: Requiring or forbidding specific fields.
+* %unique and %key::    Working with keys.
+* %doc::                Documenting your database.
+* %typedef and %type::  Field types.
+* %auto::               Auto counters and time-stamps.
+* %sort::               Keeping your record sets sorted.
+* %size::               Restricting the size of your database.
+* %constraint::         Setting arbitrary constraints.
+* %confidential::       Storing confidential information.
+@end menu
+
 @example
 %rec: Entry
 
@@ -524,7 +520,7 @@ Used to store confidential information.
 @end table
 
 @node %rec
-@chapter %rec
+@section %rec
 
 The @code{%rec} special field is used for two main purposes: to
 identify a record as a record descriptor, and to provide a name for
@@ -616,7 +612,7 @@ If you are using the GNU recutils to process your recfiles, any URL
 schema supported by @code{libcurl} will work.
 
 @node %mandatory and %prohibit
-@chapter %mandatory and %prohibit
+@section %mandatory and %prohibit
 
 Those special field names are used to restrict the fields that can
 appear in the records stored in a database.  Their usage is:
@@ -687,7 +683,7 @@ database both @code{Id} and @code{id} are prohibited:
 @end example
 
 @node %unique and %key
-@chapter %unique and %key
+@section %unique and %key
 
 These special field names are used to avoid several instances of the
 same field in a record, and to implement keys in record sets.  Their
@@ -753,7 +749,7 @@ same record descriptor.  That is a data integrity
 violation and will be reported by a checking tool.
 
 @node %doc
-@chapter %doc
+@section %doc
 
 This field contains documentation about the record.   It is similar to a
 comment (@pxref{Comments}), but this field can be managed in a programmatic
@@ -790,7 +786,7 @@ Phone: +33 34 87 65
 
 
 @node %typedef and %type
-@chapter %typedef and %type
+@section %typedef and %type
 
 Field values are, by default, unrestricted text strings.  However, it
 is often useful to impose some restrictions on the values of certain
@@ -826,7 +822,7 @@ described in the following subsections.
 @end menu
 
 @node Declaring types
-@section Declaring types
+@subsection Declaring types
 
 A type can be declared in a record descriptor by using the
 @code{%typedef} special field.  The syntax is:
@@ -906,7 +902,7 @@ thus invalid:
 The scope of a type is the record descriptor where it is defined.
 
 @node Types and fields
-@section Types and fields
+@subsection Types and fields
 
 Fields can be declared to have a given type by using the @code{%type}
 special field in a record descriptor.  The synopsis is:
@@ -939,7 +935,7 @@ without having to use a @code{%typedef} in the following way:
 @end example
 
 @node Scalar types
-@section Scalar types
+@subsection Scalar types
 
 The rec format supports the declaration of fields of the following
 scalar types: integer numbers, ranges and reals.
@@ -1019,7 +1015,7 @@ Height: 10
 
 
 @node String types
-@section String types
+@subsection String types
 
 The @code{line} field type specifier can be used to restrict the value
 of a field to a single line, @ie{} no newline characters are allowed.
@@ -1101,7 +1097,7 @@ The regexp flavor supported in recfiles are the POSIX EREs plus
 several GNU extensions.  @xref{Regular Expressions}.
 
 @node Enumerated types
-@section Enumerated types
+@subsection Enumerated types
 
 Fields of this type contain symbols taken from an enumeration.
 
@@ -1154,7 +1150,7 @@ SwitchedOn: false
 @end example
 
 @node Time related types
-@section Time related types
+@subsection Time related types
 
 The @dfn{Date} field type specifier can be used to declare dates and
 times.  The synopsis is:
@@ -1168,7 +1164,7 @@ The several date/time syntax supported by librec is provided by the
 @code{date} module from gnulib.  @xref{Date input formats}.
 
 @node Other types
-@section Other types
+@subsection Other types
 
 The @dfn{Email} field type specifier is used to declare electronic
 addresses such as emails.  The synopsis is:
@@ -1220,7 +1216,7 @@ to be stored in fields of type @code{Maintainer_t} are of whatever
 type defined for the primary key of the @code{Hacker} record set.
 
 @node %auto
-@chapter %auto
+@section %auto
 
 This special field designates auto-generated fields in 
 record sets.  Its usage is:
@@ -1335,7 +1331,7 @@ records, in the same order they are found in the @code{%auto}
 directives.
 
 @node %sort
-@chapter %sort
+@section %sort
 
 This special field sets sorting criteria for the records
 contained in a record set.  Its usage is:
@@ -1507,7 +1503,7 @@ In this last case, Mr. One comes after Mr. Two because the class A
 comes before the class B even if they got the same score (@code{6.8}).
 
 @node %size
-@chapter %size
+@section %size
 
 The @code{%size} special field is used to define constraints in the
 number of records stored in a record set.  Its usage is:
@@ -1546,7 +1542,7 @@ this type shall exist in the file.
 This field shall appear only once in a record descriptor.
 
 @node %constraint
-@chapter %constraint
+@section %constraint
 
 The @code{%constraint} special field is used to define constraints
 based on selection expressions.  Its usage is:
@@ -1589,7 +1585,7 @@ Note that it is acceptable to declare several constraints in the same record
 set.
 
 @node %confidential
-@chapter %confidential
+@section %confidential
 
 This special field declares a set of fields as
 @dfn{confidential}, meaning they contain sensitive information such as
@@ -1679,10 +1675,26 @@ The GNU recutils fully support encrypted fields.  See the documentation
 for @code{recsel}, @code{recins} and @code{recfix} for details on how
 to operate on files containing confidential fields.
 
+
+@node Recutils Expressions
+@chapter Recutils Expressions
+
+When using recutils, you can retrieve data using literal strings or using
+an expression appropriate to the context.
+
+@menu
+* Date input formats:: Specifying dates and times.
+* Regular Expressions::       Expressions parseable by a regular grammar.
+* Selection Expressions::     Selecting records of a database.
+* Field Expressions::         Selecting fields of a record.
+@end menu
+
+@lowersections
 @include parse-datetime.texi
+@raisesections
 
 @node Regular Expressions
-@chapter Regular Expressions
+@section Regular Expressions
 
 The character @samp{.} matches any single character except the null character.
 
@@ -1756,29 +1768,6 @@ The longest possible match is returned; this applies to the regular
 expression as a whole and (subject to this constraint) to
 sub-expressions within groups.
 
-@node Common Options
-@chapter Common Options
-
-Certain options are available in all of these programs.  Rather than
-writing identical descriptions for each of the programs, they are
-described here.
-
-@table @samp
-@item @w{@kbd{--version}}
-Print the version number, then exit successfully.
-@item @w{@kbd{--help}}
-Print a help message, then exit successfully.
-@item @w{@kbd{--}}
-Delimit the option list.  Later arguments, if any, are treated as
-operands even if they begin with @option{-}.  For example,
-@code{recsel -- -p} reads from the file named @file{-p}.
-@end table
-
-@menu
-* Selection Expressions::  Selecting records of a database.
-* Field Expressions::      Selecting fields of a record.
-@end menu
-      
 @node Selection Expressions
 @section Selection Expressions
 
@@ -2050,8 +2039,8 @@ string.  This is used when replacing the slots in templates
 @section Field Expressions
 
 @dfn{Field expressions} (also known as FEXs) are a way to select
-fields of a record.  They also allow to do some transformations in the
-selected fields, such as changing their names.
+fields of a record.  They also allow you to do certain transformations on
+the selected fields, such as changing their names.
 
 A FEX is composed by a sequence of @dfn{elements} separated by commas:
 
@@ -2172,8 +2161,37 @@ like follows:
 Foo.Bar
 @end example
 
+@node Recutils Reference
+@chapter Recutils Reference
+
+Certain options are available in all of these programs.  Rather than
+writing identical descriptions for each of the programs, they are
+listed here.
+
+@anchor{Common Options}
+@table @samp
+@item @w{@kbd{--version}}
+Print the version number, then exit successfully.
+@item @w{@kbd{--help}}
+Print a help message, then exit successfully.
+@item @w{@kbd{--}}
+Delimit the option list.  Later arguments, if any, are treated as
+operands even if they begin with @option{-}.  For example,
+@code{recsel -- -p} reads from the file named @file{-p}.
+@end table
+
+@menu
+* recinf::              Printing information about rec files.
+* recsel::              Selecting records.
+* recins::              Inserting records.
+* recdel::              Deleting records.
+* recset::              Managing fields.
+* recfix::              Fixing broken rec files, and diagnostics.
+* recfmt::              Formatting records using templates.
+@end menu
+
 @node recinf
-@chapter recinf
+@section recinf
 
 @command{recinf} reads the given rec files (or the data in the
 standard input if no file is specified) and prints information about
@@ -2184,7 +2202,7 @@ it.
 @end menu
 
 @node recinf Invocation
-@section recinf Invocation
+@subsection recinf Invocation
 
 @command{recinf} reads the given rec files (or the data in the
 standard input if no file is specified) and prints a resume of the
@@ -2214,8 +2232,7 @@ $ recinf data.rec
 10
 @end example
 
-In addition of the common options described earlier (@pxref{Common
-Options}) the program accepts the following options.
+In addition of the common options described earlier the program accepts the following options.
 
 @table @samp
 @item -t @var{type}
@@ -2236,7 +2253,7 @@ format.  This option is intended to be used by lisp programs.
 @end table
 
 @node recsel
-@chapter recsel
+@section recsel
 
 @command{recsel} reads the given rec files (or the data in the
 standard input if no file is specified) and prints out records (or
@@ -2250,7 +2267,7 @@ part of records) based upon some criteria specified by the user.
 @end menu
 
 @node recsel Invocation
-@section recsel Invocation
+@subsection recsel Invocation
 
 @command{recsel} searches rec files for records satisfying certain
 criteria.  Synopsis:
@@ -2376,7 +2393,7 @@ Print the data using sexps instead of rec format.
 @end table
 
 @node recsel Examples
-@section recsel Examples
+@subsection recsel Examples
 
 Print the closed bugs:
 
@@ -2391,7 +2408,7 @@ $ recsel -e 'Age < 20' -P Partner registrants.rec
 @end example
 
 @node recsel Encryption
-@section recsel Encryption
+@subsection recsel Encryption
 
 The contents of confidential fields can be read using the
 @option{-s|--password} command line option to @command{recsel}.  When
@@ -2481,7 +2498,7 @@ We would need to invoke @command{recsel} with the password used to
 encrypt the admin entry in order to read it back unencrypted.
 
 @node recsel Grouping
-@section recsel Grouping
+@subsection recsel Grouping
 
 @dfn{Grouping} is an important technique used in relational databases,
 always combined with aggregate functions.
@@ -2579,7 +2596,7 @@ partition.
 @end enumerate
 
 @node recins
-@chapter recins
+@section recins
 
 @command{recins} adds new records to a rec file or to rec data read
 from the standard input.
@@ -2591,7 +2608,7 @@ from the standard input.
 @end menu
 
 @node recins Invocation
-@section recins Invocation
+@subsection recins Invocation
 
 @command{recins} adds new records to a rec file or to rec data read
 from the standard input.  Synopsis:
@@ -2678,7 +2695,7 @@ such as when the data integrity of the database is compromised.
 @end table
 
 @node recins Examples
-@section recins Examples
+@subsection recins Examples
 
 Create a new issue in the bugs database:
 
@@ -2698,7 +2715,7 @@ recins -f Date -v `date` -f Entry -v "$HW_ADDR device connected" \
 @end example
 
 @node recins Encryption
-@section recins Encryption
+@subsection recins Encryption
 
 @command{recins} allows the insertion of encrypted fields in a
 database.  When the @option{-s|--password} command line option is
@@ -2722,7 +2739,7 @@ inserted in the database but no password was provided to encrypt it.
 This is to avoid having unencrypted sensitive data in the recfiles.
 
 @node recdel
-@chapter recdel
+@section recdel
 
 @command{recdel} removes records from a rec file, or from rec data
 read from the standard input.
@@ -2733,7 +2750,7 @@ read from the standard input.
 @end menu
 
 @node recdel Invocation
-@section recdel Invocation
+@subsection recdel Invocation
 
 @command{recdel} removes records from a rec file, or from rec data
 read from the standard input.  Synopsis:
@@ -2789,7 +2806,7 @@ Be verbose when reporting integrity problems.
 @end table
 
 @node recdel Examples
-@section recdel Examples
+@subsection recdel Examples
 
 Comment out closed issues in the bugs database:
 
@@ -2798,7 +2815,7 @@ $ recdel -c -t Task -e "Status = 'CLOSED'" TODO.rec
 @end example
 
 @node recset
-@chapter recset
+@section recset
 
 @command{recset} manipulates the fields of records in a rec file.
 
@@ -2808,7 +2825,7 @@ $ recdel -c -t Task -e "Status = 'CLOSED'" TODO.rec
 @end menu
 
 @node recset Invocation
-@section recset Invocation
+@subsection recset Invocation
 
 @command{recset} manipulates the fields of records in a rec file, or
 rec data read from the standard input.  Synopsis:
@@ -2900,7 +2917,7 @@ affected.
 @end table
 
 @node recset Examples
-@section recset Examples
+@subsection recset Examples
 
 Remove ``TmpName'' fields from any record in @file{data.rec}:
 
@@ -2935,7 +2952,7 @@ $ recset -n 102 -f ClosedAt -S `date` tasks.rec
 @end example
 
 @node recfix
-@chapter recfix
+@section recfix
 
 @command{recfix} checks and fixes rec files.
 
@@ -2945,7 +2962,7 @@ $ recset -n 102 -f ClosedAt -S `date` tasks.rec
 @end menu
 
 @node recfix Invocation
-@section recfix Invocation
+@subsection recfix Invocation
 
 @command{recfix} checks and fixes rec files.  Synopsis:
 
@@ -3017,7 +3034,7 @@ Force potentially dangerous operations.
 @end table
 
 @node recfix Examples
-@section recfix Examples
+@subsection recfix Examples
 
 Check and fix a rec database, invoked both destructively and as a
 filter:
@@ -3053,7 +3070,7 @@ $ recfix --auto stockage.rec
 @end example
 
 @node recfmt
-@chapter recfmt
+@section recfmt
 
 @command{recfmt} formats records using templates.
 
@@ -3064,7 +3081,7 @@ $ recfix --auto stockage.rec
 @end menu
 
 @node recfmt Invocation
-@section recfmt Invocation
+@subsection recfmt Invocation
 
 @command{recfmt} formats records using templates.  Synopsis:
 
@@ -3086,7 +3103,7 @@ line.
 @end table
 
 @node recfmt Templates
-@section recfmt Templates
+@subsection recfmt Templates
 
 A recfmt template is a text string that may contain @dfn{template
 spots}.  Those spots are substituted in the template using the
@@ -3141,7 +3158,7 @@ Note that you can use any selection expression in the slots, including
 conditionals and string concatenation.
 
 @node recfmt Examples
-@section recfmt Examples
+@subsection recfmt Examples
 
 Apply a template to all the records stored in the @file{employees.rec}
 file:
@@ -3156,8 +3173,20 @@ Read the template from a file:
 recsel employees.rec | recfmt -f fire-letter.tmpl
 @end example
 
+@node Conversion Utilities
+@chapter Conversion Utilities
+
+Distributed with @acronym{GNU} Recutils are a number of utilities to 
+convert recfiles to and from other formats.
+
+@menu
+* csv2rec::             Converting csv data into rec data.
+* rec2csv::             Converting rec data into csv data.
+* mdb2rec::             Converting mdb files into rec files.
+@end menu
+
 @node csv2rec
-@chapter csv2rec
+@section csv2rec
 
 @command{csv2rec} reads the given comma-separated-values file (or the
 data in the standard input if no file is specified) and prints out the
@@ -3169,7 +3198,7 @@ converted rec data, if possible.
 @end menu
 
 @node csv2rec Invocation
-@section csv2rec Invocation
+@subsection csv2rec Invocation
 
 @command{csv2rec} converts CSV data into rec data.  Synopsis:
 
@@ -3194,7 +3223,7 @@ Omit empty fields.
 @end table
 
 @node csv2rec Examples
-@section csv2rec Examples
+@subsection csv2rec Examples
 
 Convert from csv to rec:
 
@@ -3209,7 +3238,7 @@ $ cat contacts.csv | csv2rec -e > contacts.rec
 @end example
 
 @node rec2csv
-@chapter rec2csv
+@section rec2csv
 
 @command{rec2csv} reads the given rec files (or the data in the
 standard input if no file is specified) and prints out the converted
@@ -3222,7 +3251,7 @@ comma-separated-values.
 @end menu
 
 @node rec2csv Invocation
-@section rec2csv Invocation
+@subsection rec2csv Invocation
 
 @command{rec2csv} converts rec data into CSV data.  Synopsis:
 
@@ -3250,7 +3279,7 @@ are specified in the corresponding record descriptor with @code{%sort}.
 @end table
 
 @node rec2csv Conversion
-@section rec2csv Conversion
+@subsection rec2csv Conversion
 
 Record sets are not tables, even if tables can be easily emulated
 using records having the same fields in the same order.  For example:
@@ -3329,7 +3358,7 @@ Note how missing fields are implemented as empty rows in the generated
 csv.
 
 @node rec2csv Examples
-@section rec2csv Examples
+@subsection rec2csv Examples
 
 Generate a csv file out of a rec file:
 
@@ -3345,7 +3374,7 @@ $ cat inventory.rec | rec2csv -t Item > items.csv
 @end example
 
 @node mdb2rec
-@chapter mdb2rec
+@section mdb2rec
 
 @command{mdb2rec} reads the given mdb file and prints out the
 converted rec data, if possible.
@@ -3356,7 +3385,7 @@ converted rec data, if possible.
 @end menu
 
 @node mdb2rec Invocation
-@section mdb2rec Invocation
+@subsection mdb2rec Invocation
 
 @command{mdb2rec} converts mdb files into rec data.  Synopsis:
 
@@ -3384,7 +3413,7 @@ Don't prune empty fields in the rec output.
 @end table
 
 @node mdb2rec Examples
-@section mdb2rec Examples
+@subsection mdb2rec Examples
 
 Access files (@dfn{mdb files}) are collections of several relations,
 also known as tables.  Tables can be either @dfn{user tables} storing

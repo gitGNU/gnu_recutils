@@ -1,3 +1,7 @@
+2012-08-26  John Darrington  <john@darrington.wattle.id.au>
+
+	* doc/recutils.texi: Reorganised sectioning, in favour of fewer, but bigger chapters.
+
 2012-08-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	syntax-check fixes.
