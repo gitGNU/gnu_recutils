@@ -409,19 +409,6 @@ properties.  The most basic property that can be specified for a set
 of records is their @dfn{type}.  The special field name @code{%rec} is
 used for that purpose:
 
-@menu
-* %rec::                External and remote descriptors.
-* %mandatory and %prohibit:: Requiring or forbidding specific fields.
-* %unique and %key::    Working with keys.
-* %doc::                Documenting your database.
-* %typedef and %type::  Field types.
-* %auto::               Auto counters and time-stamps.
-* %sort::               Keeping your record sets sorted.
-* %size::               Restricting the size of your database.
-* %constraint::         Setting arbitrary constraints.
-* %confidential::       Storing confidential information.
-@end menu
-
 @example
 %rec: Entry
 
@@ -489,35 +476,21 @@ Note that the names of special fields always start with the character
 fields in a record descriptor, but such fields will have no effect on
 the described record set.
 
-What follows is an exhaustive list of the supported special fields.
-They are discussed in depth in the following sections.
+The following subsections contain a detailed description of all the
+supported special fields.
 
-@table @code
-@item %rec
-Used to name the type of a set of records and to mark record
-descriptors.
-@item %mandatory
-@item %prohibit
-Those special fields are used to control which fields can and cannot
-be included in records.
-@item %unique
-@item %key
-Used to specify unique fields and primary keys.
-@item %auto
-Used to automatically generate certain fields when creating new
-records, like auto counter and time-stamps.
-@item %doc
-Used to describe the contents of a record set.
-@item %typedef
-@item %type
-Used to define named types and to associated types with fields.
-@item %sort
-Used to keep your records sorted by some given fields.
-@item %size
-Used to control the dimensions of a record set.
-@item %confidential
-Used to store confidential information.
-@end table
+@menu
+* %rec::                External and remote descriptors.
+* %mandatory and %prohibit:: Requiring or forbidding specific fields.
+* %unique and %key::    Working with keys.
+* %doc::                Documenting your database.
+* %typedef and %type::  Field types.
+* %auto::               Auto counters and time-stamps.
+* %sort::               Keeping your record sets sorted.
+* %size::               Restricting the size of your database.
+* %constraint::         Setting arbitrary constraints.
+* %confidential::       Storing confidential information.
+@end menu
 
 @node %rec
 @section %rec
@@ -800,13 +773,14 @@ MaritalStatus: single
 Phone: +49 666 666 66
 @end example
 
-Where @code{Id} is a numeric identifier for a person. @code{Name} will
-never use several lines. @code{Age} will typically be in the range
-@code{0..120}, and there are only a few valid values for
-@code{MaritalStatus}: single, married and widow.  Phones may be
-restricted to some standard format as well to be valid.  All those
-restrictions (and many others) can be enforced by using @dfn{field
-types}.
+The values of the fields must clearly follow some structure in order
+to make sense.  @code{Id} is a numeric identifier for a
+person. @code{Name} will never use several lines. @code{Age} will
+typically be in the range @code{0..120}, and there are only a few
+valid values for @code{MaritalStatus}: single, married and widow.
+Phones may be restricted to some standard format as well to be valid.
+All those restrictions (and many others) can be enforced by using
+@dfn{field types}.
 
 There are two kind of field types: @dfn{anonymous} and @dfn{named}.  Those are
 described in the following subsections.
@@ -874,7 +848,7 @@ descriptions.  For example, consider the following example:
 
 @noindent
 Both @code{Item_t} and @code{Transaction_t} are synonyms for the type
-@code{Id_t}.  They are both numeric identifiers.
+@code{Id_t}.  They all are numeric identifiers.
 
 The order of the @code{%typedef} fields is not relevant.  In
 particular, a type definition can reference other type that is defined
@@ -912,10 +886,11 @@ special field in a record descriptor.  The synopsis is:
 @end example
 
 @noindent
-Where @var{field_list} is a list of field names separated by
-commas.  @var{type_name_or_description} can be either a type name
-declared with @code{%typedef}, or a type description.  Type names are
-useful when several fields are declared to be of the same type:
+Where @var{field_list} is a list of field names separated by commas.
+@var{type_name_or_description} can be either a type name which has
+been previously declared using @code{%typedef}, or a type description.
+Type names are useful when several fields are declared to be of the
+same type:
 
 @example
 %typedef: Id_t    int
@@ -924,9 +899,10 @@ useful when several fields are declared to be of the same type:
 @end example
 
 @noindent
-Anonymous types can be used by writing a type description instead of a
-type name.  They help to avoid superfluous type declarations.  A
-record containing a single @code{Id} field, for example, can be defined
+Anonymous types can be specified by writing a type description instead
+of a type name.  They help to avoid superfluous type declarations in
+the common case where a type is used by just one field.  A record
+containing a single @code{Id} field, for example, can be defined
 without having to use a @code{%typedef} in the following way:
 
 @example
@@ -940,7 +916,7 @@ without having to use a @code{%typedef} in the following way:
 The rec format supports the declaration of fields of the following
 scalar types: integer numbers, ranges and reals.
 
-Signed @dfn{integers} are supported by using the @code{integer}
+Signed @dfn{integers} are supported by using the @code{int}
 declaration:
 
 @example
@@ -1570,9 +1546,10 @@ finishes:
 @end example
 
 The ``implies'' operator @code{=>} is especially useful when defining
-constraints, since it allows one to specify conditional constraints.  For
-example, we could specify that if a task is closed then it must have
-an @code{End} date in the following way:
+constraints, since it can be used to specify conditional constraints,
+i.e. constraints applying only in certain records.  For example, we
+could specify that if a task is closed then it must have an @code{End}
+date in the following way:
 
 @example
 %rec: Task
@@ -1771,9 +1748,9 @@ sub-expressions within groups.
 @node Selection Expressions
 @section Selection Expressions
 
-@dfn{Selection expressions} (also known as a SEXs) are simple infix
-expressions that can be applied to a record.  The result of the SEX is
-typically interpreted as a Boolean value.
+@dfn{Selection expressions} (also known as a ``sexes'') are simple
+infix expressions that can be applied to a record.  The result of the
+SEX is typically interpreted as a Boolean value.
 
 @menu
 * SEX Operands::        Literal values, fields and sub-expressions.
@@ -2038,9 +2015,9 @@ string.  This is used when replacing the slots in templates
 @node Field Expressions
 @section Field Expressions
 
-@dfn{Field expressions} (also known as FEXs) are a way to select
-fields of a record.  They also allow you to do certain transformations on
-the selected fields, such as changing their names.
+@dfn{Field expressions} (also known as ``fexes'') are a way to select
+fields of a record.  They also allow you to do certain transformations
+on the selected fields, such as changing their names.
 
 A FEX is composed by a sequence of @dfn{elements} separated by commas:
 
@@ -3176,8 +3153,8 @@ recsel employees.rec | recfmt -f fire-letter.tmpl
 @node Conversion Utilities
 @chapter Conversion Utilities
 
-Distributed with @acronym{GNU} Recutils are a number of utilities to 
-convert recfiles to and from other formats.
+Distributed with GNU Recutils are a number of utilities to convert
+recfiles to and from other formats.
 
 @menu
 * csv2rec::             Converting csv data into rec data.
