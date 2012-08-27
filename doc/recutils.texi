@@ -80,16 +80,6 @@ The Basic Rec Format
 * Recutils Expressions::  
 * Recutils Reference::
 * Conversion Utilities::
-@c * recinf::              Printing information about rec files.
-@c * recsel::              Selecting records.
-@c * recins::              Inserting records.
-@c * recdel::              Deleting records.
-@c * recset::              Managing fields.
-@c * recfix::              Fixing broken rec files, and diagnostics.
-@c * recfmt::              Formatting records using templates.
-@c * csv2rec::             Converting csv data into rec data.
-@c * rec2csv::             Converting rec data into csv data.
-@c * mdb2rec::             Converting mdb files into rec files.
 
 * GNU Free Documentation License:: Distribution terms for this document.
 @end menu
@@ -129,6 +119,7 @@ data storage systems mentioned in the previous paragraph:
 @item They are not easily managed by version control systems.
 @end table
 
+@cindex readability
 Regarding the first point (human readability), while it is clearly
 true for the binary files, some may argue XML files are indeed human
 readable@dots{} well@dots{} <bar><foo tag=''val''>try</foo> to r&iamp;ead
@@ -158,6 +149,7 @@ The GNU recutils suite comprises:
 @node A Little Example
 @chapter A Little Example
 
+@cindex books
 Everyone loves to grow a nice book collection at home.  Unfortunately,
 in most cases the management of our private books gets uncontrolled:
 some books get lost, some of them may be loaned to some friend, there
@@ -248,6 +240,8 @@ The Colour of Magic
 @node Fields and Records
 @chapter Fields and Records
 
+@cindex record
+@cindex field
 A @dfn{field} is the written form of an association between a label
 and a value.  For example, if we wanted to associate the label
 @code{Name} with the value @code{Ada Lovelace} we would write:
@@ -260,6 +254,7 @@ The separator between the field name and the field value is a colon
 followed by a blank character (space and tabs, but not newlines).  The
 name of the field shall begin in the first column of the line.
 
+@cindex field name
 A @dfn{field name} is a sequence of alphanumeric characters plus
 dashes (@code{-}) and underscores (@code{_}), starting with a letter
 or the character @code{%}.  The regular expression denoting a field
@@ -269,6 +264,7 @@ name is:
 [a-zA-Z%][a-zA-Z0-9_-]+
 @end example
 
+@cindex case, in field names
 Field names are case-sensitive.  @code{Foo} and @code{foo} are
 different field names.
 
@@ -283,9 +279,11 @@ ab1:
 A_Field:
 @end example
 
+@cindex field values
 The @dfn{value of a field} is a sequence of characters terminated by a
 single newline character (@code{\n}).
 
+@cindex multiline field values
 Sometimes a value is too long to fit in the usual width of terminals
 and screens.  In that case, depending on the specific tool used to
 access the file, the readability of the data would not be that good.
@@ -309,6 +307,7 @@ Foo: bar1
 +  bar3
 @end example
 
+@cindex record
 A @dfn{record} is a group of one or more fields written one after the
 other:
 
@@ -328,6 +327,8 @@ Email: john.smith@@foomail.com
 Email: john@@smith.name
 @end example
 
+@cindex record size
+@cindex size, record size
 The @dfn{size of a record} is defined as the number of fields that it
 contains.  A record cannot be empty, so the minimum size
 for a record is 1.  The maximum number of fields for a record is only
@@ -352,6 +353,7 @@ Age: 969
 @node Comments
 @chapter Comments
 
+@cindex comments
 Any line having an @code{#} (ASCII 0x23) character in the first column
 is a comment line.
 
@@ -402,6 +404,7 @@ Age: 53
 @node Record Descriptors
 @chapter Record Descriptors
 
+@cindex descriptor
 Certain properties of a set of records can be specified by preceding
 them with a @dfn{record descriptor}.  A record descriptor is itself a
 record, and uses fields with some predefined names to store the
@@ -409,6 +412,7 @@ properties.  The most basic property that can be specified for a set
 of records is their @dfn{type}.  The special field name @code{%rec} is
 used for that purpose:
 
+@cindex @code{%rec}
 @example
 %rec: Entry
 
@@ -452,6 +456,9 @@ Type: acquisition
 Date: 21 April 2011
 @end example
 
+@cindex field, special fields
+@cindex key, primary key
+@cindex primary key
 Besides determining the type of the records that follows in the
 stream, record descriptors can be used to describe other properties of
 those records.  That can be done by using the so-called @dfn{special
@@ -459,6 +466,7 @@ fields}, having special names from a predefined set.  Consider for
 example the following database, where the descriptor is used to
 specify a primary key and a mandatory field:
 
+@cindex @code{%mandatory}
 @example
 %rec: Item
 %key: Id
@@ -495,6 +503,7 @@ supported special fields.
 @node %rec
 @section %rec
 
+@cindex @code{%rec}
 The @code{%rec} special field is used for two main purposes: to
 identify a record as a record descriptor, and to provide a name for
 the described record set.  The synopsis of the usage of the field is
@@ -531,8 +540,11 @@ recommended (but not enforced) to place this field in the first
 position of the record descriptor.
 
 Sometimes it is convenient to store records of the same type in
-different files.  The duplication of record descriptors in this case
-would surely lead to consistency problems.  A possible solution would
+different files.
+@cindex integrity problems
+The duplication of record descriptors in this case would surely lead to
+consistency problems. 
+A possible solution would
 be to keep the record descriptor in a separated file and then include
 it in any operation by using pipes.  For example:
 
@@ -540,6 +552,8 @@ it in any operation by using pipes.  For example:
 $ cat descriptor.rec data.rec | recsel @dots{}
 @end example
 
+@cindex external descriptor
+@cindex descriptor, external descriptor
 @noindent
 For those cases it is more convenient to use a @dfn{external
 descriptor}.  External descriptors can be built appending a file path
@@ -555,6 +569,8 @@ The previous example indicates that a record descriptor describing the
 may not exist in the external file.  Both relative and absolute paths
 can be specified there.
 
+@cindex URL
+@cindex remote descriptors
 URLs can be used as sources for external descriptors as well. In that
 case we talk about @dfn{remote descriptors}.  For example:
 
@@ -587,6 +603,10 @@ schema supported by @code{libcurl} will work.
 @node %mandatory and %prohibit
 @section %mandatory and %prohibit
 
+@cindex @code{%mandatory}
+@cindex @code{%prohibit}
+@cindex restricting fields from records
+@cindex field, forbidden fields
 Those special field names are used to restrict the fields that can
 appear in the records stored in a database.  Their usage is:
 
@@ -599,9 +619,13 @@ appear in the records stored in a database.  Their usage is:
 In both cases the list of field names are separated by one or more
 blank characters.
 
+@cindex field, compulsorary fields
+@cindex field, mandatory fields
 The fields listed in some @code{%mandatory} entry are
 mandatory; @ie{}, at least one field with this name shall be present
-in any record of this kind.  Records violating this restriction are
+in any record of this kind.
+@cindex integrity problems
+Records violating this restriction are
 invalid and a checking tool will report the situation as
 a data integrity failure.
 
@@ -658,6 +682,8 @@ database both @code{Id} and @code{id} are prohibited:
 @node %unique and %key
 @section %unique and %key
 
+@cindex @code{%unique}
+@cindex @code{%key}
 These special field names are used to avoid several instances of the
 same field in a record, and to implement keys in record sets.  Their
 usage is:
@@ -718,12 +744,15 @@ Title: Sticker big
 @noindent
 It would not make sense to have several primary keys in a record set,
 and thus it is not allowed to have several @code{%key} fields in the
-same record descriptor.  That is a data integrity
+same record descriptor.  
+@cindex integrity problems
+That is a data integrity
 violation and will be reported by a checking tool.
 
 @node %doc
 @section %doc
 
+@cindex @code{%doc}
 This field contains documentation about the record.   It is similar to a
 comment (@pxref{Comments}), but this field can be managed in a programmatic
 way easier.
@@ -808,7 +837,9 @@ A type can be declared in a record descriptor by using the
 @noindent
 Where @var{type_name} is the name of the new type, and
 @var{type_description} a description which varies depending of the
-kind of type.  For example, this is how a type @code{Age_t} could
+kind of type.
+@cindex @code{range}, type description
+For example, this is how a type @code{Age_t} could
 be defined as numbers in the range @code{0..120}:
 
 @example
@@ -861,6 +892,7 @@ below.  The previous example could have been written as:
 @end example
 
 @noindent
+@cindex integrity problems
 Integrity checks will complain if undefined types are referenced, and
 if there are loops (direct or indirect) in type declarations.  For
 example, the following set of declarations contains a loop and are
@@ -878,6 +910,11 @@ The scope of a type is the record descriptor where it is defined.
 @node Types and fields
 @subsection Types and fields
 
+@cindex @code{%type}
+@cindex @code{%typedef}
+
+@cindex types
+@cindex field types,
 Fields can be declared to have a given type by using the @code{%type}
 special field in a record descriptor.  The synopsis is:
 
@@ -898,6 +935,7 @@ same type:
 %type:    Product Id_t
 @end example
 
+@cindex anonymous types
 @noindent
 Anonymous types can be specified by writing a type description instead
 of a type name.  They help to avoid superfluous type declarations in
@@ -916,6 +954,7 @@ without having to use a @code{%typedef} in the following way:
 The rec format supports the declaration of fields of the following
 scalar types: integer numbers, ranges and reals.
 
+@cindex integers
 Signed @dfn{integers} are supported by using the @code{int}
 declaration:
 
@@ -923,6 +962,8 @@ declaration:
 %typedef: Id_t int
 @end example
 
+@cindex hexadecimal
+@cindex octal
 @noindent
 Given that declaration, Fields of type @code{Id_t} must contain
 integers, that may be negative.  Hexadecimal values can be written
@@ -938,6 +979,7 @@ Id: -0xFF
 Id: 020
 @end example
 
+@cindex ranges
 @noindent
 Sometimes it is desirable to reduce the @dfn{range} of integers allowed in a
 field.  That can be achieved by using a range type declaration:
@@ -964,10 +1006,14 @@ ten, like for example:
 %typedef: Perms_t range 755
 @end example
 
+@cindex reals
+@cindex fractions
+@cindex floating point numbers
 @noindent
 @dfn{Real} fields can be declared with the @code{real} type specifier.
 A wide range of real numbers can be represented this way, only limited
-by the underlying floating point representation.  
+by the underlying floating point representation.
+@cindex decimal separator  
 The decimal separator is always the dot (@code{.}) character regardless
 of the locale setting.
 For example:
@@ -993,6 +1039,7 @@ Height: 10
 @node String types
 @subsection String types
 
+@cindex strings
 The @code{line} field type specifier can be used to restrict the value
 of a field to a single line, @ie{} no newline characters are allowed.
 For example, a type for proper names could be declared as:
@@ -1004,12 +1051,17 @@ For example, a type for proper names could be declared as:
 @noindent
 Examples of fields of type line:
 
+@cindex multiline field values
 @example
 Name: Mr. Foo Bar
 Name: Mss. Bar Baz
 Name: This is
 + invalid
 @end example
+
+@cindex field size
+@cindex size, field size
+@cindex @code{size}, type description
 
 @noindent
 Sometimes it is the maximum size of the field value that shall be
@@ -1031,8 +1083,10 @@ specify field sizes:
 %typedef: Address_t size 0x18
 @end example
 
+@cindex restricting values of fields
 @noindent
 Arbitrary restrictions can be defined by using regular expressions.
+@cindex @code{regepx}, type description
 The @dfn{regexp} field type specifier introduces an ERE (extended
 regular expression) that will be matched against fields having that
 name.  The synopsis is:
@@ -1075,6 +1129,7 @@ several GNU extensions.  @xref{Regular Expressions}.
 @node Enumerated types
 @subsection Enumerated types
 
+@cindex enumerated types
 Fields of this type contain symbols taken from an enumeration.
 
 The type is described by writing the sequence of symbols comprising
@@ -1089,6 +1144,7 @@ following regexp:
 The symbols are separated by blank characters (including newlines).
 For example:
 
+@cindex day of week
 @example
 %typedef: Status_t enum NEW STARTED DONE CLOSED
 %typedef: Day_t enum Monday Tuesday Wednesday Thursday Friday
@@ -1096,6 +1152,7 @@ For example:
 @end example
 
 @noindent
+@cindex comments, in enumerated types
 It is possible to insert comments when describing an enum type.  The
 comments are delimited by parenthesis pairs.  The contents of the
 comments can be any character but parentheses.  For example:
@@ -1108,6 +1165,7 @@ comments can be any character but parentheses.  For example:
 @end example
 
 @noindent
+@cindex boolean types
 @dfn{Boolean} fields can be seen as special enumerations holding the
 binary values.
 
@@ -1128,6 +1186,8 @@ SwitchedOn: false
 @node Time related types
 @subsection Time related types
 
+@cindex date, fields containing dates
+@cindex time, fields containing time values
 The @dfn{Date} field type specifier can be used to declare dates and
 times.  The synopsis is:
 
@@ -1142,6 +1202,7 @@ The several date/time syntax supported by librec is provided by the
 @node Other types
 @subsection Other types
 
+@cindex email
 The @dfn{Email} field type specifier is used to declare electronic
 addresses such as emails.  The synopsis is:
 
@@ -1159,6 +1220,7 @@ synopsis is:
 @end example
 
 @noindent
+@cindex UUID
 Universally Unique Identifiers (also known as UUIDs) are a way to
 assign a globally unique label to some object.  The @dfn{uuid} field
 type specifier serves that purpose.  The synopsis is:
@@ -1176,6 +1238,8 @@ displayed in 5 groups separated by hyphens. For example:
 @end example
 
 @noindent
+@cindex foreign key
+@cindex key, foreign key
 The @dfn{rec} field type is used to support the notion of @dfn{foreign
 key} in the recutils world.  It is used to denote the fact that a
 field is referring some record stored in another record set.  For
@@ -1194,6 +1258,8 @@ type defined for the primary key of the @code{Hacker} record set.
 @node %auto
 @section %auto
 
+@cindex @code{%auto}
+@cindex automatically generated values
 This special field designates auto-generated fields in 
 record sets.  Its usage is:
 
@@ -1229,6 +1295,10 @@ is also error prone: was it ``Flying Helicopter Indoor Maxi'' or
 ``Flying Helicopter Maxi Indoor''? Was ``Helicopter'' in lower case or
 upper case?
 
+@cindex primary key
+@cindex key, primary key
+@cindex @code{%key}
+@cindex ID numbers
 It is quite common in databases to use some kind of numeric ``Id'' to
 uniquely identify items like those ones.  That is because numbers are
 easy to operate with, and to increase.   So we could add a new
@@ -1289,6 +1359,7 @@ of the affected field:
 @item Auto generated fields with other types are not allowed.
 @end itemize
 
+@cindex timestamps
 Auto generated dates can be used to implement automatic timestamps.
 Consider for example a ``Transfer'' record set registering bank
 transfers.  We want to save a timestamp every time a transfer is done,
@@ -1309,6 +1380,8 @@ directives.
 @node %sort
 @section %sort
 
+@cindex @code{%sort}
+@cindex sorting
 This special field sets sorting criteria for the records
 contained in a record set.  Its usage is:
 
@@ -1373,6 +1446,7 @@ Title: Staplers
 Date: 10 February 2011
 @end example
 
+@cindex order of fields
 @noindent
 The sorting of the selected field depends on its type:
 
@@ -1478,9 +1552,13 @@ Score: 9.2
 In this last case, Mr. One comes after Mr. Two because the class A
 comes before the class B even if they got the same score (@code{6.8}).
 
+
 @node %size
 @section %size
 
+@cindex @code{%size}
+@cindex size, record size
+@cindex record size
 The @code{%size} special field is used to define constraints in the
 number of records stored in a record set.  Its usage is:
 
@@ -1499,9 +1577,10 @@ literal, including hexadecimal and octal constants.  For example:
 %type: Name enum
 + Monday Tuesday Wednesday Thursday Friday
 + Saturday Sunday
-%doc: There should be 7 days.
+%doc: There should be exactly 7 days.
 @end example
 
+@cindex operators
 The optional @var{relational_operator} shall be one of @code{<},
 @code{<=}, @code{>} and @code{>=}@.  For example:
 
@@ -1520,19 +1599,25 @@ This field shall appear only once in a record descriptor.
 @node %constraint
 @section %constraint
 
-The @code{%constraint} special field is used to define constraints
-based on selection expressions.  Its usage is:
+@cindex @code{%constraint}
+@cindex restricting values of fields
+The @code{%constraint} special field is used to define constraints upon 
+a field's value.
+Its usage is:
 
 @example
 %constraint: @var{expr}
 @end example
 
 @noindent
-where @var{expr} is a selection expression.  When a constraint is
+where @var{expr} is a selection expression (@pxref{Selection Expressions}).
+When a constraint is
 present in a record set it means that all the records of that type
 must satisfy the selection expression, @ie{} the evaluation of the
 expression with the record returns 1.  Otherwise an integrity error is
 raised.
+@cindex integrity problems
+
 
 Consider for example a record type @code{Task} featuring two fields of
 type date called @code{Start} and @code{End}.  We can use a constraint
@@ -1545,6 +1630,8 @@ finishes:
 %constraint: Start << End
 @end example
 
+@cindex implies, logical implication
+@cindex constraints
 The ``implies'' operator @code{=>} is especially useful when defining
 constraints, since it can be used to specify conditional constraints,
 @ie{} constraints applying only in certain records.  For example, we
@@ -1564,6 +1651,8 @@ set.
 @node %confidential
 @section %confidential
 
+@cindex @code{%confidential}
+@cindex passwords
 This special field declares a set of fields as
 @dfn{confidential}, meaning they contain sensitive information such as
 passwords or secrets.  Its usage is:
@@ -1578,6 +1667,7 @@ There can be several @code{%confidential} fields in the same record
 descriptor, the effective list of confidential fields being the union
 of all the entries.
 
+@cindex encrypted fields
 Declaring a field as confidential indicates that its contents must not
 be stored in plain text, but encrypted with a password-based
 mechanism.  When the information is retrieved from the database the
@@ -1628,7 +1718,9 @@ Password: secret
 @end example
 
 Unencrypted confidential fields are a data integrity error,
-and utilities like @code{recfix} will report it.  The same utility can
+and utilities like @code{recfix} will report it.
+@cindex integrity problems
+The same utility can
 be used to ``fix'' the database by massively encrypting any
 unencrypted field.
 
@@ -1673,6 +1765,7 @@ an expression appropriate to the context.
 @node Regular Expressions
 @section Regular Expressions
 
+@cindex regular expressions
 The character @samp{.} matches any single character except the null character.
 
 @table @samp
@@ -1687,30 +1780,24 @@ matches a @samp{+}
 matches a @samp{?}.
 @end table
 
-
-Bracket expressions are used to match ranges of characters.  Bracket expressions where the range is backward, for example @samp{[z-a]}, are invalid.  Within square brackets, @samp{\} is taken literally.  Character classes are supported; for example @samp{[[:digit:]]} will match a single decimal digit.
+Bracket expressions are used to match ranges of characters.
+Bracket expressions where the range is backward, for example @samp{[z-a]}, are invalid.  
+Within square brackets, @samp{\} is taken literally.  
+Character classes are supported; for example @samp{[[:digit:]]} will match a single decimal digit.
 
 GNU extensions are supported:
 @enumerate
-
 @item @samp{\w} matches a character within a word
-
 @item @samp{\W} matches a character which is not within a word
-
 @item @samp{\<} matches the beginning of a word
-
 @item @samp{\>} matches the end of a word
-
 @item @samp{\b} matches a word boundary
-
 @item @samp{\B} matches characters which are not a word boundary
-
 @item @samp{\`} matches the beginning of the whole input
-
 @item @samp{\'} matches the end of the whole input
-
 @end enumerate
 
+@cindex grouping, within regular expressions
 Grouping is performed with parentheses @samp{()}.  An unmatched
 @samp{)} matches just itself.  A backslash followed by a digit acts as
 a back-reference and matches the same thing as the previous grouped
@@ -1728,15 +1815,10 @@ character class being specified.
 @samp{*}, @samp{+} and @samp{?} are special at any point in a regular
 expression except the following places, where they are not allowed:
 @enumerate
-
 @item At the beginning of a regular expression
-
-@item After an open-group, signified by
-@samp{(}
+@item After an open-group, signified by @samp{(}
 @item After the alternation operator @samp{|}
-
 @end enumerate
-
 
 Intervals are specified by @samp{@{} and @samp{@}}.  Invalid intervals
 such as @samp{a@{1z} are not accepted.
@@ -1748,9 +1830,10 @@ sub-expressions within groups.
 @node Selection Expressions
 @section Selection Expressions
 
+@cindex selection expressions
 @dfn{Selection expressions} (also known as a ``sexes'') are simple
 infix expressions that can be applied to a record.  The result of the
-SEX is typically interpreted as a Boolean value.
+SEX is typically interpreted as a boolean value.
 
 @menu
 * SEX Operands::        Literal values, fields and sub-expressions.
@@ -1761,11 +1844,13 @@ SEX is typically interpreted as a Boolean value.
 @node SEX Operands
 @subsection Operands
 
+@cindex operands, SEX operands
 The supported operands are: numbers, strings, field names and
 parenthesized expressions.
 
 @subsubsection Numeric Literals
 
+@cindex literals, numeric literals
 The supported numeric literals are integer numbers and real numbers.
 The usual sign character @samp{-} is used to denote negative values.
 Integer values can be denoted in base 10, base 16 using the @code{0x}
@@ -1784,7 +1869,7 @@ prefix, and base 8 using the @code{0} prefix.  Examples are:
 @end example
 
 @subsubsection String Literals
-
+@cindex literals, string literals
 String values are delimited by either the @code{'} character or the
 @code{"} character.  Whatever delimiter is used, the delimiter closing
 the literal shall equal to the delimiter used to open it.
@@ -1808,7 +1893,7 @@ are escaped with a backslash, like in:
 @end example
 
 @subsubsection Field Values
-
+@cindex field values, in selection expressions
 The value of a field value can be included in a selection expression
 by writing its name.  The field name is replaced by a string
 containing the field value, covering any possibility with records with
@@ -1845,10 +1930,11 @@ Email ~ "\\.org"
 
 @noindent
 Will match any record in which there is a field named @samp{Email}
-whose value terminates in @samp{.org}.  If we are interested in the
-value of some specific email, we can specify its relative position
-into the containing record by using @dfn{subscripts}.  Consider, for
-example:
+whose value terminates in @samp{.org}.  
+If we are interested in the value of some specific email, we can specify 
+its relative position into the containing record by using @dfn{subscripts}.  
+@cindex subscripts, in selection expressions
+Consider, for example:
 
 @example
 Email[0] ~ "\\.org"
@@ -1876,18 +1962,21 @@ The regexp flavor supported in selection expressions are the POSIX
 EREs plus several GNU extensions.  @xref{Regular Expressions}.
 
 @subsubsection Parenthesized Expressions
-
+@cindex parentheses, in selection expressions.
 Parenthesis characters (@code{(} and @code{)}) can be used to group
 sub expressions in the usual way.
 
 @node SEX Operators
 @subsection Operators
 
+@cindex operators, in selection expressions
 The supported operators are arithmetic operators (addition,
 subtraction, multiplication, division and modulus), logical operators,
 string operators and field operators.
 
 @subsubsection Arithmetic Operators
+@cindex arithmetic operators
+@cindex operators, arithmetic operators
 
 Arithmetic operators for addition (@code{+}), subtraction (@code{-}),
 multiplication (@code{*}), integer division (@code{/}) and modulus
@@ -1897,6 +1986,8 @@ These operators require either numeric operands or string operands
 whose value can be interpreted as numbers (integer or real).
 
 @subsubsection Boolean Operators
+@cindex boolean operators
+@cindex operators, boolean operators
 
 The boolean operators @strong{and} (@code{&&}), @strong{or}
 (@code{||}) and  @strong{not} (@code{!}) are supported with the same
@@ -1916,6 +2007,8 @@ any string operand to an integer value.
 
 @subsubsection Comparison Operators
 
+@cindex operators, comparison operators
+@cindex comparison
 The compare operators @strong{less than} (@code{<}), @strong{greater
 than} (@code{>}), @strong{less than or equal} (@code{<=}),
 @strong{greater than or equal} (@code{>=}), @strong{equal} (@code{=})
@@ -1929,7 +2022,7 @@ given regular expression.  The supported regexp syntax is described in
 the GNU C library manual.
 
 @subsubsection Date Comparison Operators
-
+@cindex date comparison
 The compare operators @strong{before} (@code{<<}), @strong{after}
 (@code{>>}) and @strong{same time} (@code{==}) can be used with fields
 and strings containing parseable dates.
@@ -1937,7 +2030,8 @@ and strings containing parseable dates.
 @xref{Date input formats}.
 
 @subsubsection Field Operators
-
+@cindex field operators
+@cindex counting occurences of a field
 Field counters are replaced by the number of occurrences of a field
 with the given name in the record.  For example:
 
@@ -1950,7 +2044,8 @@ The previous expression is replaced with the number of fields named
 have a field with that name.
 
 @subsubsection String Operators
-
+@cindex string operators
+@cindex operators, string operators
 The string concatenation operator (@code{&}) can be used to
 concatenate any number of strings and field values.
 
@@ -1959,7 +2054,8 @@ concatenate any number of strings and field values.
 @end example
 
 @subsubsection Conditional Operator
-
+@cindex conditional operator
+@cindex operators, conditional operator
 The ternary conditional operator can be used to select alternatives
 based on the value of some expression:
 
@@ -1973,6 +2069,7 @@ operator yields @code{expr2}.  Otherwise it yields @code{expr3}.
 
 @node SEX Evaluation
 @subsection Evaluation of Selection Expressions
+@cindex evaluation, of selection expressions
 
 Given that:
 
@@ -2014,6 +2111,8 @@ string.  This is used when replacing the slots in templates
 
 @node Field Expressions
 @section Field Expressions
+@cindex  field expressions
+@cindex  FEX
 
 @dfn{Field expressions} (also known as ``fexes'') are a way to select
 fields of a record.  They also allow you to do certain transformations
@@ -2084,6 +2183,7 @@ Email[0],Name,Email
 will print the first email, the name, and then all the email fields
 including the first one.
 
+@cindex aliasing, field name aliasing
 It is possible to include a @dfn{rewrite rule} in an element of a
 field expression, which specifies an alias for the selected fields:
 
@@ -2169,6 +2269,7 @@ operands even if they begin with @option{-}.  For example,
 
 @node recinf
 @section recinf
+@cindex @command{recinf}
 
 @command{recinf} reads the given rec files (or the data in the
 standard input if no file is specified) and prints information about
@@ -2231,7 +2332,9 @@ format.  This option is intended to be used by lisp programs.
 
 @node recsel
 @section recsel
+@cindex @command{recsel}
 
+@cindex selecting records
 @command{recsel} reads the given rec files (or the data in the
 standard input if no file is specified) and prints out records (or
 part of records) based upon some criteria specified by the user.
@@ -2268,6 +2371,7 @@ The following @dfn{global options} are available.
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.
+@cindex case, in selection expressions
 @item -C
 @item @w{@kbd{--collapse}}
 Do not section the result in records with newlines.
@@ -2282,6 +2386,7 @@ Try to decrypt confidential fields with the given password.
 Sort the output by the comma separated list of fields names
 @var{fields}.  This option has precedence to whatever sorting criteria
 is specified in the corresponding record descriptor with @code{%sort}.
+@cindex sorting
 @item -U
 @itemx @w{@kbd{--uniq}}
 Remove duplicated fields in the output records.  Fields are
@@ -2574,7 +2679,9 @@ partition.
 
 @node recins
 @section recins
+@cindex @command{recins}
 
+@cindex inserting new records
 @command{recins} adds new records to a rec file or to rec data read
 from the standard input.
 
@@ -2666,6 +2773,7 @@ records are selected, @ie{} no replace mode is activated.
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.
+@cindex case, in selection expressions
 @itemx @w{@kbd{--force}}
 Insert the requested record even in potentially dangerous situations,
 such as when the data integrity of the database is compromised.
@@ -2717,7 +2825,9 @@ This is to avoid having unencrypted sensitive data in the recfiles.
 
 @node recdel
 @section recdel
+@cindex @command{recdel}
 
+@cindex deleting records
 @command{recdel} removes records from a rec file, or from rec data
 read from the standard input.
 
@@ -2793,7 +2903,9 @@ $ recdel -c -t Task -e "Status = 'CLOSED'" TODO.rec
 
 @node recset
 @section recset
+@cindex @command{recset}
 
+@cindex manipulating records
 @command{recset} manipulates the fields of records in a rec file.
 
 @menu
@@ -2930,6 +3042,10 @@ $ recset -n 102 -f ClosedAt -S `date` tasks.rec
 
 @node recfix
 @section recfix
+@cindex @command{recfix}
+
+@cindex checking recfiles
+@cindex integrity, checking
 
 @command{recfix} checks and fixes rec files.
 
@@ -2973,6 +3089,7 @@ Perform a physical sort of all the records contained in the file (or
 the standard input) after checking for its integrity.  The sorting
 criteria are provided by the @code{%sort} special field, if any.  If
 there is an integrity failure the sorting is not performed.
+@cindex sorting
 
 Note that this is a destructive operation.
 @itemx @w{@kbd{--encrypt}}
@@ -3048,7 +3165,9 @@ $ recfix --auto stockage.rec
 
 @node recfmt
 @section recfmt
+@cindex @command{recfmt}
 
+@cindex formatted output
 @command{recfmt} formats records using templates.
 
 @menu
@@ -3082,6 +3201,7 @@ line.
 @node recfmt Templates
 @subsection recfmt Templates
 
+@cindex templates
 A recfmt template is a text string that may contain @dfn{template
 spots}.  Those spots are substituted in the template using the
 information of a given record.  Any text that is not within a spot is
@@ -3153,6 +3273,7 @@ recsel employees.rec | recfmt -f fire-letter.tmpl
 @node Conversion Utilities
 @chapter Conversion Utilities
 
+@cindex converting, to/from other formats
 Distributed with GNU Recutils are a number of utilities to convert
 recfiles to and from other formats.
 
@@ -3164,7 +3285,10 @@ recfiles to and from other formats.
 
 @node csv2rec
 @section csv2rec
+@cindex @command{csv2rec}
 
+@cindex csv
+@cindex comma separated values
 @command{csv2rec} reads the given comma-separated-values file (or the
 data in the standard input if no file is specified) and prints out the
 converted rec data, if possible.
@@ -3216,6 +3340,10 @@ $ cat contacts.csv | csv2rec -e > contacts.rec
 
 @node rec2csv
 @section rec2csv
+@cindex @command{rec2csv}
+@cindex csv
+@cindex comma separated values
+
 
 @command{rec2csv} reads the given rec files (or the data in the
 standard input if no file is specified) and prints out the converted
@@ -3352,6 +3480,8 @@ $ cat inventory.rec | rec2csv -t Item > items.csv
 
 @node mdb2rec
 @section mdb2rec
+@cindex @command{mdb2rec}
+@cindex mdb
 
 @command{mdb2rec} reads the given mdb file and prints out the
 converted rec data, if possible.
@@ -3480,9 +3610,18 @@ $ mdb2rec sales.mdb
 @dots{}
 @end example
 
+
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License
+@cindex license, GNU Free Documentation License
 
 @include fdl.texi
+
+
+@node Concept Index
+@unnumbered Concept Index
+
+@printindex cp
+
 
 @bye

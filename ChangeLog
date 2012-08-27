@@ -5,6 +5,7 @@
 	spacing.
 
 	* doc/recutils.texi: Added @. where appropriate.
+	* doc/recutils.texi: Added an index.
      
 
 2012-08-26  Jose E. Marchesi  <jemarch@gnu.org>
