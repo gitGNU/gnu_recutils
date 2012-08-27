@@ -8,7 +8,7 @@
 
 @comment Latin: id est 
 @macro ie
-@i{i.e.}
+@i{i.e.@:}
 @end macro
 
 @copying
@@ -1547,7 +1547,7 @@ finishes:
 
 The ``implies'' operator @code{=>} is especially useful when defining
 constraints, since it can be used to specify conditional constraints,
-i.e. constraints applying only in certain records.  For example, we
+@ie{} constraints applying only in certain records.  For example, we
 could specify that if a task is closed then it must have an @code{End}
 date in the following way:
 

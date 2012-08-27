@@ -1,3 +1,9 @@
+2012-08-27  John Darrington  <john@darrington.wattle.id.au>
+
+	* doc/recutils.texi: Replaced one remaining instance of "i.e." with the
+	respective macro.  Also added @: to the macro definition to improve
+	spacing.
+
 2012-08-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc: minor fixes in the manual.
