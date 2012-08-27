@@ -111,7 +111,7 @@ package deserves an explanation.  There is a rich set of already
 available free data storage systems, covering a broad range of
 requirements.  Big systems having complex data storage requirements
 will probably make use of some full-fledged relational system such as
-MySQL or PostgreSQL.  Less demanding applications, or applications
+MySQL or PostgreSQL@.  Less demanding applications, or applications
 with special deployment requirements, may find it more convenient to
 use a simpler system such as SQLite, where the data are stored in a
 single binary file.  XML files are often used to store configuration
@@ -134,7 +134,7 @@ true for the binary files, some may argue XML files are indeed human
 readable@dots{} well@dots{} <bar><foo tag=''val''>try</foo> to r&iamp;ead
 <p>this</p></bar>.  YAML @footnote{Yet Another Markup Language} is an
 example of a hierarchical data storage format which is much more
-readable than XML.  The problem with YAML is that it was designed as a
+readable than XML@.  The problem with YAML is that it was designed as a
 ``data serialization language'' and thus to map the data constructs
 usually found in programming languages.  That makes it too complex for
 the simple task of storing plain lists of items.
@@ -1503,7 +1503,7 @@ literal, including hexadecimal and octal constants.  For example:
 @end example
 
 The optional @var{relational_operator} shall be one of @code{<},
-@code{<=}, @code{>} and @code{>=}.  For example:
+@code{<=}, @code{>} and @code{>=}@.  For example:
 
 @example
 %rec: Item
