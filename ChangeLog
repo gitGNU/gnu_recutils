@@ -1,3 +1,7 @@
+2012-08-27  Jose E. Marchesi  <jco@terma.com>
+
+	* .x-sc_prohibit_strncpy: New file.
+
 2012-08-27  John Darrington  <john@darrington.wattle.id.au>
 
 	* doc/recutils.texi: Replaced one remaining instance of "i.e." with the
@@ -6,7 +10,6 @@
 
 	* doc/recutils.texi: Added @. where appropriate.
 	* doc/recutils.texi: Added an index.
-     
 
 2012-08-26  Jose E. Marchesi  <jemarch@gnu.org>
 
