@@ -1,3 +1,7 @@
+2012-08-27  Jose E. Marchesi  <jco@terma.com>
+
+	* .x-sc_prohibit_strncpy: New file.
+
 2012-08-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc: minor fixes in the manual.
