@@ -125,8 +125,8 @@ data storage systems mentioned in the previous paragraph:
 @cindex readability
 Regarding the first point (human readability), while it is clearly
 true for the binary files, some may argue XML files are indeed human
-readable@dots{} well@dots{} <bar><foo tag=''val''>try</foo> to r&iamp;ead
-<p>this</p></bar>.  YAML @footnote{Yet Another Markup Language} is an
+readable@dots{} well@dots{} @code{<bar><foo tag=''val''>try</foo> to r&iamp;ead
+<p>this</p></bar>}.  YAML @footnote{Yet Another Markup Language} is an
 example of a hierarchical data storage format which is much more
 readable than XML@.  The problem with YAML is that it was designed as a
 ``data serialization language'' and thus to map the data constructs
@@ -145,7 +145,7 @@ The GNU recutils suite comprises:
 @itemize @minus
 @item This Texinfo manual, describing the Rec format and the accompanying software.
 @item A C library (librec) that provides a rich set of functions to manipulate rec data.
-@item A set of C utilities (recinf, recsel, recins, recdel, recset and  recfix) that can be used in shell scripts and in the command line to operate on rec files.
+@item A set of C utilities (@command{recinf}, @command{recsel}, @command{recins}, @command{recdel}, @command{recset} and  @command{recfix}) that can be used in shell scripts and in the command line to operate on rec files.
 @item An emacs mode, @code{rec-mode}.
 @end itemize
 
@@ -1057,7 +1057,7 @@ Examples of fields of type line:
 @cindex multiline field values
 @example
 Name: Mr. Foo Bar
-Name: Mss. Bar Baz
+Name: Mrs. Bar Baz
 Name: This is
 + invalid
 @end example
@@ -1747,7 +1747,6 @@ The GNU recutils fully support encrypted fields.  See the documentation
 for @code{recsel}, @code{recins} and @code{recfix} for details on how
 to operate on files containing confidential fields.
 
-
 @node Recutils Expressions
 @chapter Recutils Expressions
 
@@ -2235,7 +2234,7 @@ It is possible to use the dot notation in order to refer to field and
 sub-fields.  This is mainly used in the context of joins, where new
 fields are created having compound names such as @code{Foo_Bar}.  A
 reference to such a field can be done in the fex using dot notation
-like follows:
+as follows:
 
 @example
 Foo.Bar
