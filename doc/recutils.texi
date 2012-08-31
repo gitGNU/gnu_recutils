@@ -11,6 +11,12 @@
 @i{i.e.@:}
 @end macro
 
+@comment Latin: exempla greta
+@macro eg
+@i{e.g.@:}
+@end macro
+
+
 @copying
 This manual is for GNU recutils (version @value{VERSION},
 @value{UPDATED}).
@@ -73,9 +79,8 @@ Overview
 * A Little Example::    Recutils in action.
 
 The Basic Rec Format
-* Fields and Records::    The basic structures conforming Rec files.
-* Comments::              Comments are useful to store meta data.
-* Record Descriptors::    Describing different types of records.
+* Structure of a Recfile::    The basic structures conforming Rec files.
+* Record Descriptors::        Describing different types of records.
 
 * Recutils Expressions::  
 * Recutils Reference::
@@ -240,10 +245,22 @@ $ recsel -e "Location = 'loaned'" -P Title books.rec
 The Colour of Magic
 @end example
 
-@node Fields and Records
-@chapter Fields and Records
+@node Structure of a Recfile
+@chapter Structure of a Recfile
 
-@cindex record
+A recfile is nothing but a text file, which conforms to a few simple rules.
+This chapter shows you how, by observing these rules, recfiles of arbirary
+complexity can be written.
+
+@menu
+* Fields::               The key--value pairs which comprise the data.
+* Records::              The `objects´ of a recfile.
+* Comments::             Information for humans' benefit only.
+@end menu
+
+@node Fields
+@section Fields
+
 @cindex field
 A @dfn{field} is the written form of an association between a label
 and a value.  For example, if we wanted to associate the label
@@ -310,6 +327,9 @@ Foo: bar1
 +  bar3
 @end example
 
+@node Records
+@section Records
+
 @cindex record
 A @dfn{record} is a group of one or more fields written one after the
 other:
@@ -354,7 +374,7 @@ Age: 969
 @end example
 
 @node Comments
-@chapter Comments
+@section Comments
 
 @cindex comments
 Any line having an @code{#} (ASCII 0x23) character in the first column
@@ -519,7 +539,7 @@ the following:
 @noindent
 @var{type} is the name of the kind of records described by the
 descriptor.  It is mandatory to specify it, and it follows the same
-lexical conventions used by field names.  @xref{Fields and Records}.
+lexical conventions used by field names.  @xref{Fields}.
 There is a non-enforced convention to use singular nouns, because the
 name makes reference to the type of a single entity, even if it
 applies to all the records contained in the record set.  For example,
@@ -2239,6 +2259,9 @@ as follows:
 @example
 Foo.Bar
 @end example
+
+
+
 
 @node Recutils Reference
 @chapter Recutils Reference

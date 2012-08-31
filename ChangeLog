@@ -1,3 +1,8 @@
+2012-08-31  John Darrington  <john@darrington.wattle.id.au>
+
+	* doc/recutils.texi : Merge Fields and Records, and Comments into 
+          one chapter
+
 2012-08-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Top): Concept Index added to the menu.
