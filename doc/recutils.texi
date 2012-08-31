@@ -81,7 +81,7 @@ Overview
 The Basic Rec Format
 * Structure of a Recfile::    The basic structures conforming Rec files.
 * Record Descriptors::        Describing different types of records.
-
+* Using the Recutils::
 * Recutils Expressions::  
 * Recutils Reference::
 * Conversion Utilities::
@@ -1766,6 +1766,523 @@ machine.
 The GNU recutils fully support encrypted fields.  See the documentation
 for @code{recsel}, @code{recins} and @code{recfix} for details on how
 to operate on files containing confidential fields.
+
+@node Using the Recutils
+@chapter Using the Recutils
+ 
+The previous chapters describe how to create and edit recfiles by hand.
+Now we will introduce utilities to extract data from your already
+created recfiles, and to automate the process using the recutils.
+
+@menu
+* Checking Recfiles for Errors::
+* Retrieving Data::             
+* Joining Records using Foreign Keys::  
+* Formatted Output:: 
+@end menu
+
+@node Checking Recfiles for Errors
+@section Checking Recfiles for Errors
+
+@cindex integrity, checking
+Sometimes, when creating a recfile by hand, typographical errors will
+occur.  It can be hard to spot such errors visually.  Fortunately
+there is a tool called @command{recfix} which can find these errors.
+
+One easy mistake is to forget the colon separating the field name from
+its value.
+
+@example
+%rec: Article
+%key  Id
+
+Name: Thing
+Id:   0
+@end example
+
+@cindex @command{recfix}
+Running @command{recfix} on this file will immediately tell us that
+there is a problem:
+
+@example
+$recfix --check inventory.rec
+inventory.rec: 2: error: expected a record
+@end example
+
+Here, @command{recfix} has diagnosed a problem in the file @file{inventory.rec} 
+and the problem lies at line 2.
+If, as in this case, @command{recfix} shows there is a problem with
+the recfile, you should attend to that problem before trying to use
+any other recutils program on that file, otherwise strange things
+could happen.
+
+It is a good idea to get into the habit of running @command{recfix} on
+a file after editing it, and before trying other commands.
+In fact, the @code{--check} flag is not necessary, because that is the
+default operation.
+
+
+
+@node Retrieving Data
+@section Retrieving Data
+
+Since recfiles are always human readable, you could lookup data simply by
+opening an editor and searching for the desired information.  
+Or you could use a standard tool such as @command{grep} to extract
+strings matching a pattern.
+However, recutils provide a more powerfull and flexible way to lookup
+data.
+
+Consider the following example record set, which we shall assume is
+saved in a recfile called @file{acquaintances.rec}:
+
+@example
+Name: Ada Lovelace
+Age: 36
+
+Name: Peter the Great
+Age: 53
+
+Name: Bart Simpson
+Age: 10
+
+Name: Adrian Mole
+Age: 13.75
+@end example
+
+@cindex selecting records
+@cindex looking up data
+@cindex retrieving data
+@noindent It contains names of people along with their respective ages.
+Suppose we want to get a list of the names of all the children.  
+It would not be easy to do this using @command{grep}.
+Neither would it, for any reasonably large recfile, be feasible to search
+manually for the children.
+Fortunately the @command{recsel} command provides an easy way to do
+such a lookup:
+@cindex @command{recsel}
+@example
+$ recfix acquaintances.rec
+$ recsel -e "Age < 18" -P Name acquaintances.rec
+Bart Simpson
+Adrian Mole
+@end example
+
+@noindent Before the @command{recsel} command there is a call to
+@command{recfix}, just in case @file{acquaintances.rec} contains
+something problematic.
+Let us look at each of the arguments to @command{recsel} in turn:
+Firstly we have  @code{-e} which tells @command{recsel} to lookup records
+matching the expression  @code{Age < 18} --- in other words all those persons
+whose ages are less than 18.
+@cindex selection expressions
+This is an example of a @dfn{selection expression} (@pxref{Selection Expressions}) ---
+in this case it is a very simple one, but it can be as complex as needed.
+Next there is @code{-P} which tells recsel to print out the value of
+the @code{Name} field --- because we want just the name, not the entire record.
+The final argument is the name of the file from whence the records are
+to come: @file{acquaintances.rec}.
+
+Rather than explicitly storing ages in the recfile, a more realistic example
+might have the date of birth instead 
+(otherwise it would be necessary to update the people's ages in the recfile every year).
+
+@example
+# Date of Birth
+%type: Dob date
+
+Name: Alfred Nebel
+Dob: 20 April 2010
+Email: alf@@example.com
+
+Name: Bertram Worcester
+Dob: 3 January 1966
+Email: bert@@example.com
+
+Name: Charles Spencer
+Dob: 4 July 1997
+Email: charlie@@example.com
+
+Name: Dirk Hogart
+Dob: 29 June 1945
+Email: dirk@@example.com
+
+Name: Ernest Wright
+Dob: 26 April 1978
+Email: ernie@@example.com
+@end example
+
+@noindent Now we can achieve a similar result as before, by looking up
+the names of all those persons who were born after a particular date:
+@example
+$ recfix acquaintances.rec
+$ recsel -e "Dob >> '31 July 1994'" -p Name acquaintances.rec
+Name: Alfred Nebel
+Name: Charles Spencer
+@end example
+
+@cindex date comparison
+@noindent The @code{>>} operator means ``later than'', and is used
+here to select a date of birth after 31st July 1994.
+Note also that this example uses a lower case @code{-p} whereas the preceeding example
+used the upper case @code{-P}.  The difference is, that @code{-p} prints the field name
+and field value, whereas @code{-P} prints just the value.
+@command{Recsel} accepts more than one @code{-e} argument,
+each introducing a selection expression,
+in which case records which satisfy all expressions are selected.
+You can provide more than one field label to @code{-P} or @code{-p} in order to select
+additional fields to be displayed.
+For example, if you wanted to send an email to all children 14 years of age or older,
+and today's date were @w{1st August} 1994, then you could use the following command to get
+the name and email address of all such children:
+
+@example
+$ recfix acquaintances.rec
+$ recsel -e "Dob >> '31 July 1994' && Dob << '01 August 1998'" -p Name,Email acquaintances.rec
+Name: Charles Spencer
+Email: charlie@@example.com
+@end example
+
+@noindent As you can see, there is only one such child in the record set.
+
+@cindex quotation marks
+Note that the example command shown above contains both double quotes @code{"} and
+single quotes @code{'}.
+@cindex date comparison
+The double quotes are interpreted by the shell (@eg{} @command{bash}) and
+the single quotes are part of the string which forms the  two dates being compared.
+
+
+@node Joining Records using Foreign Keys
+@section Joining Records using Foreign Keys
+
+Suppose you wanted to add the residential address of the people in 
+the @file{acquaintances.rec} file.
+
+One way to do this is as follows:
+@example
+%type: Dob date
+
+Name: Alfred Nebel
+Dob: 20 April 2010
+Email: alf@@example.com
+Address: 42 Abbeter Way, Inprooving, WORCS
+Telephone: 01234 5676789
+
+Name: Mandy Nebel
+Dob: 21 February 1972
+Email: mandy@@example.com
+Address: 42 Abbeter Way, Inprooving, WORCS
+Telephone: 01234 5676789
+
+Name: Bertram Nebel
+Dob: 3 January 1966
+Email: bert@@example.com
+Address: 42 Abbeter Way, Inprooving, WORCS
+Telephone: 01234 5676789
+
+Name: Charles Spencer
+Dob: 4 July 1997
+Email: charlie@@example.com
+Address: 2 Serpe Rise, Little Worning, SURREY
+Telephone: 09876 5432109
+
+ Name: Dirk Spencer
+Dob: 29 June 1945
+Email: dirk@@example.com
+Address: 2 Serpe Rise, Little Worning, SURREY
+Telephone: 09876 5432109
+
+Name: Ernest Wright
+Dob: 26 April 1978
+Email: ernie@@example.com
+Address: 1 Wanter Rise, Greater Inncombe, BUCKS
+@end example
+
+
+This will work fine.
+However you will notice that there are two addresses where more than one person 
+live (presumably they are members of the same family).
+This has a number of disadvantages:
+@itemize @minus
+@item You have to type (or copy)  the same information several times.
+@item Should a family move house, then you would have to update the addresses (and telephone number) of all the family members.
+@item A typing error in one of the addresses would lead an automatic query to erroneously suggest that the persons lived at different addresses.
+@item It unnecessarily increases the size of the recfile.
+@end itemize
+
+@cindex record sets
+A better way would be to separate the addresses and persons into different record sets.
+@cindex duplication, avoiding
+The first record set might look like this:
+
+@example
+%rec: Person
+%type: Dob date
+%type: Abode rec Residence
+
+
+Name: Alfred Nebel
+Dob: 20 April 2010
+Email: alf@@example.com
+Abode: 42AbbeterWay
+
+Name: Mandy Nebel
+Dob: 21 February 1972
+Email: mandy@@example.com
+Mobile: 0555 342123
+Abode: 42AbbeterWay
+
+Name: Bertram Nebel
+Dob: 3 January 1966
+Email: bert@@example.com
+Abode: 42AbbeterWay
+
+Name: Charles Spencer
+Dob: 4 July 1997
+Email: charlie@@example.com
+Abode: 2SerpeRise
+
+Name: Dirk Spencer
+Dob: 29 June 1945
+Email: dirk@@example.com
+Mobile: 0555 342123
+Abode: 2SerpeRise
+
+Name: Ernest Wright
+Dob: 26 April 1978
+Abode: ChezGrampa
+
+@end example
+
+@noindent and the second (which follows in the same file), like this:
+
+@example
+
+%rec: Residence
+%key: Id
+
+Address: 42 Abbeter Way, Inprooving, WORCS
+Telephone: 01234 5676789
+Id: 42AbbeterWay 
+
+Address: 2 Serpe Rise, Little Worning, SURREY
+Telephone: 09876 5432109
+Id: 2SerpeRise
+
+Address: 1 Wanter Rise, Greater Inncombe, BUCKS
+Id: ChezGrampa
+@end example
+
+Here you can see that there are two record sets @i{viz:} @code{Person}
+and @code{Residence}.
+There are six persons, but only three residences, because some residences
+accommodate more than one person.
+@cindex @code{%key}
+Note also that the @code{Residence} descriptor has the entry @code{%key: Id} 
+whilst the @code{Person} descriptor has @code{%type: Abode rec Residence}.
+@cindex foreign key
+@cindex key, foreign key
+@cindex @code{rec}, type description
+This is because @code{Abode} is the foreign key which identifies the residence
+where a person lives. 
+
+@cindex readability
+We could have declared the @code{Id} field as @code{%auto}.  This would have had
+the advantage that we need not manually update it. 
+However, we decided that the @code{Abode} field values in the @code{Person} records
+are better as alphanumeric fields, so that they can contain
+human readable values.  In this way, it is self-evident by reading a @code{Person}
+record where that person lives.
+Yet since the @code{Id} field is declared using the @code{%key} special field
+name, you can be sure that you don't accidently reuse an existant key.
+
+The above example has also added a new field to the @code{Person} record set
+to contain that person's mobile phone number.  Note that the @code{Telephone}
+field belongs to the @code{Residence} record set because that contains the telephone
+number of the home,
+whereas  @code{Mobile} belongs to @code{Person} since mobile telephones are normally
+used exclusively by one individual.
+
+If we want to look up the name and address of persons in our recfile, we can 
+use the @command{recsel} as before.
+Because we now have more than one record set in the @file{acquaintances.rec}
+file, we have to tell @command{recsel} from which record set we want to lookup
+records. 
+We do this with the @code{-t} flag as follows:
+@footnote{For clarity, the examples will not call @code{recfix} before the other recutils commands.
+However we suggest that you continue to do so, so that you are aware typing mistakes or other problems.}
+
+@example
+$ recsel -t Person -P Name,Abode acquaintances.rec
+Alfred Nebel
+42AbbeterWay
+
+Mandy Nebel
+42AbbeterWay
+
+Bertram Nebel
+42AbbeterWay
+
+Charles Spencer
+2SerpeRise
+
+Dirk Spencer
+2SerpeRise
+
+Ernest Wright
+ChezGrampa
+@end example
+
+This result tells us the names of all the people in the recfile, as well as 
+giving a concise and hopefully effective reminder telling us where they live.
+However these results would not be useful to someone unacquainted with the 
+individuals.
+They need a list of names and full addresses.
+We can use @command{recsel} to produce such a list:
+
+@example
+$ recsel -t Person -j Abode acquaintances.rec
+Name: Charles Spencer
+Dob: 4 July 1997
+Email: charlie@@example.com
+Abode_Address: 2 Serpe Rise, Little Worning, SURREY
+Abode_Telephone: 09876 5432109
+Abode_Id: 2SerpeRise
+
+Name: Dirk Spencer
+Dob: 29 June 1945
+Email: dirk@@example.com
+Mobile: 0555 342123
+Abode_Address: 2 Serpe Rise, Little Worning, SURREY
+Abode_Telephone: 09876 5432109
+Abode_Id: 2SerpeRise
+
+Name: Ernest Wright
+Dob: 26 April 1978
+Abode_Address: 1 Wanter Rise, Greater Inncombe, BUCKS
+Abode_Id: ChezGrampa
+@end example
+
+The @code{-t} flag we have seen before.  It tells @command{recsel} that we want
+to extract records of type @code{Person}.
+@cindex join
+The @code{-j} flag is new.  It says that we want to perform a @dfn{join}.
+Specifically we want to join the @code{Person} records according to their
+@code{Abode} field.
+
+In the above example, @command{recsel} displays several field names which
+do not appear anywhere in the input @eg{} @code{Abode_Address}.
+This is the @code{Address} field in the record joined by the foreign key @code{Abode}.
+In this example probably only the name and address are of interest.
+The other information such as date of birth is incidental.
+The foreign key @code{Abode_Id} is certainly not wanted in the output since it
+is redundant.
+As usual, you can use the @code{-P} or @code{-p} options to limit the fields
+which will be displayed.
+However the full joined field name, if appropriate, must be specified. 
+So the names and addresses without the other information can be retrieved thus:
+
+@example
+$ recsel -t Person -j Abode -p Name,Abode_Address acquaintances.rec
+Name: Charles Spencer
+Abode_Address: 2 Serpe Rise, Little Worning, SURREY
+
+Name: Dirk Spencer
+Abode_Address: 2 Serpe Rise, Little Worning, SURREY
+
+Name: Ernest Wright
+Abode_Address: 1 Wanter Rise, Greater Inncombe, BUCKS
+@end example
+
+@node Formatted Output
+@section Formatted Output
+
+Having a list of names and addresses, one might want to use this list
+to address envelopes
+(perhaps, to send annual greeting cards).
+Since addresses are normally written on several lines, it would be appropriate
+then to split the @code{Address} field values across multiple lines as described in
+@ref{Fields}.
+Suitable text can now be obtained thus:
+
+@example
+$ recsel -t Person -j Abode -P Name,Abode_Address acquaintances.rec
+Charles Spencer
+2 Serpe Rise,
+Little Worning,
+SURREY
+
+Dirk Spencer
+2 Serpe Rise,
+Little Worning,
+SURREY
+
+Ernest Wright
+1 Wanter Rise,
+Greater Inncombe,
+BUCKS
+@end example
+
+A business enterprise might want to go one step further and generate letters
+(such an advertisement or a recall notice) to customers.
+Since @command{recsel} merely selects records and fields from record sets, on 
+its own it cannot do this.
+There is another command designed for this purpose called @command{recfmt}.
+@cindex @command{recfmt}
+@cindex templates
+This command uses a @dfn{template} which defines the general form of the 
+desired output.  
+A letter template might look as follows:
+@example
+@{@{Name@}@}
+@{@{Abode_Address@}@}
+
+Dear @{@{Name@}@},
+
+     Re: Special offer for January
+
+We are delighted to be able to offer you a 95% discount on all car and
+truck hire contracts between 1 January and 2 February.  Please call us
+to take advantage of this offer.
+
+Yours sincerely,
+
+
+Karen van Rental (CEO) 
+^L
+@end example
+
+It is best to place such a template into a file, so that you can edit it
+as you wish.  
+Notice the instances of  double braces enclosing a  field name (@eg{} @code{@{@{Name@}@}}).
+These are called @dfn{spots} and indicate places where the respective field's
+value should be placed.
+@cindex spots
+Let's assume this template is in a file called @file{offer.templ}.
+We can then pipe the output from @command{recsel} into @command{recfmt} in order
+as follows:
+
+@example
+$ recsel -t Person -j Abode acquaintances.rec | recfmt -f offer.templ
+Charles Spencer
+2 Serpe Rise,
+Little Worning,
+SURREY
+
+Dear Charles Spencer,
+
+     Re: Special offer for January
+
+We are delighted to be able to offer you a 95% discount on all car and
+.
+.
+.
+@end example
+
+@noindent For each record that @command{recsel} selects, one copy of
+@file{offer.templ} will be generated.  Each spot will be replaced
+with the field value corresponding to the field name in the spot.
 
 @node Recutils Expressions
 @chapter Recutils Expressions

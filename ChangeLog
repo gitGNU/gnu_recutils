@@ -3,6 +3,8 @@
 	* doc/recutils.texi : Merge Fields and Records, and Comments into 
           one chapter
 
+        * doc/recutils.texi : Added the start of a tutorial chapter
+
 2012-08-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Top): Concept Index added to the menu.
