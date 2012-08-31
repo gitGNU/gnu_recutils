@@ -249,7 +249,7 @@ The Colour of Magic
 @chapter Structure of a Recfile
 
 A recfile is nothing but a text file, which conforms to a few simple rules.
-This chapter shows you how, by observing these rules, recfiles of arbirary
+This chapter shows you how, by observing these rules, recfiles of arbitrary
 complexity can be written.
 
 @menu
@@ -642,7 +642,7 @@ appear in the records stored in a database.  Their usage is:
 In both cases the list of field names are separated by one or more
 blank characters.
 
-@cindex field, compulsorary fields
+@cindex field, compulsory fields
 @cindex field, mandatory fields
 The fields listed in some @code{%mandatory} entry are
 mandatory; @ie{}, at least one field with this name shall be present
@@ -652,7 +652,7 @@ Records violating this restriction are
 invalid and a checking tool will report the situation as
 a data integrity failure.
 
-Consider for example an ``addressbook'' database where each record
+Consider for example an ``address book'' database where each record
 stores the information associated with a contact.  The records will be
 heterogeneous, in the sense they won't feature exactly the same
 fields: the contact of an internet shop will probably have an
@@ -723,7 +723,7 @@ The @code{%unique} special field allows one to declare fields as unique,
 meaning there cannot exist more than one field with the same name in a
 single record.
 
-For example, an entry in an addressbook database could contain an
+For example, an entry in an address book database could contain an
 @code{Age} field.  It does not make sense for a single person to be of
 several ages, so that field could be declared as ``unique'' in the
 corresponding record descriptor as follows:
@@ -780,7 +780,7 @@ This field contains documentation about the record.   It is similar to a
 comment (@pxref{Comments}), but this field can be managed in a programmatic
 way easier.
 
-Unlike a comment, @code{%doc} fields are recognised by tools such as
+Unlike a comment, @code{%doc} fields are recognized by tools such as
 @command{recinf} (@pxref{recinf}) which process record descriptors.
 It is a good idea to use the @code{%doc} field to provide a description
 of the records; typically a  description more verbose than the name provided
@@ -1109,7 +1109,7 @@ specify field sizes:
 @cindex restricting values of fields
 @noindent
 Arbitrary restrictions can be defined by using regular expressions.
-@cindex @code{regepx}, type description
+@cindex @code{regexp}, type description
 The @dfn{regexp} field type specifier introduces an ERE (extended
 regular expression) that will be matched against fields having that
 name.  The synopsis is:
@@ -1830,7 +1830,7 @@ Since recfiles are always human readable, you could lookup data simply by
 opening an editor and searching for the desired information.  
 Or you could use a standard tool such as @command{grep} to extract
 strings matching a pattern.
-However, recutils provide a more powerfull and flexible way to lookup
+However, recutils provide a more powerful and flexible way to lookup
 data.
 
 Consider the following example record set, which we shall assume is
@@ -1924,7 +1924,7 @@ Name: Charles Spencer
 @cindex date comparison
 @noindent The @code{>>} operator means ``later than'', and is used
 here to select a date of birth after 31st July 1994.
-Note also that this example uses a lower case @code{-p} whereas the preceeding example
+Note also that this example uses a lower case @code{-p} whereas the preceding example
 used the upper case @code{-P}.  The difference is, that @code{-p} prints the field name
 and field value, whereas @code{-P} prints just the value.
 @command{Recsel} accepts more than one @code{-e} argument,
@@ -2095,7 +2095,7 @@ are better as alphanumeric fields, so that they can contain
 human readable values.  In this way, it is self-evident by reading a @code{Person}
 record where that person lives.
 Yet since the @code{Id} field is declared using the @code{%key} special field
-name, you can be sure that you don't accidently reuse an existant key.
+name, you can be sure that you don't accidentally reuse an existent key.
 
 The above example has also added a new field to the @code{Person} record set
 to contain that person's mobile phone number.  Note that the @code{Telephone}
@@ -2570,7 +2570,7 @@ and strings containing parseable dates.
 
 @subsubsection Field Operators
 @cindex field operators
-@cindex counting occurences of a field
+@cindex counting occurrences of a field
 Field counters are replaced by the number of occurrences of a field
 with the given name in the record.  For example:
 
