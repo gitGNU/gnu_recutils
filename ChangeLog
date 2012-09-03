@@ -1,6 +1,10 @@
+2012-09-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* AUTHORS: Daiki, Ralf, John and Michał added.
+
 2012-08-31  John Darrington  <john@darrington.wattle.id.au>
 
-	* doc/recutils.texi : Merge Fields and Records, and Comments into 
+	* doc/recutils.texi : Merge Fields and Records, and Comments into
           one chapter
 
         * doc/recutils.texi : Added the start of a tutorial chapter
