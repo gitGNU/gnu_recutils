@@ -480,6 +480,7 @@ Date: 21 April 2011
 @end example
 
 @cindex field, special fields
+@cindex special fields
 @cindex key, primary key
 @cindex primary key
 Besides determining the type of the records that follows in the
@@ -490,6 +491,7 @@ example the following database, where the descriptor is used to
 specify a primary key and a mandatory field:
 
 @cindex @code{%mandatory}
+@cindex mandatory fields
 @example
 %rec: Item
 %key: Id
@@ -627,9 +629,11 @@ schema supported by @code{libcurl} will work.
 @section %mandatory and %prohibit
 
 @cindex @code{%mandatory}
+@cindex mandatory fields
 @cindex @code{%prohibit}
 @cindex restricting fields from records
 @cindex field, forbidden fields
+@cindex prohibited fields
 Those special field names are used to restrict the fields that can
 appear in the records stored in a database.  Their usage is:
 
@@ -719,6 +723,7 @@ usage is:
 @noindent
 The list of field names are separated by one or more blank characters.
 
+@cindex unique fields
 The @code{%unique} special field allows one to declare fields as unique,
 meaning there cannot exist more than one field with the same name in a
 single record.
@@ -776,6 +781,7 @@ violation and will be reported by a checking tool.
 @section %doc
 
 @cindex @code{%doc}
+@cindex documentation fields
 This field contains documentation about the record.   It is similar to a
 comment (@pxref{Comments}), but this field can be managed in a programmatic
 way easier.
@@ -1680,6 +1686,7 @@ set.
 
 @cindex @code{%confidential}
 @cindex passwords
+@cindex confidential data
 This special field declares a set of fields as
 @dfn{confidential}, meaning they contain sensitive information such as
 passwords or secrets.  Its usage is:
@@ -2427,6 +2434,7 @@ Examples are:
 ''
 @end example
 
+@cindex quotation marks
 The @code{'} and @code{"} characters can be part of a string if they
 are escaped with a backslash, like in:
 
