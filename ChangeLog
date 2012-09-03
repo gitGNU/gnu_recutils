@@ -21,6 +21,10 @@
 	beginning of the buffer.
 	(rec-edit-type): Likewise.
 
+2012-09-06   John Darrington  <john@darrington.wattle.id.au>
+
+	* doc/recutils.texi : Minor markup alterations
+
 2012-09-04  Jose E. Marchesi  <jco@terma.com>
 
 	rec-mode: improve rec-log-current-defun so it works in all cases.

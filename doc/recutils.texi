@@ -1511,6 +1511,7 @@ Class: C
 Score: 4
 @end example
 
+@noindent
 If we wanted to sort it by @code{Class} and by @code{Score} we would
 insert a @code{%sort} special field in the descriptor, having:
 
@@ -1541,6 +1542,7 @@ Class: C
 Score: 6.8
 @end example
 
+@noindent
 Note that the order of the fields in the @code{%sort} field is
 significant.  If we reverse the order in the example above then we get
 a different sorted set:
@@ -1572,8 +1574,10 @@ Class: B
 Score: 9.2
 @end example
 
-In this last case, Mr. One comes after Mr. Two because the class A
-comes before the class B even if they got the same score (@code{6.8}).
+@noindent
+In this last case, @code{Mr. One} comes after @code{Mr. Two} because the 
+class @code{A} 
+comes before the class @code{B} even if they got the same score (@code{6.8}).
 
 
 @node %size
