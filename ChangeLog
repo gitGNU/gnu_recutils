@@ -1,5 +1,13 @@
 2012-09-03  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: provide a sensible log-current-defun for the add-log
+	function.
+	* etc/rec-mode.el (rec-log-current-defun): New function.
+	(rec-mode): Set the buffer local value of
+	add-log-current-defun-function to rec-log-current-defun.
+
+2012-09-03  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* AUTHORS: Daiki, Ralf, John and Michał added.
 
 2012-08-31  John Darrington  <john@darrington.wattle.id.au>

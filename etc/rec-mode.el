@@ -2040,6 +2040,21 @@ This command is especially useful with enumerated types."
           (message "record copied to kill ring"))
       (message "Not in a record"))))
 
+;;;; Interacting with other modes
+
+(defun rec-log-current-defun ()
+  "Return the value of the key in the current record, if any.  If
+no key is defined then return the value of the first field in the
+record.  In case the pointer is not in a record then this
+function returns `nil'."
+  (let ((record (rec-current-record))
+        (key (rec-key)))
+    (when record
+      (if key
+          (let ((values (rec-record-assoc key record)))
+            (when values (car values)))
+        (rec-field-value (car (rec-record-fields record)))))))
+
 ;;;; Definition of modes
 
 (defun rec-mode ()
@@ -2058,6 +2073,8 @@ Commands:
   (make-local-variable 'rec-update-p)
   (make-local-variable 'rec-preserve-last-newline)
   (make-local-variable 'rec-editing)
+  (set (make-local-variable 'add-log-current-defun-function)
+       #'rec-log-current-defun)
   (setq rec-editing nil)
   (setq rec-jump-back nil)
   (setq rec-update-p nil)
