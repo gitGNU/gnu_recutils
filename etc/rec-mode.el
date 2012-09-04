@@ -2052,7 +2052,9 @@ function returns `nil'."
     (when record
       (if key
           (let ((values (rec-record-assoc key record)))
-            (when values (car values)))
+            (if values
+                (car values)
+              (rec-field-value (car (rec-record-fields record)))))
         (rec-field-value (car (rec-record-fields record)))))))
 
 ;;;; Definition of modes

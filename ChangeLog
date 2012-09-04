@@ -1,3 +1,9 @@
+2012-09-04  Jose E. Marchesi  <jco@terma.com>
+
+	rec-mode: improve rec-log-current-defun so it works in all cases.
+	* etc/rec-mode.el (rec-log-current-defun): Cover the case where
+	there is a defined key but the field is not present in the record.
+
 2012-09-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: provide a sensible log-current-defun for the add-log
