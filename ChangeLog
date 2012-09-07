@@ -1,5 +1,20 @@
 2012-09-07  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: fixed to allow comments in records.
+	* etc/rec-mode.el (rec-hide-continuation-line-markers): Fixed to
+	ignore comments in records.
+	(rec-hide-record-fields): Likewise.
+	(rec-record-elems): Renamed from rec-record-fields.
+	(rec-insert-record): Use rec-record-elems.
+	(rec-record-assoc): Likewise.
+	(rec-record-names): Likewise.
+	(rec-hide-continuation-line-markers): Likewise.
+	(rec-hide-record-fields): Likewise.
+	(rec-unfold-record-fields): Likewise.
+	(rec-log-current-defun): Likewise.
+
+2012-09-07  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: don't move the pointer after switching to edit buffer or
 	edit type mode.
 	* etc/rec-mode.el (rec-edit-buffer): Don't move the pointer to the

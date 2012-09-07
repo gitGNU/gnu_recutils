@@ -330,7 +330,7 @@ nil"
               (cond
                ((rec-comment-p elem) (rec-insert-comment elem))
                ((rec-field-p elem) (rec-insert-field elem))))
-            (rec-record-fields record))))
+            (rec-record-elems record))))
 
 ;;;; Operations on record structures
 ;;
@@ -347,8 +347,8 @@ nil"
   (when (rec-record-p record)
     (nth 1 record)))
 
-(defun rec-record-fields (record)
-  "Return a list with the fields of the given record."
+(defun rec-record-elems (record)
+  "Return a list with the elements of the given record."
   (when (rec-record-p record)
     (nth 2 record)))
 
@@ -367,7 +367,7 @@ If no such field exists in RECORD then nil is returned."
                 (when (and (rec-field-p field)
                            (equal name (rec-field-name field)))
                   (setq result (cons (rec-field-value field) result))))
-              (rec-record-fields record))
+              (rec-record-elems record))
       (reverse result))))
 
 (defun rec-record-names (record)
@@ -377,7 +377,7 @@ If no such field exists in RECORD then nil is returned."
       (mapcar (lambda (field)
                 (when (rec-field-p field)
                   (setq result (cons (rec-field-name field) result))))
-              (rec-record-fields record))
+              (rec-record-elems record))
       (reverse result))))
 
 ;;;; Operations on comment structures
@@ -905,19 +905,20 @@ current buffer to look like indentation."
     (when (rec-record-p record)
       (mapcar
        (lambda (field)
-         (let* ((pos (rec-field-position field))
-                (value-begin (+ pos (length (rec-field-name field)) 1))
-                (value-end (+ value-begin
-                              (length (with-temp-buffer
-                                        (rec-insert-field-value (rec-field-value field))
-                                        (buffer-substring (point-min) (point-max)))))))
-           (save-excursion
-             (goto-char value-begin)
-             (while (re-search-forward "^\\+ ?" (+ value-end 1) t)
-               (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
-                 (overlay-put ov 'display '(space . (:width rec-continuation-line-markers-width)))
-                 (push ov rec-continuation-line-markers-overlays))))))
-       (rec-record-fields record)))))
+         (when (rec-field-p field)
+           (let* ((pos (rec-field-position field))
+                  (value-begin (+ pos (length (rec-field-name field)) 1))
+                  (value-end (+ value-begin
+                                (length (with-temp-buffer
+                                          (rec-insert-field-value (rec-field-value field))
+                                          (buffer-substring (point-min) (point-max)))))))
+             (save-excursion
+               (goto-char value-begin)
+               (while (re-search-forward "^\\+ ?" (+ value-end 1) t)
+                 (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
+                   (overlay-put ov 'display '(space . (:width rec-continuation-line-markers-width)))
+                   (push ov rec-continuation-line-markers-overlays)))))))
+       (rec-record-elems record)))))
 
 (defun rec-remove-continuation-line-marker-overlays ()
   "Delete all the continuation line markers overlays."
@@ -937,16 +938,17 @@ the visibility."
     (when (rec-record-p record)
       (mapcar
        (lambda (field)
-         (let ((lines-in-value (with-temp-buffer
-                                 (insert (rec-field-value field))
-                                 (count-lines (point-min) (point-max))))
-               ov)
-           (when (> lines-in-value rec-max-lines-in-fields)
-             (save-excursion
-               (goto-char (rec-field-position field))
-               (rec-fold-field))
-             t)))
-       (rec-record-fields record)))))
+         (when (rec-field-p field)
+           (let ((lines-in-value (with-temp-buffer
+                                   (insert (rec-field-value field))
+                                   (count-lines (point-min) (point-max))))
+                 ov)
+             (when (> lines-in-value rec-max-lines-in-fields)
+               (save-excursion
+                 (goto-char (rec-field-position field))
+                 (rec-fold-field))
+               t))))
+       (rec-record-elems record)))))
 
 (defun rec-field-folded-p ()
   "Return whether the current field is folded."
@@ -993,10 +995,11 @@ the visibility."
     (when (rec-record-p record)
       (mapcar
        (lambda (field)
-         (save-excursion
-           (goto-char (rec-field-position field))
-           (rec-unfold-field)))
-       (rec-record-fields record)))))
+         (when (rec-field-p field)
+           (save-excursion
+             (goto-char (rec-field-position field))
+             (rec-unfold-field))))
+       (rec-record-elems record)))))
 
 (defun rec-toggle-field-visibility ()
   "Toggle the visibility of the current field."
@@ -2052,8 +2055,8 @@ function returns `nil'."
           (let ((values (rec-record-assoc key record)))
             (if values
                 (car values)
-              (rec-field-value (car (rec-record-fields record)))))
-        (rec-field-value (car (rec-record-fields record)))))))
+              (rec-field-value (car (rec-record-elems record)))))
+        (rec-field-value (car (rec-record-elems record)))))))
 
 ;;;; Definition of modes
 
