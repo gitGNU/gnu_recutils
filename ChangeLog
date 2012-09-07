@@ -1,3 +1,11 @@
+2012-09-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: don't move the pointer after switching to edit buffer or
+	edit type mode.
+	* etc/rec-mode.el (rec-edit-buffer): Don't move the pointer to the
+	beginning of the buffer.
+	(rec-edit-type): Likewise.
+
 2012-09-04  Jose E. Marchesi  <jco@terma.com>
 
 	rec-mode: improve rec-log-current-defun so it works in all cases.

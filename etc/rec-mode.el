@@ -1806,7 +1806,6 @@ the file.  Interactive version."
   (widen)
   (rec-narrow-to-type (rec-record-type))
   (setq rec-update-p t)
-  (goto-char (point-min))
   (rec-set-head-line (concat "Editing type "
                              "'" (rec-record-type) "'"
                              " - use C-cC-c to return to navigation mode"))
@@ -1822,7 +1821,6 @@ the file.  Interactive version."
   (use-local-map rec-mode-edit-map)
   (widen)
   (setq rec-update-p t)
-  (goto-char (point-min))
   (rec-set-head-line "Editing buffer - use C-cC-c to return to navigation mode")
   (rec-set-mode-line "Edit buffer"))
 
