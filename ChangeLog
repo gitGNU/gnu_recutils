@@ -5,6 +5,10 @@
 	(process_csv): Initialize lineno.
 	(field_cb): Improve the error message.
 
+2012-10-07  John Darrington  <john@darrington.wattle.id.au>
+
+	utils/recutl.c: (recutl_write_db_to_file) Fixed memory leak
+
 2012-09-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: fixed to allow comments in records.

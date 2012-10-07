@@ -350,7 +350,7 @@ recutl_write_db_to_file (rec_db_t db,
                          char *file_name)
 {
   FILE *out;
-  char *tmp_file_name;
+  char tmp_file_name[10]="recXXXXXX";
   rec_writer_t writer;
   int des;
   struct stat st1;
@@ -366,8 +366,6 @@ recutl_write_db_to_file (rec_db_t db,
       stat_result = stat (file_name, &st1);
 
       /* Create a temporary file with the results. */
-      tmp_file_name = xmalloc (100);
-      strcpy (tmp_file_name, "recXXXXXX");
       des = mkstemp (tmp_file_name);
       if (des == -1)
         {
