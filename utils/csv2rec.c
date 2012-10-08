@@ -55,6 +55,7 @@ struct csv2rec_ctx
   rec_record_t record;
 
   size_t num_fields;
+  size_t lineno;
 
 #define MAX_FIELDS 256
   bool header_p;
@@ -251,7 +252,24 @@ field_cb (void *s, size_t len, void *data)
         {
           if (ctx->num_fields > ctx->num_field_names)
             {
-              recutl_fatal (_("not enough headers"));
+              char *errmsg = NULL;
+              char *source = csv2rec_csv_file;
+
+              if (!source)
+                {
+                  source = "stdin";
+                }
+
+              if (!asprintf (&errmsg,
+                             _("%s: %d: this line contains %d fields, but %d header fields were read\n"),
+                             source,
+                             ctx->lineno, ctx->num_field_names, ctx->num_fields))
+                {
+                  recutl_fatal ("out of memory\n");
+                }
+
+              fprintf (stderr, errmsg);
+              exit (EXIT_FAILURE);
             }
           field = rec_field_new (ctx->field_names[ctx->num_fields], str);
           rec_mset_append (rec_record_mset (ctx->record), MSET_FIELD, (void *) field, MSET_ANY);
@@ -266,6 +284,8 @@ record_cb (int c, void *data)
 {
   struct csv2rec_ctx *ctx;
   ctx = (struct csv2rec_ctx *) data;
+
+  ctx->lineno++;
 
   if (ctx->header_p)
     {
@@ -326,6 +346,7 @@ process_csv (void)
   ctx.header_p = true;
   ctx.num_field_names = -1;
   ctx.num_fields = 0;
+  ctx.lineno = 0;
 
   /* Set the files to read/write from/to.
 

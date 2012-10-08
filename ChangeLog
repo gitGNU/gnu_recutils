@@ -1,3 +1,10 @@
+2012-10-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	csv2rec: diagnostic messages improved.
+	* utils/csv2rec.c (struct csv2rec_ctx): New field lineno.
+	(process_csv): Initialize lineno.
+	(field_cb): Improve the error message.
+
 2012-09-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: fixed to allow comments in records.
