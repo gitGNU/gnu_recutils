@@ -1396,41 +1396,39 @@ rec_type_check_enum (rec_type_t type,
   const char *p, *b;
   char name[100];
 
-  if (!rec_match (str, REC_TYPE_ENUM_VALUE_RE))
+  if (rec_match (str, REC_TYPE_ENUM_VALUE_RE))
     {
-      return false;
-    }
-
-  /* Get the name from STR.  */
-  p = str;
-
-  while (p && rec_blank_p (*p))
-    {
-      p++;
-    }
-
-  b = p;
-  while (p && (rec_letter_p (*p)
-               || rec_letter_p (*p)
-               || rec_digit_p (*p)
-               || (*p == '_')
-               || (*p == '-')))
-    {
-      name[p - b] = *p;
-      p++;
-    }
-  name[p - b] = '\0';
-
-  /* Check for the name in the enum types.  */
-  i = 0;
-  while (type->data.names[i])
-    {
-      if (strcmp (name, type->data.names[i]) == 0)
+      /* Get the name from STR.  */
+      p = str;
+      
+      while (p && rec_blank_p (*p))
         {
-          return true;
+          p++;
         }
       
-      i++;
+      b = p;
+      while (p && (rec_letter_p (*p)
+                   || rec_letter_p (*p)
+                   || rec_digit_p (*p)
+                   || (*p == '_')
+                   || (*p == '-')))
+        {
+          name[p - b] = *p;
+          p++;
+        }
+      name[p - b] = '\0';
+      
+      /* Check for the name in the enum types.  */
+      i = 0;
+      while (type->data.names[i])
+        {
+          if (strcmp (name, type->data.names[i]) == 0)
+            {
+              return true;
+            }
+          
+          i++;
+        }
     }
 
   if (errors)
