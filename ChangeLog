@@ -1,3 +1,18 @@
+2012-11-07  Jose E. Marchesi  <jemarch@gnu.org>
+
+	man: do not require help2man unless the sources are changed.
+	* .gitignore: generated manpages removed.
+	* man/csv2rec.1: Added to the repo.
+	* man/recset.1: Likewise.
+	* man/recsel.1: Likewise.
+	* man/recins.1: Likewise.
+	* man/recinf.1: Likewise.
+	* man/recfmt.1: Likewise.
+	* man/recfix.1: Likewise.
+	* man/recdel.1: Likewise.
+	* man/rec2csv.1: Likewise.
+	* man/mdb2rec.1: Likewise.
+
 2012-10-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	csv2rec: diagnostic messages improved.
