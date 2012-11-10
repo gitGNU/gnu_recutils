@@ -1,5 +1,31 @@
 2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	rec-mode: check for the validity of the contents of the buffers
+	before going to navigation mode.
+	* etc/rec-mode.el (rec-mode): Do not activate the rec-mode if the
+	contents of the buffer are not valid rec data.  Show an error
+	message in the modeline instead.
+	(rec-update-buffer-descriptors-and-check): New function.
+	(rec-finish-editing): Warn and don't abandon edit mode if there
+	are errors in the rec data in the buffer.
+
+	* utils/recinf.c (main): Recognize parse errors when stdin is used
+	to read the rec data.
+
+	* torture/utils/recinf.sh (invalid): New input file.
+	(recinf-invalid): New test.
+
+	* src/rec-parser.c (rec_parse_db): Keep track of the result of
+	rec_parse_rset so an invalid database is properly reported.
+
+	* utils/recinf.c (print_info_file): Return false if there is a
+	parse error in the input.
+
+	* etc/rec-mode.el (rec-update-buffer-descriptors): Return nil if
+	the :
+
+2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: avoid trying to delete the sole window in the current
 	frame.
 	(rec-finish-editing-field): avoid trying to delete the edit window

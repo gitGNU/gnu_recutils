@@ -593,40 +593,69 @@ The current record is the record where the pointer is"
 ;; These functions perform the management of the collection of records
 ;; in the buffer.
 
+(defun rec-update-buffer-descriptors-and-check (&optional dont-go-fundamental)
+  "Update buffer descriptors and switch to fundamental mode if
+there is a parse error."
+  (if (rec-update-buffer-descriptors)
+      t
+    (unless dont-go-fundamental
+      (fundamental-mode))
+    (let* ((cur-buf (current-buffer))
+           (errmsg (with-temp-buffer
+                     (let ((err-buf (current-buffer)))
+                       (save-excursion
+                         (set-buffer cur-buf)
+                         (call-process-region (point-min) (point-max)
+                                              rec-recfix
+                                              nil ; delete
+                                              (list err-buf t)
+                                              nil ; display
+                                              "--check")))
+                     (goto-char (point-min))
+                     (when (looking-at "stdin: ")
+                       (delete-region (point-min) (match-end 0)))
+                     (goto-char (point-max))
+                     (when (equal (char-after) ?\n)
+                       (delete-char 1))
+                     (buffer-substring (point-min) (- (point-max) 1)))))
+      (message (concat (buffer-name) ": " errmsg))
+      nil)))
+
 (defun rec-update-buffer-descriptors ()
-  "Get a list of the record descriptors in the current buffer."
-  (message "Updating record descriptors...")
+  "Get a list of the record descriptors in the current buffer.
+
+If the contents of the current buffer are not valid rec data then
+this function returns `nil'."
   (setq rec-buffer-descriptors
 	(let ((buffer (generate-new-buffer "Rec Inf "))
 	      descriptors records status)
-	  (unwind-protect
-	      (progn
-		;; Call 'recinf' to get the list of record descriptors in
-		;; sexp format.
-		(setq status (call-process-region (point-min) (point-max)
-						  rec-recinf
-						  nil ; delete
-						  buffer
-						  nil ; display
-						  "-S" "-d"))
-		(if (/= status 0)
-		    (error "recinf returned error: %d" status))
-		(with-current-buffer buffer
-		  (goto-char (point-min))
-		  (insert "(")
-		  (goto-char (point-max))
-		  (insert ")")
-		  (setq descriptors (read (point-min-marker)))))
-	    (kill-buffer buffer))
-	  ;; Calculate the value of 'rec-buffer-descriptors'.
-	  (mapcar (lambda (descriptor)
-		    (let ((marker (make-marker)))
-		      (set-marker marker (rec-record-position descriptor))
-		      (setq records (cons (list 'descriptor descriptor marker)
-					  records))))
-		  descriptors)
-	  (reverse records)))
-  (message ""))
+          ;; Call 'recinf' to get the list of record descriptors in
+          ;; sexp format.
+          (setq status (call-process-region (point-min) (point-max)
+                                            rec-recinf
+                                            nil ; delete
+                                            buffer
+                                            nil ; display
+                                            "-S" "-d"))
+          (if (equal status 0)
+              (progn (with-current-buffer buffer
+                       (goto-char (point-min))
+                       (insert "(")
+                       (goto-char (point-max))
+                       (insert ")")
+                       (unwind-protect
+                           (setq descriptors (read (point-min-marker)))
+                         (kill-buffer buffer)))
+                     (when descriptors
+                       (mapcar (lambda (descriptor)
+                                 (let ((marker (make-marker)))
+                                   (set-marker marker (rec-record-position descriptor))
+                                   (setq records (cons (list 'descriptor descriptor marker)
+                                                       records))))
+                               descriptors)
+                       (reverse records)))
+            (kill-buffer buffer)
+            nil))))
 
 (defun rec-buffer-types ()
   "Return a list with the names of the record types in the
@@ -1795,7 +1824,7 @@ the file.  Interactive version."
   (use-local-map rec-mode-edit-map)
   (rec-set-head-line "Editing record - use C-cC-c to return to navigation mode")
   (rec-set-mode-line "Edit record")
-  (setq rec-update-p t)
+  (setq rec-update-p nil)
   (setq rec-preserve-last-newline t))
 
 (defun rec-edit-type ()
@@ -1830,24 +1859,23 @@ the file.  Interactive version."
 (defun rec-finish-editing ()
   "Go back from the record edition mode"
   (interactive)
-  (or (rec-current-record)
-      (rec-goto-next-rec)
-      (rec-goto-previous-rec))
-  (when rec-preserve-last-newline
-    (save-excursion
-      (goto-char (point-max))
-      (unless (equal (char-before) ?\n)
-        (insert ?\n))))
-  (when rec-update-p
-    (save-restriction
-      (widen)
-      (rec-update-buffer-descriptors))
-    (setq rec-update-p nil))
-  (rec-show-record)
-  (rec-set-head-line nil)
-  (rec-set-mode-line (rec-record-type))
-  (setq rec-editing nil)
-  (message "End of edition"))
+  (when (or (not rec-update-p)
+            (and rec-update-p
+                 (save-restriction (widen) (rec-update-buffer-descriptors-and-check t))))
+    (or (rec-current-record)
+        (rec-goto-next-rec)
+        (rec-goto-previous-rec))
+    (when rec-preserve-last-newline
+      (save-excursion
+        (goto-char (point-max))
+        (unless (equal (char-before) ?\n)
+          (insert ?\n))))
+    (setq rec-update-p nil)
+    (rec-show-record)
+    (rec-set-head-line nil)
+    (rec-set-mode-line (rec-record-type))
+    (setq rec-editing nil)
+    (message "End of edition")))
 
 (defun rec-cmd-show-descriptor ()
   "Show the descriptor record of the current record.
@@ -2088,21 +2116,23 @@ Commands:
   (set-syntax-table rec-mode-syntax-table)
   (setq mode-name "Rec")
   (setq major-mode 'rec-mode)
-  ;; Goto the first record of the first type (including the Unknown)
-  (rec-update-buffer-descriptors)
-  ;; If the configured open-mode is navigation, set up the buffer
-  ;; accordingly.  But don't go into navigation mode if the file is
-  ;; empty.
-  (if (and (equal rec-open-mode 'navigation)
-           (> (buffer-size (current-buffer)) 0))
-    (progn
-      (setq buffer-read-only t)
-      (setq rec-type (car (rec-buffer-types)))
-      (rec-show-type rec-type))
-    ;; Edit mode
-    (use-local-map rec-mode-edit-map)
-    (setq rec-editing t)
-    (rec-set-mode-line "Edit buffer")))
+  ;; Goto the first record of the first type (including the Unknown).
+  ;; If there is a problem (i.e.  syntax error) then go to fundamental
+  ;; mode and show the output of recfix in a separated buffer.
+  (when (rec-update-buffer-descriptors-and-check)
+    ;; If the configured open-mode is navigation, set up the buffer
+    ;; accordingly.  But don't go into navigation mode if the file is
+    ;; empty.
+    (if (and (equal rec-open-mode 'navigation)
+             (> (buffer-size (current-buffer)) 0))
+        (progn
+          (setq buffer-read-only t)
+          (setq rec-type (car (rec-buffer-types)))
+          (rec-show-type rec-type))
+      ;; Edit mode
+      (use-local-map rec-mode-edit-map)
+      (setq rec-editing t)
+      (rec-set-mode-line "Edit buffer"))))
 
 (defvar rec-edit-field-mode-map
   (let ((map (make-sparse-keymap)))

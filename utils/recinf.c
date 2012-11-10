@@ -128,7 +128,9 @@ print_info_file (FILE *in,
 
   ret = true;
   parser = rec_parser_new (in, file_name);
-  if (rec_parse_db (parser, &db))
+
+  ret = rec_parse_db (parser, &db);
+  if (ret)
     {
       for (position = 0; position < rec_db_size (db); position++)
         {
@@ -274,7 +276,11 @@ main (int argc, char *argv[])
     }
   else
     {
-      print_info_file (stdin, "stdin");
+      if (!print_info_file (stdin, "stdin"))
+        {
+          /* Parse error */
+          exit (EXIT_FAILURE);
+        }
     }
   
   return EXIT_SUCCESS;

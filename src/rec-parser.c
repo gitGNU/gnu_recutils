@@ -663,6 +663,11 @@ rec_parse_db (rec_parser_t parser,
         }
     }
 
+  if (!rec_parser_eof (parser))
+    {
+      ret = false;
+    }
+
   if (ret)
     {
       *db = new;

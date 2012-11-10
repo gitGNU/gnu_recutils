@@ -31,6 +31,14 @@ test_init "recinf"
 
 test_declare_input_file empty-file ''
 
+test_declare_input_file invalid \
+'foo: bar
+bar: baz
+
++ jo
+ju: bar
+'
+
 test_declare_input_file one-record \
 'field1: value1
 field2: value2
@@ -130,6 +138,11 @@ test_tool recinf-names-only ok \
 Type2
 Type3
 '
+
+test_tool recinf-invalid xfail \
+          recinf \
+          '' \
+          invalid
 
 #
 # Cleanup
