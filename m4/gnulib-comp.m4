@@ -60,6 +60,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module environ:
   # Code from module errno:
   # Code from module error:
+  # Code from module euidaccess:
   # Code from module execute:
   # Code from module exitfail:
   # Code from module extensions:
@@ -90,6 +91,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module gendocs:
   # Code from module getdelim:
   # Code from module getdtablesize:
+  # Code from module getgroups:
   # Code from module getline:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
@@ -100,6 +102,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module gettimeofday:
   # Code from module gnumakefile:
   # Code from module gnupload:
+  # Code from module group-member:
   # Code from module havelib:
   # Code from module include_next:
   # Code from module inline:
@@ -160,6 +163,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module realloc-posix:
   # Code from module regex:
   # Code from module regexprops-generic:
+  # Code from module root-uid:
   # Code from module sched:
   # Code from module setenv:
   # Code from module sigaction:
@@ -269,6 +273,12 @@ AC_DEFUN([gl_INIT],
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_][XGETTEXT_OPTION([--flag=error:3:c-format])
      AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
+  gl_FUNC_EUIDACCESS
+  if test $HAVE_EUIDACCESS = 0; then
+    AC_LIBOBJ([euidaccess])
+    gl_PREREQ_EUIDACCESS
+  fi
+  gl_UNISTD_MODULE_INDICATOR([euidaccess])
   gl_EXECUTE
   AC_REQUIRE([gl_EXTERN_INLINE])
   gl_FATAL_SIGNAL
@@ -357,6 +367,11 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_GETDTABLESIZE
   fi
   gl_UNISTD_MODULE_INDICATOR([getdtablesize])
+  gl_FUNC_GETGROUPS
+  if test $HAVE_GETGROUPS = 0 || test $REPLACE_GETGROUPS = 1; then
+    AC_LIBOBJ([getgroups])
+  fi
+  gl_UNISTD_MODULE_INDICATOR([getgroups])
   gl_FUNC_GETLINE
   if test $REPLACE_GETLINE = 1; then
     AC_LIBOBJ([getline])
@@ -408,6 +423,12 @@ AC_DEFUN([gl_INIT],
           m4_defn([m4_PACKAGE_VERSION])), [1], [],
         [AC_CONFIG_LINKS([$GNUmakefile:$GNUmakefile], [],
           [GNUmakefile=$GNUmakefile])])
+  gl_FUNC_GROUP_MEMBER
+  if test $HAVE_GROUP_MEMBER = 0; then
+    AC_LIBOBJ([group-member])
+    gl_PREREQ_GROUP_MEMBER
+  fi
+  gl_UNISTD_MODULE_INDICATOR([group-member])
   gl_INLINE
   gl_FUNC_ISNAND_NO_LIBM
   if test $gl_func_isnand_no_libm != yes; then
@@ -919,6 +940,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/errno.in.h
   lib/error.c
   lib/error.h
+  lib/euidaccess.c
   lib/execute.c
   lib/execute.h
   lib/exitfail.c
@@ -949,6 +971,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/ftello.c
   lib/getdelim.c
   lib/getdtablesize.c
+  lib/getgroups.c
   lib/getline.c
   lib/getopt.c
   lib/getopt.in.h
@@ -963,6 +986,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gl_array_list.h
   lib/gl_list.c
   lib/gl_list.h
+  lib/group-member.c
   lib/intprops.h
   lib/isnan.c
   lib/isnand-nolibm.h
@@ -1034,6 +1058,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/regex_internal.c
   lib/regex_internal.h
   lib/regexec.c
+  lib/root-uid.h
   lib/sched.in.h
   lib/setenv.c
   lib/sig-handler.h
@@ -1104,6 +1129,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xalloc-oversized.h
   lib/xalloc.h
   lib/xmalloc.c
+  lib/xsize.c
   lib/xsize.h
   m4/00gnulib.m4
   m4/alloca.m4
@@ -1123,6 +1149,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/environ.m4
   m4/errno_h.m4
   m4/error.m4
+  m4/euidaccess.m4
   m4/execute.m4
   m4/exponentd.m4
   m4/exponentf.m4
@@ -1149,6 +1176,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/ftello.m4
   m4/getdelim.m4
   m4/getdtablesize.m4
+  m4/getgroups.m4
   m4/getline.m4
   m4/getopt.m4
   m4/getpass.m4
@@ -1159,6 +1187,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/glibc2.m4
   m4/glibc21.m4
   m4/gnulib-common.m4
+  m4/group-member.m4
   m4/iconv.m4
   m4/include_next.m4
   m4/inline.m4

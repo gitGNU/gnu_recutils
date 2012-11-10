@@ -1,5 +1,9 @@
 2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* gnulib module euidaccess imported.
+
+2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	rec-mode: check for the validity of the contents of the buffers
 	before going to navigation mode.
 	* etc/rec-mode.el (rec-mode): Do not activate the rec-mode if the
