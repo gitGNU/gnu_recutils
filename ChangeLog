@@ -1,3 +1,12 @@
+2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: rec-end-of-field-pos now works properly when a field
+	ends with the end of file mark.
+	* etc/rec-mode.el (rec-end-of-field-pos): Do not add one to the
+	end-of-field position.
+	(rec-delete-field): Delete the trailing \n after the field, if
+	any.
+
 2012-11-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: emit a useful message when an invalid enum literal is found

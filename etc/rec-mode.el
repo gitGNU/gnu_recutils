@@ -494,10 +494,7 @@ the pointer is not on a field."
         (when (looking-at rec-field-name-re)
           (goto-char (match-end 0)))
         (when (looking-at rec-field-value-re)
-          ;; The +1 is to include the \n at the beginning of the
-          ;; record value, that is part of the field but not part of
-          ;; the value
-          (+ (match-end 0) 1))))))
+          (match-end 0))))))
 
 (defun rec-beginning-of-comment-pos ()
   "Return the position of the beginning of the current comment,
@@ -1695,7 +1692,9 @@ will be used for fields of any type."
   (let ((begin-pos (rec-beginning-of-field-pos))
         (end-pos (rec-end-of-field-pos)))
     (when (and begin-pos end-pos)
-      (delete-region begin-pos end-pos))))
+      (delete-region begin-pos end-pos)
+      (when (equal (char-after) ?\n)
+        (delete-char 1)))))
 
 (defun rec-copy-record ()
   "Copy the current record"
