@@ -362,6 +362,12 @@ main (int argc, char *argv[])
     }
 
   recset_process_actions (db);
+
+  if (!recutl_file_is_writable (recset_file))
+    {
+      recutl_error (_("file %s is not writable.\n"), recset_file);
+      return EXIT_FAILURE;
+    }
   recutl_write_db_to_file (db, recset_file);
 
   return EXIT_SUCCESS;

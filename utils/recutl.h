@@ -227,6 +227,8 @@ rec_db_t recutl_build_db (int argc, char **argv);
 rec_db_t recutl_read_db_from_file (char *file_name);
 void recutl_write_db_to_file (rec_db_t db, char *file_name);
 
+bool recutl_file_is_writable (char *file_name);
+
 char *recutl_read_file (char *file_name);
 
 void recutl_check_integrity (rec_db_t db,

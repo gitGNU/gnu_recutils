@@ -45,6 +45,7 @@
 #include <regex.h>
 #include <stdint.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -343,6 +344,12 @@ recutl_read_db_from_file (char *file_name)
     }
 
   return db;
+}
+
+bool
+recutl_file_is_writable (char *file_name)
+{
+  return (euidaccess (file_name, W_OK) == 0);
 }
 
 void

@@ -1,5 +1,19 @@
 2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: honor file permissions when doing in-place operations.
+	* utils/recset.c (main): Likewise.
+
+	* utils/recins.c (main): Likewise.
+
+	* utils/recfix.c (recfix_do_sort): Likewise.
+
+	* utils/recdel.c (main): Check for the writeability of the file
+	before writing to it.
+
+	* utils/recutl.c (recutl_check_file_is_writable): new function.
+
+2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* gnulib module euidaccess imported.
 
 2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>

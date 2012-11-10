@@ -398,6 +398,12 @@ recfix_do_sort ()
       return EXIT_FAILURE;
     }
 
+  if (!recutl_file_is_writable (recfix_file))
+    {
+      recutl_error (_("file %s is not writable.\n"), recfix_file);
+      return EXIT_FAILURE;
+    }
+
   recutl_write_db_to_file (db, recfix_file);
   return EXIT_SUCCESS;
 }

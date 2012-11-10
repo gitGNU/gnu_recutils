@@ -405,6 +405,12 @@ main (int argc, char *argv[])
       db = rec_db_new ();
     }
   recins_add_new_record (db);
+
+  if (!recutl_file_is_writable (recins_file))
+    {
+      recutl_error (_("file %s is not writable.\n"), recins_file);
+      return EXIT_FAILURE;
+    }
   recutl_write_db_to_file (db, recins_file);
 
   return EXIT_SUCCESS;

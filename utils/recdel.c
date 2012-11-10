@@ -272,9 +272,15 @@ main (int argc, char *argv[])
     {
       recdel_delete_records (db);
     }
+
+  if (!recutl_file_is_writable (recdel_file))
+    {
+      recutl_error (_("file %s is not writable.\n"), recdel_file);
+      return EXIT_FAILURE;
+    }
   recutl_write_db_to_file (db, recdel_file);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 /* End of recdel.c */
