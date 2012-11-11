@@ -1,3 +1,9 @@
+2012-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	utils: a NULL file name means stdout, which is always writable.
+	* utils/recutl.c (recutl_file_is_writable): Return true if the
+	file name is NULL.
+
 2012-11-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	utils: honor file permissions when doing in-place operations.

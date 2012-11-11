@@ -349,7 +349,7 @@ recutl_read_db_from_file (char *file_name)
 bool
 recutl_file_is_writable (char *file_name)
 {
-  return (euidaccess (file_name, W_OK) == 0);
+  return !file_name || (euidaccess (file_name, W_OK) == 0);
 }
 
 void
