@@ -1,5 +1,23 @@
 2012-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
+	doc: some work on the rec-mode manual.
+	* doc/rec-mode.texi (Opening recfiles): New section.
+	(Editing records and fields): Likewise.
+	(Edition modes): Likewise.
+	(Edition mode): Likewise.
+	(Data integrity): Likewise.
+	(Statistics): Likewise.
+	(Editing fields): Likewise.
+	(Searches): Likewise.
+	(Motion): Likewise.
+	(Navigation mode): Likewise.
+	(Field navigation and folding): Likewise.
+	(reccmd): New macro.
+	(ie): Likewise.
+	(Records appearance): New section.
+
+2012-11-11  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: a NULL file name means stdout, which is always writable.
 	* utils/recutl.c (recutl_file_is_writable): Return true if the
 	file name is NULL.
