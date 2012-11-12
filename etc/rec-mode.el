@@ -53,6 +53,11 @@ values.  The default is `t'."
   :type 'boolean
   :group 'rec-mode)
 
+(defcustom rec-mode-hook nil
+  "Hook run when entering rec mode."
+  :type 'hook
+  :group 'rec-mode)
+
 (defvar rec-max-lines-in-fields 15
   "Values of fields having more than the specified lines will be
 hidden by default in navigation mode.")
@@ -2092,7 +2097,10 @@ function returns `nil'."
   "A major mode for editing rec files.
 
 Commands:
-\\{rec-mode-map}"
+\\{rec-mode-map}
+
+Turning on rec-mode calls the members of the variable
+`rec-mode-hook' with no args, if that value is is non-nil."
   (interactive)
   (kill-all-local-variables)
   (widen)
@@ -2116,6 +2124,7 @@ Commands:
   (set-syntax-table rec-mode-syntax-table)
   (setq mode-name "Rec")
   (setq major-mode 'rec-mode)
+  (run-hooks 'rec-mode-hooks)
   ;; Goto the first record of the first type (including the Unknown).
   ;; If there is a problem (i.e.  syntax error) then go to fundamental
   ;; mode and show the output of recfix in a separated buffer.

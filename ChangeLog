@@ -1,3 +1,9 @@
+2012-11-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: support for a mode hook.
+	* etc/rec-mode.el (rec-mode-hook): New custom.
+	(rec-mode): Run the hooks installed in rec-mode-hook.
+
 2012-11-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc: some work on the rec-mode manual.
