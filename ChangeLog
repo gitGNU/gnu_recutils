@@ -1,3 +1,11 @@
+2012-11-15  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: visiting an empty file works again.
+	* etc/rec-mode.el (rec-buffer-valid-p): New function.
+	(rec-update-buffer-descriptors-and-check): Use rec-buffer-valid-p
+	to determine if the buffer contains valid rec data, instead of
+	rec-update-buffer-descriptors.
+
 2012-11-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: support for a mode hook.

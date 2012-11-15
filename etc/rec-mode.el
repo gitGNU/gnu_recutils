@@ -598,11 +598,22 @@ The current record is the record where the pointer is"
 ;; These functions perform the management of the collection of records
 ;; in the buffer.
 
+(defun rec-buffer-valid-p ()
+  "Determine whether the current buffer contains valid rec data."
+  (equal (call-process-region (point-min) (point-max)
+                              rec-recinf
+                              nil ; delete
+                              nil ; discard output
+                              nil ; display
+                              ) 0))
+
 (defun rec-update-buffer-descriptors-and-check (&optional dont-go-fundamental)
   "Update buffer descriptors and switch to fundamental mode if
 there is a parse error."
-  (if (rec-update-buffer-descriptors)
-      t
+  (if (rec-buffer-valid-p)
+      (progn
+        (rec-update-buffer-descriptors)
+        t)
     (unless dont-go-fundamental
       (fundamental-mode))
     (let* ((cur-buf (current-buffer))
