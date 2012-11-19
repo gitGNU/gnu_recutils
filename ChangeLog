@@ -1,3 +1,8 @@
+2012-11-21  John Darrington  <john@darrington.wattle.id.au>
+
+	doc/recutils.texi: Updated so that Texinfo 4.13.90 does not
+	show errors.
+
 2012-11-15  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: visiting an empty file works again.

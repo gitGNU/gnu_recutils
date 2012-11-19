@@ -120,12 +120,12 @@ So it looks like all the needs are covered by the existing
 solutions @dots{} but consider the following characteristics of the
 data storage systems mentioned in the previous paragraph:
 
-@table @minus
+@itemize @minus
 @item The stored data are not directly readable by humans.
 @item The stored data are definitely not directly writable by humans.
 @item They are program dependent.
 @item They are not easily managed by version control systems.
-@end table
+@end itemize
 
 @cindex readability
 Regarding the first point (human readability), while it is clearly
@@ -3024,7 +3024,7 @@ between the recutils and other programs, such as lisp interpreters.
 Those options are not intended to be used by human operators.
 
 @table @samp
-@itemx @w{@kbd{--print-sexps}}
+@item @w{@kbd{--print-sexps}}
 Print the data using sexps instead of rec format.
 @end table
 
@@ -3290,11 +3290,11 @@ intermixed with @kbd{-f @dots{} -v} pairs.
 @item -s
 @itemx @w{@kbd{--password}}
 Encrypt confidential fields with the given password.
-@itemx @w{@kbd{--no-external}}
+@item @w{@kbd{--no-external}}
 Don't use external record descriptors.
-@itemx @w{@kbd{--verbose}}
+@item @w{@kbd{--verbose}}
 Be verbose when reporting integrity problems.
-@itemx @w{@kbd{--no-auto}}
+@item @w{@kbd{--no-auto}}
 Don't generate @dfn{auto} fields. @xref{%auto}.
 @end table
 
@@ -3328,7 +3328,7 @@ records are selected, @ie{} no replace mode is activated.
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.
 @cindex case, in selection expressions
-@itemx @w{@kbd{--force}}
+@item @w{@kbd{--force}}
 Insert the requested record even in potentially dangerous situations,
 such as when the data integrity of the database is compromised.
 @end table
@@ -3434,15 +3434,15 @@ the records.
 @item -c
 @itemx @w{@kbd{--comment}}
 Comment the matching records out instead of removing them.
-@itemx @w{@kbd{--force}}
+@item @w{@kbd{--force}}
 Delete even in potentially dangerous situations, such as the request
 to delete all the records of some type, for example.
-@itemx @w{@kbd{--no-external}}
+@item @w{@kbd{--no-external}}
 Don't use external record descriptors.
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
 Make strings case-insensitive in selection expressions.
-@itemx @w{@kbd{--verbose}}
+@item @w{@kbd{--verbose}}
 Be verbose when reporting integrity problems.
 @end table
 
@@ -3549,11 +3549,11 @@ Delete the selected fields in the selected records.
 @item -c
 @itemx @w{@kbd{--comment}}
 Comment out the selected fields in the selected records.
-@itemx @w{@kbd{--no-external}}
+@item @w{@kbd{--no-external}}
 Don't use external record descriptors.
-@itemx @w{@kbd{--verbose}}
+@item @w{@kbd{--verbose}}
 Be verbose when reporting integrity problems.
-@itemx @w{@kbd{--force}}
+@item @w{@kbd{--force}}
 Perform the requested operation even in potentially dangerous
 situations, or when the integrity of the data stored in the file is
 affected.
@@ -3625,7 +3625,7 @@ In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following global options.
 
 @table @samp
-@itemx @w{@kbd{--no-external}}
+@item @w{@kbd{--no-external}}
 Don't use external record descriptors.
 @end table
 
@@ -3634,11 +3634,11 @@ performs.  The operation mode is selected by using one of the
 following options.
 
 @table @samp
-@itemx @w{@kbd{--check}}
+@item @w{@kbd{--check}}
 Check the integrity of the database contained in the file, printing
 diagnostics messages in case something is not right.  This is the
 default operation.
-@itemx @w{@kbd{--sort}}
+@item @w{@kbd{--sort}}
 Perform a physical sort of all the records contained in the file (or
 the standard input) after checking for its integrity.  The sorting
 criteria are provided by the @code{%sort} special field, if any.  If
@@ -3646,7 +3646,7 @@ there is an integrity failure the sorting is not performed.
 @cindex sorting
 
 Note that this is a destructive operation.
-@itemx @w{@kbd{--encrypt}}
+@item @w{@kbd{--encrypt}}
 Encrypt all the non encrypted fields in the database which are marked
 as confidential.  This operation requires a password.  If no password
 is specified with @option{-s} and the program is run in a terminal, a
@@ -3656,14 +3656,14 @@ If this operation is performed to a file having encrypted fields, the
 operation will fail unless @w{@kbd{--force}} is used.
 
 Note that this is a destructive operation.
-@itemx @w{@kbd{--decrypt}}
+@item @w{@kbd{--decrypt}}
 Decrypt all the encrypted fields in the database which are marked as
 confidential.  This operation requires a password.  If no password is
 specified with @option{-s} and the program is run in a terminal, a
 prompt is used to get the password from the user.
 
 Note that this is a destructive operation.
-@itemx @w{@kbd{--auto}}
+@item @w{@kbd{--auto}}
 Insert auto-generated fields as appropriate in the records which are
 missing them.
 
@@ -3677,7 +3677,7 @@ described in the table below.
 @item -s @var{secret}
 @itemx @w{@kbd{--password}=@var{secret}}
 Password used to encrypt or decrypt fields.
-@itemx @w{@kbd{--force}}
+@item @w{@kbd{--force}}
 Force potentially dangerous operations.
 @end table
 
