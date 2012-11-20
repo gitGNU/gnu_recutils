@@ -96,7 +96,7 @@ Indexes
 @chapter Introduction
 
 GNU recutils is a set of tools and libraries to access human-editable,
-text-based databases called @emph{recfiles}.  The data are stored as a
+text-based databases called @emph{recfiles}.  The data is stored as a
 sequence of records, each record containing an arbitrary number of
 named fields.  Advanced capabilities usually found in other data
 storage systems are supported: data types, data integrity (keys,
@@ -111,9 +111,9 @@ requirements.  Big systems having complex data storage requirements
 will probably make use of some full-fledged relational system such as
 MySQL or PostgreSQL@.  Less demanding applications, or applications
 with special deployment requirements, may find it more convenient to
-use a simpler system such as SQLite, where the data are stored in a
+use a simpler system such as SQLite, where the data is stored in a
 single binary file.  XML files are often used to store configuration
-settings for programs, and to encode data to be transmitted through
+settings for programs, and to encode data for transmission through
 networks.
 
 So it looks like all the needs are covered by the existing
@@ -121,8 +121,8 @@ solutions @dots{} but consider the following characteristics of the
 data storage systems mentioned in the previous paragraph:
 
 @itemize @minus
-@item The stored data are not directly readable by humans.
-@item The stored data are definitely not directly writable by humans.
+@item The stored data is not directly human readable.
+@item The stored data is definitely not directly writable by humans.
 @item They are program dependent.
 @item They are not easily managed by version control systems.
 @end itemize
@@ -138,10 +138,10 @@ readable than XML@.  The problem with YAML is that it was designed as a
 usually found in programming languages.  That makes it too complex for
 the simple task of storing plain lists of items.
 
-Recfiles are human-readable, human-writable and still they are easy to
+Recfiles are human-readable, human-writable and still easy to
 parse and to manipulate automatically.  Obviously they are not
 suitable for any task (for example, it can be difficult to manage
-hierarchies in recfiles) and performance is somewhat sacrificed in
+hierarchies in recfiles) and performance is somewhat sacrified in
 favor of readability.  But they are quite handy to store small to
 medium simple databases.
 
@@ -380,9 +380,9 @@ Age: 969
 Any line having an @code{#} (ASCII 0x23) character in the first column
 is a comment line.
 
-Comment may be used to insert information that
-is not part of the database but useful otherwise.
-They are completely ignored by processing tools and can only ever be seen by
+Comments may be used to insert information that
+is not part of the database but useful in other ways.
+They are completely ignored by processing tools and can only be seen by
 looking at the recfile itself. 
 
 It is also quite convenient to comment-out information from the
@@ -418,7 +418,7 @@ kind of markers:
 
 Unlike some file formats, comments in recfiles must be complete lines.
 You cannot start a comment in the middle of a line.
-For example, in the following, the @code{#} does @emph{not} start a comment:
+For example, in the following record, the @code{#} does @emph{not} start a comment:
 @example
 Name: Peter the Great # Russian Tsar
 Age: 53   
@@ -430,7 +430,7 @@ Age: 53
 @cindex descriptor
 Certain properties of a set of records can be specified by preceding
 them with a @dfn{record descriptor}.  A record descriptor is itself a
-record, and uses fields with some predefined names to store the
+record, and uses fields with some predefined names to store
 properties.  The most basic property that can be specified for a set
 of records is their @dfn{type}.  The special field name @code{%rec} is
 used for that purpose:
@@ -454,10 +454,10 @@ The effect of a record descriptor ends when another descriptor is
 found in the stream of records.  This allows you to store different kinds
 of records in the same database.  For example, consider you have to
 maintain a depot.  You will need to keep records of both the current
-stockage and the movements.
+articles and their stock.
 
 The following example shows the usage of two record descriptors to
-store both kind of records: articles and movements.
+store both kind of records: articles and stock.
 
 @example
 %rec: Article
@@ -468,14 +468,14 @@ Title: Article 1
 Id: 2
 Title: Article 2
 
-%rec: Movement
+%rec: Stock
 
 Id: 1
 Type: sell
 Date: 20 April 2011
 
 Id: 2
-Type: acquisition
+Type: stock
 Date: 21 April 2011
 @end example
 
@@ -483,12 +483,12 @@ Date: 21 April 2011
 @cindex special fields
 @cindex key, primary key
 @cindex primary key
-Besides determining the type of the records that follows in the
+Besides determining the type of record that follows in the
 stream, record descriptors can be used to describe other properties of
-those records.  That can be done by using the so-called @dfn{special
-fields}, having special names from a predefined set.  Consider for
-example the following database, where the descriptor is used to
-specify a primary key and a mandatory field:
+those records.  This can be done by using @dfn{special
+fields}, which have special names from a predefined set.  
+Consider for example the following database, where record descriptors
+are used to specify a primary key and a mandatory field:
 
 @cindex @code{%mandatory}
 @cindex mandatory fields
@@ -559,7 +559,7 @@ Title: Loan
 @end example
 
 @noindent
-Only one @code{%rec} field shall appear in a record descriptor.  If
+Only one @code{%rec} field should be in a record descriptor.  If
 there are more it is an integrity violation.  It is highly
 recommended (but not enforced) to place this field in the first
 position of the record descriptor.
@@ -634,7 +634,7 @@ schema supported by @code{libcurl} will work.
 @cindex restricting fields from records
 @cindex field, forbidden fields
 @cindex prohibited fields
-Those special field names are used to restrict the fields that can
+These special field names are used to restrict the fields that can
 appear in the records stored in a database.  Their usage is:
 
 @example
@@ -643,12 +643,12 @@ appear in the records stored in a database.  Their usage is:
 @end example
 
 @noindent
-In both cases the list of field names are separated by one or more
+In both cases the lists of field names are separated by one or more
 blank characters.
 
 @cindex field, compulsory fields
 @cindex field, mandatory fields
-The fields listed in some @code{%mandatory} entry are
+The fields listed in a @code{%mandatory} entry are
 mandatory; @ie{}, at least one field with this name shall be present
 in any record of this kind.
 @cindex integrity problems
@@ -659,10 +659,10 @@ a data integrity failure.
 Consider for example an ``address book'' database where each record
 stores the information associated with a contact.  The records will be
 heterogeneous, in the sense they won't feature exactly the same
-fields: the contact of an internet shop will probably have an
-@code{Url} field, while the entry for our grandmother probably won't.
-We still want to make sure that every entry has at a field: the name
-of the contact.  In that case we could use @code{%mandatory} as
+fields: the contact of an internet shop will probably have a
+@code{URL} field, while the entry for our grandmother probably won't.
+We still want to make sure that every entry has a field with the name
+of the contact.  In this case, we could use @code{%mandatory} as
 follows:
 
 @example
@@ -678,8 +678,8 @@ Phone: +98 43434433
 @end example
 
 @noindent
-Similarly, the fields listed in some @code{%prohibit} entry are
-forbidden; @ie{}, no field with this name shall be present
+Similarly, the fields listed in a @code{%prohibit} entry are
+forbidden; @ie{}, no field with this name should be present
 in any record of this kind.  Again, records violating this restriction
 are invalid.
 
@@ -721,16 +721,16 @@ usage is:
 @end example
 
 @noindent
-The list of field names are separated by one or more blank characters.
+The lists of field names are separated by one or more blank characters.
 
 @cindex unique fields
-The @code{%unique} special field allows one to declare fields as unique,
+The @code{%unique} special field allows us to declare fields as unique,
 meaning there cannot exist more than one field with the same name in a
 single record.
 
 For example, an entry in an address book database could contain an
 @code{Age} field.  It does not make sense for a single person to be of
-several ages, so that field could be declared as ``unique'' in the
+several ages. So, a field could be declared as ``unique'' in the
 corresponding record descriptor as follows:
 
 @example
@@ -744,13 +744,13 @@ Several @code{%unique} fields can appear in the same record
 descriptor.  The set of unique fields is the union of all the entries.
 
 @code{%key} makes the referred field the primary key of the record
-set.  Its effect is that any field with that name must be both unique
-and mandatory, and additionally the values of those fields shall be
+set.  As effect, any field with that name must be both unique
+and mandatory, and additionally, the values of those fields shall be
 unique in the context of the record set.  This closely corresponds to
 the notion of ``primary key'' usually implemented in relational
 systems.
 
-Consider for example a database of items in a stockage.  Each item is
+Consider for example a database of items in stock.  Each item is
 identified by a numerical @code{Id} field.  No item may have more than
 one @code{Id}, and no items may exist without an associated
 @code{Id}.  Additionally, no two items may share the same @code{Id}.
@@ -770,12 +770,12 @@ Title: Sticker big
 @end example
 
 @noindent
-It would not make sense to have several primary keys in a record set,
-and thus it is not allowed to have several @code{%key} fields in the
+It would not make sense to have several primary keys in a record set.
+Thus, it is not allowed to have several @code{%key} fields in the
 same record descriptor.  
 @cindex integrity problems
-That is a data integrity
-violation and will be reported by a checking tool.
+This would be a data integrity
+violation, and will be reported by a checking tool.
 
 @node %doc
 @section %doc
@@ -783,14 +783,14 @@ violation and will be reported by a checking tool.
 @cindex @code{%doc}
 @cindex documentation fields
 This field contains documentation about the record.   It is similar to a
-comment (@pxref{Comments}), but this field can be managed in a programmatic
-way easier.
+comment (@pxref{Comments}), but it can be managed easier 
+in a programmatic way.
 
 Unlike a comment, @code{%doc} fields are recognized by tools such as
-@command{recinf} (@pxref{recinf}) which process record descriptors.
+@command{recinf} (@pxref{recinf}) which processes record descriptors.
 It is a good idea to use the @code{%doc} field to provide a description
-of the records; typically a  description more verbose than the name provided
-by the  @code{%rec} field.
+of the records; typically a description more verbose than the name provided
+by the @code{%rec} field.
 For example, you might have two record sets with @code{%rec} and @code{%doc}
 fields as follows:
 
@@ -837,7 +837,7 @@ person. @code{Name} will never use several lines. @code{Age} will
 typically be in the range @code{0..120}, and there are only a few
 valid values for @code{MaritalStatus}: single, married and widow.
 Phones may be restricted to some standard format as well to be valid.
-All those restrictions (and many others) can be enforced by using
+All these restrictions (and many others) can be enforced by using
 @dfn{field types}.
 
 There are two kind of field types: @dfn{anonymous} and @dfn{named}.  Those are
@@ -888,7 +888,7 @@ it is a good idea to consistently follow some convention to help
 distinguishing type names from field names.  For example, the
 @code{_t} suffix could be used for types.
 
-A type can be declared to be a synonym of another type.  The syntax
+A type can be declared to be an alias for another type.  The syntax
 is:
 
 @example
@@ -907,8 +907,9 @@ descriptions.  For example, consider the following example:
 @end example
 
 @noindent
-Both @code{Item_t} and @code{Transaction_t} are synonyms for the type
-@code{Id_t}.  They all are numeric identifiers.
+Both @code{Item_t} and @code{Transaction_t} are aliases for the type
+@code{Id_t}. Which is in place an alias for the type @code{int}.
+ So, they are both numeric identifiers.
 
 The order of the @code{%typedef} fields is not relevant.  In
 particular, a type definition can reference other type that is defined
@@ -922,10 +923,10 @@ below.  The previous example could have been written as:
 
 @noindent
 @cindex integrity problems
-Integrity checks will complain if undefined types are referenced, and
-if there are loops (direct or indirect) in type declarations.  For
-example, the following set of declarations contains a loop and are
-thus invalid:
+Integrity check will complain if undefined types are referenced. As well as when any aliases  up referencing back (looping back
+directly or indirectly) in type declarations.  For
+example, the following set of declarations contains a loop.
+Thus, it's invalid:
 
 @example
 %typedef: A_t B_t
@@ -981,7 +982,7 @@ without having to use a @code{%typedef} in the following way:
 @subsection Scalar types
 
 The rec format supports the declaration of fields of the following
-scalar types: integer numbers, ranges and reals.
+scalar types: integer numbers, ranges and real numbers.
 
 @cindex integers
 Signed @dfn{integers} are supported by using the @code{int}
@@ -994,9 +995,9 @@ declaration:
 @cindex hexadecimal
 @cindex octal
 @noindent
-Given that declaration, Fields of type @code{Id_t} must contain
-integers, that may be negative.  Hexadecimal values can be written
-using the @code{0x} prefix, and octal values use an extra
+Given the declaration above, fields of type @code{Id_t} must
+contain integers, and they may be negative.  Hexadecimal values can be written
+using the @code{0x} prefix, and octal values using an extra
 @code{0}. Valid examples are:
 
 @example
@@ -1011,7 +1012,7 @@ Id: 020
 @cindex ranges
 @noindent
 Sometimes it is desirable to reduce the @dfn{range} of integers allowed in a
-field.  That can be achieved by using a range type declaration:
+field.  This can be achieved by using a range type declaration:
 
 @example
 %typedef: Percentage_t range 0 100
@@ -1039,7 +1040,8 @@ ten, like for example:
 @cindex fractions
 @cindex floating point numbers
 @noindent
-@dfn{Real} fields can be declared with the @code{real} type specifier.
+@dfn{Real} number fields can be declared with the @code{real} type
+specifier.
 A wide range of real numbers can be represented this way, only limited
 by the underlying floating point representation.
 @cindex decimal separator  

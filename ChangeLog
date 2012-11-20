@@ -1,6 +1,11 @@
+2012-11-21  Julio C. M. Ramirez <rikijpn@member.fsf.org>
+
+	* doc/recutils.texi : Grammar corrections and rephrasing some
+	parts for easier reading.
+
 2012-11-21  John Darrington  <john@darrington.wattle.id.au>
 
-	doc/recutils.texi: Updated so that Texinfo 4.13.90 does not
+	* doc/recutils.texi: Updated so that Texinfo 4.13.90 does not
 	show errors.
 
 2012-11-15  Jose E. Marchesi  <jemarch@gnu.org>
