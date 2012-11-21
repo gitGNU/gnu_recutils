@@ -1,3 +1,12 @@
+2012-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	utils: make recsel to honour --print-row and --print-values.
+	* torture/utils/recsel.sh (recsel-row-long): New test.
+	(recsel-values-long): New test.
+
+	* utils/recsel.c (recsel_parse_args): Honour --print-row and
+	--print-values.
+
 2012-11-21  Julio C. M. Ramirez <rikijpn@member.fsf.org>
 
 	* doc/recutils.texi : Grammar corrections and rephrasing some

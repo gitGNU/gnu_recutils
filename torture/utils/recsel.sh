@@ -421,6 +421,16 @@ value22
 
 value32
 '
+test_tool recsel-values-long ok \
+          recsel \
+          '--print-values=field2' \
+          multiple-records \
+'value12
+
+value22
+
+value32
+'
 
 # Print multiple values
 test_tool recsel-multiple-values ok \
@@ -464,6 +474,17 @@ value33
 test_tool recsel-row ok \
           recsel \
           '-R field1,field2' \
+          multiple-records \
+'value11 value12
+
+value21 value22
+
+value31 value32
+'
+
+test_tool recsel-row-long ok \
+          recsel \
+          '--print-row=field1,field2' \
           multiple-records \
 'value11 value12
 

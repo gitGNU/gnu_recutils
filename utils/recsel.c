@@ -290,6 +290,8 @@ recsel_parse_args (int argc,
             break;
           }
         case PRINT_ARG:
+        case PRINT_VALUES_ARG:
+        case PRINT_IN_A_ROW_ARG:
         case 'p':
         case 'P':
         case 'R':
@@ -299,12 +301,12 @@ recsel_parse_args (int argc,
                 recutl_fatal (_("cannot specify -[pPR] and also -c.\n"));
               }
 
-            if (c == 'P')
+            if ((c == 'P') || (c == PRINT_VALUES_ARG))
               {
                 recsel_write_mode = REC_WRITER_VALUES;
               }
 
-            if (c == 'R')
+            if ((c == 'R') || (c == PRINT_IN_A_ROW_ARG))
               {
                 recsel_write_mode = REC_WRITER_VALUES_ROW;
               }
