@@ -1,5 +1,11 @@
 2012-11-21  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: little fix in the introduction.
+	* doc/recutils.texi (Introduction): Don't enumerate the different
+	utilities.
+
+2012-11-21  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: make recsel to honour --print-row and --print-values.
 	* torture/utils/recsel.sh (recsel-row-long): New test.
 	(recsel-values-long): New test.
