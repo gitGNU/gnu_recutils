@@ -361,6 +361,34 @@ Name: Fred
 Foreign: xxx
 '
 
+test_declare_input_file several-foreign-keys \
+'%rec: R
+%key: Id
+
+Id: R1
+Description: this is R1
+
+Id: R2
+Description: this is R1
+
+Id: R3
+Description: this is R1
+
+%rec: T
+%key: Id
+%type: Requirement rec R
+
+Id: T1
+Requirement: R1
+
+Id: T2
+Requirement: R2
+Requirement: R3
+
+Id: T3
+Requirement: R3
+'
+
 #
 # Declare tests
 #
@@ -1682,6 +1710,23 @@ test_tool recsel-non-existant-foreign-key ok \
           non-existant-foreign-key \
 'Name: Fred
 Foreign: xxx
+'
+
+test_tool recsel-several-foreign-keys ok \
+          recsel \
+          '-t T -j Requirement -p Id,Requirement.Id' \
+          several-foreign-keys \
+'Id: T1
+Requirement_Id: R1
+
+Id: T2
+Requirement_Id: R2
+
+Id: T2
+Requirement_Id: R3
+
+Id: T3
+Requirement_Id: R3
 '
 
 #
