@@ -1,3 +1,8 @@
+2012-12-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-finish-editing-field): Do the right thing
+	when the selected window is the only window in the frame.
+
 2012-12-06  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,torture: support several foreign keys with the same name in a
