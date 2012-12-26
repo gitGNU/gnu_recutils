@@ -483,6 +483,30 @@ rec_parse_record (rec_parser_t parser,
               rec_mset_append (rec_record_mset (new), MSET_COMMENT, (void *) comment, MSET_ANY);
             }
         }
+      else if ((c == ' ') || (c == '\t'))
+        {
+          /* A line composed just by blanks acts like an end of record
+             separator. */
+
+          while ((ci != EOF) && ((c == ' ') || (c == '\t')))
+            {
+              ci = rec_parser_getc (parser);
+              c = (char) ci;
+            }
+
+          if ((ci == EOF) || (c == '\n'))
+            {
+              /* End of record */
+              break;
+            }
+          else
+            {
+              /* Parse error: field expected */
+              parser->error = REC_PARSER_EFIELD;
+              ret = false;
+              break;
+            }
+        }
       else if (c == '\n')
         {
           /* End of record */

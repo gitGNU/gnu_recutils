@@ -1225,6 +1225,16 @@ test_declare_input_file unused-type \
 Id: 1
 '
 
+test_declare_input_file blank-line-after-record \
+'foo: bar
+  
+'
+
+test_declare_input_file blank-line-after-record-invalid \
+'foo:bar
+ x
+'
+
 #
 # Declare tests.
 #
@@ -2161,6 +2171,17 @@ test_tool recfix-unused-type ok \
           unused-type \
           ''
 
+test_tool recfix-blank-line-after-record ok \
+          recfix \
+         '--check' \
+         blank-line-after-record \
+         ''
+
+test_tool recfix-blank-line-after-record-invalid xfail \
+          recfix \
+         '--check' \
+         blank-line-after-record-invalid
+        
 #
 # Cleanup.
 #
