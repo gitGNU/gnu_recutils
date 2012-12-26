@@ -1170,11 +1170,9 @@ rec_db_join (rec_db_t db,
 
   /* The descriptor of the new record set will define records of type
      TYPE_FIELD, where FIELD is the name specified to trigger the
-     operation.  The contents of the descriptor will be the contents
-     of the descriptor of TYPE plus some of the fields in the
-     descriptor of the referred type.  In particular, fields denoting
-     properties of the fields "imported" into the joined table (such
-     as types) are copied.  */
+     operation.  The contents of the descriptor will be just the
+     %rec entry. */
+
   {
     rec_record_t new_descriptor = rec_record_new ();
     if (!new_descriptor)
@@ -1206,21 +1204,6 @@ rec_db_join (rec_db_t db,
         }
     }
 
-    /* Add all the fields of the record descriptor of rset1, not
-       including:
-
-       - %rec, for obvious reasons.
-
-       - Any %type field on the 'join field', since the join field is
-         removed from the records in the join.
-
-    */
-
-    {
-      rec_record_t descriptor1 = rec_rset_descriptor (rset1);
-
-    }
-    
     rec_rset_set_descriptor (join, new_descriptor);
   }
 

@@ -1729,6 +1729,21 @@ Id: T3
 Requirement_Id: R3
 '
 
+test_tool recsel-join-descriptor ok \
+          recsel \
+          '-t Package -j Maintainer -d -p Name' \
+         packages-maintainers \
+'%rec: Package_Maintainer
+
+Name: GNU PDF
+
+Name: GNU PDF
+
+Name: GNU recutils
+
+Name: GNU Emacs
+'
+
 #
 # Cleanup
 #
