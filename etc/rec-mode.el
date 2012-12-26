@@ -1703,7 +1703,8 @@ will be used for fields of any type."
                               name
                               value))
       (goto-char prev-pointer)
-      (rec-hide-continuation-line-markers))))
+      (unless rec-editing
+        (rec-hide-continuation-line-markers)))))
 
 (defun rec-beginning-of-field ()
   "Goto to the beginning of the current field"
