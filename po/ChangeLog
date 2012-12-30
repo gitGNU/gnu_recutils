@@ -1,3 +1,8 @@
+2012-12-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	po: vietnamite translation added.
+	* vi.po: New file.
+
 2012-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* fr.po: Updated for 1.5.
