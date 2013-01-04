@@ -73,6 +73,9 @@ hidden by default in navigation mode.")
 
 ;;;; Variables and constants that the user does not want to touch (really!)
 
+(defconst rec-mode-version "1.5"
+  "Version of rec-mode.el")
+
 (defconst rec-keyword-prefix "%"
   "Prefix used to distinguish special fields.")
 
