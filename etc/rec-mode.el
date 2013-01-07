@@ -1598,15 +1598,33 @@ will be used for fields of any type."
                    (equal field-type-kind 'bool))
                (null n))
           (let* ((data (rec-type-data field-type))
-                 (i -1)
                  (fast-selection-data
                   (cond
                    ((equal field-type-kind 'enum)
-                    (mapcar
-                     (lambda (elem)
-                       (setq i (+ i 1))
-                       (list elem (+ i ?a)))
-                     data))
+                    (let (used-letters)
+                      (mapcar
+                       (lambda (elem)
+                         ;; Assign a letter to this enumerated entry.
+                         ;; The letters are chosen using the following
+                         ;; criteria: if the first letter of the entry
+                         ;; is free then use it.  Otherwise, if the
+                         ;; second letter of the entry is free then
+                         ;; use it.  Otherwise use the first available
+                         ;; symbol in the alphabet. Note that ELEM
+                         ;; cannot be the empty string.
+                         (let ((letter (if (not (member (elt elem 0) used-letters))
+                                           (elt elem 0)
+                                         (if (and (> (length elem) 1)
+                                                  (not (member (elt elem 1) used-letters)))
+                                             (elt elem 1)
+                                           (let* ((c ?a) (i 0))
+                                             (while (member c used-letters)
+                                               (setq c (+ ?a i))
+                                               (setq i (+ i 1)))
+                                             c)))))
+                           (setq used-letters (cons letter used-letters))
+                           (list elem letter)))
+                       data)))
                    ((equal field-type-kind 'bool)
                     '(("yes" ?y) ("no" ?n) ("1" ?o) ("0" ?z) ("true" ?t) ("false" ?f)))
                    (t
