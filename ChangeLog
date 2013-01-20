@@ -1,3 +1,10 @@
+2013-01-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: new sections on configuring rec-mode.
+	* doc/rec-mode.texi (Records appearance): Section completed.
+	(Finding the recutils): New section.
+	(Top): Detailed menu updated.
+
 2013-01-07  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: be smart assigning letters to enumerated entries.

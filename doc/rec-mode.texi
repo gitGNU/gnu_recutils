@@ -89,7 +89,8 @@ Edition modes
 
 Configuration
 
-* Records appearance::       Setting the way records are displayed.
+* Finding the recutils::        Specifying the location of the recutils.
+* Records appearance::          Setting the way records are displayed.
 @end detailmenu
 @end menu
 
@@ -418,13 +419,39 @@ is reported in the echo area and navigation mode is not entered.
 TBC
 
 @menu
+* Finding the recutils::     Specifying the location of the recutils.
 * Records appearance::       Setting the way records are displayed
 @end menu
+
+@node Finding the recutils
+@section Finding the recutils
+
+@code{rec-mode} makes use of the several utilities which are part of
+the recutils.  The following variables tell the mode where to find the
+utilities.  The default values of these variables must work if the
+recutils are installed system-wide in the system.
+
+@table @code
+@item rec-recsel
+Name of the @command{recsel} utility from the GNU recutils.
+@item rec-recinf
+Name of the @command{recinf} utility from the GNU recutils.
+@item rec-recfix
+Name of the @command{recfix} utility from the GNU recutils.
+@end table
 
 @node Records appearance
 @section Records appearance
 
-TBC
+The appearance of the records in navigation mode can be customised by
+tweaking the value of the following variables.
+
+@table @code
+@item rec-max-lines-in-fields
+Values in fiels having more than the specified number of lines will be
+hidden by default in navigation mode.  When hidden, an ellipsis is
+shown instead of the value of the field.  Default is @code{15}.
+@end table
 
 @node GNU Free Documentation License
 @appendix GNU Free Documentation License
