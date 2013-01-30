@@ -1,3 +1,10 @@
+2013-01-30  Jose E. Marchesi  <jemarch@gnu.org>
+
+	static gnulib removed.
+	* bootstrap: Imported.
+	* bootstrap.conf: New file.
+	Many files deleted.
+
 2013-01-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: new sections on configuring rec-mode.
