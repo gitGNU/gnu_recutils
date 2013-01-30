@@ -1,5 +1,7 @@
 2013-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* README-dev: Mention bootstrap instead of autogen.sh.
+
 	* src/Makefile.am (librec_la_LIBADD): Rename libgnu.la to
 	librecutils.la.
 	* utils/Makefile.am (COMMONLIBS): Likewise.

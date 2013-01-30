@@ -57,7 +57,7 @@ a less capable software:
 Building
 --------
 After getting the git sources, and installing the tools above, you can run
-  sh ./autogen.sh
+  ./bootstrap
 to do a fresh build.  After that first time, running make should suffice.
 
 When modifying the sources, or making a distribution, more is needed, as
