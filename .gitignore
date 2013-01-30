@@ -101,3 +101,5 @@ torture/utils/config.sh
 /algol68/rec.m
 /algol68/librec-a68.a
 /torture/utils/*.in
+/GNUmakefile
+/maint.mk

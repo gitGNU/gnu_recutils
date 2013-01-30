@@ -1,5 +1,13 @@
 2013-01-30  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/Makefile.am (librec_la_LIBADD): Rename libgnu.la to
+	librecutils.la.
+	* utils/Makefile.am (COMMONLIBS): Likewise.
+
+	* configure.ac: Invoke gl_EARLY after AC_PROG_CC.
+
+2013-01-30  Jose E. Marchesi  <jemarch@gnu.org>
+
 	static gnulib removed.
 	* bootstrap: Imported.
 	* bootstrap.conf: New file.

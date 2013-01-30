@@ -61,7 +61,7 @@ endif
 
 AM_LDFLAGS = -no-undefined
 AM_CPPFLAGS = -I$(top_srcdir)/lib -DLOCALEDIR=\"$(localedir)\"
-librec_la_LIBADD = $(top_builddir)/lib/libgnu.la \
+librec_la_LIBADD = $(top_builddir)/lib/librecutils.la \
                    $(LIB_CLOCK_GETTIME)
 
 if CRYPT
