@@ -279,6 +279,14 @@ rec_write_field (rec_writer_t writer,
                 }
             }
         }
+      else if (((fvalue[pos] == '"') || (fvalue[pos] == '\\')) && (mode == REC_WRITER_SEXP))
+        {
+          if ((!rec_writer_putc (writer, '\\'))
+              || (!rec_writer_putc (writer, fvalue[pos])))
+            {
+              return false;
+            }
+        }
       else
         {
           if (!rec_writer_putc (writer, fvalue[pos]))

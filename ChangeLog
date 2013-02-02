@@ -1,5 +1,14 @@
 2013-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	writer: quote special characters when printing lisp strings.
+	* torture/utils/recsel.sh (unquoted-lisp-strings): New input file.
+	(recsel-unquoted-lisp-strings): New test.
+
+	* src/rec-writer.c (rec_write_field): Escape double quotes and
+	backslashes when writing the field values in lisp strings.
+
+2013-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/recutils.texi (Checking Recfiles for Errors): format typo
 	fixed.
 

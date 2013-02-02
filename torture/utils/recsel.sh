@@ -389,6 +389,11 @@ Id: T3
 Requirement: R3
 '
 
+test_declare_input_file unquoted-lisp-strings \
+'foo: fo\o
+bar: a quote"etouq a
+'
+
 #
 # Declare tests
 #
@@ -1742,6 +1747,15 @@ Name: GNU PDF
 Name: GNU recutils
 
 Name: GNU Emacs
+'
+
+test_tool recsel-unquoted-lisp-strings ok \
+          recsel \
+          '--print-sexps' \
+          unquoted-lisp-strings \
+'(record 0 (
+(field 0 "foo" "fo\\o")
+(field 11 "bar" "a quote\"etouq a")))
 '
 
 #
