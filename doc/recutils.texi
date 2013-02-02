@@ -1818,7 +1818,7 @@ Running @command{recfix} on this file will immediately tell us that
 there is a problem:
 
 @example
-$recfix --check inventory.rec
+$ recfix --check inventory.rec
 inventory.rec: 2: error: expected a record
 @end example
 

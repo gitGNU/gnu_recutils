@@ -1,5 +1,10 @@
 2013-02-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/recutils.texi (Checking Recfiles for Errors): format typo
+	fixed.
+
+2013-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: allow duplicated fields in grouped record sets.
 	* src/rec-rset.c (rec_rset_merge_records): Don't remove duplicated
 	fields when grouping record sets.
