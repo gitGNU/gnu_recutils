@@ -1730,14 +1730,16 @@ rec_rset_merge_records (rec_record_t to_record,
             }
 
           /* Don't allow duplicated fields in the resulting record
-             generated as a result of this operation.  */
+             generated as a result of this operation.  This is
+             commented out because it fucks up the usage of aggregated
+             functions in grouped-by record sets.  */
 
-          if (rec_record_contains_field (to_record,
+          /*         if (rec_record_contains_field (to_record,
                                          rec_field_name (field),
                                          rec_field_value (field)))
             {
               continue;
-            }
+              } */
 
           /* Ok, add this field.  */
 
