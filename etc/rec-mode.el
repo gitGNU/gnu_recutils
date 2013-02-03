@@ -152,6 +152,7 @@ hidden by default in navigation mode.")
     (define-key map "\C-cc" 'rec-cmd-compile)
     (define-key map "\C-csq" 'rec-cmd-select-fast)
     (define-key map "\C-css" 'rec-cmd-select-sex)
+    (define-key map "\C-ch" 'rec-cmd-show-summary)
     (define-key map "\C-cI" 'rec-cmd-show-info)
     (define-key map "\C-cf\C-w" 'rec-cmd-kill-field)
     (define-key map "\C-cf\M-w" 'rec-cmd-copy-field)
@@ -185,6 +186,7 @@ hidden by default in navigation mode.")
     (define-key map "f\M-w" 'rec-cmd-copy-field)
     (define-key map "sq" 'rec-cmd-select-fast)
     (define-key map "ss" 'rec-cmd-select-sex)
+    (define-key map "h" 'rec-cmd-show-summary)
     (define-key map "\C-ct" 'rec-find-type)
 ;;    (define-key map [remap move-beginning-of-line] 'rec-cmd-beginning-of-line)
     (define-key map [remap undo] 'rec-cmd-undo)
@@ -1320,6 +1322,35 @@ Each character should identify only one name."
             (throw 'exit t)))))
       result)))
 
+;;;; Summary mode
+
+(defvar rec-summary-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map tabulated-list-mode-map)
+    (define-key map "\C-m" 'foo)
+    map)
+  "Local keymap for `rec-summary-mode' buffers.")
+
+(define-derived-mode rec-summary-mode tabulated-list-mode "Rec Summary"
+  "Major mode for summarizing the contents of a recfile.
+\\<rec-summary-mode-map>
+\\{rec-summary-mode-map}"
+  (setq tabulated-list-format nil)
+  (setq tabulated-list-padding 2)
+  (setq tabulated-list-sort-key nil)
+  (tabulated-list-init-header))
+
+(defun rec-summary-populate (entries)
+  "Populate a rec-mode summary buffer with the data in ENTRIES.
+
+The data has the same structure than `tabulated-list-entries'."
+  (setq tabulated-list-format [("Id" 18 nil) ("Type" 5 nil) ("Need" 5 nil) ("Validation" 10 nil) ("Section" 20 nil) ("ImplV" 5 nil)])
+  (setq tabulated-list-padding 2)
+  (setq tabulated-list-sort-key (cons "Id" nil))
+  (tabulated-list-init-header)
+  (setq tabulated-list-entries entries)
+  (tabulated-list-print nil))
+
 ;;;; Rec Idle mode
 ;;
 ;; This section is heavily inspired in semantic-idle.el
@@ -1504,7 +1535,7 @@ ARGS contains the arguments to pass to the program."
               (setq args (cons "-i" args)))
             (when uniq
               (setq args (cons "-U" args)))
-            (when (and (not fex) (not group-by) (not sort-by))
+            (when (and (not group-by) (not sort-by))
               (setq args (cons "--print-sexps" args)))
             ;; Call 'recsel' to perform the query.
             (setq status (apply #'call-process-region
@@ -2107,6 +2138,28 @@ This command is especially useful with enumerated types."
           (copy-region-as-kill begin-pos end-pos)
           (message "record copied to kill ring"))
       (message "Not in a record"))))
+
+(defun rec-cmd-show-summary ()
+  "Show a window with a summary of the contents of the current
+record set."
+  (interactive)
+  (let* ((query (rec-query :fex "Id,Type,Need,Validation,Section,ImplV"))
+         (summary-list (mapcar (lambda (elt)
+                                 (list nil (vconcat (rec-record-assoc "Id" elt)
+                                                    (rec-record-assoc "Type" elt)
+                                                    (rec-record-assoc "Need" elt)
+                                                    (rec-record-assoc "Validation" elt)
+                                                    (rec-record-assoc "Section" elt)
+                                                    (rec-record-assoc "ImplV" elt))))
+                               query)))
+    ;; Create the summary window if it does not exist and populate
+    ;; it.
+    (let ((buf (get-buffer-create "Rec Summary")))
+      (switch-to-buffer-other-window buf)
+      (let ((buffer-read-only nil))
+        (delete-region (point-min) (point-max))
+        (rec-summary-mode)
+        (rec-summary-populate summary-list)))))
 
 ;;;; Interacting with other modes
 

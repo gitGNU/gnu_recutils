@@ -1,4 +1,20 @@
+2013-02-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-db.c (rec_db_process_fex): Don't loose the location
+	information in records processed by fexes.
+
 2013-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-summary-mode): New function.
+	(rec-summary-mode-map): New variable.
+	(rec-mode-map): Map 'h' to rec-cmd-show-summary.
+	(rec-mode-edit-map): Map 'C-ch' to rec-cmd-show-summary.
+	(rec-cmd-show-summary): New function.
+	(rec-summary-populate): Likewise.
+	(rec-query): Use --print-sexps even if a fex was specified.
+
+2013-02-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 
 	writer: quote special characters when printing lisp strings.
 	* torture/utils/recsel.sh (unquoted-lisp-strings): New input file.

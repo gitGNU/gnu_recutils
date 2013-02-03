@@ -443,6 +443,7 @@ rec_db_query (rec_db_t     db,
       rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
       while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
         {
+          rec_record_t res_record;
           bool selected = false;
           num_rec++;
         
@@ -462,8 +463,8 @@ rec_db_query (rec_db_t     db,
 
           /* Transform the record through the field expression and add
              it to the result record set.  */
-        
-          rec_record_t res_record
+      
+          res_record
             = rec_db_process_fex (db, rset, record, fex);
 
           if (!res_record)
@@ -1768,6 +1769,13 @@ rec_db_process_fex (rec_db_t db,
             }
         }
     }
+
+  /* At this point RES is a record containing all the selected fields
+     of the original record, but we must also copy the location
+     information.  */
+
+  rec_record_set_location (res, rec_record_location (record));
+  rec_record_set_char_location (res, rec_record_char_location (record));
 
   return res;
 }
