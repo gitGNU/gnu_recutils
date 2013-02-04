@@ -33,6 +33,7 @@
 (require 'compile)
 (require 'cl)
 (require 'calendar)
+(require 'hl-line)
 
 ;;;; Customization
 
@@ -89,6 +90,9 @@ hidden by default in navigation mode.")
 
 (defconst rec-keyword-mandatory (concat rec-keyword-prefix "mandatory")
   "Mandatory keyword.")
+
+(defconst rec-keyword-summary (concat rec-keyword-prefix "summary")
+  "Summary keyword.")
 
 (defconst rec-time-stamp-format "%Y-%m-%d %a %H:%M"
   "Format for `format-time-string' which is used for time stamps.")
@@ -389,6 +393,12 @@ If no such field exists in RECORD then nil is returned."
                   (setq result (cons (rec-field-name field) result))))
               (rec-record-elems record))
       (reverse result))))
+
+(defun rec-record-values (record fields)
+  "Given a list of field names, return a list of the values."
+  (when fields
+    (append (rec-record-assoc (car fields) record)
+            (rec-record-values record (cdr fields)))))
 
 ;;;; Operations on comment structures
 ;;
@@ -890,6 +900,15 @@ Return nil if the point is not on a record."
           descriptor
         nil))))
 
+(defun rec-summary-fields ()
+  "Return a list with the names of the summary fields in the
+current record set."
+  (let ((descriptor (cadr (rec-record-descriptor))))
+    (when descriptor
+      (let ((fields-str (rec-record-assoc rec-keyword-summary descriptor)))
+        (when fields-str
+          (split-string (car fields-str)))))))
+
 (defun rec-mandatory-fields ()
   "Return a list with the names of the mandatory fields in the
 current record set."
@@ -1327,9 +1346,13 @@ Each character should identify only one name."
 (defvar rec-summary-mode-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map tabulated-list-mode-map)
-    (define-key map "\C-m" 'foo)
+    (define-key map "\C-m" 'rec-summary-cmd-jump-to-record)
     map)
   "Local keymap for `rec-summary-mode' buffers.")
+
+(defvar rec-summary-rec-buffer nil
+  "rec-mode buffer paired with this summary buffer.")
+(make-variable-buffer-local 'rec-summary-rec-buffer)  
 
 (define-derived-mode rec-summary-mode tabulated-list-mode "Rec Summary"
   "Major mode for summarizing the contents of a recfile.
@@ -1340,16 +1363,28 @@ Each character should identify only one name."
   (setq tabulated-list-sort-key nil)
   (tabulated-list-init-header))
 
-(defun rec-summary-populate (entries)
+(defun rec-summary-populate (headers entries)
   "Populate a rec-mode summary buffer with the data in ENTRIES.
 
 The data has the same structure than `tabulated-list-entries'."
-  (setq tabulated-list-format [("Id" 18 nil) ("Type" 5 nil) ("Need" 5 nil) ("Validation" 10 nil) ("Section" 20 nil) ("ImplV" 5 nil)])
+  (setq tabulated-list-format headers)
   (setq tabulated-list-padding 2)
-  (setq tabulated-list-sort-key (cons "Id" nil))
+;;  (setq tabulated-list-sort-key (cons (car (elt headers 0)) nil))
   (tabulated-list-init-header)
   (setq tabulated-list-entries entries)
   (tabulated-list-print nil))
+
+(defun rec-summary-cmd-jump-to-record ()
+  "Jump to the selected record in the rec-mode buffer."
+  (interactive)
+;;  (if (buffer-live-p rec-summary-rec-buffer)
+  (save-excursion
+    (let ((rec-marker (tabulated-list-get-id)))
+      (set-buffer (marker-buffer rec-marker))
+      (widen)
+      (goto-char (marker-position rec-marker))
+      (rec-show-record))))
+;;    (message "The rec buffer paired with this summary is not alive.")))
 
 ;;;; Rec Idle mode
 ;;
@@ -2141,25 +2176,46 @@ This command is especially useful with enumerated types."
 
 (defun rec-cmd-show-summary ()
   "Show a window with a summary of the contents of the current
-record set."
+record set.
+
+The fields used to build the summary are determined in the
+following way: if there is a %summary field in the record
+descriptor of the current record set then it must contain a comma
+separated list of fields.  Otherwise the %key is used.  Otherwise
+the user is prompted."
   (interactive)
-  (let* ((query (rec-query :fex "Id,Type,Need,Validation,Section,ImplV"))
-         (summary-list (mapcar (lambda (elt)
-                                 (list nil (vconcat (rec-record-assoc "Id" elt)
-                                                    (rec-record-assoc "Type" elt)
-                                                    (rec-record-assoc "Need" elt)
-                                                    (rec-record-assoc "Validation" elt)
-                                                    (rec-record-assoc "Section" elt)
-                                                    (rec-record-assoc "ImplV" elt))))
-                               query)))
-    ;; Create the summary window if it does not exist and populate
-    ;; it.
-    (let ((buf (get-buffer-create "Rec Summary")))
-      (switch-to-buffer-other-window buf)
-      (let ((buffer-read-only nil))
-        (delete-region (point-min) (point-max))
-        (rec-summary-mode)
-        (rec-summary-populate summary-list)))))
+  (let ((summary-buffer-name (concat (buffer-name (current-buffer)) " Summary")))
+    (if (buffer-live-p (get-buffer summary-buffer-name))
+        (progn
+          (delete-other-windows)
+          (split-window-vertically 10)
+          (switch-to-buffer summary-buffer-name))
+      (let ((summary-fields (rec-summary-fields)))
+        (unless summary-fields
+          (setq summary-fields (list (rec-key)))
+          (unless (car summary-fields)
+            (setq summary-fields (list (read-from-minibuffer "Fields to use in the summary: ")))))
+        (if (car summary-fields)
+            (let* ((query (rec-query :fex (rec-join-string summary-fields ",")))
+                   (summary-list (mapcar (lambda (rec)
+                                           (let ((entry-marker (make-marker)))
+                                             (set-marker entry-marker (rec-record-position rec))
+                                             (list entry-marker (vconcat (rec-record-values rec summary-fields)))))
+                                         query)))
+              ;; Create the summary window if it does not exist and populate
+              ;; it.
+              (let ((rec-buf (current-buffer))
+                    (buf (get-buffer-create (concat (buffer-name (current-buffer)) " Summary"))))
+                (delete-other-windows)
+                (split-window-vertically 10)
+                (switch-to-buffer buf)
+                (let ((buffer-read-only nil))
+                  (delete-region (point-min) (point-max))
+                  (setq rec-summary-rec-buffer rec-buf)
+                  (rec-summary-mode)
+                  (rec-summary-populate (vconcat (mapcar (lambda (field) (list field 15 nil)) summary-fields)) summary-list)
+                  (hl-line-mode 1))))
+          (message "No fields to build the summary."))))))
 
 ;;;; Interacting with other modes
 
@@ -2246,6 +2302,13 @@ Commands:
   (use-local-map rec-edit-field-mode-map)
   (setq mode-name "Rec Edit")
   (setq major-mode 'rec-edit-field-mode))
+
+;;;; Miscellaneous utilities
+
+(defun rec-join-string (l c)
+  (if (> (length l) 1)
+    (concat (car l) c (rec-join-string (cdr l) c))
+    (car l)))
 
 (provide 'rec-mode)
 

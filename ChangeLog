@@ -1,4 +1,18 @@
+2013-02-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-summary-populate): Use the first header as
+	the sorting criteria.
+	(rec-cmd-show-summary): Store the record position as the ID of the
+	tabular row.
+	(rec-summary-rec-buffer): New variable.
+	(rec-cmd-show-summary): Set the buffer local variable
+	rec-summary-rec-buffer the proper value.
+
 2013-02-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-keyword-summary): New constant.
+	(rec-summary-fields): New function.
+	(rec-join-string): Likewise.
 
 	* src/rec-db.c (rec_db_process_fex): Don't loose the location
 	information in records processed by fexes.
