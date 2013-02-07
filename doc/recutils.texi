@@ -56,7 +56,7 @@ Documentation License''.
 @titlepage
 @title GNU recutils
 @subtitle for version @value{VERSION}, @value{UPDATED}
-@author GNU recutils Developers (@email{bug-recutils@@gnu.org})
+@author Jose E. Marchesi
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -74,26 +74,146 @@ This manual documents version @value{VERSION} of the GNU recutils.
 @end ifnottex
 
 @menu
-Overview
-* Introduction::        Introducing the GNU recutils.
-* A Little Example::    Recutils in action.
+The Basics
 
-The Basic Rec Format
-* Structure of a Recfile::    The basic structures conforming Rec files.
-* Record Descriptors::        Describing different types of records.
-* Using the Recutils::
-* Recutils Expressions::  
-* Recutils Reference::
-* Conversion Utilities::
+* Introduction::             Introducing recutils.
+* The Rec Format::           Writing recfiles.
+
+Using the Recutils
+
+* Querying Recfiles::        Extracting data from recfiles.
+* Editing Records::          Inserting and deleting records.
+* Editing Fields::           Inserting, modifying and deleting fields.
+
+Data Integrity
+
+* Field Types::              Restrictions on the values of fields.
+* Field Restrictions::       Requiring or forbidding specific fields.
+* Checking Recfiles::        Making sure the data is ok.
+
+Advanced Topics
+
+* Grouping and Aggregates::  Statistics.
+* Joins::                    Crossing record of different types.
+* Auto-Generated Fields::    Counters and time-stamps.
+* Encryption::               Storing sensible information.
+* Generating Reports::       Formatted output with templates.
+* Interoperability::         Importing and exporting to other formats.
+
+Reference Material
+
+* Invoking the Utilities::   Command line arguments.
+* Regular Expressions::      Flavor of regexps supported in recutils.
+* Date input formats::       Specifying dates and times.
 
 * GNU Free Documentation License:: Distribution terms for this document.
 
 Indexes
 * Concept Index::
+
+@detailmenu
+ --- The Detailed Node Listing ---
+ ---------------------------------
+
+Here are some other nodes which are really subnodes of the ones
+already listed, mentioned here so you can get to them in one step:
+
+Introduction
+
+* Purpose::                   Why recutils.
+* A Little Example::          Recutils in action.
+
+The Rec Format
+
+* Fields::                    The key--value pairs which comprise the data.
+* Records::                   The main entities of a recfile.
+* Comments::                  Information for humans' benefit only.
+* Record Descriptors::        Describing different types of records.
+
+Querying Recfiles
+
+* Selecting by Type::         Get the records of some given type.
+* Selecting by Position::     Get the record occupying some position.
+* Selection Expressions::     Get the records satisfying some expression.
+* Random Records::            Get a set of random records.
+* Field Expressions::         Selecting a subset of fields.
+* Sorting::                   Get the records in a given order.
+
+Editing Records
+
+* Reading Records::          Extracting data from recfiles.
+* Inserting Records::        Inserting data into recfiles.
+* Deleting Records::         Removing data.
+
+Editing Fields
+
+* Setting Fields::           Editing field values.
+* Adding Fields::            Adding new fields to records.
+* Deleting Fields::          Removing or commenting-out fields.
+
+Field Types
+
+* Declaring Types::          Declaration of types in record descriptors.
+* Types and Fields::         Associating fields with types.
+* Scalar Field Types::       Numbers and ranges.
+* String Field Types::       Lines, limited strings and regular expressions. 
+* Enumerated Field Types::   Enumerations and boolean values.
+* Time Field Types::         Dates and times.
+* Other Field Types::        Emails, fields, UUIDs, @dots{}
+
+Field Restrictions
+
+* Keys and Unique fields::   Fields characterising records.
+* Mandatory fields::         Requiring the presence of fields.
+* Prohibited fields::        Forbidding the presence of fields.
+* Arbitrary Constraints::    Constraints records must comply with.
+
+Checking Recfiles
+
+Joins
+
+* Foreign Keys::             Referring records from another records.
+* Joining Records::          Performing cross-joins.
+
+Auto-Generated Fields
+
+* Counters::                 Generating incremental Ids.
+* Unique Identifiers::       Generating universally unique Ids.
+* Time-stamps::              Tracking the creation of records.
+
+Encryption
+
+* Confidential Fields::      Declaring fields as sensible data.
+* Encrypting files::         Encrypt confidential fields.
+* Decrypting data::          Reading encrypted fields.
+
+Generating Reports
+
+* Templates::                Formatted output.
+
+Interoperability
+
+* CSV Files::                Converting recfiles to/from csv files.
+* Importing MDB files::      Importing MS Access Databases.
+
+Invoking the Utilities
+
+* recinf::                   Printing information about rec files.
+* recsel::                   Selecting records.
+* recins::                   Inserting records.
+* recdel::                   Deleting records.
+* recset::                   Managing fields.
+* recfix::                   Fixing broken rec files, and diagnostics.
+* recfmt::                   Formatting records using templates.
+* csv2rec::                  Converting csv data into rec data.
+* rec2csv::                  Converting rec data into csv data.
+* mdb2rec::                  Converting mdb files into rec files.
+
+@end detailmenu
 @end menu
 
-@node Introduction
-@chapter Introduction
+@node Purpose
+@chapter Purpose
 
 GNU recutils is a set of tools and libraries to access human-editable,
 text-based databases called @emph{recfiles}.  The data is stored as a
