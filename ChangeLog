@@ -1,5 +1,10 @@
 2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* src/rec-db.c (rec_db_process_fex): Avoid a segmentation fault
+	when the function is called with a NULL record.
+
+2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: record sets and simple selection techniques documented.
 	* doc/recutils.texi (Record Sets): New subsection.
 	(Naming Record Types): Likewise.

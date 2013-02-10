@@ -1774,8 +1774,11 @@ rec_db_process_fex (rec_db_t db,
      of the original record, but we must also copy the location
      information.  */
 
-  rec_record_set_location (res, rec_record_location (record));
-  rec_record_set_char_location (res, rec_record_char_location (record));
+  if (record)
+    {
+      rec_record_set_location (res, rec_record_location (record));
+      rec_record_set_char_location (res, rec_record_char_location (record));
+    }
 
   return res;
 }
