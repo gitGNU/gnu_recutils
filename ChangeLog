@@ -1,3 +1,12 @@
+2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: record sets and simple selection techniques documented.
+	* doc/recutils.texi (Record Sets): New subsection.
+	(Naming Record Types): Likewise.
+	(The Special Fields): Likewise.
+	(Selecting by Position): Written.
+	(Random Records): Likewise.
+
 2013-02-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/rec-mode.el (rec-summary-populate): Use the first header as

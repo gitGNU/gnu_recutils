@@ -129,10 +129,11 @@ The Rec Format
 
 Querying Recfiles
 
+* Simple Selections::         Introducing @command{recsel}.
 * Selecting by Type::         Get the records of some given type.
 * Selecting by Position::     Get the record occupying some position.
-* Selection Expressions::     Get the records satisfying some expression.
 * Random Records::            Get a set of random records.
+* Selection Expressions::     Get the records satisfying some expression.
 * Field Expressions::         Selecting a subset of fields.
 * Sorting::                   Get the records in a given order.
 
@@ -576,9 +577,21 @@ Age: 53
 Certain properties of a set of records can be specified by preceding
 them with a @dfn{record descriptor}.  A record descriptor is itself a
 record, and uses fields with some predefined names to store
-properties.  The most basic property that can be specified for a set
-of records is their @dfn{type}.  The special field name @code{%rec} is
-used for that purpose:
+properties.
+
+@menu
+* Record Sets::               Defining different types of records.
+* Naming Record Types::       Some conventions on naming record sets.
+* Record Sets Properties::    Introducing the special fields.
+@end menu
+
+@node Record Sets
+@subsection Record Sets
+@cindex record sets
+
+The most basic property that can be specified for a set of records is
+their @dfn{type}.  The special field name @code{%rec} is used for that
+purpose:
 
 @cindex @code{%rec}
 @example
@@ -593,7 +606,8 @@ Name: Entry 2
 
 The records following the descriptors are then identified as having
 its type.  So in the example above we would say there are two records
-of type ``Entry''.
+of type ``Entry''.  Or in a more colloquial way we would say there are
+two ``Entries'' in the database.
 
 The effect of a record descriptor ends when another descriptor is
 found in the stream of records.  This allows you to store different kinds
@@ -623,6 +637,80 @@ Id: 2
 Type: stock
 Date: 21 April 2011
 @end example
+
+The collection of records having same types in recfiles are known as
+@dfn{record sets} in the recutils jargon.  In the example above two
+record sets are defined: one containing articles and the other
+containing stock movements.
+
+Nothing prevents to have empty record sets in databases.  This is
+usually the case when a new recfile is written but no data exists yet.
+In our depot example we could write a first version of the database
+containing just the record descriptors:
+
+@example
+%rec: Article
+
+%rec: Stock
+@end example
+
+@cindex default record types
+Many simple recfiles do not feature special record.  This is because
+all the records contained in the file are of the same type, and their
+nature can usually be inferred from both the file name and their
+contents.  For example, @file{contacts.rec} could simply contain
+records representing contacts without an explicit @code{%rec: Contact}
+record descriptor.  In this case we say that the type of the anonymous
+records stored in the file is the @dfn{default record type}.
+
+Another possible situation, although not usual, is to have a recfile
+containing both non-typed (default) and typed record types:
+
+@example
+Id: 1
+Title: Blah
+
+Id: 2
+Title: Bleh
+
+%rec: Movement
+
+Date: 13-Aug-2012
+Concept: 20
+
+Date: 24-Sept-2012
+Concept: 12
+@end example
+
+@noindent
+In this case the records preceding the movements are of the
+``default'' type, whereas the records following the record descriptor
+are of type @code{Movement}.  Even if it is supported by the format
+and the utilities, it is generally not recommended to mix non-typed
+and typed records in a recfile.
+
+@node Naming Record Types
+@subsection Naming Record Types
+
+It is up to you how to name your record sets.  Any string composed by
+alphanumeric characters, dashes or underscores, and that starts with a
+letter will be a legal name.  However, it is recommended to use the
+singular form of a noun in order to describe the ``type'' of the
+records in the records set. Examples are @code{Article},
+@code{Contributor}, @code{Employee} and @code{Movement}.
+
+The used noun shall be specific enough in order to characterize the
+property of the records which matters.  For example, in a
+contributor's database it would be better to have a record set named
+@code{Contributor} than @code{Person}.
+
+The reason of using singular nouns instead of their plural forms is
+that it works better with the utilities: it is more natural to read
+@command{recsel -t Contributor} (@command{-t} is for ``type'') than
+@command{recsel -t Contributors}.
+
+@node Record Sets Properties
+@subsection Record Sets Properties
 
 @cindex field, special fields
 @cindex special fields
@@ -654,34 +742,97 @@ Note that the names of special fields always start with the character
 fields in a record descriptor, but such fields will have no effect on
 the described record set.
 
-@c XXX: make this a list
-@c @menu
-@c * %rec::                External and remote descriptors.
-@c * %mandatory and %prohibit:: Requiring or forbidding specific fields.
-@c * %unique and %key::    Working with keys.
-@c * %doc::                Documenting your database.
-@c * %typedef and %type::  Field types.
-@c * %auto::               Auto counters and time-stamps.
-@c * %sort::               Keeping your record sets sorted.
-@c * %size::               Restricting the size of your database.
-@c * %constraint::         Setting arbitrary constraints.
-@c * %confidential::       Storing confidential information.
-@c @end menu
+Every record set must contain one, and only one, field named
+@code{%rec}.  It is not mandated that that field must occupy the first
+position in the record.  However, it is considered a good style to
+place it as the first field in the record set, in order for the casual
+reader to easily identify the type of the records.
+
+The following list briefly describes the special fields defined in the
+recutils format, along with references to the sections of this manual
+describing their usage in deep.
+
+@cindex special fields, list of
+@table @code
+@item %rec
+Naming record types.  Also, they allow using external and remote
+descriptors.  @xref{Remote Descriptors}.
+@item %mandatory and %prohibit
+Requiring or forbidding specific fields.  @xref{Mandatory Fields}.
+@xref{Prohibited Fields}.
+@item %unique and %key
+Working with keys.  @xref{Keys and Unique Fields}.
+@item %doc
+Documenting your database. @xref{%doc}.
+@item %typedef and %type
+Field types.  @xref{Field Types}.
+@item %auto
+Auto-counters and time-stamps.  @xref{Auto-Generated Fields}.
+@item %sort
+Keeping your record sets sorted.  @xref{Sorting}.
+@item %size
+Restricting the size of your database.  @xref{%size}.
+@item %constraint
+Enforcing arbitrary constraints.  @xref{Arbitrary Constraints}.
+@item %confidential
+Storing confidential information.  @xref{Encryption}.
+@end table
 
 @node Querying Recfiles
 @chapter Querying Recfiles
 
-Since recfiles are always human readable, you could lookup data simply by
-opening an editor and searching for the desired information.  
-Or you could use a standard tool such as @command{grep} to extract
-strings matching a pattern.
-However, recutils provide a more powerful and flexible way to lookup
-data.
+Since recfiles are always human readable, you could lookup data simply
+by opening an editor and searching for the desired information.  Or
+you could use a standard tool such as @command{grep} to extract
+strings matching a pattern.  However, recutils provide a more powerful
+and flexible way to lookup data.  The following sections explore how
+the recutils can be used in order to extract data from recfiles, from
+very basic and simple queries to quite complex examples.
 
+@menu
+* Simple Selections::         Introducing @command{recsel}.
+* Selecting by Type::         Get the records of some given type.
+* Selecting by Position::     Get the record occupying some position.
+* Random Records::            Get a set of random records.
+* Selection Expressions::     Get the records satisfying some expression.
+* Field Expressions::         Selecting a subset of fields.
+* Sorting::                   Get the records in a given order.
+@end menu
+
+@node Simple Selections
+@section Simple Selections
+
+@command{recsel} is an utility whose primary purpose is to select
+records from a recfile and print them in the standard output.
 Consider the following example record set, which we shall assume is
 saved in a recfile called @file{acquaintances.rec}:
 
 @example
+# This database contains a list of both real and fictional persons
+# along with their age.
+
+Name: Ada Lovelace
+Age: 36
+
+Name: Peter the Great
+Age: 53
+
+# Name: Matusalem
+# Age: 969
+
+Name: Bart Simpson
+Age: 10
+
+Name: Adrian Mole
+Age: 13.75
+@end example
+
+@noindent
+If we invoke @command{recsel acquaintainces.rec} we will get a list of
+all the records stored in the file in the terminal:
+
+@example
+$ recsel acquaintainces.rec
 Name: Ada Lovelace
 Age: 36
 
@@ -694,6 +845,251 @@ Age: 10
 Name: Adrian Mole
 Age: 13.75
 @end example
+
+@noindent
+Note that the commented out parts of the file, in this case the
+explanatory header and the record corresponding to Matusalem, are not
+part of the output produced by @command{recsel}.  This is because
+@command{recsel} is concerned only by the data.
+
+@command{recsel} will also ``pack'' the records so any extra empty
+line that may be between records is not echoed in the output:
+
+@multitable @columnfractions .5 .5
+@headitem acquaintainces.rec @tab recsel acquaintainces.rec
+@item
+@example
+@exdent Name: Peter the Great
+@exdent Age: 53
+@exdent @*
+@exdent # Note the extra empty lines.
+@exdent @*
+@exdent @*
+@exdent Name: Bart Simpson
+@exdent Age: 10
+@end example
+@tab
+@example
+@exdent Name: Peter the Great
+@exdent Age: 53
+@exdent @*
+@exdent Name: Bart Simpson
+@exdent Age: 10
+@end example
+@end multitable
+
+@noindent
+It is a common situation to store data gathered in several recfiles.
+For example, we could have a @file{contacts.rec} file containing
+general contact records, and also a @file{work-contacts.rec} file
+containing business contacts:
+
+@multitable @columnfractions .5 .5
+@headitem contacts.rec @tab work-contacts.rec
+@item 
+@example
+@exdent Name: Granny
+@exdent Phone: +12 23456677
+@exdent @*
+@exdent Name: Doctor
+@exdent Phone: +12 58999222
+@end example
+@tab
+@example
+@exdent Name: Yoyodyne Corp.
+@exdent Email: sales@@yoyod.com
+@exdent Phone: +98 43434433
+@exdent @*
+@exdent Name: Robert Harris
+@exdent Email: robert.harris@@yoyod.com
+@exdent Note: Sales Department.
+@end example
+@end multitable
+
+Both files can be passed to @command{recsel} in the command line.  In
+that case @command{recsel} will simply process them and output their
+records in the same order they were specified:
+
+@example
+$ recsel contacts.rec work-contacts.rec
+Name: Granny
+Phone: +12 23456677
+
+Name: Doctor
+Phone: +12 58999222
+
+Name: Yoyodyne Corp.
+Email: sales@@yoyod.com
+Phone: +98 43434433
+
+Name: Robert Harris
+Email: robert.harris@@yoyod.com
+Note: Sales Department.
+@end example
+
+@noindent
+This is a commutative, so @command{recsel work-contacts.rec
+contacts.rec} would output the records of the business contacts first
+and then the ones from @file{contacts.rec}.
+
+@node Selecting by Type
+@section Selecting by Type
+
+As we saw in the section discussing record descriptors, it is possible
+to have several different types of records in a single recfile.
+Consider for example a @file{gnu.rec} file containing information
+about maintainers and packages in the GNU Project:
+
+@example
+%rec: Maintainer
+
+Name: Jose E. Marchesi
+Email: jemarch@@gnu.org
+
+Name: Luca Saiou 
+Email: positron@@gnu.org
+
+%rec: Package
+
+Name: GNU recutils
+URL: http://www.gnu.org/software/recutils
+
+Name: GNU epsilon
+URL: http://www.gnu.org/software/epsilon
+@end example
+
+@noindent If @command{recsel} is invoked in that file it will complain:
+
+@example
+$ recsel gnu.rec
+recsel: error: several record types found.  Please use -t to specify one.
+@end example
+
+@noindent
+This is because @command{recsel} does not know which records to
+output: the maintainers or the packages.  This can be achieved by
+using the @code{-t} command line option:
+
+@example
+$ recsel -t Package gnu.rec
+Name: GNU recutils
+URL: http://www.gnu.org/software/recutils
+
+Name: GNU epsilon
+URL: http://www.gnu.org/software/epsilon
+@end example
+
+@noindent
+Note that at the moment it is not possible to select non-typed
+(default) records when other record sets are stored in the same file.
+This is one of the reasons why mixing non-typed records and typed
+records in a single recfile is not recommended.
+
+@noindent
+Note also that if a non-existing record type is specified in @code{-t}
+then @command{recsel} does nothing.
+
+@node Selecting by Position
+@section Selecting by Position
+
+As was explained in the previous sections, @command{recsel} outputs
+all the records of some record set, in the same order the records are
+written in the recfile.  However, sometimes it is desirable to select
+a subset of the records determined by the position they occupy into
+their record set.
+
+The @code{-n} command line argument to @command{recsel} allows to do
+this in a very easy way.  This is how we would retrieve the first
+contact listed in a contacts database using @command{recsel}:
+
+@example
+$ recsel -n 0 contacts.rec
+Name: Granny
+Phone: +12 23456677
+@end example
+
+@noindent 
+Note that the index is 0-based.  In case we want to retrieve more
+records we can specify several indexes to @code{-n} separated by
+commas.  In case an index is too big then it is simply ignored:
+
+@example
+$ recsel -n 0,1,999 contacts.rec
+Name: Granny
+Phone: +12 23456677
+
+Name: Doctor
+Phone: +12 58999222
+@end example
+
+@noindent Note that the order in which the records are echoed does not
+depend on the order of the indexes passed to @code{-n}.
+This means that the output of @command{recsel -n 0,1} will be
+identical to the output of @command{recsel -n 1,0}.
+
+Ranges of indexes can also be used to select a subset of the records.
+For example, the following call would also select the first three
+contacts of the database:
+
+@example
+$ recsel -n 0-2 contacts.rec
+Name: Granny
+Phone: +12 23456677
+
+Name: Doctor
+Phone: +12 58999222
+
+Name: Dad
+Phone: +12 88229900
+@end example
+
+@noindent Note that it is possible to mix concrete indexes and index
+ranges in the same call.  For example, @command{recsel -n 0,5-6} would
+select the first, the fourth and the fifth records in some record
+descriptor.
+
+@node Random Records
+@section Random Records
+
+Consider a database in which each record is a cooking recipe.  It is
+always difficult to decide what to cook each day, so it would be nice
+if we could ask @command{recsel} to pick up a random recipe.  This can
+be achieved using the @code{-m} or @code{--random} command line option
+of @command{recsel}:
+
+@example
+$ recsel -m 1 recipes.rec
+Title: Curry chicken
+Ingredient: A whole chicken
+Ingredient: Curry
+Preparation: ...
+@end example
+
+@noindent In case we need two recipes, because we will be cooking for
+both lunch and dinner, we can pass a different number to @code{-m}:
+
+@example
+$ recsel -m 2 recipes.rec
+Title: Fabada Asturiana
+Ingredient: 300 gr of fabes.
+Ingredient: Chorizo
+Ingredient: Morcilla
+Preparation: ...
+
+Title: Pasta with ragu
+Ingredient: 500gr of Spaguetti.
+Ingredient: 2 tomate.
+Ingredient: Minced meet.
+Preparation: ...
+@end example
+
+@node Selection Expressions
+@section Selection Expressions
+
+@cindex selection expressions
+@dfn{Selection expressions}, also known as a ``sexes'' in the recutils
+jargon, are simple infix expressions that can be applied to a record.
+The result of the SEX is typically interpreted as a boolean value.
 
 @cindex selecting records
 @cindex looking up data
@@ -796,33 +1192,6 @@ single quotes @code{'}.
 @cindex date comparison
 The double quotes are interpreted by the shell (@eg{} @command{bash}) and
 the single quotes are part of the string which forms the  two dates being compared.
-
-@menu
-* Selecting by Type::         Get the records of some given type.
-* Selecting by Position::     Get the record occupying some position.
-* Selection Expressions::     Get the records satisfying some expression.
-* Random Records::            Get a set of random records.
-* Field Expressions::         Selecting a subset of fields.
-* Sorting::                   Get the records in a given order.
-@end menu
-
-@node Selecting by Type
-@section Selecting by Type
-
-XXX
-
-@node Selecting by Position
-@section Selecting by Position
-
-XXX
-
-@node Selection Expressions
-@section Selection Expressions
-
-@cindex selection expressions
-@dfn{Selection expressions} (also known as a ``sexes'') are simple
-infix expressions that can be applied to a record.  The result of the
-SEX is typically interpreted as a boolean value.
 
 @menu
 * SEX Operands::        Literal values, fields and sub-expressions.
@@ -1098,11 +1467,6 @@ Sometimes a selection expression is used to compute a result instead
 of a boolean.  In that case the returned value is converted to a
 string.  This is used when replacing the slots in templates
 (@pxref{Templates}).
-
-@node Random Records
-@section Random Records
-
-XXX
 
 @node Field Expressions
 @section Field Expressions
