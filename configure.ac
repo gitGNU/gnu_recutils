@@ -23,7 +23,7 @@ AC_INIT([GNU recutils], [1.5], [bug-recutils@gnu.org])
 dnl Must come before AM_INIT_AUTOMAKE
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(src/config.h)
+AC_CONFIG_HEADERS(src/config.h)
 AC_CONFIG_MACRO_DIR([m4])
 
 dnl Autobuild
@@ -32,7 +32,7 @@ AB_INIT
 AC_PROG_CC
 gl_EARLY
 
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 
@@ -186,19 +186,20 @@ AC_ARG_ENABLE([coverage],
 AM_CONDITIONAL([USE_COVERAGE], [test "x$use_gcov" = "xyes"])
 
 dnl Generate output files
-AC_OUTPUT(Makefile
-          lib/Makefile
-          libcsv/Makefile
-          src/Makefile
-          utils/Makefile
-          doc/Makefile
-          po/Makefile.in
-          torture/Makefile
-          torture/utils/Makefile
-          torture/utils/config.sh
-          man/Makefile
-          etc/Makefile
-          algol68/Makefile)
+AC_CONFIG_FILES(Makefile
+                lib/Makefile
+                libcsv/Makefile
+                src/Makefile
+                utils/Makefile
+                doc/Makefile
+                po/Makefile.in
+                torture/Makefile
+                torture/utils/Makefile
+                torture/utils/config.sh
+                man/Makefile
+                etc/Makefile
+                algol68/Makefile)
+AC_OUTPUT
 
 dnl Report warnings
 

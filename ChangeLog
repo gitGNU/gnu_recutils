@@ -1,3 +1,9 @@
+2013-02-10  Michał Masłowski  <mtjm@mtjm.eu>
+
+	* configure.ac: Use AC_CONFIG_HEADERS, LT_INIT and AC_CONFIG_FILES
+	instead of deprecated AM_CONFIG_HEADER, AC_PROG_LIBTOOL and
+	argument of AC_OUTPUT.
+
 2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/rec-mode.texi: Copyright updated.
