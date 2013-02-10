@@ -21,7 +21,7 @@
 This manual is for GNU recutils (version @value{VERSION},
 @value{UPDATED}).
 
-Copyright @copyright{} 2009, 2010, 2011, 2012 Jose E. Marchesi
+Copyright @copyright{} 2009-2013 Jose E. Marchesi
 
 Copyright @copyright{} 1994-2012 Free Software Foundation, Inc.
 

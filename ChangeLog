@@ -1,7 +1,10 @@
 2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/rec-mode.texi: Copyright updated.
+
 	* doc/recutils.texi (Random Records): Clarify how the internal
 	algorihtm works.
+	Copyright updated.
 
 2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
 
