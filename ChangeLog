@@ -1,5 +1,10 @@
 2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/recutils.texi (Random Records): Clarify how the internal
+	algorihtm works.
+
+2013-02-10  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/rec-db.c (rec_db_process_fex): Avoid a segmentation fault
 	when the function is called with a NULL record.
 

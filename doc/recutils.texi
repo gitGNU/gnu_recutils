@@ -1083,6 +1083,12 @@ Ingredient: Minced meet.
 Preparation: ...
 @end example
 
+@noindent
+Note that the algorithm used to implement @code{-m} guarantees that
+you will never get multiple instances of the same record.  This means
+that if a record set has @var{n} records and you ask for @var{n}
+random records, you will get all the records in a random order.
+
 @node Selection Expressions
 @section Selection Expressions
 
@@ -1556,7 +1562,7 @@ For example, the following field expression specifies an alias for the
 fields named @code{Email} in a record:
 
 @example
-Name,Email:ElectronicEmail
+Name,Email:ElectronicMail
 @end example
 
 Since the rewrite rules only affect to the fields selected in a single
