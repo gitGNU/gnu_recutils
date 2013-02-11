@@ -1,3 +1,9 @@
+2013-02-11  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: Field Restrictions introduction written.
+	* doc/recutils.texi (Field Restrictions): Introduction to the
+	chapter written.
+
 2013-02-10  Michał Masłowski  <mtjm@mtjm.eu>
 
 	* configure.ac: Use AC_CONFIG_HEADERS, LT_INIT and AC_CONFIG_FILES

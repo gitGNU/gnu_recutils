@@ -2303,7 +2303,17 @@ type defined for the primary key of the @code{Hacker} record set.
 @node Field Restrictions
 @chapter Field Restrictions
 
-XXX
+The records in a recfile are by default not restricted to display any
+structure more than being composed by one or more fields and any
+number of comments.  This provides the format a huge expressive power,
+but in many cases it is also desirable to impose some restrictions in
+order to reflect some of the properties of the data stored in the
+database.  It is also useful in order to preserve data integrity and
+thus avoid data corruption.
+
+The following sections describe the usage of some predefined special
+fields whose purpose is to impose that kind of restrictions in the
+structure of the records.
 
 @menu
 * Keys and Unique Fields::   Fields characterising records.
@@ -2477,9 +2487,13 @@ XXX
 
 @node Arbitrary Constraints
 @section Arbitrary Constraints
-
 @cindex @code{%constraint}
 @cindex restricting values of fields
+
+XXX the arbitrary constraints allow to define restrictions in the
+structure of the records based on the values of the fields, and
+the other way around.
+
 The @code{%constraint} special field is used to define constraints upon 
 a field's value.
 Its usage is:
