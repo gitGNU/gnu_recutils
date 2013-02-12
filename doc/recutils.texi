@@ -195,7 +195,7 @@ Generating Reports
 Interoperability
 
 * CSV Files::                Converting recfiles to/from csv files.
-* Importing MDB files::      Importing MS Access Databases.
+* Importing MDB Files::      Importing MS Access Databases.
 
 Invoking the Utilities
 
@@ -3022,6 +3022,21 @@ Abode_Address: 2 Serpe Rise, Little Worning, SURREY
 Name: Ernest Wright
 Abode_Address: 1 Wanter Rise, Greater Inncombe, BUCKS
 @end example
+
+@menu
+* Foreign Keys::             Referring records from another records.
+* Joining Records::          Performing cross-joins.
+@end menu
+
+@node Foreign Keys
+@section Foreign Keys
+
+XXX
+
+@node Joining Records
+@section Joining Records
+
+XXX
 
 @node Auto-Generated Fields
 @chapter Auto-Generated Fields

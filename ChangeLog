@@ -1,3 +1,10 @@
+2013-02-12  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: get recutils.texi compiling again.
+	* doc/recutils.texi (Joining Records): Empty section created.
+	(Foreign Keys): Likewise.
+	(Top): Entry in menu fixed to avoid an invalid reference.
+
 2013-02-11  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: Field Restrictions introduction written.
