@@ -1,3 +1,10 @@
+2013-03-14  Jose E. Marchesi  <jemarch@gnu.org>
+
+	doc: minor improvements in the manual.
+	* doc/recutils.texi: Add John as an author.
+	(Selecting by Type): Document the -d command line option to
+	recsel.
+
 2013-02-12  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: get recutils.texi compiling again.

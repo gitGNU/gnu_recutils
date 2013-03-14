@@ -56,7 +56,7 @@ Documentation License''.
 @titlepage
 @title GNU recutils
 @subtitle for version @value{VERSION}, @value{UPDATED}
-@author by Jose E. Marchesi
+@author by Jose E. Marchesi and John Darrington
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -980,6 +980,23 @@ URL: http://www.gnu.org/software/epsilon
 @end example
 
 @noindent
+By default @command{recsel} never outputs record descriptors.  This is
+because most of the time the user is only interested in the data.
+However, using the @code{-d} command line output the record descriptor
+of the selected type is printed preceding the data records:
+
+@example
+$ recsel -d -t Maintainer gnu.rec
+%rec: Maintainer
+
+Name: Jose E. Marchesi
+Email: jemarch@@gnu.org
+
+Name: Luca Saiou 
+Email: positron@@gnu.org
+@end example
+
+@noindent
 Note that at the moment it is not possible to select non-typed
 (default) records when other record sets are stored in the same file.
 This is one of the reasons why mixing non-typed records and typed
@@ -993,10 +1010,10 @@ then @command{recsel} does nothing.
 @section Selecting by Position
 
 As was explained in the previous sections, @command{recsel} outputs
-all the records of some record set, in the same order the records are
-written in the recfile.  However, sometimes it is desirable to select
-a subset of the records determined by the position they occupy into
-their record set.
+all the records of some record set.  The records are echoed in the
+same order they are written in the recfile.  However, often it is
+desirable to select a subset of the records determined by the position
+they occupy into their record set.
 
 The @code{-n} command line argument to @command{recsel} allows to do
 this in a very easy way.  This is how we would retrieve the first
@@ -1095,7 +1112,10 @@ random records, you will get all the records in a random order.
 @cindex selection expressions
 @dfn{Selection expressions}, also known as a ``sexes'' in the recutils
 jargon, are simple infix expressions that can be applied to a record.
-The result of the SEX is typically interpreted as a boolean value.
+The result of the SEX is typically interpreted as a boolean
+value@footnote{As with any sex.}
+
+XXX.
 
 @cindex selecting records
 @cindex looking up data
