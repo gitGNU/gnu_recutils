@@ -1,3 +1,9 @@
+2013-05-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (Sorted Output): Renamed from Sorting.
+	(Sorting Records): New section.
+	(Editing Records): Intro written.
+
 2013-03-14  Jose E. Marchesi  <jemarch@gnu.org>
 
 	doc: minor improvements in the manual.

@@ -135,12 +135,13 @@ Querying Recfiles
 * Random Records::            Get a set of random records.
 * Selection Expressions::     Get the records satisfying some expression.
 * Field Expressions::         Selecting a subset of fields.
-* Sorting::                   Get the records in a given order.
+* Sorted Output::             Get the records in a given order.
 
 Editing Records
 
 * Inserting Records::        Inserting data into recfiles.
-* Deleting Records::         Removing data.
+* Deleting Records::         Removing entries.
+* Sorting Records::          Physical reordering of records.
 
 Editing Fields
 
@@ -769,7 +770,7 @@ Field types.  @xref{Field Types}.
 @item %auto
 Auto-counters and time-stamps.  @xref{Auto-Generated Fields}.
 @item %sort
-Keeping your record sets sorted.  @xref{Sorting}.
+Keeping your record sets sorted.  @xref{Sorted Output}.
 @item %size
 Restricting the size of your database.  @xref{%size}.
 @item %constraint
@@ -796,7 +797,7 @@ very basic and simple queries to quite complex examples.
 * Random Records::            Get a set of random records.
 * Selection Expressions::     Get the records satisfying some expression.
 * Field Expressions::         Selecting a subset of fields.
-* Sorting::                   Get the records in a given order.
+* Sorted Output::             Get the records in a given order.
 @end menu
 
 @node Simple Selections
@@ -1624,8 +1625,8 @@ as follows:
 Foo.Bar
 @end example
 
-@node Sorting
-@section Sorting
+@node Sorted Output
+@section Sorted Output
 
 @cindex @code{%sort}
 @cindex sorting
@@ -1807,11 +1808,21 @@ comes before the class @code{B} even if they got the same score (@code{6.8}).
 @node Editing Records
 @chapter Editing Records
 
-XXX
+The simplest way of editing a recfile is to fire up your favourite
+text editor and hack the contents of the file as desired.  However,
+the rec format is structured enough so recfiles can be updated
+automatically by programs.  This is useful for writing shell scripts
+or when there are complex data integrity rules stored in the file that
+we want to be sure to preserve.
+
+The following sections discuss the usage of the recutils for alteting
+recfiles in the level of record: adding new records, deleting or
+commenting them out, sorting them, etc.
 
 @menu
 * Inserting Records::        Inserting data into recfiles.
 * Deleting Records::         Removing data.
+* Sorting Records::          Physical reordering of records.
 @end menu
 
 @node Inserting Records
@@ -1821,6 +1832,11 @@ XXX
 
 @node Deleting Records
 @section Deleting Records
+
+XXX
+
+@node Sorting Records
+@section Sorting Records
 
 XXX
 
