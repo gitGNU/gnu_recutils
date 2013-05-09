@@ -82,3 +82,16 @@ torture/utils/config.sh
 /torture/utils/*.in
 /GNUmakefile
 /maint.mk
+/doc/recutils-a4-book.pdf
+/doc/recutils-a4.aux
+/doc/recutils-a4.cp
+/doc/recutils-a4.cps
+/doc/recutils-a4.fn
+/doc/recutils-a4.fns
+/doc/recutils-a4.ky
+/doc/recutils-a4.log
+/doc/recutils-a4.pg
+/doc/recutils-a4.toc
+/doc/recutils-a4.tp
+/doc/recutils-a4.vr
+/doc/recutils-a4.vrs
