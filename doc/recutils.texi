@@ -1815,7 +1815,7 @@ automatically by programs.  This is useful for writing shell scripts
 or when there are complex data integrity rules stored in the file that
 we want to be sure to preserve.
 
-The following sections discuss the usage of the recutils for alteting
+The following sections discuss the usage of the recutils for altering
 recfiles in the level of record: adding new records, deleting or
 commenting them out, sorting them, etc.
 
