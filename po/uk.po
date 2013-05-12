@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.5\n"
 "Report-Msgid-Bugs-To: bug-recutils@gnu.org\n"
-"POT-Creation-Date: 2012-02-29 21:43+0100\n"
+"POT-Creation-Date: 2012-01-13 12:00+0100\n"
 "PO-Revision-Date: 2012-01-14 21:47+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -212,16 +212,14 @@ msgstr "Підпроцесом %s отримано сигнал щодо ава�
 msgid "memory exhausted"
 msgstr "пам’ять вичерпано"
 
-#: src/rec-fex.c:379
+#: src/rec-fex.c:377
 #, c-format
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
-msgstr ""
-"внутрішня помилка: перевищено обмеження REC_FEX_MAX_ELEMS. Будь ласка, "
-"повідомте авторам програми про цю помилку.\n"
+msgstr "внутрішня помилка: перевищено обмеження REC_FEX_MAX_ELEMS. Будь ласка, повідомте авторам програми про цю помилку.\n"
 
 #: src/rec-int.c:172
-#, fuzzy, c-format
-msgid "%s: error: the number of records of type %s should be %zd.\n"
+#, c-format
+msgid "%s: error: the number of records of type %s shall be %zd.\n"
 msgstr "%s: помилка: кількість записів типу %s має дорівнювати %zd.\n"
 
 #: src/rec-int.c:182
@@ -234,258 +232,215 @@ msgstr "%s: помилка: забагато записів типу %s. Мак�
 msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
 msgstr "%s: помилка: замало записів типу %s. Мінімальною кількістю є %zd.\n"
 
-#: src/rec-int.c:350
+#: src/rec-int.c:305
+#, c-format
+msgid "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
+msgstr "%s:%s: попередження: тип %s суперечить еталонному типу %s у rset %s.\n"
+
+#: src/rec-int.c:410
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr "%s:%s: помилка: у записі не виявлено обов’язкового поля «%s»\n"
 
-#: src/rec-int.c:401
+#: src/rec-int.c:463
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
-msgstr ""
-"%s:%s: помилка: у цьому записі можна використовувати лише одне поле «%s»\n"
+msgstr "%s:%s: помилка: у цьому записі можна використовувати лише одне поле «%s»\n"
 
-#: src/rec-int.c:452
+#: src/rec-int.c:516
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr "%s:%s: помилка: у записі виявлено заборонене поле «%s»\n"
 
-#: src/rec-int.c:491
+#: src/rec-int.c:555
 #, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
 msgstr "%s:%s: помилка: вміст поля з конфіденційними даними не зашифровано\n"
 
-#: src/rec-int.c:543
+#: src/rec-int.c:607
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr "%s:%s: помилка: у записі не виявлено поля ключа «%s»\n"
 
-#: src/rec-int.c:552
+#: src/rec-int.c:616
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr "%s:%s: помилка: у записі виявлено декілька полів ключів «%s»\n"
 
-#: src/rec-int.c:595
+#: src/rec-int.c:659
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
-msgstr ""
-"%s:%s: помилка: у записі виявлено дублювання встановлення значення ключа у "
-"полі «%s»\n"
+msgstr "%s:%s: помилка: у записі виявлено дублювання встановлення значення ключа у полі «%s»\n"
 
-#: src/rec-int.c:643
+#: src/rec-int.c:709
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr "%s:%s: помилка: у дескрипторі запису не вистачає поля %%rec\n"
 
-#: src/rec-int.c:651
+#: src/rec-int.c:717
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr "%s:%s: помилка: у дескрипторі запису занадто багато полів %%rec\n"
 
-#: src/rec-int.c:661
+#: src/rec-int.c:727
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr "%s:%s: помилка: некоректний тип запису %s\n"
 
-#: src/rec-int.c:672
+#: src/rec-int.c:738
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
-msgstr ""
-"%s:%s: помилка: у дескрипторі запису можна використовувати лише одне поле "
-"%%key\n"
+msgstr "%s:%s: помилка: у дескрипторі запису можна використовувати лише одне поле %%key\n"
 
-#: src/rec-int.c:682
+#: src/rec-int.c:748
 #, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
-msgstr ""
-"%s:%s: помилка: у дескрипторі запису можна використовувати лише одне поле "
-"%%size\n"
+msgstr "%s:%s: помилка: у дескрипторі запису можна використовувати лише одне поле %%size\n"
 
-#: src/rec-int.c:692
+#: src/rec-int.c:758
 #, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
-msgstr ""
-"%s:%s: помилка: у дескрипторі запису можна використовувати лише одне поле "
-"%%sort\n"
+msgstr "%s:%s: помилка: у дескрипторі запису можна використовувати лише одне поле %%sort\n"
 
-#: src/rec-int.c:715
+#: src/rec-int.c:782
 #, c-format
-msgid ""
-"%s:%s: error: expected a comma-separated list of fields before the type "
-"specification\n"
-msgstr ""
-"%s:%s: помилка: перед специфікацією типу мало бути вказано список полів, "
-"відокремлених комами\n"
+msgid "%s:%s: error: expected a comma-separated list of fields before the type specification\n"
+msgstr "%s:%s: помилка: перед специфікацією типу мало бути вказано список полів, відокремлених комами\n"
 
-#: src/rec-int.c:741 src/rec-int.c:794
+#: src/rec-int.c:808 src/rec-int.c:861
 #, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
 msgstr "%s:%s: помилка: вказаного типу, %s, не існує\n"
 
-#: src/rec-int.c:753
+#: src/rec-int.c:820
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr "%s:%s: помилка: некоректне визначення типу\n"
 
-#: src/rec-int.c:768
+#: src/rec-int.c:835
 #, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
-msgstr ""
-"%s:%s: помилка: перед специфікацією типу мало бути вказано назву типу\n"
+msgstr "%s:%s: помилка: перед специфікацією типу мало бути вказано назву типу\n"
 
-#: src/rec-int.c:806
+#: src/rec-int.c:873
 #, c-format
 msgid "%s:%s: error: invalid typedef specification\n"
 msgstr "%s:%s: помилка: некоректне визначення типу\n"
 
-#: src/rec-int.c:828
+#: src/rec-int.c:895
 #, c-format
 msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
 msgstr "%s:%s: помилка: значенням %s[%zd] не є список назв полів\n"
 
-#: src/rec-int.c:844
-#, fuzzy, c-format
-msgid "%s:%s: error: value for %s should be a field name.\n"
+#: src/rec-int.c:911
+#, c-format
+msgid "%s:%s: error: value for %s shall be a field name.\n"
 msgstr "%s:%s: помилка: значенням %s має бути назва поля.\n"
 
-#: src/rec-int.c:856
-#, fuzzy, c-format
-msgid ""
-"%s:%s: error: value for %s should be a number optionally preceded by >, <, "
-">= or <=.\n"
-msgstr ""
-"%s:%s: помилка: значенням %s має бути число, перед яким може бути вказано "
-"символ >, <, >= або <=.\n"
+#: src/rec-int.c:923
+#, c-format
+msgid "%s:%s: error: value for %s shall be a number optionally preceded by >, <, >= or <=.\n"
+msgstr "%s:%s: помилка: значенням %s має бути число, перед яким може бути вказано символ >, <, >= або <=.\n"
 
-#: src/rec-int.c:872
-#, fuzzy, c-format
-msgid "%s:%s: error: value for %s should be a list of field names.\n"
+#: src/rec-int.c:939
+#, c-format
+msgid "%s:%s: error: value for %s shall be a list of field names.\n"
 msgstr "%s:%s: помилка: значенням %s має бути список назв полів.\n"
 
-#: src/rec-int.c:900
-#, fuzzy, c-format
-msgid ""
-"%s:%s: error: auto-incremented field %s should be of type int, range, uuid "
-"or date\n"
-msgstr ""
-"%s:%s: помилка: поле з автоматичним збільшенням значення %s має містити "
-"значення цілого типу, діапазон або дату\n"
+#: src/rec-int.c:964
+#, c-format
+msgid "%s:%s: error: auto-incremented field %s shall be of type int, range or date\n"
+msgstr "%s:%s: помилка: поле з автоматичним збільшенням значення %s має містити значення цілого типу, діапазон або дату\n"
 
-#: src/rec-int.c:902
-#, fuzzy, c-format
-msgid ""
-"%s:%s: error: auto-incremented field %s should be of type int, range or "
-"date\n"
-msgstr ""
-"%s:%s: помилка: поле з автоматичним збільшенням значення %s має містити "
-"значення цілого типу, діапазон або дату\n"
-
-#: src/rec-int.c:985
+#: src/rec-int.c:1046
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
-msgstr ""
-"%s:%s: помилка: не вдалося отримати значення дескриптора за адресою url %s.\n"
+msgstr "%s:%s: помилка: не вдалося отримати значення дескриптора за адресою url %s.\n"
 
-#: src/rec-int.c:1004
+#: src/rec-int.c:1065
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
-msgstr ""
-"%s:%s: помилка: не вдалося прочитати зовнішній дескриптор з файла %s.\n"
+msgstr "%s:%s: помилка: не вдалося прочитати зовнішній дескриптор з файла %s.\n"
 
-#: src/rec-int.c:1019
+#: src/rec-int.c:1080
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr "%s:%s: помилка: у %s не міститься коректних даних rec.\n"
 
-#: src/rec-int.c:1033
+#: src/rec-int.c:1094
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr "%s:%s: помилка: у %s не міститься даних типу %s.\n"
 
-#: src/rec-types.c:416
+#: src/rec-types.c:393
 #, c-format
-msgid ""
-"internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() "
-"in rec_type_new().\n"
-msgstr ""
-"внутрішня помилка: типи rec: отримано сигнал REC_TYPE_NONE від функції "
-"rec_type_parse_type_kind() у rec_type_new().\n"
+msgid "internal error: rec-types: got REC_TYPE_NONE from rec_type_parse_type_kind() in rec_type_new().\n"
+msgstr "внутрішня помилка: типи rec: отримано сигнал REC_TYPE_NONE від функції rec_type_parse_type_kind() у rec_type_new().\n"
 
-#: src/rec-types.c:956
+#: src/rec-types.c:913
 msgid "invalid integer."
 msgstr "некоректне ціле число."
 
-#: src/rec-types.c:972
+#: src/rec-types.c:929
 msgid "invalid 'field' value."
 msgstr "некоректне значення «field»."
 
-#: src/rec-types.c:995
-#, fuzzy
-msgid "invalid 'uuid' value."
-msgstr "некоректне значення «field»."
-
-#: src/rec-types.c:1013
+#: src/rec-types.c:945
 msgid "invalid 'bool' value."
 msgstr "некоректне значення «bool»."
 
-#: src/rec-types.c:1036
+#: src/rec-types.c:968
 msgid "invalid 'range' value."
 msgstr "некоректне значення «range»."
 
-#: src/rec-types.c:1045
+#: src/rec-types.c:977
 #, c-format
 msgid "expected an integer between %d and %d."
 msgstr "слід було використати ціле значення у діапазоні від %d до %d."
 
-#: src/rec-types.c:1066
+#: src/rec-types.c:998
 msgid "invalid 'real' value."
 msgstr "некоректне значення «real»."
 
-#: src/rec-types.c:1084
+#: src/rec-types.c:1016
 #, c-format
 msgid "value too large.  Expected a size <= %zu."
 msgstr "занадто велике значення. Слід було використати розмір <= %zu."
 
-#: src/rec-types.c:1105
+#: src/rec-types.c:1037
 msgid "invalid 'line' value."
 msgstr "некоректне значення «line»."
 
-#: src/rec-types.c:1124
+#: src/rec-types.c:1056
 msgid "value does not match the regexp."
 msgstr "значення не відповідає формальному виразу."
 
-#: src/rec-types.c:1147
+#: src/rec-types.c:1079
 msgid "invalid date."
 msgstr "некоректна дата."
 
-#: src/rec-types.c:1163
+#: src/rec-types.c:1095
 msgid "invalid email."
 msgstr "некоректна адреса ел. пошти."
 
-#: src/rec-types.c:1217
+#: src/rec-types.c:1149
 msgid "invalid enum value."
 msgstr "некоректне значення нумератора."
 
 #: src/rec-utils.c:87
 #, c-format
 msgid "internal error: rec_int_rec_extract_file: error compiling regexp.\n"
-msgstr ""
-"внутрішня помилка: rec_int_rec_extract_file: помилка під час спроби "
-"компіляції формального виразу.\n"
+msgstr "внутрішня помилка: rec_int_rec_extract_file: помилка під час спроби компіляції формального виразу.\n"
 
-#: src/rec-utils.c:115 src/rec-utils.c:144
+#: src/rec-utils.c:115 src/rec-utils.c:143
 #, c-format
 msgid "internal error: rec_int_rec_extract_url: error compiling regexp.\n"
-msgstr ""
-"внутрішня помилка: rec_int_rec_extract_url: помилка під час спроби "
-"компіляції формального виразу.\n"
+msgstr "внутрішня помилка: rec_int_rec_extract_url: помилка під час спроби компіляції формального виразу.\n"
 
-#: src/rec-utils.c:290
+#: src/rec-utils.c:289
 #, c-format
 msgid "internal error: rec_match: error compiling regexp.\n"
-msgstr ""
-"внутрішня помилка: rec_match: помилка під час спроби компіляції формального "
-"виразу.\n"
+msgstr "внутрішня помилка: rec_match: помилка під час спроби компіляції формального виразу.\n"
 
 #. TRANSLATORS: --help output, csv2rec synopsis.
 #. no-wrap
@@ -498,27 +453,20 @@ msgstr "Використання: csv2rec [ПАРАМЕТРИ]... [ФАЙЛ_CSV]
 #. no-wrap
 #: utils/csv2rec.c:109
 msgid "Convert csv data into rec data.\n"
-msgstr ""
-"Перетворення даних csv (списку значень відокремлених роздільниками) у дані "
-"rec.\n"
+msgstr "Перетворення даних csv (списку значень відокремлених роздільниками) у дані rec.\n"
 
 #. TRANSLATORS: --help output, csv2rec options.
 #. no-wrap
 #: utils/csv2rec.c:115
 msgid ""
-"  -t, --type=TYPE                     type name for the converted records; "
-"if this\n"
-"                                        parameter is ommited then no type is "
-"used.\n"
+"  -t, --type=TYPE                     type name for the converted records; if this\n"
+"                                        parameter is ommited then no type is used.\n"
 "  -s, --strict                        be strict parsing the csv file.\n"
 "  -e, --omit-empty                    omit empty fields.\n"
 msgstr ""
-"  -t, --type=ТИП                      назва типу для перетворених значень "
-"записів; якщо цей\n"
-"                                        параметр буде пропущено, не "
-"використовуватиметься жодного типу.\n"
-"  -s, --strict                        обробити файл csv зі строгим "
-"застосуванням правил.\n"
+"  -t, --type=ТИП                      назва типу для перетворених значень записів; якщо цей\n"
+"                                        параметр буде пропущено, не використовуватиметься жодного типу.\n"
+"  -s, --strict                        обробити файл csv зі строгим застосуванням правил.\n"
 "  -e, --omit-empty                    пропустити порожні поля.\n"
 
 #: utils/csv2rec.c:213
@@ -531,26 +479,26 @@ msgstr "досягнуто максимальної можливої кільк�
 msgid "invalid field name '%s' in header\n"
 msgstr "некоректна назва поля, «%s», у заголовку\n"
 
-#: utils/csv2rec.c:246 utils/csv2rec.c:282 utils/csv2rec.c:297
-#: utils/mdb2rec.c:310 utils/mdb2rec.c:423 utils/recsel.c:420
+#: utils/csv2rec.c:248 utils/csv2rec.c:287 utils/csv2rec.c:302
+#: utils/mdb2rec.c:326 utils/mdb2rec.c:439
 msgid "out of memory\n"
 msgstr "не вистачає пам'яті\n"
 
-#: utils/csv2rec.c:254
+#: utils/csv2rec.c:258
 msgid "not enough headers"
 msgstr "недостатньо заголовків"
 
-#: utils/csv2rec.c:339 utils/recdel.c:268 utils/recset.c:361
-#: utils/recutl.c:278
+#: utils/csv2rec.c:344 utils/recdel.c:328 utils/recset.c:706
+#: utils/recutl.c:294
 #, c-format
 msgid "cannot read file %s\n"
 msgstr "не вдалося виконати читання даних з файла %s\n"
 
-#: utils/csv2rec.c:350
+#: utils/csv2rec.c:355
 msgid "failed to initialize csv parser\n"
 msgstr "не вдалося започаткувати обробку csv\n"
 
-#: utils/csv2rec.c:368
+#: utils/csv2rec.c:373
 #, c-format
 msgid "error while parsing CSV file: %s\n"
 msgstr "помилка під час обробки файла CSV: %s\n"
@@ -575,48 +523,45 @@ msgid ""
 "  -s, --system-tables                 include system tables.\n"
 "  -e, --keep-empty-fields             don't prune empty fields in the rec\n"
 "                                        output.\n"
-"  -l, --list-tables                   dump a list of the table names "
-"contained\n"
+"  -l, --list-tables                   dump a list of the table names contained\n"
 "                                        in the mdb file.\n"
 msgstr ""
 "  -s, --system-tables                 включити системні таблиці.\n"
-"  -e, --keep-empty-fields             не вирізати порожні поля з виведених "
-"даних\n"
+"  -e, --keep-empty-fields             не вирізати порожні поля з виведених даних\n"
 "                                        rec.\n"
-"  -l, --list-tables                   показати список назв таблиць, що "
-"містяться\n"
+"  -l, --list-tables                   показати список назв таблиць, що містяться\n"
 "                                        у файлі mdb.\n"
 
-#: utils/mdb2rec.c:251 utils/mdb2rec.c:317
+#: utils/mdb2rec.c:252 utils/mdb2rec.c:333
 #, c-format
 msgid "failed to normalise record type name %s\n"
 msgstr "не вдалося нормалізувати тип запису з назвою %s\n"
 
-#: utils/mdb2rec.c:259 utils/mdb2rec.c:270
+#: utils/mdb2rec.c:260 utils/mdb2rec.c:272
 #, c-format
 msgid "failed to normalise field name %s\n"
 msgstr "не вдалося нормалізувати поле з назвою %s\n"
 
-#: utils/mdb2rec.c:338
+#: utils/mdb2rec.c:354
 #, c-format
 msgid "failed to normalise the field name %s\n"
 msgstr "не вдалося нормалізувати поле з назвою %s\n"
 
-#: utils/mdb2rec.c:447 utils/recins.c:209 utils/recset.c:253
+#: utils/mdb2rec.c:465 utils/recins.c:342 utils/recset.c:265
 #, c-format
 msgid "invalid field name %s.\n"
 msgstr "некоректна назва поля %s.\n"
 
-#: utils/mdb2rec.c:478 utils/rec2csv.c:193 utils/rec2csv.c:200
+#: utils/mdb2rec.c:496 utils/rec2csv.c:193 utils/rec2csv.c:200
 msgid "out of memory"
 msgstr "нестача пам'яті"
 
-#: utils/mdb2rec.c:488
+#: utils/mdb2rec.c:506
 #, c-format
 msgid "could not open file %s\n"
 msgstr "не вдалося відкрити файл %s\n"
 
-#: utils/mdb2rec.c:495
+#: utils/mdb2rec.c:513
 msgid "file does not appear to be an Access database\n"
 msgstr "здається, файл не є файлом бази даних Access\n"
 
@@ -631,46 +576,34 @@ msgstr "Використання: rec2csv [ПАРАМЕТРИ]... [ФАЙЛ_REC]
 #. no-wrap
 #: utils/rec2csv.c:90
 msgid "Convert rec data into csv data.\n"
-msgstr ""
-"Перетворення даних rec у файли csv (списку значень відокремлених "
-"роздільниками).\n"
+msgstr "Перетворення даних rec у файли csv (списку значень відокремлених роздільниками).\n"
 
 #. TRANSLATORS: --help output, rec2csv options.
 #. no-wrap
 #: utils/rec2csv.c:96
 msgid ""
-"  -t, --type=TYPE                     record set to convert to csv; if this "
-"parameter\n"
-"                                        is omitted then the default record "
-"set is used\n"
-"  -S, --sort=FIELD                    sort the output by the specified "
-"field.\n"
+"  -t, --type=TYPE                     record set to convert to csv; if this parameter\n"
+"                                        is omitted then the default record set is used\n"
+"  -S, --sort=FIELD                    sort the output by the specified field.\n"
 msgstr ""
-"  -t, --type=ТИП                      набір записів, які слід перетворити у "
-"формат csv; якщо цього параметра\n"
-"                                        не буде вказано, "
-"використовуватиметься типовий набір записів\n"
-"  -S, --sort=FIELD                    впорядкувати виведені дані за вмістом "
-"вказаного поля.\n"
+"  -t, --type=ТИП                      набір записів, які слід перетворити у формат csv; якщо цього параметра\n"
+"                                        не буде вказано, використовуватиметься типовий набір записів\n"
+"  -S, --sort=FIELD                    впорядкувати виведені дані за вмістом вказаного поля.\n"
 
-#: utils/rec2csv.c:135 utils/recsel.c:230
+#: utils/rec2csv.c:135 utils/recsel.c:228
 msgid "only one field can be specified as a sorting criteria.\n"
 msgstr "критерієм впорядковування може бути лише значення одного поля.\n"
 
-#: utils/rec2csv.c:142 utils/recsel.c:237
+#: utils/rec2csv.c:142 utils/recsel.c:235
 msgid "invalid field name in -S.\n"
 msgstr "некоректна назва поля у -S.\n"
 
 #. TRANSLATORS: --help output, recdel synopsis.
 #. no-wrap
 #: utils/recdel.c:89
-#, fuzzy, c-format
-msgid ""
-"Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m "
-"NUM] [FILE]\n"
-msgstr ""
-"Використання: recdel [ПАРАМЕТРИ]... [-t ТИП] [-n НОМЕР | -e ВИРАЗ | -q РЯДОК "
-"| -m НОМЕР]] [ФАЙЛ]\n"
+#, c-format
+msgid "Usage: recdel [OPTIONS]... [-t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [FILE]\n"
+msgstr "Використання: recdel [ПАРАМЕТРИ]... [-t ТИП] [-n НОМЕР | -e ВИРАЗ | -q РЯДОК | -m НОМЕР]] [ФАЙЛ]\n"
 
 #. TRANSLATORS: --help output, recdel short description.
 #. no-wrap
@@ -682,29 +615,20 @@ msgstr "Вилучення (або коментування) записів у �
 #. no-wrap
 #: utils/recdel.c:101
 msgid ""
-"  -c, --comment                       comment out the matching records "
-"instead of\n"
+"  -c, --comment                       comment out the matching records instead of\n"
 "                                        deleting them.\n"
-"      --force                         delete even in potentially dangerous "
-"situations,\n"
-"                                        and if the deletion is violating "
-"record restrictions.\n"
+"      --force                         delete even in potentially dangerous situations,\n"
+"                                        and if the deletion is violating record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
-"      --verbose                       give a detailed report if the "
-"integrity check\n"
+"      --verbose                       give a detailed report if the integrity check\n"
 "                                        fails.\n"
 msgstr ""
-"  -c, --comment                       закоментувати відповідні записи "
-"замість\n"
+"  -c, --comment                       закоментувати відповідні записи замість\n"
 "                                        їхнього вилучення.\n"
-"      --force                         вилучати навіть у потенційно "
-"небезпечних ситуаціях\n"
-"                                        і якщо вилучення призводити до "
-"порушення обмежень запису.\n"
-"      --no-external                   не використовувати зовнішніх "
-"дескрипторів.\n"
-"      --verbose                       надати докладний звіт у разі, якщо "
-"буде виявлено помилку\n"
+"      --force                         вилучати навіть у потенційно небезпечних ситуаціях\n"
+"                                        і якщо вилучення призводити до порушення обмежень запису.\n"
+"      --no-external                   не використовувати зовнішніх дескрипторів.\n"
+"      --verbose                       надати докладний звіт у разі, якщо буде виявлено помилку\n"
 "                                        цілісності бази даних.\n"
 
 #. TRANSLATORS: --help output, notes on recdel.
@@ -718,29 +642,29 @@ msgid ""
 "If no FILE is specified then the command acts like a filter, getting\n"
 "the data from standard input and writing the result to standard output.\n"
 msgstr ""
-"Якщо не буде вказано значення ФАЙЛ, програма працюватиме у режимі "
-"фільтрування:\n"
-"отримуватиме дані зі стандартного джерела вхідних даних і виводитиме ці дані "
-"до\n"
+"Якщо не буде вказано значення ФАЙЛ, програма працюватиме у режимі фільтрування:\n"
+"отримуватиме дані зі стандартного джерела вхідних даних і виводитиме ці дані до\n"
 "стандартного виводу даних.\n"
 
-#: utils/recdel.c:136
+#: utils/recdel.c:143
 #, c-format
 msgid "no records of type %s found.\n"
 msgstr "не виявлено жодних записів типу %s.\n"
 
-#: utils/recdel.c:229
+#: utils/recdel.c:224 utils/recins.c:501 utils/recsel.c:447
+msgid "evaluating the selection expression.\n"
+msgstr "визначення виразу вибору.\n"
+
+#: utils/recdel.c:289
 #, c-format
 msgid "ignoring a request to delete all records of type %s.\n"
 msgstr "пропущено запит щодо вилучення всіх записів типу %s.\n"
 
-#: utils/recdel.c:231
+#: utils/recdel.c:291
 msgid "use --force if you really want to proceed, or use either -n or -e.\n"
-msgstr ""
-"скористайтеся параметром --force, якщо вам потрібно продовжити обробку, або "
-"скористайтеся одним з параметрів, -n або -e.\n"
+msgstr "скористайтеся параметром --force, якщо вам потрібно продовжити обробку, або скористайтеся одним з параметрів, -n або -e.\n"
 
-#: utils/recdel.c:239
+#: utils/recdel.c:299 utils/recset.c:432
 msgid "invalid selection expression.\n"
 msgstr "некоректний вираз вибору.\n"
 
@@ -749,8 +673,7 @@ msgstr "некоректний вираз вибору.\n"
 #: utils/recfix.c:118
 #, c-format
 msgid "Usage: recfix [OPTION]... [OPERATION] [OP_OPTION]... [FILE]\n"
-msgstr ""
-"Використання: recfix [ПАРАМЕТР]... [ДІЯ] [ПАРАМЕТРИ_ДІЇ]... [ФАЙЛ]...\n"
+msgstr "Використання: recfix [ПАРАМЕТР]... [ДІЯ] [ПАРАМЕТРИ_ДІЇ]... [ФАЙЛ]...\n"
 
 #. TRANSLATORS: --help output, recfix short description.
 #. no-wrap
@@ -762,16 +685,13 @@ msgstr "Перевірка і виправлення файлів rec.\n"
 #. no-wrap
 #: utils/recfix.c:130
 msgid ""
-"  -t, --type=TYPE                     process only records of the given "
-"type.\n"
+"  -t, --type=TYPE                     process only records of the given type.\n"
 "      --no-external                   don't use external descriptors.\n"
 "      --force                         force the requested operation.\n"
 msgstr ""
 "  -t, --type=ТИП                     обробляти лише записи вказаного типу.\n"
-"      --no-external                  не використовувати зовнішніх "
-"дескрипторів.\n"
-"      --force                        змінювати записи, навіть якщо у "
-"результаті буде порушено\n"
+"      --no-external                  не використовувати зовнішніх дескрипторів.\n"
+"      --force                        змінювати записи, навіть якщо у результаті буде порушено\n"
 "                                      обмеження, накладені на запис.\n"
 
 #. TRANSLATORS: --help output, recfix operations.
@@ -779,34 +699,24 @@ msgstr ""
 #: utils/recfix.c:141
 msgid ""
 "Operations:\n"
-"      --check                         check integrity of the specified "
-"file.  Default.\n"
-"      --sort                          sort the records in the specified "
-"file.\n"
-"      --auto                          insert auto-generated fields in "
-"records missing them.\n"
+"      --check                         check integrity of the specified file.  Default.\n"
+"      --sort                          sort the records in the specified file.\n"
+"      --auto                          insert auto-generated fields in records missing them.\n"
 msgstr ""
 "Дії:\n"
-"      --check                         перевірити цілісність вказаного файла. "
-"Типова дія.\n"
-"      --sort                          впорядкувати записи у вказаному "
-"файлі.\n"
-"      --auto                          вставити автозаповнені поля до "
-"записів, у яких їх не вистачає.\n"
+"      --check                         перевірити цілісність вказаного файла. Типова дія.\n"
+"      --sort                          впорядкувати записи у вказаному файлі.\n"
+"      --auto                          вставити автозаповнені поля до записів, у яких їх не вистачає.\n"
 
 #. TRANSLATORS: --help output, recfix operations related with encryption.
 #. no-wrap
 #: utils/recfix.c:151
 msgid ""
-"      --encrypt                       encrypt confidential fields in the "
-"specified file.\n"
-"      --decrypt                       decrypt confidential fields in the "
-"specified file.\n"
+"      --encrypt                       encrypt confidential fields in the specified file.\n"
+"      --decrypt                       decrypt confidential fields in the specified file.\n"
 msgstr ""
-"      --encrypt                       зашифрувати вміст полів з "
-"конфіденційними даними у вказаному файлі.\n"
-"      --decrypt                       розшифрувати вміст полів з "
-"конфіденційними даними у вказаному файлі.\n"
+"      --encrypt                       зашифрувати вміст полів з конфіденційними даними у вказаному файлі.\n"
+"      --decrypt                       розшифрувати вміст полів з конфіденційними даними у вказаному файлі.\n"
 
 #. TRANSLATORS: --help output, recfix encryption and decryption
 #. options.
@@ -817,8 +727,7 @@ msgid ""
 "  -s, --password=PASSWORD             encrypt/decrypt with this password.\n"
 msgstr ""
 "Параметри розшифрування та шифрування:\n"
-"  -s, --password=ПАРОЛЬ               зашифрувати або розшифрувати на основі "
-"вказаного пароля.\n"
+"  -s, --password=ПАРОЛЬ               зашифрувати або розшифрувати на основі вказаного пароля.\n"
 
 #: utils/recfix.c:210
 msgid "--password|-s must be used as an operation argument.\n"
@@ -837,19 +746,19 @@ msgstr "будь ласка, вкажіть лише один пароль.\n"
 msgid "please specify just one operation.\n"
 msgstr "будь ласка, вкажіть лише одну дію.\n"
 
-#: utils/recfix.c:307 utils/recins.c:341 utils/recsel.c:359
+#: utils/recfix.c:307 utils/recins.c:173 utils/recsel.c:348
 msgid "Password: "
 msgstr "Пароль: "
 
-#: utils/recfix.c:454
+#: utils/recfix.c:451
 msgid "the database contains already encrypted fields\n"
 msgstr "у базі даних містяться вже зашифровані поля\n"
 
-#: utils/recfix.c:455
+#: utils/recfix.c:452
 msgid "please use --force or --decrypt\n"
 msgstr "будь ласка, скористайтеся --force або --decrypt\n"
 
-#: utils/recfix.c:567
+#: utils/recfix.c:561
 msgid "unknown operation in recfix: please report this as a bug.\n"
 msgstr "невідома операція у recfix: будь ласка, повідомте про цю ваду.\n"
 
@@ -864,19 +773,13 @@ msgstr "Використання: recfmt [ПАРАМЕТР]... [ШАБЛОН]\n"
 #. no-wrap
 #: utils/recfmt.c:83
 msgid "Apply a template to records read from standard input.\n"
-msgstr ""
-"Застосування шаблону до записів, прочитаних зі стандартного джерела вхідних "
-"даних.\n"
+msgstr "Застосування шаблону до записів, прочитаних зі стандартного джерела вхідних даних.\n"
 
 #. TRANSLATORS: --help output, recfmt arguments.
 #. no-wrap
 #: utils/recfmt.c:89
-msgid ""
-"  -f, --file=FILENAME                 read the template to apply from a "
-"file.\n"
-msgstr ""
-"  -f, --file=НАЗВА_ФАЙЛА              прочитати дані шаблону, який слід "
-"застосувати з файла.\n"
+msgid "  -f, --file=FILENAME                 read the template to apply from a file.\n"
+msgstr "  -f, --file=НАЗВА_ФАЙЛА              прочитати дані шаблону, який слід застосувати з файла.\n"
 
 #: utils/recfmt.c:123
 #, c-format
@@ -885,9 +788,7 @@ msgstr "не вдалося відкрити файл %s для читання �
 
 #: utils/recfmt.c:141
 msgid "don't specify a template in the command line and -f at the same time.\n"
-msgstr ""
-"не можна вказувати шаблон у командному рядку і одночасно використовувати "
-"параметр -f.\n"
+msgstr "не можна вказувати шаблон у командному рядку і одночасно використовувати параметр -f.\n"
 
 #: utils/recfmt.c:164
 msgid "invalid expression in a template slot.\n"
@@ -899,9 +800,7 @@ msgstr "помилка під час визначення виразу у пол
 
 #: utils/recfmt.c:204
 msgid "recfmt_apply_template: error compiling regexp. Please report this.\n"
-msgstr ""
-"recfmt_apply_template: помилка під час спроби компіляції формального виразу. "
-"Будь ласка, повідомте про цю помилку авторам програми.\n"
+msgstr "recfmt_apply_template: помилка під час спроби компіляції формального виразу. Будь ласка, повідомте про цю помилку авторам програми.\n"
 
 #. TRANSLATORS: --help output, recinf synopsis.
 #. no-wrap
@@ -920,8 +819,7 @@ msgstr "Показ даних щодо типів записів, що міст�
 #. no-wrap
 #: utils/recinf.c:96
 msgid ""
-"  -t, --type=RECORD_TYPE          print information on the records having "
-"the\n"
+"  -t, --type=RECORD_TYPE          print information on the records having the\n"
 "                                    specified type.\n"
 "  -d, --descriptor                include the full record descriptors.\n"
 "  -n, --names-only                output just the names of the record files\n"
@@ -938,14 +836,12 @@ msgstr ""
 #: utils/recinf.c:109
 msgid ""
 "Special options:\n"
-"  -S, --print-sexps                   print the data in sexps instead of rec "
-"format.\n"
+"  -S, --print-sexps                   print the data in sexps instead of rec format.\n"
 msgstr ""
 "Особливі параметри:\n"
-"  -S, --print-sexps                   показати дані у форматі sexps, а не у "
-"форматі rec.\n"
+"  -S, --print-sexps                   показати дані у форматі sexps, а не у форматі rec.\n"
 
-#: utils/recinf.c:260
+#: utils/recinf.c:259
 #, c-format
 msgid "error: cannot read file %s\n"
 msgstr "помилка: не вдалося виконати читання даних з файла %s\n"
@@ -953,13 +849,9 @@ msgstr "помилка: не вдалося виконати читання да
 #. TRANSLATORS: --help output, recins synopsis.
 #. no-wrap
 #: utils/recins.c:112
-#, fuzzy, c-format
-msgid ""
-"Usage: recins [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m "
-"NUM] [(-f NAME -v STR) | -R RECDATA]... [FILE]\n"
-msgstr ""
-"Використання: recins [ПАРАМЕТР]... [-t ТИП] [-n НОМЕР | -e ВИРАЗ | -q РЯДОК "
-"| -m НОМЕР] [(-f РЯДОК -v РЯДОК]|[-R ДАНІ_ЗАПИСУ)]... [ФАЙЛ]\n"
+#, c-format
+msgid "Usage: recins [OPTION]... [t TYPE] [-n NUM | -e EXPR | -q STR | -m NUM] [(-f STR -v STR]|[-R RECDATA)]... [FILE]\n"
+msgstr "Використання: recins [ПАРАМЕТР]... [-t ТИП] [-n НОМЕР | -e ВИРАЗ | -q РЯДОК | -m НОМЕР] [(-f РЯДОК -v РЯДОК]|[-R ДАНІ_ЗАПИСУ)]... [ФАЙЛ]\n"
 
 #. TRANSLATORS: --help output, recins short description.
 #. no-wrap
@@ -971,395 +863,308 @@ msgstr "Додавання нових записів до бази даних re
 #. no-wrap
 #: utils/recins.c:123
 msgid ""
-"  -f, --field=STR                     field name; should be followed by a -"
-"v.\n"
-"  -v, --value=STR                     field value; should be preceded by an -"
-"f.\n"
-"  -r, --record=STR                    record that will be inserted in the "
-"file.\n"
-"      --force                         insert the record even if it is "
-"violating\n"
+"  -f, --field=STR                     field name; should be followed by a -v.\n"
+"  -v, --value=STR                     field value; should be preceded by an -f.\n"
+"  -r, --record=STR                    record that will be inserted in the file.\n"
+"      --force                         insert the record even if it is violating\n"
 "                                        record restrictions.\n"
 "      --no-external                   don't use external descriptors.\n"
 "      --no-auto                       don't insert auto generated fields.\n"
-"      --verbose                       give a detailed report if the "
-"integrity check\n"
+"      --verbose                       give a detailed report if the integrity check\n"
 "                                        fails.\n"
 msgstr ""
-"  -f, --field=РЯДОК                   назва поля; після цього параметра слід "
-"вказати параметр -v.\n"
-"  -v, --value=РЯДОК                   значення поля; перед цим параметром "
-"слід вказати параметр -f.\n"
+"  -f, --field=РЯДОК                   назва поля; після цього параметра слід вказати параметр -v.\n"
+"  -v, --value=РЯДОК                   значення поля; перед цим параметром слід вказати параметр -f.\n"
 "  -r, --record=РЯДОК                  запис, який буде додано до файла.\n"
-"      --force                         додати запис, навіть якщо його "
-"додавання порушує\n"
+"      --force                         додати запис, навіть якщо його додавання порушує\n"
 "                                        обмеження, накладені на запис.\n"
-"      --no-external                   не використовувати зовнішніх "
-"дескрипторів.\n"
-"      --no-auto                       не вставляти автоматично створених "
-"полів.\n"
-"      --verbose                       надати докладний звіт у разі, якщо "
-"виконання перевірки\n"
+"      --no-external                   не використовувати зовнішніх дескрипторів.\n"
+"      --no-auto                       не вставляти автоматично створених полів.\n"
+"      --verbose                       надати докладний звіт у разі, якщо виконання перевірки\n"
 "                                        цілісності зазнає невдачі.\n"
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
 #: utils/recins.c:137
-msgid ""
-"  -s, --password=STR                  encrypt confidential fields with the "
-"given password.\n"
-msgstr ""
-"  -s, --password=РЯДОК                зашифрувати поля з конфіденційними "
-"даними за допомогою вказаного пароля.\n"
+msgid "  -s, --password=STR                  encrypt confidential fields with the given password.\n"
+msgstr "  -s, --password=РЯДОК                зашифрувати поля з конфіденційними даними за допомогою вказаного пароля.\n"
 
-#: utils/recins.c:196
+#: utils/recins.c:316
 msgid "a -f should be followed by a -v\n"
 msgstr "після параметра -f слід вказати параметр -v\n"
 
-#: utils/recins.c:220
+#: utils/recins.c:354
 msgid "a -v should be preceded by a -f\n"
 msgstr "перед параметром -v слід вказати параметр -f\n"
 
-#: utils/recins.c:245 utils/recsel.c:218
+#: utils/recins.c:379 utils/recsel.c:216
 msgid "more than one password was specified\n"
 msgstr "було вказано декілька паролів\n"
 
-#: utils/recins.c:259
+#: utils/recins.c:393
 msgid "error while parsing the record provided by -r\n"
 msgstr "помилка під час обробки запису, вказаного за допомогою -r\n"
 
-#: utils/recins.c:294
+#: utils/recins.c:428
 #, c-format
 msgid "please provide a value for the field %s\n"
 msgstr "будь ласка, вкажіть значення для поля %s\n"
 
 #. TRANSLATORS: --help output, recsel synopsis.
 #. no-wrap
-#: utils/recsel.c:116
-#, fuzzy, c-format
-msgid ""
-"Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q STR | -"
-"m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
-msgstr ""
-"Використання: recsel [ПАРАМЕТР]... [-t ТИП] [-n ІНДЕКСИ | -e ВИРАЗ_ЗАПИСУ | -"
-"q ВИРАЗ | -m НОМЕР]] [-c | (-p|-P) ВИРАЗ_ПОЛЯ] [ФАЙЛ]...\n"
+#: utils/recsel.c:115
+#, c-format
+msgid "Usage: recsel [OPTION]... [-t TYPE] [-n INDEXES | -e RECORD_EXPR | -q EXPR | -m NUM] [-c | (-p|-P) FIELD_EXPR] [FILE]...\n"
+msgstr "Використання: recsel [ПАРАМЕТР]... [-t ТИП] [-n ІНДЕКСИ | -e ВИРАЗ_ЗАПИСУ | -q ВИРАЗ | -m НОМЕР]] [-c | (-p|-P) ВИРАЗ_ПОЛЯ] [ФАЙЛ]...\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:121
+#: utils/recsel.c:120
 msgid "Select and print rec data.\n"
 msgstr "Вибір і виведення даних rec.\n"
 
 #. TRANSLATORS: --help output, recsel arguments.
 #. no-wrap
-#: utils/recsel.c:127
-#, fuzzy
+#: utils/recsel.c:126
 msgid ""
-"  -d, --include-descriptors           print record descriptors along with "
-"the matched\n"
+"  -d, --include-descriptors           print record descriptors along with the matched\n"
 "                                        records.\n"
-"  -C, --collapse                      do not section the result in records "
-"with newlines.\n"
-"  -S, --sort=FIELD                    sort the output by the specified "
-"field.\n"
-"  -G, --group-by=FIELD                group records by the specified field.\n"
-"  -U, --uniq                          remove duplicated fields in the output "
-"records.\n"
+"  -C, --collapse                      do not section the result in records with newlines.\n"
+"  -S, --sort=FIELD                    sort the output by the specified field.\n"
+"  -U, --uniq                          remove duplicated fields in the output records.\n"
 msgstr ""
-"  -d, --include-descriptors           показувати дескриптори записів разом з "
-"відповідними\n"
+"  -d, --include-descriptors           показувати дескриптори записів разом з відповідними\n"
 "                                        записами.\n"
-"  -C, --collapse                      не поділяти окремі записи у "
-"результатах символами нового рядка.\n"
-"  -S, --sort=ПОЛЕ                     впорядкувати виведені дані за вмістом "
-"вказаного поля.\n"
-"  -U, --uniq                          вилучити дублікати полів з виведених "
-"записів.\n"
+"  -C, --collapse                      не поділяти окремі записи у результатах символами нового рядка.\n"
+"  -S, --sort=ПОЛЕ                     впорядкувати виведені дані за вмістом вказаного поля.\n"
+"  -U, --uniq                          вилучити дублікати полів з виведених записів.\n"
 
 #. TRANSLATORS: --help output, encryption related options.
 #. no-wrap
-#: utils/recsel.c:139
-msgid ""
-"  -s, --password=STR                  decrypt confidential fields with the "
-"given password.\n"
-msgstr ""
-"  -s, --password=РЯДОК                розшифрувати поля з конфіденційними "
-"даними за допомогою вказаного пароля.\n"
+#: utils/recsel.c:137
+msgid "  -s, --password=STR                  decrypt confidential fields with the given password.\n"
+msgstr "  -s, --password=РЯДОК                розшифрувати поля з конфіденційними даними за допомогою вказаного пароля.\n"
 
 #. TRANSLATORS: --help output, recsel output options.
 #. no-wrap
-#: utils/recsel.c:152
+#: utils/recsel.c:150
 msgid ""
 "Output options:\n"
-"  -p, --print=FIELDS                  comma-separated list of fields to "
-"print for each\n"
+"  -p, --print=FIELDS                  comma-separated list of fields to print for each\n"
 "                                        matching record.\n"
-"  -P, --print-values=FIELDS           as -p, but print only the values of "
-"the selected\n"
+"  -P, --print-values=FIELDS           as -p, but print only the values of the selected\n"
 "                                        fields.\n"
-"  -R, --print-row=FIELDS              as -P, but separate the values with "
-"spaces instead\n"
+"  -R, --print-row=FIELDS              as -P, but separate the values with spaces instead\n"
 "                                        of newlines.\n"
-"  -c, --count                         print a count of the matching records "
-"instead of\n"
+"  -c, --count                         print a count of the matching records instead of\n"
 "                                        the records themselves.\n"
 msgstr ""
 "Параметри виведення даних:\n"
-"  -p, --print=ПОЛЯ                    список полів, відокремлених комами, "
-"які\n"
-"                                        слід показати для кожного "
-"відповідного запису.\n"
-"  -P, --print-values=ПОЛЯ             те саме, що і -p, але показувати лише "
-"значення\n"
+"  -p, --print=ПОЛЯ                    список полів, відокремлених комами, які\n"
+"                                        слід показати для кожного відповідного запису.\n"
+"  -P, --print-values=ПОЛЯ             те саме, що і -p, але показувати лише значення\n"
 "                                        вибраних полів.\n"
-"  -R, --print-row=ПОЛЯ                те саме, що і -P, але з відокремленням "
-"значень пробілами\n"
+"  -R, --print-row=ПОЛЯ                те саме, що і -P, але з відокремленням значень пробілами\n"
 "                                        замість символів нового рядка.\n"
-"  -c, --count                         показати кількість відповідних записів "
-"замість\n"
+"  -c, --count                         показати кількість відповідних записів замість\n"
 "                                        самих записів.\n"
 
 #. TRANSLATORS: --help output, recsel special options.
 #. no-wrap
-#: utils/recsel.c:166
+#: utils/recsel.c:164
 msgid ""
 "Special options:\n"
-"      --print-sexps                   print the data in sexps instead of rec "
-"format.\n"
+"      --print-sexps                   print the data in sexps instead of rec format.\n"
 msgstr ""
 "Особливі параметри:\n"
-"      --print-sexps                   показати дані у форматі sexps, а не у "
-"форматі rec.\n"
+"      --print-sexps                   показати дані у форматі sexps, а не у форматі rec.\n"
 
 #: utils/recsel.c:247
-#, fuzzy
-msgid "only one field can be specified as a grouping criteria.\n"
-msgstr "критерієм впорядковування може бути лише значення одного поля.\n"
-
-#: utils/recsel.c:255
-#, fuzzy
-msgid "invalid field name in -G.\n"
-msgstr "некоректна назва поля у -S.\n"
-
-#: utils/recsel.c:267
 msgid "cannot specify -[pPR] and also -c.\n"
 msgstr "не можна одночасно використовувати -[pPR] і -c.\n"
 
-#: utils/recsel.c:284
-#, fuzzy, c-format
-msgid "invalid list of fields in -%c\n"
-msgstr "некоректна назва поля %s.\n"
-
-#: utils/recsel.c:292
+#: utils/recsel.c:273
 msgid "internal error creating the field expression.\n"
 msgstr "внутрішня помилка під час створення виразу поля.\n"
 
-#: utils/recsel.c:308
+#: utils/recsel.c:289
 msgid "cannot specify -c and also -p.\n"
 msgstr "не можна одночасно визначати -c і -p.\n"
 
-#: utils/recsel.c:382
+#: utils/recsel.c:369
 msgid "several record types found.  Please use -t to specify one.\n"
-msgstr ""
-"знайдено декілька типів записів. Будь ласка, скористайтеся параметром -t, "
-"щоб вказати потрібний вам тип.\n"
+msgstr "знайдено декілька типів записів. Будь ласка, скористайтеся параметром -t, щоб вказати потрібний вам тип.\n"
 
 #. TRANSLATORS: --help output, recset synopsis.
 #. no-wrap
-#: utils/recset.c:113
+#: utils/recset.c:125
 #, c-format
 msgid "Usage: recset [OPTION]... [FILE]...\n"
 msgstr "Використання: recset [ПАРАМЕТР]... [ФАЙЛ]...\n"
 
 #. TRANSLATORS: --help output, recset short description.
 #. no-wrap
-#: utils/recset.c:118
+#: utils/recset.c:130
 msgid "Alter or delete fields in records.\n"
 msgstr "Зміна або вилучення полів у записах.\n"
 
 #. TRANSLATORS: --help output, recset options.
 #. no-wrap
-#: utils/recset.c:124
+#: utils/recset.c:136
 msgid ""
 "      --no-external                   don't use external descriptors.\n"
-"      --force                         alter the records even if violating "
-"record\n"
+"      --force                         alter the records even if violating record\n"
 "                                        restrictions.\n"
 msgstr ""
-"      --no-external                   не використовувати зовнішніх "
-"дескрипторів.\n"
-"      --force                         змінювати записи, навіть якщо у "
-"результаті буде порушено\n"
+"      --no-external                   не використовувати зовнішніх дескрипторів.\n"
+"      --force                         змінювати записи, навіть якщо у результаті буде порушено\n"
 "                                        обмеження, накладені на запис.\n"
 
 #. TRANSLATORS: --help output, recset field selection options.
 #. no-wrap
-#: utils/recset.c:137
+#: utils/recset.c:149
 msgid ""
 "Field selection options:\n"
-"  -f, --fields=FIELDS                 comma-separated list of field names "
-"with optional\n"
+"  -f, --fields=FIELDS                 comma-separated list of field names with optional\n"
 "                                        subscripts.\n"
 msgstr ""
 "Параметри вибору полів:\n"
-"  -f, --fields=ПОЛЯ                   список назв полів, відокремлених "
-"комами,\n"
+"  -f, --fields=ПОЛЯ                   список назв полів, відокремлених комами,\n"
 "                                        з додатковими індексами.\n"
 
 #. TRANSLATORS: --help output, recset actions.
 #. no-wrap
-#: utils/recset.c:145
+#: utils/recset.c:157
 msgid ""
 "Actions:\n"
-"  -s, --set=VALUE                     change the value of the selected "
-"fields.\n"
-"  -a, --add=VALUE                     add the selected fields with the given "
-"value.\n"
-"  -S, --set-add=VALUE                 change the value of the selected "
-"fields.  If they don't\n"
-"                                        exist then add a new field with that "
-"value.\n"
-"  -r, --rename=NAME                   rename the selected fields to a given "
-"name.  If an entire\n"
-"                                        record set is selected then the "
-"field is renamed in the\n"
+"  -s, --set=VALUE                     change the value of the selected fields.\n"
+"  -a, --add=VALUE                     add the selected fields with the given value.\n"
+"  -S, --set-add=VALUE                 change the value of the selected fields.  If they don't\n"
+"                                        exist then add a new field with that value.\n"
+"  -r, --rename=NAME                   rename the selected fields to a given name.  If an entire\n"
+"                                        record set is selected then the field is renamed in the\n"
 "                                        record descriptor as well.\n"
 "  -d, --delete                        delete the selected fields.\n"
 "  -c, --comment                       comment out the selected fields.\n"
 msgstr ""
 "Дії:\n"
-"  -s, --set=ЗНАЧЕННЯ                  змінити значення вибраних полів на "
-"вказане.\n"
-"  -a, --add=ЗНАЧЕННЯ                  додати вибрані поля з вказаним "
-"значенням.\n"
-"  -S, --set-add=ЗНАЧЕННЯ              змінити значення вибраних полів. Якщо "
-"цих полів\n"
-"                                        не існує, додати нове поле з цим "
-"значенням.\n"
-"  -r, --rename=НАЗВА                  перейменувати позначені поля, надавши "
-"їм вказаної назви.\n"
-"                                        Якщо вибрано весь набір записів, "
-"поле буде\n"
-"                                        перейменовано і у дескрипторі "
-"записів.\n"
+"  -s, --set=ЗНАЧЕННЯ                  змінити значення вибраних полів на вказане.\n"
+"  -a, --add=ЗНАЧЕННЯ                  додати вибрані поля з вказаним значенням.\n"
+"  -S, --set-add=ЗНАЧЕННЯ              змінити значення вибраних полів. Якщо цих полів\n"
+"                                        не існує, додати нове поле з цим значенням.\n"
+"  -r, --rename=НАЗВА                  перейменувати позначені поля, надавши їм вказаної назви.\n"
+"                                        Якщо вибрано весь набір записів, поле буде\n"
+"                                        перейменовано і у дескрипторі записів.\n"
 "  -d, --delete                        вилучити вибрані поля.\n"
 "  -c, --comment                       закоментувати вибрані поля.\n"
 
-#: utils/recset.c:168
+#: utils/recset.c:180
 msgid "please specify some field with -f.\n"
 msgstr "будь ласка, вкажіть якесь поле за допомогою параметра -f.\n"
 
-#: utils/recset.c:173
+#: utils/recset.c:185
 msgid "please specify just one action.\n"
 msgstr "будь ласка, вкажіть лише одну дію.\n"
 
-#: utils/recset.c:213
+#: utils/recset.c:225
 msgid "invalid field expression in -f.\n"
 msgstr "некоректний вираз для поля у параметрі -f.\n"
 
-#: utils/recset.c:221
+#: utils/recset.c:233
 msgid "creating the field expression.\n"
 msgstr "створення виразу для поля.\n"
 
-#: utils/recset.c:243
-msgid ""
-"the rename operation requires just one field with an optional subscript.\n"
-msgstr ""
-"для дії з перейменування слід вказати точно одне поле з додатковим "
-"параметром індексу.\n"
+#: utils/recset.c:255
+msgid "the rename operation requires just one field with an optional subscript.\n"
+msgstr "для дії з перейменування слід вказати точно одне поле з додатковим параметром індексу.\n"
+
+#: utils/recset.c:449 utils/recutl.c:489
+msgid "operation aborted due to integrity failures.\n"
+msgstr "дію перервано через порушення цілісності бази даних.\n"
+
+#: utils/recset.c:450 utils/recutl.c:490
+msgid "use --verbose to get a detailed report.\n"
+msgstr "скористайтеся параметром --verbose, щоб отримати докладний звіт.\n"
+
+#: utils/recset.c:457 utils/recutl.c:497
+msgid "use --force to skip the integrity check.\n"
+msgstr "скористайтеся параметром --force, щоб наказати програмі не виконувати перевірки цілісності.\n"
 
 #. TRANSLATORS: --help output 5+ (reports)
 #. TRANSLATORS: the placeholder indicates the bug-reporting address
 #. for this application.  Please add _another line_ with the
 #. address for translation bugs.
 #. no-wrap
-#: utils/recutl.c:113
+#: utils/recutl.c:129
 #, c-format
 msgid "Report bugs to: %s\n"
 msgstr "Повідомляйте про вади на адресу: %s\n"
 
-#: utils/recutl.c:116
+#: utils/recutl.c:132
 #, c-format
 msgid "Report %s bugs to: %s\n"
 msgstr "Про вади у %s повідомляйте на адресу %s\n"
 
-#: utils/recutl.c:120
+#: utils/recutl.c:136
 #, c-format
 msgid "%s home page: <%s>\n"
 msgstr "Домашня сторінка %s: <%s>\n"
 
-#: utils/recutl.c:122
+#: utils/recutl.c:138
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/recutils/>\n"
 msgstr "Домашня сторінка %s: <http://www.gnu.org/software/recutils/>\n"
 
-#: utils/recutl.c:125
+#: utils/recutl.c:141
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
-msgstr ""
-"Загальна довідкова інформація щодо використання програмного забезпечення "
-"GNU: <http://www.gnu.org/gethelp/>\n"
+msgstr "Загальна довідкова інформація щодо використання програмного забезпечення GNU: <http://www.gnu.org/gethelp/>\n"
 
 #. TRANSLATORS: --help output, common arguments.
 #. no-wrap
-#: utils/recutl.c:134
+#: utils/recutl.c:150
 msgid ""
 "      --help                          print a help message and exit.\n"
 "      --version                       show version and exit.\n"
 msgstr ""
-"      --help                          показати довідкове повідомлення і "
-"завершити роботу.\n"
-"      --version                       показати повідомлення щодо версії і "
-"завершити роботу.\n"
+"      --help                          показати довідкове повідомлення і завершити роботу.\n"
+"      --version                       показати повідомлення щодо версії і завершити роботу.\n"
 
 #. TRANSLATORS: --help output, record selection arguments
 #. no-wrap
-#: utils/recutl.c:145
-#, fuzzy
+#: utils/recutl.c:161
 msgid ""
 "Record selection options:\n"
-"  -i, --case-insensitive              make strings case-insensitive in "
-"selection\n"
+"  -i, --case-insensitive              make strings case-insensitive in selection\n"
 "                                        expressions.\n"
-"  -t, --type=TYPE                     operate on records of the specified "
-"type only.\n"
-"  -e, --expression=RECORD_EXPR        selection expression.\n"
-"  -q, --quick=STR                     select records with fields containing "
-"a string.\n"
-"  -n, --number=NUM,...                select specific records by position, "
-"with ranges.\n"
-"  -m, --random=NUM                    select a given number of random "
-"records.\n"
+"  -t, --type=TYPE                     operate on records of the specified type only.\n"
+"  -e, --expression=EXPR               selection expression.\n"
+"  -q, --quick=STR                     select records with fields containing a string.\n"
+"  -n, --number=NUM,...                select specific records by position, with ranges.\n"
+"  -R, --random=NUM                    select a given number of random records.\n"
 msgstr ""
 "Параметри вибору записів:\n"
-"  -i, --case-insensitive              не зважати на регістр символів у "
-"виразах\n"
+"  -i, --case-insensitive              не зважати на регістр символів у виразах\n"
 "                                        вибору.\n"
 "  -t, --type=ТИП                      обробляти лише записи вказаного типу.\n"
 "  -e, --expression=ВИРАЗ              вираз для вибору.\n"
-"  -q, --quick=РЯДОК                   вибрати записи з полями, що містять "
-"рядок.\n"
+"  -q, --quick=РЯДОК                   вибрати записи з полями, що містять рядок.\n"
 "  -n, --number=НОМЕР                  вибрати запис з вказаним номером.\n"
-"  -R, --random=КІЛЬКІСТЬ              вибрати вказану кількість випадкових "
-"записів.\n"
+"  -R, --random=КІЛЬКІСТЬ              вибрати вказану кількість випадкових записів.\n"
 
-#: utils/recutl.c:170
+#: utils/recutl.c:186
 #, c-format
 msgid ""
 "Copyright (C) %s Jose E. Marchesi.\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
-"html>.\n"
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n"
 "This is free software: you are free to change and redistribute it.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
 msgstr ""
 "Авторські права належать Jose E. Marchesi, %s.\n"
-"Умови ліцензування викладено у GPLv3+: GNU GPL версії 3 або новішій, <http://"
-"gnu.org/licenses/gpl.html>\n"
-"Це вільне програмне забезпечення: ви можете вільно змінювати і поширювати "
-"його.\n"
-"Вам не надається ЖОДНИХ ГАРАНТІЙ, окрім гарантій передбачених "
-"законодавством.\n"
+"Умови ліцензування викладено у GPLv3+: GNU GPL версії 3 або новішій, <http://gnu.org/licenses/gpl.html>\n"
+"Це вільне програмне забезпечення: ви можете вільно змінювати і поширювати його.\n"
+"Вам не надається ЖОДНИХ ГАРАНТІЙ, окрім гарантій передбачених законодавством.\n"
 
-#: utils/recutl.c:176
+#: utils/recutl.c:192
 msgid ""
 "\n"
 "Written by Jose E. Marchesi."
@@ -1367,80 +1172,48 @@ msgstr ""
 "\n"
 "Автор — Jose E. Marchesi."
 
-#: utils/recutl.c:188 utils/recutl.c:202
+#: utils/recutl.c:204 utils/recutl.c:218
 msgid ": error: "
 msgstr ": помилка: "
 
-#: utils/recutl.c:214
+#: utils/recutl.c:230
 msgid ": warning: "
 msgstr ": попередження: "
 
-#: utils/recutl.c:238
+#: utils/recutl.c:254
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr "повторення набору записів «%s» з %s.\n"
 
-#: utils/recutl.c:396
+#: utils/recutl.c:412
 msgid "cannot create a unique name.\n"
 msgstr "не вдалося створити назви, яка б не повторювалася.\n"
 
-#: utils/recutl.c:417
+#: utils/recutl.c:433
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr "перейменування файла %s на %s\n"
 
-#: utils/recutl.c:448
+#: utils/recutl.c:464
 #, c-format
 msgid "reading file %s"
 msgstr "читання файла %s"
 
-#: utils/recutl.c:473
-msgid "operation aborted due to integrity failures.\n"
-msgstr "дію перервано через порушення цілісності бази даних.\n"
-
-#: utils/recutl.c:474
-msgid "use --verbose to get a detailed report.\n"
-msgstr "скористайтеся параметром --verbose, щоб отримати докладний звіт.\n"
-
-#: utils/recutl.c:481
-msgid "use --force to skip the integrity check.\n"
-msgstr ""
-"скористайтеся параметром --force, щоб наказати програмі не виконувати "
-"перевірки цілісності.\n"
-
-#: utils/recutl.c:542
+#: utils/recutl.c:553
 msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
-msgstr ""
-"внутрішня помилка: помилка recutl_index_list_parse під час спроби компіляції "
-"формального виразу.\n"
-
-#~ msgid ""
-#~ "%s:%s: warning: type %s collides with referred type %s in the rset %s.\n"
-#~ msgstr ""
-#~ "%s:%s: попередження: тип %s суперечить еталонному типу %s у rset %s.\n"
-
-#~ msgid "evaluating the selection expression.\n"
-#~ msgstr "визначення виразу вибору.\n"
+msgstr "внутрішня помилка: помилка recutl_index_list_parse під час спроби компіляції формального виразу.\n"
 
 #~ msgid "internal error: rec_resolver_check: error compiling regexp.\n"
-#~ msgstr ""
-#~ "внутрішня помилка: помилка rec_resolver_check під час спроби компіляції "
-#~ "формального виразу.\n"
+#~ msgstr "внутрішня помилка: помилка rec_resolver_check під час спроби компіляції формального виразу.\n"
 
 #~ msgid "internal error: rec_field_name_part_str_p: error compiling regexp.\n"
-#~ msgstr ""
-#~ "внутрішня помилка: помилка rrec_field_name_part_str_p під час спроби "
-#~ "компіляції формального виразу.\n"
+#~ msgstr "внутрішня помилка: помилка rrec_field_name_part_str_p під час спроби компіляції формального виразу.\n"
 
 #~ msgid "internal error: rec_int_rec_type_p: error compiling regexp.\n"
-#~ msgstr ""
-#~ "внутрішня помилка: помилка rec_int_rec_type_p під час спроби компіляції "
-#~ "формального виразу.\n"
+#~ msgstr "внутрішня помилка: помилка rec_int_rec_type_p під час спроби компіляції формального виразу.\n"
 
 #~ msgid "internal error: rec-types: error compiling regexp.\n"
-#~ msgstr ""
-#~ "внутрішня помилка: типи rec: помилка під час спроби компіляції "
-#~ "формального виразу.\n"
+#~ msgstr "внутрішня помилка: типи rec: помилка під час спроби компіляції формального виразу.\n"
 
 #~ msgid ""
 #~ "Examples:\n"
@@ -1479,14 +1252,12 @@ msgstr ""
 #~ "Examples:\n"
 #~ "\n"
 #~ "        recdel -n 10 contacts.rec\n"
-#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
-#~ "rec\n"
+#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n"
 #~ msgstr ""
 #~ "Приклади:\n"
 #~ "\n"
 #~ "        recdel -n 10 contacts.rec\n"
-#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other."
-#~ "rec\n"
+#~ "        cat hackers.rec | recdel -e \"Email[0] = 'foo@bar.com'\" > other.rec\n"
 
 #~ msgid ""
 #~ "Examples:\n"
@@ -1515,23 +1286,16 @@ msgstr ""
 #~ msgid ""
 #~ "Examples:\n"
 #~ "\n"
-#~ "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts."
-#~ "rec\n"
-#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > "
-#~ "other.rec\n"
+#~ "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
+#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n"
 #~ msgstr ""
 #~ "Приклади:\n"
 #~ "\n"
-#~ "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts."
-#~ "rec\n"
-#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > "
-#~ "other.rec\n"
+#~ "        recins -f Name -v \"Mr Foo\" -f Email -v foo@foo.org contacts.rec\n"
+#~ "        cat hackers.rec | recins -t Hacker -f Email -v foo@foo.org > other.rec\n"
 
-#~ msgid ""
-#~ "the record set contains confidential fields but no password was provided\n"
-#~ msgstr ""
-#~ "набір записів містить дані конфіденційних полів, але не вказано жодного "
-#~ "пароля для доступу до них\n"
+#~ msgid "the record set contains confidential fields but no password was provided\n"
+#~ msgstr "набір записів містить дані конфіденційних полів, але не вказано жодного пароля для доступу до них\n"
 
 #~ msgid "the resulting record will have those fields unencrypted!\n"
 #~ msgstr "у остаточному записі дані цих полів буде розшифровано!\n"
@@ -1540,36 +1304,30 @@ msgstr ""
 #~ "Examples:\n"
 #~ "\n"
 #~ "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
-#~ "rec\n"
+#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"
 #~ msgstr ""
 #~ "Приклади:\n"
 #~ "\n"
 #~ "        recsel -t Friend -e \"Name ~ 'Smith'\" friends.rec\n"
-#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers."
-#~ "rec\n"
+#~ "        recsel -C -e \"#Email && Wiki = 'no'\" -P Email[0] gnupdf-hackers.rec\n"
 
 #~ msgid ""
 #~ "Examples:\n"
 #~ "\n"
 #~ "        recset -f TmpName -d data.rec\n"
 #~ "        recset -f Email[1] -s invalid@email.com friends.rec\n"
-#~ "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends."
-#~ "rec\n"
+#~ "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
 #~ "        recset -f Email[1] -r AltEmail friends.rec\n"
 #~ msgstr ""
 #~ "Приклади:\n"
 #~ "\n"
 #~ "        recset -f TmpName -d data.rec\n"
 #~ "        recset -f Email[1] -s invalid@email.com friends.rec\n"
-#~ "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends."
-#~ "rec\n"
+#~ "        recset -e \"Name ~ 'Smith'\" -f Email -a new@email.com friends.rec\n"
 #~ "        recset -f Email[1] -r AltEmail friends.rec\n"
 
 #~ msgid "      --no-external               don't use external descriptors.\n"
-#~ msgstr ""
-#~ "      --no-external               не використовувати зовнішніх "
-#~ "дескрипторів.\n"
+#~ msgstr "      --no-external               не використовувати зовнішніх дескрипторів.\n"
 
 #~ msgid ""
 #~ "Examples:\n"

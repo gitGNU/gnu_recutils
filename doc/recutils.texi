@@ -2435,26 +2435,25 @@ violation, and will be reported by a checking tool.
 
 @cindex @code{%mandatory}
 @cindex mandatory fields
-@cindex restricting fields from records
+@cindex requiring certain fields in records
+@cindex compulsory fields 
 
-XXX
-
-These special field names are used to restrict the fields that can
-appear in the records stored in a database.  Their usage is:
+Sometimes, you want to make sure that @emph{every} record of a particular type
+contains certain fields.
+To do this, use the special field @code{%mandatory}. 
+The usage is:
 
 @example
 %mandatory: @var{field1} @var{field2} @dots{} @var{fieldN}
-%prohibit: @var{field1} @var{field2} @dots{} @var{fieldN}
 @end example
-
 @noindent
-In both cases the lists of field names are separated by one or more
+The field names are separated by one or more
 blank characters.
 
 @cindex field, compulsory fields
 @cindex field, mandatory fields
 The fields listed in a @code{%mandatory} entry are
-mandatory; @ie{}, at least one field with this name shall be present
+non-optional; @ie{}, at least one field with this name shall be present
 in any record of this kind.
 @cindex integrity problems
 Records violating this restriction are
@@ -2482,34 +2481,17 @@ Email: sales@@yoyod.com
 Phone: +98 43434433
 @end example
 
-@noindent
-Similarly, the fields listed in a @code{%prohibit} entry are
-forbidden; @ie{}, no field with this name should be present
-in any record of this kind.  Again, records violating this restriction
-are invalid.
+A word of caution, however:  In many situations, especially in  day to day social
+interaction, it is common to find that certain information is simply unavailable.
+For example, although every person has a date of birth, some people will refuse 
+to provide that information.
 
-This can be useful when some field name is reserved for some future
-use.  For example, if we want to make sure no @code{Telex} will ever
-be used in our contacts database, we would change the record
-descriptor as follows:
+It is probably wise therefore to avoid stipulating a field as mandatory, unless it is
+essential to the enterprise.
+Otherwise, 
+a data entry clerk faced with this situation, will have to make the choice between
+dropping the entry entirely, or entering some fake data to keep the system happy.
 
-@example
-%rec: Contact
-%mandatory: Name
-%prohibit: Telex
-@end example
-
-@noindent
-Several @code{%mandatory} and/or @code{%prohibit} fields can appear in
-the same record descriptor.  The set of mandatory or prohibited fields
-is the union of all the entries.  For example, in the following
-database both @code{Id} and @code{id} are prohibited:
-
-@example
-%rec: Entry
-%prohibit: Id
-%prohibit: id
-@end example
 
 @node Prohibited Fields
 @section Prohibited Fields
@@ -2519,19 +2501,71 @@ database both @code{Id} and @code{id} are prohibited:
 @cindex field, forbidden fields
 @cindex prohibited fields
 
-XXX
+The converse of @code{%mandatory} is @code{%prohibit}.
+Prohibited fields may not occur in @emph{any} record of the given type.
+The usage is:
+
+@example
+%prohibit: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+@noindent The field names are separated by one or more blank characters.
+
+@noindent
+Fields listed in a @code{%prohibit} entry are
+forbidden; @ie{}, no field with this name should be present
+in any record of this kind.
+Again, records violating this restriction
+are invalid.
+
+@noindent
+Several @code{%prohibit} fields can appear in
+the same record descriptor.
+The set of prohibited fields
+is the union of all the entries.
+For example, in the following
+database both @code{Id} and @code{id} are prohibited:
+
+@example
+%rec: Entry
+%prohibit: Id
+%prohibit: id
+@end example
+
+One possible use case for prohibited fields arises 
+when some field name is reserved for some future
+use.
+For example, if we were organising a sports competition, we would want
+competitors to register before the event.  
+However a competitor's @code{result} should not and cannot be entered
+before the competition takes place.
+Initially then, we  would change the record
+descriptor as follows:
+
+@example
+%rec: Contact
+%mandatory: Name
+%prohibit: result
+@end example
+@noindent
+At the start of the event, the @code{%mandatory} line can be deleted, to 
+allow results to be entered.
+
 
 @node Arbitrary Constraints
 @section Arbitrary Constraints
 @cindex @code{%constraint}
 @cindex restricting values of fields
 
-XXX the arbitrary constraints allow to define restrictions in the
-structure of the records based on the values of the fields, and
-the other way around.
+Occasionally @code{%mandatory} and @code{%prohibit} are just not flexible enough.
+We might, for instance, want to ensure that @emph{if} a field is present,
+then it must have a certain relationship to other fields.
+Or we might want to stipulate that only under certain conditions, a record contains
+a particular field.
 
-The @code{%constraint} special field is used to define constraints upon 
-a field's value.
+To this end, recutils provides a way for arbitrary field constraints to be defined.
+These permit restrictions on the presence and/or value of fields, based upon the value or
+presence of other fields within that record.
+This is done using the  @code{%constraint} special field.
 Its usage is:
 
 @example
