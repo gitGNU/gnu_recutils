@@ -3639,7 +3639,9 @@ conditionals and string concatenation.
 @node Interoperability
 @chapter Interoperability
 
-XXX
+Included in the recutils package are a number of utilities to assist the creation
+of recfiles using data which already exists in other formats
+and for exporting data from recfiles so that it can be used in other applications.
 
 @menu
 * CSV Files::                Converting recfiles to/from csv files.
@@ -3649,7 +3651,14 @@ XXX
 @node CSV Files
 @section CSV Files
 
-Record sets are not tables, even if tables can be easily emulated
+@cindex csv
+@cindex comma separated values
+
+Many applications are able to read and write files containing so-called
+``comma separated values''.
+Such files generally contain tabular data where the columns are separated
+by commas and the rows by line feed and/or carriage return characters.
+However record sets are not tables, although tables can be easily emulated
 using records having the same fields in the same order.  For example:
 
 @example
@@ -3664,7 +3673,7 @@ c: value
 @dots{}
 @end example
 
-There are several ways records are more flexible than tables:
+In several respects records are more flexible than tables:
 
 @itemize @minus
 @item Fields can appear in a different order in several records.
@@ -3672,22 +3681,33 @@ There are several ways records are more flexible than tables:
 @item Records can differ in the number of fields.
 @end itemize
 
-Since comma-separated-values files contain tables, the @code{rec2csv}
-utility implements an algorithm that deals with the previous
-difficulties, to generate a table that is what the user expects
-(likewise).
+It is evident that records, such as those in recfiles, are a more
+general structure than comma separated values.
+This means that when converting from csv files to recfiles, certain 
+decisions need to be made.
+The @code{rec2csv} utility (@pxref{rec2csv})
+implements an algorithm to deal with this problem
+and generate a table that the user expects.
 
-The algorithm is the following.  The utility first scans the specified
+The algorithm works as follows:
+
+@enumerate
+@item
+The utility first scans the specified
 record set, building a list with the names that will become the table
-header.  For each field, a header is added with the form:
+header.
+
+@item
+For each field, a header is added with the form:
 
 @example
-FIELDNAME[_N]
+FIELDNAME[_@var{n}]
 @end example
 
 @noindent
-where N is a number in the range @code{2..inf} and is the ``index'' of
-the field in its containing record plus one.  For example, consider
+where @var{n} is a number in the range @code{2..inf} and is the ``index'' of
+the field in its containing record plus one.  
+For example, consider
 the following record set:
 
 @example
@@ -3707,14 +3727,19 @@ The corresponding list of headers being:
 a b b_2 c a b d
 @end example
 
+@item
 Then duplicates are removed:
 
 @example
 a b b_2 c d
 @end example
 
+@item
 The resulting list of headers is then used to build the table in the
-generated csv file.  In this case:
+generated csv file.  
+@end enumerate
+
+In the above example the result would be
 
 @example
 "a","b","b_2","c","d"
@@ -3722,7 +3747,7 @@ generated csv file.  In this case:
 "a2","b2",,,"d2"
 @end example
 
-Note how missing fields are implemented as empty rows in the generated
+Note that missing fields are implemented as empty columns in the generated
 csv.
 
 @node Importing MDB Files
