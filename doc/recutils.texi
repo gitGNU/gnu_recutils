@@ -93,7 +93,7 @@ Advanced Topics
 * Grouping and Aggregates::  Statistics.
 * Joins::                    Crossing record of different types.
 * Auto-Generated Fields::    Counters and time-stamps.
-* Encryption::               Storing sensible information.
+* Encryption::               Storing sensitive information.
 * Generating Reports::       Formatted output with templates.
 * Interoperability::         Importing and exporting to other formats.
 
@@ -185,7 +185,7 @@ Auto-Generated Fields
 
 Encryption
 
-* Confidential Fields::      Declaring fields as sensible data.
+* Confidential Fields::      Declaring fields as sensitive data.
 * Encrypting Files::         Encrypt confidential fields.
 * Decrypting Data::          Reading encrypted fields.
 
@@ -3252,10 +3252,23 @@ so we include an @code{%auto} for the date:
 @node Encryption
 @chapter Encryption
 
-XXX
+@cindex encryption
+
+For ethical or security reasons it is sometimes necessary that information
+in a recfile should not be readable by unauthorised persons.
+One way to prevent a recfile from being read is to use the security features of
+the operating system.
+A more secure way would be to encrypt the entire recfile using a free strong encryption program 
+such as @uref{http://gnu.org/software/gnupg,GnuPG}.
+The disadvantage of both these methods is that the entire
+recfile has to be secured 
+when it may well be the case that only certain data need to be protected.
+
+Recutils offers a way to securely encrypt specified fields in a record, whilst leaving
+the rest in clear text.
 
 @menu
-* Confidential Fields::      Declaring fields as sensible data.
+* Confidential Fields::      Declaring fields as sensitive data.
 * Encrypting Files::         Encrypt confidential fields.
 * Decrypting Data::          Reading encrypted fields.
 @end menu
@@ -3266,16 +3279,19 @@ XXX
 @cindex @code{%confidential}
 @cindex passwords
 @cindex confidential data
+To specify that a field should be encrypted, use the @code{%confidential} 
+special field.
 This special field declares a set of fields as
-@dfn{confidential}, meaning they contain sensitive information such as
-passwords or secrets.  Its usage is:
+@dfn{confidential}, meaning they contain secret data such as
+passwords or personal information.  
+Its usage is:
 
 @example
 %confidential: @var{field1} @var{field2} @dots{} @var{fieldN}
 @end example
 
 @noindent
-The list of field names are separated by one or more blank characters.
+The field names are separated by one or more blank characters.
 There can be several @code{%confidential} fields in the same record
 descriptor, the effective list of confidential fields being the union
 of all the entries.
