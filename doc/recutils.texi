@@ -292,7 +292,7 @@ the simple task of storing plain lists of items.
 Recfiles are human-readable, human-writable and still easy to
 parse and to manipulate automatically.  Obviously they are not
 suitable for any task (for example, it can be difficult to manage
-hierarchies in recfiles) and performance is somewhat sacrified in
+hierarchies in recfiles) and performance is somewhat sacrificed in
 favor of readability.  But they are quite handy to store small to
 medium simple databases.
 
@@ -834,11 +834,11 @@ Age: 13.75
 @end example
 
 @noindent
-If we invoke @command{recsel acquaintainces.rec} we will get a list of
+If we invoke @command{recsel acquaintances.rec} we will get a list of
 all the records stored in the file in the terminal:
 
 @example
-$ recsel acquaintainces.rec
+$ recsel acquaintances.rec
 Name: Ada Lovelace
 Age: 36
 
@@ -862,7 +862,7 @@ part of the output produced by @command{recsel}.  This is because
 line that may be between records is not echoed in the output:
 
 @multitable @columnfractions .5 .5
-@headitem acquaintainces.rec @tab recsel acquaintainces.rec
+@headitem acquaintances.rec @tab recsel acquaintances.rec
 @item
 @example
 @exdent Name: Peter the Great
