@@ -46,6 +46,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <unistd.h>
+#include <getpass.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -578,6 +579,36 @@ size_t *
 recutl_index (void)
 {
   return recutl_indexes;
+}
+
+char *
+recutl_getpass (void)
+{
+  char *ret = NULL;
+
+  char *pass = getpass (_("Password: "));
+  if (pass)
+    {
+      ret = xstrdup (pass);
+      pass = getpass (_("Password again: "));
+      if (pass)
+        {
+          if (strcmp (ret, pass) != 0)
+            {
+              recutl_fatal (_("the provided passwords don't match.\n"));
+              memset (ret, 0, strlen (ret));
+              memset (pass, 0, strlen (pass));
+            }
+        }
+      else
+        {
+          memset (ret, 0, strlen (ret));
+          free (ret);
+          ret = NULL;
+        }
+    }
+
+  return ret;
 }
 
 /* End of recutl.c */

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,6 +238,8 @@ void recutl_check_integrity (rec_db_t db,
 bool recutl_yesno (char *prompt);
 
 bool recutl_interactive (void);
+
+char *recutl_getpass (void);
 
 /* Parse a list of indexes from the given string and set the internal
    recutl_indexes accordingly.  Return true if a list was found in the

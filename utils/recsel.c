@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
 #include <xalloc.h>
 #include <gettext.h>
 #define _(str) gettext (str)
-#include <getpass.h>
 
 #include <rec.h>
 #include <recutl.h>
@@ -414,7 +413,7 @@ recsel_process_data (rec_db_t db)
           confidential_fields = rec_rset_confidential (rset);
           if (rec_fex_size (confidential_fields) > 0)
             {
-              recsel_password = getpass (_("Password: "));
+              recsel_password = recutl_getpass ();
             }
           
           rec_fex_destroy (confidential_fields);

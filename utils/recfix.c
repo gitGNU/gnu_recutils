@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <xalloc.h>
-#include <getpass.h>
 #include <gettext.h>
 #define _(str) gettext (str)
 
@@ -303,7 +302,7 @@ recfix_parse_args (int argc,
     {
       if (recutl_interactive ())
         {
-          recfix_password = getpass (_("Password: "));
+          recfix_password = recutl_getpass ();
         }
 
       if (!recfix_password || (strlen (recfix_password) == 0))

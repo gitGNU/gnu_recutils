@@ -33,7 +33,6 @@
 #include <errno.h>
 #include <time.h>
 #include <locale.h>
-#include <getpass.h>
 #define _(str) gettext (str)
 #include <base64.h>
 
@@ -338,7 +337,11 @@ recins_add_new_record (rec_db_t db)
               {
                 if (!recins_password && recutl_interactive ())
                   {
-                    recins_password = getpass (_("Password: "));
+                    recins_password = recutl_getpass ();
+                    if (!recins_password)
+                      {
+                        recutl_fatal ("not in an interactive terminal.\n");
+                      }
                   }
                 
                 /* Passwords can't be empty.  */

@@ -1,3 +1,13 @@
+2013-05-22  Jose E. Marchesi  <jemarch@gnu.org>
+
+	utils: interactively ask for a password twice to avoid loosing
+	data because of typing errors.
+	* utils/recins.c (recins_add_new_record): Use recutl_getpass.
+	* utils/recsel.c (recsel_process_data): Likewise.
+	* utils/recfix.c (recfix_parse_args): Likewise.
+
+	* utils/recutl.c (recutl_getpass): New function.
+
 2013-05-22  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* etc/ob-rec.el (org-babel-execute:rec): Add support for GroupBy.
