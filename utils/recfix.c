@@ -302,7 +302,14 @@ recfix_parse_args (int argc,
     {
       if (recutl_interactive ())
         {
-          recfix_password = recutl_getpass ();
+          if (recfix_op == RECFIX_OP_ENCRYPT)
+            {
+              recfix_password = recutl_getpass (true);
+            }
+          else
+            {
+              recfix_password = recutl_getpass (false);
+            }
         }
 
       if (!recfix_password || (strlen (recfix_password) == 0))

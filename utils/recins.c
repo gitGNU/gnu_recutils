@@ -337,7 +337,7 @@ recins_add_new_record (rec_db_t db)
               {
                 if (!recins_password && recutl_interactive ())
                   {
-                    recins_password = recutl_getpass ();
+                    recins_password = recutl_getpass (true);
                     if (!recins_password)
                       {
                         recutl_fatal ("not in an interactive terminal.\n");

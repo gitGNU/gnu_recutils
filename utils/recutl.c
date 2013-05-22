@@ -582,7 +582,7 @@ recutl_index (void)
 }
 
 char *
-recutl_getpass (void)
+recutl_getpass (bool asktwice)
 {
   char *ret = NULL;
 
@@ -590,21 +590,24 @@ recutl_getpass (void)
   if (pass)
     {
       ret = xstrdup (pass);
-      pass = getpass (_("Password again: "));
-      if (pass)
+      if (asktwice)
         {
-          if (strcmp (ret, pass) != 0)
+          pass = getpass (_("Password again: "));
+          if (pass)
             {
-              recutl_fatal (_("the provided passwords don't match.\n"));
-              memset (ret, 0, strlen (ret));
-              memset (pass, 0, strlen (pass));
+              if (strcmp (ret, pass) != 0)
+                {
+                  recutl_fatal (_("the provided passwords don't match.\n"));
+                  memset (ret, 0, strlen (ret));
+                  memset (pass, 0, strlen (pass));
+                }
             }
-        }
-      else
-        {
-          memset (ret, 0, strlen (ret));
-          free (ret);
-          ret = NULL;
+          else
+            {
+              memset (ret, 0, strlen (ret));
+              free (ret);
+              ret = NULL;
+            }
         }
     }
 

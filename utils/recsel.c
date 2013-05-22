@@ -413,7 +413,7 @@ recsel_process_data (rec_db_t db)
           confidential_fields = rec_rset_confidential (rset);
           if (rec_fex_size (confidential_fields) > 0)
             {
-              recsel_password = recutl_getpass ();
+              recsel_password = recutl_getpass (false);
             }
           
           rec_fex_destroy (confidential_fields);

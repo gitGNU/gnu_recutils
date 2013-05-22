@@ -239,7 +239,7 @@ bool recutl_yesno (char *prompt);
 
 bool recutl_interactive (void);
 
-char *recutl_getpass (void);
+char *recutl_getpass (bool asktwice);
 
 /* Parse a list of indexes from the given string and set the internal
    recutl_indexes accordingly.  Return true if a list was found in the
