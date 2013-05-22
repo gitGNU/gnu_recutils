@@ -1,3 +1,8 @@
+2013-05-22  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* etc/ob-rec.el (org-babel-execute:rec): Add support for GroupBy.
+	(org-babel-execute:rec): Add support for joins.
+
 2013-05-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Sorted Output): Renamed from Sorting.

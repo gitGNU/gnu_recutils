@@ -41,7 +41,9 @@ This function is called by `org-babel-execute-src-block'."
 	 (cmdline (cdr (assoc :cmdline params)))
 	 (rec-type (cdr (assoc :type params)))
 	 (fields (cdr (assoc :fields params)))
+         (join (cdr (assoc :join params)))
          (sort (cdr (assoc :sort params)))
+         (groupby (cdr (assoc :groupby params)))
 	 (cmd (concat "recsel"
 		      (when rec-type (concat " -t " rec-type " "))
 		      " " (expand-file-name in-file)
@@ -49,7 +51,9 @@ This function is called by `org-babel-execute-src-block'."
                         (concat " -e " "\""
                                 (replace-regexp-in-string "\"" "\\\\\"" body)
                                 "\""))
+                      (when join (concat " -j " join " "))
                       (when sort (concat " -S " sort " "))
+                      (when groupby (concat " -G " groupby " "))
 		      (when fields (concat " -p " fields " "))))
          (do-raw (or (member "scalar" result-params)
                      (member "html" result-params)
