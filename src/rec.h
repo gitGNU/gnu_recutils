@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2009, 2010, 2011, 2012, 2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -367,7 +367,7 @@ bool rec_comment_equal_p (rec_comment_t comment1, rec_comment_t comment2);
 
 /******************* Regexps for field names *******************/
 
-#define REC_FNAME_RE "[a-zA-Z%][a-zA-Z0-9_-]*"
+#define REC_FNAME_RE "[a-zA-Z%][a-zA-Z0-9_]*"
 
 #define REC_TYPE_NAME_RE "[a-zA-Z][a-zA-Z0-9_-]*"
 #define REC_URL_REGEXP "(file|http|ftp|https)://[^ \t]+"

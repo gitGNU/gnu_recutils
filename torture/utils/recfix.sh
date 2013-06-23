@@ -1235,6 +1235,10 @@ test_declare_input_file blank-line-after-record-invalid \
  x
 '
 
+test_declare_input_file hyphens-in-field-names \
+'foo-bar: baz
+'
+
 #
 # Declare tests.
 #
@@ -2181,6 +2185,11 @@ test_tool recfix-blank-line-after-record-invalid xfail \
           recfix \
          '--check' \
          blank-line-after-record-invalid
+
+test_tool recfix-hyphens-in-field-names xfail \
+          recfix \
+          '--check' \
+          hyphens-in-field-names
         
 #
 # Cleanup.

@@ -104,7 +104,7 @@ hidden by default in navigation mode.")
   "regexp denoting the beginning of a record")
 
 (defvar rec-field-name-re
-  "^[a-zA-Z%][a-zA-Z0-9_-]*:"
+  "^[a-zA-Z%][a-zA-Z0-9_]*:"
   "Regexp matching a field name")
 
 (defvar rec-field-value-re
@@ -139,7 +139,7 @@ hidden by default in navigation mode.")
   "Syntax table used in rec-mode")
 
 (defvar rec-font-lock-keywords
-`((,(concat "^" rec-keyword-prefix "[a-zA-Z0-9_-]+:") . font-lock-keyword-face)
+`((,(concat "^" rec-keyword-prefix "[a-zA-Z0-9_]+:") . font-lock-keyword-face)
   (,rec-field-name-re . font-lock-variable-name-face)
   ("^\\+" . font-lock-constant-face))
 "Font lock keywords used in rec-mode")
@@ -1179,7 +1179,7 @@ manual."
                       (goto-char (match-end 0)))
                     (list 'type (intern kind) str-copy (reverse names))))))
              ((equal kind "rec")
-              (when (looking-at "[ \n\t]*\\([a-zA-Z%][a-zA-Z0-9_-]*\\)[ \n\t]*$") ; Field name without a colon.
+              (when (looking-at "[ \n\t]*\\([a-zA-Z%][a-zA-Z0-9_]*\\)[ \n\t]*$") ; Field name without a colon.
                 (let ((referred-record (match-string 1)))
                   (list 'type (intern kind) str referred-record))))
              ((equal kind "regexp")
@@ -1237,7 +1237,7 @@ is a field type structure."
      ((equal kind 'enum)
       (member value data))
      ((equal kind 'field)
-      (string-match-p "^[a-zA-Z%][a-zA-Z0-9_-]*$" value))
+      (string-match-p "^[a-zA-Z%][a-zA-Z0-9_]*$" value))
      ((equal kind 'email)
       (string-match-p "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]+$" value))
      ((equal kind 'uuid)
@@ -1268,7 +1268,7 @@ returned."
                  (begin-description (match-end 0))
                  name)
              (goto-char (match-beginning 1))
-             (while (looking-at "\\([a-zA-Z%][a-zA-Z0-9_-]*\\),?")
+             (while (looking-at "\\([a-zA-Z%][a-zA-Z0-9_]*\\),?")
                (if (equal (match-string 1) field-name)
                    (progn
                      (goto-char begin-description)

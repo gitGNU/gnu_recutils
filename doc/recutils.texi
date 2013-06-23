@@ -428,12 +428,11 @@ name of the field shall begin in the first column of the line.
 
 @cindex field name
 A @dfn{field name} is a sequence of alphanumeric characters plus
-dashes (@code{-}) and underscores (@code{_}), starting with a letter
-or the character @code{%}.  The regular expression denoting a field
-name is:
+underscores (@code{_}), starting with a letter or the character
+@code{%}.  The regular expression denoting a field name is:
 
 @example
-[a-zA-Z%][a-zA-Z0-9_-]+
+[a-zA-Z%][a-zA-Z0-9_]+
 @end example
 
 @cindex case, in field names
@@ -1934,7 +1933,7 @@ be defined as numbers in the range @code{0..120}:
 Type names are identifiers having the following syntax:
 
 @example
-[a-zA-Z][a-zA-Z0-9_-]*
+[a-zA-Z][a-zA-Z0-9_]*
 @end example
 
 @noindent
