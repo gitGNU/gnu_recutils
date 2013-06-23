@@ -1834,6 +1834,72 @@ commenting them out, sorting them, @etc{}
 
 XXX
 
+@menu
+* Adding Anonymous Records:: Inserting or replacing records with no
+                              type.
+@end menu
+
+@node Adding Anonymous Records
+@subsection Adding Anonymous Records
+
+In a previous chapter we noted that @command{recsel} interprets the
+absence of a @command{-t} argument depending on the actual contents of
+the file: if the recfile contains records of just one type the
+command assumes that the user is referring these records.
+
+@command{recins} does not follow this convention, and the absence of
+an explicit type always means to insert (or replace) an anonymous
+record.  Consider for example the following database:
+
+@example
+%rec: Marks
+%type: Class enum A B C
+
+Name: Alfred
+Class: A
+
+Name: Bertram
+Class: B
+@end example
+
+@noindent
+If we want to insert a new mark we have to specify the type explicitly
+using @command{-t}:
+
+@example
+$ cat marks.rec | recins -t Marks -f Name -v Xavier -f Class -v C
+%rec: Marks
+%type: Class enum A B C
+
+Name: Alfred
+Class: A
+
+Name: Bertram
+Class: B
+
+Name: Xavier
+Class: C
+@end example
+
+@noindent
+If we forget to specify the type then an anonymous record is created
+instead:
+
+@example
+$ cat marks.rec | recins -f Name -v Xavier -f Class -v C
+Name: Xavier
+Class: C
+
+%rec: Marks
+%type: Class enum A B C
+
+Name: Alfred
+Class: A
+
+Name: Bertram
+Class: B
+@end example
+
 @node Deleting Records
 @section Deleting Records
 

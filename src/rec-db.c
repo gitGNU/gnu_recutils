@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,10 +144,6 @@ rec_db_get_rset (rec_db_t db,
 
   if (db->size > 0)
     {
-      if (position < 0)
-        {
-          position = 0;
-        }
       if (position >= db->size)
         {
           position = db->size - 1;
@@ -168,7 +164,7 @@ rec_db_insert_rset (rec_db_t db,
 
   node = NULL;
 
-  if (position < 0)
+  if (position == 0)
     {
       node = gl_list_nx_add_first (db->rset_list,
                                    (void *) rset);
@@ -203,10 +199,6 @@ rec_db_remove_rset (rec_db_t db, size_t position)
   
   if (db->size > 0)
     {
-      if (position < 0)
-        {
-          position = 0;
-        }
       if (position >= db->size)
         {
           position = db->size - 1;
@@ -725,7 +717,7 @@ rec_db_insert (rec_db_t db,
               /* The default rset should always be placed in the
                  beginning of the db.  */
 
-              rec_db_insert_rset (db, rset, -1);
+              rec_db_insert_rset (db, rset, 0);
             }
         }
     }

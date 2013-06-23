@@ -152,6 +152,17 @@ test_declare_input_file auto-range-overflow \
 myrange: 10
 '
 
+test_declare_input_file marks \
+'%rec: Marks
+%type: Class enum A B C
+
+Name: Alfred
+Class: A
+
+Name: Bertram
+Class: B
+'
+
 #
 # Declare tests.
 #
@@ -500,6 +511,23 @@ field3: Value23
 field1: Value31
 field2: Value32
 field3: Value33
+'
+
+test_tool recins-insert-default-type ok \
+          recins \
+          '-f Name -v Xavier -f Class -v X' \
+          marks \
+'Name: Xavier
+Class: X
+
+%rec: Marks
+%type: Class enum A B C
+
+Name: Alfred
+Class: A
+
+Name: Bertram
+Class: B
 '
  
 #
