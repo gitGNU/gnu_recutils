@@ -1,3 +1,11 @@
+2013-07-29  Michał Masłowski  <mtjm@mtjm.eu>
+
+       src: fix memory leak.
+       * src/rec-rset.c (struct rec_rset_fprops_s): Remove const from
+       fname, since it can be dynamically allocated.
+       (rec_rset_destroy): Free fname.
+       (rec_rset_update_field_props): Destroy the temporary fex.
+
 2013-06-23  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,doc,torture: fix the insertion of anonymous records in dbs.

@@ -51,7 +51,7 @@
 
 struct rec_rset_fprops_s
 {
-  const char *fname;
+  char *fname;
 
   bool key_p;          /* Primary key  */
   bool auto_p;         /* Auto-field.  */
@@ -252,6 +252,7 @@ rec_rset_destroy (rec_rset_t rset)
             {
               rec_type_destroy (aux->type);
             }
+          free (aux->fname);
           free (aux->type_name);
           props = props->next;
           free (aux);
@@ -1287,6 +1288,8 @@ rec_rset_update_field_props (rec_rset_t rset)
                   
                   free (field_type);
                 }
+
+              rec_fex_destroy (fex);
             }
 
           /* Update the key field.  */
