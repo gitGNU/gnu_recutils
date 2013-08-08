@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2009-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ recutl_print_help (void)
   /* TRANSLATORS: --help output, recins synopsis.
      no-wrap */
   printf (_("\
-Usage: recins [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m NUM] [(-f NAME -v STR) | -R RECDATA]... [FILE]\n"));
+Usage: recins [OPTION]... [-t TYPE] [-n NUM | -e RECORD_EXPR | -q STR | -m NUM] [(-f NAME -v STR) | -r RECDATA]... [FILE]\n"));
 
   /* TRANSLATORS: --help output, recins short description.
      no-wrap */

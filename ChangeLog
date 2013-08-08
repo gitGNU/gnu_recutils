@@ -1,5 +1,10 @@
 2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* utils/recins.c (recutl_print_help): typo fixed in help string:
+	-R must be -r.
+
+2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	maint: syntax-check fixes.
 	* etc/rec-mode.el (rec-summary-rec-buffer): Trailing blanks
 	removed from line.
