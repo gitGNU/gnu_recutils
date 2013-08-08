@@ -1352,7 +1352,7 @@ Each character should identify only one name."
 
 (defvar rec-summary-rec-buffer nil
   "rec-mode buffer paired with this summary buffer.")
-(make-variable-buffer-local 'rec-summary-rec-buffer)  
+(make-variable-buffer-local 'rec-summary-rec-buffer)
 
 (define-derived-mode rec-summary-mode tabulated-list-mode "Rec Summary"
   "Major mode for summarizing the contents of a recfile.
@@ -2243,7 +2243,7 @@ Commands:
 \\{rec-mode-map}
 
 Turning on rec-mode calls the members of the variable
-`rec-mode-hook' with no args, if that value is is non-nil."
+`rec-mode-hook' with no args, if that value is non-nil."
   (interactive)
   (kill-all-local-variables)
   (widen)

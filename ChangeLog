@@ -1,4 +1,15 @@
-2013-07-29  Michał Masłowski  <address@hidden>
+2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
+
+	maint: syntax-check fixes.
+	* etc/rec-mode.el (rec-summary-rec-buffer): Trailing blanks
+	removed from line.
+	* AUTHORS (John Darrington): Likewise.
+
+	* .gitignore: Newline added at EOF to keep syntax-check happy.
+
+	* etc/rec-mode.el (rec-mode): Typo in comment fixed.
+
+2013-07-29  Michał Masłowski  <mtjm@mtjm.eu>
 
 	src: fix memory leak.
 	* src/rec-rset.c (struct rec_rset_fprops_s): Remove const from
