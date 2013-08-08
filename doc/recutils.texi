@@ -1115,7 +1115,7 @@ random records, you will get all the records in a random order.
 @section Selection Expressions
 
 @cindex selection expressions
-@dfn{Selection expressions}, also known as a ``sexes'' in the recutils
+@dfn{Selection expressions}, also known as ``sexes'' in the recutils
 jargon, are simple infix expressions that can be applied to a record.
 The result of the SEX is typically interpreted as a boolean
 value@footnote{As with any sex.}
@@ -1832,12 +1832,106 @@ commenting them out, sorting them, @etc{}
 @node Inserting Records
 @section Inserting Records
 
-XXX
+Adding new records to a recfile is pretty trivial: open it with your
+text editor and just write down the fields composing the records.
+This is really the best way to add contents to a recfile containing
+very simple data.  However, complex databases may introduce some
+difficulties:
+
+@table @emph
+@item Multi-line values.
+It can be tedious to manually encode the several lines.
+@item Data integrity.
+It is difficult to manually maintain the integrity fo the data stored
+in the database.
+@item Counters and timestamps.
+Some record sets feature auto-generated fields, which are commonly
+used to implement counters and time-stamps.  @xref{Auto-Generated
+Fields}.
+@end table
+
+To facilitate the insertion of new data a command line utility called
+@command{recins} is included in the recutils.  The usage of recins is
+very simple, and can be both used in the command line or called from
+another program.  The following subsections discuss several aspects of
+using this utility.
 
 @menu
+* Adding Records With recins:: Basics of the @command{recins} utility.
+@c XXX * Adding records with encrypted fields::
 * Adding Anonymous Records:: Inserting or replacing records with no
                               type.
+@c XXX * Replacing Records:: 
 @end menu
+
+@node Adding Records With recins
+@subsection Adding Records With recins
+
+Each invocation of @command{recins} adds one record to the targetted
+database.  The fields composing the records are specified using pairs
+of @code{-f} and @code{-v} command line arguments.  For example, this
+is how we would add the first entry to a previously empty contacts
+database:
+
+@example
+$ recins -f Name -v "Mr Foo" -f Email -v foo@@bar.baz contacts.rec
+$ cat contacts.rec
+Name: Mr. Foo
+Email: foo@@bar.baz
+@end example
+
+@noindent
+If we invoke recins again on the same database we will be adding a
+second record:
+
+@example
+$ recins -f Name -v "Mr Bar" -f Email -v bar@@gnu.org contacts.rec
+$ cat contacts.rec
+Name: Mr. Foo
+Email: foo@@bar.baz
+
+name: Mr. Bar
+Email: bar@@gnu.org
+@end example
+
+There is no limit on the number of @code{-f} @code{-v} pairs that can
+be specified to recins, other than any limit on command line arguments
+which may be imposed by the shell.
+
+The field values provided using @code{-v} are encoded to follow the
+rec format conventions.  this included multi-line field values.
+Consider the following example:
+
+@example
+$ recins -f Name -v "Mr. Foo" -f Address -v ' contacts.rec
+Foostrs. 19
+Frankfurt am Oder
+Germany' contacts.rec
+$ cat contacts.rec
+Name: Mr. Foo
+Address:
++ Foostrs. 19
++ Frankfurt am Oder
++ Germany
+@end example
+
+It is also possible to provide fields alredy encoded as rec data for
+their addition, using the @code{-r} command line argument.  This
+argument can be intermixed with @code{-f} @code{-v}.
+
+@example
+$ recins -f Name -v "Mr. Foo" -r "Email: foo@@bar.baz" contacts.rec
+$ cat contacts.rec
+Name: Mr. Foo
+Email: foo@@bar.baz
+@end example
+
+If the string passed to @code{-r} is not valid rec data then
+@command{recins} will complain with an error and the operation will be
+aborted.
+
+Note that at this moment it is not possible to add new records
+containing comments.
 
 @node Adding Anonymous Records
 @subsection Adding Anonymous Records
