@@ -2,7 +2,7 @@
 #
 # recfix.sh - System tests for recfix.
 #
-# Copyright (C) 2010, 2011, 2012 Jose E. Marchesi.
+# Copyright (C) 2010-2013 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1239,6 +1239,56 @@ test_declare_input_file hyphens-in-field-names \
 'foo-bar: baz
 '
 
+test_declare_input_file ranges-min-ok \
+'%rec: foo
+%type: Negative range MIN -1
+
+Negative: -1
+Negative: -2147483648
+'
+
+test_declare_input_file ranges-min-invalid \
+'%rec: foo
+%type: Negative range MIN -1
+
+Negative: -1
+Negative: 0
+'
+
+test_declare_input_file ranges-max-ok \
+'%rec: foo
+%type: Positive range 0 MAX
+
+Positive: 0
+Positive: 2147483647
+'
+
+test_declare_input_file ranges-max-invalid \
+'%rec: foo
+%type: Positive range 0 MAX
+
+Positive: -1
+Positive: 2147483647
+'
+
+test_declare_input_file ranges-minmax-ok \
+'%rec: foo
+%type: Any range MIN MAX
+
+Any: -2147483648
+Any: 0
+Any: 2147483647
+'
+
+test_declare_input_file ranges-minmax-invalid \
+'%rec: foo
+%type None range MAX MIN
+
+None: -2147483648
+None: 0
+None: 2147483647
+'
+
 #
 # Declare tests.
 #
@@ -1325,6 +1375,39 @@ test_tool recfix-range-oct-xfail xfail \
           recfix \
           '' \
           ranges-oct-invalid
+
+test_tool recfix-range-min-ok ok \
+          recfix \
+          '' \
+          ranges-min-ok \
+''
+
+test_tool recfix-range-min-invalid xfail \
+          recfix \
+          '' \
+          ranges-min-invalid
+
+test_tool recfix-range-max-ok ok \
+          recfix \
+          '' \
+          ranges-max-ok \
+''
+
+test_tool recfix-range-max-invalid xfail \
+          recfix \
+          '' \
+          ranges-max-invalid
+
+test_tool recfix-range-minmax-ok ok \
+          recfix \
+          '' \
+          ranges-minmax-ok \
+''
+
+test_tool recfix-range-minmax-invalid xfail \
+          recfix \
+          '' \
+          ranges-minmax-invalid
 
 test_tool recfix-ranges-xfail-1 xfail \
           recfix \

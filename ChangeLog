@@ -1,5 +1,34 @@
 2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,torture,doc: support the usage of MIN and MAX keywords in
+	range types.
+	* doc/recutils.texi (Scalar Field Types): Document the MIN and MAX
+	keywords in range specifications.
+
+	* torture/utils/recfix.sh (range_min_ok): New test.
+	(range_min_invalid): Likewise.
+	(range_max_ok): Likewise.
+	(range_max_invalid): Likewise.
+	(range_minmax_ok): Likewise.
+	(range_minmax_invalid): Likewise.
+
+	* src/rec-types.c (rec_type_parse_range): Support MIN and MAX
+	keywords in range definitions.
+	(rec_type_parse_range_point): New function.
+	Include limits.h.
+
+	* src/rec-utils.c (rec_parse_int): update 'ret' only if hte
+	parsing was successful.
+	(rec_parse_regexp): Likewise.
+
+	* src/rec-types.c (REC_TYPE_RANGE_DESCR_RE): Allow MIN and MAX
+	literals as well as numeric literals.
+	(REC_TYPE_RANGE_MINMAX_RE): New constant.
+	(REC_TYPE_DESCR_RE): Duplicate check for REC_TYPE_RANGE_DESCR_RE
+	removed.
+
+2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/recutils.texi (Inserting Records): basic operation of recins
 	documented.
 

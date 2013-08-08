@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +193,11 @@ rec_parse_int (const char **str, int *num)
       ret = false;
     }
 
-  *str = p;
+  if (ret)
+    {
+      *str = p;
+    }
+
   return ret;
 }
 
@@ -244,7 +248,11 @@ rec_parse_regexp (const char **str, const char *re, char **result)
       regfree (&regexp);
     }
 
-  *str = p;
+  if (ret)
+    {
+      *str = p;
+    }
+
   return ret;
 }
 

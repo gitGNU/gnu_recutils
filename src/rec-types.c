@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <regex.h>
 #include <string.h>
+#include <limits.h>
 #include <regex.h>
 #include <parse-datetime.h>
 #include <gettext.h>
@@ -144,13 +145,14 @@
   REC_TYPE_BOOL_NAME
 
 /* range MIN MAX  */
+#define REC_TYPE_RANGE_MINMAX_RE "MIN | MAX"
 #define REC_TYPE_RANGE_DESCR_RE                    \
   REC_TYPE_RANGE_NAME                              \
   REC_TYPE_BLANKS_RE                               \
-  REC_INT_RE                                       \
+  "(" REC_INT_RE "|" REC_TYPE_RANGE_MINMAX_RE ")"  \
   "("                                              \
-  REC_TYPE_ZBLANKS_RE                              \
-  REC_INT_RE                                       \
+     REC_TYPE_ZBLANKS_RE                           \
+     "(" REC_INT_RE "|" REC_TYPE_RANGE_MINMAX_RE ")"\
   ")?"
 
 /* real  */
@@ -207,7 +209,6 @@
      "|" "(" REC_TYPE_RANGE_DESCR_RE  ")"       \
      "|" "(" REC_TYPE_REAL_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_SIZE_DESCR_RE   ")"       \
-     "|" "(" REC_TYPE_RANGE_DESCR_RE  ")"       \
      "|" "(" REC_TYPE_LINE_DESCR_RE   ")"       \
      "|" "(" REC_TYPE_REGEXP_DESCR_RE ")"       \
      "|" "(" REC_TYPE_DATE_DESCR_RE   ")"       \
@@ -1626,6 +1627,27 @@ rec_type_parse_rec (const char *str, rec_type_t type)
   return p;
 }
 
+static bool
+rec_type_parse_range_point (const char **str, int *num)
+{
+  if (rec_match (*str, "^MIN"))
+    {
+      *num = INT_MIN;
+      *str += 3;
+    }
+  else if (rec_match (*str, "^MAX"))
+    {
+      *num = INT_MAX;
+      *str += 3;
+    }
+  else if (!rec_parse_int (str, num))
+    {
+      return false;
+    }
+
+  return true;
+}
+
 static const char *
 rec_type_parse_range (const char *str, rec_type_t type)
 {
@@ -1635,7 +1657,7 @@ rec_type_parse_range (const char *str, rec_type_t type)
 
   rec_skip_blanks (&p);
 
-  if (!rec_parse_int (&p, &(type->data.range[0])))
+  if (!rec_type_parse_range_point (&p, &(type->data.range[0])))
     {
       return NULL;
     }
@@ -1651,7 +1673,7 @@ rec_type_parse_range (const char *str, rec_type_t type)
     }
   else
     {
-      if (!rec_parse_int (&p, &(type->data.range[1])))
+      if (!rec_type_parse_range_point (&p, &(type->data.range[1])))
         {
           return NULL;
         }

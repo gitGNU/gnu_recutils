@@ -2241,6 +2241,19 @@ case it is implicitly zero:
 @end example
 
 @noindent
+It is possible to use the keywords @code{MIN} and @code{MAX} instead
+of a numeral literal in one or both of the points conforming the
+range.  They mean the minimum and the maximum integer value supported
+by the implementation respectively.  See the following examples:
+
+@example
+%type Negative MIN -1
+%type Positive 0 MAX
+%type AnyInt MIN MAX
+%type Impossible MAX MIN
+@end example
+
+@noindent
 Hexadecimal and octal numbers can be used to specify the limits in a
 range.  This helps to define scalar types whose natural base is not
 ten, like for example:
