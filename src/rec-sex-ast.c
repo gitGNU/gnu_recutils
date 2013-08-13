@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,5 +362,45 @@ rec_sex_ast_print (rec_sex_ast_t ast)
   rec_sex_ast_print_node (ast->top);
 }
 
+bool
+rec_sex_ast_name_p_1 (rec_sex_ast_node_t node,
+                      const char *name,
+                      size_t idx)
+{
+  size_t i = 0;
+
+  if (node)
+    {
+      if ((node->type == REC_SEX_NAME)
+          && ((node->index == -1) || (node->index < idx))
+          && (strcmp (name, node->val.name[0]) == 0))
+        {
+          return true;
+        }
+
+      for (i = 0; i < node->num_children; i++)
+        {
+          if (rec_sex_ast_name_p_1 (node->children[i], name, idx))
+            {
+              return true;
+            }
+        }
+    }
+
+  return false;
+}
+
+bool
+rec_sex_ast_name_p (rec_sex_ast_t ast,
+                    const char *name,
+                    size_t idx)
+{
+  /* Traverse the AST looking for any name node NAME[I] where I <
+     idx.  */
+
+  return rec_sex_ast_name_p_1 (ast->top,
+                               name,
+                               idx);
+}
 
 /* End of rec-sex-ast.c */

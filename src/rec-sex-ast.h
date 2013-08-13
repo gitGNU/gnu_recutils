@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +121,10 @@ void rec_sex_ast_node_fix (rec_sex_ast_node_t node, char *val);
 void rec_sex_ast_node_unfix (rec_sex_ast_node_t node);
 bool rec_sex_ast_node_fixed (rec_sex_ast_node_t node);
 char *rec_sex_ast_node_fixed_val (rec_sex_ast_node_t node);
+
+/* This function returns 'true' if there is a node on AST of type
+   REC_SEX_NAME where NAME.name == NAME and NAME.idx <= IDX.  */
+bool rec_sex_ast_name_p (rec_sex_ast_t ast, const char *name, size_t idx);
 
 #endif /* rec-sex-ast.h */
 

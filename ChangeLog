@@ -1,5 +1,15 @@
 2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: optimize the evaluation of sex expressions, avoiding
+	permutations on fields not appearing in the expression.
+	* src/rec-sex-ast.c (rec_sex_ast_name_p_1): New function.
+	(rec_sex_ast_name_p): Likewise.
+
+	* src/rec-sex.c (rec_sex_eval): Do not permute on fields not
+	featured on the selection expression.
+
+2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,torture,doc: support the usage of MIN and MAX keywords in
 	range types.
 	* doc/recutils.texi (Scalar Field Types): Document the MIN and MAX

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,8 +219,8 @@ rec_sex_eval (rec_sex_t sex,
   while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, NULL))
     {
       nf = rec_record_get_num_fields_by_name (record, rec_field_name (field));
-      if (nf > 1)
-        /* XXX.  Optimization: && (rec_sex_ast_name_p (sex->ast, field_name_str))) */
+      if ((nf > 1)
+          && (rec_sex_ast_name_p (sex->ast, rec_field_name (field), nf)))
         {
           for (j = 0; j < nf; j++)
             {
