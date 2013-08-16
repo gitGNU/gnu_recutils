@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2009-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -734,6 +734,51 @@ rec_record_append (rec_record_t dest_record,
           return;
         }
     }
+  rec_mset_iterator_free (&iter);
+}
+
+void
+rec_record_reset_marks (rec_record_t record)
+{
+  rec_mset_iterator_t iter;
+  rec_field_t field;
+
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
+    {
+      rec_field_set_mark (field, 0);
+    }
+  rec_mset_iterator_free (&iter);
+}
+
+bool
+rec_record_mark_field (rec_record_t record,
+                       rec_field_t field,
+                       int mark)
+{
+  rec_mset_iterator_t iter;
+  rec_field_t iter_field;
+
+  iter = rec_mset_iterator (record->mset);
+  while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &iter_field, NULL))
+    {
+      if (field == iter_field)
+        {
+          rec_field_set_mark (field, mark);
+          rec_mset_iterator_free (&iter);
+          return true;
+        }
+    }
+  rec_mset_iterator_free (&iter);
+
+  return false;
+}
+
+int
+rec_record_field_mark (rec_record_t record,
+                       rec_field_t field)
+{
+  return rec_field_mark (field);
 }
 
 /*

@@ -812,6 +812,12 @@ const char *rec_field_char_location_str (rec_field_t field);
 
 bool rec_field_set_char_location (rec_field_t field, size_t location);
 
+/* Get/set the mark of a given field, which is an integer associated
+   to the field ADT.  */
+
+void rec_field_set_mark (rec_field_t field, int mark);
+int rec_field_mark (rec_field_t field);
+
 /********************* Transformations in fields ********************/
 
 /* Get the textual representation of a field and make it a comment
@@ -1023,6 +1029,24 @@ void rec_record_uniq (rec_record_t record);
    SRC_RECORD to DEST_RECORD.  */
 
 void rec_record_append (rec_record_t dest_record, rec_record_t src_record);
+
+/********************* Field Marks in records **********************/
+
+/* Reset the marks of all fields in a given records, setting all the
+   marks to 0.  */
+
+void rec_record_reset_marks (rec_record_t record);
+
+/* Set the mark of a given field.  Return true if the field is marked
+   as desired.  Return false if the field is not stored in the
+   record.  */
+
+bool rec_record_mark_field (rec_record_t record, rec_field_t field, int mark);
+
+/* Get the mark associated to a field in a record.  If the given field
+   is not found in the record then return 0.  */
+
+int rec_record_field_mark (rec_record_t record, rec_field_t field);
 
 /*
  * RECORD SETS

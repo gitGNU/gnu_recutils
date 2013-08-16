@@ -1,3 +1,18 @@
+2013-08-16  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: support for field marks in records.
+	* src/rec-record.c (rec_record_reset_marks): New function.
+	(rec_record_mark_field): Likewise.
+	(rec_record_field_mark): Likewise.
+
+	* src/rec-field.c (struct rec_field_s): New attribute 'mark' for
+	fields.
+	(rec_field_dup): Field mark.
+	(rec_field_set_mark): New function.
+	(rec_field_mark): Likewise.
+
+	* src/rec.h: Prototypes for the new field marks related functions.
+
 2013-08-15  Giuseppe Scrivano  <gscrivan@redhat.com>
 
 	* src/rec-aggregate.c (rec_aggregate_std_count): Fix formatting string.

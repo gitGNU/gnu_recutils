@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2009-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,10 @@ struct rec_field_s
   char *location_str;
   size_t char_location;
   char *char_location_str;
+
+  /* Field marks.  */
+
+  int mark;
 };
 
 /* Static functions defined below.  */
@@ -131,6 +135,7 @@ rec_field_dup (rec_field_t field)
     {
       new_field->location = field->location;
       new_field->char_location = field->char_location;
+      new_field->mark = field->mark;
 
       if (field->source)
         {
@@ -296,6 +301,18 @@ rec_field_char_location_str (rec_field_t field)
     }
   
   return res;
+}
+
+void
+rec_field_set_mark (rec_field_t field, int mark)
+{
+  field->mark = mark;
+}
+
+int
+rec_field_mark (rec_field_t field)
+{
+  return field->mark;
 }
 
 /*
