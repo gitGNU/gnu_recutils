@@ -992,8 +992,6 @@ rec_rset_record_compare_fn (void *data1,
   rec_rset_t rset                  = NULL;
   rec_record_t record1             = NULL;
   rec_record_t record2             = NULL;
-  rec_field_t field1               = NULL;
-  rec_field_t field2               = NULL;
   int type_comparison              = 0;
 
   /* If elem2 is a comment then elem1 > elem2.  */
@@ -1336,7 +1334,6 @@ rec_rset_update_field_props (rec_rset_t rset)
                  entries are just ignored.  */
               
               const char *field_value = rec_field_value (field);
-              char *type_name = NULL;
 
               rec_fex_t fex = rec_fex_new (field_value, REC_FEX_SIMPLE);
               if (fex)

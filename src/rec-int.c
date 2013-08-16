@@ -244,13 +244,11 @@ rec_int_check_field_type (rec_db_t db,
                           rec_buf_t errors)
 {
   bool res = true;
-  const char *field_name = NULL;
   rec_type_t type;
   char *errors_str;
 
   res = true;
 
-  field_name = rec_field_name (field);
 
   /* Get the proper type to check 'field' with, checking with the type
      from the type registry of 'rset', if any.  */

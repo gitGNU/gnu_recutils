@@ -1,3 +1,28 @@
+2013-08-15  Giuseppe Scrivano  <gscrivan@redhat.com>
+
+	* src/rec-aggregate.c (rec_aggregate_std_count): Fix formatting string.
+	(rec_aggregate_std_avg): Likewise.
+	(REC_AGGREGATE_ACCUM_FUNC): Likewise.
+	* src/rec-fex.c (rec_fex_parse_str_simple): Wrap assignment in if
+	statement in parentheses.
+	* src/rec-sex-lex.l (top): Specify options header-file, noinput and
+	nounput.
+	(rec_sex_lex_extract_subname): Remove unused variable `res'.
+	* src/rec-sex-tab.y: Include "rec-sex-lex.h".
+	* src/rec-sex-ast.c (rec_sex_ast_print_node): Use name[0] to access the
+	name.
+	* src/rec-sex-parser.c: Include "rec-sex-lex.h" and "rec-sex-tab.h".
+	* src/rec-sex-lex.l: Generate the header file "rec-sex-lex.h".
+	* src/rec-int.c (rec_int_check_field_type): Removed unused variable
+	`field_name'.
+	* src/rec-db.c (rec_db_query): Removed unused variable `selected'.
+	(rec_db_query): Removed unused variable `n_rset'.
+	Remove declaration for the static function `rec_db_set_act_setadd'.
+	* src/rec-rset.c (rec_rset_record_compare_fn): Removed unused variables
+	`field1' and `field2'.
+	(rec_rset_update_field_props): Removed unused variable `type_name'.
+	* src/rec-mset.c (rec_mset_elem_init): Remove unused function.
+
 2013-08-08  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: optimize the evaluation of sex expressions, avoiding

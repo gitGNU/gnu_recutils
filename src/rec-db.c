@@ -69,7 +69,6 @@ static bool rec_db_index_p (size_t *index, size_t num);
 static bool rec_db_set_act_rename (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool rename_descriptor, const char *arg);
 static bool rec_db_set_act_set (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool xxx, const char *arg);
 static bool rec_db_set_act_add (rec_rset_t rset, rec_record_t record, rec_fex_t fex, const char *arg);
-static bool rec_db_set_act_setadd (rec_rset_t rset, rec_record_t record, rec_fex_t fex, const char *arg);
 static bool rec_db_set_act_delete (rec_rset_t rset, rec_record_t record, rec_fex_t fex, bool comment_out);
 
 static rec_rset_t rec_db_join (rec_db_t db, const char *type1, const char *field, const char *type2);
@@ -280,7 +279,6 @@ rec_db_query (rec_db_t     db,
 {
   rec_rset_t res = NULL;
   rec_rset_t rset = NULL;
-  size_t n_rset = 0;
 
   /* Create a new, empty, record set, that will contain the contents
      of the selection.  */
@@ -436,7 +434,6 @@ rec_db_query (rec_db_t     db,
       while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void **) &record, NULL))
         {
           rec_record_t res_record;
-          bool selected = false;
           num_rec++;
         
           /* Determine whether we must skip this record.  */

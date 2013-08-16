@@ -38,6 +38,8 @@
 
   #include <rec-sex-ast.h>
   #include <rec-sex-parser.h>
+  #include "rec-sex-tab.h"
+  /*  #include "rec-sex-lex.h" */
 
   void sexerror (rec_sex_parser_t context, const char *err)
   {

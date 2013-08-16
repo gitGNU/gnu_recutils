@@ -555,7 +555,7 @@ rec_fex_parse_str_simple (rec_fex_t new,
     {
       if (strlen (elem_str) > 0)
         {
-          if (elem = malloc (sizeof (struct rec_fex_elem_s)))
+          if ((elem = malloc (sizeof (struct rec_fex_elem_s))))
             {
               const char *p = elem_str;
 

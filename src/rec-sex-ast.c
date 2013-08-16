@@ -265,7 +265,7 @@ rec_sex_ast_print_node (rec_sex_ast_node_t node)
     }
   if (node->type == REC_SEX_NAME)
     {
-      printf("value: %s\n", node->val.name);
+      printf("value: %s\n", node->val.name[0]);
     }
   if (node->type == REC_SEX_STR)
     {

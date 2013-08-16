@@ -254,7 +254,7 @@ rec_aggregate_std_count (rec_rset_t rset,
      will be returned by this function below to signal the
      end-of-memory condition.  */
       
-  asprintf (&result, "%ld", count);
+  asprintf (&result, "%zu", count);
   return result;
 }
 
@@ -294,7 +294,7 @@ rec_aggregate_std_avg (rec_rset_t rset,
       
   if (avg == floor (avg))
     {
-      asprintf (&result, "%ld", (size_t) avg);      
+      asprintf (&result, "%zu", (size_t) avg);
     }
   else
     {
@@ -365,7 +365,7 @@ rec_aggregate_std_avg_record (rec_record_t record,
                                                                         \
   if (val == floor (val))                                               \
     {                                                                   \
-      asprintf (&result, "%ld", (size_t) val);                          \
+      asprintf (&result, "%zu", (size_t) val);                          \
     }                                                                   \
   else                                                                  \
     {                                                                   \

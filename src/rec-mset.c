@@ -73,7 +73,6 @@ struct rec_mset_s
  */
 
 static void rec_mset_init (rec_mset_t mset);
-static void rec_mset_elem_init (rec_mset_elem_t elem);
 
 static bool rec_mset_elem_equal_fn (const void *e1,
                                     const void *e2);
@@ -778,16 +777,6 @@ rec_mset_init (rec_mset_t mset)
      initialized with real values.  */
 
   memset (mset, 0 /* NULL */, sizeof (struct rec_mset_s));
-}
-
-static void
-rec_mset_elem_init (rec_mset_elem_t elem)
-{
-  /* Initialize the mset_elem structure so it can be safely passed to
-     rec_mset_elem_destroy even if its contents are not completely
-     initialized with real values.  */
-
-  memset (elem, 0 /* NULL */, sizeof (struct rec_mset_elem_s));
 }
 
 static bool

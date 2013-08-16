@@ -30,6 +30,8 @@
 #include <stdio.h>
 
 #include <rec-sex-parser.h>
+#include "rec-sex-tab.h"
+/*#include "rec-sex-lex.h" */
 
 /*
  * Data types
