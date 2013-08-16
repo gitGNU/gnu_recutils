@@ -1,5 +1,11 @@
 2013-08-16  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: optimize the sex evaluator.
+	* src/rec-sex.c (rec_sex_eval): Optimize the evaluator, avoiding
+	discarding the same field twice.
+
+2013-08-16  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: support for field marks in records.
 	* src/rec-record.c (rec_record_reset_marks): New function.
 	(rec_record_mark_field): Likewise.

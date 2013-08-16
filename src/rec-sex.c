@@ -215,11 +215,14 @@ rec_sex_eval (rec_sex_t sex,
       goto exit;
     }
 
+  rec_record_reset_marks (record);
+
   iter = rec_mset_iterator (rec_record_mset (record));
   while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void**) &field, NULL))
     {
       nf = rec_record_get_num_fields_by_name (record, rec_field_name (field));
       if ((nf > 1)
+          && (rec_record_field_mark (record, field) == 0)
           && (rec_sex_ast_name_p (sex->ast, rec_field_name (field), nf)))
         {
           for (j = 0; j < nf; j++)
@@ -231,6 +234,8 @@ rec_sex_eval (rec_sex_t sex,
                 {
                   rec_record_destroy (wrec);
                 }
+
+              rec_record_mark_field (record, wfield, 1);
 
               wrec = rec_record_dup (record);
               rec_record_remove_field_by_name (wrec,
