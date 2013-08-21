@@ -1,3 +1,7 @@
+2013-08-21  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (Replacing Records With recins): New section.
+
 2013-08-16  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: optimize the sex evaluator.

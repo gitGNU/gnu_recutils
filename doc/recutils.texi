@@ -1843,7 +1843,7 @@ difficulties:
 It can be tedious to manually encode the several lines.
 @item Data integrity.
 It is difficult to manually maintain the integrity fo the data stored
-in the database.
+in the data base.
 @item Counters and timestamps.
 Some record sets feature auto-generated fields, which are commonly
 used to implement counters and time-stamps.  @xref{Auto-Generated
@@ -1857,11 +1857,10 @@ another program.  The following subsections discuss several aspects of
 using this utility.
 
 @menu
-* Adding Records With recins:: Basics of the @command{recins} utility.
-@c XXX * Adding records with encrypted fields::
+* Adding Records With recins::    Basics of the @command{recins} utility.
+* Replacing Records With recins:: Substituing records in a file.
 * Adding Anonymous Records:: Inserting or replacing records with no
                               type.
-@c XXX * Replacing Records:: 
 @end menu
 
 @node Adding Records With recins
@@ -1932,6 +1931,46 @@ aborted.
 
 Note that at this moment it is not possible to add new records
 containing comments.
+
+@node Replacing Records With recins
+@subsection Replacing Records With recins
+
+@command{recins} can also be used to replace existing records in a
+database with a provided record.  This is done by specifying some
+criteria selecting the record (or records) to be replaced.
+
+Consider for example the following command applied to our contacts
+database:
+
+@example
+$ recins -e "Email = 'foo@@bar.baz'" -f Name -v "Mr. Foo" -f Email -v \
+  "new@@bar.baz" contacts.rec
+@end example
+
+@noindent
+The contact featuring an email @code{foo@@bar.baz} gets replaced with
+the following record:
+
+@example
+Name: Mr. Foo
+Email: new@@bar.baz
+@end example
+
+The records to be replaced can also be specified by index, or by a
+range of indexes.  For example, the following command replaces the
+first, second and third records in a database with dummy records:
+
+@example
+$ recins -n 0,1-2 -f Dummy -v XXX foo.rec
+$ cat foo.rec
+Dummy: XXX
+
+Dummy: XXX
+
+Dummy: XXX
+
+... Other records ...
+@end example
 
 @node Adding Anonymous Records
 @subsection Adding Anonymous Records
