@@ -1,5 +1,12 @@
 2013-08-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: empty stub sections for the bash bulitins.
+	* doc/recutils.texi (Bash Builtins): New stub chapter.
+	(readrec): Likewise.
+	(testrec): Likewise.
+
+2013-08-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	bash: readrec builtin.
 	* Makefile.am (SUBDIRS): Recurse to the bash/ subdirectory.
 

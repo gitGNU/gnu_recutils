@@ -101,6 +101,7 @@ Advanced Topics
 * Encryption::               Storing sensitive information.
 * Generating Reports::       Formatted output with templates.
 * Interoperability::         Importing and exporting to other formats.
+* Bash Builtins::            Boosting the recutils in the shell.
 
 Reference Material
 * Invoking the Utilities::   Exhaustive list of command line arguments.
@@ -202,6 +203,11 @@ Interoperability
 
 * CSV Files::                Converting recfiles to/from csv files.
 * Importing MDB Files::      Importing MS Access Databases.
+
+Bash Builtins
+
+* readrec::                  Iterating over records in the shell.
+* testrec::                  Selection expressions in shell conditionals.
 
 Invoking the Utilities
 
@@ -3863,6 +3869,26 @@ and for exporting data from recfiles so that it can be used in other application
 * CSV Files::                Converting recfiles to/from csv files.
 * Importing MDB Files::      Importing MS Access Databases.
 @end menu
+
+@node Bash Builtins
+@chapter Bash Builtins
+
+XXX
+
+@menu
+* readrec::                  Iterating over records in the shell.
+* testrec::                  Selection expressions in shell conditionals.
+@end menu
+
+@node readrec
+@section readrec
+
+XXX
+
+@node testrec
+@section testrec
+
+XXX
 
 @node CSV Files
 @section CSV Files
