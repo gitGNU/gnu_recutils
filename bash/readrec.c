@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2013-08-24 14:57:34 jemarch"
+/* -*- mode: C -*- Time-stamp: "2013-08-24 16:01:44 jemarch"
  *
  *       File:         readrec.c
  *       Date:         Fri Aug 23 18:38:08 2013
@@ -70,7 +70,6 @@ readrec_builtin (WORD_LIST *list)
           return EXIT_FAILURE;
         }
 
-      printf ("FOO\n");
       builtin_error (_("parse error reading a record"));
       return EXECUTION_FAILURE;
     }
