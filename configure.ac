@@ -3,7 +3,7 @@ dnl
 dnl Please process this file with autoconf to get a 'configure'
 dnl script.
 
-dnl Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi
+dnl Copyright (C) 2009-2013 Jose E. Marchesi
 
 dnl This program is free software: you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
@@ -150,6 +150,35 @@ AM_CONDITIONAL([COMPILE_MDB2REC],
 AM_CONDITIONAL([REMOTE_DESCRIPTORS], [test "x$have_curl" = "xyes"])
 AM_CONDITIONAL([UUID_TYPE], [test "x$have_uuid" = "xyes"])
 
+dnl Bash builtins
+
+dnl It would be much better to use AC_CHECK_HEADER([bash/config.h]) instead
+dnl of a fixed value like /usr/include/bash, but then it would be difficult
+dnl to set a proper search path for the preprocessor, since the bash
+dnl headers which are needed to compile loadable builtins are not
+dnl very well designed.
+
+BASH_HEADERS=/usr/include/bash
+AC_ARG_WITH([bash-headers],
+            AS_HELP_STRING([--with-bash-headers],
+                           [location of the bash header files (default is /usr/include/bash)]),
+            [BASH_HEADERS=$withval],)
+
+if test -f ${BASH_HEADERS}/config.h; then
+   AC_SUBST([BASH_HEADERS])
+   bash_headers_available=yes
+else
+   bash_headers_available=no
+fi
+
+AC_ARG_ENABLE([bash-builtins],
+              AS_HELP_STRING([--enable-bash-builtins],
+                             [Build the recutils bash builtins (default is YES)]),
+              [bash_builtins_enabled=$enableval], [bash_builtins_enabled=yes])
+
+AM_CONDITIONAL([BASH_BUILTINS],
+               [test "x$bash_headers_available" = "xyes" && test "x$bash_builtins_enabled" = "xyes"])
+
 dnl Check for an Algol 68 compiler
 
 AC_ARG_ENABLE([algol68],
@@ -191,6 +220,7 @@ AC_CONFIG_FILES(Makefile
                 libcsv/Makefile
                 src/Makefile
                 utils/Makefile
+                bash/Makefile
                 doc/Makefile
                 po/Makefile.in
                 torture/Makefile
@@ -202,6 +232,11 @@ AC_CONFIG_FILES(Makefile
 AC_OUTPUT
 
 dnl Report warnings
+
+if test "x$have_check" = "xno"; then
+   echo "warning: libcheck was not found in the system."
+   echo "warning: unit tests wont be compiled and executed upon make check."
+fi
 
 if test "x$have_mdb" = "xno"; then
    echo "warning: libmdb was not found in the system."
@@ -219,6 +254,10 @@ fi
 
 if test "x$have_uuid" = "xno"; then
    echo "warning: building recutils without support for uuid types."
+fi
+
+if test "x$bash_headers_available" = "xno" || test "x$bash_builtins_enabled" = "xno"; then
+   echo "warning: not building the recutils bash builtins."
 fi
 
 dnl End of configure.ac

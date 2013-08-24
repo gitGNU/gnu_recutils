@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = lib libcsv src utils doc po man torture etc
+SUBDIRS = lib libcsv src utils bash doc po man torture etc
 
 if BUILD_A68
    SUBDIRS += algol68
