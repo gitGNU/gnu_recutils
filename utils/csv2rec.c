@@ -57,10 +57,10 @@ struct csv2rec_ctx
   size_t num_fields;
   size_t lineno;
 
-#define MAX_FIELDS 256
+#define ALLOC_FIELDS 256
   bool header_p;
   size_t num_field_names;
-  char *field_names[MAX_FIELDS];
+  char **field_names;
 };
 
 /*
@@ -208,12 +208,10 @@ field_cb (void *s, size_t len, void *data)
   if (ctx->header_p)
     {
       /* Add a new field name to ctx.field_names.  */
-      ctx->num_field_names++;
-      if (ctx->num_field_names == MAX_FIELDS)
-        {
-          recutl_fatal (_("reached maximum number of fields: %d\n"),
-                        ctx->num_field_names);
-        }
+
+      if ((ctx->num_field_names % ALLOC_FIELDS) == 0)
+        ctx->field_names =
+          realloc (ctx->field_names, ((ctx->num_field_names / ALLOC_FIELDS) + 1) * (sizeof(char *) * ALLOC_FIELDS));
 
       /* Normalize the name: spaces and tabs are turned into dashes
          '_'.  */
@@ -232,7 +230,7 @@ field_cb (void *s, size_t len, void *data)
           recutl_fatal (_("invalid field name '%s' in header\n"),
                         str);
         }
-      ctx->field_names[ctx->num_field_names] = str;
+      ctx->field_names[ctx->num_field_names++] = str;
     }
   else
     {
@@ -344,7 +342,8 @@ process_csv (void)
   ctx.rset = NULL;
   ctx.record = NULL;
   ctx.header_p = true;
-  ctx.num_field_names = -1;
+  ctx.field_names = NULL;
+  ctx.num_field_names = 0;
   ctx.num_fields = 0;
   ctx.lineno = 0;
 

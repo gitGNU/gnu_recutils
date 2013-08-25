@@ -1,5 +1,14 @@
 2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	csv2rec: remove hard limit on the number of fields in the input
+	csv file.
+	* utils/csv2rec.c (MAX_FIELDS): Removed.
+	(process_csv): Initialize ctx.field_names to NULL.
+	(field_cb): Re-allocate memory for fields when needed, in blocks
+	with size ALLOC_FIELDS.
+
+2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* bash/readrec.c (readrec_builtin): Define variables after fields
 	in the read records.
 
