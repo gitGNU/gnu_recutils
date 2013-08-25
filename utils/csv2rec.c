@@ -241,9 +241,7 @@ field_cb (void *s, size_t len, void *data)
           /* Create a new record.  */
           ctx->record = rec_record_new ();
           if (!ctx->record)
-            {
-              recutl_fatal (_("out of memory\n"));
-            }
+            recutl_out_of_memory ();
         }
       
       if (!csv2rec_omit_empty || (strlen(str) > 0))
@@ -262,9 +260,7 @@ field_cb (void *s, size_t len, void *data)
                              _("%s: %d: this line contains %d fields, but %d header fields were read\n"),
                              source,
                              ctx->lineno, ctx->num_field_names, ctx->num_fields))
-                {
-                  recutl_fatal ("out of memory\n");
-                }
+                recutl_out_of_memory ();
 
               fprintf (stderr, errmsg);
               exit (EXIT_FAILURE);
@@ -296,9 +292,7 @@ record_cb (int c, void *data)
           /* Create a new record set.  */
           ctx->rset = rec_rset_new ();
           if (!ctx->rset)
-            {
-              recutl_fatal (_("out of memory\n"));
-            }
+            recutl_out_of_memory ();
 
           /* Add a type, if needed.  */
           if (csv2rec_record_type)
@@ -311,9 +305,7 @@ record_cb (int c, void *data)
             {
               ctx->db = rec_db_new ();
               if (!ctx->db)
-                {
-                  recutl_fatal (_("out of memory\n"));
-                }
+                recutl_out_of_memory ();
             }
           rec_db_insert_rset (ctx->db, ctx->rset, rec_db_size (ctx->db));
         }

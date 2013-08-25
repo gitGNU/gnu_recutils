@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2011-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,16 +195,12 @@ rec2csv_generate_csv (rec_rset_t rset,
           if (asprintf (&tmp, "%s_%d",
                         field_name,
                         rec_fex_elem_min (fex_elem) + 1) == -1)
-            {
-              recutl_fatal (_("out of memory"));
-            }
+            recutl_out_of_memory ();
         }
       else
         {
           if (asprintf (&tmp, "%s", field_name) == -1)
-            {
-              recutl_fatal (_("out of memory"));
-            }
+            recutl_out_of_memory ();
         }
 
       csv_fwrite (stdout, tmp, strlen(tmp));
@@ -306,9 +302,7 @@ rec2csv_process_data (rec_db_t db)
           /* Process this record set.  */
 
           if (!rec_rset_sort (rset, rec2csv_sort_by_fields))
-            {
-              recutl_fatal ("out of memory\n");
-            }
+            recutl_out_of_memory ();
 
           /* Build the fields that will appear in the row. */
           row_fields = rec2csv_determine_fields (rset);

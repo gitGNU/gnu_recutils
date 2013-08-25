@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -332,10 +332,7 @@ recset_process_actions (rec_db_t db)
                    recset_action,
                    recset_value,
                    flags))
-    {
-      recutl_fatal ("out of memory\n");
-    }
-
+    recutl_out_of_memory ();
   
   /* Check the integrity of the resulting database.  */
 

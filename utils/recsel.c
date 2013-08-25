@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -474,9 +474,7 @@ recsel_process_data (rec_db_t db)
                          recutl_sort_by_fields,
                          flags);
     if (!rset)
-      {
-        recutl_fatal (_("out of memory\n"));
-      }
+      recutl_out_of_memory ();
   }
 
   if (recsel_count)

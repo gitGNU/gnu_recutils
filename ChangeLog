@@ -1,5 +1,25 @@
 2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: avoid the replication of out-of-memory string literals.
+	* utils/csv2rec.c (field_cb): Use recutl_out_of_memory.
+	(record_cb): Likewise.
+	(record_cb): Likewise.
+	* utils/recsel.c (recsel_process_data): Likewise.
+	* utils/recins.c (recins_add_new_record): Likewise.
+	(recins_add_new_record): Likewise.
+	* utils/recfix.c (recfix_do_sort): Likewise.
+	(recfix_do_auto): Likewise.
+	* utils/recdel.c (recdel_delete_records): Likewise.
+	* utils/rec2csv.c (rec2csv_generate_csv): Likewise.
+	(rec2csv_generate_csv): Likewise.
+	(rec2csv_process_data): Likewise.
+	* utils/mdb2rec.c (process_table): Likewise.
+	(process_mdb): Likewise.
+
+	* utils/recutl.c (recutl_out_of_memory): New function.
+
+2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: documentation for the readrec bash built-in.
 	* doc/recutils.texi (Bash Builtins): Written.
 	(readrec): Written.
@@ -7667,7 +7687,7 @@
 
 	* Begin of the change log.
 
-Copyright 2009, 2010, 2011, 2012 Jose E. Marchesi
+Copyright 2009-2013 Jose E. Marchesi
 
 Copying and distribution of this file, with or without modification, are
 permitted in any medium without royalty provided the copyright notice

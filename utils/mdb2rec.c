@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,9 +306,7 @@ process_table (MdbCatalogEntry *entry)
   /* Create the record set.  */
   rset = rec_rset_new ();
   if (!rset)
-    {
-      recutl_fatal (_("out of memory\n"));
-    }
+    recutl_out_of_memory ();
 
   /* Create the record descriptor and add the %rec: entry.  */
   field_name = rec_field_name_normalise (table_name);
@@ -419,9 +417,7 @@ process_table (MdbCatalogEntry *entry)
     {
       record = rec_record_new ();
       if (!record)
-        {
-          recutl_fatal (_("out of memory\n"));
-        }
+        recutl_out_of_memory ();
 
       for (i = 0; i < table->num_cols; i++)
         {
@@ -474,9 +470,7 @@ process_mdb (void)
   /* Create the rec database.  */
   db = rec_db_new ();
   if (!db)
-    {
-      recutl_fatal (_("out of memory"));
-    }
+    recutl_out_of_memory ();
 
   /* Initialize libmdb and open the input file.  */
   mdb_init();

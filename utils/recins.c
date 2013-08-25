@@ -329,9 +329,7 @@ recins_add_new_record (rec_db_t db)
           {
             confidential_fields = rec_rset_confidential (rset);
             if (!confidential_fields)
-              {
-                recutl_fatal ("out of memory\n");
-              }
+              recutl_out_of_memory ();
             
             if (rec_fex_size (confidential_fields) > 0)
               {
@@ -380,9 +378,7 @@ recins_add_new_record (rec_db_t db)
                       recins_password,
                       recins_record,
                       flags))
-    {
-      recutl_fatal ("out of memory\n");
-    }
+    recutl_out_of_memory ();
 
   /* Check for the integrity of the resulting database.  */
 

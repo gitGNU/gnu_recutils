@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,6 +193,12 @@ recutl_fatal (const char *fmt, ...)
   va_end (ap);
 
   exit (EXIT_FAILURE);
+}
+
+void
+recutl_out_of_memory (void)
+{
+  recutl_fatal (_("out of memory\n"));
 }
 
 void

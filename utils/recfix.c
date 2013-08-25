@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -394,9 +394,7 @@ recfix_do_sort ()
     {
       rset = rec_db_get_rset (db, n_rset);
       if (!rec_rset_sort (rset, NULL))
-        {
-          recutl_fatal ("out of memory\n");
-        }
+        recutl_out_of_memory ();
     }
   
   if (!recfix_check_database (db))
@@ -514,9 +512,7 @@ recfix_do_auto ()
       while (rec_mset_iterator_next (&iter, MSET_RECORD, (const void**) &record, NULL))
         {
           if (!rec_rset_add_auto_fields (rset, record))
-            {
-              recutl_fatal ("out of memory\n");
-            }
+            recutl_out_of_memory ();
         }
 
       rec_mset_iterator_free (&iter);

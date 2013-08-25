@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2009-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,9 +159,7 @@ recdel_delete_records (rec_db_t db)
                         recutl_quick_str,
                         recutl_random,
                         flags))
-      {
-        recutl_fatal ("out of memory\n");
-      }
+      recutl_out_of_memory ();
   }
 
 

@@ -220,6 +220,7 @@ void recutl_print_help_record_selection (void);
 void recutl_error (const char *fmt, ...);
 void recutl_warning (const char *fmt, ...);
 void recutl_fatal (const char *fmt, ...);
+void recutl_out_of_memory (void);
 
 bool recutl_parse_db_from_file (FILE *in, char *file_name, rec_db_t db);
 rec_db_t recutl_build_db (int argc, char **argv);
