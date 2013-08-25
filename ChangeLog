@@ -1,5 +1,11 @@
 2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: documentation for the readrec bash built-in.
+	* doc/recutils.texi (Bash Builtins): Written.
+	(readrec): Written.
+
+2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: remove hard limit on the number of types registered in a
 	types registry.
 	* src/rec-types.c (REC_TYPE_REG_ALLOC_TYPES): New constant.
