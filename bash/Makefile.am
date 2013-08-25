@@ -21,11 +21,17 @@ if BASH_BUILTINS
 COMMON_CPPFLAGS = -I$(top_srcdir)/src -DHAVE_CONFIG_H \
                   -I$(BASH_HEADERS) -I$(BASH_HEADERS)/lib -I$(BASH_HEADERS)/builtins
 
-lib_LTLIBRARIES = readrec.la
+lib_LTLIBRARIES = readrec.la testrec.la
+
+AM_CPPFLAGS = $(COMMON_CPPFLAGS)
+
 readrec_la_LDFLAGS = -module
 readrec_la_LIBADD = -lrec
-readrec_la_CPPFLAGS = $(COMMON_CPPFLAGS)
 readrec_la_SOURCES = readrec.c
+
+testrec_la_LDFLAGS = -module
+testrec_la_LIBADD = -lrec
+testrec_la_SOURCES = testrec.c
 
 endif
 

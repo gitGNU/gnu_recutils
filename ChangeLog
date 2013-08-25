@@ -1,5 +1,14 @@
 2013-08-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* bash/Makefile.am (testrec_la_LDFLAGS): Define.
+	(testrec_la_LIBADD): Likewise.
+	(testrec_la_SOURCES): Likewise.
+
+	* bash/testrec.c: New file.
+	(testrec_builtin): New function.
+
+2013-08-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: empty stub sections for the bash bulitins.
 	* doc/recutils.texi (Bash Builtins): New stub chapter.
 	(readrec): Likewise.
