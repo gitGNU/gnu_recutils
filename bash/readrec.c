@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2013-08-24 16:13:31 jemarch"
+/* -*- mode: C -*- Time-stamp: "2013-08-25 17:46:42 jemarch"
  *
  *       File:         readrec.c
  *       Date:         Fri Aug 23 18:38:08 2013
@@ -34,6 +34,7 @@
 
 #include "builtins.h"
 #include "shell.h"
+#include "common.h"
 #include "builtins/bashgetopt.h"
 
 /* The function implementing the builtin.  It uses internal_getopt to
@@ -83,6 +84,47 @@ readrec_builtin (WORD_LIST *list)
     var = bind_variable ("REPLY_REC", record_str_dequoted, 0);
     VUNSETATTR (var, att_invisible);
     xfree (record_str_dequoted);
+
+    /* Set the environment variables for the fields.  */
+    {
+      rec_field_t field = NULL;
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
+
+      //      rec_record_reset_marks (record);
+      while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
+        {
+          char *var_name = rec_field_name (field);
+          size_t num_fields = rec_record_get_num_fields_by_name (record, var_name);
+          
+          //          if (rec_record_field_mark (record, field))
+          //            continue;
+
+#if defined (ARRAY_VARS) 
+          if (num_fields > 1)
+            {
+              /* In case several fields share the same field name, create
+                 an array variable containing all the values.  */
+
+              size_t i = 0;
+              for (; i < num_fields; i++)
+                {
+                  //                  rec_record_mark_field (record, field, true);
+                  field = rec_record_get_field_by_name (record, var_name, i);
+                  var = bind_array_variable (var_name, i, rec_field_value (field), 0);
+                  VUNSETATTR (var, att_invisible);
+                }
+            }
+          else
+            {
+              /* Bind a normal variable.  */
+              char *var_value = rec_field_value (field);
+              var = bind_variable (var_name, var_value, 0);
+              VUNSETATTR (var, att_invisible);
+            }
+#endif /* ARRAY_VARS */
+        }
+      rec_mset_iterator_free (&iter);
+    }
   }
 
   return EXECUTION_SUCCESS;
@@ -94,8 +136,8 @@ readrec_builtin (WORD_LIST *list)
 char *readrec_doc[] = {
   "Read a recutils record from the standard input.",
   "",
-  "Reads a recutils record from the standard input.  The record is stored\n\
-  in the REPLY_REC variable.\n\
+  "The read record is stored in the REPLY_REC variable.  Additional variables\n\
+are set named after the fields in the record.\n\
 \n\
 Exit Status:\n\
 The return code is zero, unless end-of-file is encountered.\n",

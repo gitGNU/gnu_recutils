@@ -1,3 +1,8 @@
+2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* bash/readrec.c (readrec_builtin): Define variables after fields
+	in the read records.
+
 2013-08-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* bash/Makefile.am (testrec_la_LDFLAGS): Define.
