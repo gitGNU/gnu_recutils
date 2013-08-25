@@ -3889,6 +3889,17 @@ the @command{help} command.  For example:
 $ help readrec
 @end example
 
+If you installed recutils using a binary package in a GNU/Linux
+distribution, odds are that the built-in commands described in this
+chapter are already available to you.  Otherwise (you get a ``command
+not found'' or similar error) you may have to register the built-in
+commands into your bash.  This is very easy using the @command{enable}
+bash command.  The registering command for readrec would be:
+
+@example
+$ enable readrec.so readrec
+@end example
+
 @menu
 * readrec::                  Exporting the contents of records to the shell.
 * testrec::                  Selection expressions in shell conditionals.
