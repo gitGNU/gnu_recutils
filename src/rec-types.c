@@ -231,6 +231,9 @@ struct rec_type_s
   enum rec_type_kind_e kind;  /* Kind of the type.  */
   char *expr;                 /* Copy of the type descriptor used to
                                  create the type.  */
+  size_t size;                /* Used for enumerations: number of
+                                 names.  */
+
   union
   {
     size_t max_size;          /* Size of string.  */
@@ -238,8 +241,8 @@ struct rec_type_s
     regex_t regexp;           /* Regular expression.  */
     char *recname;            /* Record.  */
 
-#define REC_ENUM_MAX_NAMES 50
-    char *names[REC_ENUM_MAX_NAMES];   /* Names in enumeration.  */
+#define REC_ENUM_ALLOC_NAMES 50
+    char **names;             /* Names in enumeration.  */
   } data;
 };
 
@@ -358,6 +361,7 @@ rec_type_new (const char *str)
       goto exit;
     }
   new->name = NULL; /* Newly created types are anonyous. */
+  new->size = 0;
 
   rec_skip_blanks (&p);
 
@@ -680,7 +684,7 @@ rec_type_destroy (rec_type_t type)
     {
       if (type->kind == REC_TYPE_ENUM)
         {
-          for (i = 0; type->data.names[i]; i++)
+          for (i = 0; i < type->size; i++)
             {
               free (type->data.names[i]);
             }
@@ -878,14 +882,11 @@ rec_type_equal_p (rec_type_t type1,
         }
       else if (type1->kind == REC_TYPE_ENUM)
         {
-          i = 0;
-          while (type1->data.names[i])
+          for (i = 0; i < type1->size; i++)
             {
-              ret = (type2->data.names[i]
+              ret = ((i < type2->size)
                      && (strcmp (type1->data.names[i],
                                  type2->data.names[i]) == 0));
-
-              i++;
             }
         }
       else if (type1->kind == REC_TYPE_REGEXP)
@@ -1420,16 +1421,9 @@ rec_type_check_enum (rec_type_t type,
       name[p - b] = '\0';
       
       /* Check for the name in the enum types.  */
-      i = 0;
-      while (type->data.names[i])
-        {
-          if (strcmp (name, type->data.names[i]) == 0)
-            {
-              return true;
-            }
-          
-          i++;
-        }
+      for (i = 0; i < type->size; i++)
+        if (strcmp (name, type->data.names[i]) == 0)
+          return true;
     }
 
   if (errors)
@@ -1469,21 +1463,22 @@ static const char *
 rec_type_parse_enum (const char *str, rec_type_t type)
 {
   const char *p;
-  size_t i, j;
+  size_t i;
   
   p = str;
 
-  for (i = 0; i < REC_ENUM_MAX_NAMES; i++)
-    {
-      type->data.names[i] = NULL;
-    }
+  type->size = 0;
+  type->data.names = NULL;
 
-  i = 0;
-  while (*p && (i < REC_ENUM_MAX_NAMES))
+  while (*p)
     {
+      /* Allocate space in the list of enum names if needed.  */
+      if ((type->size % REC_ENUM_ALLOC_NAMES) == 0)
+        type->data.names =
+          realloc (type->data.names, ((type->size / REC_ENUM_ALLOC_NAMES) + 1) * (sizeof(char *) * REC_ENUM_ALLOC_NAMES));
+      
       /* Skip blanks.  */
       rec_skip_blanks (&p);
-
 
       if (*p == '(')
         {
@@ -1509,17 +1504,15 @@ rec_type_parse_enum (const char *str, rec_type_t type)
           /* Parse an enum entry.  */
           if (!rec_parse_regexp (&p,
                                  "^" REC_TYPE_ENUM_NAME_RE,
-                                 &(type->data.names[i])))
+                                 &(type->data.names[type->size++])))
             {
               p = NULL;
               break;
             }
-
-          i++;
         }
     }
 
-  if (i == 0)
+  if (type->size == 0)
     {
       /* We require at least one entry in the enum.  In this case it
          is not needed to save memory.  */
@@ -1529,9 +1522,9 @@ rec_type_parse_enum (const char *str, rec_type_t type)
   if (!p)
     {
       /* Free memory.  */
-      for (j = 0; j < i; j++)
+      for (i = 0; i < i; i++)
         {
-          free (type->data.names[j]);
+          free (type->data.names[i]);
         }
     }
 

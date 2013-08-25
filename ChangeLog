@@ -1,5 +1,16 @@
 2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: remove hard limit on the number of literals in enum types.
+	* src/rec-types.c (REC_ENUM_NAMES): Removed.
+	(REC_ENUM_ALLOC_NAMES): Created.
+	(rec_type_new): Initialize the size of the type to 0.
+	(rec_type_parse_enum): Allocate memory for the enumeration names
+	in chunks.
+	(rec_type_equal_p): Adjusted to new semantics.
+	(rec_type_check_enum): Likewise.
+
+2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	csv2rec: remove hard limit on the number of fields in the input
 	csv file.
 	* utils/csv2rec.c (MAX_FIELDS): Removed.
