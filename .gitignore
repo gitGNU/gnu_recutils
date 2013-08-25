@@ -73,6 +73,7 @@ libtool
 /po/POTFILES
 /po/remove-potcdate.sed
 /po/*.gmo
+/po/*.po
 /po/Makevars
 config.cache
 torture/utils/config.sh
