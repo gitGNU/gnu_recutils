@@ -1,5 +1,16 @@
 2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: remove hard limit on the number of types registered in a
+	types registry.
+	* src/rec-types.c (REC_TYPE_REG_ALLOC_TYPES): New constant.
+	(rec_type_reg_destroy): Free the dynamically allocated list of
+	types.
+	(rec_type_reg_new): Initialize new->types to NULL.
+	(rec_type_reg_add): Adjusted to new semantics.
+	(rec_type_reg_add_synonym): Likewise.
+
+2013-08-25  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: remove hard limit on the number of literals in enum types.
 	* src/rec-types.c (REC_ENUM_NAMES): Removed.
 	(REC_ENUM_ALLOC_NAMES): Created.

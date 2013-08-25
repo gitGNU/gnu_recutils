@@ -246,7 +246,7 @@ struct rec_type_s
   } data;
 };
 
-#define REC_TYPE_REG_MAX_TYPES  100
+#define REC_TYPE_REG_ALLOC_TYPES 100
 
 struct rec_type_reg_entry_s
 {
@@ -260,7 +260,7 @@ struct rec_type_reg_entry_s
 struct rec_type_reg_s
 {
   size_t num_types;
-  struct rec_type_reg_entry_s types[REC_TYPE_REG_MAX_TYPES];
+  struct rec_type_reg_entry_s *types;
 };
 
 /*
@@ -708,6 +708,7 @@ rec_type_reg_new (void)
   if (new)
     {
       new->num_types = 0;
+      new->types = NULL;
     }
 
   return new;
@@ -727,6 +728,7 @@ rec_type_reg_destroy (rec_type_reg_t reg)
       free (reg->types[i].type_name);
       free (reg->types[i].to_type);
     }
+  free (reg->types);
   free (reg);
 }
 
@@ -759,15 +761,20 @@ rec_type_reg_add (rec_type_reg_t reg,
         }
     }
 
+  /* If we need to add a new entry then allocate it.  */
+
+  if (i == reg->num_types)
+    {
+      reg->types =
+        realloc (reg->types,
+                 ((i / REC_TYPE_REG_ALLOC_TYPES) + 1) * (sizeof (struct rec_type_reg_entry_s *) * REC_TYPE_REG_ALLOC_TYPES));
+      reg->num_types++;
+    }
+
   reg->types[i].type_name = strdup (rec_type_name (type));
   reg->types[i].type = type;
   reg->types[i].to_type = NULL;
   reg->types[i].visited_p = false;
-  if (i == reg->num_types)
-    {
-      /* We added a new entry.  */
-      reg->num_types++;
-    }
 }
 
 void
@@ -792,15 +799,21 @@ rec_type_reg_add_synonym (rec_type_reg_t reg,
         }
     }
 
+
+  /* If we need to add a new entry then allocate it.  */
+
+  if (i == reg->num_types)
+    {
+      reg->types =
+        realloc (reg->types,
+                 ((i / REC_TYPE_REG_ALLOC_TYPES) + 1) * (sizeof (struct rec_type_reg_entry_s *) * REC_TYPE_REG_ALLOC_TYPES));
+      reg->num_types++;
+    }
+
   reg->types[i].type_name = strdup (type_name);
   reg->types[i].to_type = strdup (to_type);
   reg->types[i].type = NULL;
   reg->types[i].visited_p = false;
-  if (i == reg->num_types)
-    {
-      /* We added a new entry.  */
-      reg->num_types++;
-    }
 }
 
 rec_type_t
