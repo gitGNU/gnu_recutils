@@ -1311,7 +1311,7 @@ Each character should identify only one name."
     (save-window-excursion
       (set-buffer (get-buffer-create " *Rec Fast Selection*"))
       (delete-other-windows)
-      (split-window-vertically)
+;;      (split-window-vertically)
       (switch-to-buffer-other-window (get-buffer-create " *Rec Fast Selection*"))
       (erase-buffer)
       (insert prompt ":")
@@ -1546,6 +1546,7 @@ ARGS contains the arguments to pass to the program."
           (progn
             ;; Prepare the arguments to recsel based on the arguments
             ;; passed to this function.
+            
             (when (stringp type)
               (setq args (cons "-t" (cons type args))))
             (when (stringp join)
