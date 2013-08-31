@@ -1839,7 +1839,7 @@ commenting them out, sorting them, @etc{}
 @section Inserting Records
 
 Adding new records to a recfile is pretty trivial: open it with your
-text editor and just write down the fields composing the records.
+text editor and just write down the fields comprising the records.
 This is really the best way to add contents to a recfile containing
 very simple data.  However, complex databases may introduce some
 difficulties:
@@ -1873,7 +1873,7 @@ using this utility.
 @subsection Adding Records With recins
 
 Each invocation of @command{recins} adds one record to the targetted
-database.  The fields composing the records are specified using pairs
+database.  The fields comprising the records are specified using pairs
 of @code{-f} and @code{-v} command line arguments.  For example, this
 is how we would add the first entry to a previously empty contacts
 database:
