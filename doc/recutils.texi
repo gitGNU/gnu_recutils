@@ -3927,7 +3927,7 @@ done
 @end example
 
 Unfortunately @command{read} is not very useful when it comes to
-process recutils records in the shell.  Even thou it is indeed
+process recutils records in the shell.  Even though it is indeed
 possible to customize the character used by @command{read} to split
 the input in records, we would need to ignore the empty records in
 the probable cases where more than one empty line separates records.
