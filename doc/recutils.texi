@@ -1105,9 +1105,9 @@ Ingredient: Morcilla
 Preparation: ...
 
 Title: Pasta with ragu
-Ingredient: 500gr of Spaguetti.
-Ingredient: 2 tomate.
-Ingredient: Minced meet.
+Ingredient: 500 gr of Spaghetti.
+Ingredient: 2 tomatoes.
+Ingredient: Minced meat.
 Preparation: ...
 @end example
 
