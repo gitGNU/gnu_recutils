@@ -1154,8 +1154,8 @@ Firstly we have  @code{-e} which tells @command{recsel} to lookup records
 matching the expression  @code{Age < 18} --- in other words all those persons
 whose ages are less than 18.
 @cindex selection expressions
-This is an example of a @dfn{selection expression} (@pxref{Selection Expressions}) ---
-in this case it is a very simple one, but it can be as complex as needed.
+This is an example of a @dfn{selection expression}.
+In this case it is a very simple one, but it can be as complex as needed.
 Next there is @code{-P} which tells recsel to print out the value of
 the @code{Name} field --- because we want just the name, not the entire record.
 The final argument is the name of the file from whence the records are
