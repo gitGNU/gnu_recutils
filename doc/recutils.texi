@@ -3984,7 +3984,7 @@ done
 Note the usage of the bash array when accessing to the primary email
 address of each contact.  Note also how we update each contact to
 figure as ``checked'' so she won't get spammed the next time the
-script is ran.
+script is run.
 
 @node testrec
 @section testrec
