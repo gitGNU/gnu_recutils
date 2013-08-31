@@ -3337,8 +3337,10 @@ XXX
 
 @cindex @code{%auto}
 @cindex automatically generated values
-This special field designates auto-generated fields in 
-record sets.  Its usage is:
+Auto generated fields are a very useful facility usually provided by
+database implementations.  
+In recfiles, this is achieved with the @code{%auto} special field.
+Its usage is:
 
 @example
 %auto: @var{field1} @var{field2} @dots{} @var{fieldN}
@@ -3350,9 +3352,7 @@ There can be several @code{%auto} fields in the same record
 descriptor, the effective list of auto-generated fields being the
 union of all the entries.
 
-Auto generated fields are a very useful facility usually provided by
-database implementations.  Consider for example a list of articles in
-stock in a toys store:
+Consider for example a list of articles in stock in a toys store:
 
 @example
 %rec: Item
