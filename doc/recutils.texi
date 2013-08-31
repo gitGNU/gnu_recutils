@@ -978,7 +978,7 @@ recsel: error: several record types found.  Please use -t to specify one.
 
 @noindent
 This is because @command{recsel} does not know which records to
-output: the maintainers or the packages.  This can be achieved by
+output: the maintainers or the packages.  This can be resolved by
 using the @code{-t} command line option:
 
 @example
