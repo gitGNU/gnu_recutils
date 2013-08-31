@@ -3077,7 +3077,9 @@ partition.
 @chapter Joins
 
 Suppose you wanted to add the residential address of the people in 
-the @file{acquaintances.rec} file.
+the @file{acquaintances.rec} file from 
+@ref{Simple Selections}.
+
 
 One way to do this is as follows:
 @example
