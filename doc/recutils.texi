@@ -1921,7 +1921,7 @@ rec format conventions.  this included multi-line field values.
 Consider the following example:
 
 @example
-$ recins -f Name -v "Mr. Foo" -f Address -v ' contacts.rec
+$ recins -f Name -v "Mr. Foo" -f Address -v '
 Foostrs. 19
 Frankfurt am Oder
 Germany' contacts.rec
