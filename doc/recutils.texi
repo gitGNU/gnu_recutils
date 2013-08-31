@@ -1857,7 +1857,7 @@ Fields}.
 @end table
 
 To facilitate the insertion of new data a command line utility called
-@command{recins} is included in the recutils.  The usage of recins is
+@command{recins} is included in the recutils.  The usage of @command{recins} is
 very simple, and can be both used in the command line or called from
 another program.  The following subsections discuss several aspects of
 using this utility.
@@ -1900,7 +1900,7 @@ Email: bar@@gnu.org
 @end example
 
 There is no limit on the number of @code{-f} @code{-v} pairs that can
-be specified to recins, other than any limit on command line arguments
+be specified to @command{recins}, other than any limit on command line arguments
 which may be imposed by the shell.
 
 The field values provided using @code{-v} are encoded to follow the
@@ -3592,7 +3592,7 @@ restricted password available only to the administrator of the
 machine.
 
 The GNU recutils fully support encrypted fields.  See the documentation
-for @code{recsel}, @code{recins} and @code{recfix} for details on how
+for @command{recsel}, @command{recins} and @command{recfix} for details on how
 to operate on files containing confidential fields.
 
 @node Encrypting Files
