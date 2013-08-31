@@ -3929,7 +3929,7 @@ done
 Unfortunately @command{read} is not very useful when it comes to
 process recutils records in the shell.  Even though it is indeed
 possible to customize the character used by @command{read} to split
-the input in records, we would need to ignore the empty records in
+the input into records, we would need to ignore the empty records in
 the probable cases where more than one empty line separates records.
 Also, we would need to use @command{recsel} to access to the record
 fields.  Too complicated!
