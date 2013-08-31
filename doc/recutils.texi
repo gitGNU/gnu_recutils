@@ -1818,7 +1818,7 @@ comes before the class @code{B} even if they got the same score (@code{6.8}).
 @node Editing Records
 @chapter Editing Records
 
-The simplest way of editing a recfile is to fire up your favourite
+The simplest way of editing a recfile is to start your favourite
 text editor and hack the contents of the file as desired.  However,
 the rec format is structured enough so recfiles can be updated
 automatically by programs.  This is useful for writing shell scripts
