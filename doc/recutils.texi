@@ -1983,7 +1983,7 @@ Dummy: XXX
 
 In a previous chapter we noted that @command{recsel} interprets the
 absence of a @command{-t} argument depending on the actual contents of
-the file: if the recfile contains records of just one type the
+the file: If the recfile contains records of just one type the
 command assumes that the user is referring these records.
 
 @command{recins} does not follow this convention, and the absence of
