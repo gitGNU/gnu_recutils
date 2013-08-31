@@ -939,7 +939,7 @@ Note: Sales Department.
 @end example
 
 @noindent
-This is a commutative, so @command{recsel work-contacts.rec
+This is commutative, so @command{recsel work-contacts.rec
 contacts.rec} would output the records of the business contacts first
 and then the ones from @file{contacts.rec}.
 
