@@ -1848,7 +1848,7 @@ difficulties:
 @item Multi-line values.
 It can be tedious to manually encode the several lines.
 @item Data integrity.
-It is difficult to manually maintain the integrity fo the data stored
+It is difficult to manually maintain the integrity of data stored
 in the data base.
 @item Counters and timestamps.
 Some record sets feature auto-generated fields, which are commonly
