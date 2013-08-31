@@ -3872,125 +3872,6 @@ and for exporting data from recfiles so that it can be used in other application
 * Importing MDB Files::      Importing MS Access Databases.
 @end menu
 
-@node Bash Builtins
-@chapter Bash Builtins
-
-The several command-line utilities distributed as part of recutils are
-designed to be used interactively in the shell.  Together, and often
-combined with the standard shell utilities, they provide a quite
-complete user interface.  However, the user experience can be greatly
-improved by a closer integration between the recutils and the shell.
-The following sections describe several extensions for @command{bash},
-the GNU shell.  These extensions make the shell ``aware'' of the
-recutils.
-
-As with any bash built-in, help is available in the command line using
-the @command{help} command.  For example:
-
-@example
-$ help readrec
-@end example
-
-If you installed recutils using a binary package in a GNU/Linux
-distribution, odds are that the built-in commands described in this
-chapter are already available to you.  Otherwise (you get a ``command
-not found'' or similar error) you may have to register the built-in
-commands into your bash.  This is very easy using the @command{enable}
-bash command.  The registering command for readrec would be:
-
-@example
-$ enable readrec.so readrec
-@end example
-
-@menu
-* readrec::                  Exporting the contents of records to the shell.
-* testrec::                  Selection expressions in shell conditionals.
-@end menu
-
-@node readrec
-@section readrec
-
-The bash built-in @command{read}, when invoked with no options,
-consumes one line from the standard input and makes it available in
-the predefined @code{REPLY} environment variable, or any other
-variable whose name is passed as an argument.  This allows to process
-data structured in lines in a quite natural way.  For example, the
-following program prints the third field of each line (fields are
-separated by commas) until the standard input is exhausted:
-
-@example
-# Process one line at a time.
-while read
-do
-  echo "The third field is " `echo $REPLY | cut -d, -f 2`
-done
-@end example
-
-Unfortunately @command{read} is not very useful when it comes to
-process recutils records in the shell.  Even though it is indeed
-possible to customize the character used by @command{read} to split
-the input into records, we would need to ignore the empty records in
-the probable cases where more than one empty line separates records.
-Also, we would need to use @command{recsel} to access to the record
-fields.  Too complicated!
-
-The @command{readrec} bash built-in is similar to @command{read} with
-the difference that it reads records instead of lines.  It also
-``exports'' the contents of the record to the user as the values of
-several environment variables:
-
-@itemize @minus
-@item @code{REPLY_REC} is set to the record read from the standard input.
-@item A set of variables @code{FIELD} named after each field found in
-the record are set to the (decoded) value of the fields found in the
-input record.  When several fields with the same name are found in the
-input record then a bash array is created.
-@end itemize
-
-Consider for example the following simple database containing
-contacts information:
-
-@example
-Name: Mr. Foo
-Email: foo@@bar.com
-Email: bar@@baz.net
-Checked: no
-
-Name: Mr. Bar
-Email: bar@@foo.com
-Telephone: 999666000
-Checked: yes
-@end example
-
-@noindent
-We would like to write some shell code to send an email to all the
-contacts, but only if the contact has not been checked before,
-@ie{} the @code{Checked} field contains @code{no}.  The following code
-snippet would do the job nicely using @command{readrec}:
-
-@example
-recsel contacts.rec | while readrec
-do
-   if [ $Checked = "no" ]
-   then
-      mail -s "You are been checked." $@{Email[0]@} < email.txt
-      recset -e "Email = '$Email'" -f Checked -S yes contacts.rec
-      sleep 1
-   fi
-done
-@end example
-
-@noindent
-Note the usage of the bash array when accessing to the primary email
-address of each contact.  Note also how we update each contact to
-figure as ``checked'' so she won't get spammed the next time the
-script is run.
-
-@node testrec
-@section testrec
-
-XXX
-
 @node CSV Files
 @section CSV Files
 
@@ -4183,6 +4064,125 @@ $ mdb2rec sales.mdb
 %rec: Orders
 @dots{}
 @end example
+
+@node Bash Builtins
+@chapter Bash Builtins
+
+The several command-line utilities distributed as part of recutils are
+designed to be used interactively in the shell.  Together, and often
+combined with the standard shell utilities, they provide a quite
+complete user interface.  However, the user experience can be greatly
+improved by a closer integration between the recutils and the shell.
+The following sections describe several extensions for @command{bash},
+the GNU shell.  These extensions make the shell ``aware'' of the
+recutils.
+
+As with any bash built-in, help is available in the command line using
+the @command{help} command.  For example:
+
+@example
+$ help readrec
+@end example
+
+If you installed recutils using a binary package in a GNU/Linux
+distribution, odds are that the built-in commands described in this
+chapter are already available to you.  Otherwise (you get a ``command
+not found'' or similar error) you may have to register the built-in
+commands into your bash.  This is very easy using the @command{enable}
+bash command.  The registering command for readrec would be:
+
+@example
+$ enable readrec.so readrec
+@end example
+
+@menu
+* readrec::                  Exporting the contents of records to the shell.
+* testrec::                  Selection expressions in shell conditionals.
+@end menu
+
+@node readrec
+@section readrec
+
+The bash built-in @command{read}, when invoked with no options,
+consumes one line from the standard input and makes it available in
+the predefined @code{REPLY} environment variable, or any other
+variable whose name is passed as an argument.  This allows to process
+data structured in lines in a quite natural way.  For example, the
+following program prints the third field of each line (fields are
+separated by commas) until the standard input is exhausted:
+
+@example
+# Process one line at a time.
+while read
+do
+  echo "The third field is " `echo $REPLY | cut -d, -f 2`
+done
+@end example
+
+Unfortunately @command{read} is not very useful when it comes to
+process recutils records in the shell.  Even though it is indeed
+possible to customize the character used by @command{read} to split
+the input into records, we would need to ignore the empty records in
+the probable cases where more than one empty line separates records.
+Also, we would need to use @command{recsel} to access to the record
+fields.  Too complicated!
+
+The @command{readrec} bash built-in is similar to @command{read} with
+the difference that it reads records instead of lines.  It also
+``exports'' the contents of the record to the user as the values of
+several environment variables:
+
+@itemize @minus
+@item @code{REPLY_REC} is set to the record read from the standard input.
+@item A set of variables @code{FIELD} named after each field found in
+the record are set to the (decoded) value of the fields found in the
+input record.  When several fields with the same name are found in the
+input record then a bash array is created.
+@end itemize
+
+Consider for example the following simple database containing
+contacts information:
+
+@example
+Name: Mr. Foo
+Email: foo@@bar.com
+Email: bar@@baz.net
+Checked: no
+
+Name: Mr. Bar
+Email: bar@@foo.com
+Telephone: 999666000
+Checked: yes
+@end example
+
+@noindent
+We would like to write some shell code to send an email to all the
+contacts, but only if the contact has not been checked before,
+@ie{} the @code{Checked} field contains @code{no}.  The following code
+snippet would do the job nicely using @command{readrec}:
+
+@example
+recsel contacts.rec | while readrec
+do
+   if [ $Checked = "no" ]
+   then
+      mail -s "You are been checked." $@{Email[0]@} < email.txt
+      recset -e "Email = '$Email'" -f Checked -S yes contacts.rec
+      sleep 1
+   fi
+done
+@end example
+
+@noindent
+Note the usage of the bash array when accessing to the primary email
+address of each contact.  Note also how we update each contact to
+figure as ``checked'' so she won't get spammed the next time the
+script is run.
+
+@node testrec
+@section testrec
+
+XXX
 
 @node Invoking the Utilities
 @chapter Invoking the Utilities
