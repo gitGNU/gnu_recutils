@@ -3015,13 +3015,27 @@ set.
 @chapter Checking Recfiles
 
 @cindex integrity, checking
-Sometimes, when creating a recfile by hand, typographical errors will
-occur.  It can be hard to spot such errors visually.  Fortunately
+Sometimes, when creating a recfile by hand, typographical errors or other 
+mistakes will occur.
+If a recfile contains such mistakes, then one cannot rely upon the results
+of queries or other operations.
+Fortunately
 there is a tool called @command{recfix} which can find these errors.
+It is a good idea to get into the habit of running @command{recfix} on
+a file after editing it, and before trying other commands.
+
+
+@menu
+* Syntactical Errors::
+* Semantic Errors::
+@end menu
+
+@node Syntactical Errors
+@section Syntactical Errors
 
 One easy mistake is to forget the colon separating the field name from
 its value.
-
+ 
 @example
 %rec: Article
 %key  Id
@@ -3029,8 +3043,8 @@ its value.
 Name: Thing
 Id:   0
 @end example
-
 @cindex @command{recfix}
+@noindent
 Running @command{recfix} on this file will immediately tell us that
 there is a problem:
 
@@ -3038,18 +3052,51 @@ there is a problem:
 $ recfix --check inventory.rec
 inventory.rec: 2: error: expected a record
 @end example
-
+@noindent
 Here, @command{recfix} has diagnosed a problem in the file @file{inventory.rec} 
 and the problem lies at line 2.
 If, as in this case, @command{recfix} shows there is a problem with
 the recfile, you should attend to that problem before trying to use
 any other recutils program on that file, otherwise strange things
 could happen.
-
-It is a good idea to get into the habit of running @command{recfix} on
-a file after editing it, and before trying other commands.
-In fact, the @code{--check} flag is not necessary, because that is the
+The @code{--check} flag is optional but in normal execution not required because that is the
 default operation.
+
+@node Semantic Errors
+@section Semantic Errors
+
+@cindex special fields
+However @command{recfix} checks more than the syntactical integrity of the recfile.
+If also checks certain semantics and that the data is self consistent.
+To do this, it uses the special fields of the record, some of which were introduced
+in above (@pxref{Field Restrictions}).
+It is a good idea to use the special fields to stipulate the ``enterprise rules'' 
+of the data.
+
+Errors will be reported if any of the following special keywords are present and
+the data does not match the stipulated conditions
+@table @code
+@item %mandatory
+The mandated fields are missing from a record.
+@item %prohibit
+The prohibited fields are present in a record.
+@item %unique
+There is more than one field in a single record of the given name.
+@item %keys
+Two or more records share the same value of the field which is the key field.
+@item %typedef and %type
+A field has a value which does not conform to the specified type.
+@item %size
+The number of records does not conform to the specified restriction.
+@item %constraint
+A field does not conform to the specified constraint.
+@item %confidential
+An unencrypted value exists for a confidential field.
+@end table
+
+
+
+
 
 @node Remote Descriptors
 @chapter Remote Descriptors
