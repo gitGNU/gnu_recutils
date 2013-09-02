@@ -1128,16 +1128,28 @@ random records, you will get all the records in a random order.
 
 @cindex selection expressions
 @dfn{Selection expressions}, also known as ``sexes'' in the recutils
-jargon, are simple infix expressions that can be applied to a record.
-The result of the SEX is typically interpreted as a boolean
-value@footnote{As with any sex.}
+jargon, are infix expressions that can be applied to a record.
+A ``sex'' is a predicate which select a subset of records within a recfile.
+They can be simple expressions involving just one operator and a pair of
+operands, or complex compound expressions with parenthetical sub-expressions 
+and many operators and operands.
+One of their most common uses is to examine records matching a particular
+set of conditions.
 
-XXX.
+@menu
+* Selecting by predicate:: Selecting records which satisfy conditions.
+* SEX Operands::        Literal values, fields and sub-expressions.
+* SEX Operators::       Arithmetic, logical and other operators.
+* SEX Evaluation::      Selection expressions are like generators.
+@end menu
 
+@node Selecting by predicate
+@subsection Selecting by predicate
 @cindex selecting records
 @cindex looking up data
 @cindex retrieving data
-@noindent It contains names of people along with their respective ages.
+Consider the example recfile @file{acquaintances.rec} introduced earlier.
+It contains names of people along with their respective ages.
 Suppose we want to get a list of the names of all the children.  
 It would not be easy to do this using @command{grep}.
 Neither would it, for any reasonably large recfile, be feasible to search
@@ -1236,11 +1248,6 @@ single quotes @code{'}.
 The double quotes are interpreted by the shell (@eg{} @command{bash}) and
 the single quotes are part of the string which forms the  two dates being compared.
 
-@menu
-* SEX Operands::        Literal values, fields and sub-expressions.
-* SEX Operators::       Arithmetic, logical and other operators.
-* SEX Evaluation::      Selection expressions are like generators.
-@end menu
 
 @node SEX Operands
 @subsection Operands
