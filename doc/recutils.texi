@@ -6,6 +6,12 @@
 @afourpaper
 @comment %**end of header
 
+
+@comment Latin: videre licet,
+@macro viz
+@i{viz@:}
+@end macro
+
 @comment Latin: id est 
 @macro ie
 @i{i.e.@:}
@@ -2041,39 +2047,204 @@ Class: B
 
 @node Deleting Records
 @section Deleting Records
+@cindex deleting records
 
-XXX
+Just as @code{recins} inserts records, the utility @code{recdel} deletes them.
+Consider the following recfile @file{stock.rec}: 
+@example
+%rec: Item
+%type: Expiry date
+%sort: Title
+
+Title: First Aid Kit
+Expiry: 2 May 2009
+
+Title: Emergency Rations
+Expiry: 10 August 2009
+
+Title: Life raft
+Expiry: 2 March 2009
+@end example
+
+Suppose we wanted to delete all items 
+with an Expiry before a certain date, we could do this with the following command:
+
+@example
+$ recdel -t Item -e 'Expiry << "5/12/2009"' stock.rec
+@end example
+@noindent
+After running this command, only one record will remain in the file
+(@viz{} the one titled `Emergency Rations') because all the others have expiry dates
+prior to 12 May 2009.
+@footnote{`5/12/2009' means the 12th day of May 2009, @emph{not} the fifth day of December,
+even if your LC_TIME environment variable has been set to suggest otherwise.}
+The @command{-t} option can be omitted if, and only if, there is no @code{%rec} field 
+in the recfile.
+
+@command{recdel} tries to warn you, if you attempt to perform a delete operation
+which it deems to be too pervasive.  In such cases, it will refuse to run, 
+unless you give the @command{--force} flag.
+However, you should not rely upon @command{recdel} to protect you, because it cannot 
+always correctly guess that you might be deleting more records than intended.
+For this reason, you might consider it wise, to use the @command{-c} flag, which causes
+the relevant records to be commented out, rather than deleted.
+ 
+The complete options available to the @command{recdel} command are explained later.
+@xref{recdel}.
 
 @node Sorting Records
 @section Sorting Records
+@cindex sorting
+@cindex sorting, physically
 
-XXX
+In the example above, note the existance of the @code{%sort: Title} line.
+This field was discussed previously (@pxref{Sorted Output}) and, as mentioned, does not
+imply that the records need to be stored in the recfile in any particular order.
+
+However, if desired, you can automatically arrange the recfile in that order using 
+@command{recfix} with the @command{--sort} flag.
+After running the command
+@example
+$ recfix --sort stock.rec
+@end example
+@noindent
+the file @file{stock.rec} will have its records sorted in alphabetical order 
+of the @code{Title} fields, thus:
+@example
+%rec: Item
+%type: Expiry date
+%sort: Title
+
+Title: Emergency Rations
+Expiry: 10 August 2009
+
+Title: First Aid Kit
+Expiry: 2 May 2009
+
+Title: Liferaft
+Expiry: 2 March 2009
+@end example
+
+
 
 @node Editing Fields
 @chapter Editing Fields
 
-XXX
+Fields of a recfile can, of course, be edited manually using an editor and this is often 
+the easiest way when only a few fields need to be changed or when the nature of the changes do
+not follow any particular pattern.
+If however a large number of similar changes to several records are required then the 
+there exists the @command{recset} command to make the job easier.
+
+The formal description of @command{recset} is presented later (@pxref{recset}).  In this
+chapter some typical usage examples are discussed.
+As with @command{recdel}, @command{recset} if used erroneously has the potential to make 
+very pervasive changes, which could result in a large loss of data.
+It is prudent therefore to take a copy of a recfile before running such commands.
+
 
 @menu
 * Setting Fields::           Editing field values.
 * Adding Fields::            Adding new fields to records.
 * Deleting Fields::          Removing or commenting-out fields.
+* Renaming Fields::          Changing the name of a field.
 @end menu
 
-@node Setting Fields
-@section Setting Fields
-
-XXX
 
 @node Adding Fields
 @section Adding Fields
+@cindex adding fields
 
-XXX
+The command @command{recins} adds new records to a recfile.  It cannot however
+add fields to an existent record, and it would be cumbersome to do so manually.
+Such a task can be achieved automatically using @command{recset} and its @command{-a} flag.
+
+Suppose that (after a stock inspection) you wanted to add an `Inspected' field to all the items in
+the recfile.
+The following command could be used.
+@example
+$ recset -t Item -f Inspected -a 'Yes' stock.rec
+@end example
+@noindent
+Note that, because no record selection flag was provided, the command affected @emph{all} the 
+records (of type `Item').
+We could limit the effect of the command using the @command{-e}, @command{-q}, 
+@command{-n} or @command{-m} flags.
+For example to add the `Inspected' field to only the first item the following command 
+is possible:
+@example
+$ recset -t Item -n 0 -f Inspected -a 'Yes' stock.rec
+@end example
+@noindent 
+Similarly, a selection expression could have been used with the @command{-e} flag in order to 
+add the field only to records which satisfy the expression.
+
+If you use @command{recset} with the @command{-a} flag on a field which already exists, a
+new field (in addition to those already present) will be appended with the given value.
+
+
+@node Setting Fields
+@section Setting Fields
+@cindex mutating field values
+
+It is also possible to update the value of a field.
+This is done using @command{recset} with its @command{-s} flag.
+In the previous example, an `Inspected' flag was added to certain records, 
+with the value  `yes'.  
+After reflection, one might want to record the date of inspection, rather than
+a simple yes/no flag.
+Records which have no such field will remain unchanged.
+@example
+$ recset -t Item -f Inspected -s '30 October 2006' stock.rec
+@end example
+Although the above command does not have any selection criteria, it will
+only affect those records for which a `Inspected' field exists.
+This is because the @command{-s} flag only sets field values.
+It will not create any fields.
+
+If instead, the @command{-S} flag is used, this will create the field
+(if it does not already exist) @emph{and} set its value.
+@example
+$ recset -t Item -f Inspected -S '30 October 2006' stock.rec
+@end example
 
 @node Deleting Fields
 @section Deleting Fields
+@cindex deleting fields
 
-XXX
+You can delete fields using @command{recset}'s @command{-d} flag.
+For example, if we wanted to delete the @code{Inspected} field which we introduced above,
+we could do so as follows:
+@example
+$ recset -t Item -f Inspected -d stock.rec
+@end example
+@noindent
+This would delete @emph{all} fields named @code{Inspected} from @emph{all} records of type 
+@code{Item}.
+It may be that, we only wanted to delete the @code{Inspected} fields from records which satisfy
+a certain condition.
+The following would delete the fields only from items whose @code{Expiry} date was before 
+2 January 2010:
+@example
+$ recset -t Item -e 'Expiry << "2 January 2010"' -f Inspected -d stock.rec
+@end example
+
+
+@node Renaming Fields
+@section Renaming Fields
+@cindex renaming fields
+
+Another use of @command{recset} is to rename existing fields.  This is achieved using the 
+@command{-r} flag.
+To rename all instances of the @code{Expiry} field occuring in any record of type @code{Item},
+the following command suffices:
+@example
+$ recset -t Item -f Expiry -r 'UseBy' stock.rec
+@end example
+@noindent
+As with most operations, this could be done selectively, using the @command{-e} flag and a 
+selection expression.
+
 
 @node Field Types
 @chapter Field Types
@@ -3196,7 +3367,7 @@ Address: 1 Wanter Rise, Greater Inncombe, BUCKS
 Id: ChezGrampa
 @end example
 
-Here you can see that there are two record sets @i{viz:} @code{Person}
+Here you can see that there are two record sets @viz{} @code{Person}
 and @code{Residence}.
 There are six persons, but only three residences, because some residences
 accommodate more than one person.
