@@ -3604,7 +3604,7 @@ Amount: 8
 @dots{}
 @end example
 
-It would be natural to identify the items by its description, but it
+It would be natural to identify the items by their descriptions, but it
 is also error prone: was it ``Flying Helicopter Indoor Maxi'' or
 ``Flying Helicopter Maxi Indoor''? Was ``Helicopter'' in lower case or
 upper case?
