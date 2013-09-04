@@ -102,7 +102,7 @@ Data Integrity
 Advanced Topics
 * Remote Descriptors::       Implementing distributed databases.
 * Grouping and Aggregates::  Statistics.
-* Joins::                    Crossing record of different types.
+* Queries which Join Records:: Crossing record of different types.
 * Auto-Generated Fields::    Counters and time-stamps.
 * Encryption::               Storing sensitive information.
 * Generating Reports::       Formatted output with templates.
@@ -3310,8 +3310,8 @@ aggregate functions and the grouping fields, is executed for each
 partition.
 @end enumerate
 
-@node Joins
-@chapter Joins
+@node Queries which Join Records
+@chapter Queries which Join Records
 
 Suppose you wanted to add the residential address of the people in 
 the @file{acquaintances.rec} file from 
@@ -3369,6 +3369,16 @@ This has a number of disadvantages:
 @item A typing error in one of the addresses would lead an automatic query to erroneously suggest that the persons lived at different addresses.
 @item It unnecessarily increases the size of the recfile.
 @end itemize
+
+
+@menu
+* Foreign Keys::             Referring to records from another records.
+* Joining Records::          Performing cross-joins.
+@end menu
+
+
+@node Foreign Keys
+@section Foreign Keys
 
 @cindex record sets
 A better way would be to separate the addresses and persons into different record sets.
@@ -3455,6 +3465,9 @@ human readable values.  In this way, it is self-evident by reading a @code{Perso
 record where that person lives.
 Yet since the @code{Id} field is declared using the @code{%key} special field
 name, you can be sure that you don't accidentally reuse an existent key.
+
+@node Joining Records
+@section Joining Records
 
 The above example has also added a new field to the @code{Person} record set
 to contain that person's mobile phone number.  Note that the @code{Telephone}
@@ -3553,21 +3566,6 @@ Abode_Address: 2 Serpe Rise, Little Worning, SURREY
 Name: Ernest Wright
 Abode_Address: 1 Wanter Rise, Greater Inncombe, BUCKS
 @end example
-
-@menu
-* Foreign Keys::             Referring records from another records.
-* Joining Records::          Performing cross-joins.
-@end menu
-
-@node Foreign Keys
-@section Foreign Keys
-
-XXX
-
-@node Joining Records
-@section Joining Records
-
-XXX
 
 @node Auto-Generated Fields
 @chapter Auto-Generated Fields
