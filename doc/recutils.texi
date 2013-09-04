@@ -4120,7 +4120,7 @@ Many applications are able to read and write files containing so-called
 ``comma separated values''.
 Such files generally contain tabular data where the columns are separated
 by commas and the rows by line feed and/or carriage return characters.
-However record sets are not tables, although tables can be easily emulated
+Although record sets are not tables, tables can be easily emulated
 using records having the same fields in the same order.  For example:
 
 @example
@@ -4306,14 +4306,19 @@ $ mdb2rec sales.mdb
 @node Bash Builtins
 @chapter Bash Builtins
 
-The several command-line utilities distributed as part of recutils are
-designed to be used interactively in the shell.  Together, and often
+@cindex bash
+@cindex interactive use
+@cindex shell
+The command-line utilities described in @ref{Invoking the Utilities} are
+designed to be used interactively in the shell.
+Together, and often
 combined with the standard shell utilities, they provide a quite
-complete user interface.  However, the user experience can be greatly
+complete user interface.
+However, the user's experience can be greatly
 improved by a closer integration between the recutils and the shell.
 The following sections describe several extensions for @command{bash},
-the GNU shell.  These extensions make the shell ``aware'' of the
-recutils.
+the GNU shell (@pxref{Top,,, bash, The GNU Bourne-Again SHell}).
+These extensions make the shell ``aware'' of the recutils.
 
 As with any bash built-in, help is available in the command line using
 the @command{help} command.  For example:
