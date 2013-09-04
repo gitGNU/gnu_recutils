@@ -3951,6 +3951,7 @@ encrypt the admin entry in order to read it back unencrypted.
 @node Generating Reports
 @chapter Generating Reports
 
+@cindex reports
 Having a list of names and addresses, one might want to use this list
 to address envelopes
 (perhaps, to send annual greeting cards).
