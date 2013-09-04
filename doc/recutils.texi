@@ -3725,7 +3725,7 @@ The disadvantage of both these methods is that the entire
 recfile has to be secured 
 when it may well be the case that only certain data need to be protected.
 
-Recutils offers a way to securely encrypt specified fields in a record, whilst leaving
+Recutils offers a way to encrypt specified fields in a record, whilst leaving
 the rest in clear text.
 
 @menu
