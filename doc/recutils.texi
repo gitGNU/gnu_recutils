@@ -168,7 +168,7 @@ Field Types
 * Scalar Field Types::       Numbers and ranges.
 * String Field Types::       Lines, limited strings and regular expressions. 
 * Enumerated Field Types::   Enumerations and boolean values.
-* Time Field Types::         Dates and times.
+* Date and Time Types::      Dates and times.
 * Other Field Types::        Emails, fields, UUIDs, @dots{}
 
 Field Restrictions
@@ -2286,7 +2286,7 @@ described in the following subsections.
 * Scalar Field Types::       Numbers and ranges.
 * String Field Types::       Lines, limited strings and regular expressions. 
 * Enumerated Field Types::   Enumerations and boolean values.
-* Time Field Types::         Dates and times.
+* Date and Time Types::      Dates and times.
 * Other Field Types::        Emails, fields, UUIDs, @dots{}
 @end menu
 
@@ -2495,6 +2495,7 @@ specifier.
 A wide range of real numbers can be represented this way, only limited
 by the underlying floating point representation.
 @cindex decimal separator  
+@cindex locale
 The decimal separator is always the dot (@code{.}) character regardless
 of the locale setting.
 For example:
@@ -2664,21 +2665,31 @@ SwitchedOn: yes
 SwitchedOn: false
 @end example
 
-@node Time Field Types
-@section Time Field Types
+@node Date and Time  Types
+@section Date and Time Types
 
 @cindex date, fields containing dates
 @cindex time, fields containing time values
-The @dfn{Date} field type specifier can be used to declare dates and
+The @dfn{date} field type specifier can be used to declare dates and
 times.  The synopsis is:
 
 @example
 %typedef: @var{type_name} date
 @end example
 
+@cindex locale
+@cindex time zone correction
 @noindent
-The several date/time syntax supported by librec is provided by the
-@code{date} module from gnulib.  @xref{Date input formats}.
+There are  many permitted date formats which are described in detail later in this manual (@pxref{Date input formats}).
+Of particular note are the following:
+@itemize @minus
+@item Dates and times read from recfiles are not affected by the locale or the timezone.  This means that the LC_TIME and  the TZ environment variables are ignored.
+If you wish, for example, to specify a time which must be interpreted as UTC, you 
+must explicitly append the time zone correction: @eg{} `2001-1-10 12:09Z'.
+@item The field value `1/10/2001' means January 10, 2001, @strong{not} October 1, 2001.
+@item Relative times and dates (such as `1 day ago') are permitted but are not 
+  particularly useful.
+@end itemize
 
 @node Other Field Types
 @section Other Field Types
