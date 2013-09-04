@@ -1877,7 +1877,7 @@ using this utility.
 
 @menu
 * Adding Records With recins::    Basics of the @command{recins} utility.
-* Replacing Records With recins:: Substituing records in a file.
+* Replacing Records With recins:: Substituting records in a file.
 * Adding Anonymous Records:: Inserting or replacing records with no
                               type.
 @end menu
@@ -1885,7 +1885,7 @@ using this utility.
 @node Adding Records With recins
 @subsection Adding Records With recins
 
-Each invocation of @command{recins} adds one record to the targetted
+Each invocation of @command{recins} adds one record to the targeted
 database.  The fields comprising the records are specified using pairs
 of @code{-f} and @code{-v} command line arguments.  For example, this
 is how we would add the first entry to a previously empty contacts
@@ -1933,7 +1933,7 @@ Address:
 + Germany
 @end example
 
-It is also possible to provide fields alredy encoded as rec data for
+It is also possible to provide fields already encoded as rec data for
 their addition, using the @code{-r} command line argument.  This
 argument can be intermixed with @code{-f} @code{-v}.
 
@@ -2104,7 +2104,7 @@ The complete options available to the @command{recdel} command are explained lat
 @cindex sorting
 @cindex sorting, physically
 
-In the example above, note the existance of the @code{%sort: Title} line.
+In the example above, note the existence of the @code{%sort: Title} line.
 This field was discussed previously (@pxref{Sorted Output}) and, as mentioned, does not
 imply that the records need to be stored in the recfile in any particular order.
 
@@ -2243,7 +2243,7 @@ $ recset -t Item -e 'Expiry << "2 January 2010"' -f Inspected -d stock.rec
 
 Another use of @command{recset} is to rename existing fields.  This is achieved using the 
 @command{-r} flag.
-To rename all instances of the @code{Expiry} field occuring in any record of type @code{Item},
+To rename all instances of the @code{Expiry} field occurring in any record of type @code{Item},
 the following command suffices:
 @example
 $ recset -t Item -f Expiry -r 'UseBy' stock.rec
