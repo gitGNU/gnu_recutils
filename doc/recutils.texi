@@ -173,7 +173,7 @@ Field Types
 
 Field Restrictions
 
-* Keys and Unique Fields::   Fields characterising records.
+* Keys and Unique Fields::   Fields characterizing records.
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
 * Arbitrary Constraints::    Constraints records must comply with.
@@ -2763,7 +2763,7 @@ fields whose purpose is to impose that kind of restrictions in the
 structure of the records.
 
 @menu
-* Keys and Unique Fields::   Fields characterising records.
+* Keys and Unique Fields::   Fields characterizing records.
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
 * Arbitrary Constraints::    Constraints records must comply with.
@@ -2945,7 +2945,7 @@ database both @code{Id} and @code{id} are prohibited:
 One possible use case for prohibited fields arises 
 when some field name is reserved for some future
 use.
-For example, if we were organising a sports competition, we would want
+For example, if we were organizing a sports competition, we would want
 competitors to register before the event.  
 However a competitor's @code{result} should not and cannot be entered
 before the competition takes place.
@@ -3714,7 +3714,7 @@ so we include an @code{%auto} for the date:
 @cindex encryption
 
 For ethical or security reasons it is sometimes necessary that information
-in a recfile should not be readable by unauthorised persons.
+in a recfile should not be readable by unauthorized persons.
 One way to prevent a recfile from being read is to use the security features of
 the operating system.
 A more secure way would be to encrypt the entire recfile using a free strong encryption program 
