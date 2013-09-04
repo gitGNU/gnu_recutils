@@ -3206,7 +3206,8 @@ The record descriptor above is including the contents of the
 the local record descriptor, that in this case contains just the
 @code{%mandatory} field.
 
-If you are using the GNU recutils to process your recfiles, any URL
+If you are using the GNU recutils (@pxref{Invoking the Utilities}) to 
+process your recfiles, any URL
 schema supported by @code{libcurl} will work.
 
 @node Grouping and Aggregates
