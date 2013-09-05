@@ -710,7 +710,7 @@ and typed records in a recfile.
 @subsection Naming Record Types
 
 It is up to you how to name your record sets.  Any string comprising
-alphanumeric characters, dashes or underscores, and that starts with a
+only alphanumeric characters or underscores, and that starts with a
 letter will be a legal name.  However, it is recommended to use the
 singular form of a noun in order to describe the ``type'' of the
 records in the records set. Examples are @code{Article},
