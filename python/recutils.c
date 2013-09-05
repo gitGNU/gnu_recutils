@@ -264,10 +264,10 @@ recdb_get_rset(recdb *self, PyObject *args, PyObject *kwds)
 static PyObject*
 recdb_pyinsert_rset(recdb *self, PyObject *args, PyObject *kwds)
 {
-  static char *kwlist[] = {"recset", "position",NULL};
   rset *recset;
   size_t position;
   bool success;
+  static char *kwlist[] = {"recset", "position",NULL};
   if (! PyArg_ParseTupleAndKeywords(args, kwds, "Oi", kwlist, 
                                     &recset,
                                     &position))
@@ -348,60 +348,516 @@ recdb_get_rset_by_type(recdb *self, PyObject *args, PyObject *kwds)
     return result;
 }
 
-
-
-/******************** Miscellaneous database functions ****************/
-
-/* Return the registry of aggregates of the given database.  */
-
-/*rec_aggregate_reg_t rec_db_aggregates (rec_db_t db);*/
+/******************** Database High-Level functions *******************/
 
 /* Query for some data in a database.  The resulting data is returned
-   in a record set. */
+   in a record set. 
+
+   This function takes the following arguments:
+
+   DB
+
+      Database to query.
+
+   TYPE 
+
+      The type of records to query.  This string must identify a
+      record set contained in the database.  If TYPE is NULL then the
+      default record set, if any, is queried.
+
+   JOIN
+   
+      If not NULL, this argument must be a string denoting a field
+      name.  This field name must be a foreign key (field of type
+      'rec') defined in the selected record set.  The query operation
+      will do an inner join using T1.Field = T2.Field as join
+      criteria.
+
+   INDEX
+
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of valid
+      records.  The list of ends with the pair
+      REC_Q_NOINDEX,REC_Q_NOINDEX.
+
+      INDEX is mutually exclusive with any other selection option.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select from the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FEX
+
+      Field expression to apply to the matching records to build the
+      records in the result record set.  If FEX is NULL then the
+      matching records are unaltered.
+
+   PASSWORD
+
+      Password to use to decrypt confidential fields.  If the password
+      does not work then the encrypted fields are returned as-is.  If
+      PASSWORD is NULL, or if it is the empty string, then no attempt
+      to decrypt encrypted fields will be performed.
+
+   GROUP_BY
+
+      If not NULL, group the record set by the given field names.
+ 
+   SORT_BY
+
+      If not NULL, sort the record set by the given field names.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_Q_DESCRIPTOR
+
+      If set returned record set will feature a record descriptor.  If
+      the query is involving a single record set then the descriptor
+      will be a copy of the descriptor of the referred record set, and
+      will feature the same record type name.  Otherwise it will be
+      built from the several descriptors of the involved record sets,
+      and the record type name will be formed concatenating the type
+      names of the involved record sets.  If this flag is not
+      activated then the returned record set won't feature a record
+      descriptor.
+
+      REC_Q_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+  This function returns NULL if there is not enough memory to
+  perform the operation.  */
 
 static PyObject*
 recdb_query(recdb *self, PyObject *args, PyObject *kwds)
 {
-    const char  *type;
-    const char  *join;
-    size_t      *index;
-    sex         *sexp;
-    const char  *fast_string;
-    size_t       random;
-    fex         *fexp;
-    const char  *password;
-    fex         *group_by;
-    fex         *sort_by;
-    int          flags;
-    rset        *tmp = PyObject_NEW(rset, &rsetType); //return type
-    rec_rset_t res;
-    static char *kwlist[] = {"type", "join", "index", "sexp",
-                             "fast_string", "random", "fexp",
-                             "password", "group_by", "sort_by",
-                             "flags", NULL};
-    if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzzOziOzOOi", kwlist,
-                                      &type, &join, &index, &sexp, &fast_string, 
-                                      &random, &fexp, &password, &group_by, 
-                                      &sort_by, &flags))
-      { 
+  const char  *type;
+  const char  *join;
+  size_t      *index;
+  sex         *sexp;
+  const char  *fast_string;
+  size_t       random;
+  fex         *fexp;
+  const char  *password;
+  fex         *group_by;
+  fex         *sort_by;
+  int          flags;
+  rset        *tmp = PyObject_NEW(rset, &rsetType); //return type
+  rec_rset_t res;
+  static char *kwlist[] = {"type", "join", "index", "sexp",
+                           "fast_string", "random", "fexp",
+                           "password", "group_by", "sort_by",
+                           "flags", NULL};
+  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzzOziOzOOi", kwlist,
+                                    &type, &join, &index, &sexp, &fast_string, 
+                                    &random, &fexp, &password, &group_by, 
+                                    &sort_by, &flags))
+    { 
 
-        return NULL;
-      }
-    if((PyObject *)sexp == Py_None)
-      sexp->sx = NULL;
-    if((PyObject *)fexp == Py_None)
-      fexp->fx = NULL;
-    if((PyObject *)group_by == Py_None)
-      group_by->fx = NULL;
-    if((PyObject *)sort_by == Py_None)
-      sort_by->fx = NULL;
-    res = rec_db_query (self->rdb, type, join, index,
-                        sexp->sx, fast_string, random,
-                        fexp->fx, password, group_by->fx,
-                        sort_by->fx, flags);
-    tmp->rst = res;
-    return Py_BuildValue("O",tmp);
+      return NULL;
+    }
+  if((PyObject *)sexp == Py_None)
+    sexp->sx = NULL;
+  if((PyObject *)fexp == Py_None)
+    fexp->fx = NULL;
+  if((PyObject *)group_by == Py_None)
+    group_by->fx = NULL;
+  if((PyObject *)sort_by == Py_None)
+    sort_by->fx = NULL;
+  res = rec_db_query (self->rdb, type, join, index,
+                      sexp->sx, fast_string, random,
+                      fexp->fx, password, group_by->fx,
+                      sort_by->fx, flags);
+  tmp->rst = res;
+  return Py_BuildValue("O",tmp);
 }
+
+
+/* Insert a new record into a database, either appending it to some
+   record set or replacing one or more existing records.
+
+   This function takes the following arguments:
+   
+   DB
+
+      Database where to insert the record.
+
+   TYPE
+
+      Type of the new record.  If there is an existing record set
+      holding records of that type then the record is added to it.
+      Otherwise a new record set is appended into the database.
+
+   INDEX
+
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of records that
+      will be replaced by copies of the provided record. The list of
+      ends with the pair REC_Q_NOINDEX,REC_Q_NOINDEX.
+
+      INDEX is mutually exclusive with any other selection option.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select from the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+
+   PASSWORD
+
+      Password to use to crypt confidential fields.  If PASSWORD is
+      NULL, or if it is the empty string, then no attempt to crypt
+      confidential fields will be performed.
+
+   RECORD
+
+      Record to insert.  If more than one record is replaced in the
+      database they will be substitued with copies of this record.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_F_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+      REC_F_NOAUTO
+
+      If set then no auto-fields will be added to the newly created
+      records in the database.
+
+   If no selection option is used then the new record is appended to
+   either an existing record set identified by TYPE or to a newly
+   created record set.  If some selection option is used then the
+   matching existing records will be replaced.
+
+   This function returns 'false' if there is not enough memory to
+   perform the operation.  */
+
+
+static PyObject*
+recdb_insert(recdb *self, PyObject *args, PyObject *kwds)
+{
+
+  const char  *type;
+  size_t      *index;
+  sex         *sexp;
+  const char  *fast_string;
+  size_t       random;
+  const char  *password;
+  record      *recp;
+  int          flags;
+  bool success; 
+  static char *kwlist[] = {"type", "index", "sexp",
+                           "fast_string", "random",
+                           "password", "recp",
+                           "flags", NULL};
+  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOzizOi", kwlist,
+                                  &type, &index, &sexp, &fast_string, 
+                                  &random, &password, &recp, &flags))
+
+    { 
+
+      return NULL;
+    }
+  if((PyObject *)sexp == Py_None)
+    sexp->sx = NULL;
+  success = rec_db_insert (self->rdb, type, index,
+                           sexp->sx, fast_string, random,
+                           password, recp->rcd, flags);
+  return Py_BuildValue("i",success);
+}
+
+
+/* Delete records from a database, either physically removing them or
+   commenting them out.
+
+   This function takes the following arguments:
+
+   DB
+
+      Database where to remove records.
+
+   TYPE
+
+      Type of the records to remove.
+
+   INDEX
+
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of records that
+      will be deleted or commented out. The list of ends with the pair
+      REC_Q_NOINDEX,REC_Q_NOINDEX.
+
+      INDEX is mutually exclusive with any other selection option.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+ 
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select for deletion in the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_F_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+      REC_F_COMMENT_OUT
+
+      If set the selected records will be commented out instead of physically
+      removed from the database.
+
+  This function returns 'false' if there is not enough memory to
+  perform the operation.  */
+
+static PyObject*
+recdb_delete(recdb *self, PyObject *args, PyObject *kwds)
+{
+
+  const char  *type;
+  size_t      *index;
+  sex         *sexp;
+  const char  *fast_string;
+  size_t       random;
+  int          flags;
+  bool success; 
+  static char *kwlist[] = {"type", "index", "sexp",
+                           "fast_string", "random",
+                           "flags", NULL};
+  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOzii", kwlist,
+                                  &type, &index, &sexp, &fast_string, 
+                                  &random, &flags))
+
+    { 
+
+      return NULL;
+    }
+  if((PyObject *)sexp == Py_None)
+    sexp->sx = NULL;
+  success = rec_db_delete (self->rdb, type, index,
+                           sexp->sx, fast_string, 
+                           random, flags);
+  return Py_BuildValue("i",success);
+}
+
+
+/* Manipulate the fields of the selected records in a database: remove
+   them, set their values or rename them.
+
+   This function takes the following arguments:
+
+   DB
+
+      Database where to set fields.
+
+   TYPE
+
+      Type of the records to act in.
+
+   INDEX
+
+      If not NULL, this argument is a pointer to a buffer containing
+      pairs of Min,Max indexes, identifying intervals of records that
+      will be deleted or commented out. The list of ends with the pair
+      REC_Q_NOINDEX,REC_Q_NOINDEX.
+
+      INDEX is mutually exclusive with any other selection option.
+
+   SEX
+
+      Selection expression which is evaluated for every record in the
+      referred record set.  If SEX is NULL then all records are
+      selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+
+   FAST_STRING
+
+      If this argument is not NULL then it is a string which is used
+      as a fixed pattern.  Records featuring fields containing
+      FAST_STRING as a substring in their values are selected.
+
+      This argument is mutually exclusive with any other selection
+      option.
+ 
+   RANDOM
+
+      If not 0, this argument indicates the number of random records
+      to select for manipulation in the referred record set.
+ 
+      This argument is mutually exclusive with any other selection
+      option.
+   
+   FEX
+
+      Field expression selecting the fields in the selected records
+      which will be modified.
+
+   ACTION
+
+      Action to perform to the selected fields.  Valid values for this
+      argument are:
+
+      REC_SET_ACT_RENAME
+
+      Rename the matching fields to the string pointed by ACTION_ARG.
+
+      REC_SET_ACT_SET
+
+      Set the value of the matching fields to the string pointed by
+      ACTION_ARG.
+
+      REC_SET_ACT_ADD
+
+      Add new fields with the names specified in the fex to the
+      selected records.  The new fields will have the string pointed
+      by ACTION_ARG as their value.
+
+      REC_SET_ACT_SETADD
+
+      Set the selected fields to the value pointed by ACTION_ARG.  IF
+      the fields dont exist then create them with that value.
+
+      REC_SET_ACT_DELETE
+
+      Delete the selected fields.  ACTION_ARG is ignored by this
+      action.
+
+      REC_SET_ACT_COMMENT
+
+      Comment out the selected fields.  ACTION_ARG is ignored by this
+      action.
+      
+   ACTION_ARG
+
+      Argument to the selected action.  It is ok to pass NULL for
+      actions which dont require an argument.
+
+   FLAGS
+
+      ORed value of any of the following flags:
+
+      REC_F_ICASE
+
+      If set the string operations in the selection expression will be
+      case-insensitive.  If FALSE any string operation will be
+      case-sensitive.
+
+   This function return s'false' if there is not enough memory to
+   perform the operation.
+*/
+
+static PyObject*
+recdb_set(recdb *self, PyObject *args, PyObject *kwds)
+{
+
+  const char  *type;
+  size_t      *index;
+  sex         *sexp;
+  const char  *fast_string;
+  size_t       random;
+  fex         *fexp;
+  int          action;
+  const char   *action_arg;
+  int          flags;
+  bool success; 
+  static char *kwlist[] = {"type", "index", "sexp",
+                           "fast_string", "random", 
+                           "fexp", "action", "action_arg",
+                           "flags", NULL};
+  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOziOizi", kwlist,
+                                  &type, &index, &sexp, &fast_string, 
+                                  &random, &fexp, &action, &action_arg, &flags))
+
+    { 
+
+      return NULL;
+    }
+  if((PyObject *)sexp == Py_None)
+    sexp->sx = NULL;
+  if((PyObject *)fexp == Py_None)
+    fexp->fx = NULL;
+  success = rec_db_set (self->rdb, type, index,
+                        sexp->sx, fast_string, random,
+                        fexp->fx, action, action_arg, flags);
+  return Py_BuildValue("i",success);
+}
+
 
 /*recdb doc string */
 static char recdb_doc[] =
@@ -448,6 +904,19 @@ static PyMethodDef recdb_methods[] = {
      METH_VARARGS, 
      "Query the DB"
     },
+    {"insert", (PyCFunction)recdb_insert, 
+     METH_VARARGS, 
+     "Insert a record into DB"
+    },
+    {"delete", (PyCFunction)recdb_delete, 
+     METH_VARARGS, 
+     "Delete a record from DB"
+    },
+    {"set", (PyCFunction)recdb_set, 
+     METH_VARARGS, 
+     "Manipulate a record in DB"
+    },
+
     {NULL}  
 };
 

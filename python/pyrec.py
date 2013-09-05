@@ -41,6 +41,12 @@ class Recdb(recutils.recdb):
 class Fexenum(recutils.fex):
  	(REC_FEX_SIMPLE, REC_FEX_CSV, REC_FEX_SUBSCRIPTS) = range(0,3)
 
+class RecSetenum(recutils.recdb):
+ 	(REC_SET_ACT_NONE, REC_SET_ACT_RENAME, 
+ 	 REC_SET_ACT_SET, REC_SET_ACT_ADD, 
+ 	 REC_SET_ACT_SETADD, REC_SET_ACT_DELETE, REC_SET_ACT_COMMENT) = range(0,7)
+
+
 
 class RecSex(recutils.sex):
 	 	

@@ -105,5 +105,27 @@ flag4 = db2.writefile("account1_query.rec")
 
 
 
+print "\nCALLING INSERT FUNCTION"
+print "Inserting the record descriptor of Account file"
+ins = db.insert("Account", None, None, None, 1, None, desc, 0)
+print "Insert success? - check \"books_account_ins.rec\"", ins
+flag4 = db.writefile("books_account_ins.rec")
+
+
+print "\nCALLING DELETE FUNCTION"
+print "Deleting the record descriptor of Account file"
+ins = db.delete("Account", None, None, None, 1, 0)
+print "Delete success? - check \"books_account_del.rec\"", ins
+flag4 = db.writefile("books_account_del.rec")
+
+print "\nCALLING SET FUNCTION"
+print "Change the authors of all books at home to J.R.R. Tolkien"
+db3 = pyrec.Recdb()
+db3.loadfile("books.rec")
+rsetenum = pyrec.RecSetenum.REC_SET_ACT_SETADD
+print "rsetenum = ",rsetenum
+ins = db3.set("Book", None, sex1, None, 10, fex1, rsetenum, "J.R.R.Tolkien", 0)
+print "Set success? - check \"books_tolkien.rec\"", ins
+flag4 = db3.writefile("books_tolkien.rec")
 
 
