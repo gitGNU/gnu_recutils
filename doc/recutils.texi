@@ -397,7 +397,7 @@ Location: home
 @end example
 
 Simple.  The file contains a set of records separated by blank lines.
-Each record is composed by a set of fields with a name and a value.
+Each record comprises a set of fields with a name and a value.
 
 The GNU recutils can then be used to access the contents of the file.
 For example, we could get a list of the names of loaned books by invoking
@@ -475,7 +475,7 @@ escaping a newline with a backslash character, as in:
 
 @example
 LongLine: This is a quite long value \
-composed by a unique logical line \
+comprising a single unique logical line \
 split in several physical lines.
 @end example
 
@@ -709,7 +709,7 @@ and typed records in a recfile.
 @node Naming Record Types
 @subsection Naming Record Types
 
-It is up to you how to name your record sets.  Any string composed by
+It is up to you how to name your record sets.  Any string comprising
 alphanumeric characters, dashes or underscores, and that starts with a
 letter will be a legal name.  However, it is recommended to use the
 singular form of a noun in order to describe the ``type'' of the
@@ -1528,7 +1528,7 @@ string.  This is used when replacing the slots in templates
 fields of a record.  They also allow you to do certain transformations
 on the selected fields, such as changing their names.
 
-A FEX is composed by a sequence of @dfn{elements} separated by commas:
+A FEX comprises a sequence of @dfn{elements} separated by commas:
 
 @example
 ELEM_1,ELEM_2,@dots{},ELEM_N
@@ -2750,9 +2750,10 @@ type defined for the primary key of the @code{Hacker} record set.
 @node Field Restrictions
 @chapter Field Restrictions
 
-The records in a recfile are by default not restricted to display any
-structure more than being composed by one or more fields and any
-number of comments.  This provides the format a huge expressive power,
+The records in a recfile are by default not restricted to any particular
+structure 
+except that they must contain one or more fields and optional comments.
+This provides the format a huge expressive power,
 but in many cases it is also desirable to impose some restrictions in
 order to reflect some of the properties of the data stored in the
 database.  It is also useful in order to preserve data integrity and
@@ -4501,7 +4502,7 @@ Print all the record descriptors present in the file.
 @item -n
 @itemx @w{@kbd{--names-only}}
 Output just the names of the record types found in the input.  If the
-input is composed by anonymous records only then don't emit any
+input is contains anonymous records only then don't emit any
 output.
 @item -S
 @itemx @w{@kbd{--print-sexps}}
