@@ -9,7 +9,7 @@
 
 @comment Latin: videre licet,
 @macro viz
-@i{viz@:}
+@i{viz:@:}
 @end macro
 
 @comment Latin: id est 
@@ -173,9 +173,9 @@ Field Types
 
 Field Restrictions
 
-* Keys and Unique Fields::   Fields characterizing records.
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
+* Keys and Unique Fields::   Fields characterizing records.
 * Arbitrary Constraints::    Constraints records must comply with.
 
 Checking Recfiles
@@ -731,20 +731,18 @@ that it works better with the utilities: it is more natural to read
 
 @cindex field, special fields
 @cindex special fields
-@cindex key, primary key
-@cindex primary key
 Besides determining the type of record that follows in the
 stream, record descriptors can be used to describe other properties of
 those records.  This can be done by using @dfn{special
 fields}, which have special names from a predefined set.  
 Consider for example the following database, where record descriptors
-are used to specify a primary key and a mandatory field:
+are used to specify a (optional) numeric `Id' and a mandatory `Title' field:
 
 @cindex @code{%mandatory}
 @cindex mandatory fields
 @example
 %rec: Item
-%key: Id
+%type: Id int
 %mandatory: Title
 
 Id: 10
@@ -2731,21 +2729,17 @@ displayed in 5 groups separated by hyphens. For example:
 
 @noindent
 @cindex foreign key
-@cindex key, foreign key
-The @dfn{rec} field type is used to support the notion of @dfn{foreign
-key} in the recutils world.  It is used to denote the fact that a
-field is referring some record stored in another record set.  For
-example:
-
+There is one other possible field type @viz{} a foreign key.
+The following example 
+defines the type @code{Maintainer_t} to be of type ``record @code{Hacker}'' or 
+in other words a foreign key referring to a record in the @code{Hacker} record set.
 @example
 %typedef: Maintainer_t rec Hacker
 @end example
-
-@noindent
-The previous example defines the type @code{Maintainer_t} which is of
-type ``record @code{Hacker}''.  This basically means that the values
+@noindent This basically means that the values
 to be stored in fields of type @code{Maintainer_t} are of whatever
 type defined for the primary key of the @code{Hacker} record set.
+Why this is useful is discussed later. @xref{Queries which Join Records}.
 
 @node Field Restrictions
 @chapter Field Restrictions
@@ -2764,82 +2758,11 @@ fields whose purpose is to impose that kind of restrictions in the
 structure of the records.
 
 @menu
-* Keys and Unique Fields::   Fields characterizing records.
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
+* Keys and Unique Fields::   Fields characterizing records.
 * Arbitrary Constraints::    Constraints records must comply with.
 @end menu
-
-@node Keys and Unique Fields
-@section Keys and Unique Fields
-
-@cindex @code{%unique}
-@cindex @code{%key}
-These special field names are used to avoid several instances of the
-same field in a record, and to implement keys in record sets.  Their
-usage is:
-
-@example
-%unique: @var{field1} @var{field2} @dots{} @var{fieldN}
-%key: @var{field}
-@end example
-
-@noindent
-The lists of field names are separated by one or more blank characters.
-
-@cindex unique fields
-The @code{%unique} special field allows us to declare fields as unique,
-meaning there cannot exist more than one field with the same name in a
-single record.
-
-For example, an entry in an address book database could contain an
-@code{Age} field.  It does not make sense for a single person to be of
-several ages. So, a field could be declared as ``unique'' in the
-corresponding record descriptor as follows:
-
-@example
-%rec: Contact
-%mandatory: Name
-%unique: Age
-@end example
-
-@noindent
-Several @code{%unique} fields can appear in the same record
-descriptor.  The set of unique fields is the union of all the entries.
-
-@code{%key} makes the referred field the primary key of the record
-set.  As effect, any field with that name must be both unique
-and mandatory, and additionally, the values of those fields shall be
-unique in the context of the record set.  This closely corresponds to
-the notion of ``primary key'' usually implemented in relational
-systems.
-
-Consider for example a database of items in stock.  Each item is
-identified by a numerical @code{Id} field.  No item may have more than
-one @code{Id}, and no items may exist without an associated
-@code{Id}.  Additionally, no two items may share the same @code{Id}.
-This common situation can be implementing by declaring @code{Id} as
-the key in the record descriptor:
-
-@example
-%rec: Item
-%key: Id
-%mandatory: Title
-
-Id: 1
-Title: Box
-
-Id: 2
-Title: Sticker big
-@end example
-
-@noindent
-It would not make sense to have several primary keys in a record set.
-Thus, it is not allowed to have several @code{%key} fields in the
-same record descriptor.  
-@cindex integrity problems
-This would be a data integrity
-violation, and will be reported by a checking tool.
 
 
 @node Mandatory Fields
@@ -2961,6 +2884,85 @@ descriptor as follows:
 @noindent
 At the start of the event, the @code{%mandatory} line can be deleted, to 
 allow results to be entered.
+
+@node Keys and Unique Fields
+@section Keys and Unique Fields
+
+@cindex @code{%unique}
+@cindex @code{%key}
+The @code{%unique} and @code{%key} special fields are 
+used to avoid several instances of the
+same field in a record, and to implement keys in record sets.  
+Their usage is:
+
+@example
+%unique: @var{field1} @var{field2} @dots{} @var{fieldN}
+%key: @var{field}
+@end example
+
+@noindent
+The field names are separated by one or more blank characters.
+
+@cindex unique fields
+Normally it is permitted for a record to contain two or more fields of
+the same name.
+The @code{%unique} special field revokes this permissiveness.
+A field declared ``unique'' cannot appear more than once in a single record.
+
+For example, an entry in an address book database could contain an
+@code{Age} field.  It does not make sense for a single person to be of
+several ages. So, a field could be declared as ``unique'' in the
+corresponding record descriptor as follows:
+
+@example
+%rec: Contact
+%mandatory: Name
+%unique: Age
+@end example
+
+@noindent
+Several @code{%unique} fields can appear in the same record
+descriptor.  The set of unique fields is the union of all the entries.
+
+@cindex primary key
+@code{%key} makes the referenced field the primary key of the record
+set.
+The primary key behaves as if both @code{%unique} and 
+@code{%mandatory} had been specified for that field.
+Additionally, there is further restriction, @viz{} 
+The value of a primary key field may appear no more than once within a 
+record set.
+
+Consider for example a database of items in stock.  Each item is
+identified by a numerical @code{Id} field.  No item may have more than
+one @code{Id}, and no items may exist without an associated
+@code{Id}.  Additionally, no two items may share the same @code{Id}.
+This common situation can be implementing by declaring @code{Id} as
+the key in the record descriptor:
+
+@example
+%rec: Item
+%key: Id
+%mandatory: Title
+
+Id: 1
+Title: Box
+
+Id: 2
+Title: Sticker big
+@end example
+
+@noindent
+It would not make sense to have several primary keys in a record set.
+Thus, it is not allowed to have several @code{%key} fields in the
+same record descriptor.  
+It is also forbidden for two items to share the same `Id' value
+@cindex integrity problems
+Both of these situations would be data integrity
+violations, and will be reported by a checking tool.
+
+Later, you will learn how primary keys can be used to link one record set to 
+another using primary keys together with foreign keys. @xref{Queries which Join Records}.
 
 
 @node Arbitrary Constraints
