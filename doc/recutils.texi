@@ -5249,7 +5249,7 @@ The character @samp{.} matches any single character except the null character.
 @item +
 indicates that the regular expression should match one or more occurrences of the previous atom or regexp.
 @item ?
-indicates that the regular expression should match zero or one occurrence of the previous atom or regexp.
+indicates that the regular expression should match zero or one occurrences of the previous atom or regexp.
 @item \+
 matches a @samp{+}
 @item \?
