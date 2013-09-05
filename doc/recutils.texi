@@ -1030,7 +1030,7 @@ As was explained in the previous sections, @command{recsel} outputs
 all the records of some record set.  The records are echoed in the
 same order they are written in the recfile.  However, often it is
 desirable to select a subset of the records determined by the position
-they occupy into their record set.
+they occupy in their record set.
 
 The @code{-n} command line argument to @command{recsel} allows to do
 this in a very easy way.  This is how we would retrieve the first
@@ -1341,7 +1341,7 @@ Email ~ "\\.org"
 Will match any record in which there is a field named @samp{Email}
 whose value terminates in @samp{.org}.  
 If we are interested in the value of some specific email, we can specify 
-its relative position into the containing record by using @dfn{subscripts}.  
+its relative position in the containing record by using @dfn{subscripts}.  
 @cindex subscripts, in selection expressions
 Consider, for example:
 
@@ -4330,7 +4330,7 @@ If you installed recutils using a binary package in a GNU/Linux
 distribution, odds are that the built-in commands described in this
 chapter are already available to you.  Otherwise (you get a ``command
 not found'' or similar error) you may have to register the built-in
-commands into your bash.  This is very easy using the @command{enable}
+commands with your bash.  This is very easy using the @command{enable}
 bash command.  The registering command for readrec would be:
 
 @example
