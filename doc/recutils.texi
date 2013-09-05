@@ -3477,7 +3477,7 @@ whereas  @code{Mobile} belongs to @code{Person} since mobile telephones are norm
 used exclusively by one individual.
 
 If we want to look up the name and address of persons in our recfile, we can 
-use the @command{recsel} as before.
+use @command{recsel} as before.
 Because we now have more than one record set in the @file{acquaintances.rec}
 file, we have to tell @command{recsel} from which record set we want to lookup
 records. 
