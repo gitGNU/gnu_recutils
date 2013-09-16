@@ -1,4 +1,5 @@
 %rec: movies
+%mandatory: Date
 
 Id: 19
 Title: 100 Ways to murder your Wife

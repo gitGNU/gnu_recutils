@@ -14,6 +14,10 @@ db.appendfile("account.rec") #Should get duplicate rset error
 db2.loadfile("books.rec")
 db.pywritefile("books_account.rec")
 
+db4 = pyrec.Recdb()
+db4.loadfile("movies.rec")
+
+err = recutils.buffer("hello",100)
 
 print "CREATE TWO FIELDS"
 fl1 = recutils.field("Author", "Richard M. Stallman")
@@ -128,4 +132,8 @@ ins = db3.set("Book", None, sex1, None, 10, fex1, rsetenum, "J.R.R.Tolkien", 0)
 print "Set success? - check \"books_tolkien.rec\"", ins
 flag4 = db3.writefile("books_tolkien.rec")
 
+
+print "Integrity check of movies.rec file - added %mandatory: Date"
+n = db4.int_check(1,1,err)
+print "Checks = ",n
 

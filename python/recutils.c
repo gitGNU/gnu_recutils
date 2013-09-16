@@ -48,6 +48,11 @@ typedef struct {
     rec_comment_t cmnt;  
 } comment;
 
+typedef struct {
+    PyObject_HEAD
+    rec_buf_t buf;  
+} buffer;
+
 staticforward PyTypeObject rsetType;
 staticforward PyTypeObject recordType;
 staticforward PyTypeObject fexType;
@@ -55,6 +60,7 @@ staticforward PyTypeObject fexelemType;
 staticforward PyTypeObject sexType;
 staticforward PyTypeObject fieldType;
 staticforward PyTypeObject commentType;
+staticforward PyTypeObject bufferType;
 static PyObject *RecError;
 
 /* Create an empty database.  */
@@ -602,8 +608,8 @@ recdb_insert(recdb *self, PyObject *args, PyObject *kwds)
                            "password", "recp",
                            "flags", NULL};
   if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOzizOi", kwlist,
-                                  &type, &index, &sexp, &fast_string, 
-                                  &random, &password, &recp, &flags))
+                                    &type, &index, &sexp, &fast_string, 
+                                    &random, &password, &recp, &flags))
 
     { 
 
@@ -699,8 +705,8 @@ recdb_delete(recdb *self, PyObject *args, PyObject *kwds)
                            "fast_string", "random",
                            "flags", NULL};
   if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOzii", kwlist,
-                                  &type, &index, &sexp, &fast_string, 
-                                  &random, &flags))
+                                    &type, &index, &sexp, &fast_string, 
+                                    &random, &flags))
 
     { 
 
@@ -841,8 +847,8 @@ recdb_set(recdb *self, PyObject *args, PyObject *kwds)
                            "fexp", "action", "action_arg",
                            "flags", NULL};
   if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOziOizi", kwlist,
-                                  &type, &index, &sexp, &fast_string, 
-                                  &random, &fexp, &action, &action_arg, &flags))
+                                    &type, &index, &sexp, &fast_string, 
+                                    &random, &fexp, &action, &action_arg, &flags))
 
     { 
 
@@ -858,6 +864,30 @@ recdb_set(recdb *self, PyObject *args, PyObject *kwds)
   return Py_BuildValue("i",success);
 }
 
+/* Check the integrity of all the record sets stored in a given
+   database.  This function returns the number of errors found.
+   Descriptive messages about the errors are appended to ERRORS.  */
+
+static PyObject*
+recdb_int_check(recdb *self, PyObject *args, PyObject *kwds)
+{
+
+  bool check_descriptors_p;
+  bool remote_descriptors_p;
+  buffer *errors;
+  int num;
+  static char *kwlist[] = {"check_descriptors_p","remote_descriptors_p","errors", NULL};
+  if (! PyArg_ParseTupleAndKeywords(args, kwds, "iiO", kwlist,
+                                    &check_descriptors_p, &remote_descriptors_p, &errors))
+
+    { 
+
+      return NULL;
+    }
+
+   num = rec_int_check_db (self->rdb, check_descriptors_p, remote_descriptors_p, errors->buf);
+   return Py_BuildValue("i", num);
+ }
 
 /*recdb doc string */
 static char recdb_doc[] =
@@ -915,6 +945,10 @@ static PyMethodDef recdb_methods[] = {
     {"set", (PyCFunction)recdb_set, 
      METH_VARARGS, 
      "Manipulate a record in DB"
+    },
+    {"int_check", (PyCFunction)recdb_int_check, 
+     METH_VARARGS, 
+     "Check the integrity of all the record sets stored in DB"
     },
 
     {NULL}  
@@ -1963,9 +1997,6 @@ static PyMethodDef field_methods[] = {
 };
 
 
-//PyDict_SetItemString(fexType, "bar", PyInt_FromLong(1));
-
-
 /* Define the record object type */
 static PyTypeObject fieldType = {
     PyObject_HEAD_INIT(NULL)
@@ -2108,7 +2139,6 @@ static PyMethodDef comment_methods[] = {
 };
 
 
-//PyDict_SetItemString(fexType, "bar", PyInt_FromLong(1));
 
 
 /* Define the record object type */
@@ -2168,6 +2198,103 @@ static PyMethodDef recutils_methods[] = {
     },
     {NULL}  /* Sentinel */
 };
+
+
+
+/*
+ * FLEXIBLE BUFFERS
+ *
+ * A flexible buffer (rec_buf_t) is a buffer to which stream-like
+ * operations can be applied.  Its size will grow as required.
+ */
+
+static PyObject *
+buffer_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+  buffer *self;
+  char **data;
+  size_t *size;
+  static char *kwlist[] = {"data", "size", NULL};
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "zi", kwlist, &data, &size)) 
+    {
+      return NULL;
+    }
+ self = (buffer *)type->tp_alloc(type, 0);
+  if (self != NULL) 
+    {
+      self->buf = rec_buf_new(data, size);
+      if (self->buf == NULL) 
+        {
+           /* Out of memory.  */
+          Py_DECREF(self);
+          return NULL;
+        }
+    }
+  return (PyObject *)self;
+
+}
+
+static void
+buffer_dealloc (buffer* self)
+{
+  //rec_com_destroy (self->cmnt);
+  self->ob_type->tp_free((PyObject*)self);
+}
+
+
+/*record doc string */
+static char buffer_doc[] =
+  "A flexible buffer is a buffer to which stream-like operations can be applied.";
+
+
+static PyMethodDef buffer_methods[] = {
+    {NULL}
+};
+
+/* Define the record object type */
+static PyTypeObject bufferType = {
+    PyObject_HEAD_INIT(NULL)
+    0,                         /*ob_size*/
+    "recutils.buffer",              /*tp_name*/
+    sizeof(buffer),             /*tp_basicsize*/
+    0,                         /*tp_itemsize*/
+    (destructor)buffer_dealloc, /*tp_dealloc*/
+    0,                         /*tp_print*/
+    0,                         /*tp_getattr*/
+    0,                         /*tp_setattr*/
+    0,                         /*tp_compare*/
+    0,                         /*tp_repr*/
+    0,                         /*tp_as_number*/
+    0,                         /*tp_as_sequence*/
+    0,                         /*tp_as_mapping*/
+    0,                         /*tp_hash */
+    0,                         /*tp_call*/
+    0,                         /*tp_str*/
+    0,                         /*tp_getattro*/
+    0,                         /*tp_setattro*/
+    0,                         /*tp_as_buffer*/
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+    buffer_doc,                 /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    0,                         /* tp_richcompare */
+    0,                         /* tp_weaklistoffset */
+    0,                         /* tp_iter */
+    0,                         /* tp_iternext */
+    buffer_methods,             /* tp_methods */
+    0,                         /* tp_members */
+    0,                         /* tp_getset */
+    0,                         /* tp_base */
+    0,                         /* tp_dict */
+    0,                         /* tp_descr_get */
+    0,                         /* tp_descr_set */
+    0,                         /* tp_dictoffset */
+    0,                         /* tp_init */
+    0,                         /* tp_alloc */
+    buffer_new,                 /* tp_new */
+};
+
+
 /*
  * Initialization function, which is called when the module is loaded.
  */
@@ -2198,6 +2325,9 @@ initrecutils (void)
     if (PyType_Ready(&commentType) < 0)
         return;  
 
+    if (PyType_Ready(&bufferType) < 0)
+        return; 
+
     m = Py_InitModule3("recutils", recutils_methods, recutils_doc);
 
     if (m == NULL)
@@ -2223,6 +2353,9 @@ initrecutils (void)
 
     Py_INCREF(&commentType);
     PyModule_AddObject(m, "comment", (PyObject *)&commentType);
+
+    Py_INCREF(&bufferType);
+    PyModule_AddObject(m, "buffer", (PyObject *)&bufferType);
 
     RecError = PyErr_NewException("recutils.error", NULL, NULL);
     Py_INCREF(RecError);
