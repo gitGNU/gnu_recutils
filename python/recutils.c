@@ -1,13 +1,11 @@
 //#include <config.h>
-
 #include <Python.h>
 #include <rec.h>
-#include <recutl.h>
 #include "structmember.h"
 #include <error.h>
 
 typedef struct {
-    PyObject_HEAD
+    PyObject_HEAD   
     rec_db_t rdb;  
 } recdb;
 
@@ -69,7 +67,7 @@ static PyObject *
 recdb_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   recdb *self;
-  self = (recdb *)type->tp_alloc(type, 0);
+  self = (recdb *) type->tp_alloc (type, 0);
   //Py_INCREF(self);
   if (self != NULL) 
     {
@@ -95,24 +93,24 @@ recdb_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 recdb_dealloc (recdb* self)
 {
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*) self);
 }
 
 
 /* Return the number of record sets contained in a given record
    set.  */
 static PyObject*
-recdb_size(recdb* self)
+recdb_size (recdb* self)
 {
   int s = rec_db_size (self->rdb);
-  return Py_BuildValue("i", s);
+  return Py_BuildValue ("i", s);
 }
 
 
 /* Load a file into a Database object */
 
 static PyObject*
-recdb_pyloadfile(recdb *self, PyObject *args, PyObject *kwds)
+recdb_pyloadfile (recdb *self, PyObject *args, PyObject *kwds)
 {
   char *string = NULL;
   bool success;
@@ -122,29 +120,29 @@ recdb_pyloadfile(recdb *self, PyObject *args, PyObject *kwds)
     {
       return NULL;
     }
-  FILE *in = fopen(string,"r");
-  if(in == NULL)
+  FILE *in = fopen (string,"r");
+  if (in == NULL)
     {
-      PyErr_SetString(RecError, strerror(errno));
+      PyErr_SetString (RecError, strerror (errno));
       return NULL;
     }
   parser = rec_parser_new (in, string);
-  rec_db_destroy(self->rdb);
+  rec_db_destroy (self->rdb);
   success = rec_parse_db (parser, &(self->rdb));
-  if(!success)
+  if (!success)
     {
-      PyErr_SetString(RecError, "parse error");
+      PyErr_SetString (RecError, "parse error");
       return NULL;
     }
-  fclose(in);
+  fclose (in);
   rec_parser_destroy (parser);
-  return Py_BuildValue("");
+  return Py_BuildValue ("");
 }
 
 /* Append a file into a Database object */
 
 static PyObject*
-recdb_pyappendfile(recdb *self, PyObject *args, PyObject *kwds)
+recdb_pyappendfile (recdb *self, PyObject *args, PyObject *kwds)
 {
   char *string = NULL;
   bool success = true;
@@ -152,14 +150,14 @@ recdb_pyappendfile(recdb *self, PyObject *args, PyObject *kwds)
   rec_rset_t res;  
   rec_parser_t parser;
   static char *kwlist[] = {"filename", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &string)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "s", kwlist, &string)) 
     {
       return NULL;
     }
-  FILE *in = fopen(string,"r");
-  if(in == NULL)
+  FILE *in = fopen (string,"r");
+  if (in == NULL)
     {
-      PyErr_SetString(RecError, strerror(errno));
+      PyErr_SetString (RecError, strerror (errno));
       return NULL;
     }
   parser = rec_parser_new (in, string);
@@ -170,8 +168,8 @@ recdb_pyappendfile(recdb *self, PyObject *args, PyObject *kwds)
       rset_type = rec_rset_type (res);
       if (rec_db_type_p (self->rdb, rset_type))
         {
-          sprintf(str,"Duplicated record set '%s' from %s.",rset_type, string);
-          PyErr_SetString(RecError, str);
+          sprintf (str,"Duplicated record set '%s' from %s.",rset_type, string);
+          PyErr_SetString (RecError, str);
           return NULL;
         }
 
@@ -190,42 +188,42 @@ recdb_pyappendfile(recdb *self, PyObject *args, PyObject *kwds)
       success = false;
     }
   rec_parser_destroy (parser);
-  fclose(in);
-  if(!success)
+  fclose (in);
+  if (!success)
     {
-      PyErr_SetString(RecError, "parse error");
+      PyErr_SetString (RecError, "parse error");
       return NULL;
     }
-  return Py_BuildValue("");
+  return Py_BuildValue ("");
 }
 
 /*Write to file from a DB object */ 
 
 static PyObject*
-recdb_pywritefile(recdb *self, PyObject *args, PyObject *kwds)
+recdb_pywritefile (recdb *self, PyObject *args, PyObject *kwds)
 {
   char *string = NULL;
   bool success;
   static char *kwlist[] = {"filename", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &string))
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "s", kwlist, &string))
     {
       return NULL;
     }
-  FILE *out = fopen(string,"w");
-  if(out == NULL)
+  FILE *out = fopen (string,"w");
+  if (out == NULL)
     {
-      PyErr_SetString(RecError, strerror(errno));
+      PyErr_SetString (RecError, strerror (errno));
       return NULL;
     }
   rec_writer_t writer = rec_writer_new (out);
   success = rec_write_db (writer, self->rdb);
-  if(!success)
+  if (!success)
     {
-      PyErr_SetString(RecError, "parse error");
+      PyErr_SetString (RecError, "parse error");
       return NULL;
     }
-  fclose(out);
-  return Py_BuildValue("");
+  fclose (out);
+  return Py_BuildValue ("");
 
 }
 
@@ -235,12 +233,12 @@ recdb_pywritefile(recdb *self, PyObject *args, PyObject *kwds)
    returned.  */
 
 static PyObject*
-recdb_get_rset(recdb *self, PyObject *args, PyObject *kwds)
+recdb_get_rset (recdb *self, PyObject *args, PyObject *kwds)
 {
   int pos;
   rec_rset_t res;
   PyObject *result;
-  rset *tmp = PyObject_NEW(rset, &rsetType);
+  rset *tmp = PyObject_NEW (rset, &rsetType);
   //tmp->rst = rec_rset_new();
   static char *kwlist[] = {"position", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &pos)) 
@@ -249,7 +247,7 @@ recdb_get_rset(recdb *self, PyObject *args, PyObject *kwds)
     }
   res = rec_db_get_rset (self->rdb, pos);
   tmp->rst = res;
-  result =  Py_BuildValue("O",tmp);
+  result =  Py_BuildValue ("O",tmp);
   return result;
 }
 
@@ -268,25 +266,25 @@ recdb_get_rset(recdb *self, PyObject *args, PyObject *kwds)
  */
 
 static PyObject*
-recdb_pyinsert_rset(recdb *self, PyObject *args, PyObject *kwds)
+recdb_pyinsert_rset (recdb *self, PyObject *args, PyObject *kwds)
 {
   rset *recset;
   size_t position;
   bool success;
   static char *kwlist[] = {"recset", "position",NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "Oi", kwlist, 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "Oi", kwlist, 
                                     &recset,
                                     &position))
     {
       return NULL; 
     }
   success = rec_db_insert_rset (self->rdb, recset->rst, position);
-  if(!success)
+  if (!success)
     {
-      PyErr_SetString(RecError, "Record set insertion failed");
+      PyErr_SetString (RecError, "Record set insertion failed");
       return NULL;
     }
-  return Py_BuildValue("");
+  return Py_BuildValue ("");
 }
 
 
@@ -299,37 +297,38 @@ recdb_pyinsert_rset(recdb *self, PyObject *args, PyObject *kwds)
    returned.  */
 
 static PyObject*
-recdb_pyremove_rset(recdb *self, PyObject *args, PyObject *kwds)
+recdb_pyremove_rset (recdb *self, PyObject *args, PyObject *kwds)
 {
   size_t position;
   bool success;
   static char *kwlist[] = {"position",NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "i", kwlist, 
                                     &position))
     {
       return NULL;
     }
   success = rec_db_remove_rset (self->rdb, position);
-  if(!success)
+  if (!success)
     {
-      PyErr_SetString(RecError, "Record set deletion failed");
+      PyErr_SetString (RecError, "Record set deletion failed");
       return NULL;
     }
-  return Py_BuildValue("");
+  return Py_BuildValue ("");
 }
 
 /* Determine whether an rset named TYPE exists in a database.  If TYPE
    is NULL then it refers to the default record set.  */
 
 static PyObject*
-recdb_type(recdb *self, PyObject *args)
+recdb_type (recdb *self, PyObject *args)
 {
     char *type;
-    if (!PyArg_ParseTuple(args, "s", &type)) {
-      return NULL;
-    }
+    if (!PyArg_ParseTuple (args, "s", &type)) 
+      {
+        return NULL;
+      }
     bool success = rec_db_type_p (self->rdb,type);
-    return Py_BuildValue("i",success);
+    return Py_BuildValue ("i",success);
 
 }
 
@@ -338,19 +337,20 @@ recdb_type(recdb *self, PyObject *args)
 NULL if there is no a record set having that type.  */
 
 static PyObject*
-recdb_get_rset_by_type(recdb *self, PyObject *args, PyObject *kwds)
+recdb_get_rset_by_type (recdb *self, PyObject *args, PyObject *kwds)
 {
     char *type = NULL;
     rec_rset_t res;
     PyObject *result;
     rset *tmp = PyObject_NEW(rset, &rsetType);
     static char *kwlist[] = {"type", NULL};
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &type)) {
-      return NULL;
-    }
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &type)) 
+      {
+        return NULL;
+      }
     res = rec_db_get_rset_by_type (self->rdb,type);
     tmp->rst = res;
-    result =  Py_BuildValue("O",tmp);
+    result =  Py_BuildValue ("O",tmp);
     return result;
 }
 
@@ -461,7 +461,7 @@ recdb_get_rset_by_type(recdb *self, PyObject *args, PyObject *kwds)
   perform the operation.  */
 
 static PyObject*
-recdb_query(recdb *self, PyObject *args, PyObject *kwds)
+recdb_query (recdb *self, PyObject *args, PyObject *kwds)
 {
   const char  *type;
   const char  *join;
@@ -474,13 +474,13 @@ recdb_query(recdb *self, PyObject *args, PyObject *kwds)
   fex         *group_by;
   fex         *sort_by;
   int          flags;
-  rset        *tmp = PyObject_NEW(rset, &rsetType); //return type
+  rset        *tmp = PyObject_NEW (rset, &rsetType); //return type
   rec_rset_t res;
   static char *kwlist[] = {"type", "join", "index", "sexp",
                            "fast_string", "random", "fexp",
                            "password", "group_by", "sort_by",
                            "flags", NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzzOziOzOOi", kwlist,
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zzzOziOzOOi", kwlist,
                                     &type, &join, &index, &sexp, &fast_string, 
                                     &random, &fexp, &password, &group_by, 
                                     &sort_by, &flags))
@@ -488,20 +488,20 @@ recdb_query(recdb *self, PyObject *args, PyObject *kwds)
 
       return NULL;
     }
-  if((PyObject *)sexp == Py_None)
-    sexp->sx = NULL;
-  if((PyObject *)fexp == Py_None)
-    fexp->fx = NULL;
-  if((PyObject *)group_by == Py_None)
-    group_by->fx = NULL;
-  if((PyObject *)sort_by == Py_None)
-    sort_by->fx = NULL;
+  if ((PyObject *)sexp == Py_None)
+      sexp->sx = NULL;
+  if ((PyObject *)fexp == Py_None)
+      fexp->fx = NULL;
+  if ((PyObject *)group_by == Py_None)
+      group_by->fx = NULL;
+  if ((PyObject *)sort_by == Py_None)
+      sort_by->fx = NULL;
   res = rec_db_query (self->rdb, type, join, index,
                       sexp->sx, fast_string, random,
                       fexp->fx, password, group_by->fx,
                       sort_by->fx, flags);
   tmp->rst = res;
-  return Py_BuildValue("O",tmp);
+  return Py_BuildValue ("O",tmp);
 }
 
 
@@ -591,7 +591,7 @@ recdb_query(recdb *self, PyObject *args, PyObject *kwds)
 
 
 static PyObject*
-recdb_insert(recdb *self, PyObject *args, PyObject *kwds)
+recdb_insert (recdb *self, PyObject *args, PyObject *kwds)
 {
 
   const char  *type;
@@ -607,7 +607,7 @@ recdb_insert(recdb *self, PyObject *args, PyObject *kwds)
                            "fast_string", "random",
                            "password", "recp",
                            "flags", NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOzizOi", kwlist,
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zzOzizOi", kwlist,
                                     &type, &index, &sexp, &fast_string, 
                                     &random, &password, &recp, &flags))
 
@@ -615,12 +615,12 @@ recdb_insert(recdb *self, PyObject *args, PyObject *kwds)
 
       return NULL;
     }
-  if((PyObject *)sexp == Py_None)
-    sexp->sx = NULL;
+  if ((PyObject *)sexp == Py_None)
+      sexp->sx = NULL;
   success = rec_db_insert (self->rdb, type, index,
                            sexp->sx, fast_string, random,
                            password, recp->rcd, flags);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 
@@ -691,7 +691,7 @@ recdb_insert(recdb *self, PyObject *args, PyObject *kwds)
   perform the operation.  */
 
 static PyObject*
-recdb_delete(recdb *self, PyObject *args, PyObject *kwds)
+recdb_delete (recdb *self, PyObject *args, PyObject *kwds)
 {
 
   const char  *type;
@@ -704,7 +704,7 @@ recdb_delete(recdb *self, PyObject *args, PyObject *kwds)
   static char *kwlist[] = {"type", "index", "sexp",
                            "fast_string", "random",
                            "flags", NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOzii", kwlist,
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zzOzii", kwlist,
                                     &type, &index, &sexp, &fast_string, 
                                     &random, &flags))
 
@@ -712,12 +712,12 @@ recdb_delete(recdb *self, PyObject *args, PyObject *kwds)
 
       return NULL;
     }
-  if((PyObject *)sexp == Py_None)
-    sexp->sx = NULL;
+  if ((PyObject *)sexp == Py_None)
+      sexp->sx = NULL;
   success = rec_db_delete (self->rdb, type, index,
                            sexp->sx, fast_string, 
                            random, flags);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 
@@ -829,7 +829,7 @@ recdb_delete(recdb *self, PyObject *args, PyObject *kwds)
 */
 
 static PyObject*
-recdb_set(recdb *self, PyObject *args, PyObject *kwds)
+recdb_set (recdb *self, PyObject *args, PyObject *kwds)
 {
 
   const char  *type;
@@ -846,7 +846,7 @@ recdb_set(recdb *self, PyObject *args, PyObject *kwds)
                            "fast_string", "random", 
                            "fexp", "action", "action_arg",
                            "flags", NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "zzOziOizi", kwlist,
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zzOziOizi", kwlist,
                                     &type, &index, &sexp, &fast_string, 
                                     &random, &fexp, &action, &action_arg, &flags))
 
@@ -854,14 +854,14 @@ recdb_set(recdb *self, PyObject *args, PyObject *kwds)
 
       return NULL;
     }
-  if((PyObject *)sexp == Py_None)
-    sexp->sx = NULL;
-  if((PyObject *)fexp == Py_None)
-    fexp->fx = NULL;
+  if ((PyObject *)sexp == Py_None)
+      sexp->sx = NULL;
+  if ((PyObject *)fexp == Py_None)
+      fexp->fx = NULL;
   success = rec_db_set (self->rdb, type, index,
                         sexp->sx, fast_string, random,
                         fexp->fx, action, action_arg, flags);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 /* Check the integrity of all the record sets stored in a given
@@ -869,7 +869,7 @@ recdb_set(recdb *self, PyObject *args, PyObject *kwds)
    Descriptive messages about the errors are appended to ERRORS.  */
 
 static PyObject*
-recdb_int_check(recdb *self, PyObject *args, PyObject *kwds)
+recdb_int_check (recdb *self, PyObject *args, PyObject *kwds)
 {
 
   bool check_descriptors_p;
@@ -877,7 +877,7 @@ recdb_int_check(recdb *self, PyObject *args, PyObject *kwds)
   buffer *errors;
   int num;
   static char *kwlist[] = {"check_descriptors_p","remote_descriptors_p","errors", NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "iiO", kwlist,
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "iiO", kwlist,
                                     &check_descriptors_p, &remote_descriptors_p, &errors))
 
     { 
@@ -886,7 +886,7 @@ recdb_int_check(recdb *self, PyObject *args, PyObject *kwds)
     }
 
    num = rec_int_check_db (self->rdb, check_descriptors_p, remote_descriptors_p, errors->buf);
-   return Py_BuildValue("i", num);
+   return Py_BuildValue ("i", num);
  }
 
 /*recdb doc string */
@@ -1008,14 +1008,14 @@ static PyObject *
 rset_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   rset *self;
-  self = (rset *)type->tp_alloc(type, 0);
+  self = (rset *) type->tp_alloc (type, 0);
   if (self != NULL) 
     {
         self->rst = rec_rset_new();
         if (self->rst == NULL) 
           {
               /*Out of memory*/
-            Py_DECREF(self);
+            Py_DECREF (self);
             return NULL;
           }
     }
@@ -1031,7 +1031,7 @@ static void
 rset_dealloc (rset* self)
 {
   rec_rset_destroy (self->rst);
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*)self);
 }
 
 
@@ -1041,7 +1041,7 @@ static PyObject*
 rset_num_records (rset* self)
 {
   int num = rec_rset_num_records (self->rst);
-  return Py_BuildValue("i",num);
+  return Py_BuildValue ("i",num);
 }
 
 /* Return the record descriptor of a given record set.  NULL is
@@ -1053,11 +1053,11 @@ rset_descriptor (rset* self)
 {
   PyObject *result;
   rec_record_t reco;
-  record *tmp = PyObject_NEW(record, &recordType);
+  record *tmp = PyObject_NEW (record, &recordType);
   reco = rec_rset_descriptor (self->rst);
   //printf("The desc is: %s", reco->source);
   tmp->rcd = reco;
-  result = Py_BuildValue("O",tmp);
+  result = Py_BuildValue ("O",tmp);
   return result;
 }
 
@@ -1070,7 +1070,7 @@ rset_type (rset* self)
   PyObject *result;
   char* restype;
   restype = rec_rset_type (self->rst);
-  result = Py_BuildValue("s",restype);
+  result = Py_BuildValue ("s",restype);
   return result;
 }
 
@@ -1143,14 +1143,14 @@ static PyObject *
 record_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   record *self;
-  self = (record *)type->tp_alloc(type, 0);
+  self = (record *) type->tp_alloc (type, 0);
   if (self != NULL) 
     {
         self->rcd = rec_record_new();
         if (self->rcd == NULL) 
           {
              /* Out of memory.  */
-            Py_DECREF(self);
+            Py_DECREF (self);
             return NULL;
           }
     }
@@ -1165,7 +1165,7 @@ static void
 record_dealloc (record* self)
 {
   rec_record_destroy (self->rcd);
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*)self);
 }  
 
 /* Return the number of fields stored in the given record.  */
@@ -1174,7 +1174,7 @@ static PyObject*
 record_num_fields (record* self)
 {
   int num = rec_record_num_fields (self->rcd);
-  return Py_BuildValue("i",num);
+  return Py_BuildValue ("i",num);
 
 }
 
@@ -1194,7 +1194,7 @@ record_contains_value (record* self, PyObject *args, PyObject *kwds)
       return NULL;
     }
   success = rec_record_contains_value (self->rcd, value, case_insensitive);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 
 }
 
@@ -1213,7 +1213,7 @@ record_contains_field (record* self, PyObject *args, PyObject *kwds)
       return NULL;
     }
   bool success = rec_record_contains_field (self->rcd, field_name, field_value);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 
 }
 
@@ -1296,7 +1296,7 @@ sex_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
     {
       return NULL;
     }
-  self = (sex *)type->tp_alloc(type, 0);
+  self = (sex *) type->tp_alloc (type, 0);
   if (self != NULL) 
     {
       self->sx = rec_sex_new(case_insensitive);
@@ -1304,7 +1304,7 @@ sex_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
       if (self->sx == NULL) 
         {
            /* Out of memory.  */
-          Py_DECREF(self);
+          Py_DECREF (self);
           return NULL;
         }
     }
@@ -1316,24 +1316,24 @@ static void
 sex_dealloc (sex* self)
 {
   rec_sex_destroy (self->sx);
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*)self);
 }
 
 /* Compile a sex.  Sexes must be compiled before being used.  If there
    is a parse error return false.  */
 
 static PyObject*
-sex_pycompile(sex *self, PyObject *args, PyObject *kwds)
+sex_pycompile (sex *self, PyObject *args, PyObject *kwds)
 {
   const char *expr;
   static char *kwlist[] = {"expr",NULL};
   bool success;
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "z", kwlist, &expr)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "z", kwlist, &expr)) 
     {
       return NULL;
     }
   success = rec_sex_compile (self->sx,expr);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 /* Apply a sex expression to a record, setting STATUS in accordance:
@@ -1341,38 +1341,38 @@ sex_pycompile(sex *self, PyObject *args, PyObject *kwds)
    function returns the same value that is stored in STATUS.  */
 
 static PyObject*
-sex_pyeval(sex *self, PyObject *args, PyObject *kwds)
+sex_pyeval (sex *self, PyObject *args, PyObject *kwds)
 {
   bool status;
   record *rec;
   bool success;
   static char *kwlist[] = {"rec", "status",NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "Oi", kwlist, 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "Oi", kwlist, 
                                     &rec,
                                     &status))
     {
       return NULL; 
     }
   success = rec_sex_eval (self->sx, rec->rcd, &status);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 /* Apply a sex expression and get the result as an allocated
    string.  */
 
 static PyObject*
-sex_eval_str(sex *self, PyObject *args, PyObject *kwds)
+sex_eval_str (sex *self, PyObject *args, PyObject *kwds)
 {
   record *rec;
   char *str;
   static char *kwlist[] = {"rec",NULL};
-  if (! PyArg_ParseTupleAndKeywords(args, kwds, "O", kwlist, 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "O", kwlist, 
                                     &rec))
     {
     return NULL; 
     }
   str = rec_sex_eval_str (self->sx, rec->rcd);   
-  return Py_BuildValue("z",str);
+  return Py_BuildValue ("z",str);
 }
 
 
@@ -1452,18 +1452,18 @@ fex_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
   const char *str;
   enum rec_fex_kind_e kind;
   static char *kwlist[] = {"str","kind", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "zi", kwlist, &str, &kind)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zi", kwlist, &str, &kind)) 
     {
       return NULL;
     }
-  self = (fex *)type->tp_alloc(type, 0);
+  self = (fex *) type->tp_alloc (type, 0);
   if (self != NULL) 
     {
-      self->fx = rec_fex_new(str,kind);
+      self->fx = rec_fex_new (str,kind);
       if (self->fx == NULL) 
         {
            /* Out of memory.  */
-          Py_DECREF(self);
+          Py_DECREF (self);
           return NULL;
         }
     }
@@ -1476,36 +1476,36 @@ static void
 fex_dealloc (fex* self)
 {
   rec_fex_destroy (self->fx);
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*)self);
 }
 
 
 /* Get the number of elements stored in a field expression.  */
 
 static PyObject*
-fex_size(fex *self)
+fex_size (fex *self)
 {
   int num;
-  num = rec_fex_size(self->fx);
-  return Py_BuildValue("i", num);
+  num = rec_fex_size (self->fx);
+  return Py_BuildValue ("i", num);
 }
 
 /* Check whether a given field (or set of fields) identified by their
    name and indexes, are contained in a fex.  */
 
 static PyObject*
-fex_member_p(fex *self, PyObject *args, PyObject *kwds)
+fex_member_p (fex *self, PyObject *args, PyObject *kwds)
 {
   const char *fname;
   int min, max;
   bool success;
   static char *kwlist[] = {"fname","min","max", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "zii", kwlist, &fname, &min, &max)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zii", kwlist, &fname, &min, &max)) 
     {
       return NULL;
     }
   success = rec_fex_member_p (self->fx, fname, min, max);
-  return Py_BuildValue("i", success);
+  return Py_BuildValue ("i", success);
 }
 
 
@@ -1513,19 +1513,19 @@ fex_member_p(fex *self, PyObject *args, PyObject *kwds)
    If the position is invalid then NULL is returned.  */
 
 static PyObject*
-fex_get(fex *self, PyObject *args, PyObject *kwds)
+fex_get (fex *self, PyObject *args, PyObject *kwds)
 {
   size_t position;
-  fexelem *tmp = PyObject_NEW(fexelem, &fexelemType);
+  fexelem *tmp = PyObject_NEW (fexelem, &fexelemType);
   rec_fex_elem_t fexel;
   static char *kwlist[] = {"position", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &position)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "i", kwlist, &position)) 
     {
       return NULL;
     }
   fexel = rec_fex_get (self->fx, position);
   tmp->fxel = fexel;
-  return Py_BuildValue("O",tmp);
+  return Py_BuildValue ("O",tmp);
 }
 
 
@@ -1534,20 +1534,20 @@ fex_get(fex *self, PyObject *args, PyObject *kwds)
    operation.  */
 
 static PyObject*
-fex_append(fex *self, PyObject *args, PyObject *kwds)
+fex_append (fex *self, PyObject *args, PyObject *kwds)
 {
   const char *fname;
   int min, max;
-  fexelem *tmp = PyObject_NEW(fexelem, &fexelemType);
+  fexelem *tmp = PyObject_NEW (fexelem, &fexelemType);
   rec_fex_elem_t fexel;
   static char *kwlist[] = {"fname","min","max", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "zii", kwlist, &fname, &min, &max)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zii", kwlist, &fname, &min, &max)) 
     {
       return NULL;
     }
   fexel = rec_fex_append (self->fx, fname, min, max);
   tmp->fxel = fexel;
-  return Py_BuildValue("O",tmp);
+  return Py_BuildValue ("O",tmp);
 }
 
 
@@ -1555,56 +1555,56 @@ fex_append(fex *self, PyObject *args, PyObject *kwds)
    calls.  */
 
 static PyObject*
-fex_all_calls_p(fex *self)
+fex_all_calls_p (fex *self)
 {
   bool success;
   success = rec_fex_all_calls_p (self->fx);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 /* Check whether a given string STR contains a proper fex description
    of type KIND.  */
 
 static PyObject*
-fex_check(fex *self, PyObject *args, PyObject *kwds)
+fex_check (fex *self, PyObject *args, PyObject *kwds)
 {
   const char *str;
   enum rec_fex_kind_e kind;
   bool success;
   static char *kwlist[] = {"str","kind", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "zi", kwlist, &str, &kind)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zi", kwlist, &str, &kind)) 
     {
       return NULL;
     }
   success = rec_fex_check (str, kind);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 
 /* Sort the elements of a fex using the 'min' index of the elements as
    the sorting criteria.  */
 static PyObject*
-fex_sort(fex *self)
+fex_sort (fex *self)
 {
   rec_fex_sort (self->fx);
-  return Py_BuildValue("");
+  return Py_BuildValue ("");
 }
 
 /* Get the written form of a field expression.  This function returns
    NULL if there is not enough memory to perform the operation.  */
 
 static PyObject*
-fex_str(fex *self, PyObject *args, PyObject *kwds)
+fex_str (fex *self, PyObject *args, PyObject *kwds)
 {
   enum rec_fex_kind_e kind;
   char *str;
   static char *kwlist[] = {"kind", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &kind)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "i", kwlist, &kind)) 
     {
       return NULL;
     }
   str = rec_fex_str (self->fx, kind);
-  return Py_BuildValue("z",str);
+  return Py_BuildValue ("z",str);
 }
 /*record doc string */
 
@@ -1696,18 +1696,18 @@ field_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
   const char *name;
   const char *value;
   static char *kwlist[] = {"name","value", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "zz", kwlist, &name, &value)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zz", kwlist, &name, &value)) 
     {
       return NULL;
     }
-  self = (field *)type->tp_alloc(type, 0);
+  self = (field *) type->tp_alloc (type, 0);
   if (self != NULL) 
     {
       self->fld = rec_field_new (name,value);
       if (self->fld == NULL) 
         {
            /* Out of memory.  */
-          Py_DECREF(self);
+          Py_DECREF (self);
           return NULL;
         }
     }
@@ -1719,26 +1719,26 @@ static void
 field_dealloc (field* self)
 {
   rec_field_destroy (self->fld);
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*)self);
 }
 
 /* Determine whether two given fields are equal (i.e. they have equal
    names but possibly different values).  */
 
 static PyObject*
-recutils_field_equal_p(PyObject *self, PyObject *args, PyObject *kwds)
+recutils_field_equal_p (PyObject *self, PyObject *args, PyObject *kwds)
 {
   field *field1;
   field *field2;
   bool success;
   static char *kwlist[] = {"field1","field2", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "OO", kwlist, &field1, &field2)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "OO", kwlist, &field1, &field2)) 
     {
       return NULL;
     }
 
   success = rec_field_equal_p (field1->fld, field2->fld);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 /* Return a NULL terminated string containing the name of a field.
@@ -1746,11 +1746,11 @@ recutils_field_equal_p(PyObject *self, PyObject *args, PyObject *kwds)
    properly initialized field.  */
 
 static PyObject*
-field_name(field *self)
+field_name (field *self)
 {
   const char *str;
   str = rec_field_name (self->fld);
-  return Py_BuildValue("s",str);
+  return Py_BuildValue ("s",str);
 }
 
 
@@ -1759,11 +1759,11 @@ field_name(field *self)
    empty if the field has no value, but never NULL.  */
 
 static PyObject*
-field_value(field *self)
+field_value (field *self)
 {
   const char *str;
   str = rec_field_value (self->fld);
-  return Py_BuildValue("s",str);
+  return Py_BuildValue ("s",str);
 }
 
 
@@ -1771,22 +1771,22 @@ field_value(field *self)
    not enough memory to perform the operation.  */
 
 static PyObject*
-field_set_name(field *self, PyObject *args, PyObject *kwds)
+field_set_name (field *self, PyObject *args, PyObject *kwds)
 {
   const char *name;
   static char *kwlist[] = {"name",NULL};
   bool success;
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "z", kwlist, &name)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "z", kwlist, &name)) 
     {
       return NULL;
     }
   success = rec_field_set_name (self->fld, name);
-  if(!success)
+  if (!success)
     {
-      PyErr_SetString(RecError, "Not enough memory to set field name");
+      PyErr_SetString (RecError, "Not enough memory to set field name");
       return NULL;
     }
-  return Py_BuildValue("i", success);
+  return Py_BuildValue ("i", success);
 }
 
 /* Set the value of a given field to the given string.  This function
@@ -1794,22 +1794,22 @@ field_set_name(field *self, PyObject *args, PyObject *kwds)
    operation.  */
 
 static PyObject*
-field_set_value(field *self, PyObject *args, PyObject *kwds)
+field_set_value (field *self, PyObject *args, PyObject *kwds)
 {
   const char *value;
   static char *kwlist[] = {"value",NULL};
   bool success;
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "z", kwlist, &value)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "z", kwlist, &value)) 
     {
       return NULL;
     }
   success = rec_field_set_value (self->fld, value);
-  if(!success)
+  if (!success)
     {
-      PyErr_SetString(RecError, "Not enough memory to set field value");
+      PyErr_SetString (RecError, "Not enough memory to set field value");
       return NULL;
     }
-  return Py_BuildValue("i", success);
+  return Py_BuildValue ("i", success);
 }
 
 /* Return a string describing the source of the field.  The specific
@@ -1818,11 +1818,11 @@ field_set_value(field *self, PyObject *args, PyObject *kwds)
    which a source was never set.  */
 
 static PyObject*
-field_source(field *self)
+field_source (field *self)
 {
   const char *str;
   str = rec_field_source (self->fld);
-  return Py_BuildValue("z",str);
+  return Py_BuildValue ("z",str);
 }
 
 
@@ -1832,22 +1832,22 @@ field_source(field *self)
    enough memory to perform the operation.  */
 
 static PyObject*
-field_set_source(field *self, PyObject *args, PyObject *kwds)
+field_set_source (field *self, PyObject *args, PyObject *kwds)
 {
   const char *source;
-  static char *kwlist[] = {"source",NULL};
+  static char *kwlist[] = {"source", NULL};
   bool success;
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &source)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "s", kwlist, &source)) 
     {
       return NULL;
     }
   success = rec_field_set_source (self->fld, source);
-  if(!success)
+  if (!success)
     {
-      PyErr_SetString(RecError, "Not enough memory to set field source");
+      PyErr_SetString (RecError, "Not enough memory to set field source");
       return NULL;
     }
-  return Py_BuildValue("i", success);
+  return Py_BuildValue ("i", success);
 }
 
 /* Return an integer representing the location of the field within its
@@ -1857,11 +1857,11 @@ field_set_source(field *self, PyObject *args, PyObject *kwds)
 
 
 static PyObject*
-field_location(field *self)
+field_location (field *self)
 {
   size_t loc;
   loc = rec_field_location (self->fld);
-  return Py_BuildValue("i",loc);
+  return Py_BuildValue ("i",loc);
 }
 
 /* Return the textual representation for the location of a field
@@ -1869,35 +1869,13 @@ field_location(field *self)
    having a defined source.  */
 
 static PyObject*
-field_location_str(field *self)
+field_location_str (field *self)
 {
   const char *str;
   str = rec_field_location_str (self->fld);
-  return Py_BuildValue("s",str);
+  return Py_BuildValue ("s",str);
 }
 
-/* Set a number as the new location for the given field.  Any
-   previously stored location is forgotten.  This function returns
-   'false' if there is not enough memory to perform the operation.  */
-
-static PyObject*
-field_set_location(field *self, PyObject *args, PyObject *kwds)
-{
-  size_t location;
-  static char *kwlist[] = {"location",NULL};
-  bool success;
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &location)) 
-    {
-      return NULL;
-    }
-  success = rec_field_set_location (self->fld, location);
-  if(!success)
-    {
-      PyErr_SetString(RecError, "Not enough memory to set field location");
-      return NULL;
-    }
-  return Py_BuildValue("i", success);
-} 
 
 /* Return an integer representing the char location of the field
    within its source.  The specific meaning of the location depends on
@@ -1906,11 +1884,11 @@ field_set_location(field *self, PyObject *args, PyObject *kwds)
    having a defined source.  */
 
 static PyObject*
-field_char_location(field *self)
+field_char_location (field *self)
 {
   size_t char_loc;
   char_loc = rec_field_char_location (self->fld);
-  return Py_BuildValue("i",char_loc);
+  return Py_BuildValue ("i",char_loc);
 }
 
 /* Return the textual representation for the char location of a field
@@ -1918,35 +1896,11 @@ field_char_location(field *self)
    having a defined source.  */
 
 static PyObject*
-field_char_location_str(field *self)
+field_char_location_str (field *self)
 {
   const char *char_loc;
-  char_loc = rec_field_char_location_str(self->fld);
-  return Py_BuildValue("s",char_loc);
-}
-
-/* Set a number as the new char location for the given field.  Any
-   previously stored char location is forgotten.  This function
-   returns 'false' if there is not enough memory to perform the
-   operation.  */
-
-static PyObject*
-field_set_char_location(field *self, PyObject *args, PyObject *kwds)
-{
-  size_t location;
-  static char *kwlist[] = {"location",NULL};
-  bool success;
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &location)) 
-    {
-      return NULL;
-    }
-  success = rec_field_set_char_location (self->fld, location);
-  if(!success)
-    {
-      PyErr_SetString(RecError, "Not enough memory to set field char location");
-      return NULL;
-    }
-  return Py_BuildValue("i", success);
+  char_loc = rec_field_char_location_str (self->fld);
+  return Py_BuildValue ("s",char_loc);
 }
 
 
@@ -1980,19 +1934,12 @@ static PyMethodDef field_methods[] = {
     {"location_str", (PyCFunction)field_location_str, METH_NOARGS,
      "Return the textual representation of the location of the field within its source."  
     },
-    {"set_location", (PyCFunction)field_set_location, METH_VARARGS,
-     "Set a number as the new location for the given field."  
-    },
     {"char_location", (PyCFunction)field_char_location, METH_NOARGS,
      "Return an integer representing the char location of the field within its source. "  
     },
     {"char_location_str", (PyCFunction)field_char_location_str, METH_NOARGS,
      "Return the textual representation for the char location of a field within its source.  "  
     },
-    {"set_char_location", (PyCFunction)field_set_char_location, METH_VARARGS,
-     "Set a number as the new char location for the given field."  
-    },
-
     {NULL}
 };
 
@@ -2050,18 +1997,18 @@ comment_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
   comment *self;
   char *text;
   static char *kwlist[] = {"text", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "z", kwlist, &text)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "z", kwlist, &text)) 
     {
       return NULL;
     }
-  self = (comment *)type->tp_alloc(type, 0);
+  self = (comment *) type->tp_alloc (type, 0);
   if (self != NULL) 
     {
-      self->cmnt = rec_comment_new(text);
+      self->cmnt = rec_comment_new (text);
       if (self->cmnt == NULL) 
         {
            /* Out of memory.  */
-          Py_DECREF(self);
+          Py_DECREF (self);
           return NULL;
         }
     }
@@ -2074,7 +2021,7 @@ static void
 comment_dealloc (comment* self)
 {
   rec_comment_destroy (self->cmnt);
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*)self);
 }
 
 
@@ -2084,8 +2031,8 @@ static PyObject*
 comment_text (comment *self)
 {
   char *str;
-  str = rec_comment_text(self->cmnt);
-  return Py_BuildValue("s", str);
+  str = rec_comment_text (self->cmnt);
+  return Py_BuildValue ("s", str);
 }
 
 /* Set the text of a comment.  Any previous text associated with the
@@ -2096,30 +2043,30 @@ comment_set_text (comment *self, PyObject *args, PyObject *kwds)
 {
   char *text;
   static char *kwlist[] = {"text",NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &text)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "s", kwlist, &text)) 
     {
       return NULL;
     }
   rec_comment_set_text (&self->cmnt, text);
-  return Py_BuildValue("");
+  return Py_BuildValue ("");
 } 
 
 /* Determine whether the texts stored in two given comments are
    equal.  */
 
 static PyObject*
-recutils_comment_equal_p(PyObject *self, PyObject *args, PyObject *kwds)
+recutils_comment_equal_p (PyObject *self, PyObject *args, PyObject *kwds)
 {
   comment *comment1;
   comment *comment2;
   bool success;
   static char *kwlist[] = {"comment1","comment2", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "OO", kwlist, &comment1, &comment2)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "OO", kwlist, &comment1, &comment2)) 
     {
       return NULL;
     }
   success = rec_comment_equal_p (comment1->cmnt, comment2->cmnt);
-  return Py_BuildValue("i",success);
+  return Py_BuildValue ("i",success);
 }
 
 
@@ -2215,30 +2162,29 @@ buffer_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
   char **data;
   size_t *size;
   static char *kwlist[] = {"data", "size", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "zi", kwlist, &data, &size)) 
+  if (!PyArg_ParseTupleAndKeywords (args, kwds, "zi", kwlist, &data, &size)) 
     {
       return NULL;
     }
- self = (buffer *)type->tp_alloc(type, 0);
+ self = (buffer *) type->tp_alloc (type, 0);
   if (self != NULL) 
     {
-      self->buf = rec_buf_new(data, size);
+      self->buf = rec_buf_new (data, size);
       if (self->buf == NULL) 
         {
            /* Out of memory.  */
-          Py_DECREF(self);
+          Py_DECREF (self);
           return NULL;
         }
     }
   return (PyObject *)self;
-
 }
 
 static void
 buffer_dealloc (buffer* self)
 {
   //rec_com_destroy (self->cmnt);
-  self->ob_type->tp_free((PyObject*)self);
+  self->ob_type->tp_free ((PyObject*)self);
 }
 
 
@@ -2304,61 +2250,61 @@ initrecutils (void)
 {
     PyObject* m;
 
-    if (PyType_Ready(&recdbType) < 0)
+    if (PyType_Ready (&recdbType) < 0)
         return;
 
-    if (PyType_Ready(&rsetType) < 0)
+    if (PyType_Ready (&rsetType) < 0)
         return;
 
-    if (PyType_Ready(&recordType) < 0)
+    if (PyType_Ready (&recordType) < 0)
         return;
 
-    if (PyType_Ready(&sexType) < 0)
+    if (PyType_Ready (&sexType) < 0)
         return;
 
-    if (PyType_Ready(&fexType) < 0)
+    if (PyType_Ready (&fexType) < 0)
         return;
 
-    if (PyType_Ready(&fieldType) < 0)
+    if (PyType_Ready (&fieldType) < 0)
         return;  
 
-    if (PyType_Ready(&commentType) < 0)
+    if (PyType_Ready (&commentType) < 0)
         return;  
 
-    if (PyType_Ready(&bufferType) < 0)
+    if (PyType_Ready (&bufferType) < 0)
         return; 
 
-    m = Py_InitModule3("recutils", recutils_methods, recutils_doc);
+    m = Py_InitModule3 ("recutils", recutils_methods, recutils_doc);
 
     if (m == NULL)
       return;
 
-    Py_INCREF(&recdbType);
-    PyModule_AddObject(m, "recdb", (PyObject *)&recdbType);
+    Py_INCREF (&recdbType);
+    PyModule_AddObject (m, "recdb", (PyObject *)&recdbType);
 
-    Py_INCREF(&rsetType);
-    PyModule_AddObject(m, "rset", (PyObject *)&rsetType);
+    Py_INCREF (&rsetType);
+    PyModule_AddObject (m, "rset", (PyObject *)&rsetType);
 
-    Py_INCREF(&recordType);
-    PyModule_AddObject(m, "record", (PyObject *)&recordType);
+    Py_INCREF (&recordType);
+    PyModule_AddObject (m, "record", (PyObject *)&recordType);
 
-    Py_INCREF(&sexType);
-    PyModule_AddObject(m, "sex", (PyObject *)&sexType);
+    Py_INCREF (&sexType);
+    PyModule_AddObject (m, "sex", (PyObject *)&sexType);
 
-    Py_INCREF(&fexType);
-    PyModule_AddObject(m, "fex", (PyObject *)&fexType);
+    Py_INCREF (&fexType);
+    PyModule_AddObject (m, "fex", (PyObject *)&fexType);
 
-    Py_INCREF(&fieldType);
-    PyModule_AddObject(m, "field", (PyObject *)&fieldType);
+    Py_INCREF (&fieldType);
+    PyModule_AddObject (m, "field", (PyObject *)&fieldType);
 
     Py_INCREF(&commentType);
-    PyModule_AddObject(m, "comment", (PyObject *)&commentType);
+    PyModule_AddObject (m, "comment", (PyObject *)&commentType);
 
-    Py_INCREF(&bufferType);
-    PyModule_AddObject(m, "buffer", (PyObject *)&bufferType);
+    Py_INCREF (&bufferType);
+    PyModule_AddObject (m, "buffer", (PyObject *)&bufferType);
 
-    RecError = PyErr_NewException("recutils.error", NULL, NULL);
-    Py_INCREF(RecError);
-    PyModule_AddObject(m, "error", RecError);
+    RecError = PyErr_NewException ("recutils.error", NULL, NULL);
+    Py_INCREF (RecError);
+    PyModule_AddObject (m, "error", RecError);
 }
     
