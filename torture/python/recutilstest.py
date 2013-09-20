@@ -8,7 +8,7 @@ db = pyrec.Recdb()
 db.appendfile("books.rec")
 db.appendfile("account.rec")
 db.appendfile("account.rec") #Should get duplicate rset error
-db.pywritefile("books_account.rec")
+db.writefile("books_account.rec")
 print "Created db"
 db2 = pyrec.Recdb()
 db2.loadfile("books.rec")
