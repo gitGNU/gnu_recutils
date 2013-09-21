@@ -97,8 +97,7 @@ recdb_dealloc (recdb* self)
 }
 
 
-/* Return the number of record sets contained in a given record
-   set.  */
+/* Return the number of record sets contained in a given database  */
 static PyObject*
 recdb_size (recdb* self)
 {
@@ -229,7 +228,7 @@ recdb_pywritefile (recdb *self, PyObject *args, PyObject *kwds)
 
 
 /* Return the record set occupying the given position in the database.
-   If no such record set is contained in the database then NULL is
+   If no such record set is contained in the database then None is
    returned.  */
 
 static PyObject*
@@ -824,7 +823,7 @@ recdb_delete (recdb *self, PyObject *args, PyObject *kwds)
       case-insensitive.  If FALSE any string operation will be
       case-sensitive.
 
-   This function return s'false' if there is not enough memory to
+   This function returns'false' if there is not enough memory to
    perform the operation.
 */
 
@@ -1178,7 +1177,7 @@ record_num_fields (record* self)
 
 }
 
-/* Determine whether a record contains some field whose value is STR.
+/* Determine whether a record contains some field whose value is VALUE.
    The string comparison can be either case-sensitive or
    case-insensitive.  */
 
@@ -1364,7 +1363,7 @@ static PyObject*
 sex_eval_str (sex *self, PyObject *args, PyObject *kwds)
 {
   record *rec;
-  char *str;
+  char *str;  
   static char *kwlist[] = {"rec",NULL};
   if (!PyArg_ParseTupleAndKeywords (args, kwds, "O", kwlist, 
                                     &rec))
@@ -2132,21 +2131,6 @@ static PyTypeObject commentType = {
 };
 
 
-static char recutils_doc[] =
-  "This module provides bindings to the librec library (GNU recutils).";
-
-
-static PyMethodDef recutils_methods[] = {
-    {"field_equal_p", (PyCFunction)recutils_field_equal_p, METH_VARARGS,
-     "Determine whether two given fields are equal."  
-    },
-    {"comment_equal_p", (PyCFunction)recutils_comment_equal_p, METH_VARARGS,
-     "Determine whether the texts stored in two given comments are equal."  
-    },
-    {NULL}  /* Sentinel */
-};
-
-
 
 /*
  * FLEXIBLE BUFFERS
@@ -2240,6 +2224,20 @@ static PyTypeObject bufferType = {
     buffer_new,                 /* tp_new */
 };
 
+
+static char recutils_doc[] =
+  "This module provides bindings to the librec library (GNU recutils).";
+
+
+static PyMethodDef recutils_methods[] = {
+    {"field_equal_p", (PyCFunction)recutils_field_equal_p, METH_VARARGS,
+     "Determine whether two given fields are equal."  
+    },
+    {"comment_equal_p", (PyCFunction)recutils_comment_equal_p, METH_VARARGS,
+     "Determine whether the texts stored in two given comments are equal."  
+    },
+    {NULL}  /* Sentinel */
+};
 
 /*
  * Initialization function, which is called when the module is loaded.
