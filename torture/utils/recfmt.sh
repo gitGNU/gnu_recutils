@@ -2,7 +2,7 @@
 #
 # recfmt.sh - System tests for recfmt.
 #
-# Copyright (C) 2010 Jose E. Marchesi.
+# Copyright (C) 2010-2013 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,7 +67,8 @@ test_tool recfmt-empty-file ok \
 # Apply a template affecting all the records.
 test_tool recfmt-all-records ok \
           recfmt \
-          '"foo {{field3}} bar"' \
+          '"foo {{field3}} bar
+"' \
           multiple-records \
 'foo value13 bar
 foo value23 bar
@@ -77,7 +78,8 @@ foo value33 bar
 # Apply a template with a slot starting at 0.
 test_tool recfmt-slot-beginning ok \
           recfmt \
-          '"{{field1}} bar"' \
+          '"{{field1}} bar
+"' \
           multiple-records \
 'value11 bar
 value21 bar
@@ -87,7 +89,8 @@ value31 bar
 # Apply a template without prolog.
 test_tool recfmt-no-prolog ok \
           recfmt \
-          '"foo {{field1}}"' \
+          '"foo {{field1}}
+"' \
           multiple-records \
 'foo value11
 foo value21
@@ -97,7 +100,8 @@ foo value31
 # Apply a template with subscripts.
 test_tool recfmt-subscripts ok \
           recfmt \
-          '"foo {{field2[1]}} bar"' \
+          '"foo {{field2[1]}} bar
+"' \
           multiple-records \
 'foo  bar
 foo value22bis bar
@@ -109,13 +113,13 @@ test_tool recfmt-non-matching-records ok \
           recfmt \
           '"{{field2[1]}}"' \
           multiple-records \
-'value22bis
-'
+'value22bis'
 
 # Apply a template with string concatenation.
 test_tool recfmt-concat ok \
           recfmt \
-          '"{{field1 & '\'' '\'' & field2 & field3}}"' \
+          '"{{field1 & '\'' '\'' & field2 & field3}}
+"' \
           multiple-records \
 'value11 value12value13
 value21 value22value23
@@ -125,13 +129,15 @@ value31 value32value33
 # Try to apply an empty slot.
 test_tool recfmt-empty-slot xfail \
           recfmt \
-          '"{{field2[1]}}{{}}"' \
+          '"{{field2[1]}}{{}}
+"' \
           multiple-records
 
 # Try to apply an invalid slot.
 test_tool recfmt-invalid-slot xfail \
           recfmt \
-          '"invalid slot: {{in#alid[}}"' \
+          '"invalid slot: {{in#alid[}}
+"' \
           multiple-records
 
 #

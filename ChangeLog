@@ -1,3 +1,13 @@
+2013-09-24  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	recfmt: do not append a newline to the expansion of templates.
+	Reported by Aikido Guy.
+	* torture/utils/recfmt.sh: Adjust tests to not expect a newline
+	inserted between applications of a template.
+
+	* utils/recfmt.c (recfmt_process_db): Do not append a newline to
+	the expansion of a template.
+
 2013-08-29  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/rec-mode.el (rec-fast-selection): Avoid an extra useless

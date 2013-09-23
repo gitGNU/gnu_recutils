@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2013 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ recfmt_process_db (rec_db_t db, char *template)
           result = recfmt_apply_template (record, template);
           if (result && (*result != '\0'))
             {
-              puts (result);
+              printf ("%s", result);
               free (result);
             }
         }
