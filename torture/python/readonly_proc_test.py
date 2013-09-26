@@ -2,7 +2,7 @@
 
 # -*- mode: Python -*-
 #
-#       File:         recutilstest.py
+#       File:         readonly_proc_test.py
 #       Date:         Thu Sep 26 16:31:12 2013
 #
 #       GNU recutils - Test file for Python bindings 
