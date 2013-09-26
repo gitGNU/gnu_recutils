@@ -1,4 +1,28 @@
-//#include <config.h>
+/* -*- mode: C -*-
+ *
+ *       File:         recutils.c
+ *       Date:         Thu Sep 26 16:11:37 2013
+ *
+ *       GNU recutils - Python Extension Module
+ *
+ */
+
+/* Copyright (C) 2013 Maninya M. */
+
+/* This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <Python.h>
 #include <rec.h>
 #include "structmember.h"
@@ -1375,7 +1399,7 @@ sex_eval_str (sex *self, PyObject *args, PyObject *kwds)
 }
 
 
-/*record doc string */
+/*sex doc string */
 static char sex_doc[] =
   "This type refers to the selection expression structure of recutils";
 
@@ -1394,7 +1418,7 @@ static PyMethodDef sex_methods[] = {
 };
 
 
-/* Define the record object type */
+/* Define the sex object type */
 static PyTypeObject sexType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /*ob_size*/
@@ -1605,8 +1629,8 @@ fex_str (fex *self, PyObject *args, PyObject *kwds)
   str = rec_fex_str (self->fx, kind);
   return Py_BuildValue ("z",str);
 }
-/*record doc string */
 
+/*fex doc string */
 static char fex_doc[] =
   "This type refers to the field expression structure of recutils";
 
@@ -1641,17 +1665,14 @@ static PyMethodDef fex_methods[] = {
 };
 
 
-//PyDict_SetItemString(fexType, "bar", PyInt_FromLong(1));
-
-
-/* Define the record object type */
+/* Define the fex object type */
 static PyTypeObject fexType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /*ob_size*/
-    "recutils.fex",              /*tp_name*/
-    sizeof(fex),             /*tp_basicsize*/
+    "recutils.fex",            /*tp_name*/
+    sizeof(fex),               /*tp_basicsize*/
     0,                         /*tp_itemsize*/
-    (destructor)fex_dealloc, /*tp_dealloc*/
+    (destructor)fex_dealloc,   /*tp_dealloc*/
     0,                         /*tp_print*/
     0,                         /*tp_getattr*/
     0,                         /*tp_setattr*/
@@ -1667,18 +1688,18 @@ static PyTypeObject fexType = {
     0,                         /*tp_setattro*/
     0,                         /*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-    fex_doc,                 /* tp_doc */
+    fex_doc,                   /* tp_doc */
     0,                         /* tp_traverse */
     0,                         /* tp_clear */
     0,                         /* tp_richcompare */
     0,                         /* tp_weaklistoffset */
     0,                         /* tp_iter */
     0,                         /* tp_iternext */
-    fex_methods,             /* tp_methods */
+    fex_methods,               /* tp_methods */
     0,                         /* tp_members */
     0,                         /* tp_getset */
     0,                         /* tp_base */
-    0,      /* tp_dict */
+    0,                         /* tp_dict */
     0,                         /* tp_descr_get */
     0,                         /* tp_descr_set */
     0,                         /* tp_dictoffset */
@@ -1903,7 +1924,7 @@ field_char_location_str (field *self)
 }
 
 
-/*record doc string */
+/*field doc string */
 static char field_doc[] =
   "A field is an association between a label and a value.";
 
@@ -1943,7 +1964,7 @@ static PyMethodDef field_methods[] = {
 };
 
 
-/* Define the record object type */
+/* Define the field object type */
 static PyTypeObject fieldType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /*ob_size*/
@@ -2069,7 +2090,7 @@ recutils_comment_equal_p (PyObject *self, PyObject *args, PyObject *kwds)
 }
 
 
-/*record doc string */
+/*comment doc string */
 static char comment_doc[] =
   "A comment is a block of text.";
 
@@ -2087,46 +2108,46 @@ static PyMethodDef comment_methods[] = {
 
 
 
-/* Define the record object type */
+/* Define the comment object type */
 static PyTypeObject commentType = {
     PyObject_HEAD_INIT(NULL)
-    0,                         /*ob_size*/
-    "recutils.comment",              /*tp_name*/
+    0,                           /*ob_size*/
+    "recutils.comment",          /*tp_name*/
     sizeof(comment),             /*tp_basicsize*/
-    0,                         /*tp_itemsize*/
+    0,                           /*tp_itemsize*/
     (destructor)comment_dealloc, /*tp_dealloc*/
-    0,                         /*tp_print*/
-    0,                         /*tp_getattr*/
-    0,                         /*tp_setattr*/
-    0,                         /*tp_compare*/
-    0,                         /*tp_repr*/
-    0,                         /*tp_as_number*/
-    0,                         /*tp_as_sequence*/
-    0,                         /*tp_as_mapping*/
-    0,                         /*tp_hash */
-    0,                         /*tp_call*/
-    0,                         /*tp_str*/
-    0,                         /*tp_getattro*/
-    0,                         /*tp_setattro*/
-    0,                         /*tp_as_buffer*/
+    0,                           /*tp_print*/
+    0,                           /*tp_getattr*/
+    0,                           /*tp_setattr*/
+    0,                           /*tp_compare*/
+    0,                           /*tp_repr*/
+    0,                           /*tp_as_number*/
+    0,                           /*tp_as_sequence*/
+    0,                           /*tp_as_mapping*/
+    0,                           /*tp_hash */
+    0,                           /*tp_call*/
+    0,                           /*tp_str*/
+    0,                           /*tp_getattro*/
+    0,                           /*tp_setattro*/
+    0,                           /*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
     comment_doc,                 /* tp_doc */
-    0,                         /* tp_traverse */
-    0,                         /* tp_clear */
-    0,                         /* tp_richcompare */
-    0,                         /* tp_weaklistoffset */
-    0,                         /* tp_iter */
-    0,                         /* tp_iternext */
+    0,                           /* tp_traverse */
+    0,                           /* tp_clear */
+    0,                           /* tp_richcompare */
+    0,                           /* tp_weaklistoffset */
+    0,                           /* tp_iter */
+    0,                           /* tp_iternext */
     comment_methods,             /* tp_methods */
-    0,                         /* tp_members */
-    0,                         /* tp_getset */
-    0,                         /* tp_base */
-    0,      /* tp_dict */
-    0,                         /* tp_descr_get */
-    0,                         /* tp_descr_set */
-    0,                         /* tp_dictoffset */
-    0,                         /* tp_init */
-    0,                         /* tp_alloc */
+    0,                           /* tp_members */
+    0,                           /* tp_getset */
+    0,                           /* tp_base */
+    0,                           /* tp_dict */
+    0,                           /* tp_descr_get */
+    0,                           /* tp_descr_set */
+    0,                           /* tp_dictoffset */
+    0,                           /* tp_init */
+    0,                           /* tp_alloc */
     comment_new,                 /* tp_new */
 };
 
@@ -2167,12 +2188,11 @@ buffer_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 buffer_dealloc (buffer* self)
 {
-  //rec_com_destroy (self->cmnt);
   self->ob_type->tp_free ((PyObject*)self);
 }
 
 
-/*record doc string */
+/*buffer doc string */
 static char buffer_doc[] =
   "A flexible buffer is a buffer to which stream-like operations can be applied.";
 
@@ -2181,7 +2201,7 @@ static PyMethodDef buffer_methods[] = {
     {NULL}
 };
 
-/* Define the record object type */
+/* Define the buffer object type */
 static PyTypeObject bufferType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /*ob_size*/
