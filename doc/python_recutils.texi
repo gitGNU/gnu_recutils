@@ -62,6 +62,7 @@ This manual documents version 1.0 of the Python bindings for GNU Recutils, versi
 * Introduction:: 
 * Modules:: 
 * A Little Example:: 
+* GNU Free Documentation License::
 
 @end menu
 
@@ -1027,7 +1028,7 @@ python little_example.py
 
 @end menu
 
-@node Walkthrough,,A Little Example,A Little Example
+@node Walkthrough,GNU Free Documentation License,A Little Example,A Little Example
 @anchor{examples walkthrough}@anchor{57}
 @section Walkthrough
 
@@ -1084,6 +1085,12 @@ db1.writefile("german.rec")
 Lastly, just to be sure we got what we wanted, we insert @cite{queryrset} into @cite{db1}, the second database object we created, and then write it to file. Opening @cite{german.rec} should give you the list of all the German movies you wanted to see.
 
 You can try out more such operations with the help of the example-test programs in @code{torture/python/}.
+
+@node GNU Free Documentation License,,Walkthrough,Top
+@appendix GNU Free Documentation License
+@cindex license, GNU Free Documentation License
+
+@include fdl.texi
 
 @c %**end of body
 @bye
