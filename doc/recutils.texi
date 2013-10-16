@@ -3818,7 +3818,7 @@ upper case?
 @cindex ID numbers
 It is quite common in databases to use some kind of numeric ``Id'' to
 uniquely identify items like those ones.  That is because numbers are
-easy to operate with, and to increase.   So we could add a new
+easy to increment and manipulate.   So we could add a new
 numeric @code{Id} field and use it as the primary key:
 
 @example
