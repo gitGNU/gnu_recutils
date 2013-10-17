@@ -216,7 +216,6 @@ Interoperability
 Bash Builtins
 
 * readrec::                  Exporting the contents of records to the shell.
-* testrec::                  Selection expressions in shell conditionals.
 
 Invoking the Utilities
 
@@ -4544,7 +4543,6 @@ $ enable readrec.so readrec
 
 @menu
 * readrec::                  Exporting the contents of records to the shell.
-* testrec::                  Selection expressions in shell conditionals.
 @end menu
 
 @node readrec
@@ -4625,11 +4623,6 @@ Note the usage of the bash array when accessing to the primary email
 address of each contact.  Note also how we update each contact to
 figure as ``checked'' so she won't get spammed the next time the
 script is run.
-
-@node testrec
-@section testrec
-
-XXX
 
 @node Invoking the Utilities
 @chapter Invoking the Utilities
