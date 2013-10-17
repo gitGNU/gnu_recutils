@@ -184,6 +184,9 @@ Remote Descriptors
 
 Grouping and Aggregates
 
+* Grouping Records::         Combining records by fields.
+* Aggregate Functions::      Statistics and more.
+
 Joins
 
 * Foreign Keys::             Referring records from another records.
@@ -3216,102 +3219,302 @@ schema supported by @code{libcurl} will work.
 @node Grouping and Aggregates
 @chapter Grouping and Aggregates
 
-XXX
+Grouping and aggregate functions are two related functionalities which
+are very useful in order to extract statistics from a record set, or a
+subset of that record set.
 
-@dfn{Grouping} is an important technique used in relational databases,
-always combined with aggregate functions.
+@menu
+* Grouping Records::         Combining records by fields.
+* Aggregate Functions::      Statistics and more.
+@end menu
 
-Consider for example a relation of items in a shop stockage.  For each
-item it is stored its type, its category, its price, the date of the
-last selling operation of an item of that type, and the amount of
-items currently available in stock.  A sample of such a database is
-contained in the following table:
+@node Grouping Records
+@section Grouping Records
+@cindex grouping
 
-@multitable @columnfractions .08 .21 .21 .08 .21 .21
-@item Id   @tab Type @tab Category @tab Price @tab LastSell @tab Available
-@item 12   @tab EC Car @tab Toy @tab 12.2 @tab 20/April/2012 @tab 623
-@item 16   @tab Terria Nat. @tab Food @tab 0.60 @tab 22/April/2012 @tab 8239
-@item 17   @tab Typex @tab Office @tab 1.20 @tab 22/April/2012 @tab 10878
-@item 19   @tab Notebook @tab Office @tab 1.00 @tab 21/April/2012 @tab 77455
-@item 20   @tab Sexy Puzzle @tab Toy @tab 6.20 @tab 21/April/2012 @tab 12
-@end multitable
+Consider a recfile containing a relation of items in a shop
+stockage. For each item it is stored its type, its category, its
+price, the date of the last selling operation of an item of that type,
+and the amount of items currently available in stock.  A sample of
+such a database could be:
+
+@example
+Type: EC Car
+Category: Toy
+Price: 12.2
+LastSell: 20-April-2012
+Available: 623
+
+Type: Terria
+Category: Food
+Price: 0.60
+LastSell: 22-April-2012
+Available: 8239
+
+Type: Typex
+Category: Office
+Price: 1.20
+LastSell: 22-April-2012
+Available: 10878
+
+Type: Notebook
+Category: Office
+Price: 1.00
+LastSell: 21-April-2012
+Available: 77455
+
+Type: Sexy Puzzle
+Category: Toy
+Price: 6.20
+LastSell: 6.20
+Available: 12
+@end example
+
+@noindent
+Now imagine we are interested in grouping the contents of the
+@code{Items} record set in groups of items of the same category.  We
+can do it using the @command{-G} command line argument for
+@command{recsel}.  This argument accepts a list of fields separated by
+commas.  The argument can be read as ``group by''.
+
+In this case we want to group by @code{Category}, so we would do:
+
+@example
+$ recsel -G Category
+Type: Terria
+Category: Food
+Price: 0.60
+LastSell: 22-April-2012
+Available: 8239
+
+Type: Typex
+Category: Office
+Price: 1.20
+LastSell: 22-April-2012
+Available: 10878
+Type: Notebook
+Price: 1.00
+LastSell: 21-April-2012
+Available: 77455
+
+Type: EC Car
+Category: Toy
+Price: 12.2
+LastSell: 20-April-2012
+Available: 623
+Type: Sexy Puzzle
+Price: 6.20
+LastSell: 6.20
+Available: 12
+@end example
+
+@noindent
+Note how the output are three records, which correspond to the three
+different categories of items which are present in the database.
+However, we are interested in the types of products in each category,
+so we can remove unwanted information using @code{-p}:
+
+@example
+$ recsel -G Category -p Category,Type items.rec
+Category: Food
+Type: Terria
+
+Category: Office
+Type: Typex
+Type: Notebook
+
+Category: Toy
+Type: EC Car
+Type: Sexy Puzzle
+@end example
+
+@noindent
+It is also possible to group by several fields.  We could group by
+both @code{Category} and @code{LastSell}:
+
+@example
+$ recsel -G Category,LastSell -p Category,LastSell,Type items.rec
+Category: Food
+LastSell: 22-April-2012
+Type: Terria
+
+Category: Office
+LastSell: 21-April-2012
+Type: Notebook
+
+Category: Office
+LastSell: 22-April-2012
+Type: Typex
+
+Category: Toy
+LastSell: 20-April-2012
+Type: EC Car
+
+Category: Toy
+LastSell: 6.20
+Type: Sexy Puzzle
+@end example
+
+@node Aggregate Functions
+@section Aggregate Functions
+@cindex aggregate function
+
+recutils support @dfn{aggregate functions}.  These are so called
+because they accept a record set and a field name as inputs and
+generate a single result.  Most of the times this result is numerical.
+
+The supported aggregate functions are the following:
+
+@table @code
+@item Count(FIELD)
+Counts the number of occurences of a field.
+@item Avg(FIELD)
+Calculates the average of the numerical values of a field.
+@item Sum(FIELD)
+Calculates the sum of the numerical values of a field.
+@item Min(FIELD)
+Calculates the minimum numerical value of a field.
+@item Max(FIELD)
+Calculates the maximum numerical value of a field.
+@end table
+
+The aggregate functions are invoked in the field expressions in
+@command{recsel}.  By default they are applied to the totality of the
+records in a record set.  For example, using the items database from
+the previous section, we can calculate the number of entries
 
 The SQL aggregate functions can be applied to the totality of the
 tuples in the relation.  For example, using the @code{Count} aggregate
-function we can calculate the number of entries in the relation as
-follows:
+function we can calculate the number of fields named @code{Category}
+present in the record set as follows:
 
 @example
-> SELECT Count(Id) FROM Items
-6
+$ recsel -p "Count(Category)" items.rec
+Count_Category: 5
 @end example
 
 @noindent
-Similarly, the average price of all the item types stored in the
-stockage is obtained using the following query:
+The result is a field whose name is derived from the function name and
+the field passed as its parameter, separated by an underline.  This
+name scheme is probably ok for most purposes, but it is always
+possible to use a rewrite rule to obtain something different:
 
 @example
-> SELECT Average(Price) FROM Items
-4.24
-@end example
-
-But, what if we are interested in some property of a subset of the
-tuples in the relation?  SQL allows the partitioning of the contents of a
-relation in several ``groups'', using a list of fields which act as
-the grouping criteria.
-
-For example, if we wanted to group the contents of the @code{Items}
-relation in groups of items of the same category, we would end with
-the following ``sub-relations'':
-
-@multitable @columnfractions .08 .21 .21 .08 .21 .21
-@item Id   @tab Type @tab Category @tab Price @tab LastSell @tab Available
-@item 12   @tab EC Car @tab Toy @tab 12.2 @tab 20/April/2012 @tab 623
-@item 20   @tab Sexy Puzzle @tab Toy @tab 6.20 @tab 21/April/2012 @tab 12
-@item ---- @tab ----        @tab ----@tab ---- @tab ----           @tab ----
-@item 16   @tab Terria Nat. @tab Food @tab 0.60 @tab 22/April/2012 @tab 8239
-@item ---- @tab ----        @tab ----@tab ---- @tab ----           @tab ----
-@item 17   @tab Typex @tab Office @tab 1.20 @tab 22/April/2012 @tab 10878
-@item 19   @tab Notebook @tab Office @tab 1.00 @tab 21/April/2012 @tab 77455
-@end multitable
-
-Aggregate functions can then be applied to the sub-relations.  For
-example, the average prices of the several item categories stored in
-the database, we would use the query:
-
-@example
-SELECT Category,Average(Price) FROM Items GROUP BY Category
+$ recsel -p "Count(Category):NumCategories" items.rec
+NumCategories: 5
 @end example
 
 @noindent
-Obtaining the following result relation:
+You can use different casing writing the name of the aggregate, but
+that will be reflected in the field name:
 
-@multitable @columnfractions .10 .10
-@item Toy    @tab 9.2
-@item Food   @tab 0.60
-@item Office @tab 1.1
-@end multitable
+@example
+$ recsel -p "CoUnT(Category)" items.rec
+CoUnT_Category: 5
+@end example
 
-Note that in most relational systems the query above is processed in
-several differentiated steps:
+@noindent
+It is possible to use more than one aggregate function in the field
+expression.  Suppose we are also interested in the average price of
+the items we sell.  We can use the @code{Avg} aggregate:
 
-@enumerate
-@item A selection is performed in the relation using whatever
-expression is specified in the @code{WHERE} part of the query.  In
-this example no expression is used, so the selection result is the
-whole relation.
-@item The relation is partitioned using the list of fields specified
-in the @code{GROUP BY} part of the query.  Note that the relational
-paradigm does not support this notion of sub-relation.  Thus, the
-partitioning is not something directly visible by the user of the
-system.  It is just a temporary representation of the data.
-@item A selection is performed in each partition using the expression
-in the @code{HAVING} part of the query.  In this example no expression
-is used.
-@item Finally the @code{SELECT} part, which contains calls to
-aggregate functions and the grouping fields, is executed for each
-partition.
-@end enumerate
+@example
+$ recsel -p "Count(Category),Avg(Price)" items.rec
+Count_Category: 5
+Avg_Price: 4.240000
+@end example
+
+@noindent
+Now lets add a field along with an aggregate function to the field
+expression and see what we get:
+
+@example
+$ recsel -p "Type,Avg(Price)" items.rec
+Type: EC Car
+Avg_Price: 12.200000
+
+Type: Terria
+Avg_Price: 0.600000
+
+Type: Typex
+Avg_Price: 1.200000
+
+Type: Notebook
+Avg_Price: 1
+
+Type: Sexy Puzzle
+Avg_Price: 6.200000
+@end example
+
+@noindent
+We get five records!  The reason is that when @emph{only} aggregate
+functions are part of the field expression they are applied the single
+record that would result concatenating all the records in the record
+set together.  However, when a regular field appears in the field
+expression the aggregate functions are applied to the individual
+records.  This is still useful in some cases, like in a database of
+maintainers:
+
+@example
+Name: Jose E. Marchesi
+Email: jemarch@@gnu.org
+Email: jemarch@@es.gnu.org
+
+Name: Luca Saiou 
+Email: positron@@gnu.org
+@end example
+
+@noindent
+Lets see how many emails each maintainer has:
+
+@example
+$ recsel -p "Name,Count(Email)" maintainers.rec
+Name: Jose E. Marchesi
+Count_Email: 2
+
+Name: Luca Saiou 
+Count_Email: 1
+@end example
+
+@noindent
+Aggregate functions are most useful when we combine them with
+grouping.  This is when we are interested in some property of a subset
+of the records in the database.  For example, the average prices of
+the several item categories stored in the database can be obtained by
+executing:
+
+@example
+$ recsel -p "Category,Avg(Price)" -G Category items.rec
+Category: Food
+Avg_Price: 0.600000
+
+Category: Office
+Avg_Price: 1.100000
+
+Category: Toy
+Avg_Price: 9.200000
+@end example
+
+@noindent
+If we were interested in the actual prices that result in each average
+we can:
+
+@example
+$ recsel -p "Category,Price,Avg(Price)" -G Category items.rec
+Category: Food
+Price: 0.60
+Avg_Price: 0.600000
+
+Category: Office
+Price: 1.20
+Price: 1.00
+Avg_Price: 1.100000
+
+Category: Toy
+Price: 12.2
+Price: 6.20
+Avg_Price: 9.200000
+@end example
 
 @node Queries which Join Records
 @chapter Queries which Join Records

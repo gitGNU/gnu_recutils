@@ -1,3 +1,9 @@
+2013-10-17  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	manual: document grouping and aggregate functions.
+	* doc/recutils.texi (Grouping Records): New section.
+	(Aggregate Functions): Likewise.
+
 2013-09-24  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	recfmt: do not append a newline to the expansion of templates.
