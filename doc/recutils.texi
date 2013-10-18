@@ -111,7 +111,6 @@ Advanced Topics
 
 Reference Material
 * Invoking the Utilities::     Exhaustive list of command line arguments.
-* Special Fields::             Syntax of all the supported special fields.
 * Regular Expressions::        Flavor of regexps supported in recutils.
 * Date input formats::         Specifying dates and times.
 
@@ -230,22 +229,6 @@ Invoking the Utilities
 * csv2rec::                  Converting csv data into rec data.
 * rec2csv::                  Converting rec data into csv data.
 * mdb2rec::                  Converting mdb files into rec files.
-
-Special Fields
-
-* %rec::                     Declaring the type of a record.
-* %mandatory::               Requiring specific fields.
-* %prohibit::                Forbidding specific fields.
-* %unique::                  Unique fields.
-* %key::                     Primary keys.
-* %doc::                     Documenting your database.
-* %typedef::                 Defining types.
-* %type::                    Associating fields with types.
-* %auto::                    Auto counters and time-stamps.
-* %sort::                    Keeping your record sets sorted.
-* %size::                    Restricting the size of your database.
-* %constraint::              Setting arbitrary constraints.
-* %confidential::            Storing confidential information.
 
 @end detailmenu
 @end menu
@@ -827,7 +810,7 @@ Requiring or forbidding specific fields.  @xref{Mandatory Fields}.
 @item %unique and %key
 Working with keys.  @xref{Keys and Unique Fields}.
 @item %doc
-Documenting your database. @xref{%doc}.
+Documenting your database. @xref{Documenting Records}.
 @item %typedef and %type
 Field types.  @xref{Field Types}.
 @item %auto
@@ -835,7 +818,7 @@ Auto-counters and time-stamps.  @xref{Auto-Generated Fields}.
 @item %sort
 Keeping your record sets sorted.  @xref{Sorted Output}.
 @item %size
-Restricting the size of your database.  @xref{%size}.
+Restricting the size of your database.  @xref{Size Constraints}.
 @item %constraint
 Enforcing arbitrary constraints.  @xref{Arbitrary Constraints}.
 @item %confidential
@@ -4148,7 +4131,7 @@ $ recins -t Account -s mypassword -f Login -v foo -f Password -v secret accounts
 @noindent
 Will encrypt the value of the @code{Password} field with
 @code{mypassword} as long as the field is declared as confidential.
-(@pxref{%confidential} for details on confidential fields).
+(@pxref{Confidential Fields} for details on confidential fields).
 
 @command{recins} will issue a warning if a confidential field is
 inserted in the database but no password was provided to encrypt it.
@@ -4220,7 +4203,7 @@ Password: barsecret
 @end example
 
 Note that nothing prevents to have confidential fields encrypted with
-different passwords.  As discussed in @pxref{%confidential} this can
+different passwords.  As discussed in @pxref{Confidential Fields} this can
 be useful to implement several ``levels'' of security.  For example,
 we may have an entry in our database with data about the account of
 the administrator of the online service.  In that case we could want
@@ -4987,7 +4970,7 @@ Don't use external record descriptors.
 @item @w{@kbd{--verbose}}
 Be verbose when reporting integrity problems.
 @item @w{@kbd{--no-auto}}
-Don't generate @dfn{auto} fields. @xref{%auto}.
+Don't generate @dfn{auto} fields. @xref{Auto-Generated Fields}.
 @end table
 
 Record selection arguments are supported too.  If they are used
@@ -5373,91 +5356,6 @@ line.
 Don't prune empty fields in the rec output.
 @end table
 
-@node Special Fields
-@chapter Special Fields
-
-XXX
-
-@menu
-* %rec::                     Declaring the type of a record.
-* %mandatory::               Requiring specific fields.
-* %prohibit::                Forbidding specific fields.
-* %unique::                  Unique fields.
-* %key::                     Primary keys.
-* %doc::                     Documenting your database.
-* %typedef::                 Defining types.
-* %type::                    Associating fields with types.
-* %auto::                    Auto counters and time-stamps.
-* %sort::                    Keeping your record sets sorted.
-* %size::                    Restricting the size of your database.
-* %constraint::              Setting arbitrary constraints.
-* %confidential::            Storing confidential information.
-@end menu
-
-@node %rec
-@section %rec
-
-XXX
-
-@node %mandatory
-@section %mandatory
-
-XXX
-
-@node %prohibit
-@section %prohibit
-
-XXX
-
-@node %unique
-@section %unique
-
-XXX
-
-@node %key
-@section %key
-
-XXX
-
-@node %doc
-@section %doc
-
-XXX
-
-@node %typedef
-@section %typedef
-
-XXX
-
-@node %type
-@section %type
-
-XXX
-
-@node %auto
-@section %auto
-
-XXX
-
-@node %sort
-@section %sort
-
-XXX
-
-@node %size
-@section %size
-
-XXX
-
-@node %constraint
-@section %constraint
-
-XXX
-
-@node %confidential
-@section %confidential
-
-XXX
 
 @node Regular Expressions
 @chapter Regular Expressions
