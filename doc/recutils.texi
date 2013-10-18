@@ -601,6 +601,7 @@ properties.
 @menu
 * Record Sets::               Defining different types of records.
 * Naming Record Types::       Some conventions on naming record sets.
+* Documenting Records::       Documenting your record sets.
 * Record Sets Properties::    Introducing the special fields.
 @end menu
 
@@ -727,6 +728,51 @@ The reason of using singular nouns instead of their plural forms is
 that it works better with the utilities: it is more natural to read
 @command{recsel -t Contributor} (@command{-t} is for ``type'') than
 @command{recsel -t Contributors}.
+
+@node Documenting Records
+@subsection Documenting Records
+
+@cindex @code{%doc}
+@cindex documentation fields
+@cindex description of record sets
+
+As well as a name, it is a good idea to provide a description of the record set.
+This is sometimes call the record set's @dfn{documentation} and is specified
+using the @code{%doc} field. 
+
+Whereas the name is usually short and can contain only alphanumeric characters and
+underscores, no such restriction applies to the documentation.
+The documentation is typically more verbose than the name provided
+by the @code{%rec} field and may contain arbitrary characters such as punctuation and
+parentheses.
+It is somewhat similar to a
+comment (@pxref{Comments}), but it can be managed easier 
+in a programmatic way.
+Unlike a comment, the @code{%doc} field is recognized by tools such as
+@command{recinf} (@pxref{recinf}) which processes record descriptors.
+For example, you might have two record sets with @code{%rec} and @code{%doc}
+fields as follows:
+
+@example
+%rec: Contact
+%doc: Family, friends and aqaintances (other than business).
+
+Name: Granny
+Phone: +12 23456677
+
+Name: Edwina
+Phone: +55 0923 8765
+
+
+%rec: Associate
+%doc: Colleagues and other business contacts
+
+Name: Karl Schmidt
+Phone: +49 88234566
+
+Name: Genevieve Curie
+Phone: +33 34 87 65
+@end example
 
 @node Record Sets Properties
 @subsection Record Sets Properties
@@ -5329,40 +5375,7 @@ XXX
 @node %doc
 @section %doc
 
-@cindex @code{%doc}
-@cindex documentation fields
-This field contains documentation about the record.   It is similar to a
-comment (@pxref{Comments}), but it can be managed easier 
-in a programmatic way.
-
-Unlike a comment, @code{%doc} fields are recognized by tools such as
-@command{recinf} (@pxref{recinf}) which processes record descriptors.
-It is a good idea to use the @code{%doc} field to provide a description
-of the records; typically a description more verbose than the name provided
-by the @code{%rec} field.
-For example, you might have two record sets with @code{%rec} and @code{%doc}
-fields as follows:
-
-@example
-%rec: Contact
-%doc: Family and friends
-
-Name: Granny
-Phone: +12 23456677
-
-Name: Edwina
-Phone: +55 0923 8765
-
-
-%rec: Associate
-%doc: Colleagues and other business contacts
-
-Name: Karl Schmidt
-Phone: +49 88234566
-
-Name: Genevieve Curie
-Phone: +33 34 87 65
-@end example
+XXX
 
 @node %typedef
 @section %typedef
