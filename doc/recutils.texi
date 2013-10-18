@@ -86,34 +86,34 @@ This manual documents version @value{VERSION} of the GNU recutils.
 
 @menu
 The Basics
-* Introduction::             Introducing recutils.
-* The Rec Format::           Writing recfiles.
+* Introduction::               Introducing recutils.
+* The Rec Format::             Writing recfiles.
 
 Using the Recutils
-* Querying Recfiles::        Extracting data from recfiles.
-* Editing Records::          Inserting and deleting records.
-* Editing Fields::           Inserting, modifying and deleting fields.
+* Querying Recfiles::          Extracting data from recfiles.
+* Editing Records::            Inserting and deleting records.
+* Editing Fields::             Inserting, modifying and deleting fields.
 
 Data Integrity
-* Field Types::              Restrictions on the values of fields.
-* Field Restrictions::       Requiring or forbidding specific fields.
-* Checking Recfiles::        Making sure the data is ok.
+* Field Types::                Restrictions on the values of fields.
+* Constraints on Record Sets:: Requiring or forbidding specific fields.
+* Checking Recfiles::          Making sure the data is ok.
 
 Advanced Topics
-* Remote Descriptors::       Implementing distributed databases.
-* Grouping and Aggregates::  Statistics.
+* Remote Descriptors::         Implementing distributed databases.
+* Grouping and Aggregates::    Statistics.
 * Queries which Join Records:: Crossing record of different types.
-* Auto-Generated Fields::    Counters and time-stamps.
-* Encryption::               Storing sensitive information.
-* Generating Reports::       Formatted output with templates.
-* Interoperability::         Importing and exporting to other formats.
-* Bash Builtins::            Boosting the recutils in the shell.
+* Auto-Generated Fields::      Counters and time-stamps.
+* Encryption::                 Storing sensitive information.
+* Generating Reports::         Formatted output with templates.
+* Interoperability::           Importing and exporting to other formats.
+* Bash Builtins::              Boosting the recutils in the shell.
 
 Reference Material
-* Invoking the Utilities::   Exhaustive list of command line arguments.
-* Special Fields::           Syntax of all the supported special fields.
-* Regular Expressions::      Flavor of regexps supported in recutils.
-* Date input formats::       Specifying dates and times.
+* Invoking the Utilities::     Exhaustive list of command line arguments.
+* Special Fields::             Syntax of all the supported special fields.
+* Regular Expressions::        Flavor of regexps supported in recutils.
+* Date input formats::         Specifying dates and times.
 
 * GNU Free Documentation License:: Distribution terms for this document.
 
@@ -171,11 +171,12 @@ Field Types
 * Date and Time Types::      Dates and times.
 * Other Field Types::        Emails, fields, UUIDs, @dots{}
 
-Field Restrictions
+Constraints on Record Sets
 
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
 * Keys and Unique Fields::   Fields characterizing records.
+* Size Constraints::         Limiting the size of a record set.
 * Arbitrary Constraints::    Constraints records must comply with.
 
 Checking Recfiles
@@ -2789,8 +2790,8 @@ to be stored in fields of type @code{Maintainer_t} are of whatever
 type defined for the primary key of the @code{Hacker} record set.
 Why this is useful is discussed later. @xref{Queries which Join Records}.
 
-@node Field Restrictions
-@chapter Field Restrictions
+@node Constraints on Record Sets
+@chapter Constraints on Record Sets
 
 The records in a recfile are by default not restricted to any particular
 structure 
@@ -2809,6 +2810,7 @@ structure of the records.
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
 * Keys and Unique Fields::   Fields characterizing records.
+* Size Constraints::         Constraints on the number of records in a set.
 * Arbitrary Constraints::    Constraints records must comply with.
 @end menu
 
@@ -3013,12 +3015,57 @@ Later, you will learn how primary keys can be used to link one record set to
 another using primary keys together with foreign keys. @xref{Queries which Join Records}.
 
 
+@node Size Constraints
+@section Size Constraints
+
+@cindex @code{%size}
+@cindex size, record size
+@cindex record size
+Sometimes it is desireable to place constraints on entire records.
+This can be done with the @code{%size} special field which is used to limit the
+number of records in a record set.  Its usage is:
+
+@example
+%size: [@var{relational_operator}] @var{number}
+@end example
+
+@noindent
+If no operator is specified then @var{number} is interpreted as the
+exact number of records of this type.  The number can be any integer
+literal, including hexadecimal and octal constants.  For example:
+
+@example
+%rec: Day
+%size: 7
+%type: Name enum
++ Monday Tuesday Wednesday Thursday Friday
++ Saturday Sunday
+%doc: There should be exactly 7 days.
+@end example
+
+@cindex operators
+The optional @var{relational_operator} shall be one of @code{<},
+@code{<=}, @code{>} and @code{>=}@.  For example:
+
+@example
+%rec: Item
+%key: Id
+%size: <= 100
+%doc: We have at most 100 different articles.
+@end example
+
+It is valid to specify a size of @code{0}, meaning that no records of
+this type shall exist in the file.
+
+Only one @code{%size} field shall appear in a record descriptor.
+
+
 @node Arbitrary Constraints
 @section Arbitrary Constraints
 @cindex @code{%constraint}
 @cindex restricting values of fields
 
-Occasionally @code{%mandatory} and @code{%prohibit} are just not flexible enough.
+Occasionally @code{%mandatory},  @code{%prohibit} and @code{%size} are just not flexible enough.
 We might, for instance, want to ensure that @emph{if} a field is present,
 then it must have a certain relationship to other fields.
 Or we might want to stipulate that only under certain conditions, a record contains
@@ -3131,7 +3178,7 @@ default operation.
 However @command{recfix} checks more than the syntactical integrity of the recfile.
 If also checks certain semantics and that the data is self consistent.
 To do this, it uses the special fields of the record, some of which were introduced
-in above (@pxref{Field Restrictions}).
+in above (@pxref{Constraints on Record Sets}).
 It is a good idea to use the special fields to stipulate the ``enterprise rules'' 
 of the data.
 
@@ -5400,45 +5447,7 @@ XXX
 @node %size
 @section %size
 
-@cindex @code{%size}
-@cindex size, record size
-@cindex record size
-The @code{%size} special field is used to define constraints in the
-number of records stored in a record set.  Its usage is:
-
-@example
-%size: [@var{relational_operator}] @var{number}
-@end example
-
-@noindent
-If no operator is specified then @var{number} is interpreted as the
-exact number of records of this type.  The number can be any integer
-literal, including hexadecimal and octal constants.  For example:
-
-@example
-%rec: Day
-%size: 7
-%type: Name enum
-+ Monday Tuesday Wednesday Thursday Friday
-+ Saturday Sunday
-%doc: There should be exactly 7 days.
-@end example
-
-@cindex operators
-The optional @var{relational_operator} shall be one of @code{<},
-@code{<=}, @code{>} and @code{>=}@.  For example:
-
-@example
-%rec: Item
-%key: Id
-%size: <= 100
-%doc: We have at most 100 different articles.
-@end example
-
-It is valid to specify a size of @code{0}, meaning that no records of
-this type shall exist in the file.
-
-This field shall appear only once in a record descriptor.
+XXX
 
 @node %constraint
 @section %constraint
