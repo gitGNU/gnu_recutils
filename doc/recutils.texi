@@ -180,6 +180,9 @@ Constraints on Record Sets
 
 Checking Recfiles
 
+* Syntactical Errors::       Fixing structure errors in recfiles.
+* Semantic Errors::          Fixing semantic errors in recfiles.
+
 Remote Descriptors
 
 Grouping and Aggregates
@@ -3118,8 +3121,8 @@ a file after editing it, and before trying other commands.
 
 
 @menu
-* Syntactical Errors::
-* Semantic Errors::
+* Syntactical Errors::  Fixing structure errors in recfiles.
+* Semantic Errors::     Fixing semantic errors in recfiles.
 @end menu
 
 @node Syntactical Errors
@@ -3185,9 +3188,6 @@ A field does not conform to the specified constraint.
 @item %confidential
 An unencrypted value exists for a confidential field.
 @end table
-
-
-
 
 
 @node Remote Descriptors
