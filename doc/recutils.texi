@@ -3853,21 +3853,6 @@ Abode_Address: 1 Wanter Rise, Greater Inncombe, BUCKS
 
 @cindex @code{%auto}
 @cindex automatically generated values
-Auto generated fields are a very useful facility usually provided by
-database implementations.  
-In recfiles, this is achieved with the @code{%auto} special field.
-Its usage is:
-
-@example
-%auto: @var{field1} @var{field2} @dots{} @var{fieldN}
-@end example
-
-@noindent
-The list of field names are separated by one or more blank characters.
-There can be several @code{%auto} fields in the same record
-descriptor, the effective list of auto-generated fields being the
-union of all the entries.
-
 Consider for example a list of articles in stock in a toys store:
 
 @example
@@ -3920,7 +3905,42 @@ is associated with which article.
 
 To ease the management of those Ids database systems use to provide a
 facility called ``auto-counters''. Auto-counters can be implemented in
-recfiles using the @code{%auto} directive in the record descriptor:
+recfiles using the @code{%auto} directive in the record descriptor.
+Its usage is:
+
+@example
+%auto: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+
+@noindent
+The list of field names are separated by one or more blank characters.
+There can be several @code{%auto} fields in the same record
+descriptor, the effective list of auto-generated fields being the
+union of all the entries.
+
+Note that the auto fields are generated at the beginning of the new
+records, in the same order they are found in the @code{%auto}
+directives.
+
+The concrete effect of the @code{%auto} directive depends on the type
+of the affected field.  The following sections document how.
+
+@menu
+* Counters::                 Generating incremental Ids.
+* Unique Identifiers::       Generating universally unique Ids.
+* Time-Stamps::              Tracking the creation of records.
+@end menu
+
+@node Counters
+@section Counters
+@cindex counters
+
+If an auto field is of type @code{integer} or @code{range} then any
+newly generated field will use the biggest non-used number in the
+record set.
+
+Consider the toys stockage database introduced above.  We could
+declare that the @code{Id} field must be generated automatically:
 
 @example
 %rec: Item
@@ -3934,43 +3954,72 @@ Description: 2cm metal soldier WWII
 Amount: 2111
 @end example
 
+@noindent
 Next time a new item is introduced in the database, the conforming
 application will note the @code{%auto}, and will create a new
 @code{Id} field for the new record with the bigger unused integer
-available.  In this example, the new record will have an Id of
-@code{1}.  The application can still provide an explicit Id for the
-new record.  In that case the field is not generated automatically.
+available, since @code{Id} is declared to be of type @code{int}.  In
+this example, the new record will have an Id of @code{1}.  The
+application can still provide an explicit Id for the new record.  In
+that case the field is not generated automatically.
 
-The concrete effect of the @code{%auto} directive depends on the type
-of the affected field:
-
-@itemize @minus
-@item If it is an @code{integer} or a @code{range} then the biggest non-used number in the record set will be generated.
-@item If no explicit type is defined for an auto generated field it is assumed to be an integer.
-@item If it is a @code{date} then a field with the current date will be generated.
-@item If it is a @code{uuid} then a new time-based uuid will be generated.
-@item Auto generated fields with other types are not allowed.
-@end itemize
-
-Note that the auto fields are generated at the beginning of the new
-records, in the same order they are found in the @code{%auto}
-directives.
-
-@menu
-* Counters::                 Generating incremental Ids.
-* Unique Identifiers::       Generating universally unique Ids.
-* Time-Stamps::              Tracking the creation of records.
-@end menu
-
-@node Counters
-@section Counters
-
-XXX
+Note that if no explicit type is defined for an auto generated field
+then it is assumed to be an integer.
 
 @node Unique Identifiers
 @section Unique Identifiers
+@cindex unique identifiers
+@cindex uuid
 
-XXX
+Universally Unique Identifiers, often abbreviated as UUIDs, can also
+be auto-generated using recutils.  Suppose you maintain a database
+with events featuring the following record descriptor:
+
+@example
+%rec: Event
+%key: Id
+%mandatory: Title Date
+@end example
+
+@noindent
+What would be appropriate to identify each event?  We could use an
+integer and declare it as auto-generated.  After adding two events the
+database would look like this:
+
+@example
+%rec: Event
+%key: Id
+%mandatory: Title Date
+
+Id: 0
+Title: Team meeting
+Date: 12-08-2013
+
+Id: 1
+Title: Dave's birthday
+Date: 20-12-2013
+@end example
+
+@noindent
+However, suppose that we want to share our events with other people,
+i.e. to send them event records and to incorporate their records into
+our own database.  In this case the @code{Id}s would collide.  A good
+solution is to use @code{uuids} and declare them as @code{auto}:
+
+@example
+%rec: Event
+%key: Id
+%type: Id uuid
+%mandatory: Title Date
+
+Id: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+Title: Team meeting
+Date: 12-08-2013
+
+Id: f81d4fae-dc18-11d0-a765-a01328400a0c
+Title: Dave's birthday
+Date: 20-12-2013
+@end example
 
 @node Time-Stamps
 @section Time-Stamps
