@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2013-08-25 17:46:42 jemarch"
+/* -*- mode: C -*- Time-stamp: "2013-10-29 21:36:45 jemarch"
  *
  *       File:         readrec.c
  *       Date:         Fri Aug 23 18:38:08 2013
@@ -24,10 +24,7 @@
  */
 
 #include <bash/config.h>
-
-#if defined (HAVE_UNISTD_H)
-#  include <unistd.h>
-#endif
+#include <unistd.h>
 
 #include <stdio.h>
 #include <rec.h>
@@ -68,7 +65,7 @@ readrec_builtin (WORD_LIST *list)
     {
       return EXECUTION_FAILURE;
     }
-  
+
   {
     size_t record_str_size = 0;
     char *record_str = NULL;
@@ -95,11 +92,11 @@ readrec_builtin (WORD_LIST *list)
         {
           char *var_name = rec_field_name (field);
           size_t num_fields = rec_record_get_num_fields_by_name (record, var_name);
-          
+
           //          if (rec_record_field_mark (record, field))
           //            continue;
 
-#if defined (ARRAY_VARS) 
+#if defined ARRAY_VARS
           if (num_fields > 1)
             {
               /* In case several fields share the same field name, create
@@ -155,4 +152,3 @@ struct builtin readrec_struct = {
 	"readrec",		/* usage synopsis; becomes short_doc */
 	0			/* reserved for internal use */
 };
-	

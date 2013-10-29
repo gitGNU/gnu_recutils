@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2013-08-25 15:55:28 jemarch"
+/* -*- mode: C -*- Time-stamp: "2013-10-29 21:36:16 jemarch"
  *
  *       File:         testrec.c
  *       Date:         Fri Aug 23 21:41:00 2013
@@ -24,10 +24,7 @@
  */
 
 #include <bash/config.h>
-
-#if defined (HAVE_UNISTD_H)
-#  include <unistd.h>
-#endif
+#include <unistd.h>
 
 #include <stdio.h>
 #include <rec.h>
@@ -133,4 +130,3 @@ struct builtin testrec_struct = {
 	"testrec",		/* usage synopsis; becomes short_doc */
 	0			/* reserved for internal use */
 };
-	
