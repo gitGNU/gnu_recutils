@@ -433,7 +433,7 @@ underscores (@code{_}), starting with a letter or the character
 @code{%}.  The regular expression denoting a field name is:
 
 @example
-[a-zA-Z%][a-zA-Z0-9_]+
+[a-zA-Z%][a-zA-Z0-9_]*
 @end example
 
 @cindex case, in field names

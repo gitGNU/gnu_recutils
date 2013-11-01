@@ -1,3 +1,17 @@
+2013-11-01  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,doc,torture: support single-char fields in selection
+	expressions.
+	* torture/utils/recsel.sh (single-char-field-names): New input
+	file.
+	(recsel-sex-single-char-field-names): New test.
+
+	* doc/recutils.texi (Fields): Update regexp denoting field names
+	to allow fields composed by just one character.
+
+	* src/rec-sex-lex.l: Allow fields composed by just one character
+	in selection expressions.
+
 2013-10-29  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* NEWS: Updated for 1.5.90.

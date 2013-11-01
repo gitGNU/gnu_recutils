@@ -2,7 +2,7 @@
 #
 # recsel.sh - System tests for recsel.
 #
-# Copyright (C) 2010, 2011, 2012 Jose E. Marchesi.
+# Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -392,6 +392,14 @@ Requirement: R3
 test_declare_input_file unquoted-lisp-strings \
 'foo: fo\o
 bar: a quote"etouq a
+'
+
+test_declare_input_file single-char-field-names \
+'a: 10
+b: 20
+
+c: 30
+d: 40
 '
 
 #
@@ -1756,6 +1764,13 @@ test_tool recsel-unquoted-lisp-strings ok \
 '(record 0 (
 (field 0 "foo" "fo\\o")
 (field 11 "bar" "a quote\"etouq a")))
+'
+test_tool recsel-sex-single-char-field-names ok \
+          recsel \
+          '-e "c = 30"' \
+          single-char-field-names \
+'c: 30
+d: 40
 '
 
 #

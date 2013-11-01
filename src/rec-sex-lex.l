@@ -72,7 +72,7 @@ NEWLINE            \n
 BLANK              [ \t\n]
 DIGIT              [0-9]
 LETTER             [a-zA-Z]
-FIELD_NAME         {LETTER}[a-zA-Z0-9_]+
+FIELD_NAME         {LETTER}[a-zA-Z0-9_]*
 STRING             '([^']|\\(.|\n))*'|\"([^"]|\\(.|\n))*\"
 
 /* Please do not touch this comment' */
