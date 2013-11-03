@@ -7,40 +7,38 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 1.5.90 (29 October 2013)
-
-* New operation group-by in librec and -G command line argument in
-  recsel which allows to group records by one or more fields.
-* New support for rewrite rules in field expressions.
-* Support for universally unique identifiers using the new `uuid'
-  field types and also uuid auto-fields.
-* New support for writing field values in a row with the -R command
-  line argument to recsel.
-* New support for dot-notation in selection expressions.
-* The rec-mode Emacs mode is now documented in a nice user manual.
-* Many user improvements in the Emacs mode: fields folding, special
-  editing methods for the different field types, font-lock and much
-  more.
-* The operators >= and <= can now be used in selection expressions.
-* A useful set of aggregate functions (sum, mix, max, avg) can now be
-  used in field expressions along with grouping.
-* It is now possible to sort by several fields using the -S command
-  line option to recsel.
-* Support for arbitrary field constraints with the new %constraint
-  special field and the "implies" => operator in selection
-  expressions.
-* Range types defition can now use the predefined keywords MIN and MAX
-  that denotes the minimum supported integer in the system and the
-  bigger supported integer in the system respectively.
-* Support for foreign keys and inner joins using the new `rec' field
-  type and the -j option to recsel.
-* New high-level API in librec, which provides the same functionality
-  than the command line utilities for C programs.
-* Sorting now keeps the relative position of records, which is what
-  most people expect.
-* Evaluation of selection expressions is much faster now.
-* Support for the bash builtin `readred' which allows to iterate on
-  records in bash loops.
+ Version 1.6 (03 November 2013)
+* Utilities:
+  . Support for joins and foreign keys.
+  . Grouping records by one or more fields.
+  . Sorting recors by several fields.
+  . Specifying rewrite rules in field expressions.
+  . Writing field values in rows.
+  . Dot-notation in selection expressions.
+  . Support for the >= and <= operators in selection expressions.
+  . Aggregated functions: sum, min, max, avg.
+  . New bash loadable builtin `readrec'.
+* Format:
+  . New UUID field type.
+  . User provided arbitrary constraints with %constraint.
+  . Pre-defined constants MIN and MAX can now be used in ranges.
+* librec:
+  . New high-level API: rec_db_query, rec_db_insert, rec_db_delete and
+    rec_db_set.
+  . Documentation in the rec.h header file extended and improved.
+* Emacs mode:
+  . Texinfo manual describing the usage of rec-mode.
+  . Support for a mode hook.
+  . Comments are now supported in records.
+  . add-change-log-entry in a recfile now does the right thing.
+  . Commands for copying/killing fields and records.
+  . Support for undo in navigation mode.
+  . Field folding.
+  . Editing methods for the several field types.
+  . Statistics.
+* Documentation:
+  . The user manual has been restructured and expanded.
+* Internal cleanup and code factorization.
 * Many, many, many bug fixes :D
 
  Version 1.5 (13 January 2012)

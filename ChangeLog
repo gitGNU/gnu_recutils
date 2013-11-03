@@ -1,3 +1,9 @@
+2013-11-03  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Preparation for 1.6.
+	* configure.ac: Version number bumped to 1.6.
+	* NEWS: Updated for 1.6.
+
 2013-11-01  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,doc,torture: support single-char fields in selection
