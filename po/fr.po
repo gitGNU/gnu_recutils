@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU recutils 1.5\n"
 "Report-Msgid-Bugs-To: bug-gnu-utils@gnu.org\n"
-"POT-Creation-Date: 2013-10-29 21:59+0100\n"
+"POT-Creation-Date: 2013-11-03 15:13+0100\n"
 "PO-Revision-Date: 2012-01-30 20:16+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -186,7 +186,7 @@ msgstr "Expression régulière trop grande"
 msgid "Unmatched ) or \\)"
 msgstr ") ou \\) sans correspondant"
 
-#: lib/regcomp.c:704
+#: lib/regcomp.c:707
 msgid "No previous regular expression"
 msgstr "Pas d'expression régulière précédente"
 

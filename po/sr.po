@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: recutils-1.5\n"
 "Report-Msgid-Bugs-To: bug-gnu-utils@gnu.org\n"
-"POT-Creation-Date: 2013-10-29 21:59+0100\n"
+"POT-Creation-Date: 2013-11-03 15:13+0100\n"
 "PO-Revision-Date: 2012-06-15 09:02+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnu@prevod.org>\n"
@@ -183,7 +183,7 @@ msgstr "Регуларни израз је превелик"
 msgid "Unmatched ) or \\)"
 msgstr "Не одговара ) или \\)"
 
-#: lib/regcomp.c:704
+#: lib/regcomp.c:707
 msgid "No previous regular expression"
 msgstr "Нема претходног регуларног израза"
 
