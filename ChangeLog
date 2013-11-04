@@ -1,3 +1,8 @@
+2013-11-04  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* .gitignore: Updated with the files generated when building the
+	rec-mode manual.
+
 2013-11-03  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.6.
