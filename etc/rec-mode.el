@@ -1860,45 +1860,49 @@ record.  Interactive version."
       (rec-beginning-of-record))
     (rec-goto-next-field)))
 
-(defun rec-cmd-goto-next-rec ()
+(defun rec-cmd-goto-next-rec (&optional n)
   "Move the pointer to the beginning of the next record in the
 file.  Interactive version."
-  (interactive)
+  (interactive "P")
+  (when (null n) (setq n 1))
   (widen)
   (let ((record-type (rec-record-type)))
-    (if (save-excursion
-          (and (rec-goto-next-rec)
-               (equal (rec-record-type) record-type)
-               (not (rec-record-descriptor-p (rec-current-record)))))
-        (progn
-          (rec-unfold-all-fields)
-          (rec-remove-continuation-line-marker-overlays)
-          (rec-goto-next-rec))
-      (if (not (rec-record-type))
-          (message "No more records")
-        (message "%s" (concat "No more records of type "
-                              (rec-record-type))))))
+    (dotimes (i n)
+      (if (save-excursion
+	    (and (rec-goto-next-rec)
+		 (equal (rec-record-type) record-type)
+		 (not (rec-record-descriptor-p (rec-current-record)))))
+	  (progn
+	    (rec-unfold-all-fields)
+	    (rec-remove-continuation-line-marker-overlays)
+	    (rec-goto-next-rec))
+	(if (not (rec-record-type))
+	    (message "No more records")
+	  (message "%s" (concat "No more records of type "
+				(rec-record-type)))))))
   (unless rec-editing
     (rec-show-record)))
 
-(defun rec-cmd-goto-previous-rec ()
+(defun rec-cmd-goto-previous-rec (&optional n)
   "Move the pointer to the beginning of the previous record in
 the file.  Interactive version."
-  (interactive)
+  (interactive "P")
+  (when (null n) (setq n 1))
   (widen)
   (let ((record-type (rec-record-type)))
-    (if (save-excursion
-          (and (rec-goto-previous-rec)
-               (equal (rec-record-type) record-type)
-               (not (rec-record-descriptor-p (rec-current-record)))))
-        (progn
-          (rec-unfold-all-fields)
-          (rec-remove-continuation-line-marker-overlays)
-          (rec-goto-previous-rec))
-      (if (not (rec-record-type))
-          (message "No more records")
-        (message "%s" (concat "No more records of type "
-                              (rec-record-type))))))
+    (dotimes (i n)
+      (if (save-excursion
+	    (and (rec-goto-previous-rec)
+		 (equal (rec-record-type) record-type)
+		 (not (rec-record-descriptor-p (rec-current-record)))))
+	  (progn
+	    (rec-unfold-all-fields)
+	    (rec-remove-continuation-line-marker-overlays)
+	    (rec-goto-previous-rec))
+	(if (not (rec-record-type))
+	    (message "No more records")
+	  (message "%s" (concat "No more records of type "
+				(rec-record-type)))))))
   (unless rec-editing
     (rec-show-record)))
 

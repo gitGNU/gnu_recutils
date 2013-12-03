@@ -1,3 +1,9 @@
+2012-12-04  Julio C. M. Ramirez <rikijpn@member.fsf.org>
+
+	* etc/rec-mode.el: adding numeric prefix to next/previous
+	records commands for recmode on emacs.
+	* doc/rec-mode.texi: adding mention for feature above.
+
 2013-11-04  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* .gitignore: Updated with the files generated when building the

@@ -233,8 +233,10 @@ The following commands jump to other records in the buffer.
 @table @asis
 @reccmd{n,rec-cmd-goto-next-rec}
 Display the next record of the same type in the buffer.
+@*`C-u N n' will move next N times.
 @reccmd{p,rec-cmd-goto-previous-rec}
 Display the previous record of the same type in the buffer.
+@*`C-u N p' will move backwards N times.
 @reccmd{d, rec-cmd-show-descriptor}
 Display the record descriptor applicable to the current record.  If
 the current record is anonymous, @ie{} there is not record
