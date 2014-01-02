@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2011-2013 Jose E. Marchesi */
+/* Copyright (C) 2011-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ static void rec2csv_generate_csv (rec_rset_t rset, rec_fex_t fex);
 
 char             *rec2csv_record_type    = NULL;
 rec_fex_t         rec2csv_sort_by_fields = NULL;
+char              rec2csv_delim          = ',';
 
 /*
  * Command line options management
@@ -94,6 +95,7 @@ Convert rec data into csv data.\n"), stdout);
   /* TRANSLATORS: --help output, rec2csv options.
      no-wrap */
   fputs (_("\
+  -d, --delim=char                    sets the deliminator (default ',')\n\
   -t, --type=TYPE                     record set to convert to csv; if this parameter\n\
                                         is omitted then the default record set is used\n\
   -S, --sort=FIELDS                   sort the output by the specified fields.\n"),
@@ -113,7 +115,7 @@ rec2csv_parse_args (int argc,
 
   while ((ret = getopt_long (argc,
                              argv,
-                             "t:S:",
+                             "t:S:d:",
                              GNU_longOptions,
                              NULL)) != -1)
     {
@@ -122,6 +124,11 @@ rec2csv_parse_args (int argc,
         {
           COMMON_ARGS_CASES
         case RECORD_TYPE_ARG:
+        case 'd':
+          {
+            rec2csv_delim = optarg[0];
+            break;
+          }
         case 't':
           {
             rec2csv_record_type = xstrdup (optarg);
@@ -175,7 +182,7 @@ rec2csv_generate_csv (rec_rset_t rset,
     {
       if (i != 0)
         {
-          putc (',', stdout);
+          putc (rec2csv_delim, stdout);
         }
 
       fex_elem = rec_fex_get (fex, i);
@@ -219,7 +226,7 @@ rec2csv_generate_csv (rec_rset_t rset,
         {
           if (i != 0)
             {
-              putc (',', stdout);
+              putc (rec2csv_delim, stdout);
             }
 
           fex_elem = rec_fex_get (fex, i);

@@ -1,5 +1,15 @@
 2014-01-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	utils: add support for arbitrary delimiter characters in rec2csv.
+	Patch provided by Sebastian Fischmeister.
+	* utils/rec2csv.c: New global variable rec2csv_delim.
+	(recutl_print_help): Documentation of -d.
+	(rec2csv_parse_args): Process the new -d|--delim command line
+	argument.
+	(rec2csv_generate_csv): Likewise.
+
+2014-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	Do not maintain local copies of .po files which are available in
 	the translation project.
 	* po/fr.po: file removed.
@@ -7765,7 +7775,7 @@
 
 	* Begin of the change log.
 
-Copyright 2009-2013 Jose E. Marchesi
+Copyright 2009-2014 Jose E. Marchesi
 
 Copying and distribution of this file, with or without modification, are
 permitted in any medium without royalty provided the copyright notice
