@@ -5370,7 +5370,12 @@ default records (with no name) are converted.
 @itemx @w{@kbd{--sort}=@var{fields}}
 Sort the output by the comma separated list of field names
 @var{fields}.  This option has precedence to whatever sorting criteria
-are specified in the corresponding record descriptor with @code{%sort}.
+are specified in the corresponding record descriptor with
+@code{%sort}.
+@item -d
+@itemx @w{@kbd{--delim}=@var{char}}
+Use @var{char} as the delimiter character separating fields in the
+output.  Defaults to @code{,}.
 @end table
 
 @node mdb2rec

@@ -1,5 +1,10 @@
 2014-01-02  Jose E. Marchesi  <jemarch@gnu.org>
 
+	doc: document the -d|--delim command line argument for rec2csv.
+	* doc/recutils.texi (rec2csv): Document -d|--delim.
+
+2014-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
 	utils: add support for arbitrary delimiter characters in rec2csv.
 	Patch provided by Sebastian Fischmeister.
 	* utils/rec2csv.c: New global variable rec2csv_delim.
