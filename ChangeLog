@@ -1,3 +1,12 @@
+2014-01-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Do not maintain local copies of .po files which are available in
+	the translation project.
+	* po/fr.po: file removed.
+	* po/sr.po: Likewise.
+	* po/uk.po: Likewise.
+	* po/vi.po: Likewise.
+
 2012-12-04  Julio C. M. Ramirez <rikijpn@member.fsf.org>
 
 	* etc/rec-mode.el: adding numeric prefix to next/previous
