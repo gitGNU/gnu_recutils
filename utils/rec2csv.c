@@ -344,12 +344,12 @@ main (int argc, char *argv[])
     {
       res = 1;
     }
-
-  /* Process the data.  */
-  if (!rec2csv_process_data (db))
-    {
-      res = 1;
-    }
+  else
+    /* Process the data.  */
+    if (!rec2csv_process_data (db))
+      {
+        res = 1;
+      }
 
   rec_db_destroy (db);
   

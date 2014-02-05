@@ -292,8 +292,7 @@ main (int argc, char *argv[])
   recfmt_parse_args (argc, argv);
 
   db = recutl_read_db_from_file (NULL);
-
-  if (recfmt_template)
+  if (db && recfmt_template)
     {
       recfmt_process_db (db, recfmt_template);
     }
