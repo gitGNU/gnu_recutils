@@ -1535,7 +1535,7 @@ rec_type_parse_enum (const char *str, rec_type_t type)
   if (!p)
     {
       /* Free memory.  */
-      for (i = 0; i < i; i++)
+      for (i = 0; i < type->size; i++)
         {
           free (type->data.names[i]);
         }
