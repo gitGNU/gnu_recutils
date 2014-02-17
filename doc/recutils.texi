@@ -2485,7 +2485,7 @@ Sometimes it is desirable to reduce the @dfn{range} of integers allowed in a
 field.  This can be achieved by using a range type declaration:
 
 @example
-%typedef: Percentage_t range 0 100
+%typedef: Interrupt_t range 0 15
 @end example
 
 @noindent
@@ -2493,7 +2493,7 @@ Note that it is possible to omit the minimum index in ranges.  In that
 case it is implicitly zero:
 
 @example
-%typedef: Percentage_t range 100
+%typedef: Interrupt_t range 15
 @end example
 
 @noindent

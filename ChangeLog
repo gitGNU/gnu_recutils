@@ -1,5 +1,7 @@
-2014-02-17  Jose E. Marchesi  <jose.marchesi@oracle.com>
+2014-02-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/recutils.texi (Scalar Field Types): Improve misleading
+	example.
 	* doc/recutils.texi (SEX Operands): Improve wording.
 
 2014-02-17  Jose E. Marchesi  <jemarch@gnu.org>
