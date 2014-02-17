@@ -53,15 +53,15 @@ Documentation License''.
 
 @dircategory Individual utilities
 @direntry
-* recinf: (recutils)recinf.                    Get info about recfiles.
-* recsel: (recutils)recsel.                    Read records.
-* recins: (recutils)recins.                    Insert records.
-* recdel: (recutils)recdel.                    Delete records.
-* recset: (recutils)recset.                    Manage fields.
-* recfix: (recutils)recfix.                    Fix recfiles.
-* csv2rec: (recutils)csv2rec.                  CSV to recfiles.
-* rec2csv: (recutils)rec2csv.                  Recfiles to CSV.
-* mdb2rec: (recutils)mdb2rec.                  MDB to recfiles.
+* recinf: (recutils)Invoking recinf.           Get info about recfiles.
+* recsel: (recutils)Invoking recsel.           Read records.
+* recins: (recutils)Invoking recins.           Insert records.
+* recdel: (recutils)Invoking recdel.           Delete records.
+* recset: (recutils)Invoking recset.           Manage fields.
+* recfix: (recutils)Invoking recfix.           Fix recfiles.
+* csv2rec: (recutils)Invoking csv2rec.         CSV to recfiles.
+* rec2csv: (recutils)Invoking rec2csv.         Recfiles to CSV.
+* mdb2rec: (recutils)Invoking mdb2rec.         MDB to recfiles.
 @end direntry
 
 @titlepage
@@ -222,16 +222,16 @@ Bash Builtins
 
 Invoking the Utilities
 
-* recinf::                   Printing information about rec files.
-* recsel::                   Selecting records.
-* recins::                   Inserting records.
-* recdel::                   Deleting records.
-* recset::                   Managing fields.
-* recfix::                   Fixing broken rec files, and diagnostics.
-* recfmt::                   Formatting records using templates.
-* csv2rec::                  Converting csv data into rec data.
-* rec2csv::                  Converting rec data into csv data.
-* mdb2rec::                  Converting mdb files into rec files.
+* Invoking recinf::          Printing information about rec files.
+* Invoking recsel::          Selecting records.
+* Invoking recins::          Inserting records.
+* Invoking recdel::          Deleting records.
+* Invoking recset::          Managing fields.
+* Invoking recfix::          Fixing broken rec files, and diagnostics.
+* Invoking recfmt::          Formatting records using templates.
+* Invoking csv2rec::         Converting csv data into rec data.
+* Invoking rec2csv::         Converting rec data into csv data.
+* Invoking mdb2rec::         Converting mdb files into rec files.
 
 @end detailmenu
 @end menu
@@ -727,18 +727,16 @@ As well as a name, it is a good idea to provide a description of the record set.
 This is sometimes call the record set's @dfn{documentation} and is specified
 using the @code{%doc} field. 
 
-Whereas the name is usually short and can contain only alphanumeric characters and
-underscores, no such restriction applies to the documentation.
-The documentation is typically more verbose than the name provided
-by the @code{%rec} field and may contain arbitrary characters such as punctuation and
-parentheses.
-It is somewhat similar to a
-comment (@pxref{Comments}), but it can be managed easier 
-in a programmatic way.
-Unlike a comment, the @code{%doc} field is recognized by tools such as
-@command{recinf} (@pxref{recinf}) which processes record descriptors.
-For example, you might have two record sets with @code{%rec} and @code{%doc}
-fields as follows:
+Whereas the name is usually short and can contain only alphanumeric
+characters and underscores, no such restriction applies to the
+documentation.  The documentation is typically more verbose than the
+name provided by the @code{%rec} field and may contain arbitrary
+characters such as punctuation and parentheses.  It is somewhat
+similar to a comment (@pxref{Comments}), but it can be managed easier
+in a programmatic way.  Unlike a comment, the @code{%doc} field is
+recognized by tools such as @command{recinf} (@pxref{Invoking recinf})
+which processes record descriptors.  For example, you might have two
+record sets with @code{%rec} and @code{%doc} fields as follows:
 
 @example
 %rec: Contact
@@ -1732,7 +1730,7 @@ problem, and thus the diagnosis tools must not declare a recfile as
 invalid because of this.  Some tools may provide a way to physically
 order the fields in the file.  That is certainly the case of the GNU
 recutils, where @command{recfix} can be used for that purpose.
-@xref{recfix}.
+@xref{Invoking recfix}.
 
 On the other hand any program listing, presenting or processing data
 extracted from the recfile must honor the @code{%sort} entry.  For
@@ -2130,7 +2128,7 @@ For this reason, you might consider it wise, to use the @command{-c} flag, which
 the relevant records to be commented out, rather than deleted.
  
 The complete options available to the @command{recdel} command are explained later.
-@xref{recdel}.
+@xref{Invoking recdel}.
 
 @node Sorting Records
 @section Sorting Records
@@ -2176,11 +2174,12 @@ not follow any particular pattern.
 If however a large number of similar changes to several records are required then the 
 there exists the @command{recset} command to make the job easier.
 
-The formal description of @command{recset} is presented later (@pxref{recset}).  In this
-chapter some typical usage examples are discussed.
-As with @command{recdel}, @command{recset} if used erroneously has the potential to make 
-very pervasive changes, which could result in a large loss of data.
-It is prudent therefore to take a copy of a recfile before running such commands.
+The formal description of @command{recset} is presented later
+(@pxref{Invoking recset}).  In this chapter some typical usage
+examples are discussed.  As with @command{recdel}, @command{recset} if
+used erroneously has the potential to make very pervasive changes,
+which could result in a large loss of data.  It is prudent therefore
+to take a copy of a recfile before running such commands.
 
 
 @menu
@@ -4475,7 +4474,7 @@ It is evident that records, such as those in recfiles, are a more
 general structure than comma separated values.
 This means that when converting from csv files to recfiles, certain 
 decisions need to be made.
-The @code{rec2csv} utility (@pxref{rec2csv})
+The @code{rec2csv} utility (@pxref{Invoking rec2csv})
 implements an algorithm to deal with this problem
 and generate a table that the user expects.
 
@@ -4769,20 +4768,20 @@ operands even if they begin with @option{-}.  For example,
 @end table
 
 @menu
-* recinf::                   Printing information about rec files.
-* recsel::                   Selecting records.
-* recins::                   Inserting records.
-* recdel::                   Deleting records.
-* recset::                   Managing fields.
-* recfix::                   Fixing broken rec files, and diagnostics.
-* recfmt::                   Formatting records using templates.
-* csv2rec::                  Converting csv data into rec data.
-* rec2csv::                  Converting rec data into csv data.
-* mdb2rec::                  Converting mdb files into rec files.
+* Invoking recinf::          Printing information about rec files.
+* Invoking recsel::          Selecting records.
+* Invoking recins::          Inserting records.
+* Invoking recdel::          Deleting records.
+* Invoking recset::          Managing fields.
+* Invoking recfix::          Fixing broken rec files, and diagnostics.
+* Invoking recfmt::          Formatting records using templates.
+* Invoking csv2rec::         Converting csv data into rec data.
+* Invoking rec2csv::         Converting rec data into csv data.
+* Invoking mdb2rec::         Converting mdb files into rec files.
 @end menu
 
-@node recinf
-@section recinf
+@node Invoking recinf
+@section Invoking recinf
 @cindex @command{recinf}
 
 @command{recinf} reads the given rec files (or the data in the
@@ -4833,8 +4832,8 @@ Print the data in the form of sexps (lisp expressions) instead of rec
 format.  This option is intended to be used by lisp programs.
 @end table
 
-@node recsel
-@section recsel
+@node Invoking recsel
+@section Invoking recsel
 @cindex @command{recsel}
 
 @cindex selecting records
@@ -4967,8 +4966,8 @@ Those options are not intended to be used by human operators.
 Print the data using sexps instead of rec format.
 @end table
 
-@node recins
-@section recins
+@node Invoking recins
+@section Invoking recins
 @cindex @command{recins}
 @cindex inserting new records
 
@@ -5057,8 +5056,8 @@ Insert the requested record even in potentially dangerous situations,
 such as when the data integrity of the database is compromised.
 @end table
 
-@node recdel
-@section recdel
+@node Invoking recdel
+@section Invoking recdel
 @cindex @command{recdel}
 @cindex deleting records
 
@@ -5115,8 +5114,8 @@ Make strings case-insensitive in selection expressions.
 Be verbose when reporting integrity problems.
 @end table
 
-@node recset
-@section recset
+@node Invoking recset
+@section Invoking recset
 @cindex @command{recset}
 @cindex editing fields
 
@@ -5209,8 +5208,8 @@ situations, or when the integrity of the data stored in the file is
 affected.
 @end table
 
-@node recfix
-@section recfix
+@node Invoking recfix
+@section Invoking recfix
 @cindex @command{recfix}
 @cindex checking recfiles
 @cindex integrity, checking
@@ -5285,8 +5284,8 @@ Password used to encrypt or decrypt fields.
 Force potentially dangerous operations.
 @end table
 
-@node recfmt
-@section recfmt
+@node Invoking recfmt
+@section Invoking recfmt
 @cindex @command{recfmt}
 @cindex formatted output
 
@@ -5309,8 +5308,8 @@ Read the template from the file in @var{PATH} instead of the command
 line.
 @end table
 
-@node csv2rec
-@section csv2rec
+@node Invoking csv2rec
+@section Invoking csv2rec
 @cindex @command{csv2rec}
 @cindex csv
 @cindex comma separated values
@@ -5339,8 +5338,8 @@ Be strict parsing the csv file.
 Omit empty fields.
 @end table
 
-@node rec2csv
-@section rec2csv
+@node Invoking rec2csv
+@section Invoking rec2csv
 
 @cindex @command{rec2csv}
 @cindex csv
@@ -5378,8 +5377,8 @@ Use @var{char} as the delimiter character separating fields in the
 output.  Defaults to @code{,}.
 @end table
 
-@node mdb2rec
-@section mdb2rec
+@node Invoking mdb2rec
+@section Invoking mdb2rec
 @cindex @command{mdb2rec}
 @cindex mdb
 @cindex MS Access

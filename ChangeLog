@@ -1,5 +1,27 @@
 2014-02-17  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: follow the standard way in naming the utility invokation
+	nodes.
+	* doc/recutils.texi (Invoking recinf): Renamed from node recinf.
+	(Invoking recsel): Likewise.
+	(Invoking recins): Likewise.
+	(Invoking recdel): Likewise.
+	(Invoking recset): Likewise.
+	(Invoking recfix): Likewise.
+	(Invoking recfmt): Likewise.
+	(Invoking csv2rec): Likewise.
+	(Invoking rec2csv): Likewise.
+	(Invoking mdb2rec): Likewise.
+	"Fast" access links in the "Individual utilities" dircategory
+	fixed to point to the nodes renamed above.
+	(Documenting Records): Xref fixed.
+	(Sorted Output): Likewise.
+	(Deleting Records): Likewise.
+	(Editing Fields): Likewise.
+	(CSV Files): Likewise.
+
+2014-02-17  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/recutils.texi (Scalar Field Types): Improve misleading
 	example.
 	* doc/recutils.texi (SEX Operands): Improve wording.
