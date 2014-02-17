@@ -1372,7 +1372,7 @@ Email ~ "\\.org"
 
 @noindent
 Will match any record in which there is a field named @samp{Email}
-whose value terminates in @samp{.org}.  
+whose value contains @samp{.org}.  
 If we are interested in the value of some specific email, we can specify 
 its relative position in the containing record by using @dfn{subscripts}.  
 @cindex subscripts, in selection expressions
