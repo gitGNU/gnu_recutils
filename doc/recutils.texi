@@ -4157,6 +4157,12 @@ among all the webmasters, and the ShellPassword entries with a more
 restricted password available only to the administrator of the
 machine.
 
+Note that since the utilities only accept to specify one password at a
+time different passwords cannot be specified at decryption time.  This
+means that in the example above the administrator would need to run
+@command{recsel} twice in order to decrypt all the encrypted data in
+the recfile.
+
 The GNU recutils fully support encrypted fields.  See the documentation
 for @command{recsel}, @command{recins} and @command{recfix} for details on how
 to operate on files containing confidential fields.

@@ -1,3 +1,10 @@
+2014-02-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	manual: clarify decryption using several passwords.
+	* doc/recutils.texi (Confidential Fields): Added a note clarifying
+	that it is not possible to specify several passwords in a single
+	invocation of recsel.
+
 2014-02-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: follow the standard way in naming the utility invokation
