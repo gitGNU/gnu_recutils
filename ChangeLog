@@ -1,5 +1,11 @@
 2014-02-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	bash: fix librec linking issue.
+	* bash/Makefile.am (readrec_la_LIBADD): Link with the built librec.
+	(testrec_la_LIBADD): Likewise.
+
+2014-02-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,utils,manual,torture: new writer option to omit comments when
 	outputting rsets and comments.  recsel now uses this option to
 	avoid emitting record fields.

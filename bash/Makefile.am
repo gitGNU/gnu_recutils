@@ -1,7 +1,7 @@
 # bash/Makefile.am
 # GNU recutils
 
-# Copyright (C) 2013 Jose E. Marchesi
+# Copyright (C) 2013-2014 Jose E. Marchesi
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@ lib_LTLIBRARIES = readrec.la testrec.la
 AM_CPPFLAGS = $(COMMON_CPPFLAGS)
 
 readrec_la_LDFLAGS = -module
-readrec_la_LIBADD = -lrec
+readrec_la_LIBADD = $(top_builddir)/src/librec.la
 readrec_la_SOURCES = readrec.c
 
 testrec_la_LDFLAGS = -module
-testrec_la_LIBADD = -lrec
+testrec_la_LIBADD = $(top_builddir)/src/librec.la
 testrec_la_SOURCES = testrec.c
 
 endif
