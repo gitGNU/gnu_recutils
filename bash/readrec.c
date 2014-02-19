@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2013-10-29 21:36:45 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         readrec.c
  *       Date:         Fri Aug 23 18:38:08 2013
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2013 Jose E. Marchesi */
+/* Copyright (C) 2013-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ readrec_builtin (WORD_LIST *list)
     char *record_str_dequoted = NULL;
     rec_writer_t writer = rec_writer_new_str (&record_str, &record_str_size);
 
-    if (!writer || !rec_write_record (writer, record, REC_WRITER_NORMAL))
+    if (!writer || !rec_write_record (writer, record))
       return EXIT_FAILURE;
     rec_writer_destroy (writer);
 

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2009-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +151,8 @@ print_info_file (FILE *in,
               if (descriptor)
                 {
                   writer = rec_writer_new (stdout);
-                  rec_write_record (writer, descriptor, recinf_write_mode);
+                  rec_writer_set_mode (writer, recinf_write_mode);
+                  rec_write_record (writer, descriptor);
                   rec_write_string (writer, "\n");
                   rec_writer_destroy (writer);
                 }

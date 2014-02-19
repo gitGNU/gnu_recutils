@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,8 @@ START_TEST(rec_write_comment_nominal)
   comment = rec_comment_new ("foo bar");
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
-  fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
+  rec_writer_set_mode (writer, REC_WRITER_NORMAL);
+  fail_if (!rec_write_comment (writer, comment));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "#foo bar") != 0);
@@ -56,7 +57,8 @@ START_TEST(rec_write_comment_nominal)
   comment = rec_comment_new ("one\ntwo\nthree");
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
-  fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
+  rec_writer_set_mode (writer, REC_WRITER_NORMAL);
+  fail_if (!rec_write_comment (writer, comment));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "#one\n#two\n#three") != 0);
@@ -65,7 +67,8 @@ START_TEST(rec_write_comment_nominal)
   comment = rec_comment_new ("");
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
-  fail_if (!rec_write_comment (writer, comment, REC_WRITER_NORMAL));
+  rec_writer_set_mode (writer, REC_WRITER_NORMAL);
+  fail_if (!rec_write_comment (writer, comment));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "#") != 0);
@@ -89,7 +92,8 @@ START_TEST(rec_write_comment_sexp)
   comment = rec_comment_new ("foo bar");
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
-  fail_if (!rec_write_comment (writer, comment, REC_WRITER_SEXP));
+  rec_writer_set_mode (writer, REC_WRITER_SEXP);
+  fail_if (!rec_write_comment (writer, comment));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "(comment \"foo bar\")") != 0);
@@ -98,7 +102,8 @@ START_TEST(rec_write_comment_sexp)
   comment = rec_comment_new ("");
   writer = rec_writer_new_str (&str, &str_size);
   fail_if (writer == NULL);
-  fail_if (!rec_write_comment (writer, comment, REC_WRITER_SEXP));
+  rec_writer_set_mode (writer, REC_WRITER_SEXP);
+  fail_if (!rec_write_comment (writer, comment));
   rec_comment_destroy (comment);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "(comment \"\")") != 0);

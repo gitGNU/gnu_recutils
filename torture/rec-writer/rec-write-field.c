@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,8 @@ START_TEST(rec_write_field_nominal)
   field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_NORMAL));
+  rec_writer_set_mode (writer, REC_WRITER_NORMAL);
+  fail_if (!rec_write_field (writer, field));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "foo: value") != 0);
@@ -72,7 +73,8 @@ START_TEST(rec_write_field_values)
   field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_VALUES));
+  rec_writer_set_mode (writer, REC_WRITER_VALUES);
+  fail_if (!rec_write_field (writer, field));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "value") != 0);
@@ -81,7 +83,8 @@ START_TEST(rec_write_field_values)
   field = rec_field_new ("name", "foo\nbar\nbaz");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_VALUES));
+  rec_writer_set_mode (writer, REC_WRITER_VALUES);
+  fail_if (!rec_write_field (writer, field));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "foo\nbar\nbaz") != 0);
@@ -106,7 +109,8 @@ START_TEST(rec_write_field_values_row)
   field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_VALUES_ROW));
+  rec_writer_set_mode (writer, REC_WRITER_VALUES_ROW);
+  fail_if (!rec_write_field (writer, field));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "value") != 0);
@@ -115,7 +119,8 @@ START_TEST(rec_write_field_values_row)
   field = rec_field_new ("name", "foo\nbar\nbaz");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_VALUES_ROW));
+  rec_writer_set_mode (writer, REC_WRITER_VALUES_ROW);
+  fail_if (!rec_write_field (writer, field));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "foo\nbar\nbaz") != 0);
@@ -139,7 +144,8 @@ START_TEST(rec_write_field_sexp)
   field = rec_field_new ("foo", "value");
   fail_if (field == NULL);
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_field (writer, field, REC_WRITER_SEXP));
+  rec_writer_set_mode (writer, REC_WRITER_SEXP);
+  fail_if (!rec_write_field (writer, field));
   rec_field_destroy (field);
   rec_writer_destroy (writer);
   fail_if (strcmp (str, "(field  \"foo\" \"value\")") != 0);

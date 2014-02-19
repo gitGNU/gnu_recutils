@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,8 @@ START_TEST(rec_write_rset_nominal)
   fail_if (rec_mset_append (rec_rset_mset (rset), MSET_RECORD, (void *) record, MSET_ANY) == NULL);
   
   writer = rec_writer_new_str (&str, &str_size);
-  fail_if (!rec_write_rset (writer, rset, REC_WRITER_NORMAL));
+  rec_writer_set_mode (writer, REC_WRITER_NORMAL);
+  fail_if (!rec_write_rset (writer, rset));
   rec_rset_destroy (rset);
   rec_writer_destroy (writer);
   fail_if (strcmp (str,

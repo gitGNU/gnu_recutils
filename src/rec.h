@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012, 2013 Jose E. Marchesi */
+/* Copyright (C) 2009-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1992,10 +1992,21 @@ void rec_writer_destroy (rec_writer_t writer);
 
 /************ Getting and setting writer properties ***************/
 
-/* Determine whether the writer must "collapse" the output records
-   when writing record sets.  */
+/* Set whether the writer must "collapse" the output records when
+   writing record sets.  */
 
 void rec_writer_set_collapse (rec_writer_t writer, bool value);
+
+/* Set whether the writer must skip comments when outputting record
+   sets and records.  */
+
+void rec_writer_set_skip_comments (rec_writer_t writer, bool value);
+
+/* Set the operation mode of the writer.  See the enumerated type
+   defined above for a list of allowed modes.  Note that the mode can
+   be changed at any time.  */
+
+void rec_writer_set_mode (rec_writer_t writer, enum rec_writer_mode_e mode);
 
 /************** Getting the properties of a writer ****************/
 
@@ -2014,29 +2025,28 @@ bool rec_write_string (rec_writer_t writer, const char *str);
 /* Write a comment in the given writer.  This function returns 'false'
    if there was an EOF condition.  */
 
-bool rec_write_comment (rec_writer_t writer, rec_comment_t comment, rec_writer_mode_t mode);
+bool rec_write_comment (rec_writer_t writer, rec_comment_t comment);
 
 /* Write a field name in the given writer.  This function returns
    'false' if there was an EOF condition.  */
 
-bool rec_write_field_name (rec_writer_t writer, const char *field_name, rec_writer_mode_t mode);
+bool rec_write_field_name (rec_writer_t writer, const char *field_name);
 
 /* Write a field in the given writer.  If NAME is not NULL, use it
    instead of the proper name of the field.  This function returns
    'false' if there was an EOF condition.  */
 
-bool rec_write_field (rec_writer_t writer, rec_field_t field,
-                      rec_writer_mode_t mode);
+bool rec_write_field (rec_writer_t writer, rec_field_t field);
 
 /* Write a record in the given writer.  This function returns 'false'
    if there was an EOF condition.  */
 
-bool rec_write_record (rec_writer_t writer, rec_record_t record, rec_writer_mode_t mode);
+bool rec_write_record (rec_writer_t writer, rec_record_t record);
 
 /* Write a record set to the given writer.  This function returns
    'false' if there was an EOF condition.  */
 
-bool rec_write_rset (rec_writer_t writer, rec_rset_t rset, rec_writer_mode_t mode);
+bool rec_write_rset (rec_writer_t writer, rec_rset_t rset);
 
 /* Write a database to the given writer.  This function returns
    'false' if there was an EOF condition.  */

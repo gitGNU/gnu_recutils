@@ -402,6 +402,17 @@ c: 30
 d: 40
 '
 
+test_declare_input_file record-with-comments \
+'foo1: v1
+# bar
+foo2: v2
+
+# jorl
+bar1: v1
+bar2: v2
+# jurl
+'
+
 #
 # Declare tests
 #
@@ -1771,6 +1782,17 @@ test_tool recsel-sex-single-char-field-names ok \
           single-char-field-names \
 'c: 30
 d: 40
+'
+
+test_tool recsel-record-with-comments ok \
+          recsel \
+          '' \
+          record-with-comments \
+'foo1: v1
+foo2: v2
+
+bar1: v1
+bar2: v2
 '
 
 #

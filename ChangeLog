@@ -1,3 +1,67 @@
+2014-02-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,utils,manual,torture: new writer option to omit comments when
+	outputting rsets and comments.  recsel now uses this option to
+	avoid emitting record fields.
+
+	* torture/rec-writer/rec-write-record.c
+	(rec_write_record_skip_comments): New test.
+
+	* src/rec-writer.c (rec_write_record): Do not write out comments
+	in records if the writer was configured to skip them.
+	(rec_write_rset): Likewise.
+
+	* utils/recsel.c (recsel_process_data): Configure the writer to
+	skip comments.
+
+	* torture/utils/recsel.sh (record-with-comments): New input file.
+	(recsel-record-with-comments): New test.
+
+	* torture/rec-writer/rec-write-comment.c (rec_write_comment_sexp):
+	Adapted to new writer api.
+	(rec_write_comment_nominal): Likewise.
+	* torture/rec-writer/rec-write-record.c
+	(rec_write_record_nominal): Likewise.
+	(rec_write_record_sexp): Likewise.
+	(rec_write_record_values): Likewise.
+	(rec_write_record_values_row): Likewise.
+	* torture/rec-writer/rec-write-field-name.c
+	(rec_write_field_name_nominal): Likewise.
+	(rec_write_field_name_sexp): Likewise.
+	* torture/rec-writer/rec-write-field.c (rec_write_field_nominal):
+	Likewise.
+	(rec_write_field_values): Likewise.
+	(rec_write_field_values_row): Likewise.
+	(rec_write_field_sexp): Likewise.
+	* torture/rec-writer/rec-write-rset.c (rec_write_rset_nominal):
+	Likewise.
+
+	* utils/recinf.c (print_info_file): Use the new interface for
+	setting a writer's mode.
+	* bash/readrec.c (readrec_builtin): Likewise.
+	* utils/recsel.c (recsel_process_data): Likewise.
+
+	* src/rec-writer.c (rec_writer_set_skip_comments): New function.
+	(rec_writer_set_mode): Likewise.
+	(rec_writer_new_common): Set default values for the
+	skip_comments_p and mode writer options.
+	(rec_write_comment): Use the writer mode attribute instead of an
+	extra argument to determine how to output the entity.
+	(rec_write_field): Likewise.
+	(rec_write_field_name): Likewise.
+	(rec_write_record): Likewise.
+	(rec_write_rset): Likewise.
+	(rec_write_field_str): Likewise.
+	(rec_write_field_name_str): Likewise.
+	(rec_write_comment_str): Likewise.
+
+	* src/rec.h: Copyright year updated.
+	Prototypes for rec_writer_set_skip_comments and
+	rec_writer_set_mode added.
+
+	* src/rec-writer.c (struct rec_writer_s): New fields
+	skip_comments_p and mode.
+
 2014-02-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	manual: clarify decryption using several passwords.

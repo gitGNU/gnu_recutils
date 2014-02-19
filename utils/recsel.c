@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010-2013 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -489,7 +489,9 @@ recsel_process_data (rec_db_t db)
 
       writer = rec_writer_new (stdout);
       rec_writer_set_collapse (writer, recsel_collapse);
-      rec_write_rset (writer, rset, recsel_write_mode);
+      rec_writer_set_skip_comments (writer, true);
+      rec_writer_set_mode (writer, recsel_write_mode);
+      rec_write_rset (writer, rset);
       rec_writer_destroy (writer);
     }
 

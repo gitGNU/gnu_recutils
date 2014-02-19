@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2009-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,17 @@ struct rec_writer_s
   bool eof;
   int line;  /* Current line number. */
 
-  bool collapse_p;
+  /* The following flags and options can be accesssed using the
+     corresponding rec_writer_(get/set)_FLAG function.  */
+
+  bool collapse_p;        /* If true the writer won't introduce
+                             separators between records.  */
+  bool skip_comments_p;   /* If true the writer won't print out
+                             comments.  */
+  enum rec_writer_mode_e mode; /* The mode in which the writer operates.
+                                  See the definition of the enumerated type
+                                  in rec.h for a list of allowed modes.  */
+
 };
 
 static void
@@ -61,6 +71,8 @@ rec_writer_new_common (rec_writer_t writer)
   writer->line = 1;
   writer->eof = false;
   writer->collapse_p = false;
+  writer->skip_comments_p = false;
+  writer->mode = REC_WRITER_NORMAL;
 }
 
 rec_writer_t
@@ -113,15 +125,14 @@ rec_writer_destroy (rec_writer_t writer)
 
 bool
 rec_write_comment (rec_writer_t writer,
-                   rec_comment_t comment,
-                   rec_writer_mode_t mode)
+                   rec_comment_t comment)
 {
   char *line;
   char *str;
   char *orig_str;
   size_t i;
   
-  if (mode == REC_WRITER_SEXP)
+  if (writer->mode == REC_WRITER_SEXP)
     {
       if (!rec_writer_puts (writer, "(comment "))
         {
@@ -197,12 +208,12 @@ rec_write_comment (rec_writer_t writer,
 
 bool
 rec_write_field (rec_writer_t writer,
-                 rec_field_t field,
-                 rec_writer_mode_t mode)
+                 rec_field_t field)
 {
   size_t pos;
   const char *fname;
   const char *fvalue;
+  enum rec_writer_mode_e mode = writer->mode;
 
   if (mode == REC_WRITER_SEXP)
     {
@@ -223,7 +234,7 @@ rec_write_field (rec_writer_t writer,
   if ((mode != REC_WRITER_VALUES) && (mode != REC_WRITER_VALUES_ROW))
     {
       fname = rec_field_name (field);
-      if (!rec_write_field_name (writer, fname, mode))
+      if (!rec_write_field_name (writer, fname))
         {
           return false;
         }
@@ -318,8 +329,7 @@ rec_write_field (rec_writer_t writer,
 
 bool
 rec_write_field_name (rec_writer_t writer,
-                      const char *field_name,
-                      rec_writer_mode_t mode)
+                      const char *field_name)
 {
   /* Field names can be written in several formats, according to the
    * desired mode:
@@ -328,7 +338,9 @@ rec_write_field_name (rec_writer_t writer,
    *    The field name is written in rec format. i.e. NP:
    * REC_WRITER_SEXP
    *    The field name is a string: "NP"
-  */
+   */
+
+  enum rec_writer_mode_e mode = writer->mode;
 
   if (mode == REC_WRITER_SEXP)
     {
@@ -363,33 +375,29 @@ rec_write_field_name (rec_writer_t writer,
 
 bool
 rec_write_record (rec_writer_t writer,
-                  rec_record_t record,
-                  rec_writer_mode_t mode)
+                  rec_record_t record)
 {
   bool ret;
   rec_mset_iterator_t iter;
   rec_mset_elem_t elem;
   char *data;
-  size_t num_field, num_elem;
+  size_t num_field, num_elem, num_fields, num_elems;
+  enum rec_writer_mode_e mode = writer->mode;
 
   ret = true;
 
   if (mode == REC_WRITER_SEXP)
     {
       if (!rec_writer_puts (writer, "(record "))
-        {
-          return false;
-        }
+        return false;
       if (!rec_writer_puts (writer, rec_record_char_location_str (record)))
-        {
-          return false;
-        }
+        return false;
       if (!rec_writer_puts (writer, " (\n"))
-        {
-          return false;
-        }
+        return false;
     }
 
+  num_elems = rec_record_num_elems (record);
+  num_fields = rec_record_num_fields (record);
   num_field = 0;
   num_elem = 0;
   iter = rec_mset_iterator (rec_record_mset (record));
@@ -400,9 +408,7 @@ rec_write_record (rec_writer_t writer,
           /* Write a field.  */
           rec_field_t field = (rec_field_t) data;
 
-          if (!rec_write_field (writer,
-                                field,
-                                mode))
+          if (!rec_write_field (writer, field))
             {
               ret = false;
               break;
@@ -411,27 +417,24 @@ rec_write_record (rec_writer_t writer,
           /* Include a field separator.  */
 
           if ((mode == REC_WRITER_VALUES_ROW) 
-              && (num_field != (rec_record_num_fields (record) - 1)))
+              && (num_field != (num_fields - 1)))
             {
               if(mode == REC_WRITER_VALUES_ROW)
                 {
                   if (!rec_writer_putc (writer, ' '))
-                    {
-                      return false;
-                    }
+                    return false;
                 }
             }
-          else if (num_elem != (rec_record_num_elems (record) - 1))
+          else if ((writer->skip_comments_p && (num_field != (num_fields - 1)))
+                   || (!writer->skip_comments_p && (num_elem != (num_elems - 1))))
             {
               if (!rec_writer_putc (writer, '\n'))
-                {
-                  return false;
-                }
+                return false;
             }
 
           num_field++;
         }
-      else
+      else if (!writer->skip_comments_p)
         {
           /* Write a comment.  */
 
@@ -439,18 +442,16 @@ rec_write_record (rec_writer_t writer,
 
           if ((mode != REC_WRITER_VALUES) && (mode != REC_WRITER_VALUES_ROW))
             {
-              if (!rec_write_comment (writer, comment, mode))
+              if (!rec_write_comment (writer, comment))
                 {
                   ret = false;
                   break;
                 }
 
-              if (num_elem != (rec_record_num_elems (record) - 1))
+              if (num_elem != (num_elems - 1))
                 {
                   if (!rec_writer_putc (writer, '\n'))
-                    {
-                      return false;
-                    }
+                    return false;
                 }
             }
         }
@@ -473,8 +474,7 @@ rec_write_record (rec_writer_t writer,
 
 bool
 rec_write_rset (rec_writer_t writer,
-                rec_rset_t rset,
-                rec_writer_mode_t mode)
+                rec_rset_t rset)
 {
   bool ret;
   rec_record_t descriptor;
@@ -484,6 +484,7 @@ rec_write_rset (rec_writer_t writer,
   rec_mset_iterator_t iter;
   rec_mset_elem_t elem;
   void *data;
+  enum rec_writer_mode_e mode = writer->mode;
   
   ret = true;
   wrote_descriptor = false;
@@ -496,8 +497,7 @@ rec_write_rset (rec_writer_t writer,
   if ((rec_rset_num_elems (rset) == 0) && descriptor)
     {
       rec_write_record (writer,
-                        rec_rset_descriptor (rset),
-                        mode);
+                        rec_rset_descriptor (rset));
       rec_writer_putc (writer, '\n');
 
       return true;
@@ -518,8 +518,7 @@ rec_write_rset (rec_writer_t writer,
         {
           if (descriptor 
               && (!(wrote_descriptor = rec_write_record (writer,
-                                                         rec_rset_descriptor (rset),
-                                                         mode))))
+                                                         rec_rset_descriptor (rset)))))
             {
               ret = false;
             }
@@ -537,15 +536,11 @@ rec_write_rset (rec_writer_t writer,
       
       if (rec_mset_elem_type (elem) == MSET_RECORD)
         {
-          ret = rec_write_record (writer,
-                                  (rec_record_t) data,
-                                  mode);
+          ret = rec_write_record (writer, (rec_record_t) data);
         }
-      else
+      else if (!writer->skip_comments_p)
         {
-          ret = rec_write_comment (writer,
-                                   (rec_comment_t) data,
-                                   mode);
+          ret = rec_write_comment (writer, (rec_comment_t) data);
         }
 
       if (!writer->collapse_p || (position == (rec_rset_num_elems (rset) - 1)))
@@ -582,9 +577,7 @@ rec_write_rset (rec_writer_t writer,
         {
           ret = false;
         }
-      if (!rec_write_record (writer,
-                             rec_rset_descriptor (rset),
-                             mode))
+      if (!rec_write_record (writer, rec_rset_descriptor (rset)))
         {
           ret = false;
         }
@@ -618,7 +611,7 @@ rec_write_db (rec_writer_t writer,
             }
         }
       
-      if (!rec_write_rset (writer, rset, REC_WRITER_NORMAL))
+      if (!rec_write_rset (writer, rset))
         {
           ret = false;
           break;
@@ -640,7 +633,8 @@ rec_write_field_str (rec_field_t field,
   writer = rec_writer_new_str (&result, &result_size);
   if (writer)
     {
-      rec_write_field (writer, field, mode);
+      rec_writer_set_mode (writer, mode);
+      rec_write_field (writer, field);
       rec_writer_destroy (writer);
     }
   
@@ -659,7 +653,8 @@ rec_write_field_name_str (const char *field_name,
   writer = rec_writer_new_str (&result, &result_size);
   if (writer)
     {
-      rec_write_field_name (writer, field_name, mode);
+      rec_writer_set_mode (writer, mode);
+      rec_write_field_name (writer, field_name);
       rec_writer_destroy (writer);
     }
   
@@ -678,7 +673,8 @@ rec_write_comment_str (rec_comment_t comment,
   writer = rec_writer_new_str (&result, &result_size);
   if (writer)
     {
-      rec_write_comment (writer, comment, mode);
+      rec_writer_set_mode (writer, mode);
+      rec_write_comment (writer, comment);
       rec_writer_destroy (writer);
     }
   
@@ -697,6 +693,20 @@ rec_writer_set_collapse (rec_writer_t writer,
                          bool value)
 {
   writer->collapse_p = value;
+}
+
+void
+rec_writer_set_skip_comments (rec_writer_t writer,
+                              bool value)
+{
+  writer->skip_comments_p = value;
+}
+
+void
+rec_writer_set_mode (rec_writer_t writer,
+                     enum rec_writer_mode_e mode)
+{
+  writer->mode = mode;
 }
 
 /*
