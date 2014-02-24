@@ -413,6 +413,11 @@ bar2: v2
 # jurl
 '
 
+test_declare_input_file ignored-first-blanks \
+'foo: v1
+bar:	v2
+'
+
 #
 # Declare tests
 #
@@ -1793,6 +1798,14 @@ foo2: v2
 
 bar1: v1
 bar2: v2
+'
+
+test_tool recsel-ignored-first-blanks ok \
+          recsel \
+          '' \
+          ignored-first-blanks \
+'foo: v1
+bar: v2
 '
 
 #

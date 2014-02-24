@@ -1,5 +1,15 @@
 2014-02-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src: an ignored tab can also separate field names from field
+	values.
+	* src/rec-parser.c (rec_parse_field_name): tabs also finish field
+	names.
+
+	* torture/utils/recsel.sh (ignored-first-blanks): New input file.
+	(recsel-ignored-first-blanks): New test.
+
+2014-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* doc/recutils.texi: Many English changes in the manual.  Patch by
 	Karl Berry.
 	(Selecting by Type): use LastRelease instead of URL in the

@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009, 2010, 2011, 2012, 2013 Jose E. Marchesi */
+/* Copyright (C) 2009-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -323,6 +323,7 @@ rec_parse_field_name (rec_parser_t parser,
       /* Field names ends with:
        *
        * - A blank character or
+       * - A tab or
        * - A newline or
        * - The end of the file
        *
@@ -335,7 +336,7 @@ rec_parse_field_name (rec_parser_t parser,
       if (ci != EOF)
         {
           c = (char) ci;
-          if (c == ' ')
+          if ((c == ' ') || (c == '\t'))
             {
               parser->error = REC_PARSER_NOERROR;
             }
