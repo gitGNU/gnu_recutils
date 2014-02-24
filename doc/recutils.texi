@@ -1002,10 +1002,10 @@ Email: positron@@gnu.org
 %rec: Package
 
 Name: GNU recutils
-URL: http://www.gnu.org/software/recutils
+LastRelease: 12 February 2014
 
 Name: GNU epsilon
-URL: http://www.gnu.org/software/epsilon
+LastRelease: 10 March 2013
 @end example
 
 @noindent If @command{recsel} is invoked in that file it will complain:
@@ -1023,10 +1023,10 @@ using the @code{-t} command line option:
 @example
 $ recsel -t Package gnu.rec
 Name: GNU recutils
-URL: http://www.gnu.org/software/recutils
+LastRelease: 12 February 2014
 
 Name: GNU epsilon
-URL: http://www.gnu.org/software/epsilon
+LastRelease: 10 March 2013
 @end example
 
 @noindent

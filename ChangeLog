@@ -2,6 +2,8 @@
 
 	* doc/recutils.texi: Many English changes in the manual.  Patch by
 	Karl Berry.
+	(Selecting by Type): use LastRelease instead of URL in the
+	gnu.rec example.
 
 2014-02-24  Jose E. Marchesi  <jemarch@gnu.org>
 
