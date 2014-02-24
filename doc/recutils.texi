@@ -32,9 +32,9 @@
 This manual is for GNU recutils (version @value{VERSION},
 @value{UPDATED}).
 
-Copyright @copyright{} 2009-2013 Jose E. Marchesi
+Copyright @copyright{} 2009-2014 Jose E. Marchesi
 
-Copyright @copyright{} 1994-2013 Free Software Foundation, Inc.
+Copyright @copyright{} 1994-2014 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -344,7 +344,7 @@ We usually store our books at home.
 @item
 Sometimes we loan books to friends.
 @item
-On occasions we loose track to the physical location of a book.  Did
+On occasions we lose track of the physical location of a book.  Did
 we loan it to anyone?  Was it lost in the last move?  Is it in some
 hidden place at home?
 @end itemize
@@ -400,7 +400,7 @@ The Colour of Magic
 @node The Rec Format
 @chapter The Rec Format
 
-A recfile is nothing but a text file, which conforms to a few simple
+A recfile is nothing but a text file which conforms to a few simple
 rules.  This chapter shows you how, by observing these rules, recfiles
 of arbitrary complexity can be written.
 
@@ -618,9 +618,9 @@ two ``Entries'' in the database.
 
 The effect of a record descriptor ends when another descriptor is
 found in the stream of records.  This allows you to store different kinds
-of records in the same database.  For example, consider you have to
-maintain a depot.  You will need to keep records of both the current
-articles and their stock.
+of records in the same database.  For example, suppose you are
+maintaining a depot.  You will need to keep track of both what items
+are available and when they are sold or restocked.
 
 The following example shows the usage of two record descriptors to
 store both kind of records: articles and stock.
@@ -646,11 +646,11 @@ Date: 21 April 2011
 @end example
 
 The collection of records having same types in recfiles are known as
-@dfn{record sets} in the recutils jargon.  In the example above two
+@dfn{record sets} in recutils jargon.  In the example above two
 record sets are defined: one containing articles and the other
 containing stock movements.
 
-Nothing prevents to have empty record sets in databases.  This is
+Nothing prevents having empty record sets in databases.  This is in fact
 usually the case when a new recfile is written but no data exists yet.
 In our depot example we could write a first version of the database
 containing just the record descriptors:
@@ -662,7 +662,8 @@ containing just the record descriptors:
 @end example
 
 @cindex default record types
-Many simple recfiles do not feature special record.  This is because
+Special records are not required, and many recfiles do not have them.
+This is because
 all the records contained in the file are of the same type, and their
 nature can usually be inferred from both the file name and their
 contents.  For example, @file{contacts.rec} could simply contain
@@ -692,7 +693,7 @@ Concept: 12
 @noindent
 In this case the records preceding the movements are of the
 ``default'' type, whereas the records following the record descriptor
-are of type @code{Movement}.  Even if it is supported by the format
+are of type @code{Movement}.  Even though it is supported by the format
 and the utilities, it is generally not recommended to mix non-typed
 and typed records in a recfile.
 
@@ -706,7 +707,7 @@ singular form of a noun in order to describe the ``type'' of the
 records in the records set. Examples are @code{Article},
 @code{Contributor}, @code{Employee} and @code{Movement}.
 
-The used noun shall be specific enough in order to characterize the
+The used noun should be specific enough in order to characterize the
 property of the records which matters.  For example, in a
 contributor's database it would be better to have a record set named
 @code{Contributor} than @code{Person}.
@@ -724,7 +725,7 @@ that it works better with the utilities: it is more natural to read
 @cindex description of record sets
 
 As well as a name, it is a good idea to provide a description of the record set.
-This is sometimes call the record set's @dfn{documentation} and is specified
+This is sometimes called the record set's @dfn{documentation} and is specified
 using the @code{%doc} field. 
 
 Whereas the name is usually short and can contain only alphanumeric
@@ -732,7 +733,7 @@ characters and underscores, no such restriction applies to the
 documentation.  The documentation is typically more verbose than the
 name provided by the @code{%rec} field and may contain arbitrary
 characters such as punctuation and parentheses.  It is somewhat
-similar to a comment (@pxref{Comments}), but it can be managed easier
+similar to a comment (@pxref{Comments}), but it can be managed more easily
 in a programmatic way.  Unlike a comment, the @code{%doc} field is
 recognized by tools such as @command{recinf} (@pxref{Invoking recinf})
 which processes record descriptors.  For example, you might have two
@@ -740,7 +741,7 @@ record sets with @code{%rec} and @code{%doc} fields as follows:
 
 @example
 %rec: Contact
-%doc: Family, friends and aqaintances (other than business).
+%doc: Family, friends and acquaintances (other than business).
 
 Name: Granny
 Phone: +12 23456677
@@ -832,7 +833,7 @@ Storing confidential information.  @xref{Encryption}.
 Since recfiles are always human readable, you could lookup data simply
 by opening an editor and searching for the desired information.  Or
 you could use a standard tool such as @command{grep} to extract
-strings matching a pattern.  However, recutils provide a more powerful
+strings matching a pattern.  However, recutils provides a more powerful
 and flexible way to lookup data.  The following sections explore how
 the recutils can be used in order to extract data from recfiles, from
 very basic and simple queries to quite complex examples.
@@ -851,12 +852,12 @@ very basic and simple queries to quite complex examples.
 @section Simple Selections
 
 @command{recsel} is an utility whose primary purpose is to select
-records from a recfile and print them in the standard output.
+records from a recfile and print them on standard output.
 Consider the following example record set, which we shall assume is
 saved in a recfile called @file{acquaintances.rec}:
 
 @example
-# This database contains a list of both real and fictional persons
+# This database contains a list of both real and fictional people
 # along with their age.
 
 Name: Ada Lovelace
@@ -898,10 +899,10 @@ Age: 13.75
 Note that the commented out parts of the file, in this case the
 explanatory header and the record corresponding to Matusalem, are not
 part of the output produced by @command{recsel}.  This is because
-@command{recsel} is concerned only by the data.
+@command{recsel} is concerned only with the data.
 
 @command{recsel} will also ``pack'' the records so any extra empty
-line that may be between records is not echoed in the output:
+lines that may be between records are not echoed in the output:
 
 @multitable @columnfractions .5 .5
 @headitem acquaintances.rec @tab recsel acquaintances.rec
@@ -927,7 +928,7 @@ line that may be between records is not echoed in the output:
 @end multitable
 
 @noindent
-It is a common situation to store data gathered in several recfiles.
+It is common to store data gathered in several recfiles.
 For example, we could have a @file{contacts.rec} file containing
 general contact records, and also a @file{work-contacts.rec} file
 containing business contacts:
@@ -976,8 +977,9 @@ Note: Sales Department.
 @end example
 
 @noindent
-This is commutative, so @command{recsel work-contacts.rec
-contacts.rec} would output the records of the business contacts first
+As mentioned above, the output follows the ordering on the command
+line, so @command{recsel work-contacts.rec
+contacts.rec} would output the records of @file{work-contacts.rec} first
 and then the ones from @file{contacts.rec}.
 
 @node Selecting by Type
@@ -994,7 +996,7 @@ about maintainers and packages in the GNU Project:
 Name: Jose E. Marchesi
 Email: jemarch@@gnu.org
 
-Name: Luca Saiou 
+Name: Luca Saiu 
 Email: positron@@gnu.org
 
 %rec: Package
@@ -1030,7 +1032,7 @@ URL: http://www.gnu.org/software/epsilon
 @noindent
 By default @command{recsel} never outputs record descriptors.  This is
 because most of the time the user is only interested in the data.
-However, using the @code{-d} command line output the record descriptor
+However, with the @code{-d} command line option, the record descriptor
 of the selected type is printed preceding the data records:
 
 @example
@@ -1040,7 +1042,7 @@ $ recsel -d -t Maintainer gnu.rec
 Name: Jose E. Marchesi
 Email: jemarch@@gnu.org
 
-Name: Luca Saiou 
+Name: Luca Saiu 
 Email: positron@@gnu.org
 @end example
 
@@ -1051,7 +1053,7 @@ This is one of the reasons why mixing non-typed records and typed
 records in a single recfile is not recommended.
 
 @noindent
-Note also that if a non-existing record type is specified in @code{-t}
+Note also that if a nonexistent record type is specified in @code{-t}
 then @command{recsel} does nothing.
 
 @node Selecting by Position
@@ -1060,11 +1062,11 @@ then @command{recsel} does nothing.
 As was explained in the previous sections, @command{recsel} outputs
 all the records of some record set.  The records are echoed in the
 same order they are written in the recfile.  However, often it is
-desirable to select a subset of the records determined by the position
+desirable to select a subset of the records, determined by the position
 they occupy in their record set.
 
-The @code{-n} command line argument to @command{recsel} allows to do
-this in a very easy way.  This is how we would retrieve the first
+The @code{-n} command line option to @command{recsel} supports doing
+this in a natural way.  This is how we would retrieve the first
 contact listed in a contacts database using @command{recsel}:
 
 @example
@@ -1074,9 +1076,9 @@ Phone: +12 23456677
 @end example
 
 @noindent 
-Note that the index is 0-based.  In case we want to retrieve more
+Note that the index is zero-based.  If we want to retrieve more
 records we can specify several indexes to @code{-n} separated by
-commas.  In case an index is too big then it is simply ignored:
+commas.  If a given index is too big, it is simply ignored:
 
 @example
 $ recsel -n 0,1,999 contacts.rec
@@ -1087,9 +1089,9 @@ Name: Doctor
 Phone: +12 58999222
 @end example
 
-@noindent Note that the order in which the records are echoed does not
+@noindent With @code{-n}, the order in which the records are echoed does not
 depend on the order of the indexes passed to @code{-n}.
-This means that the output of @command{recsel -n 0,1} will be
+For example, the output of @command{recsel -n 0,1} will be
 identical to the output of @command{recsel -n 1,0}.
 
 Ranges of indexes can also be used to select a subset of the records.
@@ -1108,10 +1110,9 @@ Name: Dad
 Phone: +12 88229900
 @end example
 
-@noindent Note that it is possible to mix concrete indexes and index
+@noindent It is possible to mix single indexes and index
 ranges in the same call.  For example, @command{recsel -n 0,5-6} would
-select the first, the fourth and the fifth records in some record
-descriptor.
+select the first, sixth and seventh records.
 
 @node Random Records
 @section Random Records
@@ -1119,7 +1120,7 @@ descriptor.
 Consider a database in which each record is a cooking recipe.  It is
 always difficult to decide what to cook each day, so it would be nice
 if we could ask @command{recsel} to pick up a random recipe.  This can
-be achieved using the @code{-m} or @code{--random} command line option
+be achieved using the @code{-m} (@code{--random}) command line option
 of @command{recsel}:
 
 @example
@@ -1130,7 +1131,7 @@ Ingredient: Curry
 Preparation: ...
 @end example
 
-@noindent In case we need two recipes, because we will be cooking for
+@noindent If we need two recipes, because we will be cooking at
 both lunch and dinner, we can pass a different number to @code{-m}:
 
 @example
@@ -1142,14 +1143,14 @@ Ingredient: Morcilla
 Preparation: ...
 
 Title: Pasta with ragu
-Ingredient: 500 gr of Spaghetti.
+Ingredient: 500 gr of spaghetti.
 Ingredient: 2 tomatoes.
 Ingredient: Minced meat.
 Preparation: ...
 @end example
 
 @noindent
-Note that the algorithm used to implement @code{-m} guarantees that
+The algorithm used to implement @code{-m} guarantees that
 you will never get multiple instances of the same record.  This means
 that if a record set has @var{n} records and you ask for @var{n}
 random records, you will get all the records in a random order.
@@ -1158,9 +1159,9 @@ random records, you will get all the records in a random order.
 @section Selection Expressions
 
 @cindex selection expressions
-@dfn{Selection expressions}, also known as ``sexes'' in the recutils
+@dfn{Selection expressions}, also known as ``sexes'' in recutils
 jargon, are infix expressions that can be applied to a record.
-A ``sex'' is a predicate which select a subset of records within a recfile.
+A ``sex'' is a predicate which selects a subset of records within a recfile.
 They can be simple expressions involving just one operator and a pair of
 operands, or complex compound expressions with parenthetical sub-expressions 
 and many operators and operands.
@@ -1189,30 +1190,28 @@ Fortunately the @command{recsel} command provides an easy way to do
 such a lookup:
 @cindex @command{recsel}
 @example
-$ recfix acquaintances.rec
 $ recsel -e "Age < 18" -P Name acquaintances.rec
 Bart Simpson
 Adrian Mole
 @end example
 
-@noindent Before the @command{recsel} command there is a call to
-@command{recfix}, just in case @file{acquaintances.rec} contains
-something problematic.
-Let us look at each of the arguments to @command{recsel} in turn:
+@noindent Let us look at each of the arguments to @command{recsel} in turn.
 Firstly we have  @code{-e} which tells @command{recsel} to lookup records
-matching the expression  @code{Age < 18} --- in other words all those persons
+matching the expression  @code{Age < 18} --- in other words all those people
 whose ages are less than 18.
 @cindex selection expressions
 This is an example of a @dfn{selection expression}.
-In this case it is a very simple one, but it can be as complex as needed.
-Next there is @code{-P} which tells recsel to print out the value of
+In this case it is a simple test, but it can be as complex as needed.
+
+Next, there is @code{-P} which tells @command{recsel} to print out the value of
 the @code{Name} field --- because we want just the name, not the entire record.
 The final argument is the name of the file from whence the records are
 to come: @file{acquaintances.rec}.
 
 Rather than explicitly storing ages in the recfile, a more realistic example
 might have the date of birth instead 
-(otherwise it would be necessary to update the people's ages in the recfile every year).
+(otherwise it would be necessary to update the people's ages in the
+recfile on every birthday).
 
 @example
 # Date of Birth
@@ -1240,7 +1239,7 @@ Email: ernie@@example.com
 @end example
 
 @noindent Now we can achieve a similar result as before, by looking up
-the names of all those persons who were born after a particular date:
+the names of all those people who were born after a particular date:
 @example
 $ recfix acquaintances.rec
 $ recsel -e "Dob >> '31 July 1994'" -p Name acquaintances.rec
@@ -1252,36 +1251,41 @@ Name: Charles Spencer
 @noindent The @code{>>} operator means ``later than'', and is used
 here to select a date of birth after 31st July 1994.
 Note also that this example uses a lower case @code{-p} whereas the preceding example
-used the upper case @code{-P}.  The difference is, that @code{-p} prints the field name
+used the upper case @code{-P}.  The difference is that @code{-p} prints the field name
 and field value, whereas @code{-P} prints just the value.
-@command{Recsel} accepts more than one @code{-e} argument,
+
+@command{recsel} accepts more than one @code{-e} argument,
 each introducing a selection expression,
-in which case records which satisfy all expressions are selected.
+in which case the records which satisfy all expressions are selected.
 You can provide more than one field label to @code{-P} or @code{-p} in order to select
 additional fields to be displayed.
-For example, if you wanted to send an email to all children 14 years of age or older,
-and today's date were @w{1st August} 1994, then you could use the following command to get
+For example, if you wanted to send an email to all children 14 to 18
+years of age,
+and today's date were @w{1st August} 2012, then you could use the following command to get
 the name and email address of all such children:
 
 @example
 $ recfix acquaintances.rec
-$ recsel -e "Dob >> '31 July 1994' && Dob << '01 August 1998'" -p Name,Email acquaintances.rec
+$ recsel -e "Dob >> '31 July 1994' && Dob << '01 August 1998'" \
+  -p Name,Email acquaintances.rec
 Name: Charles Spencer
 Email: charlie@@example.com
 @end example
 
-@noindent As you can see, there is only one such child in the record set.
+@noindent As you can see, there is only one such child in our record set.
 
 @cindex quotation marks
 Note that the example command shown above contains both double quotes @code{"} and
 single quotes @code{'}.
 @cindex date comparison
 The double quotes are interpreted by the shell (@eg{} @command{bash}) and
-the single quotes are part of the string which forms the  two dates being compared.
+the single quotes are interpreted by @command{recsel}, defining a
+string.  (And the backslash is interpreted by the shell, the usual
+continuation character so that this manual doesn't have a too-long line.)
 
 
 @node SEX Operands
-@subsection Operands
+@subsection SEX Operands
 
 @cindex operands, SEX operands
 The supported operands are: numbers, strings, field names and
@@ -1310,10 +1314,10 @@ prefix, and base 8 using the @code{0} prefix.  Examples are:
 @subsubsection String Literals
 @cindex literals, string literals
 String values are delimited by either the @code{'} character or the
-@code{"} character.  Whatever delimiter is used, the delimiter closing
-the literal shall equal to the delimiter used to open it.
+@code{"} character.  Whichever delimiter is used, the delimiter closing
+the literal must be the same as the delimiter used to open it.
 
-Note that newlines and tabs can be part of a string literal.
+Newlines and tabs can be part of a string literal.
 
 Examples are:
 
@@ -1325,7 +1329,7 @@ Examples are:
 
 @cindex quotation marks
 The @code{'} and @code{"} characters can be part of a string if they
-are escaped with a backslash, like in:
+are escaped with a backslash, as in:
 
 @example
 'This string contains an apostrophe: \'.'
@@ -1336,8 +1340,8 @@ are escaped with a backslash, like in:
 @cindex field values, in selection expressions
 The value of a field value can be included in a selection expression
 by writing its name.  The field name is replaced by a string
-containing the field value, covering any possibility with records with
-more than one field featuring that name.  Examples:
+containing the field value, to handle the possibility of records with
+more than one field by that name.  Examples:
 
 @example
 Name
@@ -1354,7 +1358,7 @@ $ recsel -e "OpenedBy = 'John Smith'"
 @end example
 
 @noindent
-instead of using the full field name:
+instead of using a full field name:
 
 @example
 $ recsel -e "Hacker:Name:OpenedBy = 'John Smith'"
@@ -1369,8 +1373,8 @@ Email ~ "\\.org"
 @end example
 
 @noindent
-Will match any record in which there is a field named @samp{Email}
-whose value contains @samp{.org}.  
+matches any record in which there is a field named @samp{Email}
+whose value terminates in (the literal string) @samp{.org}.
 If we are interested in the value of some specific email, we can specify 
 its relative position in the containing record by using @dfn{subscripts}.  
 @cindex subscripts, in selection expressions
@@ -1398,8 +1402,8 @@ Email: mr.foo@@foo.com
 Email: foo@@foo.org
 @end example
 
-The regexp flavor supported in selection expressions are the POSIX
-EREs plus several GNU extensions.  @xref{Regular Expressions}.
+The regexp syntax supported in selection expressions is POSIX
+EREs, with several GNU extensions.  @xref{Regular Expressions}.
 
 @subsubsection Parenthesized Expressions
 @cindex parentheses, in selection expressions.
@@ -1430,17 +1434,12 @@ whose value can be interpreted as numbers (integer or real).
 @cindex operators, boolean operators
 
 The boolean operators @strong{and} (@code{&&}), @strong{or}
-(@code{||}) and  @strong{not} (@code{!}) are supported with the same
+(@code{||}) and  @strong{not} (@code{!})@: are supported with the same
 semantics as their C counterparts.
 
 A compound boolean operator @code{=>} is also supported in order to
-ease the elaboration of constraints in records.  @code{A => B}, which
+ease the elaboration of constraints in records:  @code{A => B}, which
 can be read as ``A implies B'', translates into @code{!A || (A && B)}.
-
-@example
-A => B 
-@end example
-
 
 The boolean operators expect integer operands, and will try to convert
 any string operand to an integer value.
@@ -1458,8 +1457,7 @@ meaning.
 Strings can be compared with the equality operator (@code{=}).
 
 The match operator (@code{~}) can be used to match a string with a
-given regular expression.  The supported regexp syntax is described in
-the GNU C library manual.
+given regular expression (@pxref{Regular Expressions}).
 
 @subsubsection Date Comparison Operators
 @cindex date comparison
@@ -1515,13 +1513,14 @@ Given that:
 
 @itemize @minus
 @item It is possible to refer to fields by name in selection expressions.
-@item Records can have several fields featuring the same name.
+@item Records can have several fields with the same name.
 @end itemize
 
+@noindent
 It is clear that some backtracking mechanism is needed in the
 evaluation of the selection expressions.  For example, consider the
 following expression that is deciding whether a ``registration'' in a
-webpage shall be rejected:
+webpage should be rejected:
 
 @example
 ((Email ~ "foomail\.com") || (Age <= 18)) && !#Fixed
@@ -1612,7 +1611,7 @@ The second and the third email with:
 Email[1-2]
 @end example
 
-And so on.  Note that it is possible to select the same field (or
+And so on.  It is possible to select the same field (or
 range of fields) more than once just by repeating them in a field
 expression.  Thus, the field expression:
 
@@ -1640,7 +1639,7 @@ fields named @code{Email} in a record:
 Name,Email:ElectronicMail
 @end example
 
-Since the rewrite rules only affect to the fields selected in a single
+Since the rewrite rules only affect the fields selected in a single
 element of the field expression, it is possible to define different
 aliases to several fields having the same name but occupying different
 positions:
@@ -1695,14 +1694,14 @@ contained in a record set.  Its usage is:
 Meaning that the desired order for the records will be determined by
 the contents of the fields named in the @code{%sort} value.  The
 sorting is always done in ascending order, and there may be records
-not featuring the involved fields, it is not mandatory for the sorting
-fields to be mandatory :D.
+that lack the involved fields, @ie{} the sorting
+fields need not be mandatory.
 
 It is an error to have more than one @code{%sort} field in the same
 record descriptor, as only one field list can be used as sorting
 criteria.
 
-Consider for example that we want to keep the records in our stockage
+Consider for example that we want to keep the records in our inventory
 system ordered by entry date.  We could achieve that by using the
 following record descriptor in the database:
 
@@ -1727,10 +1726,8 @@ As you can see in the example above, the fact we use @code{%sort} in a
 database does not mean that the database will be always physically
 ordered.  Unsorted record sets are not a data integrity
 problem, and thus the diagnosis tools must not declare a recfile as
-invalid because of this.  Some tools may provide a way to physically
-order the fields in the file.  That is certainly the case of the GNU
-recutils, where @command{recfix} can be used for that purpose.
-@xref{Invoking recfix}.
++invalid because of this.  The utility @command{recfix} provides a way
++to physically order the fields in the file (@pxref{Invoking recfix}).
 
 On the other hand any program listing, presenting or processing data
 extracted from the recfile must honor the @code{%sort} entry.  For
@@ -1738,7 +1735,7 @@ example, when using the following @command{recsel} program in the
 database above we would get the output sorted by date:
 
 @example
-$ recsel stockage.rec
+$ recsel inventory.rec
 Id: 2
 Title: Ruler Pack 20
 Date: 2 March 2009
@@ -1822,7 +1819,7 @@ Score: 6.8
 @end example
 
 @noindent
-Note that the order of the fields in the @code{%sort} field is
+The order of the fields in the @code{%sort} field is
 significant.  If we reverse the order in the example above then we get
 a different sorted set:
 
@@ -1856,7 +1853,7 @@ Score: 9.2
 @noindent
 In this last case, @code{Mr. One} comes after @code{Mr. Two} because the 
 class @code{A} 
-comes before the class @code{B} even if they got the same score (@code{6.8}).
+comes before the class @code{B} even though the score is the same (@code{6.8}).
 
 
 @node Editing Records
@@ -1885,7 +1882,7 @@ commenting them out, sorting them, @etc{}
 Adding new records to a recfile is pretty trivial: open it with your
 text editor and just write down the fields comprising the records.
 This is really the best way to add contents to a recfile containing
-very simple data.  However, complex databases may introduce some
+simple data.  However, complex databases may introduce some
 difficulties:
 
 @table @emph
@@ -1900,9 +1897,9 @@ used to implement counters and time-stamps.  @xref{Auto-Generated
 Fields}.
 @end table
 
-To facilitate the insertion of new data a command line utility called
+Thus, to facilitate the insertion of new data a command line utility called
 @command{recins} is included in the recutils.  The usage of @command{recins} is
-very simple, and can be both used in the command line or called from
+very simple, and can be used both in the command line or called from
 another program.  The following subsections discuss several aspects of
 using this utility.
 
@@ -1930,7 +1927,7 @@ Email: foo@@bar.baz
 @end example
 
 @noindent
-If we invoke recins again on the same database we will be adding a
+If we invoke @command{recins} again on the same database we will be adding a
 second record:
 
 @example
@@ -1948,7 +1945,7 @@ be specified to @command{recins}, other than any limit on command line arguments
 which may be imposed by the shell.
 
 The field values provided using @code{-v} are encoded to follow the
-rec format conventions.  this included multi-line field values.
+rec format conventions, including multi-line field values.
 Consider the following example:
 
 @example
@@ -1979,7 +1976,7 @@ If the string passed to @code{-r} is not valid rec data then
 @command{recins} will complain with an error and the operation will be
 aborted.
 
-Note that at this moment it is not possible to add new records
+At this time, it is not possible to add new records
 containing comments.
 
 @node Replacing Records With recins
@@ -1993,8 +1990,8 @@ Consider for example the following command applied to our contacts
 database:
 
 @example
-$ recins -e "Email = 'foo@@bar.baz'" -f Name -v "Mr. Foo" -f Email -v \
-  "new@@bar.baz" contacts.rec
+$ recins -e "Email = 'foo@@bar.baz'" -f Name -v "Mr. Foo" \
+    -f Email -v "new@@bar.baz" contacts.rec
 @end example
 
 @noindent
@@ -2006,7 +2003,7 @@ Name: Mr. Foo
 Email: new@@bar.baz
 @end example
 
-The records to be replaced can also be specified by index, or by a
+The records to be replaced can also be specified by index, or a
 range of indexes.  For example, the following command replaces the
 first, second and third records in a database with dummy records:
 
@@ -2028,7 +2025,7 @@ Dummy: XXX
 In a previous chapter we noted that @command{recsel} interprets the
 absence of a @command{-t} argument depending on the actual contents of
 the file. If the recfile contains records of just one type the
-command assumes that the user is referring these records.
+command assumes that the user is referring to these records.
 
 @command{recins} does not follow this convention, and the absence of
 an explicit type always means to insert (or replace) an anonymous
@@ -2105,7 +2102,7 @@ Expiry: 2 March 2009
 @end example
 
 Suppose we wanted to delete all items 
-with an Expiry before a certain date, we could do this with the following command:
+with an @code{Expiry} value before a certain date, we could do this with the following command:
 
 @example
 $ recdel -t Item -e 'Expiry << "5/12/2009"' stock.rec
@@ -2115,17 +2112,18 @@ After running this command, only one record will remain in the file
 (@viz{} the one titled `Emergency Rations') because all the others have expiry dates
 prior to 12 May 2009.
 @footnote{`5/12/2009' means the 12th day of May 2009, @emph{not} the fifth day of December,
-even if your LC_TIME environment variable has been set to suggest otherwise.}
+even if your @env{LC_TIME} environment variable has been set to suggest otherwise.}
 The @command{-t} option can be omitted if, and only if, there is no @code{%rec} field 
 in the recfile.
 
-@command{recdel} tries to warn you, if you attempt to perform a delete operation
+@command{recdel} tries to warn you if you attempt to perform a delete operation
 which it deems to be too pervasive.  In such cases, it will refuse to run, 
 unless you give the @command{--force} flag.
 However, you should not rely upon @command{recdel} to protect you, because it cannot 
 always correctly guess that you might be deleting more records than intended.
-For this reason, you might consider it wise, to use the @command{-c} flag, which causes
-the relevant records to be commented out, rather than deleted.
+For this reason, it may be wise to use the @command{-c} flag, which causes
+the relevant records to be commented out, rather than deleted.  (And
+of course backups are always wise.)
  
 The complete options available to the @command{recdel} command are explained later.
 @xref{Invoking recdel}.
@@ -2171,8 +2169,8 @@ Expiry: 2 March 2009
 Fields of a recfile can, of course, be edited manually using an editor and this is often 
 the easiest way when only a few fields need to be changed or when the nature of the changes do
 not follow any particular pattern.
-If however a large number of similar changes to several records are required then the 
-there exists the @command{recset} command to make the job easier.
+If, however, a large number of similar changes to several records are
+required,the @command{recset} command can make the job easier.
 
 The formal description of @command{recset} is presented later
 (@pxref{Invoking recset}).  In this chapter some typical usage
@@ -2183,8 +2181,8 @@ to take a copy of a recfile before running such commands.
 
 
 @menu
-* Setting Fields::           Editing field values.
 * Adding Fields::            Adding new fields to records.
+* Setting Fields::           Editing field values.
 * Deleting Fields::          Removing or commenting-out fields.
 * Renaming Fields::          Changing the name of a field.
 @end menu
@@ -2194,9 +2192,10 @@ to take a copy of a recfile before running such commands.
 @section Adding Fields
 @cindex adding fields
 
-The command @command{recins} adds new records to a recfile.  It cannot however
-add fields to an existent record, and it would be cumbersome to do so manually.
-Such a task can be achieved automatically using @command{recset} and its @command{-a} flag.
+As mentioned above, the command @command{recins} adds new records to a
+recfile, but it cannot
+add fields to an existing record.
+This task can be achieved automatically using @command{recset} with its @command{-a} flag.
 
 Suppose that (after a stock inspection) you wanted to add an `Inspected' field to all the items in
 the recfile.
@@ -2205,12 +2204,12 @@ The following command could be used.
 $ recset -t Item -f Inspected -a 'Yes' stock.rec
 @end example
 @noindent
-Note that, because no record selection flag was provided, the command affected @emph{all} the 
-records (of type `Item').
+Here, because no record selection flag was provided, the command affected @emph{all} the 
+records of type `Item'.
 We could limit the effect of the command using the @command{-e}, @command{-q}, 
 @command{-n} or @command{-m} flags.
 For example to add the `Inspected' field to only the first item the following command 
-is possible:
+would work:
 @example
 $ recset -t Item -n 0 -f Inspected -a 'Yes' stock.rec
 @end example
@@ -2218,7 +2217,7 @@ $ recset -t Item -n 0 -f Inspected -a 'Yes' stock.rec
 Similarly, a selection expression could have been used with the @command{-e} flag in order to 
 add the field only to records which satisfy the expression.
 
-If you use @command{recset} with the @command{-a} flag on a field which already exists, a
+If you use @command{recset} with the @command{-a} flag on a field that already exists, a
 new field (in addition to those already present) will be appended with the given value.
 
 
@@ -2238,10 +2237,10 @@ $ recset -t Item -f Inspected -s '30 October 2006' stock.rec
 @end example
 Although the above command does not have any selection criteria, it will
 only affect those records for which a `Inspected' field exists.
-This is because the @command{-s} flag only sets field values.
+This is because the @command{-s} flag only sets values of existing fields.
 It will not create any fields.
 
-If instead, the @command{-S} flag is used, this will create the field
+If instead the @command{-S} flag is used, this will create the field
 (if it does not already exist) @emph{and} set its value.
 @example
 $ recset -t Item -f Inspected -S '30 October 2006' stock.rec
@@ -2275,7 +2274,8 @@ $ recset -t Item -e 'Expiry << "2 January 2010"' -f Inspected -d stock.rec
 
 Another use of @command{recset} is to rename existing fields.  This is achieved using the 
 @command{-r} flag.
-To rename all instances of the @code{Expiry} field occurring in any record of type @code{Item},
+To rename all instances of the @code{Expiry} field occurring in any
+record of type @code{Item} to @code{UseBy},
 the following command suffices:
 @example
 $ recset -t Item -f Expiry -r 'UseBy' stock.rec
@@ -2304,7 +2304,8 @@ The values of the fields must clearly follow some structure in order
 to make sense.  @code{Id} is a numeric identifier for a
 person. @code{Name} will never use several lines. @code{Age} will
 typically be in the range @code{0..120}, and there are only a few
-valid values for @code{MaritalStatus}: single, married and widow.
+valid values for @code{MaritalStatus}: single, married, divorced, and
+widow(er).
 Phones may be restricted to some standard format as well to be valid.
 All these restrictions (and many others) can be enforced by using
 @dfn{field types}.
@@ -2377,12 +2378,12 @@ descriptions.  For example, consider the following example:
 
 @noindent
 Both @code{Item_t} and @code{Transaction_t} are aliases for the type
-@code{Id_t}. Which is in place an alias for the type @code{int}.
+@code{Id_t}. Which is in turn an alias for the type @code{int}.
  So, they are both numeric identifiers.
 
 The order of the @code{%typedef} fields is not relevant.  In
-particular, a type definition can reference other type that is defined
-below.  The previous example could have been written as:
+particular, a type definition can forward-reference another type that is defined
+subsequently.  The previous example could have been written as:
 
 @example
 %typedef: Item_t        Id_t
@@ -2502,10 +2503,10 @@ range.  They mean the minimum and the maximum integer value supported
 by the implementation respectively.  See the following examples:
 
 @example
-%type Negative MIN -1
-%type Positive 0 MAX
-%type AnyInt MIN MAX
-%type Impossible MAX MIN
+%typedef: Negative range MIN -1
+%typedef: Positive range 0 MAX
+%typedef: AnyInt range MIN MAX
+%typedef: Impossible range MAX MIN
 @end example
 
 @noindent
@@ -2680,8 +2681,9 @@ comments can be any character but parentheses.  For example:
 
 @noindent
 @cindex boolean types
-@dfn{Boolean} fields can be seen as special enumerations holding the
-binary values.
+@dfn{Boolean} fields, declared with the type specifier @code{bool},
+can be seen as special enumerations holding the
+binary values true and false.
 
 @example
 %typedef: Yesno_t bool
@@ -2712,12 +2714,14 @@ times.  The synopsis is:
 @cindex locale
 @cindex time zone correction
 @noindent
-There are  many permitted date formats which are described in detail later in this manual (@pxref{Date input formats}).
+There are  many permitted date formats, described in detail later in this manual (@pxref{Date input formats}).
 Of particular note are the following:
 @itemize @minus
-@item Dates and times read from recfiles are not affected by the locale or the timezone.  This means that the LC_TIME and  the TZ environment variables are ignored.
+@item Dates and times read from recfiles are not affected by the
+locale or the timezone.  This means that the @env{LC_TIME} and  the
+@env{TZ} environment variables are ignored.
 If you wish, for example, to specify a time which must be interpreted as UTC, you 
-must explicitly append the time zone correction: @eg{} `2001-1-10 12:09Z'.
+must explicitly append the time zone correction: @eg{} @samp{2001-1-10 12:09Z}.
 @item The field value `1/10/2001' means January 10, 2001, @strong{not} October 1, 2001.
 @item Relative times and dates (such as `1 day ago') are permitted but are not 
   particularly useful.
@@ -2728,7 +2732,7 @@ must explicitly append the time zone correction: @eg{} `2001-1-10 12:09Z'.
 
 @cindex email
 The @dfn{Email} field type specifier is used to declare electronic
-addresses such as emails.  The synopsis is:
+addresses.  The synopsis is:
 
 @example
 %typedef: Email_t email
@@ -2754,8 +2758,8 @@ type specifier serves that purpose.  The synopsis is:
 @end example
 
 @noindent
-The format of the uuids is conformed by 32 hexadecimal digits,
-displayed in 5 groups separated by hyphens. For example:
+The format of the uuids is specified as 32 hexadecimal digits,
+displayed in five groups separated by hyphens. For example:
 
 @example
 550e8400-e29b-41d4-a716-446655440000
@@ -2763,16 +2767,16 @@ displayed in 5 groups separated by hyphens. For example:
 
 @noindent
 @cindex foreign key
-There is one other possible field type @viz{} a foreign key.
+There is one other possible field type, @viz{} a foreign key.
 The following example 
-defines the type @code{Maintainer_t} to be of type ``record @code{Hacker}'' or 
-in other words a foreign key referring to a record in the @code{Hacker} record set.
+defines the type @code{Maintainer_t} to be of type ``record @code{Hacker}'';
+in other words, a foreign key referring to a record in the @code{Hacker} record set.
 @example
 %typedef: Maintainer_t rec Hacker
 @end example
-@noindent This basically means that the values
+@noindent This essentially means that the values
 to be stored in fields of type @code{Maintainer_t} are of whatever
-type defined for the primary key of the @code{Hacker} record set.
+type is defined for the primary key of the @code{Hacker} record set.
 Why this is useful is discussed later. @xref{Queries which Join Records}.
 
 @node Constraints on Record Sets
@@ -2781,14 +2785,14 @@ Why this is useful is discussed later. @xref{Queries which Join Records}.
 The records in a recfile are by default not restricted to any particular
 structure 
 except that they must contain one or more fields and optional comments.
-This provides the format a huge expressive power,
-but in many cases it is also desirable to impose some restrictions in
+This provides the format with huge expressive power;
+but in many cases, it is also desirable to impose some restrictions in
 order to reflect some of the properties of the data stored in the
 database.  It is also useful in order to preserve data integrity and
 thus avoid data corruption.
 
 The following sections describe the usage of some predefined special
-fields whose purpose is to impose that kind of restrictions in the
+fields whose purpose is to impose this kind of restriction in the
 structure of the records.
 
 @menu
@@ -2823,7 +2827,7 @@ blank characters.
 @cindex field, compulsory fields
 @cindex field, mandatory fields
 The fields listed in a @code{%mandatory} entry are
-non-optional; @ie{}, at least one field with this name shall be present
+non-optional; @ie{} at least one field with this name shall be present
 in any record of this kind.
 @cindex integrity problems
 Records violating this restriction are
@@ -2832,8 +2836,8 @@ a data integrity failure.
 
 Consider for example an ``address book'' database where each record
 stores the information associated with a contact.  The records will be
-heterogeneous, in the sense they won't feature exactly the same
-fields: the contact of an internet shop will probably have a
+heterogeneous, in the sense they won't all contain exactly the same
+fields: the contact of an Internet shop will probably have a
 @code{URL} field, while the entry for our grandmother probably won't.
 We still want to make sure that every entry has a field with the name
 of the contact.  In this case, we could use @code{%mandatory} as
@@ -2859,8 +2863,8 @@ to provide that information.
 It is probably wise therefore to avoid stipulating a field as mandatory, unless it is
 essential to the enterprise.
 Otherwise, 
-a data entry clerk faced with this situation, will have to make the choice between
-dropping the entry entirely, or entering some fake data to keep the system happy.
+a data entry clerk faced with this situation will have to make the choice between
+dropping the entry entirely or entering some fake data to keep the system happy.
 
 
 @node Prohibited Fields
@@ -2871,7 +2875,7 @@ dropping the entry entirely, or entering some fake data to keep the system happy
 @cindex field, forbidden fields
 @cindex prohibited fields
 
-The converse of @code{%mandatory} is @code{%prohibit}.
+The inverse of @code{%mandatory} is @code{%prohibit}.
 Prohibited fields may not occur in @emph{any} record of the given type.
 The usage is:
 
@@ -2882,7 +2886,7 @@ The usage is:
 
 @noindent
 Fields listed in a @code{%prohibit} entry are
-forbidden; @ie{}, no field with this name should be present
+forbidden; @ie{} no field with this name should be present
 in any record of this kind.
 Again, records violating this restriction
 are invalid.
@@ -2917,7 +2921,7 @@ descriptor as follows:
 %prohibit: result
 @end example
 @noindent
-At the start of the event, the @code{%mandatory} line can be deleted, to 
+At the start of the event, the @code{%prohibit} line can be deleted, to 
 allow results to be entered.
 
 @node Keys and Unique Fields
@@ -2965,7 +2969,7 @@ set.
 The primary key behaves as if both @code{%unique} and 
 @code{%mandatory} had been specified for that field.
 Additionally, there is further restriction, @viz{} 
-The value of a primary key field may appear no more than once within a 
+a given value of a primary key field may appear no more than once within a 
 record set.
 
 Consider for example a database of items in stock.  Each item is
@@ -2991,12 +2995,12 @@ Title: Sticker big
 It would not make sense to have several primary keys in a record set.
 Thus, it is not allowed to have several @code{%key} fields in the
 same record descriptor.  
-It is also forbidden for two items to share the same `Id' value
+It is also forbidden for two items to share the same `Id' value.
 @cindex integrity problems
 Both of these situations would be data integrity
 violations, and will be reported by a checking tool.
 
-Later, you will learn how primary keys can be used to link one record set to 
+Elsewhere, we discuss how primary keys can be used to link one record set to 
 another using primary keys together with foreign keys. @xref{Queries which Join Records}.
 
 
@@ -3006,7 +3010,7 @@ another using primary keys together with foreign keys. @xref{Queries which Join 
 @cindex @code{%size}
 @cindex size, record size
 @cindex record size
-Sometimes it is desireable to place constraints on entire records.
+Sometimes it is desirable to place constraints on entire records.
 This can be done with the @code{%size} special field which is used to limit the
 number of records in a record set.  Its usage is:
 
@@ -3050,10 +3054,10 @@ Only one @code{%size} field shall appear in a record descriptor.
 @cindex @code{%constraint}
 @cindex restricting values of fields
 
-Occasionally @code{%mandatory},  @code{%prohibit} and @code{%size} are just not flexible enough.
+Occasionally, @code{%mandatory},  @code{%prohibit} and @code{%size} are just not flexible enough.
 We might, for instance, want to ensure that @emph{if} a field is present,
 then it must have a certain relationship to other fields.
-Or we might want to stipulate that only under certain conditions, a record contains
+Or we might want to stipulate that under certain conditions only, a record contains
 a particular field.
 
 To this end, recutils provides a way for arbitrary field constraints to be defined.
@@ -3102,7 +3106,7 @@ date in the following way:
 %constraint: Status = 'CLOSED' => #End
 @end example
 
-Note that it is acceptable to declare several constraints in the same record
+It is acceptable to declare several constraints in the same record
 set.
 
 @node Checking Recfiles
@@ -3161,9 +3165,9 @@ default operation.
 
 @cindex special fields
 However @command{recfix} checks more than the syntactical integrity of the recfile.
-If also checks certain semantics and that the data is self consistent.
+It also checks certain semantics and that the data is self-consistent.
 To do this, it uses the special fields of the record, some of which were introduced
-in above (@pxref{Constraints on Record Sets}).
+above (@pxref{Constraints on Record Sets}).
 It is a good idea to use the special fields to stipulate the ``enterprise rules'' 
 of the data.
 
@@ -3176,7 +3180,7 @@ The mandated fields are missing from a record.
 The prohibited fields are present in a record.
 @item %unique
 There is more than one field in a single record of the given name.
-@item %keys
+@item %key
 Two or more records share the same value of the field which is the key field.
 @item %typedef and %type
 A field has a value which does not conform to the specified type.
@@ -3286,15 +3290,15 @@ The record descriptor above is including the contents of the
 the local record descriptor, that in this case contains just the
 @code{%mandatory} field.
 
-If you are using the GNU recutils (@pxref{Invoking the Utilities}) to 
+If you are using GNU recutils (@pxref{Invoking the Utilities}) to 
 process your recfiles, any URL
 schema supported by @code{libcurl} will work.
 
 @node Grouping and Aggregates
 @chapter Grouping and Aggregates
 
-Grouping and aggregate functions are two related functionalities which
-are very useful in order to extract statistics from a record set, or a
+Grouping and aggregate functions are two related features which
+are useful to extract statistics from a record set, or a
 subset of that record set.
 
 @menu
@@ -3306,8 +3310,8 @@ subset of that record set.
 @section Grouping Records
 @cindex grouping
 
-Consider a recfile containing a relation of items in a shop
-stockage. For each item it is stored its type, its category, its
+Consider a recfile containing a list of items in a shop
+inventory. For each item it is stored its type, its category, its
 price, the date of the last selling operation of an item of that type,
 and the amount of items currently available in stock.  A sample of
 such a database could be:
@@ -3383,9 +3387,9 @@ Available: 12
 @end example
 
 @noindent
-Note how the output are three records, which correspond to the three
-different categories of items which are present in the database.
-However, we are interested in the types of products in each category,
+We can see that the output is three records, corresponding to the three
+different categories of items present in the database.
+However, we are only interested in the types of products in each category,
 so we can remove unwanted information using @code{-p}:
 
 @example
@@ -3433,17 +3437,17 @@ Type: Sexy Puzzle
 @section Aggregate Functions
 @cindex aggregate function
 
-recutils support @dfn{aggregate functions}.  These are so called
+recutils supports @dfn{aggregate functions}.  These are so called
 because they accept a record set and a field name as inputs and
-generate a single result.  Most of the times this result is numerical.
+generate a single result.  Usually this result is numerical.
 
 The supported aggregate functions are the following:
 
 @table @code
 @item Count(FIELD)
-Counts the number of occurences of a field.
+Counts the number of occurrences of a field.
 @item Avg(FIELD)
-Calculates the average of the numerical values of a field.
+Calculates the average (mean) of the numerical values of a field.
 @item Sum(FIELD)
 Calculates the sum of the numerical values of a field.
 @item Min(FIELD)
@@ -3452,10 +3456,10 @@ Calculates the minimum numerical value of a field.
 Calculates the maximum numerical value of a field.
 @end table
 
-The aggregate functions are invoked in the field expressions in
+The aggregate functions are to be invoked in the field expressions in
 @command{recsel}.  By default they are applied to the totality of the
 records in a record set.  For example, using the items database from
-the previous section, we can calculate the number of entries
+the previous section, we can do calculations as in the following examples.
 
 The SQL aggregate functions can be applied to the totality of the
 tuples in the relation.  For example, using the @code{Count} aggregate
@@ -3470,7 +3474,7 @@ Count_Category: 5
 @noindent
 The result is a field whose name is derived from the function name and
 the field passed as its parameter, separated by an underline.  This
-name scheme is probably ok for most purposes, but it is always
+name scheme probably suffices for most purposes, but it is always
 possible to use a rewrite rule to obtain something different:
 
 @example
@@ -3479,8 +3483,8 @@ NumCategories: 5
 @end example
 
 @noindent
-You can use different casing writing the name of the aggregate, but
-that will be reflected in the field name:
+You can use different letter case in writing the name of the aggregate, and
+this will be reflected in the field name:
 
 @example
 $ recsel -p "CoUnT(Category)" items.rec
@@ -3499,7 +3503,7 @@ Avg_Price: 4.240000
 @end example
 
 @noindent
-Now lets add a field along with an aggregate function to the field
+Now let's add a field along with an aggregate function to the field
 expression and see what we get:
 
 @example
@@ -3522,11 +3526,11 @@ Avg_Price: 6.200000
 
 @noindent
 We get five records!  The reason is that when @emph{only} aggregate
-functions are part of the field expression they are applied the single
-record that would result concatenating all the records in the record
+functions are part of the field expression, they are applied to the single
+record that would result from concatenating all the records in the record
 set together.  However, when a regular field appears in the field
 expression the aggregate functions are applied to the individual
-records.  This is still useful in some cases, like in a database of
+records.  This is still useful in some cases, such as a database of
 maintainers:
 
 @example
@@ -3534,7 +3538,7 @@ Name: Jose E. Marchesi
 Email: jemarch@@gnu.org
 Email: jemarch@@es.gnu.org
 
-Name: Luca Saiou 
+Name: Luca Saiu 
 Email: positron@@gnu.org
 @end example
 
@@ -3546,7 +3550,7 @@ $ recsel -p "Name,Count(Email)" maintainers.rec
 Name: Jose E. Marchesi
 Count_Email: 2
 
-Name: Luca Saiou 
+Name: Luca Saiu 
 Count_Email: 1
 @end example
 
@@ -3554,7 +3558,7 @@ Count_Email: 1
 Aggregate functions are most useful when we combine them with
 grouping.  This is when we are interested in some property of a subset
 of the records in the database.  For example, the average prices of
-the several item categories stored in the database can be obtained by
+each item category stored in the database can be obtained by
 executing:
 
 @example
@@ -3571,7 +3575,7 @@ Avg_Price: 9.200000
 
 @noindent
 If we were interested in the actual prices that result in each average
-we can:
+we can do:
 
 @example
 $ recsel -p "Category,Price,Avg(Price)" -G Category items.rec
@@ -3646,7 +3650,7 @@ This has a number of disadvantages:
 @itemize @minus
 @item You have to type (or copy)  the same information several times.
 @item Should a family move house, then you would have to update the addresses (and telephone number) of all the family members.
-@item A typing error in one of the addresses would lead an automatic query to erroneously suggest that the persons lived at different addresses.
+@item A typing error in one of the addresses would lead an automatic query to erroneously suggest that the people lived at different addresses.
 @item It unnecessarily increases the size of the recfile.
 @end itemize
 
@@ -3661,7 +3665,7 @@ This has a number of disadvantages:
 @section Foreign Keys
 
 @cindex record sets
-A better way would be to separate the addresses and persons into different record sets.
+A better way would be to separate the addresses and people into different record sets.
 @cindex duplication, avoiding
 The first record set might look like this:
 
@@ -3704,7 +3708,7 @@ Abode: ChezGrampa
 
 @end example
 
-@noindent and the second (which follows in the same file), like this:
+@noindent and the second (following in the same file), like this:
 
 @example
 
@@ -3725,7 +3729,7 @@ Id: ChezGrampa
 
 Here you can see that there are two record sets @viz{} @code{Person}
 and @code{Residence}.
-There are six persons, but only three residences, because some residences
+There are six people, but only three residences, because some residences
 accommodate more than one person.
 @cindex @code{%key}
 Note also that the @code{Residence} descriptor has the entry @code{%key: Id} 
@@ -3744,7 +3748,7 @@ are better as alphanumeric fields, so that they can contain
 human readable values.  In this way, it is self-evident by reading a @code{Person}
 record where that person lives.
 Yet since the @code{Id} field is declared using the @code{%key} special field
-name, you can be sure that you don't accidentally reuse an existent key.
+name, you can be sure that you don't accidentally reuse an existing key.
 
 @node Joining Records
 @section Joining Records
@@ -3756,14 +3760,13 @@ number of the home,
 whereas  @code{Mobile} belongs to @code{Person} since mobile telephones are normally
 used exclusively by one individual.
 
-If we want to look up the name and address of persons in our recfile, we can 
+If we want to look up the name and address of a person in our recfile, we can 
 use @command{recsel} as before.
 Because we now have more than one record set in the @file{acquaintances.rec}
-file, we have to tell @command{recsel} from which record set we want to lookup
+file, we have to tell @command{recsel} in which record set we want to
+look up
 records. 
 We do this with the @code{-t} flag as follows:
-@footnote{For clarity, the examples will not call @code{recfix} before the other recutils commands.
-However we suggest that you continue to do so, so that you are aware typing mistakes or other problems.}
 
 @example
 $ recsel -t Person -P Name,Abode acquaintances.rec
@@ -3852,7 +3855,7 @@ Abode_Address: 1 Wanter Rise, Greater Inncombe, BUCKS
 
 @cindex @code{%auto}
 @cindex automatically generated values
-Consider for example a list of articles in stock in a toys store:
+Consider for example a list of articles in stock in a toy store:
 
 @example
 %rec: Item
@@ -3876,8 +3879,8 @@ upper case?
 @cindex key, primary key
 @cindex @code{%key}
 @cindex ID numbers
-It is quite common in databases to use some kind of numeric ``Id'' to
-uniquely identify items like those ones.  That is because numbers are
+Thus it is quite common in databases to use some kind of numeric ``Id'' to
+uniquely identify items like those ones, because numbers are
 easy to increment and manipulate.   So we could add a new
 numeric @code{Id} field and use it as the primary key:
 
@@ -3897,7 +3900,7 @@ Amount: 8
 @dots{}
 @end example
 
-A problem of this approach is that we must be careful to not assign
+A problem with this approach is that we must be careful to not assign
 already used ids when we introduce more articles in the
 database. Other than its uniqueness, it is not important which number
 is associated with which article.
@@ -3917,7 +3920,7 @@ There can be several @code{%auto} fields in the same record
 descriptor, the effective list of auto-generated fields being the
 union of all the entries.
 
-Note that the auto fields are generated at the beginning of the new
+Such auto fields are generated at the beginning of the new
 records, in the same order they are found in the @code{%auto}
 directives.
 
@@ -3935,11 +3938,11 @@ of the affected field.  The following sections document how.
 @cindex counters
 
 If an auto field is of type @code{integer} or @code{range} then any
-newly generated field will use the biggest non-used number in the
+newly generated field will use the ``next biggest'' unused number in the
 record set.
 
-Consider the toys stockage database introduced above.  We could
-declare that the @code{Id} field must be generated automatically:
+Consider the toy inventory database introduced above.  We could
+declare the @code{Id} field to be generated automatically:
 
 @example
 %rec: Item
@@ -3954,12 +3957,12 @@ Amount: 2111
 @end example
 
 @noindent
-Next time a new item is introduced in the database, the conforming
-application will note the @code{%auto}, and will create a new
-@code{Id} field for the new record with the bigger unused integer
-available, since @code{Id} is declared to be of type @code{int}.  In
-this example, the new record will have an Id of @code{1}.  The
-application can still provide an explicit Id for the new record.  In
+When the next new item is introduced in the database, the conforming
+application will note the @code{%auto}, and create a new
+@code{Id} field for the new record with the next-biggest unused integer,
+since @code{Id} is declared to be of type @code{int}.  In
+this example, the new record would have an Id of @code{1}.  The
+database can still provide an explicit Id for the new record.  In
 that case the field is not generated automatically.
 
 Note that if no explicit type is defined for an auto generated field
@@ -4001,7 +4004,7 @@ Date: 20-12-2013
 
 @noindent
 However, suppose that we want to share our events with other people,
-i.e. to send them event records and to incorporate their records into
+@ie{} to send them event records and to incorporate their records into
 our own database.  In this case the @code{Id}s would collide.  A good
 solution is to use @code{uuids} and declare them as @code{auto}:
 
@@ -4043,7 +4046,7 @@ so we include an @code{%auto} for the date:
 @cindex encryption
 
 For ethical or security reasons it is sometimes necessary that information
-in a recfile should not be readable by unauthorized persons.
+in a recfile should not be readable by unauthorized people.
 One way to prevent a recfile from being read is to use the security features of
 the operating system.
 A more secure way would be to encrypt the entire recfile using a free strong encryption program 
@@ -4112,7 +4115,7 @@ algorithm, but requires that:
 @itemize @minus
 @item The algorithm must be password-based.
 @item The value of any encrypted field shall begin with the string
-@code{encrypted-} followed by the encrypted data.
+@samp{encrypted-} followed by the encrypted data.
 @item The encrypted data must be encoded in some ASCII encoding such
 as base64.
 @end itemize
@@ -4171,7 +4174,7 @@ to operate on files containing confidential fields.
 @section Encrypting Files
 
 @command{recins} allows the insertion of encrypted fields in a
-database.  When the @option{-s|--password} command line option is
+database.  When the @option{-s} (@option{--password}) command line option is
 specified in the command line any field declared as confidential in
 the record descriptor will get encrypted using the given passphrase.
 If the command is executed interactively and @option{-s} is not used
@@ -4179,11 +4182,12 @@ then the user is asked to provide a password using the terminal.  For
 example, the invocation:
 
 @example
-$ recins -t Account -s mypassword -f Login -v foo -f Password -v secret accounts.rec
+$ recins -t Account -s mypassword -f Login -v foo -f Password  \
+  -v secret accounts.rec
 @end example
 
 @noindent
-Will encrypt the value of the @code{Password} field with
+will encrypt the value of the @code{Password} field with
 @code{mypassword} as long as the field is declared as confidential.
 (@pxref{Confidential Fields} for details on confidential fields).
 
@@ -4195,7 +4199,7 @@ This is to avoid having unencrypted sensitive data in the recfiles.
 @section Decrypting Data
 
 The contents of confidential fields can be read using the
-@option{-s|--password} command line option to @command{recsel}.  When
+@option{-s} (@option{--password}) command line option to @command{recsel}.  When
 used, any selected record containing encrypted fields will try to
 decrypt them with the given password.  If the operation succeeds then
 the output will include the unencrypted data.  Otherwise the
@@ -4256,13 +4260,14 @@ Login: bar
 Password: barsecret
 @end example
 
-Note that nothing prevents to have confidential fields encrypted with
-different passwords.  As discussed in @pxref{Confidential Fields} this can
-be useful to implement several ``levels'' of security.  For example,
+As mentioned above, a confidential field may be encrypted with
+different passwords in different records (@pxref{Confidential Fields}).  
+For example,
 we may have an entry in our database with data about the account of
-the administrator of the online service.  In that case we could want
+the administrator of the online service.  In that case we might want
 to store the password associated with that account using a
-differentiated password.  In that case the output of the last command
+different password than that for users.  In that case the output of
+the last command
 would have been:
 
 @example
@@ -4287,7 +4292,7 @@ encrypt the admin entry in order to read it back unencrypted.
 @cindex reports
 Having a list of names and addresses, one might want to use this list
 to address envelopes
-(perhaps, to send annual greeting cards).
+(say, to send annual greeting cards).
 Since addresses are normally written on several lines, it would be appropriate
 then to split the @code{Address} field values across multiple lines as described in
 @ref{Fields}.
@@ -4312,10 +4317,10 @@ BUCKS
 @end example
 
 A business enterprise might want to go one step further and generate letters
-(such an advertisement or a recall notice) to customers.
+(such as an advertisement or a recall notice) to customers.
 Since @command{recsel} merely selects records and fields from record sets, on 
-its own it cannot do this.
-There is another command designed for this purpose called @command{recfmt}.
+its own it cannot do this; so
+there is another command designed for this purpose, called @command{recfmt}.
 @cindex @command{recfmt}
 @cindex templates
 This command uses a @dfn{template} which defines the general form of the 
@@ -4342,7 +4347,7 @@ Karen van Rental (CEO)
 
 It is best to place such a template into a file, so that you can edit it
 as you wish.  
-Notice the instances of  double braces enclosing a  field name (@eg{} @code{@{@{Name@}@}}).
+Notice the instances of  double braces enclosing a  field name, @eg{} @code{@{@{Name@}@}}.
 These are called @dfn{spots} and indicate places where the respective field's
 value should be placed.
 @cindex spots
@@ -4428,14 +4433,15 @@ now it is leaking 200 megabytes per processed record.
 Created at 12 December 2010
 @end example
 
-Note that you can use any selection expression in the slots, including
+You can use any selection expression in the slots, including
 conditionals and string concatenation.
 
 @node Interoperability
 @chapter Interoperability
 
-Included in the recutils package are a number of utilities to assist the creation
-of recfiles using data which already exists in other formats
+Included in the recutils package are a number of utilities to assist
+in the creation
+of recfiles using data which already exists in other formats,
 and for exporting data from recfiles so that it can be used in other applications.
 
 @menu
@@ -4542,7 +4548,7 @@ In the above example the result would be
 "a2","b2",,,"d2"
 @end example
 
-Note that missing fields are implemented as empty columns in the generated
+As shown, missing fields are implemented as empty columns in the generated
 csv.
 
 @node Importing MDB Files
@@ -4602,7 +4608,7 @@ Discontinued: 0
 @end example
 
 A @dfn{record descriptor} is created for the record set containing the
-generated records, called Products.  Note that @command{mdb2rec} is
+generated records, called Products.  As seen in the example, @command{mdb2rec} is
 able to generate type information for the fields.  The list of
 customers is similar:
 
@@ -4622,7 +4628,7 @@ ContactName: Jose E. Marchesi
 
 If no table is specified in the invocation to @command{mdb2rec} all
 the tables in the file are processed, with the exception of the system
-tables, for which @kbd{-s} shall be used:
+tables, which requires @kbd{-s} to be used:
 
 @example
 $ mdb2rec sales.mdb
@@ -4679,12 +4685,12 @@ $ enable readrec.so readrec
 @section readrec
 
 The bash built-in @command{read}, when invoked with no options,
-consumes one line from the standard input and makes it available in
+consumes one line from standard input and makes it available in
 the predefined @code{REPLY} environment variable, or any other
-variable whose name is passed as an argument.  This allows to process
+variable whose name is passed as an argument.  This allows processing
 data structured in lines in a quite natural way.  For example, the
-following program prints the third field of each line (fields are
-separated by commas) until the standard input is exhausted:
+following program prints the third field of each line, with fields
+separated by commas, until standard input is exhausted:
 
 @example
 # Process one line at a time.
@@ -4694,21 +4700,21 @@ do
 done
 @end example
 
-Unfortunately @command{read} is not very useful when it comes to
-process recutils records in the shell.  Even though it is indeed
+However, @command{read} is not very useful when it comes to
+processing recutils records in the shell.  Even though it is
 possible to customize the character used by @command{read} to split
 the input into records, we would need to ignore the empty records in
-the probable cases where more than one empty line separates records.
+the likely case of more than one empty line separating records.
 Also, we would need to use @command{recsel} to access to the record
 fields.  Too complicated!
 
-The @command{readrec} bash built-in is similar to @command{read} with
+Thus, the @command{readrec} bash built-in is similar to @command{read} with
 the difference that it reads records instead of lines.  It also
 ``exports'' the contents of the record to the user as the values of
 several environment variables:
 
 @itemize @minus
-@item @code{REPLY_REC} is set to the record read from the standard input.
+@item @code{REPLY_REC} is set to the record read from standard input.
 @item A set of variables @code{FIELD} named after each field found in
 the record are set to the (decoded) value of the fields found in the
 input record.  When several fields with the same name are found in the
@@ -4741,7 +4747,7 @@ recsel contacts.rec | while readrec
 do
    if [ $Checked = "no" ]
    then
-      mail -s "You are been checked." $@{Email[0]@} < email.txt
+      mail -s "You are being checked." $@{Email[0]@} < email.txt
       recset -e "Email = '$Email'" -f Checked -S yes contacts.rec
       sleep 1
    fi
@@ -4749,9 +4755,10 @@ done
 @end example
 
 @noindent
-Note the usage of the bash array when accessing to the primary email
-address of each contact.  Note also how we update each contact to
-figure as ``checked'' so she won't get spammed the next time the
+Note the usage of the bash array when accessing the primary email
+address of each contact.  Note also that we update each contact to
+figure as ``checked'', using @command{recset}, so she won't get
+pestered again the next time the
 script is run.
 
 @node Invoking the Utilities
@@ -4790,8 +4797,8 @@ operands even if they begin with @option{-}.  For example,
 @section Invoking recinf
 @cindex @command{recinf}
 
-@command{recinf} reads the given rec files (or the data in the
-standard input if no file is specified) and prints a resume of the
+@command{recinf} reads the given rec files (or the data from
+standard input if no file is specified) and prints a summary of the
 record types contained in the input.
 
 Synopsis:
@@ -4800,7 +4807,7 @@ Synopsis:
 recinf [@var{option}]@dots{} [@var{file}]@dots{}
 @end example
 
-The default behavior of the tool is to emit a line per record type in
+The default behavior is to emit a line per record type in
 the input containing its name and the number of records of that type:
 
 @example
@@ -4810,7 +4817,7 @@ $ recinf hackers.rec tasks.rec
 @end example
 
 If the input contains anonymous records, @ie{} records that are before
-the first record descriptor, the corresponding line resume won't have
+the first record descriptor, the corresponding output line won't have
 a type name:
 
 @example
@@ -4818,7 +4825,7 @@ $ recinf data.rec
 10
 @end example
 
-In addition of the common options described earlier the program accepts the following options.
+In addition to the common options described earlier the program accepts the following options.
 
 @table @samp
 @item -t @var{type}
@@ -4830,12 +4837,11 @@ Print all the record descriptors present in the file.
 @item -n
 @itemx @w{@kbd{--names-only}}
 Output just the names of the record types found in the input.  If the
-input is contains anonymous records only then don't emit any
-output.
+input contains only anonymous records then output nothing.
 @item -S
 @itemx @w{@kbd{--print-sexps}}
-Print the data in the form of sexps (lisp expressions) instead of rec
-format.  This option is intended to be used by lisp programs.
+Print the data in the form of sexps (Lisp expressions) instead of rec
+format.  This option can be useful for, of course, Lisp programs.
 @end table
 
 @node Invoking recsel
@@ -4851,16 +4857,18 @@ part of records) based upon some criteria specified by the user.
 criteria.  Synopsis:
 
 @example
-recsel [@var{option}]@dots{} [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] [-c | (-p|-P|-R) @var{field_expr}] \
+recsel [@var{option}]@dots{} \
+       [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] \
+       [-c | (-p|-P|-R) @var{field_expr}] \
        [@var{file}]@dots{}
 @end example
 
-In addition of the common options described earlier (@pxref{Common
-Options}) the program accepts the following options.
-
 If no @var{file} is specified then the command acts like a filter, getting
-the data from the standard input and writing the result in the
+the data from standard input and writing the result to
 standard output.
+
+In addition to the common options described earlier (@pxref{Common
+Options}) the program accepts the following options.
 
 @noindent
 The following @dfn{global options} are available.
@@ -4868,32 +4876,32 @@ The following @dfn{global options} are available.
 @table @samp
 @item -i
 @itemx @w{@kbd{--case-insensitive}}
-Make strings case-insensitive in selection expressions.
+Make string matching case-insensitive in selection expressions.
 @cindex case, in selection expressions
 @item -C
 @item @w{@kbd{--collapse}}
 Do not section the result in records with newlines.
 @item -d
 @itemx @w{@kbd{--include-descriptors}}
-Print record descriptors along with the matched records
+Print record descriptors along with the matched records.
 @item -s @var{secret}
 @itemx @w{@kbd{--password}=@var{secret}}
 Try to decrypt confidential fields with the given password.
 @item -S
 @itemx @w{@kbd{--sort}=@var{fields}}
-Sort the output by the comma separated list of fields names
-@var{fields}.  This option has precedence to whatever sorting criteria
-is specified in the corresponding record descriptor with @code{%sort}.
 @cindex sorting
+Sort the output by the comma-separated list of field names,
+@var{fields}.  This option takes precedence over any sorting criteria
+specified in the corresponding record descriptor with @code{%sort}.
 @item -U
 @itemx @w{@kbd{--uniq}}
 Remove duplicated fields in the output records.  Fields are
-duplicated if there are more than one featuring the same field name
+duplicated if they have the same field name
 and the same value.
 @item -G
 @itemx @w{@kbd{--group-by}=@var{fields}}
-Group the output records by the provided comma separated set of
-@var{fields}.  Note that grouping is performed before sorting.
+Group the output records by the provided comma-separated list of
+@var{fields}.  Grouping is performed before sorting.
 @end table
 
 The @dfn{selection options} are used to select a subset of
@@ -4903,10 +4911,10 @@ the records in the input.
 @item -n @var{indexes}
 @item @w{@kbd{--number}=@var{indexes}}
 Match the records occupying the given positions in its record set.
-@var{indexes} must be a comma-separated list of numbers or ranges, the
+@var{indexes} must be a comma-separated list of numbers or ranges, with
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
-records up to the tenth: @code{-n 0,2,4-9}.
+records up to the tenth: @samp{-n 0,2,4-9}.
 @item -e @var{expr}
 @itemx @w{@kbd{--expression}=@var{expr}}
 A record selection expression (@pxref{Selection Expressions}).  Only
@@ -4925,7 +4933,7 @@ the records.
 Select records of a given type only.
 @item -j @var{field}
 @itemx @w{@kbd{--field}=@var{field}}
-Perform an inner join of the record set selected in @option{-t} and
+Perform an inner join of the record set selected by @option{-t} and
 the record set for which @var{field} is a foreign key.  @var{field}
 must be a field declared with type @code{rec} and thus must be a
 foreign key.  If a join is performed then any selection expression and
@@ -4945,27 +4953,28 @@ list of field names separated by commas.  For example:
 @end example
 
 @noindent
-means to print the Name and the Email of every matching record.
+means to print the Name and the Email of every matching record, both
+the field names and values.
 
 If this option is not specified then all the fields of the matching
-records are printed in the standard output.
+records are printed to standard output.
 @item -P @var{name_list}
 @itemx @w{@kbd{--print-values}=@var{name_list}}
-Same than @samp{-p}, but print the values of the selected fields.
+Same as @samp{-p}, but print only the values of the selected fields.
 @item -R @var{name_list}
 @itemx @w{@kbd{--print-row}=@var{name_list}}
-Same than @samp{-P}, but print the values separated by single
+Same as @samp{-P}, but print the values separated by single
 spaces instead of newlines.
 @item -c
 @itemx @w{@kbd{--count}}
-If this option is specified then recsel will print the number of
+If this option is specified then @command{recsel} will print the number of
 matching records instead of the records themselves.  This option is
 incompatible with @option{-p}, @option{-P} and @option{-R}.
 @end table
 
-Some @dfn{special options} are available to ease the communication
-between the recutils and other programs, such as lisp interpreters.
-Those options are not intended to be used by human operators.
+This @dfn{special option} is available to ease the communication
+between the recutils and other programs, namely Lisp interpreters.
+This option is not intended to be used by human operators.
 
 @table @samp
 @item @w{@kbd{--print-sexps}}
@@ -4978,19 +4987,21 @@ Print the data using sexps instead of rec format.
 @cindex inserting new records
 
 @command{recins} adds new records to a rec file or to rec data read
-from the standard input.  Synopsis:
+from standard input.  Synopsis:
 
 @example
-recins [@var{option}]@dots{} [t @var{type}] [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] \
-       [(-f @var{str} -v @var{str}]|[-r @var{recdata})]@dots{} [@var{file}]
+recins [@var{option}]@dots{} [-t @var{type}] \
+       [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] \
+       [( -f @var{str} -v @var{str}]|[-r @var{recdata} )]@dots{} \
+       [@var{file}]
 @end example
 
-The new record that will be inserted by the command is constructed by
-using pairs of @samp{-f} and @samp{-v} options.  Each pair defines a
+The new record to be inserted by the command is constructed by
+using pairs of @samp{-f} and @samp{-v} options, or @samp{-r}.  Each pair defines a
 field.  The order of the parameters is significant.
 
 If no @var{file} is specified then the command acts like a filter, getting
-the data from the standard input and writing the result in the
+the data from standard input and writing the result to
 standard output.
 
 If the specified @var{file} does not exist, it is created.
@@ -5007,7 +5018,7 @@ a new record set is created.  If this parameter is not specified then
 the new record is anonymous.
 @item -f
 @itemx @w{@kbd{--field}=@var{name}}
-Declares the name of a field.  This option shall be followed by a
+Declares the name of a field.  This option must be followed by a
 @samp{-v}.
 @item -v
 @itemx @w{@kbd{--value}=@var{value}}
@@ -5028,10 +5039,10 @@ Don't generate @dfn{auto} fields. @xref{Auto-Generated Fields}.
 @end table
 
 Record selection arguments are supported too.  If they are used
-then @command{recins} enters ``replacement mode''.  Instead of
+then @command{recins} uses ``replacement mode'': instead of
 appending the new record, matched records are replaced by copies of
-the provided record.  The selection arguments are summarized in the
-next table.
+the provided record.  The selection arguments are the same as in
+@command{recsel}:
 
 @table @samp
 @item -n @var{indexes}
@@ -5068,14 +5079,16 @@ such as when the data integrity of the database is compromised.
 @cindex deleting records
 
 @command{recdel} removes records from a rec file, or from rec data
-read from the standard input.  Synopsis:
+read from standard input.  Synopsis:
 
 @example
-recdel [OPTIONS]@dots{} [-t @var{type}] [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] [@var{file}]
+recdel [OPTIONS]@dots{} [-t @var{type}] \
+       [-n @var{indexes} | -e @var{record_expr} | -q @var{str} | -m @var{num}] \
+       [@var{file}]
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
-getting the data from the standard input and writing the result in the
+getting the data from standard input and writing the result to
 standard output.
 
 In addition to the common options described earlier (@pxref{Common
@@ -5109,8 +5122,8 @@ the records.
 @itemx @w{@kbd{--comment}}
 Comment the matching records out instead of removing them.
 @item @w{@kbd{--force}}
-Delete even in potentially dangerous situations, such as the request
-to delete all the records of some type, for example.
+Delete even in potentially dangerous situations, such as a request
+to delete all the records of some type.
 @item @w{@kbd{--no-external}}
 Don't use external record descriptors.
 @item -i
@@ -5126,14 +5139,14 @@ Be verbose when reporting integrity problems.
 @cindex editing fields
 
 @command{recset} manipulates the fields of records in a rec file, or
-rec data read from the standard input.  Synopsis:
+rec data read from standard input.  Synopsis:
 
 @example
 recset [@var{option}]@dots{} [@var{file}]@dots{}
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
-getting the data from the standard input and writing the result in the
+getting the data from standard input and writing the result to
 standard output.
 
 In addition to the common options described earlier (@pxref{Common
@@ -5170,7 +5183,7 @@ Operate on @var{num} random records.  If @var{num} is zero then
 operate on all the records.
 @end table
 
-Fields selection options:
+Field selection options:
 
 @table @samp
 @item -f
@@ -5194,8 +5207,8 @@ Set the value of the selected fields to @var{value}.  If some of the
 fields don't exist in a record, append it with the specified value.
 @item -r
 @itemx @w{@kbd{--rename}=@var{value}}
-Rename a field.  @var{value} shall be a valid field name.  The field
-expression associated with this action shall contain a single field
+Rename a field; @var{value} must be a valid field name.  The field
+expression associated with this action must contain a single field
 name and an optional subscript.  If an entire record set is selected
 then the field is renamed in the record descriptor as well.
 @item -d
@@ -5227,7 +5240,7 @@ recfix [@var{option}]@dots{} [@var{operation}] [@var{op_option}]@dots{} [@var{fi
 @end example
 
 If no @var{file} is specified then the command acts like a filter,
-getting the data from the standard input and writing the result in the
+getting the data from standard input and writing the result to
 standard output.
 
 In addition to the common options described earlier (@pxref{Common
@@ -5249,38 +5262,31 @@ diagnostics messages in case something is not right.  This is the
 default operation.
 @item @w{@kbd{--sort}}
 Perform a physical sort of all the records contained in the file (or
-the standard input) after checking for its integrity.  The sorting
+standard input) after checking for its integrity.  The sorting
 criteria are provided by the @code{%sort} special field, if any.  If
 there is an integrity failure the sorting is not performed.
 @cindex sorting
 
-Note that this is a destructive operation.
-@item @w{@kbd{--encrypt}}
-Encrypt all the non encrypted fields in the database which are marked
+This is a destructive operation.
+@item @w{@kbd{--decrypt}}
+@itemx @w{@kbd{--encrypt}}
+Decrypt (encrypt) all the (non-)encrypted fields in the database which are marked
 as confidential.  This operation requires a password.  If no password
 is specified with @option{-s} and the program is run in a terminal, a
-prompt is used to get the password from the user.
+prompt is given to get the password from the user.
 
-If this operation is performed to a file having encrypted fields, the
+If encryption is performed on a file having encrypted fields, the
 operation will fail unless @w{@kbd{--force}} is used.
 
-Note that this is a destructive operation.
-@item @w{@kbd{--decrypt}}
-Decrypt all the encrypted fields in the database which are marked as
-confidential.  This operation requires a password.  If no password is
-specified with @option{-s} and the program is run in a terminal, a
-prompt is used to get the password from the user.
-
-Note that this is a destructive operation.
+These are destructive operations.
 @item @w{@kbd{--auto}}
 Insert auto-generated fields as appropriate in the records which are
 missing them.
 
-Note that this is a destructive operation.
+This is a destructive operation.
 @end table
 
-Some operations make use of certain specific options, which are
-described in the table below.
+As described above, some operations make use of these additional options:
 
 @table @samp
 @item -s @var{secret}
@@ -5302,7 +5308,7 @@ recfmt [@var{option}]@dots{} [@var{template}]
 @end example
 
 This program always works as a filter, getting the data from the
-standard input and writing the result in the standard output.
+standard input and writing the result to standard output.
 
 In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
@@ -5321,14 +5327,14 @@ line.
 @cindex comma separated values
 
 @command{csv2rec} reads the given comma-separated-values file (or the
-data in the standard input if no file is specified) and prints out the
+data from standard input if no file is specified) and prints out the
 converted rec data, if possible.  Synopsis:
 
 @example
 csv2rec [@var{option}]@dots{} [@var{csv_file}]
 @end example
 
-In addition of the common options described earlier (@pxref{Common
+In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
 @table @samp
@@ -5360,10 +5366,10 @@ rec2csv [@var{option}]@dots{} [@var{rec_file}]@dots{}
 @end example
 
 The rec data can be read from files specified in the command line, or
-in the standard input.  The program echoes the converted data in the
+from standard input.  The program writes the converted data to
 standard output.
 
-In addition of the common options described earlier (@pxref{Common
+In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
 @table @samp
@@ -5373,7 +5379,7 @@ Type of the records to convert.  If no type is specified then the
 default records (with no name) are converted.
 @item -S
 @itemx @w{@kbd{--sort}=@var{fields}}
-Sort the output by the comma separated list of field names
+Sort the output by the comma-separated list of field names
 @var{fields}.  This option has precedence to whatever sorting criteria
 are specified in the corresponding record descriptor with
 @code{%sort}.
@@ -5399,7 +5405,7 @@ mdb2rec [@var{option}]@dots{} @var{mdb_file} [@var{table}]
 All the tables contained in the mdb file are exported unless a table
 is specified in the command line.
 
-In addition of the common options described earlier (@pxref{Common
+In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following options.
 
 @table @samp
@@ -5425,9 +5431,9 @@ The character @samp{.} matches any single character except the null character.
 @table @samp
 
 @item +
-indicates that the regular expression should match one or more occurrences of the previous atom or regexp.
+match one or more occurrences of the previous atom or regexp.
 @item ?
-indicates that the regular expression should match zero or one occurrences of the previous atom or regexp.
+match zero or one occurrences of the previous atom or regexp.
 @item \+
 matches a @samp{+}
 @item \?
@@ -5437,25 +5443,33 @@ matches a @samp{?}.
 Bracket expressions are used to match ranges of characters.
 Bracket expressions where the range is backward, for example @samp{[z-a]}, are invalid.  
 Within square brackets, @samp{\} is taken literally.  
-Character classes are supported; for example @samp{[[:digit:]]} will match a single decimal digit.
+Character classes are supported; for example @samp{[[:digit:]]} matches a single decimal digit.
 
 GNU extensions are supported:
-@enumerate
-@item @samp{\w} matches a character within a word
-@item @samp{\W} matches a character which is not within a word
-@item @samp{\<} matches the beginning of a word
-@item @samp{\>} matches the end of a word
-@item @samp{\b} matches a word boundary
-@item @samp{\B} matches characters which are not a word boundary
-@item @samp{\`} matches the beginning of the whole input
-@item @samp{\'} matches the end of the whole input
-@end enumerate
+@table @samp
+@item \w
+matches a character within a word
+@item \W
+matches a character which is not within a word
+@item \<
+matches the beginning of a word
+@item \>
+matches the end of a word
+@item \b
+matches a word boundary
+@item \B
+matches characters which are not a word boundary
+@item \`
+matches the beginning of the whole input
+@item \'
+matches the end of the whole input
+@end table
 
 @cindex grouping, within regular expressions
 Grouping is performed with parentheses @samp{()}.  An unmatched
 @samp{)} matches just itself.  A backslash followed by a digit acts as
 a back-reference and matches the same thing as the previous grouped
-expression indicated by that number.  For example @samp{\2} matches
+expression indicated by that number.  For example, @samp{\2} matches
 the second group expression.  The order of group expressions is
 determined by the position of their opening parenthesis @samp{(}.
 
@@ -5463,15 +5477,15 @@ The alternation operator is @samp{|}.
 
 The characters @samp{^} and @samp{$} always represent the beginning
 and end of a string respectively, except within square brackets.
-Within brackets, @samp{^} can be used to invert the membership of the
-character class being specified.
+Within brackets, an initial @samp{^} inverts the 
+character class being matched.
 
 @samp{*}, @samp{+} and @samp{?} are special at any point in a regular
 expression except the following places, where they are not allowed:
 @enumerate
 @item At the beginning of a regular expression
-@item After an open-group, signified by @samp{(}
-@item After the alternation operator @samp{|}
+@item After an open-group, @samp{(}
+@item After the alternation operator, @samp{|}
 @end enumerate
 
 Intervals are specified by @samp{@{} and @samp{@}}.  Invalid intervals

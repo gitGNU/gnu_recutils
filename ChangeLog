@@ -1,5 +1,10 @@
 2014-02-24  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* doc/recutils.texi: Many English changes in the manual.  Patch by
+	Karl Berry.
+
+2014-02-24  Jose E. Marchesi  <jemarch@gnu.org>
+
 	* src/Makefile.am (librec_la_LDFLAGS): Bump current version to 1.
 
 2014-02-19  Jose E. Marchesi  <jemarch@gnu.org>
