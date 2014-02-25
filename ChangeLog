@@ -1,3 +1,8 @@
+2014-02-25  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi: all @w and @kbd macros used to denote command
+	line options removed.
+
 2014-02-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: an ignored tab can also separate field names from field

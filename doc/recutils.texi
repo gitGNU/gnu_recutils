@@ -4571,7 +4571,7 @@ Orders
 
 So @file{sales.mdb} stores user information in the tables Customers,
 Products and Orders.  If we want to include system tables in the
-listing we can use the @kbd{-s} command line option:
+listing we can use the @samp{-s} command line option:
 
 @example
 $ mdb2rec -s -l sales.mdb
@@ -4628,7 +4628,7 @@ ContactName: Jose E. Marchesi
 
 If no table is specified in the invocation to @command{mdb2rec} all
 the tables in the file are processed, with the exception of the system
-tables, which requires @kbd{-s} to be used:
+tables, which requires @samp{-s} to be used:
 
 @example
 $ mdb2rec sales.mdb
@@ -4770,11 +4770,11 @@ listed here.
 
 @anchor{Common Options}
 @table @samp
-@item @w{@kbd{--version}}
+@item --version
 Print the version number, then exit successfully.
-@item @w{@kbd{--help}}
+@item --help
 Print a help message, then exit successfully.
-@item @w{@kbd{--}}
+@item --
 Delimit the option list.  Later arguments, if any, are treated as
 operands even if they begin with @option{-}.  For example,
 @code{recsel -- -p} reads from the file named @file{-p}.
@@ -4829,17 +4829,17 @@ In addition to the common options described earlier the program accepts the foll
 
 @table @samp
 @item -t @var{type}
-@itemx @w{@kbd{--type}=@var{type}}
+@itemx --type=@var{type}
 Select records of a given type only.
 @item -d
-@itemx @w{@kbd{--descriptor}}
+@itemx --descriptor
 Print all the record descriptors present in the file.
 @item -n
-@itemx @w{@kbd{--names-only}}
+@itemx --names-only
 Output just the names of the record types found in the input.  If the
 input contains only anonymous records then output nothing.
 @item -S
-@itemx @w{@kbd{--print-sexps}}
+@itemx --print-sexps
 Print the data in the form of sexps (Lisp expressions) instead of rec
 format.  This option can be useful for, of course, Lisp programs.
 @end table
@@ -4875,31 +4875,31 @@ The following @dfn{global options} are available.
 
 @table @samp
 @item -i
-@itemx @w{@kbd{--case-insensitive}}
+@itemx --case-insensitive
 Make string matching case-insensitive in selection expressions.
 @cindex case, in selection expressions
 @item -C
-@item @w{@kbd{--collapse}}
+@item --collapse
 Do not section the result in records with newlines.
 @item -d
-@itemx @w{@kbd{--include-descriptors}}
+@itemx --include-descriptors
 Print record descriptors along with the matched records.
 @item -s @var{secret}
-@itemx @w{@kbd{--password}=@var{secret}}
+@itemx --password=@var{secret}
 Try to decrypt confidential fields with the given password.
 @item -S
-@itemx @w{@kbd{--sort}=@var{fields}}
+@itemx --sort=@var{fields}
 @cindex sorting
 Sort the output by the comma-separated list of field names,
 @var{fields}.  This option takes precedence over any sorting criteria
 specified in the corresponding record descriptor with @code{%sort}.
 @item -U
-@itemx @w{@kbd{--uniq}}
+@itemx --uniq
 Remove duplicated fields in the output records.  Fields are
 duplicated if they have the same field name
 and the same value.
 @item -G
-@itemx @w{@kbd{--group-by}=@var{fields}}
+@itemx --group-by=@var{fields}
 Group the output records by the provided comma-separated list of
 @var{fields}.  Grouping is performed before sorting.
 @end table
@@ -4909,30 +4909,30 @@ the records in the input.
 
 @table @samp
 @item -n @var{indexes}
-@item @w{@kbd{--number}=@var{indexes}}
+@item --number=@var{indexes}
 Match the records occupying the given positions in its record set.
 @var{indexes} must be a comma-separated list of numbers or ranges, with
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
 records up to the tenth: @samp{-n 0,2,4-9}.
 @item -e @var{expr}
-@itemx @w{@kbd{--expression}=@var{expr}}
+@itemx --expression=@var{expr}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be taken into account to
 compute the output.
 @item -q @var{str}
-@itemx @w{@kbd{--quick}=@var{str}}
+@itemx --quick=@var{str}
 Select records having a field whose value contains the substring
 @var{str}.
 @item -m @var{num}
-@itemx @w{@kbd{--random}=@var{num}}
+@itemx --random=@var{num}
 Select @var{num} random records.  If @var{num} is zero then select all
 the records. 
 @item -t @var{type}
-@itemx @w{@kbd{--type}=@var{type}}
+@itemx --type=@var{type}
 Select records of a given type only.
 @item -j @var{field}
-@itemx @w{@kbd{--field}=@var{field}}
+@itemx --field=@var{field}
 Perform an inner join of the record set selected by @option{-t} and
 the record set for which @var{field} is a foreign key.  @var{field}
 must be a field declared with type @code{rec} and thus must be a
@@ -4945,7 +4945,7 @@ the selected records to display to the user, and how to display it.
 
 @table @samp
 @item -p @var{name_list}
-@itemx @w{@kbd{--print}=@var{name_list}}
+@itemx --print=@var{name_list}
 List of fields to print for each record.  @var{name_list} is a
 list of field names separated by commas.  For example:
 @example
@@ -4959,14 +4959,14 @@ the field names and values.
 If this option is not specified then all the fields of the matching
 records are printed to standard output.
 @item -P @var{name_list}
-@itemx @w{@kbd{--print-values}=@var{name_list}}
+@itemx --print-values=@var{name_list}
 Same as @samp{-p}, but print only the values of the selected fields.
 @item -R @var{name_list}
-@itemx @w{@kbd{--print-row}=@var{name_list}}
+@itemx --print-row=@var{name_list}
 Same as @samp{-P}, but print the values separated by single
 spaces instead of newlines.
 @item -c
-@itemx @w{@kbd{--count}}
+@itemx --count
 If this option is specified then @command{recsel} will print the number of
 matching records instead of the records themselves.  This option is
 incompatible with @option{-p}, @option{-P} and @option{-R}.
@@ -4977,7 +4977,7 @@ between the recutils and other programs, namely Lisp interpreters.
 This option is not intended to be used by human operators.
 
 @table @samp
-@item @w{@kbd{--print-sexps}}
+@item --print-sexps
 Print the data using sexps instead of rec format.
 @end table
 
@@ -5011,30 +5011,30 @@ Options}) the program accepts the following options.
 
 @table @samp
 @item -t
-@itemx @w{@kbd{--type}=@var{expr}}
+@itemx --type=@var{expr}
 The type of the new record.  If there is a record set in the input
 data matching this type then the new record is added there.  Otherwise
 a new record set is created.  If this parameter is not specified then
 the new record is anonymous.
 @item -f
-@itemx @w{@kbd{--field}=@var{name}}
+@itemx --field=@var{name}
 Declares the name of a field.  This option must be followed by a
 @samp{-v}.
 @item -v
-@itemx @w{@kbd{--value}=@var{value}}
+@itemx --value=@var{value}
 The value of the field being defined.
 @item -r
-@itemx @w{@kbd{--record}=@var{value}}
+@itemx --record=@var{value}
 Add the fields of the record in @var{value}.  This option can be
-intermixed with @kbd{-f @dots{} -v} pairs.
+intermixed with @samp{-f @dots{} -v} pairs.
 @item -s
-@itemx @w{@kbd{--password}}
+@itemx --password
 Encrypt confidential fields with the given password.
-@item @w{@kbd{--no-external}}
+@item --no-external
 Don't use external record descriptors.
-@item @w{@kbd{--verbose}}
+@item --verbose
 Be verbose when reporting integrity problems.
-@item @w{@kbd{--no-auto}}
+@item --no-auto
 Don't generate @dfn{auto} fields. @xref{Auto-Generated Fields}.
 @end table
 
@@ -5046,29 +5046,29 @@ the provided record.  The selection arguments are the same as in
 
 @table @samp
 @item -n @var{indexes}
-@item @w{@kbd{--number}=@var{indexes}}
+@item --number=@var{indexes}
 Match the records occupying the given positions in its record set.
 @var{indexes} must be a comma-separated list of numbers or ranges, the
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
 records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{record_expr}
-@itemx @w{@kbd{--expression}=@var{expr}}
+@itemx --expression=@var{expr}
 A record selection expression (@pxref{Selection Expressions}).
 Matching records will get replaced.
 @item -q @var{str}
-@itemx @w{@kbd{--quick}=@var{str}}
+@itemx --quick=@var{str}
 Remove records having a field whose value contains the substring
 @var{str}.
 @item -m @var{num}
-@itemx @w{@kbd{--random}=@var{num}}
+@itemx --random=@var{num}
 Select @var{num} random records.  If @var{num} is zero then all
 records are selected, @ie{} no replace mode is activated.
 @item -i
-@itemx @w{@kbd{--case-insensitive}}
+@itemx --case-insensitive
 Make strings case-insensitive in selection expressions.
 @cindex case, in selection expressions
-@item @w{@kbd{--force}}
+@item --force
 Insert the requested record even in potentially dangerous situations,
 such as when the data integrity of the database is compromised.
 @end table
@@ -5096,40 +5096,40 @@ Options}) the program accepts the following options.
 
 @table @samp
 @item -t
-@itemx @w{@kbd{--type}=@var{expr}}
+@itemx --type=@var{expr}
 Remove records of the given type.  If this parameter is not specified
 then records of any type will be removed.
 @item -n @var{indexes}
-@item @w{@kbd{--number}=@var{indexes}}
+@item --number=@var{indexes}
 Match the records occupying the given positions in its record set.
 @var{indexes} must be a comma-separated list of numbers or ranges, the
 ranges being two numbers separated with dashes.  For example, the
 following list denotes the first, the third, the fourth and all
 records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{record_expr}
-@itemx @w{@kbd{--expression}=@var{expr}}
+@itemx --expression=@var{expr}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be removed from the file.
 @item -q @var{str}
-@itemx @w{@kbd{--quick}=@var{str}}
+@itemx --quick=@var{str}
 Remove records having a field whose value contains the substring
 @var{str}.
 @item -m @var{num}
-@itemx @w{@kbd{--random}=@var{num}}
+@itemx --random=@var{num}
 Remove @var{num} random records.  If @var{num} is zero then remove all
 the records.
 @item -c
-@itemx @w{@kbd{--comment}}
+@itemx --comment
 Comment the matching records out instead of removing them.
-@item @w{@kbd{--force}}
+@item --force
 Delete even in potentially dangerous situations, such as a request
 to delete all the records of some type.
-@item @w{@kbd{--no-external}}
+@item --no-external
 Don't use external record descriptors.
 @item -i
-@itemx @w{@kbd{--case-insensitive}}
+@itemx --case-insensitive
 Make strings case-insensitive in selection expressions.
-@item @w{@kbd{--verbose}}
+@item --verbose
 Be verbose when reporting integrity problems.
 @end table
 
@@ -5156,29 +5156,29 @@ Record selection options:
 
 @table @samp
 @item -i
-@itemx @w{@kbd{--case-insensitive}}
+@itemx --case-insensitive
 Make strings case-insensitive in selection expressions.
 @item -t
-@itemx @w{@kbd{--type}=@var{expr}}
+@itemx --type=@var{expr}
 Operate on the records of the given type.  If this parameter is not
 specified then records of any type will be affected.
 @item -n @var{indexes}
-@item @w{@kbd{--number}=@var{indexes}}
+@item --number=@var{indexes}
 Operate on the records occupying the given positions in its record
 set.  @var{indexes} must be a comma-separated list of numbers or
 ranges, the ranges being two numbers separated with dashes.  For
 example, the following list denotes the first, the third, the fourth
 and all records up to the tenth: @code{-n 0,2,4-9}.
 @item -e @var{expr}
-@itemx @w{@kbd{--expression}=@var{expr}}
+@itemx --expression=@var{expr}
 A record selection expression (@pxref{Selection Expressions}).  Only
 the records matched by the expression will be processed.
 @item -q @var{str}
-@itemx @w{@kbd{--quick}=@var{str}}
+@itemx --quick=@var{str}
 Operate on records having a field whose value contains the substring
 @var{str}.
 @item -m @var{num}
-@itemx @w{@kbd{--random}=@var{num}}
+@itemx --random=@var{num}
 Operate on @var{num} random records.  If @var{num} is zero then
 operate on all the records.
 @end table
@@ -5187,7 +5187,7 @@ Field selection options:
 
 @table @samp
 @item -f
-@itemx @w{@kbd{--fields}=@var{FEX}}
+@itemx --fields=@var{FEX}
 Field selection expression (@pxref{Field Expressions}) to select the
 fields to operate.
 @end table
@@ -5196,32 +5196,32 @@ Actions:
 
 @table @samp
 @item -s
-@itemx @w{@kbd{--set}=@var{value}}
+@itemx --set=@var{value}
 Set the value of the selected fields to @var{value}.
 @item -a
-@itemx @w{@kbd{--add}=@var{value}}
+@itemx --add=@var{value}
 Add a new field to the selected record with value @var{value}.
 @item -S
-@itemx @w{@kbd{--set-add}=@var{value}}
+@itemx --set-add=@var{value}
 Set the value of the selected fields to @var{value}.  If some of the
 fields don't exist in a record, append it with the specified value.
 @item -r
-@itemx @w{@kbd{--rename}=@var{value}}
+@itemx --rename=@var{value}
 Rename a field; @var{value} must be a valid field name.  The field
 expression associated with this action must contain a single field
 name and an optional subscript.  If an entire record set is selected
 then the field is renamed in the record descriptor as well.
 @item -d
-@itemx @w{@kbd{--delete}}
+@itemx --delete
 Delete the selected fields in the selected records.
 @item -c
-@itemx @w{@kbd{--comment}}
+@itemx --comment
 Comment out the selected fields in the selected records.
-@item @w{@kbd{--no-external}}
+@item --no-external
 Don't use external record descriptors.
-@item @w{@kbd{--verbose}}
+@item --verbose
 Be verbose when reporting integrity problems.
-@item @w{@kbd{--force}}
+@item --force
 Perform the requested operation even in potentially dangerous
 situations, or when the integrity of the data stored in the file is
 affected.
@@ -5247,7 +5247,7 @@ In addition to the common options described earlier (@pxref{Common
 Options}) the program accepts the following global options.
 
 @table @samp
-@item @w{@kbd{--no-external}}
+@item --no-external
 Don't use external record descriptors.
 @end table
 
@@ -5256,11 +5256,11 @@ performs.  The operation mode is selected by using one of the
 following options.
 
 @table @samp
-@item @w{@kbd{--check}}
+@item --check
 Check the integrity of the database contained in the file, printing
 diagnostics messages in case something is not right.  This is the
 default operation.
-@item @w{@kbd{--sort}}
+@item --sort
 Perform a physical sort of all the records contained in the file (or
 standard input) after checking for its integrity.  The sorting
 criteria are provided by the @code{%sort} special field, if any.  If
@@ -5268,18 +5268,18 @@ there is an integrity failure the sorting is not performed.
 @cindex sorting
 
 This is a destructive operation.
-@item @w{@kbd{--decrypt}}
-@itemx @w{@kbd{--encrypt}}
+@item --decrypt
+@itemx --encrypt
 Decrypt (encrypt) all the (non-)encrypted fields in the database which are marked
 as confidential.  This operation requires a password.  If no password
 is specified with @option{-s} and the program is run in a terminal, a
 prompt is given to get the password from the user.
 
 If encryption is performed on a file having encrypted fields, the
-operation will fail unless @w{@kbd{--force}} is used.
+operation will fail unless @samp{--force} is used.
 
 These are destructive operations.
-@item @w{@kbd{--auto}}
+@item --auto
 Insert auto-generated fields as appropriate in the records which are
 missing them.
 
@@ -5290,9 +5290,9 @@ As described above, some operations make use of these additional options:
 
 @table @samp
 @item -s @var{secret}
-@itemx @w{@kbd{--password}=@var{secret}}
+@itemx --password=@var{secret}
 Password used to encrypt or decrypt fields.
-@item @w{@kbd{--force}}
+@item --force
 Force potentially dangerous operations.
 @end table
 
@@ -5315,7 +5315,7 @@ Options}) the program accepts the following options.
 
 @table @samp
 @item -f
-@itemx @w{@kbd{--filename}=@var{PATH}}
+@itemx --filename=@var{PATH}
 Read the template from the file in @var{PATH} instead of the command
 line.
 @end table
@@ -5339,14 +5339,14 @@ Options}) the program accepts the following options.
 
 @table @samp
 @item -t @var{type}
-@itemx @w{@kbd{--type}=@var{type}}
+@itemx --type=@var{type}
 Type of the converted records.  If no type is specified then no type
 is used.
 @item -s
-@itemx @w{@kbd{--strict}}
+@itemx --strict
 Be strict parsing the csv file.
 @item -e
-@itemx @w{@kbd{--omit-empty}}
+@itemx --omit-empty
 Omit empty fields.
 @end table
 
@@ -5374,17 +5374,17 @@ Options}) the program accepts the following options.
 
 @table @samp
 @item -t @var{type}
-@itemx @w{@kbd{--type}=@var{type}}
+@itemx --type=@var{type}
 Type of the records to convert.  If no type is specified then the
 default records (with no name) are converted.
 @item -S
-@itemx @w{@kbd{--sort}=@var{fields}}
+@itemx --sort=@var{fields}
 Sort the output by the comma-separated list of field names
 @var{fields}.  This option has precedence to whatever sorting criteria
 are specified in the corresponding record descriptor with
 @code{%sort}.
 @item -d
-@itemx @w{@kbd{--delim}=@var{char}}
+@itemx --delim=@var{char}
 Use @var{char} as the delimiter character separating fields in the
 output.  Defaults to @code{,}.
 @end table
@@ -5410,14 +5410,14 @@ Options}) the program accepts the following options.
 
 @table @samp
 @item -s
-@itemx @w{@kbd{--system-tables}}
+@itemx --system-tables
 Include system tables in the output.
 @item -l
-@itemx @w{@kbd{--list-tables}}
+@itemx --list-tables
 Dump a list of the table names contained in the mdb file, one per
 line.
 @item -e
-@itemx @w{@kbd{--keep-empty-fields}}
+@itemx --keep-empty-fields
 Don't prune empty fields in the rec output.
 @end table
 
