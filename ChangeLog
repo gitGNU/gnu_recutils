@@ -1,3 +1,11 @@
+2014-03-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: do not abort with an error when decrypting partially
+	encrypted records.
+	* src/rec-crypt.c (rec_decrypt_record): Stop decrypting fields in
+	case of an error.
+	(rec_encrypt_field): Return true in case a field is not encrypted.
+
 2014-02-25  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi: all @w and @kbd macros used to denote command

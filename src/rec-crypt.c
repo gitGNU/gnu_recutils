@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-02-25 15:55:25 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-crypt.c
  *       Date:         Fri Aug 26 19:50:51 2011
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2011-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,14 @@
 #define AESV2_KEYSIZE 16
 
 #define SALT_SIZE 4
+
+static bool
+rec_field_encrypted_p (rec_field_t field)
+{
+  return ((strlen (rec_field_value (field)) > strlen (REC_ENCRYPTED_PREFIX))
+          && (strncmp (rec_field_value (field), REC_ENCRYPTED_PREFIX,
+                       strlen (REC_ENCRYPTED_PREFIX)) == 0));
+}
 
 bool
 rec_encrypt (char   *in,
@@ -292,9 +300,7 @@ rec_encrypt_record (rec_rset_t rset,
                 {
                   res = rec_encrypt_field (field, password);
                   if (!res)
-                    {
-                      break;
-                    }
+                    break;
                 }
             }
         }
@@ -323,9 +329,7 @@ rec_encrypt_field (rec_field_t field,
   if ((strlen (rec_field_value (field)) >= strlen (REC_ENCRYPTED_PREFIX))
       && (strncmp (rec_field_value (field), REC_ENCRYPTED_PREFIX,
                    strlen (REC_ENCRYPTED_PREFIX)) == 0))
-    {
-      return false;
-    }
+    return true;
 
   if (!rec_encrypt (field_value,
                     strlen (field_value),
@@ -385,9 +389,7 @@ rec_decrypt_field (rec_field_t field,
   if ((strlen (rec_field_value (field)) < strlen (REC_ENCRYPTED_PREFIX))
       || (strncmp (rec_field_value (field), REC_ENCRYPTED_PREFIX,
                    strlen (REC_ENCRYPTED_PREFIX)) != 0))
-    {
-      return false;
-    }
+    return true;
 
   /* Skip the "encrypted-" prefix.  */
   field_value = rec_field_value (field) + strlen (REC_ENCRYPTED_PREFIX);
@@ -447,6 +449,8 @@ rec_decrypt_record (rec_rset_t rset,
               if (field)
                 {
                   res = rec_decrypt_field (field, password);
+                  if (!res)
+                    break;
                 }
             }
         }
