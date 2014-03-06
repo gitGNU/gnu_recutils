@@ -1625,7 +1625,8 @@ The result of the selection is stored in `rec-current-selection'."
 A prefix argument means to use a case-insensitive search."
   (interactive "sFast string query: ")
   (when (not (equal str ""))
-    (setq rec-current-selection (rec-query :fast-string str))
+    (setq rec-current-selection (rec-query :fast-string str
+                                           :type (rec-record-type)))
     (rec-navigate-selection)))
 
 (defun rec-cmd-select-sex (sex)
@@ -1634,7 +1635,8 @@ A prefix argument means to use a case-insensitive search."
 A prefix argument means to use a case-insensitive search."
   (interactive "sSelection expression: ")
   (when (not (equal sex ""))
-    (setq rec-current-selection (rec-query :sex sex))
+    (setq rec-current-selection (rec-query :sex sex
+                                           :type (rec-record-type)))
     (rec-navigate-selection)))
 
 ;;;; Commands

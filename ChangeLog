@@ -1,3 +1,11 @@
+2014-03-06  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	rec-mode: fix selection commands when there are more than one
+	record sets on the recfile.
+	* etc/rec-mode.el (rec-cmd-select-fast): Use the current record
+	set.
+	(rec-cmd-select-sex): Likewise.
+
 2014-03-02  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src: do not abort with an error when decrypting partially
