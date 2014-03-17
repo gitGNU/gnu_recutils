@@ -1,3 +1,19 @@
+2014-03-18  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,doc: allow merging anonymous records coming from several files
+	in a single record set.
+	* doc/recutils.texi (Simple Selections): Document that anonymous
+	records from several files will be merged.
+
+	* src/rec.h: Prototype and doc for rec_mset_elem_dup_data.
+	* src/rec-mset.c (rec_mset_elem_dup_data): New function.
+	(rec_mset_iterator_next): Update data only if it is not NULL.
+
+	* utils/recutl.c (recutl_parse_db_from_file): do not complain
+	about duplicated default record sets.
+	(recutl_parse_db_from_file): append anonymous records to the
+	anonymous rset of the database if it exists.
+
 2014-03-17  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi (Simple Selections): Improve the readability

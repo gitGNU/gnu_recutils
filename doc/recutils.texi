@@ -987,6 +987,49 @@ line, so @command{recsel work-contacts.rec
 contacts.rec} would output the records of @file{work-contacts.rec} first
 and then the ones from @file{contacts.rec}.
 
+@noindent
+Note however that @command{recsel} will merge records from several
+files specified in the command line only if they are anonyomuse.
+If the contacts in our files were typed:
+
+@multitable @columnfractions .5 .5
+@item
+@example
+@strong{contacts.rec:}
+
+%rec: Contact
+
+Name: Granny
+Phone: +12 23456677
+
+Name: Doctor
+Phone: +12 58999222
+@end example
+@tab
+@example
+@strong{work-contacts.rec:}
+
+%rec: Contact
+
+Name: Yoyodyne Corp.
+Email: sales@@yoyod.com
+Phone: +98 43434433
+
+Name: Robert Harris
+Email: robert.harris@@yoyod.com
+Note: Sales Department.
+@end example
+@end multitable
+
+@noindent
+Then we would get the following error message:
+
+@example
+$ recsel contacts.rec work-contacts.rec
+recsel: error: duplicated record set 'Contact' from work-contacts.rec.
+@end example
+
+
 @node Selecting by Type
 @section Selecting by Type
 

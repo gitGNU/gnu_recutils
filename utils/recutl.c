@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010-2013 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,10 +244,35 @@ recutl_parse_db_from_file (FILE *in,
       rset_type = rec_rset_type (rset);
       if (rec_db_type_p (db, rset_type))
         {
-          recutl_fatal (_("duplicated record set '%s' from %s.\n"),
-                        rset_type, file_name);
-        }
+          if (rset_type)
+            recutl_fatal (_("duplicated record set '%s' from %s.\n"),
+                          rset_type, file_name);
+          else
+            {
+              /* Special case: the database already contains anonymous
+                 records (with no type) and the record set to be
+                 inserted also contains anonyous records.  In this
+                 case we just append the records and comments in the
+                 anonymous record set.  */
 
+              rec_rset_t anon_rset = rec_db_get_rset_by_type (db, NULL);
+              rec_mset_iterator_t iter = rec_mset_iterator (rec_rset_mset (rset));
+              rec_mset_elem_t elem;
+              while (rec_mset_iterator_next (&iter, MSET_ANY, NULL, &elem))
+                {
+                  void *data = rec_mset_elem_dup_data (elem);
+                  if (!data
+                      || !rec_mset_append (rec_rset_mset (anon_rset),
+                                           rec_mset_elem_type (elem),
+                                           data,
+                                           MSET_ANY))
+                    return false;
+                }
+              rec_mset_iterator_free (&iter);
+              return true;
+            }
+        }
+          
       if (!rec_db_insert_rset (db, rset, rec_db_size (db)))
         {
           /* Error.  */

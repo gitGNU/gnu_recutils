@@ -240,10 +240,10 @@ rec_mset_elem_t rec_mset_search (rec_mset_t mset, void *data);
 rec_mset_iterator_t rec_mset_iterator (rec_mset_t mset);
 
 /* Advance the iterator to the next element of the given type.  The
-   data stored by the next element is stored in *DATA and a reference
-   to the element in *ELEM if ELEM is non-NULL.  The function returns
-   true if there is a next element to which iterate to, and false
-   otherwise.  */
+   data stored by the next element is stored in *DATA if DATA is
+   non-NULL and a reference to the element in *ELEM if ELEM is
+   non-NULL.  The function returns true if there is a next element to
+   which iterate to, and false otherwise.  */
 
 bool rec_mset_iterator_next (rec_mset_iterator_t *iterator,
                              rec_mset_type_t type,
@@ -284,6 +284,13 @@ void rec_mset_elem_set_data (rec_mset_elem_t elem, void *data);
    compare_fn callback.  */
 
 bool rec_mset_elem_equal_p (rec_mset_elem_t elem1, rec_mset_elem_t elem2);
+
+/* Create a copy of the data stored in a mset element and return a
+   reference to it. This uses the user-provided callback to duplicate
+   the data.  NULL is returned if there is no enough memory to
+   complete the operation.  */
+
+void *rec_mset_elem_dup_data (rec_mset_elem_t elem);
 
 /************** Sorting, grouping and other operations **************/
 

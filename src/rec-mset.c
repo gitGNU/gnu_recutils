@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -634,7 +634,8 @@ rec_mset_iterator_next (rec_mset_iterator_t *iterator,
       /* Update the multi-set iterator and set both DATA and ELEM.  */
       
       iterator->list_iter = rec_mset_iter_gl2mset (list_iter);
-      *data = mset_elem->data;
+      if (data)
+        *data = mset_elem->data;
       if (elem)
         {
           mset_elem->list_node = list_node;
@@ -692,6 +693,12 @@ rec_mset_elem_equal_p (rec_mset_elem_t elem1,
 {
   return rec_mset_elem_equal_fn ((void *) elem1,
                                  (void *) elem2);
+}
+
+void *
+rec_mset_elem_dup_data (rec_mset_elem_t elem)
+{
+  return elem->mset->dup_fn[elem->type] (elem->data);
 }
 
 void
