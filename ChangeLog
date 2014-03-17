@@ -1,3 +1,8 @@
+2014-03-17  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi (Simple Selections): Improve the readability
+	of side-to-side example sections.
+
 2014-03-06  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	rec-mode: fix selection commands when there are more than one

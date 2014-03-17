@@ -905,25 +905,27 @@ part of the output produced by @command{recsel}.  This is because
 lines that may be between records are not echoed in the output:
 
 @multitable @columnfractions .5 .5
-@headitem acquaintances.rec @tab recsel acquaintances.rec
 @item
 @example
-@exdent Name: Peter the Great
-@exdent Age: 53
-@exdent @*
-@exdent # Note the extra empty lines.
-@exdent @*
-@exdent @*
-@exdent Name: Bart Simpson
-@exdent Age: 10
+@strong{acquaintances.rec:}
+
+Name: Peter the Great
+Age: 53
+
+# Note the extra empty lines.
+
+
+Name: Bart Simpson
+Age: 10
 @end example
 @tab
 @example
-@exdent Name: Peter the Great
-@exdent Age: 53
-@exdent @*
-@exdent Name: Bart Simpson
-@exdent Age: 10
+$ recsel acquaintances.rec
+Name: Peter the Great
+Age: 53
+
+Name: Bart Simpson
+Age: 10
 @end example
 @end multitable
 
@@ -934,24 +936,27 @@ general contact records, and also a @file{work-contacts.rec} file
 containing business contacts:
 
 @multitable @columnfractions .5 .5
-@headitem contacts.rec @tab work-contacts.rec
 @item 
 @example
-@exdent Name: Granny
-@exdent Phone: +12 23456677
-@exdent @*
-@exdent Name: Doctor
-@exdent Phone: +12 58999222
+@strong{contacts.rec:}
+
+Name: Granny
+Phone: +12 23456677
+
+Name: Doctor
+Phone: +12 58999222
 @end example
 @tab
 @example
-@exdent Name: Yoyodyne Corp.
-@exdent Email: sales@@yoyod.com
-@exdent Phone: +98 43434433
-@exdent @*
-@exdent Name: Robert Harris
-@exdent Email: robert.harris@@yoyod.com
-@exdent Note: Sales Department.
+@strong{work-contacts.rec:}
+
+Name: Yoyodyne Corp.
+Email: sales@@yoyod.com
+Phone: +98 43434433
+
+Name: Robert Harris
+Email: robert.harris@@yoyod.com
+Note: Sales Department.
 @end example
 @end multitable
 
