@@ -396,49 +396,43 @@ rec_int_check_record_mandatory (rec_rset_t rset,
                                 rec_record_t record,
                                 rec_buf_t errors)
 {
-  int res;
-  rec_record_t descriptor;
-  rec_fex_t mandatory_fex;
-  const char *mandatory_field_name;
-  rec_field_t field;
-  size_t i, j, num_fields;
+  rec_fex_t fex_mandatory = NULL;
+  int res = 0;
+  size_t i;
   
-  res = 0;
-
-  descriptor = rec_rset_descriptor (rset);
+  rec_record_t descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      num_fields = rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_MANDATORY));
-      for (i = 0; i < num_fields; i++)
+      fex_mandatory = rec_int_collect_field_list (descriptor, FNAME(REC_FIELD_MANDATORY));
+      if (!fex_mandatory)
         {
-          field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_MANDATORY), i);
+          ADD_ERROR (errors, _("out of memory\n"), "");
+          res = 1;
+          goto cleanup;
+        }
 
-          /* Parse the field name from the value of %mandatory:  */
-          mandatory_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
-          if (!mandatory_fex)
+      /* Make sure that all fields in the mandatory fields list are in
+         this record.  */
+
+      for (i = 0; i < rec_fex_size (fex_mandatory); i++)
+        {
+          const char *fname = rec_fex_elem_field_name (rec_fex_get (fex_mandatory, i));
+          if (rec_record_get_num_fields_by_name (record, fname)
+              == 0)
             {
-              /* Invalid value in %mandatory:.  Ignore it.  */
-              break;
-            }
-
-          for (j = 0; j < rec_fex_size (mandatory_fex); j++)
-            {
-              mandatory_field_name = rec_fex_elem_field_name (rec_fex_get (mandatory_fex, j));
-
-              if (rec_record_get_num_fields_by_name (record, mandatory_field_name)
-                  == 0)
-                {
-                  ADD_ERROR (errors,
-                             _("%s:%s: error: mandatory field '%s' not found in record\n"),
-                             rec_record_source (record),
-                             rec_record_location_str (record),
-                             mandatory_field_name);
-                  res++;
-                }
+              ADD_ERROR (errors,
+                         _("%s:%s: error: mandatory field '%s' not found in record\n"),
+                         rec_record_source (record),
+                         rec_record_location_str (record),
+                         fname);
+              res++;
             }
         }
     }
 
+ cleanup:
+
+  rec_fex_destroy (fex_mandatory);
   return res;
 }
 
@@ -466,7 +460,7 @@ rec_int_check_record_allowed (rec_rset_t rset,
 
       if (!fex_allowed || !fex_mandatory || !fex_key)
         {
-          ADD_ERROR (errors, _("out_of_memory\n"), "");
+          ADD_ERROR (errors, _("out of memory\n"), "");
           res = 1;
           goto cleanup;
         }
@@ -513,49 +507,42 @@ rec_int_check_record_unique (rec_rset_t rset,
                              rec_record_t record,
                              rec_buf_t errors)
 {
-  int res;
-  rec_record_t descriptor;
-  rec_fex_t unique_fex;
-  const char *unique_field_name;
-  rec_field_t field;
-  size_t i, j, num_fields;
-  
-  res = 0;
+  rec_fex_t fex_unique = NULL;
+  int res = 0;
+  size_t i;
 
-  descriptor = rec_rset_descriptor (rset);
+  rec_record_t descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      num_fields = rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_UNIQUE));
-      for (i = 0; i < num_fields; i++)
+      fex_unique = rec_int_collect_field_list (descriptor, FNAME(REC_FIELD_UNIQUE));
+      if (!fex_unique)
         {
-          field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_UNIQUE), i);
+          ADD_ERROR (errors, _("out of memory\n"), "");
+          res = 1;
+          goto cleanup;
+        }
 
-          /* Parse the field name from the value of %unique:  */
-          unique_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
-          if (!unique_fex)
+      /* Make sure that all fields in the unique fields list are
+         unique in this record.  */
+
+      for (i = 0; i < rec_fex_size (fex_unique); i++)
+        {
+          const char *fname = rec_fex_elem_field_name (rec_fex_get (fex_unique, i));
+          if (rec_record_get_num_fields_by_name (record, fname) > 1)
             {
-              /* Invalid value in %unique:.  Ignore it.  */
-              break;
-            }
-
-          for (j = 0; j < rec_fex_size (unique_fex); j++)
-            {
-              unique_field_name = rec_fex_elem_field_name (rec_fex_get (unique_fex, j));
-
-              if (rec_record_get_num_fields_by_name (record, unique_field_name)
-                  > 1)
-                {
-                  ADD_ERROR (errors,
-                             _("%s:%s: error: field '%s' should be unique in this record\n"),
-                             rec_record_source (record),
-                             rec_record_location_str (record),
-                             unique_field_name);
-                  res++;
-                }
+              ADD_ERROR (errors,
+                         _("%s:%s: error: field '%s' should be unique in this record\n"),
+                         rec_record_source (record),
+                         rec_record_location_str (record),
+                         fname);
+              res++;
             }
         }
     }
 
+ cleanup:
+
+  rec_fex_destroy (fex_unique);
   return res;
 }
 
@@ -564,49 +551,42 @@ rec_int_check_record_prohibit (rec_rset_t rset,
                                rec_record_t record,
                                rec_buf_t errors)
 {
-  int res;
-  rec_record_t descriptor;
-  rec_fex_t prohibit_fex;
-  const char *prohibit_field_name;
-  rec_field_t field;
-  size_t i, j, num_fields;
-  
-  res = 0;
+  rec_fex_t fex_prohibit = NULL;
+  int res = 0;
+  size_t i;
 
-  descriptor = rec_rset_descriptor (rset);
+  rec_record_t descriptor = rec_rset_descriptor (rset);
   if (descriptor)
     {
-      num_fields = rec_record_get_num_fields_by_name (descriptor, FNAME(REC_FIELD_PROHIBIT));
-      for (i = 0; i < num_fields; i++)
+      fex_prohibit = rec_int_collect_field_list (descriptor, FNAME(REC_FIELD_PROHIBIT));
+      if (!fex_prohibit)
         {
-          field = rec_record_get_field_by_name (descriptor, FNAME(REC_FIELD_PROHIBIT), i);
+          ADD_ERROR (errors, _("out of memory\n"), "");
+          res = 1;
+          goto cleanup;
+        }
 
-          /* Parse the field name from the value of %prohibit:  */
-          prohibit_fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
-          if (!prohibit_fex)
+      /* Make sure that no field in the prohibit fields list is
+         present in the record.  */
+
+      for (i = 0; i < rec_fex_size (fex_prohibit); i++)
+        {
+          const char *fname = rec_fex_elem_field_name (rec_fex_get (fex_prohibit, i));
+          if (rec_record_get_num_fields_by_name (record, fname) > 0)
             {
-              /* Invalid value in %prohibit:.  Ignore it.  */
-              break;
-            }
-
-          for (j = 0; j < rec_fex_size (prohibit_fex); j++)
-            {
-              prohibit_field_name = rec_fex_elem_field_name (rec_fex_get (prohibit_fex, j));
-
-              if (rec_record_get_num_fields_by_name (record, prohibit_field_name)
-                  > 0)
-                {
-                  ADD_ERROR (errors,
-                             _("%s:%s: error: prohibited field '%s' found in record\n"),
-                             rec_record_source (record),
-                             rec_record_location_str (record),
-                             prohibit_field_name);
-                  res++;
-                }
+              ADD_ERROR (errors,
+                         _("%s:%s: error: prohibited field '%s' found in record\n"),
+                         rec_record_source (record),
+                         rec_record_location_str (record),
+                         fname);
+              res++;
             }
         }
     }
 
+ cleanup:
+
+  rec_fex_destroy (fex_prohibit);
   return res;
 }
 

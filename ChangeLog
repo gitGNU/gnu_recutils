@@ -1,3 +1,12 @@
+2014-03-19  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src: simplify the implementation of mandatory/unique/prohibit
+	integrity checking.
+	* src/rec-int.c (rec_int_check_record_mandatory): Rewrote to use
+	rec_int_collect_field_list.
+	(rec_int_check_record_unique): Likewise.
+	(rec_int_check_record_prohibit): Likewise.
+
 2014-03-18  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,torture,doc: support for the %allowed special field.
