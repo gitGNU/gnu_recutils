@@ -3998,10 +3998,43 @@ There can be several @code{%auto} fields in the same record
 descriptor, the effective list of auto-generated fields being the
 union of all the entries.
 
-Such auto fields are generated at the beginning of the new
-records, in the same order they are found in the @code{%auto}
-directives.
+When @command{recins} inserts a new record in the recfile, it looks
+for any declared auto field.  If any of these fields are not provided
+explicitly in the command line then @command{recins} generates them
+along with the user-provided fields.  Such auto fields are generated
+at the beginning of the new records, in the same order they are found
+in the @code{%auto} directives.
 
+For example, consider a @file{items.rec} database with an empty record
+set:
+
+@example
+%rec: Item
+%key: Id
+%auto: Id
+%mandatory: Description
+@end example
+
+@noindent
+If we insert a new record and we do not specify an @code{Id} then it
+will be generated automatically by @command{recins}:
+
+@example
+$ recins -t Item -f Description -v 'recutils t-shirts' \
+         -f Amount -v 200 \
+         items.rec
+$ cat items.rec
+%rec: Item
+%key: Id
+%auto: Id
+%mandatory: Description
+
+Id: 0
+Description: recutils t-shirts
+Amount: 200
+@end example
+
+@noindent
 The concrete effect of the @code{%auto} directive depends on the type
 of the affected field.  The following sections document how.
 
@@ -4035,13 +4068,13 @@ Amount: 2111
 @end example
 
 @noindent
-When the next new item is introduced in the database, the conforming
-application will note the @code{%auto}, and create a new
-@code{Id} field for the new record with the next-biggest unused integer,
-since @code{Id} is declared to be of type @code{int}.  In
-this example, the new record would have an Id of @code{1}.  The
-database can still provide an explicit Id for the new record.  In
-that case the field is not generated automatically.
+When the next new item is introduced in the database, @command{recins}
+will note the @code{%auto}, and create a new @code{Id} field for the
+new record with the next-biggest unused integer, since @code{Id} is
+declared to be of type @code{int}.  In this example, the new record
+would have an Id of @code{1}.  The database can still provide an
+explicit Id for the new record.  In that case the field is not
+generated automatically.
 
 Note that if no explicit type is defined for an auto generated field
 then it is assumed to be an integer.

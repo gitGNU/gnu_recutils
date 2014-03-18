@@ -1,5 +1,13 @@
 2014-03-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	manual: clarify how auto fields are generated.
+	* doc/recutils.texi (Counters): mention 'recins' instead of the
+	'conforming application'.
+	(Auto-Generated Fields): Clarify that auto fields are physically
+	inserted in the recfile by recins.
+
+2014-03-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src: simplify the implementation of mandatory/unique/prohibit
 	integrity checking.
 	* src/rec-int.c (rec_int_check_record_mandatory): Rewrote to use
