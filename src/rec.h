@@ -403,7 +403,8 @@ enum rec_std_field_e
   REC_FIELD_TYPE,
   REC_FIELD_TYPEDEF,
   REC_FIELD_UNIQUE,
-  REC_FIELD_CONSTRAINT
+  REC_FIELD_CONSTRAINT,
+  REC_FIELD_ALLOWED
 };
 
 /******************* Field name utilities **********************/

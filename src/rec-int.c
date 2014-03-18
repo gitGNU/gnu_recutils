@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010, 2011, 2012 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,8 @@ static int rec_int_check_record_prohibit (rec_rset_t rset, rec_record_t record,
                                           rec_buf_t errors);
 static int rec_int_check_record_sex_constraints (rec_rset_t rset, rec_record_t record,
                                                  rec_buf_t errors);
+static int rec_int_check_record_allowed (rec_rset_t rset, rec_record_t record,
+                                         rec_buf_t errors);
 
 #if defined REC_CRYPT_SUPPORT
 static int rec_int_check_record_secrets (rec_rset_t rset, rec_record_t record,
@@ -232,7 +234,8 @@ rec_int_check_record (rec_db_t db,
     + rec_int_check_record_secrets   (rset, record, errors)
 #endif
     + rec_int_check_record_prohibit  (rset, record, errors)
-    + rec_int_check_record_sex_constraints (rset, record, errors);
+    + rec_int_check_record_sex_constraints (rset, record, errors)
+    + rec_int_check_record_allowed   (rset, record, errors);
 
   return res;
 }
@@ -323,6 +326,44 @@ rec_int_check_field_type (rec_db_t db,
  * Private functions
  */
 
+static rec_fex_t
+rec_int_collect_field_list (rec_record_t record,
+                            const char *fname)
+{
+  size_t i, j = 0;
+  size_t num_fields = rec_record_get_num_fields_by_name (record, fname);
+  rec_fex_t res = rec_fex_new (NULL, REC_FEX_SIMPLE);
+
+  if (!res)
+    return NULL; /* Out of memory.  */
+
+  for (i = 0; i < num_fields; i++)
+    {
+      rec_field_t field = rec_record_get_field_by_name (record, fname, i);
+      rec_fex_t fex = rec_fex_new (rec_field_value (field), REC_FEX_SIMPLE);
+      if (!fex)
+        /* Invalid value in the field.  Ignore it.  */
+        continue;
+
+      for (j = 0; j < rec_fex_size (fex); j++)
+        {
+          rec_fex_elem_t elem = rec_fex_get (fex, j);
+          char *field_name = strdup (rec_fex_elem_field_name (elem));
+
+          if (!field_name
+              || !rec_fex_append (res,
+                                  field_name,
+                                  rec_fex_elem_min (elem),
+                                  rec_fex_elem_max (elem)))
+            /* Not enough memory: panic and retreat!  */
+            return NULL;
+        }
+      rec_fex_destroy (fex);
+    }
+
+  return res;
+}
+
 static int
 rec_int_check_record_types (rec_db_t db,
                             rec_rset_t rset,
@@ -398,6 +439,72 @@ rec_int_check_record_mandatory (rec_rset_t rset,
         }
     }
 
+  return res;
+}
+
+static int
+rec_int_check_record_allowed (rec_rset_t rset,
+                              rec_record_t record,
+                              rec_buf_t errors)
+{
+  /* If %allowed is specified then fields with names not in the union
+     of %allowed + %mandatory + %key are not allowed in records, and
+     thus that situation is an integrity error.  */
+
+  rec_fex_t fex_allowed   = NULL;
+  rec_fex_t fex_mandatory = NULL;
+  rec_fex_t fex_key       = NULL;
+  
+  int res = 0;
+  rec_record_t descriptor = rec_rset_descriptor (rset);
+
+  if (descriptor)
+    {
+      fex_allowed = rec_int_collect_field_list (descriptor,   FNAME(REC_FIELD_ALLOWED));
+      fex_mandatory = rec_int_collect_field_list (descriptor, FNAME(REC_FIELD_MANDATORY));
+      fex_key = rec_int_collect_field_list (descriptor,       FNAME(REC_FIELD_KEY));
+
+      if (!fex_allowed || !fex_mandatory || !fex_key)
+        {
+          ADD_ERROR (errors, _("out_of_memory\n"), "");
+          res = 1;
+          goto cleanup;
+        }
+
+
+      if (rec_fex_size (fex_allowed) == 0)
+        /* Nothing to do.  */
+        goto cleanup;
+
+      /* Make sure that all the fields in RECORD are in either
+         %allowed, %mandatory or %key.  */
+          
+      rec_field_t field = NULL;
+      rec_mset_iterator_t iter = rec_mset_iterator (rec_record_mset (record));
+      while (rec_mset_iterator_next (&iter, MSET_FIELD, (const void **) &field, NULL))
+        {
+          const char *field_name = rec_field_name (field);
+          if (!(rec_fex_member_p (fex_allowed, field_name, -1, -1)
+                || rec_fex_member_p (fex_mandatory, field_name, -1, -1)
+                || rec_fex_member_p (fex_key, field_name, -1, -1)))
+            {
+              /* This field is not allowed.  */
+              ADD_ERROR (errors,
+                         _("%s:%s: error: field '%s' not allowed in this record set\n"),
+                         rec_record_source (record),
+                         rec_record_location_str (record),
+                         field_name);
+              res++;
+            }
+        }
+      rec_mset_iterator_free (&iter);
+    }
+  
+ cleanup:
+  
+  rec_fex_destroy (fex_allowed);
+  rec_fex_destroy (fex_mandatory);
+  rec_fex_destroy (fex_key);
   return res;
 }
 
@@ -912,7 +1019,8 @@ does not exist\n"),
                    || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_UNIQUE))
                    || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_PROHIBIT))
                    || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_AUTO))
-                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SORT)))
+                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_SORT))
+                   || rec_field_name_equal_p (field_name, FNAME(REC_FIELD_ALLOWED)))
             {
               /* Check that the value of this field is a parseable
                  list of field names.  */

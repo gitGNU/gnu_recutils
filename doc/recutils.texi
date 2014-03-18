@@ -806,9 +806,9 @@ describing their usage in deep.
 @item %rec
 Naming record types.  Also, they allow using external and remote
 descriptors.  @xref{Remote Descriptors}.
-@item %mandatory and %prohibit
+@item %mandatory, %allowed and %prohibit
 Requiring or forbidding specific fields.  @xref{Mandatory Fields}.
-@xref{Prohibited Fields}.
+@xref{Prohibited Fields}.  @xref{Allowed Fields}.
 @item %unique and %key
 Working with keys.  @xref{Keys and Unique Fields}.
 @item %doc
@@ -2846,6 +2846,7 @@ structure of the records.
 @menu
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
+* Allowed Fields::           Restricting the presence of fields.
 * Keys and Unique Fields::   Fields characterizing records.
 * Size Constraints::         Constraints on the number of records in a set.
 * Arbitrary Constraints::    Constraints records must comply with.
@@ -2971,6 +2972,35 @@ descriptor as follows:
 @noindent
 At the start of the event, the @code{%prohibit} line can be deleted, to 
 allow results to be entered.
+
+@node Allowed Fields
+@section Allowed Fields
+
+@cindex @code{%allowed}
+@cindex restricting fields from records
+@cindex field, allowed fields
+@cindex allowed fields
+
+In some cases we know the set of fields that may appear in the records
+of a given type, even if they are not mandatory.  The @code{%allowed}
+special field is used to specify this restriction.   The usage is:
+
+@example
+%allowed: @var{field1} @var{field2} @dots{} @var{fieldN}
+@end example
+@noindent The field names are separated by one or more blank
+chracters.
+
+@noindent
+If there are more or one @code{%allowed} fields in a record
+descriptor, all fields of all the records in the record set must be in
+the union of @code{%allowed}, @code{%mandatory} and @code{%key}.
+Otherwise an integrity error is raised.
+
+@noindent
+Several @code{%allowed} fields can appear in the same record
+descriptor.  The set of allowed fields is the union of all the
+entries.
 
 @node Keys and Unique Fields
 @section Keys and Unique Fields

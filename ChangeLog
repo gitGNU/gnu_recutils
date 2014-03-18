@@ -1,5 +1,36 @@
 2014-03-18  Jose E. Marchesi  <jemarch@gnu.org>
 
+	src,torture,doc: support for the %allowed special field.
+	* doc/recutils.texi (Record Sets Properties): Link to the new
+	section Allowed Fields.
+	(Allowed Fields): New section.
+
+	* torture/utils/recfix.sh (allowed-ok-1): New input file.
+	(allowed-ok-2): Likewise.
+	(allowed-ok-3): Likewise.
+	(allowed-ok-4): Likewise.
+	(allowed-ok-5): Likewise.
+	(allowed-xfail-1): Likewise.
+	(allowed-xfail-2): Likewise.
+	(allowed-xfail-3): Likewise.
+	(recfix-allowed-ok-1): New test.
+	(recfix-allowed-ok-2): Likewise.
+	(recfix-allowed-ok-3): Likewise.
+	(recfix-allowed-ok-4): Likewise.
+	(recfix-allowed-ok-5): Likewise.
+	(recfix-allowed-xfail-1): Likewise.
+	(recfix-allowed-xfail-2): Likewise.
+	(recfix-allowed-xfail-3): Likewise.
+
+	* src/rec-int.c (rec_int_check_record_allowed): New function.
+	(rec_int_collect_field_list): Likewise.
+	(rec_int_check_descriptor): Support %allowed.
+	(rec_int_check_record): Call rec_int_check_record_allowed.
+
+	* src/rec-field-name.c (fnames): added entry for %allowed.
+
+2014-03-18  Jose E. Marchesi  <jemarch@gnu.org>
+
 	src,doc: allow merging anonymous records coming from several files
 	in a single record set.
 	* doc/recutils.texi (Simple Selections): Document that anonymous

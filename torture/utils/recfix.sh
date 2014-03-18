@@ -2,7 +2,7 @@
 #
 # recfix.sh - System tests for recfix.
 #
-# Copyright (C) 2010-2013 Jose E. Marchesi.
+# Copyright (C) 2010-2014 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1289,6 +1289,96 @@ None: 0
 None: 2147483647
 '
 
+test_declare_input_file allowed-ok-1 \
+'%rec: foo
+%allowed: xxx
+
+xxx: 10
+
+xxx: 20
+'
+
+test_declare_input_file allowed-ok-2 \
+'%rec: foo
+%allowed: xxx yyy
+
+xxx: 10
+
+xxx: 20
+yyy: 30
+'
+
+test_declare_input_file allowed-ok-3 \
+'%rec: foo
+%allowed: xxx
+%allowed: yyy
+
+xxx: 10
+
+xxx: 20
+yyy: 30
+'
+
+test_declare_input_file allowed-ok-4 \
+'%rec: foo
+%allowed: xxx
+%allowed: yyy
+
+xxx: 10
+
+xxx: 20
+yyy: 30
+'
+
+test_declare_input_file allowed-ok-5 \
+'%rec: foo
+%key: xkey
+%mandatory: xmandatory
+%allowed: xxx
+
+
+xkey: jur
+xxx: 10
+xmandatory: jur
+
+xxx: 20
+xkey: jor
+xmandatory: jur
+'
+
+test_declare_input_file allowed-xfail-1 \
+'%rec: foo
+%allowed: xxx
+
+xxx: 10
+
+xxx: 20
+yyy: 30
+'
+
+test_declare_input_file allowed-xfail-2 \
+'%rec: foo
+%allowed: xxx yyy
+
+xxx: 10
+
+xxx: 20
+zzz: 40
+yyy: 30
+'
+
+test_declare_input_file allowed-xfail-3 \
+'%rec: foo
+%allowed: xxx
+%allowed: yyy
+
+xxx: 10
+
+xxx: 20
+zzz: 40
+yyy: 30
+'
+                        
 #
 # Declare tests.
 #
@@ -2273,6 +2363,51 @@ test_tool recfix-hyphens-in-field-names xfail \
           recfix \
           '--check' \
           hyphens-in-field-names
+
+test_tool recfix-allowed-ok-1 ok \
+          recfix \
+          '--check' \
+          allowed-ok-1 \
+          ''
+
+test_tool recfix-allowed-ok-2 ok \
+          recfix \
+          '--check' \
+          allowed-ok-2 \
+          ''
+
+test_tool recfix-allowed-ok-3 ok \
+          recfix \
+          '--check' \
+          allowed-ok-3 \
+          ''
+
+test_tool recfix-allowed-ok-4 ok \
+          recfix \
+          '--check' \
+          allowed-ok-4 \
+          ''
+
+test_tool recfix-allowed-ok-5 ok \
+          recfix \
+          '--check' \
+          allowed-ok-5 \
+          ''
+
+test_tool recfix-allowed-xfail-1 xfail \
+          recfix \
+          '--check' \
+          allowed-xfail-1
+
+test_tool recfix-allowed-xfail-2 xfail \
+          recfix \
+          '--check' \
+          allowed-xfail-2
+
+test_tool recfix-allowed-xfail-3 xfail \
+          recfix \
+          '--check' \
+          allowed-xfail-3
         
 #
 # Cleanup.
