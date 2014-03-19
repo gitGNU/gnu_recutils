@@ -1,5 +1,10 @@
 2014-03-19  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* NEWS: Added entry for 1.6.90 listing changes since 1.6.
+	* configure.ac: Version bumped to 1.6.90.
+
+2014-03-19  Jose E. Marchesi  <jemarch@gnu.org>
+
 	manual: clarify how auto fields are generated.
 	* doc/recutils.texi (Counters): mention 'recins' instead of the
 	'conforming application'.

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU recutils 1.6\n"
+"Project-Id-Version: GNU recutils 1.6.90\n"
 "Report-Msgid-Bugs-To: bug-gnu-utils@gnu.org\n"
-"POT-Creation-Date: 2013-11-03 15:13+0100\n"
+"POT-Creation-Date: 2014-03-19 20:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,170 +216,180 @@ msgstr ""
 msgid "internal error: REC_FEX_MAX_ELEMS exceeded.  Please report this.\n"
 msgstr ""
 
-#: src/rec-int.c:174
+#: src/rec-int.c:176
 #, c-format
 msgid "%s: error: the number of records of type %s should be %zd.\n"
 msgstr ""
 
-#: src/rec-int.c:184
+#: src/rec-int.c:186
 #, c-format
 msgid "%s: error: too many records of type %s. Maximum allowed are %zd.\n"
 msgstr ""
 
-#: src/rec-int.c:191
+#: src/rec-int.c:193
 #, c-format
 msgid "%s: error: too few records of type %s. Minimum allowed are %zd.\n"
 msgstr ""
 
-#: src/rec-int.c:391
+#: src/rec-int.c:409 src/rec-int.c:463 src/rec-int.c:520 src/rec-int.c:564
+#: utils/recutl.c:201
+msgid "out of memory\n"
+msgstr ""
+
+#: src/rec-int.c:424
 #, c-format
 msgid "%s:%s: error: mandatory field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:442
+#: src/rec-int.c:487
+#, c-format
+msgid "%s:%s: error: field '%s' not allowed in this record set\n"
+msgstr ""
+
+#: src/rec-int.c:534
 #, c-format
 msgid "%s:%s: error: field '%s' should be unique in this record\n"
 msgstr ""
 
-#: src/rec-int.c:493
+#: src/rec-int.c:578
 #, c-format
 msgid "%s:%s: error: prohibited field '%s' found in record\n"
 msgstr ""
 
-#: src/rec-int.c:523
+#: src/rec-int.c:610
 #, c-format
 msgid "%s:%s: error: %%constraint[%d] violated in record\n"
 msgstr ""
 
-#: src/rec-int.c:560
+#: src/rec-int.c:647
 #, c-format
 msgid "%s:%s: error: confidential field is not encrypted\n"
 msgstr ""
 
-#: src/rec-int.c:612
+#: src/rec-int.c:699
 #, c-format
 msgid "%s:%s: error: key field '%s' not found in record\n"
 msgstr ""
 
-#: src/rec-int.c:621
+#: src/rec-int.c:708
 #, c-format
 msgid "%s:%s: error: multiple key fields '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:664
+#: src/rec-int.c:751
 #, c-format
 msgid "%s:%s: error: duplicated key value in field '%s' in record\n"
 msgstr ""
 
-#: src/rec-int.c:712
+#: src/rec-int.c:799
 #, c-format
 msgid "%s:%s: error: missing %%rec field in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:720
+#: src/rec-int.c:807
 #, c-format
 msgid "%s:%s: error: too many %%rec fields in record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:730
+#: src/rec-int.c:817
 #, c-format
 msgid "%s:%s: error: invalid record type %s\n"
 msgstr ""
 
-#: src/rec-int.c:741
+#: src/rec-int.c:828
 #, c-format
 msgid "%s:%s: error: only one %%key field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:751
+#: src/rec-int.c:838
 #, c-format
 msgid "%s:%s: error: only one %%size field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:761
+#: src/rec-int.c:848
 #, c-format
 msgid "%s:%s: error: only one %%sort field is allowed in a record descriptor\n"
 msgstr ""
 
-#: src/rec-int.c:784
+#: src/rec-int.c:871
 #, c-format
 msgid ""
 "%s:%s: error: expected a comma-separated list of fields before the type "
 "specification\n"
 msgstr ""
 
-#: src/rec-int.c:810 src/rec-int.c:863
+#: src/rec-int.c:897 src/rec-int.c:950
 #, c-format
 msgid "%s:%s: error: the referred type %s does not exist\n"
 msgstr ""
 
-#: src/rec-int.c:822
+#: src/rec-int.c:909
 #, c-format
 msgid "%s:%s: error: invalid type specification\n"
 msgstr ""
 
-#: src/rec-int.c:837
+#: src/rec-int.c:924
 #, c-format
 msgid "%s:%s: error: expected a type name before the type specification\n"
 msgstr ""
 
-#: src/rec-int.c:875
+#: src/rec-int.c:962
 #, c-format
 msgid "%s:%s: error: invalid typedef specification\n"
 msgstr ""
 
-#: src/rec-int.c:897
+#: src/rec-int.c:984
 #, c-format
 msgid "%s:%s: error: value for %s[%zd] is not a valid selection expression\n"
 msgstr ""
 
-#: src/rec-int.c:927
+#: src/rec-int.c:1015
 #, c-format
 msgid "%s:%s: error: value for %s[%zd] is not a list of field names\n"
 msgstr ""
 
-#: src/rec-int.c:940
+#: src/rec-int.c:1028
 #, c-format
 msgid ""
 "%s:%s: error: value for %s should be a number optionally preceded by >, <, "
 ">= or <=.\n"
 msgstr ""
 
-#: src/rec-int.c:956
+#: src/rec-int.c:1044
 #, c-format
 msgid "%s:%s: error: value for %s should be a list of field names.\n"
 msgstr ""
 
-#: src/rec-int.c:984
+#: src/rec-int.c:1072
 #, c-format
 msgid ""
 "%s:%s: error: auto-incremented field %s should be of type int, range, uuid "
 "or date\n"
 msgstr ""
 
-#: src/rec-int.c:986
+#: src/rec-int.c:1074
 #, c-format
 msgid ""
 "%s:%s: error: auto-incremented field %s should be of type int, range or "
 "date\n"
 msgstr ""
 
-#: src/rec-int.c:1069
+#: src/rec-int.c:1157
 #, c-format
 msgid "%s:%s: error: could not fetch remote descriptor from url %s.\n"
 msgstr ""
 
-#: src/rec-int.c:1088
+#: src/rec-int.c:1176
 #, c-format
 msgid "%s:%s: error: could not read external descriptor from file %s.\n"
 msgstr ""
 
-#: src/rec-int.c:1103
+#: src/rec-int.c:1191
 #, c-format
 msgid "%s:%s: error: %s does not contain valid rec data.\n"
 msgstr ""
 
-#: src/rec-int.c:1117
+#: src/rec-int.c:1205
 #, c-format
 msgid "%s:%s: error: %s does not contain information for type %s.\n"
 msgstr ""
@@ -496,7 +506,7 @@ msgid "%s: %d: this line contains %d fields, but %d header fields were read\n"
 msgstr ""
 
 #: utils/csv2rec.c:351 utils/recdel.c:266 utils/recset.c:358
-#: utils/recutl.c:297
+#: utils/recutl.c:322
 #, c-format
 msgid "cannot read file %s\n"
 msgstr ""
@@ -566,21 +576,22 @@ msgstr ""
 
 #. TRANSLATORS: --help output, rec2csv synopsis.
 #. no-wrap
-#: utils/rec2csv.c:85
+#: utils/rec2csv.c:86
 #, c-format
 msgid "Usage: rec2csv [OPTIONS]... [REC_FILE]\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, rec2csv short description.
 #. no-wrap
-#: utils/rec2csv.c:90
+#: utils/rec2csv.c:91
 msgid "Convert rec data into csv data.\n"
 msgstr ""
 
 #. TRANSLATORS: --help output, rec2csv options.
 #. no-wrap
-#: utils/rec2csv.c:96
+#: utils/rec2csv.c:97
 msgid ""
+"  -d, --delim=char                    sets the deliminator (default ',')\n"
 "  -t, --type=TYPE                     record set to convert to csv; if this "
 "parameter\n"
 "                                        is omitted then the default record "
@@ -589,15 +600,15 @@ msgid ""
 "fields.\n"
 msgstr ""
 
-#: utils/rec2csv.c:135
+#: utils/rec2csv.c:142
 msgid "only one list of fields can be specified as a sorting criteria.\n"
 msgstr ""
 
-#: utils/rec2csv.c:142
+#: utils/rec2csv.c:149
 msgid "invalid field name list in -S.\n"
 msgstr ""
 
-#: utils/rec2csv.c:148 utils/recsel.c:248 utils/recsel.c:286
+#: utils/rec2csv.c:155 utils/recsel.c:248 utils/recsel.c:286
 msgid "internal error creating fex.\n"
 msgstr ""
 
@@ -826,7 +837,7 @@ msgid ""
 "format.\n"
 msgstr ""
 
-#: utils/recinf.c:262
+#: utils/recinf.c:263
 #, c-format
 msgid "error: cannot read file %s\n"
 msgstr ""
@@ -1175,52 +1186,48 @@ msgstr ""
 msgid ": error: "
 msgstr ""
 
-#: utils/recutl.c:201
-msgid "out of memory\n"
-msgstr ""
-
 #: utils/recutl.c:223
 msgid ": warning: "
 msgstr ""
 
-#: utils/recutl.c:247
+#: utils/recutl.c:248
 #, c-format
 msgid "duplicated record set '%s' from %s.\n"
 msgstr ""
 
-#: utils/recutl.c:386
+#: utils/recutl.c:411
 msgid "cannot create a unique name.\n"
 msgstr ""
 
-#: utils/recutl.c:407
+#: utils/recutl.c:432
 #, c-format
 msgid "renaming file %s to %s\n"
 msgstr ""
 
-#: utils/recutl.c:451
+#: utils/recutl.c:476
 msgid "operation aborted due to integrity failures.\n"
 msgstr ""
 
-#: utils/recutl.c:452
+#: utils/recutl.c:477
 msgid "use --verbose to get a detailed report.\n"
 msgstr ""
 
-#: utils/recutl.c:459
+#: utils/recutl.c:484
 msgid "use --force to skip the integrity check.\n"
 msgstr ""
 
-#: utils/recutl.c:520
+#: utils/recutl.c:545
 msgid "internal error: recutl_index_list_parse: error compiling regexp.\n"
 msgstr ""
 
-#: utils/recutl.c:595
+#: utils/recutl.c:620
 msgid "Password: "
 msgstr ""
 
-#: utils/recutl.c:601
+#: utils/recutl.c:626
 msgid "Password again: "
 msgstr ""
 
-#: utils/recutl.c:606
+#: utils/recutl.c:631
 msgid "the provided passwords don't match.\n"
 msgstr ""

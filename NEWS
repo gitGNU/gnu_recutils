@@ -1,12 +1,35 @@
 This NEWS file records noteworthy changes, very tersely.
 See the manual for detailed information.
 
-  Copyright 2010, 2011, 2012, 2013 Jose E. Marchesi.
+  Copyright 2010-2014 Jose E. Marchesi.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
+ Version 1.6.90 (19 March 2014)
+* Utilities:
+  . rec2csv now supports a -d option to change the delimiter
+    character in CSV files.
+  . It is now possible to specify several recfiles in the
+    command line containing anonymous records.
+* Format:
+  . Support for restricting the fields that can appear in records
+    with the new %allowed special field.
+  . If a tab separates a field name and a field value is now
+    ignored and not considered part of the field value.
+* librec:
+  . The current version of the library is now 1.
+* Emacs mode:
+  . It now possible to jump several records while navigating
+    using a prefix argument to the next/previous commands.
+* Documentation:
+  . The examples in the manual have been improved, and well as many
+    other aspects: formatting, English, etc.  Special thanks to Karl
+    Berry for pointing out the problems and suggesting solutions.
+* Internal cleanup and code factorization.
+* Many, many, many bug fixes :D
+  
  Version 1.6 (03 November 2013)
 * Utilities:
   . Support for joins and foreign keys.
