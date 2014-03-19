@@ -1,3 +1,7 @@
+2014-03-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* utils/recutl.c (recutl_print_version): Update copyright year.
+
 2014-03-19  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* NEWS: Added entry for 1.6.90 listing changes since 1.6.
