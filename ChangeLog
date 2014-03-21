@@ -1,5 +1,10 @@
 2014-03-21  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
+	rec-mode: fix a call to string-match-p with invalid arguments.
+	* etc/rec-mode.el (rec-check-type): fix a call to string-match-p.
+
+2014-03-21  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
 	rec-mode: several fixes while removing byte-compilation warnings.
 	* etc/rec-mode.el (require): Require cl only at compile time.
 	(rec-record-assoc): Use mapc instead of mapcar.

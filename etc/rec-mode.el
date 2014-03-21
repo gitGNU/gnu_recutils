@@ -1227,7 +1227,7 @@ is a field type structure."
      ((equal kind 'size)
       (<= (length str) data))
      ((equal kind 'line)
-      (string-match-p "^[^\n]*$"))
+      (string-match-p "^[^\n]*$" value))
      ((equal kind 'regexp)
       (string-match-p data value))
      ((equal kind 'date)
