@@ -1,3 +1,29 @@
+2014-03-21  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	rec-mode: several fixes while removing byte-compilation warnings.
+	* etc/rec-mode.el (require): Require cl only at compile time.
+	(rec-record-assoc): Use mapc instead of mapcar.
+	(rec-field-type): Likewise.
+	(rec-record-names): Likewise.
+	(rec-cmd-edit-field): Likewise.
+	(rec-update-buffer-descriptors): Likewise.
+	(rec-goto-type): Likewise.
+	(rec-cmd-statistic): Likewise.
+	(rec-mode): Defvar all buffer-local variables.
+	(rec-cmd-edit-field): Likewise.
+	(rec-cmd-show-info): Make it work when the buffer is not
+	associated with a file on disk.
+	(rec-cmd-compile): Use insert-buffer-substring instead of
+	insert-buffer.
+	(rec-cmd-show-info): Likewise.
+	(rec-update-buffer-descriptors-and-check): Use with-current-buffer
+	instead of save-excursion+set-buffer.
+	(rec-idle-scheduler-mode): Use called-interactively-p instead of
+	interactive-p.
+	(rec-parse-type): Use string-to-number instead of string-to-int.
+	(rec-check-type): Likewise.
+	Rec-idle related functions removed.
+
 2014-03-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* utils/recutl.c (recutl_print_version): Update copyright year.

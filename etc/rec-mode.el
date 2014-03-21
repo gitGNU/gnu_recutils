@@ -1,6 +1,6 @@
 ;;; rec-mode.el --- Major mode for viewing/editing rec files
 
-;; Copyright (C) 2009, 2010, 2011, 2012, 2013 Jose E. Marchesi
+;; Copyright (C) 2009-2014 Jose E. Marchesi
 
 ;; Maintainer: Jose E. Marchesi
 
@@ -31,7 +31,7 @@
 ;;; Code:
 
 (require 'compile)
-(require 'cl)
+(eval-when-compile (require 'cl))
 (require 'calendar)
 (require 'hl-line)
 
@@ -377,21 +377,21 @@ NAME shall be a field name.
 If no such field exists in RECORD then nil is returned."
   (when (rec-record-p record)
     (let (result)
-      (mapcar (lambda (field)
-                (when (and (rec-field-p field)
-                           (equal name (rec-field-name field)))
-                  (setq result (cons (rec-field-value field) result))))
-              (rec-record-elems record))
+      (mapc (lambda (field)
+              (when (and (rec-field-p field)
+                         (equal name (rec-field-name field)))
+                (setq result (cons (rec-field-value field) result))))
+            (rec-record-elems record))
       (reverse result))))
 
 (defun rec-record-names (record)
   "Get a list of the field names in the record"
   (when (rec-record-p record)
     (let (result)
-      (mapcar (lambda (field)
-                (when (rec-field-p field)
-                  (setq result (cons (rec-field-name field) result))))
-              (rec-record-elems record))
+      (mapc (lambda (field)
+              (when (rec-field-p field)
+                (setq result (cons (rec-field-name field) result))))
+            (rec-record-elems record))
       (reverse result))))
 
 (defun rec-record-values (record fields)
@@ -634,8 +634,7 @@ there is a parse error."
     (let* ((cur-buf (current-buffer))
            (errmsg (with-temp-buffer
                      (let ((err-buf (current-buffer)))
-                       (save-excursion
-                         (set-buffer cur-buf)
+                       (with-current-buffer cur-buf
                          (call-process-region (point-min) (point-max)
                                               rec-recfix
                                               nil ; delete
@@ -678,12 +677,12 @@ this function returns `nil'."
                            (setq descriptors (read (point-min-marker)))
                          (kill-buffer buffer)))
                      (when descriptors
-                       (mapcar (lambda (descriptor)
-                                 (let ((marker (make-marker)))
-                                   (set-marker marker (rec-record-position descriptor))
-                                   (setq records (cons (list 'descriptor descriptor marker)
-                                                       records))))
-                               descriptors)
+                       (mapc (lambda (descriptor)
+                               (let ((marker (make-marker)))
+                                 (set-marker marker (rec-record-position descriptor))
+                                 (setq records (cons (list 'descriptor descriptor marker)
+                                                     records))))
+                             descriptors)
                        (reverse records)))
             (kill-buffer buffer)
             nil))))
@@ -728,7 +727,7 @@ this function returns nil."
         nil)
     (let (found
           (descriptors rec-buffer-descriptors))
-      (mapcar
+      (mapc
        (lambda (elem)
          (when (equal (car (rec-record-assoc rec-keyword-rec
                                              (cadr elem)))
@@ -1155,14 +1154,14 @@ manual."
                 (list 'type (intern kind) str nil)))
              ((equal kind "size")
               (when (looking-at "[ \n\t]*\\([0-9]+\\)[ \n\t]*$")
-                (list (intern kind) str (string-to-int (match-string 1)))))
+                (list (intern kind) str (string-to-number (match-string 1)))))
              ((equal kind "range")
               (when (or
                      (looking-at "[ \n\t]*\\(-?[0-9]+\\)[ \n\t]*$")
                      (looking-at "[ \n\t]*\\(-?[0-9]+\\)[ \n\t]+\\([0-9]+\\)[ \n\t]*$"))
-                (let ((min (string-to-int (match-string 1)))
+                (let ((min (string-to-number (match-string 1)))
                       (max (when (stringp (match-string 2))
-                             (string-to-int (match-string 2)))))
+                             (string-to-number (match-string 2)))))
                 (list 'type (intern kind) str (list min max)))))
              ((equal kind "enum")
               (let ((str-copy str)
@@ -1221,7 +1220,7 @@ is a field type structure."
       (let ((min (car data))
             (max (cadr data)))
         (when (looking-at "-?[0-9]+$")
-          (let ((number (string-to-int (match-string 0))))
+          (let ((number (string-to-number (match-string 0))))
           (and (>= number min) (<= number max))))))
      ((equal kind 'real)
       (string-match-p "^-?\\([0-9]*\\.\\)?[0-9]+$" value))
@@ -1258,7 +1257,7 @@ returned."
          (types (rec-record-assoc "%type" (cadr descriptor)))
          res-type)
     ;; Note that invalid %type entries are simply ignored.
-    (mapcar
+    (mapc
      (lambda (type-descr)
        (with-temp-buffer
          (insert type-descr)
@@ -1386,141 +1385,6 @@ The data has the same structure than `tabulated-list-entries'."
       (rec-show-record))))
 ;;    (message "The rec buffer paired with this summary is not alive.")))
 
-;;;; Rec Idle mode
-;;
-;; This section is heavily inspired in semantic-idle.el
-
-(defvar rec-idle-scheduler-timer nil
-  "*Timer used to schedule tasks in idle time.")
-
-(defvar rec-idle-scheduler-work-timer nil
-  "*Timer used to schedule tasks in idle time that may take a
-  while.")
-
-(defcustom rec-idle-scheduler-idle-time 2
-  "*Time in seconds of idle before scheduling events.
-This time should be short enough to ensure that idle-scheduler
-will be run as soon as Emacs is idle."
-  :group 'rec
-  :type 'number
-  :set (lambda (sym val)
-         (set-default sym val)
-         (when (timerp rec-idle-scheduler-timer)
-           (cancel-timer rec-idle-scheduler-timer)
-           (setq rec-idle-scheduler-timer nil)
-           (rec-idle-scheduler-setup-timers))))
-
-(defcustom rec-idle-scheduler-work-idle-time 60
-  "*Time in seconds of idle before scheduling big work.
-This time should be long enough that once any big work is
-started, it is unlikely the user would be ready to type again
-right away."
-  :group 'rec
-  :type 'number
-  :set (lambda (sym val)
-         (set-default sym val)
-         (when (timerp rec-idle-scheduler-work-timer)
-           (cancel-timer rec-idle-scheduler-work-timer)
-           (setq semantic-idle-scheduler-work-timer nil)
-           (rec-idle-scheduler-setup-timers))))
-
-(defun rec-idle-scheduler-setup-timers ()
-  "Lazy initialization of the auto parse idle timer."
-  (or (timerp rec-idle-scheduler-timer)
-      (setq rec-idle-scheduler-timer
-            (run-with-idle-timer
-             rec-idle-scheduler-idle-time t
-             #'rec-idle-scheduler-function)))
-  (or (timerp rec-idle-scheduler-work-timer)
-      (setq rec-idle-scheduler-work-timer
-            (run-with-idle-timer
-             rec-idle-scheduler-work-idle-time t
-             #'rec-idle-scheduler-work-function))))
-
-(defun rec-idle-scheduler-kill-timer ()
-  "Kill the rec idle timer."
-  (if (timerp rec-idle-scheduler-timer)
-      (cancel-timer rec-idle-scheduler-timer))
-  (setq rec-idle-scheduler-timer nil))
-
-(defcustom rec-idle-scheduler-mode-hook nil
-  "*HOok run at the end of function `rec-idle-scheduler-mode'."
-  :group 'semantic
-  :type 'hook)
-
-(defvar rec-idle-scheduler-mode nil
-  "Non-nil if idle-scheduler minor mode is enabled.
-Use the command `rec-idle-scheduler-mode' to change this variable.")
-(make-variable-buffer-local 'rec-idle-scheduler-mode)
-
-(defcustom rec-idle-scheduler-max-buffer-size 0
-  "*Maximum size in bytes of buffers where idle-scheduler is enabled.
-If this value is less than or equal to 0, idle-schedule is enabled in
-all buffers regardless of their size."
-  :group 'rec
-  :type 'number)
-
-(defsubst rec-idle-scheduler-enabled-p ()
-  "Return non-nil if idle-scheduler is enabled for this buffer.
-idle-scheduler is disabled when debugging or if the buffer size
-exceeds the `rec-idle-scheduler-max-buffer-size' threshold."
-  (and rec-idle-scheduler-mode
-       (or (<= rec-idle-scheduler-max-buffer-size 0)
-           (< (buffer-size) rec-idle-scheduler-max-buffer-size))))
-
-(defun rec-idle-scheduler-mode-setup ()
-  "Setup option `rec-idle-scheduler-mode'.
-The minor mode can be turned on only if rec is available.  When
-minor mode is enabled process the current buffer if needed.
-Return non-nil if the minor mode is enabled."
-  (if rec-idle-scheduler-mode
-      (if (not (featurep 'rec-mode))
-          (progn
-            ;; Disable minor mode if rec-mode not available
-            (setq rec-idle-scheduler-mode nil)
-            (error "Buffer %s was not set up idle time scheduling"
-                   (buffer-name)))
-        (rec-idle-scheduler-setup-timers)))
-  rec-idle-scheduler-mode)
-
-(defun rec-idle-scheduler-mode (&optional arg)
-  "Minor mode to auto analyze buffer following a change.
-When this mode is off, a buffer is only rescanned for record
-types when some command requests the list of available types.
-When idle-scheduler is enabled, Emacs periodically checks to see
-if the buffer is out of date, and reanalyzes while the user is
-idle (not typing).
-
-With prefix argument ARG, turn on if positive, otherwise off.
-The minor mode can be turned on only if rec-mode feature is
-available and the current buffer is in rec mode.  Return non-nil
-if the minor mode is enabled."
-  (interactive
-   (list (or current-prefix-arg
-             (if rec-idle-scheduler-mode 0 1))))
-  (setq rec-idle-scheduler-mode
-        (if arg
-            (>
-             (prefix-numeric-value arg)
-             0)
-          (not rec-idle-scheduler-mode)))
-  (rec-idle-scheduler-mode-setup)
-  (run-hooks 'rec-idle-scheduler-mode-hook)
-  (if (interactive-p)
-      (message "rec-idle-scheduler minor mode %sabled"
-               (if rec-idle-scheduler-mode "en" "dis")))
-  ;; FIXME: add a note in the modeline
-  rec-idle-scheduler-mode)
-
-(defun rec-idle-scheduler-function ()
-  "Function run when after `rec-idle-scheduler-idle-time'.
-This function will reanalyze the current buffer, and if successful,
-call additional functions registered with the timer calls."
-  (when (zerop (recursion-depth))
-    (let ((debug-on-error nil))
-      (save-match-data (rec-idle-core-handler)))))
-
-
 ;;;; Database access functions
 ;;
 ;; The following functions map the high-level API rec_db_* provided by
@@ -1644,6 +1508,13 @@ A prefix argument means to use a case-insensitive search."
 ;; The following functions implement interactive commands available in
 ;; the several modes defined in this file.
 
+(defvar rec-field-name)
+(make-variable-buffer-local 'rec-field-name)
+(defvar rec-marker)
+(make-variable-buffer-local 'rec-marker)
+(defvar rec-buffer)
+(make-variable-buffer-local 'rec-buffer)
+
 (defun rec-cmd-edit-field (n)
   "Edit the contents of the field under point in a separate
 buffer.
@@ -1702,7 +1573,7 @@ will be used for fields of any type."
             (when letter
               (let ((buffer-read-only nil)
                     new-value)
-                (mapcar
+                (mapc
                  (lambda (elem)
                    (when (equal letter (cadr elem))
                      (setq new-value (car elem))))
@@ -1758,12 +1629,9 @@ will be used for fields of any type."
           (set-buffer edit-buf)
           (delete-region (point-min) (point-max))
           (rec-edit-field-mode)
-          (make-local-variable 'rec-field-name)
           (setq rec-field-name field-name)
-          (make-local-variable 'rec-marker)
           (setq rec-marker (make-marker))
           (set-marker rec-marker pointer prev-buffer)
-          (make-local-variable 'rec-buffer)
           (setq rec-prev-buffer prev-buffer)
           (setq rec-pointer pointer)
           (insert field-value)
@@ -2058,15 +1926,15 @@ This command is especially useful with enumerated types."
                                            (list key key-count (/ (* key-count 100) total))))
                                        keys))
                   str)
-             (mapcar (lambda (occurrence)
-                       (setq str (concat str
-                                         (number-to-string (nth 1 occurrence))
-                                         " "
-                                         (nth 0 occurrence)
-                                         " ("
-                                         (number-to-string (nth 2 occurrence))
-                                         "%) ")))
-                     percentages)
+             (mapc (lambda (occurrence)
+                     (setq str (concat str
+                                       (number-to-string (nth 1 occurrence))
+                                       " "
+                                       (nth 0 occurrence)
+                                       " ("
+                                       (number-to-string (nth 2 occurrence))
+                                       "%) ")))
+                   percentages)
              (message "%s" str))))))
 
 (defun rec-cmd-append-field ()
@@ -2097,7 +1965,7 @@ This command is especially useful with enumerated types."
     (if buffer-file-name
         (setq cmd (concat cmd buffer-file-name))
       (with-temp-file tmpfile
-        (insert-buffer cur-buf))
+        (insert-buffer-substring cur-buf))
       (setq cmd (concat cmd tmpfile)))
     (compilation-start cmd)))
 
@@ -2110,8 +1978,8 @@ This command is especially useful with enumerated types."
                     (make-temp-file "rec-mode-")))
         (msg ""))
     (if (not buffer-file-name)
-        (with-temp-file tmpfile
-          (insert-buffer cur-buf)))
+        (with-temp-file filename
+          (insert-buffer-substring cur-buf)))
     (with-temp-buffer
       (call-process rec-recinf
                     nil ; infile
@@ -2243,6 +2111,23 @@ function returns `nil'."
 
 ;;;; Definition of modes
 
+(defvar font-lock-defaults)
+(make-variable-buffer-local 'font-lock-defaults)
+(defvar rec-type)
+(make-variable-buffer-local 'rec-type)
+(defvar rec-buffer-descriptors)
+(make-variable-buffer-local 'rec-buffer-descriptors)
+(defvar rec-jump-back)
+(make-variable-buffer-local 'rec-jump-back)
+(defvar rec-update-p)
+(make-variable-buffer-local 'rec-update-p)
+(defvar rec-preserve-last-newline)
+(make-variable-buffer-local 'rec-preserve-last-newline)
+(defvar rec-editing)
+(make-variable-buffer-local 'rec-editing)
+(defvar add-log-current-defun-section)
+(make-variable-buffer-local 'add-log-current-defun-section)
+
 (defun rec-mode ()
   "A major mode for editing rec files.
 
@@ -2255,15 +2140,7 @@ Turning on rec-mode calls the members of the variable
   (kill-all-local-variables)
   (widen)
   ;; Local variables
-  (make-local-variable 'font-lock-defaults)
-  (make-local-variable 'rec-type)
-  (make-local-variable 'rec-buffer-descriptors)
-  (make-local-variable 'rec-jump-back)
-  (make-local-variable 'rec-update-p)
-  (make-local-variable 'rec-preserve-last-newline)
-  (make-local-variable 'rec-editing)
-  (set (make-local-variable 'add-log-current-defun-function)
-       #'rec-log-current-defun)
+  (setq add-log-current-defun-section #'rec-log-current-defun)
   (setq rec-editing nil)
   (setq rec-jump-back nil)
   (setq rec-update-p nil)
