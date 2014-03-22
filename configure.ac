@@ -191,7 +191,7 @@ if test "x$algol68_enabled" = "xyes"; then
 fi
 
 AC_SUBST([CA68])
-AM_CONDITIONAL([BUILD_A68],[test -n $CA68 && test "x$algol68_enabled" = "xyes"])
+AM_CONDITIONAL([BUILD_A68],[test -n "$CA68" && test "x$algol68_enabled" = "xyes"])
 
 dnl Platform-based compilation options
 compile_w32_system=no

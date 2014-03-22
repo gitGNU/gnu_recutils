@@ -1,3 +1,7 @@
+2014-03-22  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* configure.ac: fix non-portable test construct.
+
 2014-03-21  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	rec-mode: fix a call to string-match-p with invalid arguments.
