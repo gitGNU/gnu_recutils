@@ -174,6 +174,7 @@ Constraints on Record Sets
 
 * Mandatory Fields::         Requiring the presence of fields.
 * Prohibited Fields::        Forbidding the presence of fields.
+* Allowed Fields::           Restricting the presence of fields.
 * Keys and Unique Fields::   Fields characterizing records.
 * Size Constraints::         Limiting the size of a record set.
 * Arbitrary Constraints::    Constraints records must comply with.
