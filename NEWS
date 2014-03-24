@@ -7,7 +7,7 @@ See the manual for detailed information.
   are permitted in any medium without royalty provided the copyright
   notice and this notice are preserved.
 
- Version 1.6.90 (19 March 2014)
+ Version 1.7 (25 March 2014)
 * Utilities:
   . rec2csv now supports a -d option to change the delimiter
     character in CSV files.
@@ -29,7 +29,7 @@ See the manual for detailed information.
     Berry for pointing out the problems and suggesting solutions.
 * Internal cleanup and code factorization.
 * Many, many, many bug fixes :D
-  
+
  Version 1.6 (03 November 2013)
 * Utilities:
   . Support for joins and foreign keys.

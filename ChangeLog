@@ -1,3 +1,9 @@
+2014-03-24  Jose E. Marchesi  <jemarch@gnu.org>
+
+	Preparation for 1.7.
+	* configure.ac: Version bumped to 1.7.
+	* FSD (Version): Updated to 1.7.
+
 2014-03-22  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* configure.ac: fix non-portable test construct.
