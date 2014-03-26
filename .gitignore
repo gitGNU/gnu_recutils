@@ -1,3 +1,5 @@
+.#configure
+.dirstamp
 .libs
 .deps
 *.o
@@ -39,6 +41,7 @@ libtool
 /src/config.h.in
 /src/stamp-h1
 /src/rec-sex-lex.c
+/src/rec-sex-lex.h
 /src/rec-sex-tab.c
 /src/rec-sex-tab.h
 /torture/runtests
@@ -91,6 +94,11 @@ torture/utils/config.sh
 /algol68/rec.m
 /algol68/librec-a68.a
 /torture/utils/*.in
+/torture/utils/*.trs
+/torture/utils/*.log
+/torture/runtests.log
+/torture/runtests.trs
+/torture/test-suite.log
 /GNUmakefile
 /maint.mk
 /doc/recutils-a4-book.pdf

@@ -1,5 +1,9 @@
 2014-03-26  Jose E. Marchesi  <jemarch@gnu.org>
 
+	* .gitignore: Ignore some more files.
+
+2014-03-26  Jose E. Marchesi  <jemarch@gnu.org>
+
 	torture: fix make -j check.
 	* torture/utils/recins.sh: Fix names of input files so they
 	contain a reference to he test suite.
