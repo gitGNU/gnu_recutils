@@ -33,7 +33,7 @@ test_declare_input_file ()
         exit 1
     fi
 
-    filename="$1.in"
+    filename="${test_suite}-$1.in"
     contents="$2"
 
     # Create the input file.
@@ -140,7 +140,7 @@ test_tool ()
     status=$2
     utility=$3$EXEEXT
     parameters=$4
-    input_file="$5.in"
+    input_file="${test_suite}-$5.in"
     ok_file="$1.ok"
     output_file="$1.out"
     error_file="$1.err"

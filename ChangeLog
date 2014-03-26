@@ -1,3 +1,14 @@
+2014-03-26  Jose E. Marchesi  <jemarch@gnu.org>
+
+	torture: fix make -j check.
+	* torture/utils/recins.sh: Fix names of input files so they
+	contain a reference to he test suite.
+
+	* torture/utils/testutils.sh (test_declare_input_file): prepend
+	the test suite name to the input files in order to prevent
+	collisions with other tests.
+	(test_tool): Likewise.
+
 2014-03-24  Jose E. Marchesi  <jemarch@gnu.org>
 
 	Preparation for 1.7.

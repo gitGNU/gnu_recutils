@@ -111,7 +111,7 @@ test_declare_input_file external-descriptor-types \
 ' 
 
 test_declare_input_file external-descriptor \
-'%rec: Patata external-descriptor-types.in
+'%rec: Patata recins-external-descriptor-types.in
 
 foo: 10
 '
@@ -351,7 +351,7 @@ test_tool recins-external-descriptor ok \
           recins \
           '-t Patata -f foo -v 20' \
           external-descriptor \
-'%rec: Patata external-descriptor-types.in
+'%rec: Patata recins-external-descriptor-types.in
 
 foo: 10
 
