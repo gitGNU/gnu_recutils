@@ -1,3 +1,9 @@
+2014-03-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* utils/csv2rec.c (field_cb): Fix printf template slots to avoid
+	warnings when compiled with -Wformat.
+	Patch by Daiki Ueno.
+
 2014-03-26  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* .gitignore: Ignore some more files.

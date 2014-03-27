@@ -248,7 +248,6 @@ field_cb (void *s, size_t len, void *data)
         {
           if (ctx->num_fields > ctx->num_field_names)
             {
-              char *errmsg = NULL;
               char *source = csv2rec_csv_file;
 
               if (!source)
@@ -256,13 +255,10 @@ field_cb (void *s, size_t len, void *data)
                   source = "stdin";
                 }
 
-              if (!asprintf (&errmsg,
-                             _("%s: %d: this line contains %d fields, but %d header fields were read\n"),
-                             source,
-                             ctx->lineno, ctx->num_field_names, ctx->num_fields))
-                recutl_out_of_memory ();
-
-              fprintf (stderr, errmsg);
+              fprintf (stderr,
+                       _("%s: %lu: this line contains %lu fields, but %lu header fields were read\n"),
+                       source,
+                       ctx->lineno, ctx->num_field_names, ctx->num_fields);
               exit (EXIT_FAILURE);
             }
           field = rec_field_new (ctx->field_names[ctx->num_fields], str);
