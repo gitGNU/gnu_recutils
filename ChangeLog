@@ -1,3 +1,15 @@
+2014-04-20  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,torture: fix evaluation of sexes containing #NAME expressions.
+	* torture/utils/recsel.sh (recurrent-fields-2): New input file.
+	(recsel-sex-sharp-multiple-2): New test.
+
+	* src/rec-sex.c (rec_sex_eval): Do not permute fields appearing as
+	arguments to the # operator in the selection expression.
+
+	* src/rec-sex-ast.c (rec_sex_ast_hash_name_p_1): New function.
+	(rec_sex_ast_name_p): Likewise.
+
 2014-03-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* utils/csv2rec.c (field_cb): Fix printf template slots to avoid

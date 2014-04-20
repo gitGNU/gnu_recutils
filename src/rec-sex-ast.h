@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010-2013 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,6 +125,11 @@ char *rec_sex_ast_node_fixed_val (rec_sex_ast_node_t node);
 /* This function returns 'true' if there is a node on AST of type
    REC_SEX_NAME where NAME.name == NAME and NAME.idx <= IDX.  */
 bool rec_sex_ast_name_p (rec_sex_ast_t ast, const char *name, size_t idx);
+
+/* This function returns 'true' if there is a node on AST of type
+   REC_SEX_NAME where NAME.name == NAME and the parent of the node is
+   of type REC_SEX_OP_SHA, i.e. it recognizes #NAME in the source.  */
+bool rec_sex_ast_hash_name_p (rec_sex_ast_t ast, const char *name);
 
 #endif /* rec-sex-ast.h */
 

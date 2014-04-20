@@ -2,7 +2,7 @@
 #
 # recsel.sh - System tests for recsel.
 #
-# Copyright (C) 2010, 2011, 2012, 2013 Jose E. Marchesi.
+# Copyright (C) 2010-2014 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -126,6 +126,15 @@ field2: value122
 
 field2: value22
 field3: value23
+'
+
+test_declare_input_file recurrent-fields-2 \
+'Name: foo
+Index: 5
+Index: 9
+
+Name: bar
+Index: 7
 '
 
 test_declare_input_file dates \
@@ -989,6 +998,14 @@ test_tool recsel-sex-sharp-multiple ok \
 'field1: value11
 field2: value121
 field2: value122
+'
+
+test_tool recsel-sex-sharp-multiple-2 ok \
+          recsel \
+          '-e "#Index = 1"' \
+          recurrent-fields-2 \
+'Name: bar
+Index: 7
 '
 
 test_tool recsel-sex-sharp-subname ok \

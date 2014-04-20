@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010-2013 Jose E. Marchesi */
+/* Copyright (C) 2010-2014 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -401,6 +401,37 @@ rec_sex_ast_name_p (rec_sex_ast_t ast,
   return rec_sex_ast_name_p_1 (ast->top,
                                name,
                                idx);
+}
+
+static bool
+rec_sex_ast_hash_name_p_1 (rec_sex_ast_node_t node,
+                           const char *name)
+{
+  if (node)
+    {
+      size_t i = 0;
+
+      if ((node->type == REC_SEX_OP_SHA)
+          && (node->num_children == 1)
+          && (node->children[0]->type == REC_SEX_NAME)
+          && (strcmp (name, node->children[0]->val.name[0]) == 0))
+        return true;
+
+      for (i = 0; i < node->num_children; i++)
+        if (rec_sex_ast_hash_name_p_1 (node->children[i], name))
+          return true;
+    }
+
+  return false;
+}
+
+bool
+rec_sex_ast_hash_name_p (rec_sex_ast_t ast,
+                         const char *name)
+{
+  /* Traverse the AST looking for any name node NAME whose father is a
+     REC_SEX_OP_SHA.  */
+  return rec_sex_ast_hash_name_p_1 (ast->top, name);
 }
 
 /* End of rec-sex-ast.c */
