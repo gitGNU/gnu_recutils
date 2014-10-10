@@ -78,12 +78,11 @@ AC_FUNC_FSEEKO
 dnl Search for required libraries
 
 have_check=no
-AC_CHECK_LIB([check],[suite_create],[have_check=yes],)
+PKG_CHECK_MODULES([CHECK], [check],
+                  [have_check=yes], [have_check=no])
 AM_CONDITIONAL([CHECK], [test "x$have_check" != "xno"])
-if test "x$have_check" = "xyes"; then
-   CHECKLIBS=-lcheck
-fi
-AC_SUBST([CHECKLIBS])
+AC_SUBST([CHECK_CFLAGS])
+AC_SUBST([CHECK_LIBS])
 
 have_curl=no
 AC_CHECK_LIB([curl],[curl_global_init],[have_curl=yes],)

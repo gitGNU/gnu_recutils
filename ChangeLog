@@ -1,3 +1,11 @@
+2014-10-10  Michał Masłowski  <mtjm@mtjm.eu>
+
+	Fix detection of check on systems where it needs extra CFLAGS or
+	libraries.
+	* configure.ac: Use PKG_CHECK_MODULES to detect check.
+	* torture/Makefile.am (runtests_CFLAGS, runtests_LDADD): Pass
+	CFLAGS and LIBS that pkg-config specifies for check.
+
 2014-04-20  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,torture: fix evaluation of sexes containing #NAME expressions.
