@@ -328,11 +328,13 @@ satisfying some criteria.
 @reccmd{s q, rec-cmd-select-fast}
 Display the first record having a field whose value matches a given
 fixed pattern.  This is equivalent of using the command line option
-@option{-q} of @command{recsel}.
+@option{-q} of @command{recsel}.  If a prefix argument is specified
+then the search is case-insensitive.
 @reccmd{s s, rec-cmd-select-sex}
 Display the first record in the buffer satisfying a given selection
 expression.  This is equivalent of using the command line option
-@option{-e} of @command{recsel}.
+@option{-e} of @command{recsel}.  If a prefix argument is specified
+then the search is case-insensitive.
 @end table
 
 @node Statistics

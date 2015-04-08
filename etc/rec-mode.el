@@ -1483,23 +1483,25 @@ The result of the selection is stored in `rec-current-selection'."
   (interactive)
   (setq rec-current-selection (rec-query)))
 
-(defun rec-cmd-select-fast (str)
+(defun rec-cmd-select-fast (prefix str)
   "Perform a selection on the current record set using a fast string search.
 
 A prefix argument means to use a case-insensitive search."
-  (interactive "sFast string query: ")
+  (interactive "P\nsFast string query: ")
   (when (not (equal str ""))
     (setq rec-current-selection (rec-query :fast-string str
+                                           :icase prefix
                                            :type (rec-record-type)))
     (rec-navigate-selection)))
 
-(defun rec-cmd-select-sex (sex)
+(defun rec-cmd-select-sex (prefix sex)
   "Perform a selection on the current record set using a selection expression.
 
 A prefix argument means to use a case-insensitive search."
-  (interactive "sSelection expression: ")
+  (interactive "P\nsSelection expression: ")
   (when (not (equal sex ""))
     (setq rec-current-selection (rec-query :sex sex
+                                           :icase prefix
                                            :type (rec-record-type)))
     (rec-navigate-selection)))
 

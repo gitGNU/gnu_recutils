@@ -1,3 +1,13 @@
+2015-04-09  Jose E. Marchesi  <jemarch@gnu.org>
+
+	rec-mode: support search-insensitive searches.
+	* doc/rec-mode.texi (Searches): Document prefix arguments in both
+	rec-cmd-selext-fast and rec-cmd-select-sex.
+
+	* etc/rec-mode.el (rec-cmd-select-fast): Support case-insensitive
+	searches.
+	(rec-cmd-select-sex): Likewise.
+
 2014-10-10  Michał Masłowski  <mtjm@mtjm.eu>
 
 	Fix detection of check on systems where it needs extra CFLAGS or
