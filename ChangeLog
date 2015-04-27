@@ -1,3 +1,7 @@
+2015-04-27  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* src/rec-parser.c: Some minor stylish changes.
+
 2015-04-09  Jose E. Marchesi  <jemarch@gnu.org>
 
 	rec-mode: support search-insensitive searches.

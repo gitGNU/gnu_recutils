@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2009-2014 Jose E. Marchesi */
+/* Copyright (C) 2009-2015 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,9 +223,7 @@ rec_parse_field_name (rec_parser_t parser,
   /* Sanity check */
   if (rec_parser_eof (parser)
       || rec_parser_error (parser))
-    {
-      return false;
-    }
+    return false;
 
   buf = rec_buf_new (fname, &str_size);
   if (!buf)
@@ -243,9 +241,7 @@ rec_parse_field_name (rec_parser_t parser,
   /* [a-zA-Z%] */
   ci = rec_parser_getc (parser);
   if (ci == EOF)
-    {
-      ret = false;
-    }
+    ret = false;
   else
     {
       c = (char) ci;
@@ -286,16 +282,11 @@ rec_parse_field_name (rec_parser_t parser,
                   return false;
                 }
               if (parser->error > 0)
-                {
-                  /* error was set by ADD_TO_STR */
-                  break;
-                }
+                break;
             }
           else if (c == ':')
-            {
-              /* End of token.  Consume the ':' and report success */
-              break;
-            }
+            /* End of token.  Consume the ':' and report success */
+            break;
           else
             {
               /* Parse error */
@@ -315,9 +306,7 @@ rec_parse_field_name (rec_parser_t parser,
   rec_buf_close (buf);
 
   if (!ret)
-    {
-      free (*fname);
-    }
+    free (*fname);
   else
     {
       /* Field names ends with:
@@ -337,18 +326,14 @@ rec_parse_field_name (rec_parser_t parser,
         {
           c = (char) ci;
           if ((c == ' ') || (c == '\t'))
-            {
-              parser->error = REC_PARSER_NOERROR;
-            }
+            parser->error = REC_PARSER_NOERROR;
           else if (c == '\n')
             {
               parser->error = REC_PARSER_NOERROR;
               rec_parser_ungetc (parser, c);
             }
           else
-            {
-              rec_parser_ungetc (parser, c);
-            }
+            rec_parser_ungetc (parser, c);
         }
     }
   
@@ -377,16 +362,12 @@ rec_parse_field (rec_parser_t parser,
   /* Sanity check */
   if (rec_parser_eof (parser)
       || rec_parser_error (parser))
-    {
-      return false;
-    }
+    return false;
 
   location = parser->line;
   char_location = parser->character;
   if (char_location != 0)
-    {
-      char_location++;
-    }
+    char_location++;
 
   ret = rec_parse_field_name (parser, &field_name);
   if (ret)
@@ -429,9 +410,7 @@ rec_parse_record (rec_parser_t parser,
   /* Sanity check */
   if (rec_parser_eof (parser)
       || rec_parser_error (parser))
-    {
-      return false;
-    }
+    return false;
 
   new = rec_record_new ();
   if (!new)
@@ -444,10 +423,9 @@ rec_parse_record (rec_parser_t parser,
   rec_record_set_source (new, parser->source);
   rec_record_set_location (new, parser->line);
   char_location = parser->character;
+
   if (char_location != 0)
-    {
-      char_location++;
-    }
+    char_location++;
   rec_record_set_char_location (new, char_location);
 
   /* A record is a list of mixed fields and comments, containing at
@@ -456,10 +434,8 @@ rec_parse_record (rec_parser_t parser,
    *  FIELD (FIELD|COMMENT)*
    */
   if (rec_parse_field (parser, &field))
-    {
-      /* Add the field to the record */
-      rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field, MSET_ANY);
-    }
+    /* Add the field to the record */
+    rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field, MSET_ANY);
   else
     {
       /* Expected a field.  */
@@ -478,10 +454,8 @@ rec_parse_record (rec_parser_t parser,
         {
           rec_parser_ungetc (parser, ci);
           if (rec_parse_comment (parser, &comment))
-            {
-              /* Add the comment to the record.  */
-              rec_mset_append (rec_record_mset (new), MSET_COMMENT, (void *) comment, MSET_ANY);
-            }
+            /* Add the comment to the record.  */
+            rec_mset_append (rec_record_mset (new), MSET_COMMENT, (void *) comment, MSET_ANY);
         }
       else if ((c == ' ') || (c == '\t'))
         {
@@ -495,10 +469,8 @@ rec_parse_record (rec_parser_t parser,
             }
 
           if ((ci == EOF) || (c == '\n'))
-            {
-              /* End of record */
-              break;
-            }
+            /* End of record */
+            break;
           else
             {
               /* Parse error: field expected */
@@ -508,19 +480,15 @@ rec_parse_record (rec_parser_t parser,
             }
         }
       else if (c == '\n')
-        {
-          /* End of record */
-          break;
-        }
+        /* End of record */
+        break;
       else
         {
           /* Try to parse a field */
           rec_parser_ungetc (parser, ci);
           if (rec_parse_field (parser, &field))
-            {
-              /* Add the field to the record */
-              rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field, MSET_ANY);
-            }
+            /* Add the field to the record */
+            rec_mset_append (rec_record_mset (new), MSET_FIELD, (void *) field, MSET_ANY);
           else
             {
               /* Parse error: field expected */
@@ -532,9 +500,7 @@ rec_parse_record (rec_parser_t parser,
     }
 
   if (ret)
-    {
-      *record = new;
-    }
+    *record = new;
   else
     {
       rec_record_destroy (new);
@@ -575,9 +541,7 @@ rec_parse_rset (rec_parser_t parser,
 
       /* Skip newline characters and blanks.  */
       if ((c == '\n') || (c == ' ') || (c == '\t'))
-        {
-          continue;
-        }
+        continue;
       /* Skip comments */
       else if (c == '#')
         {
@@ -639,14 +603,10 @@ rec_parse_rset (rec_parser_t parser,
   if ((parser->error == REC_PARSER_NOERROR)
       && (rec_rset_descriptor (new)
           || (rec_rset_num_records (new) > 0)))
-    {
-      ret = true;
-    }
+    ret = true;
 
   if (ret)
-    {
       *rset = new;
-    }
   else
     {
       rec_rset_destroy (new);
@@ -668,10 +628,8 @@ rec_parse_db (rec_parser_t parser,
 
   new = rec_db_new ();
   if (!new)
-    {
-      /* Out of memory.  */
-      return false;
-    }
+    /* Out of memory.  */
+    return false;
 
   while (rec_parse_rset (parser, &rset))
     {
@@ -688,14 +646,10 @@ rec_parse_db (rec_parser_t parser,
     }
 
   if (!rec_parser_eof (parser))
-    {
-      ret = false;
-    }
+    ret = false;
 
   if (ret)
-    {
-      *db = new;
-    }
+    *db = new;
 
   return ret;
 }
@@ -712,16 +666,12 @@ rec_parse_field_name_str (const char *str)
   str_size = strlen (str);
   str2 = malloc (str_size + 2);
   if (!str2)
-    {
-      /* Out of memory.  */
-      return NULL;
-    }
+    /* Out of memory.  */
+    return NULL;
 
   memcpy (str2, str, str_size);
   if (str_size > 0 && str2[str_size - 1] == ':')
-    {
-      str2[str_size] = '\0';
-    }
+    str2[str_size] = '\0';
   else
     {
       str2[str_size] = ':';
@@ -730,9 +680,7 @@ rec_parse_field_name_str (const char *str)
   
   parser = rec_parser_new_str (str2, "dummy");
   if (!rec_parse_field_name (parser, &field_name))
-    {
-      field_name = NULL;
-    }
+    field_name = NULL;
 
   if (!rec_parser_eof (parser))
     {
@@ -758,9 +706,7 @@ rec_parse_record_str (const char *str)
   if (parser)
     {
       if (!rec_parse_record (parser, &record))
-        {
-          record = NULL;
-        }
+        record = NULL;
       rec_parser_destroy (parser);
     }
 
@@ -775,16 +721,12 @@ rec_parser_seek (rec_parser_t parser,
   if (parser->in_file)
     {
       if (fseek (parser->in_file, position, SEEK_SET))
-        {
-          return false;
-        }
+        return false;
     }
   else if (parser->in_buffer)
     {
       if (position > parser->in_size)
-        {
-          return false;
-        }
+        return false;
       parser->p = parser->in_buffer + position;
     }
   else
@@ -803,13 +745,9 @@ long
 rec_parser_tell (rec_parser_t parser)
 {
   if (parser->in_file)
-    {
-      return ftell (parser->in_file);
-    }
+    return ftell (parser->in_file);
   else if (parser->in_buffer)
-    {
-      return parser->p - parser->in_buffer;
-    }
+    return parser->p - parser->in_buffer;
   else
     {
       /* This point should not be reached!  */
@@ -831,15 +769,11 @@ rec_parser_getc (rec_parser_t parser)
   /* Get the input character depending on the backend used (memory or
      file).  */
   if (parser->in_file)
-    {
-      ci = getc (parser->in_file);
-    }
+    ci = getc (parser->in_file);
   else if (parser->in_buffer)
     {
       if (parser->p == parser->in_buffer + parser->in_size)
-        {
-          ci = EOF;
-        }
+        ci = EOF;
       else
         {
           ci = *(parser->p);
@@ -857,16 +791,12 @@ rec_parser_getc (rec_parser_t parser)
   /* Manage EOF and update statistics.  */
 
   if (ci == EOF)
-    {
-      parser->eof = true;
-    }
+    parser->eof = true;
   else 
     {
       parser->character++;
       if (((char) ci) == '\n')
-        {
-          parser->line++;
-        }
+        parser->line++;
     }
 
   return ci;
@@ -882,9 +812,7 @@ rec_parser_ungetc (rec_parser_t parser,
 
   parser->character--;
   if (((char) ci) == '\n')
-    {
-      parser->line--;
-    }
+    parser->line--;
 
   /* Unread the character, depending on the backend used (memory or
      file).  */
@@ -893,9 +821,7 @@ rec_parser_ungetc (rec_parser_t parser,
     {
       res = ungetc (ci, parser->in_file);
       if (res != ci)
-        {
-          parser->error = REC_PARSER_EUNGETC;
-        }
+        parser->error = REC_PARSER_EUNGETC;
     }
   else if (parser->in_buffer)
     {
@@ -990,9 +916,7 @@ rec_parse_field_value (rec_parser_t parser,
   /* Sanity check */
   if (rec_parser_eof (parser)
       || rec_parser_error (parser))
-    {
-      return false;
-    }
+    return false;
 
   c = '\0';
   prev_newline = false;
@@ -1105,9 +1029,7 @@ rec_parse_field_value (rec_parser_t parser,
                 }
 
               if (parser->error > 0)
-                {
-                  break;
-                }
+                break;
             }
 
           prev_newline = false;
@@ -1122,9 +1044,7 @@ rec_parse_field_value (rec_parser_t parser,
             }
 
           if (parser->error > 0)
-            {
-              break;
-            }
+            break;
           prev_newline = true;
         }
       else
@@ -1137,29 +1057,22 @@ rec_parse_field_value (rec_parser_t parser,
             }
 
           if (parser->error > 0)
-            {
-              break;
-            }
+            break;
           prev_newline = false;
         }
     }
 
   if (ret)
     {
-      if (rec_parser_eof (parser)
-          && (c == '\n'))
-        {
-          /* Special case: field just before EOF */
-          rec_buf_rewind (buf, 1);
-        }
+      if (rec_parser_eof (parser) && (c == '\n'))
+        /* Special case: field just before EOF */
+        rec_buf_rewind (buf, 1);
     }
 
   rec_buf_close (buf);
 
   if (!ret)
-    {
-      free (*str);
-    }
+    free (*str);
 
   return ret;
 }
@@ -1189,9 +1102,7 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
           if (c == '\n')
             {
               if ((ci = rec_parser_getc (parser)) == EOF)
-                {
-                  break;
-                }
+                break;
               c = (char) ci;
 
               if (c != '#')
@@ -1200,9 +1111,7 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
                   break;
                 }
               else
-                {
-                  c = '\n';
-                }
+                c = '\n';
             }
 
           if (rec_buf_putc (c, buf) == EOF)
@@ -1219,13 +1128,9 @@ rec_parse_comment (rec_parser_t parser, rec_comment_t *comment)
   rec_buf_close (buf);
 
   if (ret)
-    {
-      *comment = rec_comment_new (str);
-    }
+    *comment = rec_comment_new (str);
   else
-    {
-      *comment = NULL;
-    }
+    *comment = NULL;
 
   free (str);
   return ret;
@@ -1239,14 +1144,10 @@ rec_parser_init_common (rec_parser_t parser,
     {
       parser->source = strdup (source);
       if (!parser->source)
-        {
-          return false;
-        }
+        return false;
     }
   else
-    {
-      parser->source = NULL;
-    }
+    parser->source = NULL;
 
   parser->eof = false;
   parser->error = REC_PARSER_NOERROR;
