@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-02-26 18:08:55 jemarch"
+/* -*- mode: C -*- Time-stamp: "2015-04-27 19:59:28 jemarch"
  *
  *       File:         rec-fex-elem-rewrite-to.c
  *       Date:         Sun Feb 26 13:14:15 2012
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2012 Jose E. Marchesi */
+/* Copyright (C) 2012-2015 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

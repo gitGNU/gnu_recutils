@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2013-10-29 21:36:16 jemarch"
+/* -*- mode: C -*- Time-stamp: "2015-04-27 19:42:33 jemarch"
  *
  *       File:         testrec.c
  *       Date:         Fri Aug 23 21:41:00 2013
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2013 Jose E. Marchesi */
+/* Copyright (C) 2013-2015 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

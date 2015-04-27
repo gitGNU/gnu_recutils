@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2012-05-25 15:16:18 jemarch"
+/* -*- mode: C -*- Time-stamp: "2015-04-27 19:50:15 jemarch"
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2012 Jose E. Marchesi */
+/* Copyright (C) 2012-2015 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

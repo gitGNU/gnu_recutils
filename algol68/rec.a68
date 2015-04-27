@@ -5,7 +5,7 @@ USE standard:
   allows to use the librec library in Algol 68 programs compiled with
   the ctrans compiler.
 
-  Copyright (C) 2011, 2012 Jose E. Marchesi
+  Copyright (C) 2011-2015 Jose E. Marchesi
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

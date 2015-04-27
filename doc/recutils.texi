@@ -32,7 +32,7 @@
 This manual is for GNU recutils (version @value{VERSION},
 @value{UPDATED}).
 
-Copyright @copyright{} 2009-2014 Jose E. Marchesi
+Copyright @copyright{} 2009-2015 Jose E. Marchesi
 
 Copyright @copyright{} 1994-2014 Free Software Foundation, Inc.
 

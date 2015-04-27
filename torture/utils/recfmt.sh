@@ -2,7 +2,7 @@
 #
 # recfmt.sh - System tests for recfmt.
 #
-# Copyright (C) 2010-2013 Jose E. Marchesi.
+# Copyright (C) 2010-2015 Jose E. Marchesi.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

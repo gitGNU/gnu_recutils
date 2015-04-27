@@ -4,7 +4,7 @@
  * Original Author: Robert Gamble.
  *
  * Copyright (C) 2008  Robert Gamble
- * Copyright (C) 2010-2012  Jose E. Marchesi
+ * Copyright (C) 2010-2015  Jose E. Marchesi
 */
 
 /* This program is free software: you can redistribute it and/or
