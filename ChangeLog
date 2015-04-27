@@ -1,3 +1,8 @@
+2015-04-27  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* src/rec-mset.c (rec_mset_dup): Check for the right variable
+	in order to duplicate names.
+
 2015-04-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* src/rec-parser.c: Some minor stylish changes.

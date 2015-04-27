@@ -7,7 +7,7 @@
  *
  */
 
-/* Copyright (C) 2010-2014 Jose E. Marchesi */
+/* Copyright (C) 2010-2015 Jose E. Marchesi */
 
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,10 +146,9 @@ rec_mset_destroy (rec_mset_t mset)
   if (mset)
     {
       int i;
+
       for (i = 0; i < mset->ntypes; i++)
-        {
-          free(mset->name[i]);
-        }
+        free(mset->name[i]);
       gl_list_free (mset->elem_list);
       free (mset);
     }
@@ -172,7 +171,7 @@ rec_mset_dup (rec_mset_t mset)
       for (i = 0; i < new->ntypes; i++)
         {
           new->count[i] = 0;
-          if (new->name[i])
+          if (mset->name[i])
             {
               new->name[i] = strdup (mset->name[i]);
               if (!new->name[i])
