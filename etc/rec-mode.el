@@ -1968,7 +1968,7 @@ This command is especially useful with enumerated types."
         (setq cmd (concat cmd (shell-quote-argument buffer-file-name)))
       (with-temp-file tmpfile
         (insert-buffer-substring cur-buf))
-      (setq cmd (concat cmd tmpfile)))
+      (setq cmd (concat cmd (shell-quote-argument tmpfile))))
     (compilation-start cmd)))
 
 (defun rec-cmd-show-info ()
