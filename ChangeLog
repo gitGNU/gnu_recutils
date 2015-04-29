@@ -1,3 +1,8 @@
+2015-04-28  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-cmd-compile): Quote the file name argument
+	before to pass it to recfix in a shell.
+
 2015-04-27  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* README: Copyright years updated.

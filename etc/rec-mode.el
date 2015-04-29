@@ -1965,7 +1965,7 @@ This command is especially useful with enumerated types."
         (cmd (concat rec-recfix " "))
         (tmpfile (make-temp-file "rec-mode-")))
     (if buffer-file-name
-        (setq cmd (concat cmd buffer-file-name))
+        (setq cmd (concat cmd (shell-quote-argument buffer-file-name)))
       (with-temp-file tmpfile
         (insert-buffer-substring cur-buf))
       (setq cmd (concat cmd tmpfile)))
