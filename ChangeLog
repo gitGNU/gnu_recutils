@@ -1,3 +1,11 @@
+2015-05-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	src,torture: numeric results from aggregated functions are signed.
+	* src/rec-aggregate.c (REC_AGGREGATE_ACCUM_FUNC): Numeric results
+	from aggregated functions are signed.
+	* torture/utils/recsel.sh (negative_fields): New test input file.
+	(recsel-aggregate-sum-negative): New test.
+
 2015-04-28  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/rec-mode.el (rec-cmd-compile): Quote the file name argument

@@ -427,6 +427,14 @@ test_declare_input_file ignored-first-blanks \
 bar:	v2
 '
 
+test_declare_input_file negative_fields \
+'foo: 10
+bar: -10
+
+foo: 9
+bar: -9
+'
+
 #
 # Declare tests
 #
@@ -1610,6 +1618,13 @@ TotalCost: 12
 
 Item: D
 TotalCost: 100
+'
+
+test_tool recsel-aggregate-sum-negative ok \
+          recsel \
+          '-p "Sum(bar):TotalBar"' \
+          negative_fields \
+'TotalBar: -19
 '
 
 test_tool recsel-aggregate-min-overall ok \

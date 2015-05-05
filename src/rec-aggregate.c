@@ -1,4 +1,4 @@
-/* -*- mode: C -*- Time-stamp: "2015-04-27 19:50:15 jemarch"
+/* -*- mode: C -*-
  *
  *       File:         rec-aggregate.c
  *       Date:         Mon Apr 23 11:05:57 2012
@@ -364,13 +364,9 @@ rec_aggregate_std_avg_record (rec_record_t record,
      end-of-memory condition.  */                                       \
                                                                         \
   if (val == floor (val))                                               \
-    {                                                                   \
-      asprintf (&result, "%zu", (size_t) val);                          \
-    }                                                                   \
+      asprintf (&result, "%zd", (size_t) val);                          \
   else                                                                  \
-    {                                                                   \
       asprintf (&result, "%f", val);                                    \
-    }                                                                   \
                                                                         \
   return result;                                                        \
   }                                                                     \
