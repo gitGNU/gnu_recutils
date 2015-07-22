@@ -800,7 +800,7 @@ reader to easily identify the type of the records.
 
 The following list briefly describes the special fields defined in the
 recutils format, along with references to the sections of this manual
-describing their usage in deep.
+describing their usage in depth.
 
 @cindex special fields, list of
 @table @code
