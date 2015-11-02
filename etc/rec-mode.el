@@ -72,6 +72,10 @@ hidden by default in navigation mode.")
 (defvar rec-recfix "recfix"
   "Name of the 'recfix' utility from the GNU recutils.")
 
+(defface rec-field-name-face '((t :weight bold)) "" :group 'rec-mode)
+(defface rec-keyword-face '((t :weight bold)) "" :group 'rec-mode)
+(defface rec-continuation-line-face '((t :weight bold)) "" :group 'rec-mode)
+
 ;;;; Variables and constants that the user does not want to touch (really!)
 
 (defconst rec-mode-version "1.5"
@@ -139,9 +143,9 @@ hidden by default in navigation mode.")
   "Syntax table used in rec-mode")
 
 (defvar rec-font-lock-keywords
-`((,(concat "^" rec-keyword-prefix "[a-zA-Z0-9_]+:") . font-lock-keyword-face)
-  (,rec-field-name-re . font-lock-variable-name-face)
-  ("^\\+" . font-lock-constant-face))
+`((,(concat "^" rec-keyword-prefix "[a-zA-Z0-9_]+:") . rec-field-name-face)
+  (,rec-field-name-re . rec-keyword-face)
+  ("^\\+" . rec-continuation-line-face))
 "Font lock keywords used in rec-mode")
 
 (defvar rec-mode-edit-map

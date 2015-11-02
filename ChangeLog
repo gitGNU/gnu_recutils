@@ -1,3 +1,10 @@
+2015-11-02  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-field-name-face): New face.
+	(rec-keyword-face): Likewise.
+	(rec-continuation-line-face): Likewise.
+	(rec-font-lock-keywords): Use the rec-* faces.
+
 2015-05-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	src,torture: numeric results from aggregated functions are signed.
