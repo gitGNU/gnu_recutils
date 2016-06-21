@@ -38,6 +38,7 @@ This function is called by `org-babel-execute-src-block'."
 			 (error
                           "rec code block requires :data header argument")))
 		   (cdr (assoc :data params))))
+         (result-params (cdr (assq :result-params params)))
 	 (cmdline (cdr (assoc :cmdline params)))
 	 (rec-type (cdr (assoc :type params)))
 	 (fields (cdr (assoc :fields params)))
