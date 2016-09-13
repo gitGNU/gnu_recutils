@@ -17,7 +17,7 @@
 @i{i.e.@:}
 @end macro
 
-@comment Latin: exempla greta
+@comment Latin: exempli gratia
 @macro eg
 @i{e.g.@:}
 @end macro

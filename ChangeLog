@@ -1,3 +1,8 @@
+2016-09-13  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* doc/recutils.texi: "Latinajo" fixed.  Reported by Giovanni
+	Ridolfi.
+
 2016-06-21  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/ob-rec.el (org-babel-execute:rec): orb-babel switched to
