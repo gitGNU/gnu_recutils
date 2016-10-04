@@ -992,7 +992,7 @@ current buffer to look like indentation."
 (defun rec-remove-continuation-line-marker-overlays ()
   "Delete all the continuation line markers overlays."
   (mapc 'delete-overlay rec-continuation-line-markers-overlays)
-  (setq rec-continuation-line-markers-overlays))
+  (setq rec-continuation-line-markers-overlays nil))
 
 ;;;; Field folding
 

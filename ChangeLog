@@ -1,3 +1,8 @@
+2016-10-05  Jose E. Marchesi  <jemarch@gnu.org>
+
+	* etc/rec-mode.el (rec-remove-continuation-line-marker-overlays):
+	Fix setq typo.
+
 2016-09-13  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* doc/recutils.texi: "Latinajo" fixed.  Reported by Giovanni
