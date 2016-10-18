@@ -2157,7 +2157,7 @@ Turning on rec-mode calls the members of the variable
   (set-syntax-table rec-mode-syntax-table)
   (setq mode-name "Rec")
   (setq major-mode 'rec-mode)
-  (run-hooks 'rec-mode-hooks)
+  (run-hooks 'rec-mode-hook)
   ;; Goto the first record of the first type (including the Unknown).
   ;; If there is a problem (i.e.  syntax error) then go to fundamental
   ;; mode and show the output of recfix in a separated buffer.

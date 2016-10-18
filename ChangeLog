@@ -1,3 +1,8 @@
+2016-10-18  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* etc/rec-mode.el (rec-mode): Fix typo and run the actual
+	rec-mode-hook.
+
 2016-10-05  Jose E. Marchesi  <jemarch@gnu.org>
 
 	* etc/rec-mode.el (rec-remove-continuation-line-marker-overlays):
