@@ -34,6 +34,7 @@
 (eval-when-compile (require 'cl))
 (require 'calendar)
 (require 'hl-line)
+(require 'tabulated-list)
 
 ;;;; Customization
 
