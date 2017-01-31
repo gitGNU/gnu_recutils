@@ -33,7 +33,7 @@ utilities shipped in this distribution.  The configure script checks
 for the needed packages and drives the conditional compilation of the
 impacted utitilities.  The dependencies are:
 - The testing infrastructure uses the Check library.  At the moment
-  the svn version of the library if needed.  The configure script will
+  the svn version of the library is needed.  The configure script will
   check if you have the right version.  libcheck can be obtained at
   http://sourceforge.net/projects/check/.
 

@@ -1,3 +1,7 @@
+2017-01-31  Jose E. Marchesi  <jose.marchesi@oracle.com>
+
+	* README-dev: Correct typo.
+
 2017-01-26  Jose E. Marchesi  <jose.marchesi@oracle.com>
 
 	* etc/rec-mode.el: Require tabulated-list.
